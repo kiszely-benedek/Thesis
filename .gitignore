@@ -1,3 +1,5 @@
 docs/private/*
 docs/Academic_papers/*
 docs/Notes/*
+__pycache__/
+*.pyc
