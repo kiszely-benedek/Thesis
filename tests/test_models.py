@@ -14,6 +14,7 @@ from plantgraph.benchmark.models import (
     SheetRef,
     Side,
     SplitManifest,
+    UnresolvedConnector,
 )
 
 
@@ -79,3 +80,16 @@ def test_manifest_notices_a_dropped_connector() -> None:
         source="test", sheet_files=["5", "6"], connectors=[kept, dropped]
     )
     assert not manifest.accounted_for()
+
+
+def test_manifest_accepts_an_openly_unresolved_connector() -> None:
+    # Valódi rajzokon előfordul, hogy a célként megnevezett lap megvan, de nincs
+    # rajta hozzáilló csatlakozó. Ez nem hiba — csak be kell vallani, nem eltüntetni.
+    stuck = observation("11", "inlet/outlet22")
+    manifest = SplitManifest(
+        source="test",
+        sheet_files=["11"],
+        connectors=[stuck],
+        unresolved=[UnresolvedConnector(from_key=stuck.key, reason="no P&ID reference on the label")],
+    )
+    assert manifest.accounted_for()

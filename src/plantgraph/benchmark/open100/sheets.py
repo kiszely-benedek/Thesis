@@ -64,10 +64,21 @@ BY_REF: dict[str, Open100Sheet] = {s.ref.canonical(): s for s in SHEETS.values()
 # Rendszerek, amelyekre a 12 lap hivatkozik, de a rajzuk nincs a birtokunkban.
 # Ezekből lesznek a valódi "lógó" hivatkozások: olyan kérdések, amelyekre a helyes
 # válasz az, hogy nem tudjuk. Nem hiba, hanem hasznos teszteset.
+#
+# A 2026-08-25-i áttekintés csak 190/240/290-et azonosított; a 2026-08-31-i
+# kézi feliratolvasás (stage 2) találta a többit. A 320-as szám két különböző
+# névvel is előfordul a rajzokon ("RAD WASTE SYSTEM" és "CHEMICAL ADDITION
+# SYSTEM") — vagy egy közös épület két rendszeréről van szó, vagy elgépelés;
+# egyik esetben sem tudjuk feloldani, tehát a megkülönböztetés itt nem számít.
 KNOWN_ABSENT: dict[str, str] = {
+    "130": "Service Water System",
     "190": "High Pressure Steam Drains",
     "240": "Turbine System",
+    "250": "Turbine Exhaust",
+    "270": "Waste Process System",
     "290": "Water Sample System",
+    "300": "Make-Up Water",
+    "320": "Rad Waste / Chemical Addition System",
 }
 
 

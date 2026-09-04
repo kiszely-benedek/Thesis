@@ -160,6 +160,19 @@ class ConnectorObservation(BaseModel):
         return f"{self.sheet_file}:{self.node_id}"
 
 
+class MatchRule(str, Enum):
+    """Melyik szabály találta meg a párt — a bizonytalanabb szabályok ellenőrizhetők maradjanak.
+
+    A rangsor a docs/private/40-design/open100-annotation.md 3. lépéséből jön:
+    a sorszám maga a bizalmi szint, 1 a legerősebb.
+    """
+
+    LINE_NUMBER = "line_number"  # 1. az azonosító megegyezik mindkét lapon — ez a legerősebb jel
+    GRID_MUTUAL = "grid_mutual"  # 2. a célmező mindkét irányból ugyanoda mutat
+    SERVICE_DIRECTION = "service_direction"  # 3. csak a rendszer és az irány egyezik — kézi ellenőrzést igényel
+    SYNTHETIC = "synthetic"  # a szintetikus generátor vágta el — nem kell találgatni, tudjuk
+
+
 class ConnectorPair(BaseModel):
     """Két csatlakozó, amelyekről kiderült, hogy ugyanannak a csőnek a két vége.
 
@@ -169,12 +182,18 @@ class ConnectorPair(BaseModel):
     Az original_edge csak a szintetikus generátornál van kitöltve, mert ott mi
     magunk vágtuk el a gráf élét, tehát tudjuk, mi volt. Valódi rajz annotálásakor
     a kapcsolat visszanyerhető, de az eredeti él nem — ezért marad None.
+
+    A match_rule megmondja, mennyire kell megbízni a párban. Egy line_number
+    találat egy elgépelt felirat miatt tévedhet; egy service_direction találat
+    puszta egybeesés is lehet. Mindkettő bekerül a megoldókulcsba, de más súllyal.
     """
 
     from_key: str
     to_key: str
     line_number: str | None = None
     original_edge: tuple[str, str] | None = None
+    match_rule: MatchRule = MatchRule.SYNTHETIC
+    note: str | None = None
 
 
 class DanglingReference(BaseModel):
@@ -234,6 +253,22 @@ class IdentityGroup(BaseModel):
         return self
 
 
+class UnresolvedConnector(BaseModel):
+    """Egy csatlakozó, amelyről tudjuk, hogy nem lóg — de a párját mégsem találtuk meg.
+
+    Ez a harmadik eset a "párba került" és a "lógó" mellett, és valódi rajzokon
+    elő fog fordulni: a célként megnevezett lap megvan a korpuszban, csak épp
+    rajta nem található hozzáillő csatlakozó. Ennek több oka is lehet — elolvasási
+    hiba, a rajzoló elfelejtette berajzolni a párját, vagy a párja nem
+    "inlet/outlet" címkével van jelölve az annotációban. Egyik sem szabad, hogy
+    csendben eltűnjön: ezért kap saját kategóriát ahelyett, hogy erőltetett párba
+    vagy hibás "lógó" bejegyzésbe kerülne.
+    """
+
+    from_key: str
+    reason: str
+
+
 class SplitManifest(BaseModel):
     """Egy többlapos rajzsorozat teljes megoldókulcsa, egyetlen fájlban."""
 
@@ -242,6 +277,7 @@ class SplitManifest(BaseModel):
     connectors: list[ConnectorObservation] = Field(default_factory=list)
     connector_pairs: list[ConnectorPair] = Field(default_factory=list)
     dangling: list[DanglingReference] = Field(default_factory=list)
+    unresolved: list[UnresolvedConnector] = Field(default_factory=list)
     identity_groups: list[IdentityGroup] = Field(default_factory=list)
 
     strategy: str | None = None
@@ -250,13 +286,15 @@ class SplitManifest(BaseModel):
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     def accounted_for(self) -> bool:
-        """Igaz, ha minden csatlakozó vagy párba került, vagy lógóként van megjelölve.
+        """Igaz, ha minden csatlakozó sorsa ismert: párba került, lógó, vagy nyíltan megoldatlan.
 
-        Csatlakozó nem tűnhet el nyomtalanul. Ha egyik kategóriába sem esik, az a
-        feldolgozás hibája — inkább bukjon el a teszt, mint hogy a megoldókulcsból
-        észrevétlenül hiányozzon egy sor.
+        Csatlakozó nem tűnhet el nyomtalanul. "Ismert sorsú" nem azt jelenti, hogy
+        meg is oldottuk — az unresolved lista pont azért létezik, hogy egy valódi,
+        kézzel át nem ellenőrzött esetet be lehessen vallani ahelyett, hogy vagy
+        kimaradna, vagy erőltetett (és ezáltal hamis) párba kerülne.
         """
         placed = {p.from_key for p in self.connector_pairs}
         placed |= {p.to_key for p in self.connector_pairs}
         placed |= {d.from_key for d in self.dangling}
+        placed |= {u.from_key for u in self.unresolved}
         return placed == {c.key for c in self.connectors}
