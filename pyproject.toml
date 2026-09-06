@@ -11,7 +11,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8.3"]
+dev = ["pytest>=8.3", "ruff>=0.6", "mypy>=1.11"]
 
 [build-system]
 requires = ["hatchling"]
@@ -22,3 +22,37 @@ packages = ["src/plantgraph"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["src", "tests"]
+extend-exclude = ["docs"]
+
+[tool.ruff.format]
+# adattáblák: egy csatlakozó = egy sor; a formázó szétdobná őket soronként egy mezőre
+exclude = [
+    "src/plantgraph/benchmark/open100/annotations.py",
+    "src/plantgraph/benchmark/open100/manifest.py",
+]
+
+[tool.ruff.lint]
+# E/F: pyflakes + pycodestyle, I: import order, UP: modern syntax, B: bugbear,
+# D: docstring presence (Google style — a professor reads this code)
+select = ["E", "F", "I", "UP", "B", "D"]
+ignore = ["D100", "D104", "D105", "D107", "D203", "D213"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["D"]
+# adattáblák: egy csatlakozó = egy sor, a hosszú megjegyzés hozzátartozik
+"src/plantgraph/benchmark/open100/annotations.py" = ["E501"]
+"src/plantgraph/benchmark/open100/manifest.py" = ["E501"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+files = ["src"]
+plugins = ["pydantic.mypy"]

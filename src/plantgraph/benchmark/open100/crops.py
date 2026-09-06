@@ -43,7 +43,7 @@ def crop_connector(image: Image.Image, observation: ConnectorObservation) -> Ima
     return image.crop(box.as_pixels()).convert("L")
 
 
-def _load_font(size: int) -> ImageFont.ImageFont:
+def _load_font(size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
     """Rendes betűtípus, ha található a gépen, különben a PIL apró beépített fontja."""
     for candidate in ("arial.ttf", "DejaVuSans.ttf"):
         try:
@@ -56,12 +56,10 @@ def _load_font(size: int) -> ImageFont.ImageFont:
 def _scaled(crop: Image.Image, width: int) -> Image.Image:
     """Egységes szélességre húzza a kivágást, megtartva az oldalarányt."""
     height = max(1, round(width * crop.height / crop.width))
-    return crop.resize((width, height), Image.LANCZOS)
+    return crop.resize((width, height), Image.Resampling.LANCZOS)
 
 
-def build_montage(
-    crops: list[tuple[str, Image.Image]], row_width: int = _ROW_WIDTH
-) -> Image.Image:
+def build_montage(crops: list[tuple[str, Image.Image]], row_width: int = _ROW_WIDTH) -> Image.Image:
     """Egymás alá fűzi a kivágásokat, mindegyik mellé odaírva az azonosítóját.
 
     Args:
@@ -126,9 +124,6 @@ def write_montages(
         for i in range(0, len(observations), rows_per_montage)
     ]
     for index, batch in enumerate(batches):
-        crops = [
-            (montage_tag(o), crop_connector(image_for_sheet[o.sheet_file], o))
-            for o in batch
-        ]
+        crops = [(montage_tag(o), crop_connector(image_for_sheet[o.sheet_file], o)) for o in batch]
         build_montage(crops).save(out_dir / f"montage_{index:02d}.png")
     return tag_to_key

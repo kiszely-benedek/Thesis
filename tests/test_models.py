@@ -23,9 +23,7 @@ def box(xmin=10.0, ymin=20.0, xmax=110.0, ymax=70.0) -> BoundingBox:
 
 
 def observation(sheet="5", node_id="inlet/outlet47") -> ConnectorObservation:
-    return ConnectorObservation(
-        sheet_file=sheet, node_id=node_id, bbox=box(), side=Side.LEFT
-    )
+    return ConnectorObservation(sheet_file=sheet, node_id=node_id, bbox=box(), side=Side.LEFT)
 
 
 def test_degenerate_box_is_rejected() -> None:
@@ -67,18 +65,14 @@ def test_manifest_accounts_for_every_connector() -> None:
         sheet_files=["0", "5", "6"],
         connectors=[paired_a, paired_b, lone],
         connector_pairs=[ConnectorPair(from_key=paired_a.key, to_key=paired_b.key)],
-        dangling=[
-            DanglingReference(from_key=lone.key, target=SheetRef(pid="190", sheet_no=1))
-        ],
+        dangling=[DanglingReference(from_key=lone.key, target=SheetRef(pid="190", sheet_no=1))],
     )
     assert manifest.accounted_for()
 
 
 def test_manifest_notices_a_dropped_connector() -> None:
     kept, dropped = observation("5", "inlet/outlet1"), observation("6", "inlet/outlet2")
-    manifest = SplitManifest(
-        source="test", sheet_files=["5", "6"], connectors=[kept, dropped]
-    )
+    manifest = SplitManifest(source="test", sheet_files=["5", "6"], connectors=[kept, dropped])
     assert not manifest.accounted_for()
 
 
@@ -90,6 +84,8 @@ def test_manifest_accepts_an_openly_unresolved_connector() -> None:
         source="test",
         sheet_files=["11"],
         connectors=[stuck],
-        unresolved=[UnresolvedConnector(from_key=stuck.key, reason="no P&ID reference on the label")],
+        unresolved=[
+            UnresolvedConnector(from_key=stuck.key, reason="no P&ID reference on the label")
+        ],
     )
     assert manifest.accounted_for()

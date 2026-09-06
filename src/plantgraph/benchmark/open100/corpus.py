@@ -28,8 +28,10 @@ class Open100Corpus:
     """A 12 OPEN100 rajz és a hozzájuk tartozó annotációs fájlok együtt."""
 
     def __init__(self, root: Path) -> None:
-        """Args:
-        root: a 'Complete/PID2Graph OPEN100' könyvtár, amelyben a 0.png .. 11.png
+        """Ellenőrzi, hogy mind a 12 lap megvan, mielőtt bármit olvasnánk.
+
+        Args:
+            root: a 'Complete/PID2Graph OPEN100' könyvtár, amelyben a 0.png .. 11.png
             rajzok és a hozzájuk tartozó .graphml fájlok vannak.
 
         Raises:
@@ -43,8 +45,7 @@ class Open100Corpus:
         missing = [
             stem
             for stem in SHEETS
-            if not (root / f"{stem}.png").exists()
-            or not (root / f"{stem}.graphml").exists()
+            if not (root / f"{stem}.png").exists() or not (root / f"{stem}.graphml").exists()
         ]
         if missing:
             raise FileNotFoundError(
@@ -66,9 +67,7 @@ class Open100Corpus:
         for stem in sorted(SHEETS, key=int):
             with self.image(stem) as img:
                 width = img.width
-            found.extend(
-                extract.connectors_in_sheet(self.root / f"{stem}.graphml", width)
-            )
+            found.extend(extract.connectors_in_sheet(self.root / f"{stem}.graphml", width))
         return found
 
     def prepare_reading(self, out_dir: Path) -> dict[str, str]:
@@ -88,9 +87,7 @@ class Open100Corpus:
             for img in images.values():
                 img.close()
 
-        (out_dir / "tag_to_key.json").write_text(
-            json.dumps(tag_to_key, indent=2), encoding="utf-8"
-        )
+        (out_dir / "tag_to_key.json").write_text(json.dumps(tag_to_key, indent=2), encoding="utf-8")
         (out_dir / "manifest_stage1.json").write_text(
             self.draft_manifest(observations).model_dump_json(indent=2),
             encoding="utf-8",

@@ -65,21 +65,22 @@ class BoundingBox(BaseModel):
     @model_validator(mode="after")
     def _check_ordering(self) -> BoundingBox:
         if self.xmax <= self.xmin or self.ymax <= self.ymin:
-            raise ValueError(
-                f"degenerate box: expected xmin<xmax and ymin<ymax, got {self!r}"
-            )
+            raise ValueError(f"degenerate box: expected xmin<xmax and ymin<ymax, got {self!r}")
         return self
 
     @property
     def width(self) -> float:
+        """A doboz szélessége képpontban."""
         return self.xmax - self.xmin
 
     @property
     def height(self) -> float:
+        """A doboz magassága képpontban."""
         return self.ymax - self.ymin
 
     @property
     def centre_x(self) -> float:
+        """A doboz vízszintes középpontja — ebből dől el, melyik lapszélhez tartozik."""
         return (self.xmin + self.xmax) / 2
 
     def expanded(self, x_factor: float, y_margin: float) -> BoundingBox:
@@ -124,6 +125,7 @@ class SheetRef(BaseModel):
     sheet_no: int
 
     def canonical(self) -> str:
+        """Egységes írásmód, pl. PID-120-1 — csak ezt szabad összehasonlítani."""
         return f"PID-{self.pid}-{self.sheet_no}"
 
 
@@ -169,7 +171,9 @@ class MatchRule(str, Enum):
 
     LINE_NUMBER = "line_number"  # 1. az azonosító megegyezik mindkét lapon — ez a legerősebb jel
     GRID_MUTUAL = "grid_mutual"  # 2. a célmező mindkét irányból ugyanoda mutat
-    SERVICE_DIRECTION = "service_direction"  # 3. csak a rendszer és az irány egyezik — kézi ellenőrzést igényel
+    SERVICE_DIRECTION = (
+        "service_direction"  # 3. csak a rendszer és az irány egyezik — kézi ellenőrzést igényel
+    )
     SYNTHETIC = "synthetic"  # a szintetikus generátor vágta el — nem kell találgatni, tudjuk
 
 

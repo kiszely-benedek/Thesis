@@ -36,8 +36,7 @@ def _attribute_names(root: ET.Element) -> dict[str, str]:
     tovább. Ez a függvény ezt a szótárat adja vissza.
     """
     return {
-        key.get("id", ""): key.get("attr.name", "")
-        for key in root.findall("g:key", GRAPHML_NS)
+        key.get("id", ""): key.get("attr.name", "") for key in root.findall("g:key", GRAPHML_NS)
     }
 
 
@@ -67,9 +66,7 @@ def _side_of(bbox: BoundingBox, image_width: int) -> Side:
     return Side.LEFT if bbox.centre_x < image_width / 2 else Side.RIGHT
 
 
-def connectors_in_sheet(
-    graphml_path: Path, image_width: int
-) -> list[ConnectorObservation]:
+def connectors_in_sheet(graphml_path: Path, image_width: int) -> list[ConnectorObservation]:
     """Összegyűjti egy lap összes lapközi csatlakozóját.
 
     Args:

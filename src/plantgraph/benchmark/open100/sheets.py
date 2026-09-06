@@ -31,6 +31,7 @@ class Open100Sheet(BaseModel):
 
     @property
     def ref(self) -> SheetRef:
+        """A lap hivatkozási alakja, ahogy a csatlakozók feliratai hivatkoznak rá."""
         return SheetRef(pid=self.pid, sheet_no=self.sheet_no)
 
 
@@ -51,9 +52,7 @@ _ROWS: tuple[tuple[str, str, str, int, int], ...] = (
 )
 
 SHEETS: dict[str, Open100Sheet] = {
-    stem: Open100Sheet(
-        file_stem=stem, system=system, pid=pid, sheet_no=sheet_no, sheet_count=count
-    )
+    stem: Open100Sheet(file_stem=stem, system=system, pid=pid, sheet_no=sheet_no, sheet_count=count)
     for stem, system, pid, sheet_no, count in _ROWS
 }
 
