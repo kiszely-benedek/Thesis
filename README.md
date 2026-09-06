@@ -62,13 +62,26 @@ Libraries: **Pydantic** (data model and validation), **Pillow** (cropping the dr
 
 ## Setup
 
+Clone into a folder of your choosing, then install. The folder name is up to you; git names it after the repository (`Thesis`) unless you pass a target path as the last argument.
+
 ```powershell
-git clone <this repo>
+# Option A: let git create a folder named "Thesis" where you are
+git clone https://github.com/kiszely-benedek/Thesis.git
 cd Thesis
+
+# Option B: clone into a folder you name yourself, here "Thesis" under Projects
+mkdir C:\Projects\Thesis
+git clone https://github.com/kiszely-benedek/Thesis.git C:\Projects\Thesis
+cd C:\Projects\Thesis
+
+# Option C: you are already inside the empty folder that should hold the code
+git clone https://github.com/kiszely-benedek/Thesis.git .
+
+# Then, in every case:
 uv sync --extra dev
 ```
 
-That creates `.venv/` with the runtime and development dependencies. Run everything through `uv run` so the right interpreter is used.
+That creates `.venv/` inside the folder with the runtime and development dependencies. Run everything through `uv run` so the right interpreter is used. All commands below are given relative to that folder.
 
 ## Running
 
