@@ -17,31 +17,48 @@ import argparse
 import csv
 from pathlib import Path
 
+from plantgraph.benchmark.models import SplitManifest
 from plantgraph.benchmark.open100.corpus import Open100Corpus
 from plantgraph.benchmark.open100.manifest import build_manifest
 
 
-def _fate_of(key: str, manifest) -> tuple[str, str]:  # noqa: ANN001 — belső segéd, a manifest típusa nyilvánvaló a hívásból
-    """Egy csatlakozó sorsa és a hozzá tartozó megjegyzés, a CSV-sor kedvéért."""
+def _fate_of(key: str, manifest: SplitManifest) -> tuple[str, str, str]:
+    """Egy csatlakozó sorsa, a párja (ha van) és a megjegyzés, a CSV-sor kedvéért.
+
+    A partner kulcsa azért kerül külön oszlopba, hogy a kézi ellenőrzésnél ne a
+    manifest JSON-ból kelljen kikeresni, melyik két kivágást kell egymás mellé tenni.
+    """
     for pair in manifest.connector_pairs:
         if key in (pair.from_key, pair.to_key):
-            return f"paired ({pair.match_rule.value})", pair.note or ""
+            partner = pair.to_key if key == pair.from_key else pair.from_key
+            return f"paired ({pair.match_rule.value})", partner, pair.note or ""
     for dangling in manifest.dangling:
         if dangling.from_key == key:
-            return "dangling", dangling.reason
+            return "dangling", "", dangling.reason
     for unresolved in manifest.unresolved:
         if unresolved.from_key == key:
-            return "unresolved", unresolved.reason
-    return "MISSING", "not classified — this is a bug"  # accounted_for() véd ez ellen
+            return "unresolved", "", unresolved.reason
+    return "MISSING", "", "not classified — this is a bug"  # accounted_for() véd ez ellen
 
 
-def write_csv(manifest, path: Path) -> None:  # noqa: ANN001 — lásd fent
-    """Emberi átnézésre: egy sor csatlakozónként, a sorsával és a bizalmi jelzéssel együtt."""
+def write_csv(manifest: SplitManifest, path: Path) -> None:
+    """Emberi átnézésre: egy sor csatlakozónként, a sorsával, párjával és a bizalmi jelzéssel."""
+    header = [
+        "key",
+        "side",
+        "target",
+        "grid_cell",
+        "service",
+        "line_number",
+        "fate",
+        "partner",
+        "note",
+    ]
     with path.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.writer(handle)
-        writer.writerow(["key", "side", "target", "grid_cell", "service", "line_number", "fate", "note"])
+        writer.writerow(header)
         for obs in manifest.connectors:
-            fate, note = _fate_of(obs.key, manifest)
+            fate, partner, note = _fate_of(obs.key, manifest)
             writer.writerow(
                 [
                     obs.key,
@@ -51,12 +68,13 @@ def write_csv(manifest, path: Path) -> None:  # noqa: ANN001 — lásd fent
                     obs.service or "",
                     obs.line_number or "",
                     fate,
+                    partner,
                     note,
                 ]
             )
 
 
-def _summary(manifest) -> str:  # noqa: ANN001 — lásd fent
+def _summary(manifest: SplitManifest) -> str:
     by_rule: dict[str, int] = {}
     for pair in manifest.connector_pairs:
         by_rule[pair.match_rule.value] = by_rule.get(pair.match_rule.value, 0) + 1
@@ -71,6 +89,7 @@ def _summary(manifest) -> str:  # noqa: ANN001 — lásd fent
 
 
 def main() -> None:
+    """Parancssori belépési pont: kiírja a manifestet és az ellenőrző CSV-t."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("open100_dir", type=Path, help="a 'PID2Graph OPEN100' mappa")
     parser.add_argument("out_dir", type=Path, help="ide kerül a manifest és a csv")
