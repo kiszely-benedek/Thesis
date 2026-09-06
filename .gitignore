@@ -1,5 +1,6 @@
-docs/private/*
-docs/Academic_papers/*
-docs/Notes/*
 __pycache__/
 *.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
