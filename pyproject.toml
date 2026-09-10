@@ -3,6 +3,7 @@ name = "plantgraph"
 version = "0.1.0"
 description = "GraphRAG at plant scale for P&ID engineering diagrams"
 readme = "README.md"
+license = { text = "AGPL-3.0-only" }
 requires-python = ">=3.10"
 dependencies = [
     "pydantic>=2.10",
