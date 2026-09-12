@@ -200,6 +200,65 @@ class ConnectorPair(BaseModel):
     note: str | None = None
 
 
+class OffPageConnector(BaseModel):
+    """Egy off-page connector csonk, amelyet a szintetikus splitter szúr egy elvágott él helyére.
+
+    Amikor a splitter egy élt két lap között kettévág, mindkét lap gráfjába
+    kerül egy ilyen csonk-csomópont — ez a szintetikus megfelelője annak, amit
+    az OPEN100-on ConnectorObservation ír le egy valódi lapról leolvasva.
+
+    A key alakja szándékosan **ugyanaz**, mint a ConnectorObservation.key-é
+    (f"{lap}:{node_id}"): ez a varrat, ami miatt a ConnectorPair.from_key és
+    to_key közömbös aziránt, hogy a szintetikus splitter vagy az OPEN100
+    annotáció állította-e elő a csatlakozót — mindkettő ugyanabba a
+    SplitManifest-be kerül, és a későbbi kód a kettőt meg sem különbözteti.
+    """
+
+    tag: str
+    sheet_id: str
+    direction: Direction
+    partner_sheet_id: str
+    partner_tag: str
+    attached_node_id: str
+
+    @property
+    def key(self) -> str:
+        """Ugyanaz az alak, mint ConnectorObservation.key — lásd az osztály docstringjét."""
+        return f"{self.sheet_id}:{self.attached_node_id}"
+
+
+class NumberingScheme(str, Enum):
+    """A csatlakozók felirat-konvenciója — szándékosan variálható, nem állandó.
+
+    A splitter.md 3. fejezete szerint a lapszámozás és a feliratozás
+    generátor-paraméter: ha egy downstream komponens csak az egyik alakra
+    működik, azt a benchmarknak fel kell fednie, nem elrejtenie.
+    """
+
+    SEQUENTIAL = "sequential"  # pl. "SHEET-3-OPC-07"
+    PID_STYLE = "pid_style"  # pl. "PID-120-1" — az OPEN100-on megfigyelt alak
+
+
+class SplitConfig(BaseModel):
+    """A szintetikus splitter minden beállítása — a stratégiától a feliratozási konvencióig.
+
+    Minden itt szereplő mező szándékosan paraméter, nem beégetett állandó
+    (splitter.md 3. fejezet): a kutatási kérdés pont az, hogy ezek a
+    konvenciók hogyan hatnak a visszakeresés pontosságára.
+    """
+
+    strategy: str = "flow_greedy"
+    sheet_equipment_budget: int = Field(default=10, ge=1)
+    seed: int = 0
+    duplication_rate: float = Field(default=0.0, ge=0.0, le=1.0)
+    equipment_classes: set[str] = Field(
+        default_factory=lambda: {"vessel", "pump", "exchanger", "column", "tank"}
+    )
+    numbering_scheme: NumberingScheme = NumberingScheme.SEQUENTIAL
+    use_grid_reference: bool = False
+    exact_match_tags: bool = True
+
+
 class DanglingReference(BaseModel):
     """Csatlakozó, amely olyan lapra hivatkozik, ami nincs a birtokunkban.
 
@@ -279,6 +338,7 @@ class SplitManifest(BaseModel):
     source: str
     sheet_files: list[str]
     connectors: list[ConnectorObservation] = Field(default_factory=list)
+    off_page_connectors: list[OffPageConnector] = Field(default_factory=list)
     connector_pairs: list[ConnectorPair] = Field(default_factory=list)
     dangling: list[DanglingReference] = Field(default_factory=list)
     unresolved: list[UnresolvedConnector] = Field(default_factory=list)
@@ -296,9 +356,15 @@ class SplitManifest(BaseModel):
         meg is oldottuk — az unresolved lista pont azért létezik, hogy egy valódi,
         kézzel át nem ellenőrzött esetet be lehessen vallani ahelyett, hogy vagy
         kimaradna, vagy erőltetett (és ezáltal hamis) párba kerülne.
+
+        A connectors (OPEN100) és az off_page_connectors (szintetikus splitter)
+        listák egyszerre töltődnek: forrásonként csak az egyik nem üres. Az
+        ígéret mindkettőre egyszerre él, hogy egyik forrásnál se veszhessen el
+        csendben egy csatlakozó.
         """
         placed = {p.from_key for p in self.connector_pairs}
         placed |= {p.to_key for p in self.connector_pairs}
         placed |= {d.from_key for d in self.dangling}
         placed |= {u.from_key for u in self.unresolved}
-        return placed == {c.key for c in self.connectors}
+        expected = {c.key for c in self.connectors} | {c.key for c in self.off_page_connectors}
+        return placed == expected

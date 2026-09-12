@@ -12,7 +12,12 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8.3", "ruff>=0.6", "mypy>=1.11"]
+dev = [
+    "pytest>=8.3",
+    "ruff>=0.6",
+    "mypy>=1.11",
+    "types-networkx>=3.6.1.20260903",
+]
 
 [build-system]
 requires = ["hatchling"]
