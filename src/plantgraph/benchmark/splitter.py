@@ -7,7 +7,9 @@ Az orchestrálás négy lépésből áll (splitter.md 2. fejezet):
   3. **azonosság-alapú** kereszthivatkozás: néhány berendezést több lapra is
      felrajzolunk (splitter.md nyitott 3. kérdés),
   4. **off-page connector**: a fennmaradó lapok közötti éleket két csonk-
-     csomóponttal helyettesítjük, és felírjuk a párjukat a megoldókulcsba.
+     csomóponttal helyettesítjük, és felírjuk a párjukat a megoldókulcsba
+     (connectors.py — saját modul, mert a splitter.py e nélkül túllépné a
+     400 soros fájlkorlátot).
 
 Ez a modul csak a gráfot alakítja; képet nem rajzol (splitter.md 1. fejezet).
 """
@@ -16,34 +18,15 @@ from __future__ import annotations
 
 import hashlib
 import random
-from dataclasses import dataclass, field
 from typing import Any
 
 import networkx as nx
 
-from plantgraph.benchmark.models import (
-    ConnectorPair,
-    Direction,
-    IdentityGroup,
-    NumberingScheme,
-    OffPageConnector,
-    SplitConfig,
-    SplitManifest,
-)
+from plantgraph.benchmark import connectors
+from plantgraph.benchmark.models import IdentityGroup, SplitManifest
+from plantgraph.benchmark.sheet_graph import SheetGraph
+from plantgraph.benchmark.split_models import SplitConfig
 from plantgraph.benchmark.strategies import STRATEGIES, StrategyFn
-
-
-@dataclass
-class SheetGraph:
-    """Egy lap gráfja: a rá eső csomópontok/élek, plusz a rajta lévő off-page connectorok listája.
-
-    Sima dataclass, nem Pydantic modell (splitter.md 2. fejezet): a gráf
-    topológiáját networkx-nek szánjuk, nem szerializáljuk.
-    """
-
-    sheet_id: str
-    graph: nx.DiGraph[str]
-    connectors: list[OffPageConnector] = field(default_factory=list)
 
 
 def split(plant: nx.DiGraph[str], config: SplitConfig) -> tuple[list[SheetGraph], SplitManifest]:
@@ -59,7 +42,9 @@ def split(plant: nx.DiGraph[str], config: SplitConfig) -> tuple[list[SheetGraph]
     node_sheet = _strategy(config.strategy)(plant, config, rng)
     sheets = _induce_sheets(plant, node_sheet)
     identity_groups, resolved_edges = _duplicate_equipment(plant, sheets, node_sheet, config, rng)
-    connector_pairs = _cut_remaining_edges(plant, sheets, node_sheet, resolved_edges, config, rng)
+    connector_pairs = connectors.cut_remaining_edges(
+        plant, sheets, node_sheet, resolved_edges, config, rng
+    )
 
     all_connectors = [connector for sheet in sheets.values() for connector in sheet.connectors]
     manifest = SplitManifest(
@@ -241,99 +226,3 @@ def _tag_variant(tag: str, rng: random.Random) -> str:
         lambda t: t.lower(),  # RC-P102A -> rc-p102a
     ]
     return str(rng.choice(mutations)(tag))
-
-
-def _cut_remaining_edges(
-    plant: nx.DiGraph[str],
-    sheets: dict[str, SheetGraph],
-    node_sheet: dict[str, str],
-    resolved_edges: set[tuple[str, str]],
-    config: SplitConfig,
-    rng: random.Random,
-) -> list[ConnectorPair]:
-    """A duplikációval fel nem oldott, lapok közötti éleket off-page connector-párokkal vágja el."""
-    counters: dict[str, int] = dict.fromkeys(sheets, 0)
-    cross_edges = sorted(
-        (source, target)
-        for source, target in plant.edges()
-        if node_sheet[source] != node_sheet[target] and (source, target) not in resolved_edges
-    )
-    return [
-        _cut_one_edge(plant, sheets, node_sheet, source, target, counters, config, rng)
-        for source, target in cross_edges
-    ]
-
-
-def _cut_one_edge(
-    plant: nx.DiGraph[str],
-    sheets: dict[str, SheetGraph],
-    node_sheet: dict[str, str],
-    source: str,
-    target: str,
-    counters: dict[str, int],
-    config: SplitConfig,
-    rng: random.Random,
-) -> ConnectorPair:
-    """Egy lapok közötti élt vág el: két csonk-csomópont, két OffPageConnector, egy pár."""
-    sheet_source, sheet_target = node_sheet[source], node_sheet[target]
-    edge_attrs = plant.edges[source, target]
-
-    stub_out_id, tag_out = _new_stub(sheet_source, counters, config, rng)
-    stub_in_id, tag_in = _new_stub(sheet_target, counters, config, rng)
-
-    sheets[sheet_source].graph.add_node(stub_out_id, node_class="off_page_connector")
-    sheets[sheet_source].graph.add_edge(source, stub_out_id, **edge_attrs)
-    sheets[sheet_target].graph.add_node(stub_in_id, node_class="off_page_connector")
-    sheets[sheet_target].graph.add_edge(stub_in_id, target, **edge_attrs)
-
-    connector_out = OffPageConnector(
-        tag=tag_out,
-        sheet_id=sheet_source,
-        direction=Direction.OUTGOING,
-        partner_sheet_id=sheet_target,
-        partner_tag=tag_in,
-        attached_node_id=stub_out_id,
-    )
-    connector_in = OffPageConnector(
-        tag=tag_in,
-        sheet_id=sheet_target,
-        direction=Direction.INCOMING,
-        partner_sheet_id=sheet_source,
-        partner_tag=tag_out,
-        attached_node_id=stub_in_id,
-    )
-    sheets[sheet_source].connectors.append(connector_out)
-    sheets[sheet_target].connectors.append(connector_in)
-
-    return ConnectorPair(
-        from_key=connector_out.key, to_key=connector_in.key, original_edge=(source, target)
-    )
-
-
-def _new_stub(
-    sheet_id: str, counters: dict[str, int], config: SplitConfig, rng: random.Random
-) -> tuple[str, str]:
-    """Egyedi csonk-azonosítót és feliratot gyárt a lapon belül.
-
-    A számláló garantálja az egyediséget.
-    """
-    index = counters[sheet_id]
-    counters[sheet_id] = index + 1
-    node_id = f"opc:{sheet_id}:{index}"
-    return node_id, _make_tag(config, sheet_id, index, rng)
-
-
-def _make_tag(config: SplitConfig, sheet_id: str, index: int, rng: random.Random) -> str:
-    """A csatlakozó felirata a konfigurált konvenció szerint.
-
-    A grammatika generátor-paraméter (splitter.md 3. fejezet).
-    """
-    if config.numbering_scheme is NumberingScheme.PID_STYLE:
-        base = f"PID-{sheet_id}-{index}"
-    else:
-        base = f"SHEET-{sheet_id}-OPC-{index:02d}"
-    if config.use_grid_reference:
-        row = rng.choice("ABCDEFGH")
-        column = rng.randint(1, 12)
-        base = f"{base} ({row}-{column})"
-    return base

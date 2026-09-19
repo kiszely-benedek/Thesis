@@ -14,7 +14,7 @@ from typing import cast
 import networkx as nx
 
 from plantgraph.benchmark.models import ConnectorPair, SplitManifest
-from plantgraph.benchmark.splitter import SheetGraph
+from plantgraph.benchmark.sheet_graph import SheetGraph
 
 
 def rejoin(sheets: list[SheetGraph], manifest: SplitManifest) -> nx.DiGraph[str]:

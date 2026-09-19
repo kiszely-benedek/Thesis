@@ -17,11 +17,18 @@ Két forrás állítja elő a megoldókulcsot: a szintetikus splitter, amely egy
 vissza a kapcsolatokat. Mindkettő ugyanezt a SplitManifest-et adja ki, így a
 későbbi kód nem tudja megkülönböztetni a két forrást — és nem is szabad tudnia.
 Lásd: docs/private/40-design/splitter.md.
+
+Ez a modul a megoldókulcs sorait és az OPEN100-specifikus leleteket tartalmazza,
+a szintetikus splitter csonk-modelljével (`OffPageConnector`) együtt, mert azt
+a `SplitManifest` listája hordozza. Ami csak a splitter saját beállítása, és a
+manifesttel nem fonódik össze — `SplitConfig` és a hozzá tartozó enumok —, az a
+`split_models.py`-ban van; a kettéválasztás oka a 400 soros fájlkorlát, nem
+fogalmi különbség (`plant-generator.md` §5, "Things to watch").
 """
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 
 from pydantic import BaseModel, Field, model_validator
@@ -200,6 +207,19 @@ class ConnectorPair(BaseModel):
     note: str | None = None
 
 
+class ConnectorKind(str, Enum):
+    """Egy off-page connector milyen élt vág el: csővezetéket vagy jelvezetéket.
+
+    Ez dönti el a csonk-csomópont pyDEXPI osztályát (`plant-generator.md`
+    §4.2, finding 2a): egy elvágott `send_to` élből `PipeOffPageConnector`
+    lesz, minden más relációból (`send_signal_to`, `control`, `measured_by`)
+    `SignalOffPageConnector`.
+    """
+
+    PIPE = "pipe"
+    SIGNAL = "signal"
+
+
 class OffPageConnector(BaseModel):
     """Egy off-page connector csonk, amelyet a szintetikus splitter szúr egy elvágott él helyére.
 
@@ -220,43 +240,14 @@ class OffPageConnector(BaseModel):
     partner_sheet_id: str
     partner_tag: str
     attached_node_id: str
+    kind: ConnectorKind = ConnectorKind.PIPE
+    line_number: str | None = None
+    fluid_code: str | None = None
 
     @property
     def key(self) -> str:
         """Ugyanaz az alak, mint ConnectorObservation.key — lásd az osztály docstringjét."""
         return f"{self.sheet_id}:{self.attached_node_id}"
-
-
-class NumberingScheme(str, Enum):
-    """A csatlakozók felirat-konvenciója — szándékosan variálható, nem állandó.
-
-    A splitter.md 3. fejezete szerint a lapszámozás és a feliratozás
-    generátor-paraméter: ha egy downstream komponens csak az egyik alakra
-    működik, azt a benchmarknak fel kell fednie, nem elrejtenie.
-    """
-
-    SEQUENTIAL = "sequential"  # pl. "SHEET-3-OPC-07"
-    PID_STYLE = "pid_style"  # pl. "PID-120-1" — az OPEN100-on megfigyelt alak
-
-
-class SplitConfig(BaseModel):
-    """A szintetikus splitter minden beállítása — a stratégiától a feliratozási konvencióig.
-
-    Minden itt szereplő mező szándékosan paraméter, nem beégetett állandó
-    (splitter.md 3. fejezet): a kutatási kérdés pont az, hogy ezek a
-    konvenciók hogyan hatnak a visszakeresés pontosságára.
-    """
-
-    strategy: str = "flow_greedy"
-    sheet_equipment_budget: int = Field(default=10, ge=1)
-    seed: int = 0
-    duplication_rate: float = Field(default=0.0, ge=0.0, le=1.0)
-    equipment_classes: set[str] = Field(
-        default_factory=lambda: {"vessel", "pump", "exchanger", "column", "tank"}
-    )
-    numbering_scheme: NumberingScheme = NumberingScheme.SEQUENTIAL
-    use_grid_reference: bool = False
-    exact_match_tags: bool = True
 
 
 class DanglingReference(BaseModel):
@@ -347,7 +338,7 @@ class SplitManifest(BaseModel):
     strategy: str | None = None
     seed: int | None = None
     source_graph_hash: str | None = None
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     def accounted_for(self) -> bool:
         """Igaz, ha minden csatlakozó sorsa ismert: párba került, lógó, vagy nyíltan megoldatlan.

@@ -5,14 +5,9 @@ from __future__ import annotations
 import pytest
 from pydantic import ValidationError
 
-from plantgraph.benchmark.models import (
-    ConnectorPair,
-    Direction,
-    NumberingScheme,
-    OffPageConnector,
-    SplitConfig,
-    SplitManifest,
-)
+from plantgraph.benchmark.models import ConnectorPair, Direction, OffPageConnector, SplitManifest
+from plantgraph.benchmark.split_models import NumberingScheme, SplitConfig
+from plantgraph.graph import schema
 
 
 def connector(sheet_id="0", attached_node_id="opc:0:0", partner_sheet_id="1") -> OffPageConnector:
@@ -35,7 +30,7 @@ def test_off_page_connector_key_matches_connector_observation_shape() -> None:
 def test_split_config_defaults_cover_the_design_note_equipment_list() -> None:
     config = SplitConfig()
     assert config.strategy == "flow_greedy"
-    assert config.equipment_classes == {"vessel", "pump", "exchanger", "column", "tank"}
+    assert config.equipment_classes == set(schema.EQUIPMENT_CLASSES)
     assert config.numbering_scheme is NumberingScheme.SEQUENTIAL
 
 

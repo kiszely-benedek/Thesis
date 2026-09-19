@@ -14,8 +14,10 @@ from __future__ import annotations
 import random
 
 from plant_fixtures import make_plant_graph
-from plantgraph.benchmark.models import SplitConfig, SplitManifest
-from plantgraph.benchmark.splitter import SheetGraph, split
+from plantgraph.benchmark.models import SplitManifest
+from plantgraph.benchmark.sheet_graph import SheetGraph
+from plantgraph.benchmark.split_models import SplitConfig
+from plantgraph.benchmark.splitter import split
 from plantgraph.benchmark.strategies import STRATEGIES
 
 

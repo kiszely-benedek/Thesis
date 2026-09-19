@@ -15,10 +15,12 @@ import networkx as nx
 import pytest
 
 from plant_fixtures import make_plant_graph
-from plantgraph.benchmark.models import ConnectorPair, SplitConfig
+from plantgraph.benchmark.models import ConnectorPair
 from plantgraph.benchmark.rejoin import rejoin
+from plantgraph.benchmark.split_models import SplitConfig
 from plantgraph.benchmark.splitter import split
 from plantgraph.benchmark.strategies import STRATEGIES
+from plantgraph.graph.validation import validate_sheet_graph
 
 
 def assert_graphs_equal(rejoined: nx.DiGraph, original: nx.DiGraph) -> None:
@@ -142,6 +144,19 @@ def test_plant_without_any_equipment_node_raises() -> None:
     plant.add_node("inst-1", node_class="instrument", tag="FT-1")
     with pytest.raises(ValueError, match="no node with node_class"):
         split(plant, SplitConfig())
+
+
+@pytest.mark.parametrize("strategy_name", sorted(STRATEGIES))
+def test_every_sheet_graph_is_schema_valid(strategy_name: str) -> None:
+    plant = make_plant_graph(chain_length=6, branches=2)
+    # 'utility_header' nincs a sémában (plant_fixtures.py) — csak az
+    # utility_aware stratégia teszteléséhez létezik, itt nem kell
+    plant.remove_node("utility-steam")
+    config = SplitConfig(strategy=strategy_name, sheet_equipment_budget=2, seed=15)
+    sheets, _ = split(plant, config)
+    for sheet in sheets:
+        violations = validate_sheet_graph(sheet.graph)
+        assert violations == [], f"sheet {sheet.sheet_id}: {violations}"
 
 
 def test_rejoin_refuses_a_pair_without_an_original_edge() -> None:

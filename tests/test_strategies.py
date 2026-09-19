@@ -4,11 +4,13 @@ from __future__ import annotations
 
 import random
 
+import networkx as nx
 import pytest
 
 from plant_fixtures import make_plant_graph
-from plantgraph.benchmark.models import SplitConfig
+from plantgraph.benchmark.split_models import SplitConfig
 from plantgraph.benchmark.strategies import STRATEGIES
+from plantgraph.graph import schema
 
 
 @pytest.mark.parametrize("strategy_name", sorted(STRATEGIES))
@@ -61,7 +63,7 @@ def test_utility_aware_moves_the_high_degree_header_to_its_own_hub_sheet() -> No
         strategy="utility_aware",
         sheet_equipment_budget=2,
         seed=3,
-        equipment_classes={"vessel", "pump", "exchanger", "column", "tank", "utility_header"},
+        equipment_classes=set(schema.EQUIPMENT_CLASSES) | {"utility_header"},
     )
     node_sheet = STRATEGIES["utility_aware"](plant, config, random.Random(config.seed))
 
@@ -72,3 +74,27 @@ def test_utility_aware_moves_the_high_degree_header_to_its_own_hub_sheet() -> No
     # a hub-lap csak az utility fejvezetéket (és a rá kötött, nem-berendezés
     # csomópontokat, ha lenne) tartalmazza, a folyamatláncot nem
     assert "eq-0-0" not in hub_sheet_members
+
+
+def test_by_unit_never_mixes_units_on_a_sheet() -> None:
+    plant = make_plant_graph(chain_length=4, branches=3)
+    config = SplitConfig(strategy="by_unit", sheet_equipment_budget=2, seed=4)
+    node_sheet = STRATEGIES["by_unit"](plant, config, random.Random(config.seed))
+
+    units_per_sheet: dict[str, set[str]] = {}
+    for node_id, sheet_id in node_sheet.items():
+        unit_id = plant.nodes[node_id].get("unit_id")
+        if unit_id is None:  # a műszereknek nincs saját unit_id-juk, a berendezésükét öröklik
+            continue
+        units_per_sheet.setdefault(sheet_id, set()).add(unit_id)
+    assert all(len(units) == 1 for units in units_per_sheet.values())
+
+
+def test_by_unit_raises_without_unit_id() -> None:
+    plant: nx.DiGraph[str] = nx.DiGraph()
+    plant.add_node("a", node_class="CentrifugalPump", tag="P-1")
+    plant.add_node("b", node_class="CentrifugalPump", tag="P-2")
+    plant.add_edge("a", "b", relation="send_to")
+    config = SplitConfig(strategy="by_unit", equipment_classes={"CentrifugalPump"})
+    with pytest.raises(ValueError, match="by_unit needs unit_id"):
+        STRATEGIES["by_unit"](plant, config, random.Random(config.seed))

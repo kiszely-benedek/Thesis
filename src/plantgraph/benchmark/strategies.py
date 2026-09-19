@@ -22,7 +22,7 @@ from collections.abc import Callable
 
 import networkx as nx
 
-from plantgraph.benchmark.models import SplitConfig
+from plantgraph.benchmark.split_models import SplitConfig
 
 # idézőjeles forward reference: nx.DiGraph valódi futásidőben nem indexelhető
 # (a [str] csak a type stubban létezik), ezért itt nem szabad kiértékelni
@@ -62,6 +62,44 @@ def modularity(plant: nx.DiGraph[str], config: SplitConfig, rng: random.Random) 
     return _expand_to_nodes(owner_sheets, node_owner)
 
 
+def by_unit(plant: nx.DiGraph[str], config: SplitConfig, rng: random.Random) -> dict[str, str]:
+    """A deklarált technológiai egység (unit_id) szerint particionál, nem gráf-közösség szerint.
+
+    A modularity ebből a szerkezetből *sejt* valamit a gráf topológiájából
+    (Louvain-közösségek); a by_unit a generátor által már deklarált
+    plant->unit hierarchiát követi közvetlenül (N6, `plant-generator.md` §5
+    finding 3) — egy sheet sosem vegyít két egységet.
+
+    Raises:
+        ValueError: ha egyetlen berendezésnek sincs unit_id attribútuma.
+    """
+    equipment_owners, node_owner = _cluster_owners(plant, config.equipment_classes)
+    owner_graph = _owner_graph(plant, node_owner)
+    order = _flow_order(owner_graph, equipment_owners)
+    unit_of = {owner: str(plant.nodes[owner].get("unit_id", "")) for owner in order}
+
+    if not any(unit_of[owner] for owner in equipment_owners):
+        raise ValueError("by_unit needs unit_id on equipment nodes")
+
+    owner_sheets: list[list[str]] = []
+    for unit_id in _units_in_flow_order(order, unit_of):
+        owners_in_unit = [owner for owner in order if unit_of[owner] == unit_id]
+        owner_sheets += _chunk_by_budget(
+            owners_in_unit, equipment_owners, config.sheet_equipment_budget
+        )
+    return _expand_to_nodes(owner_sheets, node_owner)
+
+
+def _units_in_flow_order(order: list[str], unit_of: dict[str, str]) -> list[str]:
+    """Az egységeket az első bennük szereplő owner flow-sorrendi pozíciója szerint sorolja fel."""
+    seen: list[str] = []
+    for owner in order:
+        unit_id = unit_of[owner]
+        if unit_id not in seen:
+            seen.append(unit_id)
+    return seen
+
+
 def utility_aware(
     plant: nx.DiGraph[str], config: SplitConfig, rng: random.Random
 ) -> dict[str, str]:
@@ -71,6 +109,10 @@ def utility_aware(
 
     A gőz-, hűtővíz- és műszerlevegő-fejvezetékek sok rendszerhez kapcsolódnak
     (splitter.md 3. fejezet, "hub sheets"); ez a stratégia ezt a szerkezetet adja hozzá.
+
+    Megjegyzés: a kísérletekben egyelőre nem használjuk, amíg a generátor nem
+    termel utility-t (`plant-generator.md` §5) — enélkül a "hub" csak egy
+    magas fokszámú folyamat-berendezés lenne, nem valódi fejvezeték.
     """
     equipment_owners, node_owner = _cluster_owners(plant, config.equipment_classes)
     owner_graph = _owner_graph(plant, node_owner)
@@ -107,6 +149,7 @@ def random_partition(
 STRATEGIES: dict[str, StrategyFn] = {
     "flow_greedy": flow_greedy,
     "modularity": modularity,
+    "by_unit": by_unit,
     "utility_aware": utility_aware,
     "random": random_partition,
 }
