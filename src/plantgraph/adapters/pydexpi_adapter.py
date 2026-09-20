@@ -93,16 +93,32 @@ class ConversionReport(BaseModel):
     parallel_edges_collapsed: int = 0
 
 
+def load_complete_graph(model: DexpiModel) -> nx.MultiDiGraph[str]:
+    """A teljes (complete) gráf: minden pyDEXPI-objektum és attribútum, lineáris betöltővel.
+
+    Külön, publikus lépés (§3.6 1. lépése), hogy a `scale_smoke` (§9 step 7)
+    ezt a szakaszt önmagában, `perf_counter`-rel mérhesse — anélkül, hogy
+    pyDEXPI-t kellene importálnia (ADR-0003: csak `adapters/pydexpi_*.py` tehet ilyet).
+    """
+    return LinearGraphLoader().dexpi_to_graph(model)
+
+
+def abstract_conceptual_graph(complete: nx.MultiDiGraph[str]) -> nx.MultiDiGraph[str]:
+    """A lényegi (conceptual) gráf, pyDEXPI saját összevonásával, önálló szakaszként (§3.6)."""
+    return GraphAbstractor.build_conceptual_graph(complete)
+
+
 def plant_graph(generated: GeneratedPlant) -> tuple[nx.DiGraph[str], ConversionReport]:
     """Előállítja a séma `DiGraph`-ot és a lefedettségi jelentést a `GeneratedPlant` modelljéből."""
-    complete = LinearGraphLoader().dexpi_to_graph(generated.model)
-    conceptual = GraphAbstractor.build_conceptual_graph(complete)
-    return _to_schema_graph(conceptual, generated.record)
+    complete = load_complete_graph(generated.model)
+    conceptual = abstract_conceptual_graph(complete)
+    return map_conceptual_graph(conceptual, generated.record)
 
 
-def _to_schema_graph(
+def map_conceptual_graph(
     conceptual: nx.MultiDiGraph[str], record: GenerationRecord
 ) -> tuple[nx.DiGraph[str], ConversionReport]:
+    """A pyDEXPI konceptuális gráfot a séma `DiGraph`-jára fordítja (§3.6 3. lépése)."""
     section_code = _section_codes(conceptual)
     mapped_nodes, nodes_dropped = _map_nodes(conceptual, record.plant_id)
     parent_folds = _fold_parent_structure(conceptual, mapped_nodes, section_code)

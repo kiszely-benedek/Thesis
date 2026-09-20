@@ -25,7 +25,6 @@ def _two_equipment_builder() -> DexpiPlantBuilder:
         tag="TK-1-1",
         tag_prefix="TK",
         tag_seq=1,
-        data={},
     )
     builder.add_equipment(
         node_id="plant0-u1-eq2",
@@ -34,7 +33,6 @@ def _two_equipment_builder() -> DexpiPlantBuilder:
         tag="P-1-1",
         tag_prefix="P",
         tag_seq=1,
-        data={},
     )
     return builder
 

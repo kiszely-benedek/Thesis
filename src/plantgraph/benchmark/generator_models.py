@@ -23,20 +23,13 @@ backend-specifikus lépés, nem a topológia-tervezés része.
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from enum import Enum
 from typing import Protocol
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from plantgraph.graph import schema
-
-#: Egy berendezés-adat cellája: szöveg (pl. leírás), vagy (érték, mértékegység)
-#: pár egy DEXPI mennyiséghez (`plant-generator.md` §3.5, §4.8). A generátor
-#: jelenleg üres mappinget ad át (`equipment_data` egyelőre figyelmen kívül
-#: marad, lásd `GeneratorConfig.equipment_data`), de a típus már most rögzített,
-#: hogy a builder-hívás aláírása ne változzon, amikor a 3b lépés bekapcsolja.
-DataValue = str | tuple[float, str]
 
 
 class StreamKind(str, Enum):
@@ -57,8 +50,7 @@ class GeneratorConfig(BaseModel):
     """A szintetikus üzemgráf-generátor minden beállítása (`plant-generator.md` §3.2).
 
     Minden alapérték önkényes és teszt-méretű; egyik sem állítás valódi
-    üzemekről. `equipment_data` mezőt a generátor jelenleg elfogadja, de nem
-    használja (a step 3b vezeti majd be a berendezés-adatok kitöltését).
+    üzemekről.
     """
 
     plant_id: str = Field(default="plant0", pattern=r"^[a-z0-9]+$")
@@ -74,7 +66,6 @@ class GeneratorConfig(BaseModel):
         default_factory=lambda: dict.fromkeys(sorted(schema.EQUIPMENT_CLASSES), 1.0)
     )
     fluid_codes: list[str] = Field(default_factory=lambda: ["PL", "PG"], min_length=1)
-    equipment_data: bool = True
 
     @model_validator(mode="after")
     def _check_equipment_range(self) -> GeneratorConfig:
@@ -192,7 +183,6 @@ class PlantBuilder(Protocol):
         tag: str,
         tag_prefix: str,
         tag_seq: int,
-        data: Mapping[str, DataValue],
     ) -> None:
         """Felvesz egy berendezést egy egységbe."""
         ...

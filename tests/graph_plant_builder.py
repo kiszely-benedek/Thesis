@@ -13,11 +13,11 @@ ahogy `plant_fixtures.py` sem.
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 
 import networkx as nx
 
-from plantgraph.benchmark.generator_models import DataValue, LoopSpec, ValveSpec
+from plantgraph.benchmark.generator_models import LoopSpec, ValveSpec
 from plantgraph.graph.schema import Relation
 
 
@@ -42,9 +42,8 @@ class GraphPlantBuilder:
         tag: str,
         tag_prefix: str,
         tag_seq: int,
-        data: Mapping[str, DataValue],
     ) -> None:
-        """Felvesz egy berendezés-csomópontot; a `data` üres (equipment_data még nem aktív)."""
+        """Felvesz egy berendezés-csomópontot."""
         self.graph.add_node(
             node_id, node_class=node_class, tag=tag, plant_id=self.plant_id, unit_id=str(unit_no)
         )

@@ -7,17 +7,13 @@ Protocol (`generator_models.py`) pyDEXPI-backendje: minden `plan_plant`-hívást
 egy vagy több pyDEXPI-objektum felvételére fordít le, explicit id-kkal — a
 pyDEXPI alapértelmezése `uuid4` lenne, ami minden futtatáskor mást adna, és
 elrontaná a "same seed -> same graph" ígéretet (invariáns 3, 9, 10).
-
-A berendezés-adatok (`equipment_data`, §4.8) egyelőre nincsenek bekötve: a
-`data` paraméter mindig üres a jelenlegi generátorral (step 3b, ami ezt a
-modult nem kell hogy érintse, a saját feladata, `plant-generator.md` §9).
 """
 
 from __future__ import annotations
 
 import datetime
 import importlib.metadata
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import cast
 
@@ -27,7 +23,6 @@ from pydexpi.toolkits import piping_toolkit as piping
 
 from plantgraph.benchmark.generator import plan_plant
 from plantgraph.benchmark.generator_models import (
-    DataValue,
     GenerationRecord,
     GeneratorConfig,
     LoopSpec,
@@ -91,15 +86,8 @@ class DexpiPlantBuilder:
         tag: str,
         tag_prefix: str,
         tag_seq: int,
-        data: Mapping[str, DataValue],
     ) -> None:
         """Felvesz egy berendezést a megfelelő `PlantSection` alá, `taggedPlantItems`-be."""
-        if data:
-            # a step 3b vezeti majd be az adatok kitöltését (§4.8); amíg a
-            # generátor mindig üres mappinget küld, egy nem-üres itt hibát jelez
-            raise NotImplementedError(
-                f"equipment data drawing is out of scope for this builder; got data for {node_id!r}"
-            )
         equipment_cls = _dexpi_class(node_class)
         # _dexpi_class csak a bázisosztályt (DexpiBaseModel) ismeri statikusan;
         # a node_class alapján tudjuk, hogy valójában Equipment-leszármazott jön létre

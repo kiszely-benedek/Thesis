@@ -116,7 +116,6 @@ class _GenerationState:
             tag=tag,
             tag_prefix=tag_prefix,
             tag_seq=tag_seq,
-            data={},  # equipment_data egyelőre figyelmen kívül marad, lásd generator_models.py
         )
         self.node_unit[node_id] = unit_no
         return node_id
