@@ -40,14 +40,24 @@ def save_proteus_equipment_only(model: DexpiModel, directory: Path, filename: st
     serializer.save(model, directory, filename)
 
 
-def load_proteus_equipment_only(directory: Path, filename: str) -> DexpiModel:
-    """Betölt egy Proteus XML-t. A pyDEXPI **parser** csővezetéket és műszerezést is olvas.
+def load_proteus(directory: Path, filename: str) -> DexpiModel:
+    """Betölt egy tetszőleges Proteus XML-t — külső, teljes rajzot is (`kg-construction.md` §3 T1).
 
-    Csak a `save_proteus_equipment_only`-val írt fájlokra van, ahol ez a plusz
-    tudás üres listákat ad vissza — egy külső, teljes Proteus fájlnál (EXP-0001)
-    ez a funkció nem lenne elég, ott a §3.6 adapter fut az eredményén.
+    A pyDEXPI **parser** csővezetéket és műszerezést is olvas, nemcsak
+    berendezést; ez a belépési pont ezért felel meg egy valódi fájlnak
+    (pl. EX01), amit a `pydexpi_proteus_import` importere dolgoz fel tovább.
     """
     return ProteusSerializer().load(directory, filename)
+
+
+def load_proteus_equipment_only(directory: Path, filename: str) -> DexpiModel:
+    """Betölt egy `save_proteus_equipment_only`-val írt, csak berendezést tartalmazó fájlt.
+
+    Ugyanaz a hívás, mint `load_proteus` — a külön név csak azt jelzi, hogy ide
+    csak a generátor csonkolt exportja való, ahol a plusz (csővezeték/műszer)
+    tudás garantáltan üres listaként tér vissza.
+    """
+    return load_proteus(directory, filename)
 
 
 def _require_dexpi_model(loaded: object) -> DexpiModel:

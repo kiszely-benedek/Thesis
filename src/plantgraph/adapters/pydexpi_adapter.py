@@ -26,7 +26,7 @@ from pydexpi.dexpi_classes.pydantic_classes import DexpiBaseModel, DexpiModel
 from pydexpi.loaders.graph_loader import GraphAbstractor, GraphLoader
 
 from plantgraph.adapters.pydexpi_builder import GeneratedPlant
-from plantgraph.benchmark.generator_models import GenerationRecord, StreamKind
+from plantgraph.benchmark.generator_models import StreamKind
 from plantgraph.graph import schema
 
 
@@ -112,18 +112,22 @@ def plant_graph(generated: GeneratedPlant) -> tuple[nx.DiGraph[str], ConversionR
     """Előállítja a séma `DiGraph`-ot és a lefedettségi jelentést a `GeneratedPlant` modelljéből."""
     complete = load_complete_graph(generated.model)
     conceptual = abstract_conceptual_graph(complete)
-    return map_conceptual_graph(conceptual, generated.record)
+    return map_conceptual_graph(conceptual, generated.record.plant_id, generated.record.stream_kind)
 
 
 def map_conceptual_graph(
-    conceptual: nx.MultiDiGraph[str], record: GenerationRecord
+    conceptual: nx.MultiDiGraph[str], plant_id: str, stream_kind: Mapping[str, StreamKind]
 ) -> tuple[nx.DiGraph[str], ConversionReport]:
-    """A pyDEXPI konceptuális gráfot a séma `DiGraph`-jára fordítja (§3.6 3. lépése)."""
+    """A pyDEXPI konceptuális gráfot a séma `DiGraph`-jára fordítja (§3.6 3. lépése).
+
+    `plant_id` és `stream_kind` külön paraméter, nem egy `GenerationRecord`: egy importált
+    fájlnak nincs megoldókulcsa, és egy hamisítottat átadni gold-típust csempészne az importba.
+    """
     section_code = _section_codes(conceptual)
-    mapped_nodes, nodes_dropped = _map_nodes(conceptual, record.plant_id)
+    mapped_nodes, nodes_dropped = _map_nodes(conceptual, plant_id)
     parent_folds = _fold_parent_structure(conceptual, mapped_nodes, section_code)
     chosen_edges, edges_mapped, edges_dropped, collapsed = _map_edges(
-        conceptual, mapped_nodes, record.stream_kind
+        conceptual, mapped_nodes, stream_kind
     )
 
     plant: nx.DiGraph[str] = nx.DiGraph()
@@ -348,7 +352,9 @@ def _assign_valve_units(plant: nx.DiGraph[str]) -> int:
         if plant.nodes[node_id]["node_class"] not in schema.VALVE_CLASSES:
             continue
         owner = _walk_to_owning_equipment(plant, node_id)
-        if owner is None:
+        if owner is None or "unit_id" not in plant.nodes[owner]:
+            # a birtokosnak sincs unit_id-je egy PlantSection nélküli fájlnál (importált EX01,
+            # kg-construction.md §2) — ez is megoldatlan eset, nem KeyError
             unresolved += 1
             continue
         plant.nodes[node_id]["unit_id"] = plant.nodes[owner]["unit_id"]

@@ -106,7 +106,9 @@ def run_scale_smoke(
     complete, stage_seconds["loader"] = _timed(lambda: load_complete_graph(generated.model))
     conceptual, stage_seconds["conceptual"] = _timed(lambda: abstract_conceptual_graph(complete))
     mapped, stage_seconds["adapter"] = _timed(
-        lambda: map_conceptual_graph(conceptual, generated.record)
+        lambda: map_conceptual_graph(
+            conceptual, generated.record.plant_id, generated.record.stream_kind
+        )
     )
     plant, _report = mapped
     split_result, stage_seconds["split"] = _timed(lambda: split(plant, split_config))
