@@ -44,9 +44,9 @@ def test_a_node_takes_the_representatives_own_attributes_not_a_union() -> None:
     plant, conflicts = build_plant_graph([home_sheet, reference_sheet], pairs=[], groups=groups)
 
     assert conflicts == 0
-    assert set(plant.nodes) == {"0:eqA", "1:eqB"}, "a reference nem marad külön csomópont"
+    assert set(plant.nodes) == {"0:eqA", "1:eqB"}, "the reference must not remain a separate node"
     assert plant.nodes["0:eqA"] == {"node_class": "CentrifugalPump", "tag": "P-1", "plant_id": "u0"}
-    assert ("0:eqA", "1:eqB") in plant.edges, "a helyi él a reprezentánson át köt be"
+    assert ("0:eqA", "1:eqB") in plant.edges, "the local edge connects through the representative"
 
 
 def test_a_paired_stub_is_dropped_and_the_original_edge_reconnected() -> None:
@@ -105,7 +105,7 @@ def test_an_unpaired_stub_stays_as_a_node_with_its_edge() -> None:
     plant, conflicts = build_plant_graph([sheet_out], pairs=[], groups=[])
 
     assert conflicts == 0
-    assert "0:stub-out" in plant.nodes, "a párosítatlan csonk nem tűnhet el csendben"
+    assert "0:stub-out" in plant.nodes, "an unpaired stub must not silently disappear"
     assert plant.edges["0:src", "0:stub-out"] == edge_attrs
 
 
@@ -135,5 +135,5 @@ def test_conflicting_edge_attributes_are_counted_and_the_first_by_sheet_id_wins(
 
     assert conflicts == 1
     assert plant.edges["0:a", "0:b"] == {"relation": "send_to", "line_number": "L1"}, (
-        "az elsőként (lap-id sorrendben) beírt attribútumhalmaz marad érvényben"
+        "the attribute set written first (in sheet-id order) stays in effect"
     )

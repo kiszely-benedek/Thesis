@@ -43,8 +43,8 @@ def _split_with_duplication_and_connectors() -> tuple[list[SheetGraph], SplitMan
             connector_label_detail=ConnectorLabelDetail.DRAWING_ONLY,
         ),
     )
-    assert manifest.identity_groups, "a tesztnek legalább egy duplikációt kell kapnia"
-    assert any(sheet.connectors for sheet in sheets), "a tesztnek legalább egy csonkot kell adnia"
+    assert manifest.identity_groups, "the test must get at least one duplication"
+    assert any(sheet.connectors for sheet in sheets), "the test must get at least one stub"
     return sheets, manifest
 
 

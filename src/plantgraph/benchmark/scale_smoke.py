@@ -160,26 +160,26 @@ def _print_human(result: ScaleSmokeResult) -> None:
 def _parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
-            "Egyszeri mérés a generate -> plant_graph -> split útvonalon "
+            "A single measurement of the generate -> plant_graph -> split path "
             "(plant-generator.md §7, §9 step 7)."
         )
     )
     parser.add_argument(
-        "--n-units", type=int, required=True, help="technológiai egységek (PlantSection) száma"
+        "--n-units", type=int, required=True, help="number of technology units (PlantSection)"
     )
     parser.add_argument(
-        "--budget", type=int, required=True, help="sheet_equipment_budget a splitternek"
+        "--budget", type=int, required=True, help="sheet_equipment_budget for the splitter"
     )
     parser.add_argument(
-        "--seed", type=int, default=0, help="közös seed a generátornak és a splitternek"
+        "--seed", type=int, default=0, help="shared seed for the generator and the splitter"
     )
     parser.add_argument(
-        "--json", action="store_true", help="csak a gépi olvasható JSON-t írja ki, szöveg nélkül"
+        "--json", action="store_true", help="print only the machine-readable JSON, without text"
     )
     parser.add_argument(
         "--no-memory",
         action="store_true",
-        help="kihagyja a tracemalloc-ot, hogy ne torzítsa az időmérést (lásd a modul docstringjét)",
+        help="skip tracemalloc so it doesn't distort the timing (see the module docstring)",
     )
     return parser.parse_args(argv)
 

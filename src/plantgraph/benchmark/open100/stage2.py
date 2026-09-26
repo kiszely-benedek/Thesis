@@ -90,8 +90,8 @@ def _summary(manifest: SplitManifest) -> str:
 def main() -> None:
     """Command-line entry point: writes out the manifest and the review CSV."""
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("open100_dir", type=Path, help="a 'PID2Graph OPEN100' mappa")
-    parser.add_argument("out_dir", type=Path, help="ide kerül a manifest és a csv")
+    parser.add_argument("open100_dir", type=Path, help="the 'PID2Graph OPEN100' folder")
+    parser.add_argument("out_dir", type=Path, help="where the manifest and the csv are written")
     args = parser.parse_args()
 
     corpus = Open100Corpus(args.open100_dir)

@@ -40,7 +40,7 @@ def test_raw_splitter_output_at_duplication_rate_fails_contract() -> None:
     sheets, manifest = split(
         plant, SplitConfig(sheet_equipment_budget=3, seed=0, duplication_rate=0.5)
     )
-    assert manifest.identity_groups, "a tesztnek legalább egy duplikációt kell kapnia"
+    assert manifest.identity_groups, "the test must get at least one duplication"
     with pytest.raises(ValueError):
         check_contract(sheets)
 
@@ -71,7 +71,7 @@ def test_raw_splitter_output_with_connectors_fails_contract_even_at_drawing_only
             connector_label_detail=ConnectorLabelDetail.DRAWING_ONLY,
         ),
     )
-    assert any(sheet.connectors for sheet in sheets), "a fixture-nek kell csonkot adnia"
+    assert any(sheet.connectors for sheet in sheets), "the fixture must produce a stub"
 
     with pytest.raises(ValueError, match="still carries"):
         check_contract(sheets)

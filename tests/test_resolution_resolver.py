@@ -175,7 +175,7 @@ def test_g4_harder_dials_run_to_completion_with_perfect_pair_precision(config: S
     accounted = {pair.from_key for pair in resolution.connector_pairs}
     accounted |= {pair.to_key for pair in resolution.connector_pairs}
     accounted |= {entry.from_key for entry in resolution.unresolved}
-    assert len(accounted) == resolution.report.n_connectors, "egy csatlakozó sem tűnhet el csendben"
+    assert len(accounted) == resolution.report.n_connectors, "no connector may silently disappear"
 
     predicted_original = {
         _to_original_pair(pair, occurrence_map) for pair in resolution.connector_pairs

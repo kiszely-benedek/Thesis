@@ -192,7 +192,7 @@ def test_predicted_pairs_equal_the_manifest_at_splitter_defaults() -> None:
     sheet_ids = {label.sheet_id for label in labels}
     predicted, unresolved = pair_connectors(labels, sheet_ids)
 
-    message = f"alapértelmezettnél minden csatlakozónak párt kell találnia: {unresolved}"
+    message = f"at the defaults, every connector must find a pair: {unresolved}"
     assert unresolved == [], message
     predicted_original = {_to_original_pair(pair, occurrence_map) for pair in predicted}
     expected = {frozenset({pair.from_key, pair.to_key}) for pair in manifest_pairs}
@@ -212,9 +212,9 @@ def test_every_connector_is_paired_or_unresolved_at_drawing_only_detail() -> Non
 
     accounted = {pair.from_key for pair in predicted} | {pair.to_key for pair in predicted}
     accounted |= {entry.from_key for entry in unresolved}
-    assert accounted == {label.key for label in labels}, "egy csatlakozó sem tűnhet el csendben"
+    assert accounted == {label.key for label in labels}, "no connector may silently disappear"
 
     expected = {frozenset({pair.from_key, pair.to_key}) for pair in manifest_pairs}
     for pair in predicted:
         original_pair = _to_original_pair(pair, occurrence_map)
-        assert original_pair in expected, f"hibás pár: {original_pair}"
+        assert original_pair in expected, f"wrong pair: {original_pair}"

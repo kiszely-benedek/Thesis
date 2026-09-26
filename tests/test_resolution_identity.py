@@ -64,7 +64,7 @@ def test_a_tag_seen_on_only_one_sheet_forms_no_group() -> None:
     groups, ambiguous = group_identities([sheet])
 
     assert groups == []
-    assert ambiguous == 1, "két azonos tag ugyanazon a lapon: kétértelmű, nem egy magányos csoport"
+    assert ambiguous == 1, "two identical tags on the same sheet: ambiguous, not a lone group"
 
 
 def test_ambiguous_tag_within_one_sheet_is_excluded_even_with_a_valid_partner_elsewhere() -> None:

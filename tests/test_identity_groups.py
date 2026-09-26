@@ -43,7 +43,7 @@ def test_reference_occurrence_carries_only_tag_and_node_class() -> None:
     # and little else". 'manufacturer' appears only on the home in the fixture —
     # if a reference got it too, this assert would fail.
     plant, sheets, manifest, _ = _split_with_full_duplication()
-    assert manifest.identity_groups, "a fixture-nek legalább egy identity groupot kell adnia"
+    assert manifest.identity_groups, "the fixture must produce at least one identity group"
     for group in manifest.identity_groups:
         home_node_id = group.home.split(":", 1)[1]
         assert "manufacturer" in plant.nodes[home_node_id]

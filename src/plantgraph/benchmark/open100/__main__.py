@@ -14,8 +14,8 @@ from plantgraph.benchmark.open100.corpus import Open100Corpus
 def main() -> None:
     """Command-line entry point: builds montages of the OPEN100 off-page connectors."""
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("open100_dir", type=Path, help="a 'PID2Graph OPEN100' mappa")
-    parser.add_argument("out_dir", type=Path, help="ide kerülnek a montázsok")
+    parser.add_argument("open100_dir", type=Path, help="the 'PID2Graph OPEN100' folder")
+    parser.add_argument("out_dir", type=Path, help="where the montages are written")
     args = parser.parse_args()
 
     corpus = Open100Corpus(args.open100_dir)

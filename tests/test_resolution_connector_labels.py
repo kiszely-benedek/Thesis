@@ -74,7 +74,7 @@ def test_relation_comes_from_the_stub_edge_not_the_node() -> None:
 def test_non_connector_nodes_are_ignored() -> None:
     sheet = _sheet_with_one_stub("FlowOutPipeOffPageConnector", "in")
     labels, _unresolved = read_connector_labels(sheet)
-    assert {label.key for label in labels} == {"0:stub"}, "a 'other' berendezés nem csatlakozó"
+    assert {label.key for label in labels} == {"0:stub"}, "the 'other' equipment is not a connector"
 
 
 def test_missing_referenced_connector_number_stays_none() -> None:
