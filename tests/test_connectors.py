@@ -1,9 +1,9 @@
-"""A connectors.py invariánsai: connector-fajta a relációból, látható csonk-feliratok.
+"""Invariants of connectors.py: connector kind derived from the relation, visible stub labels.
 
-Ezek a `split()`-en át tesztelnek, nem a privát segédfüggvényeken közvetlenül:
-a splitter maga sosem ellenőrzi a sémát (az `relation` sztringet szó szerint
-veszi), ezért egy kétcsomópontos, mesterséges gráf is elég a viselkedés
-megfigyeléséhez (`plant-generator.md` §5, findings 2a-2c).
+These test through `split()`, not the private helper functions directly: the
+splitter itself never validates the schema (it takes the `relation` string
+literally), so a two-node synthetic graph is enough to observe the behaviour
+(`plant-generator.md` §5, findings 2a-2c).
 """
 
 from __future__ import annotations
@@ -16,7 +16,7 @@ from plantgraph.benchmark.splitter import split
 
 
 def _two_equipment_plant(relation: str, **edge_attrs: str) -> nx.DiGraph[str]:
-    """Két, egymástól elvágandó berendezés, egyetlen köztük futó éllel."""
+    """Two pieces of equipment meant to be split apart, joined by a single edge."""
     plant: nx.DiGraph[str] = nx.DiGraph()
     plant.add_node("a", node_class="CentrifugalPump", tag="P-1")
     plant.add_node("b", node_class="CentrifugalPump", tag="P-2")
@@ -25,9 +25,9 @@ def _two_equipment_plant(relation: str, **edge_attrs: str) -> nx.DiGraph[str]:
 
 
 def _stub_attrs(sheet: SheetGraph) -> dict[str, object]:
-    """A lap egyetlen csonk-csomópontjának attribútumai.
+    """Attributes of the sheet's single connector-stub node.
 
-    A teszt-fixture-ök egy csonkot tesznek le laponként.
+    The test fixtures place exactly one stub per sheet.
     """
     connector = sheet.connectors[0]
     return dict(sheet.graph.nodes[connector.attached_node_id])

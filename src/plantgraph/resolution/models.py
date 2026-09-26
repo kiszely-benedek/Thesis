@@ -1,4 +1,4 @@
-"""A resolver kimenete: `ResolutionReport` és `Resolution` (design `kg-construction.md` §5.5)."""
+"""The resolver's output: `ResolutionReport` and `Resolution` (design `kg-construction.md` §5.5)."""
 
 from __future__ import annotations
 
@@ -11,11 +11,11 @@ from plantgraph.benchmark.models import ConnectorPair, IdentityGroup, Unresolved
 
 
 class ResolutionReport(BaseModel):
-    """A `resolve()` futásának számszerű összegzése.
+    """A numeric summary of one `resolve()` run.
 
-    Ez könyvelés, nem eredmény (design §1: "a resolver gate egy helyesség-
-    kapu, nem eredmény") — a pontosság/fedettség méréséhez az `OccurrenceMap`
-    és a `SplitManifest` kell, amit ez a csomag sosem lát.
+    This is bookkeeping, not a result (design §1: "the resolver gate is a
+    correctness check, not a result") — measuring accuracy/coverage needs the
+    `OccurrenceMap` and the `SplitManifest`, which this package never sees.
     """
 
     n_sheets: int
@@ -30,10 +30,10 @@ class ResolutionReport(BaseModel):
 
 @dataclass
 class Resolution:
-    """A `resolve()` teljes kimenete: az egyesített gráf, plusz minden köztes döntés nyoma.
+    """The full output of `resolve()`: merged graph, plus a trace of every intermediate decision.
 
-    Sima dataclass, mint a `SheetGraph`: a gráf topológiáját networkx-nek
-    szánjuk, nem szerializáljuk (splitter.md 2. fejezet).
+    A plain dataclass, like `SheetGraph`: the graph topology is meant for
+    networkx, not for serialization (splitter.md section 2).
     """
 
     plant: nx.DiGraph[str]

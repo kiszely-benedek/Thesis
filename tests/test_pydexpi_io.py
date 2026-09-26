@@ -1,9 +1,9 @@
-"""A pyDEXPI JSON és Proteus perzisztencia tesztjei (`plant-generator.md` §3.7).
+"""Tests for pyDEXPI's JSON and Proteus persistence (`plant-generator.md` §3.7).
 
-A JSON kerek-út a teljes gráfra nézve `test_pydexpi_adapter.py`-ban van
-(invariáns 13); itt csak azt ellenőrizzük, amit ez a modul ad hozzá: a
-típus-igazolást betöltéskor, és hogy a Proteus export tényleg csak berendezést
-ír vissza — ahogy a modul docstringje mondja, nem többet.
+The JSON round trip for the whole graph lives in `test_pydexpi_adapter.py`
+(invariant 13); here we only check what this module adds: type validation on
+load, and that the Proteus export really writes back equipment only — as the
+module docstring says, nothing more.
 """
 
 from __future__ import annotations
@@ -44,8 +44,8 @@ def test_proteus_export_carries_equipment_but_drops_piping_and_instrumentation(
     reloaded_tags = {item.tagName for item in reloaded.conceptualModel.taggedPlantItems}
     assert reloaded_tags == original_tags
 
-    # §3.7, mérve: a Proteus exporter csak a taggedPlantItems-en iterál —
-    # a csővezeték és a műszerezés nem éli túl az exportot
+    # §3.7, verified here: the Proteus exporter only iterates taggedPlantItems —
+    # piping and instrumentation do not survive the export
     assert reloaded.conceptualModel.pipingNetworkSystems == []
     assert reloaded.conceptualModel.processInstrumentationFunctions == []
 

@@ -1,9 +1,9 @@
-"""A `plan_plant` topológia-döntéseinek invariánsai (`plant-generator.md` §3.3, §3.4).
+"""Invariants of `plan_plant`'s topology decisions (`plant-generator.md` §3.3, §3.4).
 
-A `GraphPlantBuilder` (`tests/graph_plant_builder.py`) végzi a felépítést — ez
-az oracle-builder, amit a valódi pyDEXPI-backend majd lecserél, de a
-topológiai szabályok ugyanazok maradnak (§3.4 invariánsok 1-8, a `DiGraph`
-helyett itt közvetlenül a builder gráfján ellenőrizve).
+`GraphPlantBuilder` (`tests/graph_plant_builder.py`) does the construction —
+this is the oracle builder that the real pyDEXPI backend will later replace,
+but the topological rules stay the same (§3.4 invariants 1-8, checked here
+directly on the builder's graph instead of on a `DiGraph`).
 """
 
 from __future__ import annotations
@@ -37,7 +37,7 @@ def _sorted_edges(graph: nx.DiGraph[str]) -> list[tuple[str, str, dict[str, obje
     return sorted((source, target, dict(attrs)) for source, target, attrs in graph.edges(data=True))
 
 
-# ---- invariáns 3: reprodukálhatóság ---------------------------------------------------------
+# ---- invariant 3: reproducibility ---------------------------------------------------------
 
 
 def test_same_seed_produces_an_identical_graph_and_record() -> None:
@@ -56,7 +56,7 @@ def test_seed_0_and_seed_1_differ() -> None:
     assert record_0 != record_1
 
 
-# ---- invariáns 4: a globális random modul érintetlen ------------------------------------------
+# ---- invariant 4: the global random module stays untouched ------------------------------
 
 
 def test_plan_plant_never_touches_the_global_random_module() -> None:
@@ -65,7 +65,7 @@ def test_plan_plant_never_touches_the_global_random_module() -> None:
     assert random.getstate() == state_before
 
 
-# ---- invariáns 2: séma-érvényesség -------------------------------------------------------------
+# ---- invariant 2: schema validity -------------------------------------------------------------
 
 
 @pytest.mark.parametrize("seed", SEEDS)
@@ -74,7 +74,7 @@ def test_generated_plant_is_schema_valid(seed: int) -> None:
     assert validation.validate_plant_graph(graph) == []
 
 
-# ---- invariáns 1, 5: alapszerkezet ----------------------------------------------------------
+# ---- invariants 1, 5: basic structure ----------------------------------------------------------
 
 
 @pytest.mark.parametrize("seed", SEEDS)
@@ -92,7 +92,7 @@ def test_unit_1s_first_equipment_has_in_degree_zero(seed: int) -> None:
     assert graph.in_degree(first_equipment) == 0
 
 
-# ---- invariáns 6: legalább egy elágazás a seedek felett ---------------------------------------
+# ---- invariant 6: at least one branch point across the seeds -----------------------------------
 
 
 def test_at_least_one_equipment_has_two_or_more_outgoing_streams_across_seeds() -> None:
@@ -108,7 +108,7 @@ def test_at_least_one_equipment_has_two_or_more_outgoing_streams_across_seeds() 
 
 
 def _send_to_out_degree(graph: nx.DiGraph[str], node_id: str) -> int:
-    """Egy csomópont hány csővezetéket indít — csak a `send_to` éleket számolja."""
+    """How many pipe segments a node starts — counts only `send_to` edges."""
     return sum(
         1
         for _, _, attrs in graph.out_edges(node_id, data=True)
@@ -116,7 +116,7 @@ def _send_to_out_degree(graph: nx.DiGraph[str], node_id: str) -> int:
     )
 
 
-# ---- azonosító- és tag-formátumok ------------------------------------------------------------
+# ---- id and tag formats ------------------------------------------------------------
 
 _TAG_PATTERN = re.compile(r"^[A-Z]+-\d+-\d+$")
 
@@ -137,11 +137,11 @@ def test_equipment_and_valve_tags_follow_the_prefix_unit_seq_pattern() -> None:
             assert _TAG_PATTERN.match(attrs["tag"]), f"unexpected tag shape: {attrs['tag']!r}"
 
 
-# ---- szelepek egysége -------------------------------------------------------------------------
+# ---- valves' unit ------------------------------------------------------------------------------
 
 
 def _stream_source(graph: nx.DiGraph[str], node_id: str) -> str:
-    """Visszasétál a szelepeken az adott csővezeték kiinduló berendezéséig."""
+    """Walk back through the valves to the pipe segment's originating equipment."""
     while graph.nodes[node_id]["node_class"] in schema.VALVE_CLASSES:
         node_id = next(iter(graph.predecessors(node_id)))
     return node_id
@@ -160,7 +160,7 @@ def test_valves_take_the_source_equipments_unit() -> None:
     assert checked_a_valve, "no valve was generated across seeds 0-4 to check against"
 
 
-# ---- stream_kind lefedettsége -------------------------------------------------------------
+# ---- stream_kind coverage -------------------------------------------------------------
 
 
 def test_every_streams_line_number_appears_in_the_generation_record() -> None:
@@ -173,13 +173,13 @@ def test_every_streams_line_number_appears_in_the_generation_record() -> None:
     assert line_numbers == set(record.stream_kind)
 
 
-# ---- duplikált rendezett pár -------------------------------------------------------------------
+# ---- duplicate ordered pair -------------------------------------------------------------------
 
 
 def test_a_second_stream_on_the_same_ordered_pair_raises() -> None:
-    # a nyilvános API-n (plan_plant) a véletlen döntések sosem hoznak létre
-    # ütköző párt (a recycle és a cross_link szabálya kizárja) — ez az
-    # invariáns ezért a belső _GenerationState-en ellenőrzött, direkt eset
+    # on the public API (plan_plant), random decisions never create a
+    # colliding pair (excluded by the recycle and cross_link rules) — so this
+    # invariant is checked directly on the internal _GenerationState instead
     config = GeneratorConfig(seed=0, n_units=1)
     state = generator._GenerationState(config, GraphPlantBuilder(config.plant_id))
     state.add_sections()
@@ -190,23 +190,23 @@ def test_a_second_stream_on_the_same_ordered_pair_raises() -> None:
         state._add_stream(src, dst, StreamKind.TREE)
 
 
-# ---- recycle és cross_link szabályai ------------------------------------------------------------
+# ---- recycle and cross_link rules ------------------------------------------------------------
 
 _EQ_SEQ = re.compile(r"-eq(\d+)$")
 
 
 def _eq_seq(node_id: str) -> int:
-    """A berendezés egységen belüli sorszáma a node_id-ból — a keletkezési sorrendet adja vissza."""
+    """The equipment's sequence number in its unit, from node_id — gives the creation order."""
     match = _EQ_SEQ.search(node_id)
     assert match is not None, f"not an equipment node id: {node_id!r}"
     return int(match.group(1))
 
 
 def _edges_by_line_number(graph: nx.DiGraph[str]) -> dict[str, list[tuple[str, str]]]:
-    """A `send_to` éleket csővezeték (line_number) szerint csoportosítja.
+    """Group `send_to` edges by pipe segment (line_number).
 
-    Egy csővezeték a szelepei miatt több szegmensből (élből) áll — a kind
-    ellenőrzéshez a lánc valódi két végét kell tudni, nem az egyes szegmenseket.
+    A pipe segment consists of several edges because of its valves — checking
+    the kind needs the chain's real two ends, not the individual edges.
     """
     grouped: dict[str, list[tuple[str, str]]] = {}
     for source, target, attrs in graph.edges(data=True):
@@ -217,7 +217,7 @@ def _edges_by_line_number(graph: nx.DiGraph[str]) -> dict[str, list[tuple[str, s
 
 
 def _stream_endpoints(edges: list[tuple[str, str]]) -> tuple[str, str]:
-    """Egy csővezeték-lánc valódi két vége: ami sosem cél, illetve ami sosem forrás a láncban."""
+    """A pipe segment chain's real two ends: whatever is never a target, or never a source."""
     sources = {source for source, _ in edges}
     targets = {target for _, target in edges}
     return next(iter(sources - targets)), next(iter(targets - sources))
@@ -253,7 +253,7 @@ def test_cross_link_streams_cross_units_and_never_target_a_units_first_equipment
     )
 
 
-# ---- szabályozókörök -----------------------------------------------------------------------
+# ---- control loops -----------------------------------------------------------------------
 
 
 def test_control_loops_only_sit_on_operated_valves_with_at_most_one_loop_each() -> None:

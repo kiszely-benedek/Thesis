@@ -1,14 +1,13 @@
-"""Stage 2 belépési pontja: kiírja a végleges OPEN100 megoldókulcsot.
+"""Stage 2's entry point: writes out the final OPEN100 answer key.
 
     uv run python -m plantgraph.benchmark.open100.stage2 <open100_dir> <out_dir>
 
-A stage 1-gyel ellentétben ez nem néz képet — az annotations.py-ban rögzített,
-már elolvasott feliratokból építi fel a manifestet (lásd manifest.py). Amit
-kiír:
+Unlike stage 1, this does not look at images — it builds the manifest from the
+labels already recorded and read in annotations.py (see manifest.py). What it writes:
 
-  - open100_manifest.json: a teljes SplitManifest,
-  - open100_connectors.csv: ugyanaz táblázatban, hogy táblázatkezelőben is
-    átnézhető legyen — ez a kézi ellenőrzés eszköze, nem a végeredmény.
+  - open100_manifest.json: the complete SplitManifest,
+  - open100_connectors.csv: the same data in a table, so it can also be
+    reviewed in a spreadsheet — this is a manual-review tool, not the final result.
 """
 
 from __future__ import annotations
@@ -23,10 +22,10 @@ from plantgraph.benchmark.open100.manifest import build_manifest
 
 
 def _fate_of(key: str, manifest: SplitManifest) -> tuple[str, str, str]:
-    """Egy csatlakozó sorsa, a párja (ha van) és a megjegyzés, a CSV-sor kedvéért.
+    """A connector's fate, its partner (if any), and the note, for the CSV row.
 
-    A partner kulcsa azért kerül külön oszlopba, hogy a kézi ellenőrzésnél ne a
-    manifest JSON-ból kelljen kikeresni, melyik két kivágást kell egymás mellé tenni.
+    The partner's key gets its own column so that manual review doesn't need to
+    dig through the manifest JSON to find which two crops belong side by side.
     """
     for pair in manifest.connector_pairs:
         if key in (pair.from_key, pair.to_key):
@@ -38,11 +37,11 @@ def _fate_of(key: str, manifest: SplitManifest) -> tuple[str, str, str]:
     for unresolved in manifest.unresolved:
         if unresolved.from_key == key:
             return "unresolved", "", unresolved.reason
-    return "MISSING", "", "not classified — this is a bug"  # accounted_for() véd ez ellen
+    return "MISSING", "", "not classified — this is a bug"  # accounted_for() guards against this
 
 
 def write_csv(manifest: SplitManifest, path: Path) -> None:
-    """Emberi átnézésre: egy sor csatlakozónként, a sorsával, párjával és a bizalmi jelzéssel."""
+    """For human review: one row per connector, with its fate, partner, and confidence note."""
     header = [
         "key",
         "side",
@@ -89,7 +88,7 @@ def _summary(manifest: SplitManifest) -> str:
 
 
 def main() -> None:
-    """Parancssori belépési pont: kiírja a manifestet és az ellenőrző CSV-t."""
+    """Command-line entry point: writes out the manifest and the review CSV."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("open100_dir", type=Path, help="a 'PID2Graph OPEN100' mappa")
     parser.add_argument("out_dir", type=Path, help="ide kerül a manifest és a csv")

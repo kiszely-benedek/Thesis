@@ -1,8 +1,8 @@
-"""A Proteus importer tesztjei (`kg-construction.md` §3, T1).
+"""Tests for the Proteus importer (`kg-construction.md` §3, T1).
 
-`EX01_PATH` egy valódi, külső DEXPI-fájlra mutat (`data/` nincs verziókövetve — lásd a
-CLAUDE.md megjegyzését), ezért minden rá épülő teszt üresen fut le, ha a fájl hiányzik: ez nem
-hiba, csak azt jelenti, hogy ezen a gépen nincs meg a betöltendő minta.
+`EX01_PATH` points to a real, external DEXPI file (`data/` is untracked — see
+the CLAUDE.md note), so every test built on it is skipped if the file is
+missing: not a failure, just that this machine lacks the sample to load.
 """
 
 from __future__ import annotations
@@ -23,9 +23,9 @@ from plantgraph.resolution.localize import localize
 
 EX01_PATH = Path(__file__).resolve().parent.parent / "data" / "external" / "C01V04-VER.EX01.xml"
 
-#: EX01-en mérve (kg-construction.md §2, §3.1): a séma ezeket az osztályokat nem curálja
-#: közvetlenül, de ADR-0016 óta a generikus fallback (`GenericItem`) mindet megtartja —
-#: a régi "dropped" lista most `nodes_per_dexpi_class`-ként, megtartva jelenik meg.
+#: Measured on EX01 (kg-construction.md §2, §3.1): the schema does not curate these
+#: classes directly, but since ADR-0016 the generic fallback (`GenericItem`) keeps
+#: all of them — the old "dropped" list now appears, kept, as `nodes_per_dexpi_class`.
 _EX01_GENERIC_CLASSES = {
     "ButterflyValve": 1,
     "PipeReducer": 1,
@@ -34,8 +34,8 @@ _EX01_GENERIC_CLASSES = {
     "BlindFlange": 2,
     "ReciprocatingPump": 1,
 }
-#: a két off-page connector osztály — ADR-0016 rule 3: ezek a saját séma-osztályukra
-#: térképeznek, nem generikusak, és `sheet.connectors` marad üresen (§4)
+#: the two off-page connector classes — ADR-0016 rule 3: these map to their own
+#: schema class, not generic, and `sheet.connectors` stays empty (§4)
 _EX01_CONNECTOR_CLASSES = {
     "FlowInPipeOffPageConnector": 1,
     "FlowOutPipeOffPageConnector": 1,
@@ -49,14 +49,14 @@ def _ex01_or_skip() -> Path:
 
 
 def _assert_accounting_invariant(imported: ImportedSheet) -> None:
-    """Semmi nem veszhet el nyomtalanul: minden konceptuális csomópont és él sorsa ismert."""
+    """Nothing may be lost without a trace: every conceptual node's and edge's fate is known."""
     report = imported.report
     nodes_accounted = report.conversion.nodes_mapped + sum(
         report.conversion.nodes_dropped_per_class.values()
     )
     assert nodes_accounted == report.conceptual_nodes
-    # a fallback saját számlálója (ADR-0016 §3.1 rule 6): ugyanannyi térképezett csomópontot
-    # kell adnia, csak a pyDEXPI-osztály szerint bontva, nem a séma node_class szerint
+    # the fallback's own counter (ADR-0016 §3.1 rule 6): must give the same count of
+    # mapped nodes, just broken down by pyDEXPI class instead of by schema node_class
     assert sum(report.nodes_per_dexpi_class.values()) == report.conversion.nodes_mapped
 
     edges_kept = (
@@ -72,7 +72,7 @@ def _assert_accounting_invariant(imported: ImportedSheet) -> None:
     assert edges_accounted == report.conceptual_edges
 
 
-# ---- EX01: egy valódi, külső DEXPI-fájl -------------------------------------------------------
+# ---- EX01: a real, external DEXPI file -------------------------------------------------------
 
 
 def test_ex01_sheet_id_comes_from_the_printed_drawing_number() -> None:
@@ -220,7 +220,7 @@ def _node_id_by_property(graph: nx.DiGraph[str], key: str, value: str) -> str:
     return matches[0]
 
 
-# ---- mindig futó eset: egy legenerált üzem oda-vissza Proteuson keresztül ----------------------
+# ---- always-run case: a generated plant, round-tripped through Proteus ----------------------
 
 
 def test_a_generated_plant_survives_a_proteus_round_trip(tmp_path: Path) -> None:
@@ -234,8 +234,8 @@ def test_a_generated_plant_survives_a_proteus_round_trip(tmp_path: Path) -> None
         assert attrs["node_class"] in schema.EQUIPMENT_CLASSES
     _assert_accounting_invariant(imported)
 
-    # a generátor csak berendezést exportál Proteusba (§3.7) — itt tehát tartja is a számot,
-    # de ez nincs garantálva minden bemenetre (kg-construction.md §11 nyitott kérdés 4)
+    # the generator only exports equipment to Proteus (§3.7) — so the count matches
+    # here, but this isn't guaranteed for every input (kg-construction.md §11 open question 4)
     original_equipment_count = len(generated.model.conceptualModel.taggedPlantItems)
     assert imported.report.conversion.nodes_mapped == original_equipment_count
 
@@ -257,11 +257,11 @@ def test_import_proteus_sheet_rejects_a_sheet_id_containing_a_colon(tmp_path: Pa
         import_proteus_sheet(tmp_path / "plant.xml", sheet_id="a:b")
 
 
-# ---- hand-built conceptual gráf: PlantSection nélküli szelep ----------------------------------
+# ---- hand-built conceptual graph: a valve without a PlantSection ----------------------
 
 
 def test_map_conceptual_graph_tolerates_a_valve_with_no_owning_plant_section() -> None:
-    """Egy szelep, amelynek forrás-berendezésén nincs `unit_id` — `_assign_valve_units` fixje."""
+    """A valve whose source equipment has no `unit_id` — the case `_assign_valve_units` fixes."""
     conceptual: nx.MultiDiGraph[str] = nx.MultiDiGraph()
     conceptual.add_node("pump", label="CentrifugalPump", tagName="P1")
     conceptual.add_node("valve", label="GlobeValve", pipingComponentNumber="V1")

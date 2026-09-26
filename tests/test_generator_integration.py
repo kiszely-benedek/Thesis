@@ -1,4 +1,4 @@
-"""A generátor és a splitter együtt (`plant-generator.md` §3.4 invariáns 7, 8)."""
+"""The generator and the splitter together (`plant-generator.md` §3.4 invariants 7, 8)."""
 
 from __future__ import annotations
 
@@ -23,7 +23,7 @@ def _generated_plant(seed: int) -> nx.DiGraph[str]:
     return builder.graph
 
 
-# ---- invariáns 7: kerek-út minden stratégiával -------------------------------------------------
+# ---- invariant 7: round trip with every strategy -------------------------------------------------
 
 
 @pytest.mark.parametrize("strategy_name", sorted(STRATEGIES))
@@ -51,14 +51,14 @@ def test_every_sheet_of_a_generated_plant_is_schema_valid(strategy_name: str) ->
         assert violations == [], f"sheet {sheet.sheet_id}: {violations}"
 
 
-# ---- invariáns 8: a stratégiák valóban eltérnek -----------------------------------------------
+# ---- invariant 8: the strategies really do differ -----------------------------------------------
 
 
 def test_flow_greedy_and_modularity_partition_differently_on_at_least_one_seed() -> None:
-    # ez magát a generátort teszteli, nem a splittert: ha ez elbukik, a
-    # generátor topológiája túl szabályos ahhoz, hogy a két stratégia
-    # szétváljon — meg kell állni és jelenteni, a generátort TILOS emiatt
-    # hangolni (plant-generator.md §3.4 invariáns 8)
+    # this tests the generator itself, not the splitter: if it fails, the
+    # generator's topology is too regular for the two strategies to diverge —
+    # stop and report this, do NOT tune the generator to fix it
+    # (plant-generator.md §3.4 invariant 8)
     found_a_difference = False
     for seed in range(5):
         plant = _generated_plant(seed=seed)
@@ -78,5 +78,5 @@ def test_flow_greedy_and_modularity_partition_differently_on_at_least_one_seed()
 
 
 def _partition(sheets: list[SheetGraph]) -> set[frozenset[str]]:
-    """Egy particionálás sheet-sorszámtól független alakja: mely csomópontok kerültek egy lapra."""
+    """The shape of a partition independent of numbering: which nodes landed on the same sheet."""
     return {frozenset(sheet.graph.nodes) for sheet in sheets}

@@ -1,26 +1,27 @@
-"""A plant-generator és a splitter közös gráf-sémája.
+"""The graph schema shared by the plant generator and the splitter.
 
-Fogalmak, mert a kód egy mérnöki szakterületről szól:
+Terms, because the code is about an engineering domain the reader may not know:
 
-- **P&ID**: egy üzem csöveinek és műszereinek műszaki rajza.
-- **topológia-réteg**: amit a generátor kienged és a splitter darabol — csak
-  "mi köt mihez, milyen fajta élen" (`send_to`, `control`, ...). Ez ennek a
-  modulnak a tárgya.
-- **struktúra-réteg**: tartalmazás, lapok, lapok közötti feloldás
-  (`is_located_in`, `has_sheet`, ...). A gráf-betöltő állítja elő a Neo4j-ban;
-  **sosem** él a splitter bemenő gráfjában (lásd a design 4.1. fejezetét: egy
-  "unit tartalmazza az elemeit" él tönkretenné a splitter szomszédság-alapú
-  klaszterezését).
-- **node_class**: pyDEXPI osztálynév (pl. `CentrifugalPump`), a curated
-  ős-osztály-lánccal együtt Neo4j címkeként (`labels_for`).
+- **P&ID**: a piping and instrumentation diagram — the technical drawing of a
+  plant's pipes and instruments.
+- **topology layer**: what the generator emits and the splitter cuts up — just
+  "what connects to what, over which kind of edge" (`send_to`, `control`,
+  ...). This is this module's subject.
+- **structure layer**: containment, sheets, cross-sheet resolution
+  (`is_located_in`, `has_sheet`, ...). Produced by the graph loader in Neo4j;
+  **never** present in the splitter's input graph (see design section 4.1: a
+  "unit contains its items" edge would break the splitter's
+  neighbourhood-based clustering).
+- **node_class**: a pyDEXPI class name (e.g. `CentrifugalPump`), together with
+  its curated ancestor-class chain as a Neo4j label (`labels_for`).
 
-Ez a modul az érvényes csomópont- és éltípusokat, valamint azok kötelező
-tulajdonságait tartalmazza — az ezekre épülő `validate_plant_graph` és
-`validate_sheet_graph` ellenőrző függvények a testvérmodulban,
-`plantgraph.graph.validation`-ben élnek (a 400 soros fájlkorlát miatt kerültek
-külön; a design ezt még egy fájlként írta le). Sem ez, sem a testvérmodul nem
-importál `pydexpi`-t vagy `plantgraph.benchmark`-ot (`plant-generator.md` §4.5):
-ez utóbbi épít ezekre a modulokra, nem fordítva.
+This module holds the valid node and edge types and their required properties
+— the `validate_plant_graph` and `validate_sheet_graph` functions built on top
+of them live in the sibling module, `plantgraph.graph.validation` (split out
+because of the 400-line file limit; the design still describes this as one
+file). Neither this nor the sibling module imports `pydexpi` or
+`plantgraph.benchmark` (`plant-generator.md` §4.5): the latter builds on these
+modules, never the other way round.
 """
 
 from __future__ import annotations
@@ -31,25 +32,25 @@ from pydantic import BaseModel, ConfigDict
 
 
 class NodeCategory(str, Enum):
-    """Egy node_class melyik funkcionális csoportba tartozik (a §4.2 táblázat oszlopa)."""
+    """Which functional group a node_class belongs to (a column of the §4.2 table)."""
 
     EQUIPMENT = "equipment"
     PIPING = "piping"
     INSTRUMENTATION = "instrumentation"
     CONNECTOR = "connector"
     STRUCTURE = "structure"
-    #: a `GenericItem` fallback kategóriája, ha a pyDEXPI ős-láncban nincs curated gyökér
+    #: the `GenericItem` fallback's category, when pyDEXPI's ancestor chain has no curated root
     #: (ADR-0016, kg-construction.md §3.1 "Label cut-off")
     OTHER = "other"
 
 
 class NodeClass(str, Enum):
-    """A séma összes csomópont-osztálya — pyDEXPI 1.2.0-ban ellenőrzött, curated névlánc.
+    """Every node class in the schema — a curated name chain, verified against pyDEXPI 1.2.0.
 
-    12 osztályt a generátor termel, 4 csonk-osztályt a splitter (amikor egy élt
-    elvág, a helyére egy off-page connector csonkot tesz mindkét lapra), 4
-    struktúra-osztály pedig csak a gráf-tárolóban létezik (`plant-generator.md`
-    §4.2).
+    12 classes are produced by the generator, 4 stub classes by the splitter
+    (when it cuts an edge, it places an off-page connector stub on both
+    sheets), and 4 structural classes exist only in the graph store
+    (`plant-generator.md` §4.2).
     """
 
     CENTRIFUGAL_PUMP = "CentrifugalPump"
@@ -77,7 +78,7 @@ class NodeClass(str, Enum):
 
 
 class Relation(str, Enum):
-    """A séma összes éltípusa: 4 topológia-reláció és 5 struktúra-reláció (§4.3)."""
+    """Every edge type in the schema: 4 topology relations and 5 structural relations (§4.3)."""
 
     SEND_TO = "send_to"
     SEND_SIGNAL_TO = "send_signal_to"
@@ -94,7 +95,7 @@ class Relation(str, Enum):
 
 
 class ClassSpec(BaseModel):
-    """Egy node_class Neo4j-címkelánca, kategóriája és tag-előtagja — a §4.2 táblázat egy sora."""
+    """A node_class's Neo4j label chain, category, and tag prefix — one row of the §4.2 table."""
 
     model_config = ConfigDict(frozen=True)
 
@@ -184,16 +185,16 @@ CLASS_SPECS: dict[NodeClass, ClassSpec] = {
     NodeClass.PLANT_SECTION: ClassSpec(labels=("PlantSection",), category=NodeCategory.STRUCTURE),
     NodeClass.DRAWING_SET: ClassSpec(labels=("DrawingSet",), category=NodeCategory.STRUCTURE),
     NodeClass.SHEET: ClassSpec(labels=("Sheet",), category=NodeCategory.STRUCTURE),
-    # a per-instance ős-lánc (`dexpi_labels`) egy node tulajdonsága, nem ez a séma-szintű
-    # bejegyzés — ez utóbbi csak a class-szintű Neo4j-címkét adja (`adapters/pydexpi_generic.py`)
+    # the per-instance ancestor chain (`dexpi_labels`) is a node property, not this
+    # class-level entry — the latter only gives the Neo4j label (`adapters/pydexpi_generic.py`)
     NodeClass.GENERIC_ITEM: ClassSpec(labels=("GenericItem",), category=NodeCategory.OTHER),
 }
 
 
 def _classes_in_category(category: NodeCategory) -> frozenset[str]:
-    """A CLASS_SPECS-ből szűri ki egy kategória node_class-neveit.
+    """Filter a category's node_class names out of CLASS_SPECS.
 
-    Egyetlen forrás, nem duplikált lista.
+    A single source, not a duplicated list.
     """
     return frozenset(
         node_class.value for node_class, spec in CLASS_SPECS.items() if spec.category is category
@@ -207,24 +208,24 @@ OPERATED_VALVE_CLASSES: frozenset[str] = frozenset(
 )
 CONNECTOR_CLASSES: frozenset[str] = _classes_in_category(NodeCategory.CONNECTOR)
 
-# csak a generátor termeli őket (berendezés + csővezeték-elem + műszerezés) —
-# ez a plant graph "ismert osztály" halmaza, a connector- és struktúra-osztályok nélkül.
-# Nem szerepel a §4.5 nevesített konstansai közt, de a validation.py-nak kell —
-# ezért marad publikus, nem alulvonásos: két modul osztozik rajta a fájlkorlát miatt.
+# produced only by the generator (equipment + piping component + instrumentation) —
+# this is the plant graph's "known class" set, without the connector and structural classes.
+# Not among §4.5's named constants, but validation.py needs it —
+# so it stays public, not underscored: two modules share it because of the file limit.
 GENERATOR_CLASSES: frozenset[str] = (
     EQUIPMENT_CLASSES | VALVE_CLASSES | _classes_in_category(NodeCategory.INSTRUMENTATION)
 )
 KNOWN_CLASSES: frozenset[str] = frozenset(node_class.value for node_class in NodeClass)
 
-# amit egy Proteus-importáló elfogadhat csomópont-osztálynak: a generátor osztályai, a
-# csonk-osztályok, plusz a curated ős-lánc nélküli fallback (ADR-0016, kg-construction.md §3.1).
-# GENERATOR_CLASSES önmagában nem bővül — a generátor sosem termel ismeretlen osztályt.
+# what a Proteus importer may accept as a node class: the generator's classes, the
+# stub classes, plus the fallback with no curated ancestor chain (ADR-0016, §3.1).
+# GENERATOR_CLASSES itself is not extended — the generator never produces an unknown class.
 IMPORTABLE_CLASSES: frozenset[str] = (
     GENERATOR_CLASSES | CONNECTOR_CLASSES | {NodeClass.GENERIC_ITEM.value}
 )
 
-#: `GenericItem` a séma minden topológia-relációjának mindkét végén megengedett: az
-#: ellenőrzés nem ismerheti a fallback szemantikáját — az a promóció (ADR-0016 4. szabály) dolga.
+#: `GenericItem` is allowed at both ends of every topology relation in the schema: validation
+#: cannot know the fallback's semantics — that is promotion's job (ADR-0016 rule 4).
 _GENERIC_ITEM: frozenset[str] = frozenset({NodeClass.GENERIC_ITEM.value})
 
 RELATION_ENDPOINTS: dict[Relation, tuple[frozenset[str], frozenset[str]]] = {
@@ -280,13 +281,13 @@ RELATION_ENDPOINTS: dict[Relation, tuple[frozenset[str], frozenset[str]]] = {
         )
         | _GENERIC_ITEM,
     ),
-    # a fallback él-relációja: bármelyik importálható osztály mindkét végponton állhat
-    # (ADR-0016 2. szabály) — a séma nem ismeri a jelentését, csak megőrzi
+    # the fallback's edge relation: any importable class may sit at either endpoint
+    # (ADR-0016 rule 2) — the schema doesn't know its meaning, it only preserves it
     Relation.RELATED_TO: (IMPORTABLE_CLASSES, IMPORTABLE_CLASSES),
 }
 
-# a struktúra-relációknak (is_located_in, has_sheet, ...) nincs itt végpont-halmazuk:
-# sosem szerepelnek a generátor/splitter gráfjának éleként (lásd a modul docstringjét)
+# structural relations (is_located_in, has_sheet, ...) have no endpoint set here:
+# they never appear as an edge in the generator's/splitter's graph (see the module docstring)
 TOPOLOGY_RELATIONS: frozenset[Relation] = frozenset(RELATION_ENDPOINTS)
 
 VISIBLE_NODE_PROPERTIES: frozenset[str] = frozenset(
@@ -302,7 +303,7 @@ VISIBLE_NODE_PROPERTIES: frozenset[str] = frozenset(
         "referenced_connector_number",
         "line_number",
         "fluid_code",
-        # a fallback saját jelentése: melyik pyDEXPI osztályt/címkéket látta a rajz (ADR-0016)
+        # the fallback's own meaning: which pyDEXPI class/labels the drawing showed (ADR-0016)
         "dexpi_class",
         "category",
         "dexpi_labels",
@@ -317,10 +318,10 @@ VISIBLE_EDGE_PROPERTIES: frozenset[str] = frozenset(
 
 
 def labels_for(node_class: str) -> tuple[str, ...]:
-    """Egy node_class Neo4j-címkelánca, az ős-osztályokkal együtt (§4.2).
+    """A node_class's Neo4j label chain, together with its ancestor classes (§4.2).
 
     Raises:
-        ValueError: ha node_class nincs a sémában.
+        ValueError: if node_class is not in the schema.
     """
     try:
         return CLASS_SPECS[NodeClass(node_class)].labels

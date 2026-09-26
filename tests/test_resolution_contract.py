@@ -1,10 +1,10 @@
-"""`check_contract` — a resolver-határ kapuja: nyers splitter-kimenet elbukik, `localize()` átmegy.
+"""`check_contract` — the resolver-boundary gate: raw splitter output fails, `localize()`'s passes.
 
-Ez a két nevesített szivárgást zárja explicit teszttel (design `kg-construction.md`
-§4.1): L1, hogy egy duplikált berendezés reference-előfordulása a home-éval
-azonos node_id-t kap (`splitter.py:183`), és L2, hogy egy csonk-csomópont
-`OffPageConnector`-párja a párosítás válaszkulcsát hordozza, még
-`DRAWING_ONLY` feliratozásnál is (`connectors.py:85-106`).
+This gives the two named leaks an explicit test (design `kg-construction.md`
+§4.1): L1, that a duplicated equipment's reference occurrence gets the same
+node_id as its home (`splitter.py:183`), and L2, that a stub node's
+`OffPageConnector` pair carries the pairing answer key, even under
+`DRAWING_ONLY` labelling (`connectors.py:85-106`).
 """
 
 from __future__ import annotations
@@ -23,7 +23,7 @@ from plantgraph.resolution.localize import localize
 
 
 def _generated_plant(seed: int = 8) -> nx.DiGraph[str]:
-    """Egy 4-egységes szintetikus üzem — n_units alapértéke (`GeneratorConfig`)."""
+    """A 4-unit synthetic plant — the default of n_units (`GeneratorConfig`)."""
     config = GeneratorConfig(seed=seed)
     builder = GraphPlantBuilder(config.plant_id)
     plan_plant(config, builder)
@@ -31,10 +31,10 @@ def _generated_plant(seed: int = 8) -> nx.DiGraph[str]:
 
 
 def test_raw_splitter_output_at_duplication_rate_fails_contract() -> None:
-    """A design §10 T2 elfogadási feltétele: dup=0.5-nél a nyers kimenet mindig elbukik.
+    """Design §10 T2's acceptance condition: at dup=0.5, raw output must always fail.
 
-    Melyik konkrét okon bukik el (L1 vagy L2), az a splitter belső sorrendjén
-    múlik — mindkettőt külön, elszigetelten teszteli a két lenti eset.
+    Which specific reason it fails for (L1 or L2) depends on the splitter's
+    internal ordering — the two cases below test each in isolation.
     """
     plant = _generated_plant()
     sheets, manifest = split(
@@ -46,7 +46,7 @@ def test_raw_splitter_output_at_duplication_rate_fails_contract() -> None:
 
 
 def test_shared_node_id_across_sheets_fails_contract_naming_the_id() -> None:
-    """L1 elszigetelve: a home és a reference előfordulás azonos node_id-t visel (`splitter.py`)."""
+    """L1 in isolation: home and reference occurrences carry the same node_id (`splitter.py`)."""
     graph_a: nx.DiGraph[str] = nx.DiGraph()
     graph_a.add_node("eq-1", node_class="CentrifugalPump", tag="P-1")
     graph_b: nx.DiGraph[str] = nx.DiGraph()
@@ -58,8 +58,8 @@ def test_shared_node_id_across_sheets_fails_contract_naming_the_id() -> None:
 
 
 def test_raw_splitter_output_with_connectors_fails_contract_even_at_drawing_only_detail() -> None:
-    """L2: OffPageConnector.partner_tag/partner_sheet_id minden dial mellett kitöltött, dup=0 esetén
-    minden lapok közti él csatlakozóvá vágódik, tehát a connectors lista sosem üres.
+    """L2: OffPageConnector.partner_tag/partner_sheet_id is filled under every setting; at dup=0,
+    every cross-sheet edge is cut into a connector, so the connectors list is never empty.
     """
     plant = _generated_plant()
     sheets, _ = split(
@@ -81,7 +81,7 @@ def test_localized_output_passes_contract() -> None:
     plant = _generated_plant()
     sheets, _ = split(plant, SplitConfig(sheet_equipment_budget=3, seed=0, duplication_rate=0.5))
     localized, _ = localize(sheets)
-    check_contract(localized)  # nem dob kivételt
+    check_contract(localized)  # does not raise
 
 
 def test_duplicate_sheet_id_fails_contract() -> None:

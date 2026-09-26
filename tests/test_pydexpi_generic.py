@@ -1,8 +1,8 @@
-"""A generikus fallback tesztjei (ADR-0016, `kg-construction.md` §3.1, T1b).
+"""Tests for the generic fallback (ADR-0016, `kg-construction.md` §3.1, T1b).
 
-Ezek mindig futnak (nem igénylik `data/external/C01V04-VER.EX01.xml`-t): kézzel épített
-bemeneteken ellenőrzik a kategorizálást, a pre/post-pass-t és a `related_to` élt — a valódi
-fájlon mért 36/36 gate a `test_proteus_import.py`-ban van.
+These always run (do not require `data/external/C01V04-VER.EX01.xml`): they check
+categorization, the pre/post pass, and the `related_to` edge on hand-built inputs
+— the 36/36 gate check measured on the real file lives in `test_proteus_import.py`.
 """
 
 from __future__ import annotations
@@ -20,11 +20,11 @@ from plantgraph.adapters.pydexpi_generic import (
 )
 from plantgraph.graph.schema import NodeCategory
 
-# ---- classify: kategória és címkelánc (§3.1 rule 2) --------------------------------------------
+# ---- classify: category and label chain (§3.1 rule 2) --------------------------------------------
 
 
 def test_an_unknown_equipment_subclass_roots_at_equipment() -> None:
-    """`ReciprocatingPump` a séma nem curálja, de a pyDEXPI ős-lánca `Equipment`-ben gyökerezik."""
+    """`ReciprocatingPump` isn't curated, but pyDEXPI's ancestor chain roots it at `Equipment`."""
     info = classify("ReciprocatingPump")
     assert info.category is NodeCategory.EQUIPMENT
     assert info.labels == ("ReciprocatingPump", "Pump", "Equipment")
@@ -43,12 +43,12 @@ def test_a_label_that_is_not_a_pydexpi_class_falls_to_other() -> None:
 
 
 def test_a_chain_entry_that_fails_the_label_regex_is_rejected() -> None:
-    """Egy nem biztonságos Neo4j-címke (kisbetűs, aláhúzásos) sosem jut el a store-ig (rule 7)."""
+    """An unsafe Neo4j label (lowercase, underscored) never reaches the store (rule 7)."""
     with pytest.raises(ValueError, match="not a safe Neo4j label"):
         classify("not_a_valid_label")
 
 
-# ---- prepare_generic: pre-pass, a struktúra-osztályok érintetlenek ------------------------------
+# ---- prepare_generic: pre-pass, structural classes untouched ------------------------------
 
 
 def _conceptual_with_one_unknown_and_one_known_node() -> nx.MultiDiGraph[str]:
@@ -69,11 +69,11 @@ def test_prepare_generic_relabels_only_the_classes_the_adapter_would_drop() -> N
     assert set(infos) == {"pump"}
     assert infos["pump"].dexpi_class == "ReciprocatingPump"
 
-    # a bemenet változatlan marad — a pre-pass egy másolaton dolgozik
+    # the input stays unchanged — the pre-pass works on a copy
     assert conceptual.nodes["pump"]["label"] == "ReciprocatingPump"
 
 
-# ---- annotate_generic: dexpi_class/category/dexpi_labels/tag a végleges gráfon -----------------
+# ---- annotate_generic: dexpi_class/category/dexpi_labels/tag on the final graph -----------------
 
 
 def test_annotate_generic_writes_the_tag_per_category() -> None:
@@ -109,18 +109,18 @@ def test_annotate_generic_leaves_other_category_nodes_without_a_tag() -> None:
 
 
 def test_annotate_generic_skips_a_node_missing_from_the_mapped_plant() -> None:
-    """Ha egy generikus node valamiért mégsem térképeződött, az annotáció csendben kihagyja."""
+    """If a generic node somehow was not mapped after all, annotation silently skips it."""
     conceptual: nx.MultiDiGraph[str] = nx.MultiDiGraph()
     conceptual.add_node("pump", label="ReciprocatingPump", tagName="P1")
     infos = {"pump": classify("ReciprocatingPump")}
     plant: nx.DiGraph[str] = nx.DiGraph()
 
-    annotate_generic(plant, infos, conceptual)  # nem dob kivételt
+    annotate_generic(plant, infos, conceptual)  # does not raise
 
     assert plant.number_of_nodes() == 0
 
 
-# ---- add_related_to_edges: ismeretlen élcímke -> related_to (§3.1 rule 5) -----------------------
+# ---- add_related_to_edges: unknown edge label -> related_to (§3.1 rule 5) -----------------------
 
 
 def test_an_unknown_edge_label_becomes_related_to() -> None:
@@ -141,7 +141,7 @@ def test_an_unknown_edge_label_becomes_related_to() -> None:
 
 
 def test_a_known_edge_label_is_left_to_map_edges_not_duplicated() -> None:
-    """Egy `_relation_of`-nak ismerős él (pl. `Pipe`) sosem kap `related_to`-t is."""
+    """An edge `_relation_of` already recognizes (e.g. `Pipe`) never also gets `related_to`."""
     conceptual: nx.MultiDiGraph[str] = nx.MultiDiGraph()
     conceptual.add_node("a", label="CentrifugalPump")
     conceptual.add_node("b", label="CentrifugalPump")
@@ -155,7 +155,7 @@ def test_a_known_edge_label_is_left_to_map_edges_not_duplicated() -> None:
 
     assert added == {}
     assert collapsed == 0
-    assert plant.edges["a", "b"]["relation"] == "send_to"  # nem íródott felül
+    assert plant.edges["a", "b"]["relation"] == "send_to"  # not overwritten
 
 
 def test_two_unrecognised_edges_on_the_same_pair_collapse_to_one() -> None:
@@ -174,7 +174,7 @@ def test_two_unrecognised_edges_on_the_same_pair_collapse_to_one() -> None:
     assert collapsed == 1
 
 
-# ---- count_nodes_per_dexpi_class: a lefedettségi számláló (§3.1 rule 6) -------------------------
+# ---- count_nodes_per_dexpi_class: the coverage counter (§3.1 rule 6) -------------------------
 
 
 def test_count_nodes_per_dexpi_class_counts_by_the_real_pydexpi_label() -> None:
@@ -189,6 +189,6 @@ def test_count_nodes_per_dexpi_class_counts_by_the_real_pydexpi_label() -> None:
 
 
 def test_generic_info_is_immutable_and_hashable_via_tuple_labels() -> None:
-    """`GenericInfo.labels` egy tuple, nem lista — a modell így alapból összehasonlítható."""
+    """`GenericInfo.labels` is a tuple, not a list — the model is comparable out of the box."""
     info = GenericInfo(dexpi_class="X", category=NodeCategory.OTHER, labels=("X",))
     assert info.labels == ("X",)

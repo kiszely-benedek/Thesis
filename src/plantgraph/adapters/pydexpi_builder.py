@@ -1,12 +1,12 @@
-"""A generátor topológia-döntéseiből egy valódi pyDEXPI `DexpiModel`-t épít (§3.5).
+"""Builds a real pyDEXPI `DexpiModel` from the generator's topology decisions (§3.5).
 
-**DEXPI** (Data Exchange in the Process Industry) egy szabványos adatmodell
-P&ID-khoz; a **pyDEXPI** csomag ennek Python-osztályait adja (`ProcessPlant`,
-`CentrifugalPump`, `PipingNetworkSystem`, ...). Ez a modul a `PlantBuilder`
-Protocol (`generator_models.py`) pyDEXPI-backendje: minden `plan_plant`-hívást
-egy vagy több pyDEXPI-objektum felvételére fordít le, explicit id-kkal — a
-pyDEXPI alapértelmezése `uuid4` lenne, ami minden futtatáskor mást adna, és
-elrontaná a "same seed -> same graph" ígéretet (invariáns 3, 9, 10).
+**DEXPI** (Data Exchange in the Process Industry) is a standard data model for
+P&IDs; the **pyDEXPI** package provides its Python classes (`ProcessPlant`,
+`CentrifugalPump`, `PipingNetworkSystem`, ...). This module is the pyDEXPI
+backend for the `PlantBuilder` protocol (`generator_models.py`): it translates
+every `plan_plant` call into adding one or more pyDEXPI objects, with explicit
+ids — pyDEXPI's default would be `uuid4`, which would differ on every run and
+break the "same seed -> same graph" promise (invariants 3, 9, 10).
 """
 
 from __future__ import annotations
@@ -29,18 +29,18 @@ from plantgraph.benchmark.generator_models import (
     ValveSpec,
 )
 
-#: Rögzített exportidőpont, hogy két futás ugyanazon seeddel byte-azonos
-#: pyDEXPI JSON-t adjon (invariáns 9) — a valódi óra ezt elrontaná.
+#: Fixed export timestamp, so two runs with the same seed produce byte-identical
+#: pyDEXPI JSON (invariant 9) — a real clock would break that.
 _FIXED_EXPORT_TIME = datetime.datetime(2026, 1, 1)
 
 
 class DexpiPlantBuilder:
-    """A `PlantBuilder` Protocol pyDEXPI-implementációja: felépít egy `DexpiModel`-t.
+    """The pyDEXPI implementation of the `PlantBuilder` protocol: builds a `DexpiModel`.
 
-    Belső könyvtárakban tartja a már felvett szekciókat, berendezéseket és
-    szelepeket a `node_id` szerint, mert a későbbi `add_stream`/`add_control_loop`
-    hívások ezekre a pyDEXPI-objektumokra hivatkoznak, nem csak az id-jukra
-    (pl. egy fúvóka az adott berendezés-objektumhoz kerül hozzáfűzésre).
+    Keeps the sections, equipment, and valves added so far in internal
+    dictionaries keyed by `node_id`, because later `add_stream`/`add_control_loop`
+    calls reference these pyDEXPI objects themselves, not just their ids (e.g. a
+    nozzle gets appended onto the actual equipment object).
     """
 
     def __init__(self, plant_id: str) -> None:
@@ -55,20 +55,20 @@ class DexpiPlantBuilder:
         self._sections: dict[int, dexpi.PlantSection] = {}
         self._equipment: dict[str, dexpi.Equipment] = {}
         self._valves: dict[str, dexpi.PipingComponent] = {}
-        #: berendezés-id -> hányadik fúvókánál tart — a stream-végek és az
-        #: érzékelő fúvóka is ebből a számlálóból kap sorszámot (§3.5)
+        #: equipment id -> which nozzle number it's up to — stream ends and the
+        #: sensing nozzle both draw their sequence number from this counter (§3.5)
         self._nozzle_seq: dict[str, int] = {}
         self._stream_seq = 0
 
     @property
     def backend_version(self) -> str:
-        """A telepített pyDEXPI verziója — a `GenerationRecord.pydexpi_version` mezőjébe kerül."""
+        """The installed pyDEXPI version — ends up in `GenerationRecord.pydexpi_version`."""
         return importlib.metadata.version("pydexpi")
 
-    # ---- PlantBuilder Protocol ------------------------------------------------------------
+    # ---- PlantBuilder protocol ------------------------------------------------------------
 
     def add_section(self, unit_no: int) -> None:
-        """Felvesz egy `PlantSection`-t (technológiai egységet) a `ProcessPlant` alá."""
+        """Add a `PlantSection` (a process unit) under the `ProcessPlant`."""
         section = dexpi.PlantSection(
             id=f"{self.plant_id}-u{unit_no}",
             plantSectionIdentificationCode=str(unit_no),
@@ -87,10 +87,10 @@ class DexpiPlantBuilder:
         tag_prefix: str,
         tag_seq: int,
     ) -> None:
-        """Felvesz egy berendezést a megfelelő `PlantSection` alá, `taggedPlantItems`-be."""
+        """Add one piece of equipment under its `PlantSection`, into `taggedPlantItems`."""
         equipment_cls = _dexpi_class(node_class)
-        # _dexpi_class csak a bázisosztályt (DexpiBaseModel) ismeri statikusan;
-        # a node_class alapján tudjuk, hogy valójában Equipment-leszármazott jön létre
+        # _dexpi_class statically only knows the base class (DexpiBaseModel);
+        # we know from node_class that an Equipment subclass is actually created here
         equipment = cast(
             dexpi.Equipment,
             equipment_cls(
@@ -112,20 +112,20 @@ class DexpiPlantBuilder:
         dst_id: str,
         valves: Sequence[ValveSpec],
     ) -> None:
-        """Felvesz egy csővezetéket: egy `PipingNetworkSystem`-et egyetlen szegmenssel.
+        """Add one pipe segment: a `PipingNetworkSystem` with a single segment.
 
-        A szegmens `len(valves) + 1` `Pipe`-ból és a köztes szelepekből áll
-        (`piping_toolkit.construct_new_segment`, §3.5); a rendszer szülője a
-        forrás berendezés egysége, ami a generátor "a szelep a forrás
-        egységéhez tartozik" szabályát (§3.3 lépés 4) DEXPI-szinten is kifejezi.
+        The segment consists of `len(valves) + 1` `Pipe`s and the valves between
+        them (`piping_toolkit.construct_new_segment`, §3.5); the system's parent
+        is the source equipment's unit, which expresses the generator's "a valve
+        belongs to the source's unit" rule (§3.3 step 4) at the DEXPI level too.
         """
         source = self._equipment_or_raise(src_id)
         target = self._equipment_or_raise(dst_id)
         self._stream_seq += 1
         stream_id = f"{self.plant_id}-L{self._stream_seq}"
 
-        # explicit lista-típus, mert `list` invariáns: e nélkül mypy nem engedné a
-        # PipingComponent/Pipe listát a szélesebb elemtípust váró paraméterekbe
+        # explicit list type, since `list` is invariant: without this, mypy would
+        # reject passing a PipingComponent/Pipe list into parameters expecting the wider type
         valve_objects: list[dexpi.PipingNetworkSegmentItem] = [
             self._build_valve(spec, fluid_code) for spec in valves
         ]
@@ -151,13 +151,13 @@ class DexpiPlantBuilder:
         self._conceptual_model.pipingNetworkSystems.append(system)
 
     def add_control_loop(self, loop: LoopSpec) -> None:
-        """Felvesz egy szabályozókört: érzékelő fúvóka, PSGF, PIF, AF, és a szelep hivatkozása.
+        """Add one control loop: sensing nozzle, PSGF, PIF, AF, and the valve reference.
 
-        Az érzékelő fúvóka **saját, dedikált** fúvóka a berendezésen, nem a már
-        meglévő stream-fúvóka — DEXPI nem enged berendezést `sensingLocation`-nek,
-        és egy kétnél több éllel rendelkező fúvókát pyDEXPI absztrakciója nem
-        vonna össze, ami a szomszédos csővezeték-élt is elveszejtené (§3.5,
-        "Two construction rules the evidence forced").
+        The sensing nozzle is a **dedicated nozzle of its own** on the equipment,
+        not the existing stream nozzle — DEXPI does not allow equipment as a
+        `sensingLocation`, and pyDEXPI's abstraction would not consolidate a
+        nozzle with more than two edges, which would also lose the neighbouring
+        pipe edge (§3.5, "Two construction rules the evidence forced").
         """
         equipment = self._equipment_or_raise(loop.equipment_id)
         valve = self._valve_or_raise(loop.valve_id)
@@ -196,15 +196,15 @@ class DexpiPlantBuilder:
             processInstrumentationFunctions=[pif],
         )
 
-        # a PSGF és az AF csak a PIF kompozíciós listáin (fent, a toolkit-hívásokban)
-        # válik elérhetővé a modellfában; a cm-listákra csak azt kell rátenni, ami
-        # máshogy nem érné el a gyökeret (§3.5 táblázat sorrendje)
+        # the PSGF and the AF only become reachable in the model tree through the
+        # PIF's composition lists (above, in the toolkit calls); only what would
+        # otherwise not reach the root needs adding to the cm lists (§3.5 table order)
         self._conceptual_model.processInstrumentationFunctions.append(pif)
         self._conceptual_model.actuatingSystems.append(system)
         self._conceptual_model.instrumentationLoopFunctions.append(loop_function)
 
     def build(self) -> dexpi.DexpiModel:
-        """Lezárja a felépített modellt egy `DexpiModel`-be, rögzített export-metaadatokkal."""
+        """Seal the built-up model into a `DexpiModel`, with fixed export metadata."""
         return dexpi.DexpiModel(
             id=f"{self.plant_id}-model",
             conceptualModel=self._conceptual_model,
@@ -214,7 +214,7 @@ class DexpiPlantBuilder:
             originatingSystemVersion=importlib.metadata.version("plantgraph"),
         )
 
-    # ---- belső segédek ----------------------------------------------------------------
+    # ---- internal helpers ----------------------------------------------------------------
 
     def _build_valve(self, spec: ValveSpec, fluid_code: str) -> dexpi.PipingComponent:
         valve_cls = _dexpi_class(spec.node_class)
@@ -226,7 +226,7 @@ class DexpiPlantBuilder:
         return valve
 
     def _new_nozzle(self, owner: dexpi.Equipment) -> dexpi.Nozzle:
-        """Új fúvókát fűz az `owner` berendezéshez, `N{sorszám}` sub-tag-gel (§3.5)."""
+        """Attach a new nozzle to the `owner` equipment, with an `N{sequence}` sub-tag (§3.5)."""
         seq = self._nozzle_seq.get(owner.id, 0) + 1
         self._nozzle_seq[owner.id] = seq
         nozzle = dexpi.Nozzle(id=f"{owner.id}-nz{seq}", subTagName=f"N{seq}")
@@ -253,7 +253,7 @@ class DexpiPlantBuilder:
 
 
 def _dexpi_class(node_class: str) -> type[dexpi.DexpiBaseModel]:
-    """A séma `node_class` nevéhez tartozó pyDEXPI osztályt adja vissza."""
+    """Return the pyDEXPI class belonging to the schema's `node_class` name."""
     cls = getattr(dexpi, node_class, None)
     if cls is None:
         raise ValueError(f"pydexpi has no class named {node_class!r}; check graph.schema.NodeClass")
@@ -262,14 +262,14 @@ def _dexpi_class(node_class: str) -> type[dexpi.DexpiBaseModel]:
 
 @dataclass(frozen=True)
 class GeneratedPlant:
-    """Egy lefutott generálás teljes kimenete: a pyDEXPI-modell és a megoldókulcs."""
+    """The complete output of a generation run: the pyDEXPI model and the answer key."""
 
     model: dexpi.DexpiModel
     record: GenerationRecord
 
 
 def generate_plant(config: GeneratorConfig) -> GeneratedPlant:
-    """Megtervez és felépít egy üzemet: `plan_plant` + `DexpiPlantBuilder.build`."""
+    """Plan and build a plant: `plan_plant` + `DexpiPlantBuilder.build`."""
     builder = DexpiPlantBuilder(config.plant_id)
     record = plan_plant(config, builder)
     return GeneratedPlant(model=builder.build(), record=record)

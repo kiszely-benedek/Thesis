@@ -1,9 +1,10 @@
-"""Perzisztencia egy pyDEXPI `DexpiModel`-hez: JSON és Proteus XML (`plant-generator.md` §3.7).
+"""Persistence for a pyDEXPI `DexpiModel`: JSON and Proteus XML (`plant-generator.md` §3.7).
 
-Külön modul, nem `pydexpi_adapter.py` (ami épp a 400 soros korlát alá esne, de
-felelősség szerint sem oda való): ez a modul semmit sem alakít át, csak lemez
-és `DexpiModel` között visz. A JSON az egyetlen **veszteségmentes** alak; a
-Proteus export pyDEXPI 1.2.0-ban csak berendezést ír — lásd `save_proteus_equipment_only`.
+A separate module from `pydexpi_adapter.py` (which would just fit under the
+400-line limit, but this isn't its responsibility either): this module transforms
+nothing, it only moves data between disk and `DexpiModel`. JSON is the only
+**lossless** form; Proteus (an XML interchange format for P&ID data) export in
+pyDEXPI 1.2.0 writes equipment only — see `save_proteus_equipment_only`.
 """
 
 from __future__ import annotations
@@ -16,54 +17,54 @@ from pydexpi.loaders.proteus_serializer import ProteusSerializer
 
 
 def save_json(model: DexpiModel, directory: Path, filename: str) -> None:
-    """Elmenti a modellt pyDEXPI JSON-ként — ez a publikálható, veszteségmentes alak (§3.7)."""
+    """Save the model as pyDEXPI JSON — the publishable, lossless form (§3.7)."""
     JsonSerializer().save(model, directory, filename)
 
 
 def load_json(directory: Path, filename: str) -> DexpiModel:
-    """Visszatölt egy `save_json`-nal mentett modellt."""
+    """Load back a model saved with `save_json`."""
     loaded = JsonSerializer().load(directory, filename)
     return _require_dexpi_model(loaded)
 
 
 def save_proteus_equipment_only(model: DexpiModel, directory: Path, filename: str) -> None:
-    """Proteus XML export — **csak berendezés és `MetaData`** pyDEXPI 1.2.0-ban (§3.7).
+    """Proteus XML export — **equipment and `MetaData` only** in pyDEXPI 1.2.0 (§3.7).
 
-    `ProteusSerializer`/`PlantModelExporter` csak a `taggedPlantItems`-en
-    iterál (mérve: a csővezeték és a műszerezés kimarad) — a fájlnév ezért
-    jelzi explicit, mi HIÁNYZIK belőle, nem csak mit tartalmaz.
+    `ProteusSerializer`/`PlantModelExporter` only iterates `taggedPlantItems`
+    (verified: piping and instrumentation are left out) — the filename therefore
+    states explicitly what is MISSING from it, not just what it contains.
     """
-    # override_export_info=True a jelenlegi munkakönyvtárból nyitná meg a
-    # pyproject.tomlt (proteus_exporter/exporter_modules.py) — ez a
-    # generátornak, ami bárhonnan futhat, nem biztonságos alapértelmezés
+    # override_export_info=True would open pyproject.toml from the current working
+    # directory (proteus_exporter/exporter_modules.py) — unsafe as a default for
+    # the generator, which may run from anywhere
     serializer = ProteusSerializer(override_export_info=False)
     serializer.save(model, directory, filename)
 
 
 def load_proteus(directory: Path, filename: str) -> DexpiModel:
-    """Betölt egy tetszőleges Proteus XML-t — külső, teljes rajzot is (`kg-construction.md` §3 T1).
+    """Load any Proteus XML file, including an external full drawing (`kg-construction.md` §3 T1).
 
-    A pyDEXPI **parser** csővezetéket és műszerezést is olvas, nemcsak
-    berendezést; ez a belépési pont ezért felel meg egy valódi fájlnak
-    (pl. EX01), amit a `pydexpi_proteus_import` importere dolgoz fel tovább.
+    The pyDEXPI **parser** reads piping and instrumentation, not only equipment;
+    this entry point is therefore the right one for a real file (e.g. EX01),
+    which `pydexpi_proteus_import`'s importer then processes further.
     """
     return ProteusSerializer().load(directory, filename)
 
 
 def load_proteus_equipment_only(directory: Path, filename: str) -> DexpiModel:
-    """Betölt egy `save_proteus_equipment_only`-val írt, csak berendezést tartalmazó fájlt.
+    """Load a file written by `save_proteus_equipment_only`, containing equipment only.
 
-    Ugyanaz a hívás, mint `load_proteus` — a külön név csak azt jelzi, hogy ide
-    csak a generátor csonkolt exportja való, ahol a plusz (csővezeték/műszer)
-    tudás garantáltan üres listaként tér vissza.
+    The same call as `load_proteus` — the distinct name only signals that this
+    is meant for the generator's stripped-down export, where the extra
+    (piping/instrumentation) data is guaranteed to come back as an empty list.
     """
     return load_proteus(directory, filename)
 
 
 def _require_dexpi_model(loaded: object) -> DexpiModel:
-    """`JsonSerializer.load` típusa `DexpiBaseModel`.
+    """`JsonSerializer.load`'s declared return type is `DexpiBaseModel`.
 
-    Itt igazoljuk, hogy tényleg egy `DexpiModel` jött vissza.
+    Here we verify that a `DexpiModel` really came back.
     """
     if not isinstance(loaded, DexpiModel):
         raise TypeError(

@@ -1,19 +1,19 @@
-"""Összeállítja a végleges OPEN100 megoldókulcsot a leolvasott feliratokból.
+"""Assemble the final OPEN100 answer key from the labels that were read off the drawings.
 
-A stage 2 lépései, ide sűrítve:
+Stage 2's steps, condensed here:
 
-  1. minden csatlakozóhoz hozzácsatoljuk a leolvasott feliratot (annotations.py),
-  2. a célra hivatkozó csatlakozókat vagy párba állítjuk (PAIRS — kézzel
-     azonosítva, lásd lent), vagy lógóként rögzítjük (a cél lap nincs a
-     korpuszban), vagy megoldatlanként (a cél lap megvan, de nem találtunk
-     hozzáilló csatlakozót),
-  3. ellenőrizzük, hogy mind a 96 csatlakozó sorsa ismert — SplitManifest.accounted_for().
+  1. attach the read-off label to every connector (annotations.py),
+  2. connectors referencing a target are either paired up (PAIRS — identified by
+     hand, see below), recorded as dangling (the target sheet is not in the
+     corpus), or left unresolved (the target sheet exists, but no matching
+     connector was found on it),
+  3. check that all 96 connectors' fate is known — SplitManifest.accounted_for().
 
-**A párosítás kézi munka, nem algoritmus.** A tervdokumentum egy rangsorolt
-illesztő szabályt ír le (line_number → rácsmező → szolgáltatás+irány); itt ezt
-a rangsort a leolvasáskor soronként alkalmaztuk, nem egy
-futtatható illesztő. A PAIRS lista ennek a döntésnek a lenyomata, minden sorhoz
-a match_rule jelzi, mennyire volt egyértelmű.
+**The pairing is manual work, not an algorithm.** The design note describes a
+ranked matching rule (line_number -> grid cell -> service+direction); here that
+ranking was applied by hand, row by row, while reading the labels — not by a
+runnable matcher. The PAIRS list is the record of that decision, and each row's
+match_rule states how unambiguous it was.
 """
 
 from __future__ import annotations
@@ -33,7 +33,7 @@ from plantgraph.benchmark.open100.sheets import KNOWN_ABSENT, SHEETS, resolve
 SOURCE_NAME = "PID2Graph/OPEN100"
 
 # (from_key, to_key, match_rule, note)
-# Kézzel azonosított párok a montázsok elolvasása alapján, 2026-08-31.
+# Pairs identified by hand from reading the montages, 2026-08-31.
 PAIRS: tuple[tuple[str, str, MatchRule, str | None], ...] = (
     ("0:inlet/outlet83", "1:inlet/outlet3", MatchRule.GRID_MUTUAL, "1/3 nem mutat line-t; csak a kölcsönös lap-hivatkozás (0→ACC-150-1, 1→MSS-140-1) igazolja. 1/3 E-1-et mond, 0/83 a D sorban ül (jobb szél) — egy sorral eltér"),
     ("1:inlet/outlet24", "2:inlet/outlet13", MatchRule.LINE_NUMBER, "line egyezik (160090); 1/24 F-1-et mond, de 2/13 a 2. lap BAL szélén, a G sorban ül — a rácshivatkozás itt sem sorban, sem oszlopban nem stimmel"),
@@ -60,18 +60,18 @@ PAIRS: tuple[tuple[str, str, MatchRule, str | None], ...] = (
     ("7:inlet/outlet33", "8:inlet/outlet54", MatchRule.SERVICE_DIRECTION, "kizárásos párosítás 2026-09-05: 7/33 az egyetlen szabad, 210-2-ről bejövő zászló a 7. lapon, 8/54 az egyetlen 210-1-re kimenő a 8. lapon; a line-ok nem egyeznek (FWS-175271 vs. a fejvezeték 111156-ja), és 7/33 (F-1) rácsmezője a fejvezeték MÁSIK végére (8/5) mutat — a forrásrajz önmagának mond ellent, ezért a leggyengébb fokozat"),
 )
 
-# Nincs IDENTITY_GROUPS ebben a fájlban. Az RCS-PU-102A/102B azonosság
-# (5. lap folyamatábra ↔ 6. lap DETAIL A/B) képileg igazolt, de nincs hozzá
-# valódi graphml csomópont: a sheet5 mind a hat "pump" címkéjű csomópontja
-# ellenőrzötten áramláselem (FE/FT), nem a szivattyútest, és a sheet6-on
-# egyetlen "pump" címkéjű csomópont sincs. Egy IdentityGroup-nak kitalált
-# kulcsot adni pont az a hiba lenne, amit korábban már elkövettünk és
-# kijavítottunk (lásd 50-progress/2026-W35.md). Amíg nincs valódi csomópont,
-# ez a lelet szövegben marad — lásd open100-annotation.md 1. nyitott kérdés.
+# No IDENTITY_GROUPS in this file. The RCS-PU-102A/102B identity (sheet 5's
+# flow diagram <-> sheet 6's DETAIL A/B) is visually confirmed, but has no real
+# graphml node behind it: all six "pump"-labelled nodes on sheet5 are verified
+# to be flow elements (FE/FT), not the pump body, and sheet6 has no
+# "pump"-labelled node at all. Inventing a key for an IdentityGroup would be
+# exactly the mistake already made and fixed once before (see
+# 50-progress/2026-W35.md). Until a real node exists, this finding stays as
+# text — see open100-annotation.md open question 1.
 
 
 def _dangling_reason(pid: str | None) -> str:
-    """Emberi olvasható indoklás egy lógó hivatkozáshoz, ha ismerjük a rendszer nevét."""
+    """A human-readable reason for a dangling reference, if we know the system's name."""
     name = KNOWN_ABSENT.get(pid or "")
     if name is None:
         return "target sheet not present in corpus"
@@ -79,10 +79,11 @@ def _dangling_reason(pid: str | None) -> str:
 
 
 def _classify(raw: RawConnectorText, paired_keys: set[str]) -> tuple[str, object]:
-    """Eldönti, a három sors (párba került / lógó / megoldatlan) melyikébe esik egy csatlakozó.
+    """Decide which of the three fates (paired / dangling / unresolved) a connector falls into.
 
-    A "párba került" eseteket a hívó már kiszűrte (paired_keys) — ez a függvény
-    csak a maradékot osztályozza a felirat alapján: van-e feloldható cél.
+    The "paired" cases have already been filtered out by the caller
+    (paired_keys) — this function only classifies the remainder by the label:
+    is there a resolvable target?
     """
     if raw.key in paired_keys:
         return "paired", None
@@ -100,7 +101,7 @@ def _classify(raw: RawConnectorText, paired_keys: set[str]) -> tuple[str, object
 
 
 def build_manifest(observations: list[ConnectorObservation]) -> SplitManifest:
-    """Összeilleszti a geometriát (stage 1) és a feliratokat (annotations.py) egy manifestbe."""
+    """Merge the geometry (stage 1) and the labels (annotations.py) into one manifest."""
     by_key = {raw.key: raw for raw in ANNOTATIONS}
     enriched = [_enrich(obs, by_key[obs.key]) for obs in observations]
 
@@ -130,7 +131,7 @@ def build_manifest(observations: list[ConnectorObservation]) -> SplitManifest:
 
 
 def _enrich(obs: ConnectorObservation, raw: RawConnectorText) -> ConnectorObservation:
-    """Ráírja a geometriai megfigyelésre a leolvasott feliratot."""
+    """Attach the read-off label onto the geometric observation."""
     target = None
     if raw.target_pid is not None:
         target = SheetRef(pid=raw.target_pid, sheet_no=raw.target_sheet_no or 1)

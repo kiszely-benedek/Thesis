@@ -1,6 +1,6 @@
-"""A plantgraph csomag: szintetikus üzemgráf-generátor és többlapos GraphRAG-benchmark.
+"""The plantgraph package: a synthetic plant-graph generator and a multi-sheet GraphRAG benchmark.
 
-Két al-csomag adja a tartalmát: `graph` (a gráf-séma, amit a generátor kienged
-és a splitter darabol) és `benchmark` (a generátor, a splitter és az OPEN100
-megoldókulcs-építő). Lásd `docs/private/40-design/` a tervekért.
+Two sub-packages make up its content: `graph` (the graph schema that the generator
+emits and the splitter cuts up) and `benchmark` (the generator, the splitter, and the
+OPEN100 answer-key builder). See `docs/private/40-design/` for the design notes.
 """

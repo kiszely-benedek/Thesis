@@ -1,4 +1,4 @@
-"""A splitter új adatmodelljeinek invariánsai: OffPageConnector, SplitConfig, SplitManifest."""
+"""Invariants of the splitter's newer data models: OffPageConnector, SplitConfig, SplitManifest."""
 
 from __future__ import annotations
 
@@ -22,8 +22,8 @@ def connector(sheet_id="0", attached_node_id="opc:0:0", partner_sheet_id="1") ->
 
 
 def test_off_page_connector_key_matches_connector_observation_shape() -> None:
-    # A key alakja (lap:node_id) szándékosan egyezik a ConnectorObservation.key-ével
-    # (models.py) — ez teszi lehetővé, hogy a ConnectorPair mindkét forrásra ugyanúgy működjön.
+    # The key shape (sheet:node_id) deliberately matches ConnectorObservation.key
+    # (models.py) — this is what lets ConnectorPair work the same way for both sources.
     assert connector(sheet_id="3", attached_node_id="opc:3:7").key == "3:opc:3:7"
 
 

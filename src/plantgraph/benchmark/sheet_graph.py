@@ -1,8 +1,9 @@
-"""A `SheetGraph` adatszerkezet: egy lap gráfja, a splitter és a connector-vágó közös eleme.
+"""The `SheetGraph` data structure: one sheet's graph, shared by the splitter and connector cutter.
 
-Saját modulban él, mert mind `splitter.py` (particionálás, azonosság-alapú
-duplikálás), mind `connectors.py` (off-page connector vágás) használja —
-enélkül a kettő körkörösen importálná egymást.
+Lives in its own module because both `splitter.py` (partitioning, identity-based
+duplication) and `connectors.py` (off-page connector cutting — an off-page connector
+is the marker a drawing uses to say "this pipe continues on another sheet") use it;
+without this split the two would import each other in a circle.
 """
 
 from __future__ import annotations
@@ -16,10 +17,10 @@ from plantgraph.benchmark.models import OffPageConnector
 
 @dataclass
 class SheetGraph:
-    """Egy lap gráfja: a rá eső csomópontok/élek, plusz a rajta lévő off-page connectorok listája.
+    """One sheet's graph: the nodes/edges that fall on it, plus its list of off-page connectors.
 
-    Sima dataclass, nem Pydantic modell (splitter.md 2. fejezet): a gráf
-    topológiáját networkx-nek szánjuk, nem szerializáljuk.
+    A plain dataclass, not a Pydantic model (splitter.md section 2): the graph
+    topology is meant for networkx, not for serialization.
     """
 
     sheet_id: str

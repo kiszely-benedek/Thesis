@@ -1,11 +1,11 @@
-"""A stage 2 párosítás önellenőrzése: nem függ a PID2Graph fájloktól.
+"""Self-check for the stage-2 pairing: does not depend on the PID2Graph files.
 
-A build_manifest bemenete geometriai megfigyelések (ConnectorObservation), a
-kimenete pedig a PAIRS/ANNOTATIONS táblák alapján épített manifest. Itt a
-geometriát kitaláljuk (egy közös helyőrző dobozzal) — csak az számít, hogy a
-kulcsok (sheet:node_id) megegyezzenek az annotations.py-ban szereplőkkel. Így
-ez a teszt azt őrzi, hogy a PAIRS és az ANNOTATIONS táblák önmagukban
-konzisztensek maradnak, anélkül hogy a valódi rajzokra lenne szükség.
+`build_manifest` takes geometric observations (`ConnectorObservation`) as input
+and returns a manifest built from the PAIRS/ANNOTATIONS tables. Here the geometry
+is made up (one shared placeholder box) — all that matters is that the keys
+(sheet:node_id) match the ones in annotations.py. This test therefore guards that
+the PAIRS and ANNOTATIONS tables stay internally consistent, without needing the
+real drawings.
 """
 
 from __future__ import annotations
@@ -18,7 +18,7 @@ _PLACEHOLDER_BOX = BoundingBox(xmin=0.0, ymin=0.0, xmax=10.0, ymax=10.0)
 
 
 def _fake_observations() -> list[ConnectorObservation]:
-    """Egy megfigyelés minden annotált csatlakozóhoz — a geometria itt lényegtelen."""
+    """One observation per annotated connector — the geometry does not matter here."""
     return [
         ConnectorObservation(
             sheet_file=raw.sheet,
@@ -36,8 +36,8 @@ def test_every_annotated_connector_is_accounted_for() -> None:
 
 
 def test_no_connector_appears_in_two_buckets() -> None:
-    # Ha egy kulcs párban ÉS lógóként/megoldatlanként is szerepelne, az azt
-    # jelentené, hogy a PAIRS és a _classify szabály egymásnak ellentmond.
+    # If a key appeared both paired AND as dangling/unresolved, the PAIRS
+    # table and the _classify rule would be contradicting each other.
     manifest = build_manifest(_fake_observations())
     paired = {p.from_key for p in manifest.connector_pairs} | {
         p.to_key for p in manifest.connector_pairs
@@ -50,7 +50,7 @@ def test_no_connector_appears_in_two_buckets() -> None:
 
 
 def test_every_pair_key_exists_among_the_annotations() -> None:
-    # Elgépelt kulcs a PAIRS táblában csendben "elveszne" — inkább bukjon el itt.
+    # A typo'd key in the PAIRS table would silently "disappear" — better to fail here.
     known_keys = {raw.key for raw in ANNOTATIONS}
     for from_key, to_key, _rule, _note in PAIRS:
         assert from_key in known_keys

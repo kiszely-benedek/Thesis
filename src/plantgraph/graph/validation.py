@@ -1,9 +1,9 @@
-"""Ellenőrzi, hogy egy gráf megfelel-e a `schema.py`-ban rögzített sémának.
+"""Check whether a graph conforms to the schema fixed in `schema.py`.
 
-Két belépési pont van, mert a generátor és a splitter kimenete más-más
-szabályt követ (`plant-generator.md` §4.5): egy teljes üzemgráfban nincs
-off-page connector csonk és minden csomópont teljes attribútumkészlettel
-rendelkezik, egy lap-gráfban viszont mindkettő megengedett.
+There are two entry points, because the generator's and the splitter's output
+follow different rules (`plant-generator.md` §4.5): a full plant graph has no
+off-page connector stubs and every node carries a complete set of attributes,
+while a sheet graph allows both.
 """
 
 from __future__ import annotations
@@ -29,7 +29,7 @@ SchemaViolationKind = Literal[
 
 
 class SchemaViolation(BaseModel):
-    """Egy séma-ellenőrzés talált hibája: milyen fajta, melyik csomóponton/élen, mi a baj."""
+    """A violation found by schema validation: what kind, on which node/edge, what's wrong."""
 
     kind: SchemaViolationKind
     subject: str
@@ -41,10 +41,10 @@ _CONNECTOR_REQUIRED_PROPERTIES: tuple[str, ...] = ("connector_number", "referenc
 
 
 def validate_plant_graph(plant: nx.DiGraph[str]) -> list[SchemaViolation]:
-    """Ellenőrzi a generátor kimenetét: generátor-osztályok, kötelező tulajdonságok, egyedi tag-ek.
+    """Validate the generator's output: generator classes, required properties, unique tags.
 
-    Connector-csomópont (off-page connector csonk) itt hiba: azokat csak a
-    splitter tesz a lapokra, egy teljes üzemgráfban nincs helyük.
+    A connector node (an off-page connector stub) is an error here: only the
+    splitter places those, on sheets — a full plant graph has no room for them.
     """
     violations: list[SchemaViolation] = []
     tags_seen: dict[str, str] = {}
@@ -58,7 +58,7 @@ def validate_plant_graph(plant: nx.DiGraph[str]) -> list[SchemaViolation]:
 def _validate_plant_node(
     node_id: str, attrs: dict[str, object], tags_seen: dict[str, str]
 ) -> list[SchemaViolation]:
-    """Csomópont-ellenőrzés plant graph kontextusban: ismert osztály, kötelező mezők, egyedi tag."""
+    """Node validation in the plant-graph context: known class, required fields, unique tag."""
     node_class = attrs.get("node_class")
     class_violation = _check_node_class(node_id, node_class, allowed=GENERATOR_CLASSES)
     if class_violation is not None:
@@ -71,13 +71,13 @@ def _validate_plant_node(
 
 
 def validate_sheet_graph(sheet: nx.DiGraph[str]) -> list[SchemaViolation]:
-    """Ellenőrzi a splitter egy lapját: generátor-, connector- és `GenericItem` is megengedett.
+    """Validate one of the splitter's sheets: generator, connector, and `GenericItem` all allowed.
 
-    A reference-előfordulások (azonosság-alapú kereszthivatkozás,
-    `plant-generator.md` §4.4) csak `tag`-et és `node_class`-t hordoznak, ezért
-    itt nem várjuk el a `plant_id`/`unit_id`-t — az csak a home előforduláson van.
-    `IMPORTABLE_CLASSES` a `GenericItem`-et is tartalmazza (ADR-0016): egy valódi
-    Proteus-import lapja máskülönben minden fallback-csomópontot elutasítana.
+    Reference occurrences (identity-based cross-referencing, `plant-generator.md`
+    §4.4) carry only `tag` and `node_class`, so `plant_id`/`unit_id` are not
+    required here — those live only on the home occurrence. `IMPORTABLE_CLASSES`
+    also includes `GenericItem` (ADR-0016): otherwise a real Proteus import's
+    sheet would reject every fallback node.
     """
     violations: list[SchemaViolation] = []
     tags_seen: dict[str, str] = {}
@@ -95,9 +95,9 @@ def _validate_sheet_node(
     allowed_classes: frozenset[str],
     tags_seen: dict[str, str],
 ) -> list[SchemaViolation]:
-    """Csomópont-ellenőrzés lap-gráf kontextusban.
+    """Node validation in the sheet-graph context.
 
-    A connector-csomópontnak saját kötelező mezői vannak (§4.4).
+    A connector node has its own required fields (§4.4).
     """
     node_class = attrs.get("node_class")
     class_violation = _check_node_class(node_id, node_class, allowed=allowed_classes)
@@ -114,7 +114,7 @@ def _validate_sheet_node(
 def _check_node_class(
     subject: str, node_class: object, allowed: frozenset[str]
 ) -> SchemaViolation | None:
-    """Ismeretlen vagy ebben a gráf-fajtában meg nem engedett node_class-t jelez."""
+    """Flag a node_class that is unknown, or not allowed in this kind of graph."""
     if node_class not in KNOWN_CLASSES:
         return SchemaViolation(
             kind="unknown_class",
@@ -133,7 +133,7 @@ def _check_node_class(
 def _check_required_properties(
     subject: str, attrs: dict[str, object], required: tuple[str, ...]
 ) -> list[SchemaViolation]:
-    """A hiányzó (None vagy nincs jelen) kötelező tulajdonságokat sorolja fel."""
+    """List the required properties that are missing (None or absent)."""
     return [
         SchemaViolation(
             kind="missing_property", subject=subject, detail=f"missing required property {name!r}"
@@ -146,7 +146,7 @@ def _check_required_properties(
 def _check_duplicate_tag(
     subject: str, tag: object, tags_seen: dict[str, str]
 ) -> SchemaViolation | None:
-    """Már látott tag-et jelez — a hiányzó tag-et a _check_required_properties már jelenti."""
+    """Flag a tag already seen — a missing tag is already reported by _check_required_properties."""
     if not isinstance(tag, str):
         return None
     first_seen = tags_seen.get(tag)
@@ -161,7 +161,7 @@ def _check_duplicate_tag(
 
 
 def _validate_edge(plant: nx.DiGraph[str], source: str, target: str) -> list[SchemaViolation]:
-    """Egy él relációját és végpont-osztályait ellenőrzi a §4.3 tábla szerint."""
+    """Validate an edge's relation and endpoint classes against the §4.3 table."""
     edge_id = f"{source}->{target}"
     relation = plant.edges[source, target].get("relation")
     if relation not in {member.value for member in TOPOLOGY_RELATIONS}:

@@ -1,8 +1,8 @@
-"""A `DexpiPlantBuilder` közvetlen tesztjei (`plant-generator.md` §3.5).
+"""Direct tests of `DexpiPlantBuilder` (`plant-generator.md` §3.5).
 
-Ide csak az kell, ami a `DexpiPlantBuilder`-t magát nézi (a pyDEXPI-objektumok
-alakja, a szegmens-felépítés, az érzékelő fúvóka szabálya) — a teljes
-generátor -> `DiGraph` útvonalat `test_pydexpi_adapter.py` fedi.
+Only what looks at `DexpiPlantBuilder` itself belongs here (the shape of the
+pyDEXPI objects, segment construction, the sensing-nozzle rule) — the full
+generator -> `DiGraph` path is covered by `test_pydexpi_adapter.py`.
 """
 
 from __future__ import annotations
@@ -15,7 +15,7 @@ from plantgraph.benchmark.generator_models import LoopSpec, ValveSpec
 
 
 def _two_equipment_builder() -> DexpiPlantBuilder:
-    """Egy egységet, benne egy tankot és egy szivattyút tartalmazó builder — még áram nélkül."""
+    """A builder holding one unit with a tank and a pump in it — no stream yet."""
     builder = DexpiPlantBuilder("plant0")
     builder.add_section(unit_no=1)
     builder.add_equipment(
@@ -37,7 +37,7 @@ def _two_equipment_builder() -> DexpiPlantBuilder:
     return builder
 
 
-# ---- stream szelepszáma -----------------------------------------------------------------
+# ---- stream valve count -----------------------------------------------------------------
 
 
 @pytest.mark.parametrize("n_valves", [0, 1, 2])
@@ -58,15 +58,15 @@ def test_stream_carries_the_requested_number_of_valves(n_valves: int) -> None:
 
     system = model.conceptualModel.pipingNetworkSystems[0]
     segment = system.segments[0]
-    # a szegmens elemei a szelepek; a pipe-ok száma mindig eggyel több (§3.5:
-    # "len(pipes) = len(valves) + 1"), mert a nyitott végeket is le kell zárni
+    # the segment's items are the valves; the pipe count is always one more (§3.5:
+    # "len(pipes) = len(valves) + 1"), because the open ends need closing too
     assert len(segment.items) == n_valves
     assert len(segment.connections) == n_valves + 1
     tags = [item.pipingComponentNumber for item in segment.items]
     assert tags == [valve.tag for valve in valves]
 
 
-# ---- dedikált érzékelő fúvóka -------------------------------------------------------------
+# ---- dedicated sensing nozzle -------------------------------------------------------------
 
 
 def test_sensing_location_is_a_dedicated_nozzle_distinct_from_the_stream_nozzle() -> None:
@@ -95,14 +95,14 @@ def test_sensing_location_is_a_dedicated_nozzle_distinct_from_the_stream_nozzle(
     tank = model.conceptualModel.taggedPlantItems[0]
     pif = model.conceptualModel.processInstrumentationFunctions[0]
     psgf = pif.processSignalGeneratingFunctions[0]
-    # a tanknak két fúvókája van: az egyik a stream végén, a másik csak az érzékeléshez
+    # the tank has two nozzles: one at the end of the stream, the other for sensing only
     assert len(tank.nozzles) == 2
     assert psgf.sensingLocation is tank.nozzles[1]
     assert psgf.sensingLocation is not tank.nozzles[0]
 
 
 def test_dedicated_sensing_nozzle_keeps_both_the_pipe_and_the_sensing_edge() -> None:
-    """A §3.5 mérése: egy megosztott fúvókán pyDEXPI absztrakciója elnyelte volna mindkét élt."""
+    """Verified for §3.5: on a shared nozzle, pyDEXPI's abstraction would swallow both edges."""
     builder = _two_equipment_builder()
     valve = ValveSpec(node_id="plant0-u1-va1", node_class="GlobeValve", tag="GV-1-1")
     builder.add_stream(
@@ -140,7 +140,7 @@ def test_dedicated_sensing_nozzle_keeps_both_the_pipe_and_the_sensing_edge() -> 
     assert has_sensing_edge, "the PSGF -> tank sensing edge should survive"
 
 
-# ---- azonosítók: nincs uuid ---------------------------------------------------------------
+# ---- identifiers: no uuid ---------------------------------------------------------------
 
 
 def test_backend_version_matches_the_installed_pydexpi() -> None:

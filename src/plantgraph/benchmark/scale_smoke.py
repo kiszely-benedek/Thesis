@@ -1,43 +1,43 @@
-"""`scale_smoke`: egyetlen futás mérése a teljes `generate -> plant_graph -> split` útvonalon.
+"""`scale_smoke`: measure a single run through the full `generate -> plant_graph -> split` path.
 
-Ez a `plant-generator.md` §7 és §9 step 7 eszköze. A tervezet becsléseket adott
-arra, mennyi ideig tart a generálás nagy üzemméretnél (§7 "Estimates, not
-measurements") — ez a modul ezeket a becsléseket **méréssé** váltja: ugyanazt
-az öt szakaszt méri `time.perf_counter`-rel, mint a prototípus táblázata
-(build, loader, conceptual, adapter, split), plusz — kérésre — a teljes futás
-csúcsmemóriáját `tracemalloc`-kal. A `plant-generator.md` §2 kill criterionja
-(10 perc vagy memóriahiány a legnagyobb tervezett üzemen) ez alapján dönthető
-el.
+This is the tool for `plant-generator.md` §7 and §9 step 7. The design note gave
+estimates for how long generation takes at large plant sizes (§7 "Estimates, not
+measurements") — this module turns those estimates into **measurements**: it
+times the same five stages with `time.perf_counter` as the prototype's table
+(build, loader, conceptual, adapter, split), plus — on request — the whole run's
+peak memory with `tracemalloc`. `plant-generator.md` §2's kill criterion (10
+minutes, or running out of memory, on the largest planned plant) can be
+decided from this.
 
-**Miért van `--no-memory` kapcsoló.** A `tracemalloc` minden egyes memória-
-foglalást lehallgat, ezért pont azokat a szakaszokat torzítja a legjobban,
-amelyek a legtöbbet allokálnak — vagyis épp a kill criterion alapjául szolgáló
-falióra-időt. Mérve 2026-09-20-án, `n_units=50, budget=4, seed=0`:
+**Why there is a `--no-memory` flag.** `tracemalloc` intercepts every single
+memory allocation, so it distorts the stages that allocate the most the
+worst — which is exactly the wall-clock time the kill criterion is based on.
+Measured on 2026-09-20, `n_units=50, budget=4, seed=0`:
 
-| szakasz    | tracemalloc-kal (s) | tracemalloc nélkül (s) | torzítás |
-|------------|----------------------|-------------------------|----------|
-| build      | 0.730                | 0.171                   | 4.3x     |
-| loader     | 0.742                | 0.162                   | 4.6x     |
-| conceptual | 3.424                | 0.378                   | 9.1x     |
-| adapter    | 0.062                | 0.015                   | 4.1x     |
-| split      | 0.285                | 0.100                   | 2.9x     |
+| stage      | with tracemalloc (s) | without tracemalloc (s) | distortion |
+|------------|----------------------|--------------------------|------------|
+| build      | 0.730                | 0.171                    | 4.3x       |
+| loader     | 0.742                | 0.162                    | 4.6x       |
+| conceptual | 3.424                | 0.378                    | 9.1x       |
+| adapter    | 0.062                | 0.015                    | 4.1x       |
+| split      | 0.285                | 0.100                    | 2.9x       |
 
-A tracemalloc nélküli `conceptual` érték (0.378 s) egyezik a 2026-09-13-i
-prototípus táblázatával (0.349 s, 50 egységnél, §7) — a tracemalloc-os nem.
-Ezért egy időméréshez szánt futás és egy memóriaméréshez szánt futás sosem
-osztozhat egy folyamaton: `--no-memory` teljesen kihagyja a `tracemalloc`-ot,
-és az eredmény `memory_traced` mezője rögzíti, melyik módban készült a szám —
-hogy egy futási jegyzetbe bemásolt érték sose keveredhessen össze a másikkal.
+The `conceptual` value without tracemalloc (0.378 s) matches the 2026-09-13
+prototype table (0.349 s, at 50 units, §7) — the one with tracemalloc does not.
+So a run meant for timing and a run meant for memory measurement must never
+share one process: `--no-memory` skips `tracemalloc` entirely, and the result's
+`memory_traced` field records which mode produced the number — so a value
+copied into a run note can never be confused with the other kind.
 
-Fontos: ez az eszköz **nem** futtatja a `rejoin`-t. A §7-ben megjegyzett,
-nem mért hotspot (`rejoin._stub_edge_attrs`, amely soronként végigpásztázza a
-lap-listát) ezen az úton nem fut le — az csak a rejoin-ösvényen jelentkezik,
-amit ez a smoke szándékosan nem méri (§9 step 7 pontos hatóköre: generate ->
-plant_graph -> split). A hotspotot ez a modul nem javítja.
+Important: this tool does **not** run `rejoin`. The unmeasured hotspot noted in
+§7 (`rejoin._stub_edge_attrs`, which scans the sheet list row by row) does not
+run on this path — it only shows up on the rejoin path, which this smoke test
+deliberately does not measure (§9 step 7's exact scope: generate ->
+plant_graph -> split). This module does not fix that hotspot.
 
-Futtatás: `python -m plantgraph.benchmark.scale_smoke --n-units N --budget B --seed S`.
-A nagy, ~1000+ lapos mérést a felhasználó futtatja és írja meg futási
-jegyzetként — ez a modul csak az eszközt adja, a mérést nem helyettesíti.
+Run with: `python -m plantgraph.benchmark.scale_smoke --n-units N --budget B --seed S`.
+The large, ~1000+ sheet measurement is run by the user and written up as a run
+note — this module only supplies the tool, it does not replace the measurement.
 """
 
 from __future__ import annotations
@@ -62,11 +62,11 @@ from plantgraph.benchmark.splitter import split
 
 
 class ScaleSmokeResult(BaseModel):
-    """Egy `scale_smoke` futás összes száma: méretek, öt szakasz ideje, csúcsmemória.
+    """All the numbers from one `scale_smoke` run: sizes, the five stages' timing, peak memory.
 
-    `peak_memory_bytes` csak akkor van kitöltve, ha `memory_traced` igaz —
-    `--no-memory` mellett `None` marad, sosem `0`, hogy ne lehessen egy valódi
-    nulla mérésnek nézni (lásd a modul docstringjét).
+    `peak_memory_bytes` is only filled in if `memory_traced` is true — under
+    `--no-memory` it stays `None`, never `0`, so it can't be mistaken for a real
+    zero measurement (see the module docstring).
     """
 
     n_units: int
@@ -84,16 +84,16 @@ class ScaleSmokeResult(BaseModel):
 def run_scale_smoke(
     n_units: int, sheet_equipment_budget: int, seed: int, trace_memory: bool = True
 ) -> ScaleSmokeResult:
-    """Végigfuttatja a `generate -> plant_graph -> split` útvonalat, szakaszonként mérve (§7).
+    """Run the `generate -> plant_graph -> split` path, timing each stage (§7).
 
-    Az öt szakasz sorrendje maga a prototípus táblázatának oszlopsora: build
-    (a `DexpiModel` felépítése), loader (a teljes, "complete" gráf lineáris
-    betöltővel), conceptual (pyDEXPI saját összevonása), adapter (a séma
-    `DiGraph`-jára fordítás) és split (a splitter teljes hívása).
+    The five stages' order is exactly the prototype table's column order: build
+    (constructing the `DexpiModel`), loader (loading the full "complete" graph
+    with the linear loader), conceptual (pyDEXPI's own consolidation), adapter
+    (translation to the schema's `DiGraph`), and split (the splitter's full call).
 
-    `trace_memory=False` esetén a `tracemalloc` egyáltalán el sem indul — az
-    időmérés így nem torzul a memóriakövetés overheadjétől (lásd a modul
-    docstringjének táblázatát).
+    With `trace_memory=False`, `tracemalloc` never even starts — so the timing
+    isn't distorted by memory-tracking overhead (see the table in the module
+    docstring).
     """
     generator_config = GeneratorConfig(seed=seed, n_units=n_units)
     split_config = SplitConfig(seed=seed, sheet_equipment_budget=sheet_equipment_budget)
@@ -134,14 +134,14 @@ def run_scale_smoke(
 
 
 def _timed[T](action: Callable[[], T]) -> tuple[T, float]:
-    """Lefuttatja `action`-t; visszaadja az eredményt a mért idővel (`perf_counter`) együtt."""
+    """Run `action`; return the result together with the measured time (`perf_counter`)."""
     start = time.perf_counter()
     result = action()
     return result, time.perf_counter() - start
 
 
 def _print_human(result: ScaleSmokeResult) -> None:
-    """Emberi olvasásra szánt összefoglaló — a JSON mellett, nem helyette (lásd `main`)."""
+    """A summary meant for human reading — alongside the JSON, not instead of it (see `main`)."""
     print(
         f"n_units={result.n_units} sheet_equipment_budget={result.sheet_equipment_budget} "
         f"seed={result.seed}"
@@ -185,13 +185,13 @@ def _parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
 
 
 def main(argv: Sequence[str] | None = None) -> None:
-    """CLI belépési pont: `python -m plantgraph.benchmark.scale_smoke ...`."""
+    """CLI entry point: `python -m plantgraph.benchmark.scale_smoke ...`."""
     args = _parse_args(argv)
     result = run_scale_smoke(args.n_units, args.budget, args.seed, trace_memory=not args.no_memory)
     if not args.json:
         _print_human(result)
-    # a JSON-sor mindig kiíródik, hogy a futási jegyzetbe másolható legyen
-    # kézi begépelés nélkül (a felhasználó kérése)
+    # the JSON line is always printed, so it can be copied into a run note
+    # without manual retyping (the user's request)
     print(json.dumps(result.model_dump()))
 
 

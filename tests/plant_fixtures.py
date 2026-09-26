@@ -1,25 +1,23 @@
-"""Szintetikus üzemgráfokat épít a splitter tesztjeihez.
+"""Build synthetic plant graphs for the splitter's tests.
 
-A pyDEXPI-adapter (ADR-0003) még nem létezik, ezért ezek a fixture-ök
-networkx-szel közvetlenül épülnek fel — a splitter csak azt várja el a
-bemenettől, hogy minden csomópontján legyen 'node_class' és 'tag' attribútum,
-minden élén pedig 'relation' (lásd splitter.md 2. fejezet, "In", és
-plant-generator.md §5 finding 5). Nincs "test_" előtagja, ezért a pytest nem
-gyűjti be tesztként.
+The pyDEXPI adapter (ADR-0003) does not exist yet, so these fixtures are built
+directly with networkx — the splitter only requires that every node in the input
+carry 'node_class' and 'tag' attributes, and every edge a 'relation' (see
+splitter.md section 2, "In", and plant-generator.md §5 finding 5). No "test_"
+prefix, so pytest does not collect this file as a test module.
 
-A berendezés-osztályok a séma (plantgraph.graph.schema) valódi pyDEXPI
-neveit használják, hogy a splitter alapértelmezett equipment_classes-e
-(schema.EQUIPMENT_CLASSES) módosítás nélkül működjön ezen a fixture-ön.
-'utility_header' kivétel: nincs ilyen a sémában, szándékosan teszt-only
-osztály marad az utility_aware stratégia teszteléséhez.
+The equipment classes use the schema's (plantgraph.graph.schema) real pyDEXPI
+names, so the splitter's default equipment_classes (schema.EQUIPMENT_CLASSES)
+works on this fixture without modification. 'utility_header' is the exception:
+it has no schema entry, and deliberately stays a test-only class for exercising
+the utility_aware strategy.
 
-A berendezés-csomópontok kapnak egy 'manufacturer' és egy 'unit_id'
-attribútumot is. A 'manufacturer'-t a splitter sosem másolja át a
-reference-előfordulásokra — ez adja a fogódzót annak teszteléséhez, hogy a
-duplikált csomópont valóban csak a tag-et és kevés mást hordoz (lásd
-test_identity_groups.py). Az 'unit_id' a by_unit stratégiának kell
-(plant-generator.md §5 finding 3): minden technológiai lánc a saját egysége,
-a feed az elsővel oszt.
+Equipment nodes also get a 'manufacturer' and a 'unit_id' attribute. The splitter
+never copies 'manufacturer' onto reference occurrences — this gives a handle for
+testing that a duplicated node really does carry only the tag and little else
+(see test_identity_groups.py). 'unit_id' is needed by the by_unit strategy
+(plant-generator.md §5 finding 3): each process chain is its own unit, and the
+feed shares its unit with the first chain.
 """
 
 from __future__ import annotations
@@ -32,15 +30,16 @@ EQUIPMENT_CLASSES = ("CentrifugalPump", "HeatExchanger", "ProcessColumn", "Tank"
 def make_plant_graph(
     chain_length: int = 4, branches: int = 2, utility_fanout: int = 4
 ) -> nx.DiGraph:
-    """Egy hihető üzemgráf: feed, berendezés-láncok, utility fejvezeték és a rájuk kötött műszerek.
+    """A plausible plant graph: a feed, equipment chains, a utility header, and instruments on them.
 
-    Az utility fejvezeték szándékosan magas fokszámú — sok berendezéshez kapcsolódik,
-    ahogy egy gőz- vagy hűtővízhálózat is tenné (lásd utility_aware a strategies.py-ban).
+    A utility header is a shared supply line (e.g. steam or cooling water) feeding
+    many pieces of equipment; it is deliberately given a high degree here, as a
+    real one would have (see utility_aware in strategies.py).
 
     Args:
-        chain_length: hány berendezés van egy technológiai láncban a feedtől lefelé.
-        branches: hány párhuzamos technológiai lánc induljon a feedből.
-        utility_fanout: hány berendezéshez kapcsolódjon az utility fejvezeték.
+        chain_length: how many pieces of equipment sit in one process chain downstream of the feed.
+        branches: how many parallel process chains start from the feed.
+        utility_fanout: how many pieces of equipment the utility header connects to.
     """
     plant = nx.DiGraph()
     feed = "feed-1"
@@ -62,7 +61,7 @@ def make_plant_graph(
 
 
 def _add_chain(plant: nx.DiGraph, feed: str, branch: int, chain_length: int) -> list[str]:
-    """Egy technológiai láncot fűz a feedtől lefelé, minden állomáshoz egy-egy műszerrel."""
+    """String one process chain downstream of the feed, with one instrument per stage."""
     equipment_ids: list[str] = []
     upstream = feed
     unit_id = f"u{branch}"
@@ -81,9 +80,10 @@ def _add_chain(plant: nx.DiGraph, feed: str, branch: int, chain_length: int) -> 
 
 
 def _attach_instrument(plant: nx.DiGraph, equipment_id: str, branch: int, step: int) -> None:
-    """Egy műszert köt egy berendezésre.
+    """Attach an instrument to a piece of equipment.
 
-    Sosem számít a lapkeretbe, csak a berendezésével kell utaznia.
+    Never counts against the sheet budget on its own, it just needs to travel
+    with its equipment.
     """
     instrument_id = f"inst-{branch}-{step}"
     plant.add_node(

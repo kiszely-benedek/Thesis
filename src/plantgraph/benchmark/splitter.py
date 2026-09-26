@@ -1,17 +1,18 @@
-"""A szintetikus benchmark-generátor: egy üzemgráfot lapokra vág, és megoldókulcsot ad hozzá.
+"""The synthetic benchmark generator: cuts a plant graph into sheets, and produces an answer key.
 
-Az orchestrálás négy lépésből áll (splitter.md 2. fejezet):
+The orchestration has four steps (splitter.md section 2):
 
-  1. particionálás — melyik csomópont melyik lapra kerül (strategies.py),
-  2. lapok kivágása — az egy laphoz tartozó csomópontok/élek gráffá alakítása,
-  3. **azonosság-alapú** kereszthivatkozás: néhány berendezést több lapra is
-     felrajzolunk (splitter.md nyitott 3. kérdés),
-  4. **off-page connector**: a fennmaradó lapok közötti éleket két csonk-
-     csomóponttal helyettesítjük, és felírjuk a párjukat a megoldókulcsba
-     (connectors.py — saját modul, mert a splitter.py e nélkül túllépné a
-     400 soros fájlkorlátot).
+  1. partitioning — which node goes on which sheet (strategies.py),
+  2. cutting sheets — turning one sheet's nodes/edges into a graph,
+  3. **identity-based** cross-referencing: some equipment gets drawn on more
+     than one sheet (splitter.md open question 3),
+  4. **off-page connector**: the remaining cross-sheet edges are replaced with
+     two stub nodes, and their pairing is recorded in the answer key
+     (connectors.py — its own module, because splitter.py would otherwise
+     exceed the 400-line file limit).
 
-Ez a modul csak a gráfot alakítja; képet nem rajzol (splitter.md 1. fejezet).
+This module only manipulates the graph; it does not draw an image (splitter.md
+section 1).
 """
 
 from __future__ import annotations
@@ -30,11 +31,11 @@ from plantgraph.benchmark.strategies import STRATEGIES, StrategyFn
 
 
 def split(plant: nx.DiGraph[str], config: SplitConfig) -> tuple[list[SheetGraph], SplitManifest]:
-    """Egy teljes üzemgráfot lapokra vág, és előállítja a hozzá tartozó megoldókulcsot.
+    """Cut a full plant graph into sheets, and produce its matching answer key.
 
-    Minden véletlen döntés egyetlen, config.seed-ből magozott
-    random.Random-on megy át — a globális random modult sosem érinti, hogy a
-    "same seed -> byte-identical manifest" ígéret tartható legyen.
+    Every random decision goes through a single random.Random seeded from
+    config.seed — never touches the global random module, so the "same seed ->
+    byte-identical manifest" promise can hold.
     """
     _validate_has_equipment(plant, config.equipment_classes)
     rng = random.Random(config.seed)
@@ -80,7 +81,7 @@ def _validate_has_equipment(plant: nx.DiGraph[str], equipment_classes: set[str])
 
 
 def _hash_graph(plant: nx.DiGraph[str]) -> str:
-    """A gráf stabil ujjlenyomata — ez teszi reprodukálhatóvá a benchmark-példányt."""
+    """A stable fingerprint of the graph — what makes the benchmark instance reproducible."""
     nodes = sorted((node_id, sorted(attrs.items())) for node_id, attrs in plant.nodes(data=True))
     edges = sorted(
         (source, target, sorted(attrs.items())) for source, target, attrs in plant.edges(data=True)
@@ -90,9 +91,9 @@ def _hash_graph(plant: nx.DiGraph[str]) -> str:
 
 
 def _induce_sheets(plant: nx.DiGraph[str], node_sheet: dict[str, str]) -> dict[str, SheetGraph]:
-    """Minden csomópontot és lapon belüli élt a saját lapja gráfjába másol.
+    """Copy every node and every within-sheet edge into its own sheet's graph.
 
-    A lapok közötti éleket még érintetlenül hagyja — azokat a hívó kezeli.
+    Leaves cross-sheet edges untouched for now — the caller handles those.
     """
     sheets = {
         sheet_id: SheetGraph(sheet_id=sheet_id, graph=nx.DiGraph())
@@ -113,13 +114,13 @@ def _duplicate_equipment(
     config: SplitConfig,
     rng: random.Random,
 ) -> tuple[list[IdentityGroup], set[tuple[str, str]]]:
-    """Kiválaszt egy duplication_rate hányadot a lapok közti szomszédú berendezésekből.
+    """Select a duplication_rate share of the equipment with cross-sheet neighbours.
 
-    Ez az **azonosság-alapú** kereszthivatkozás (splitter.md nyitott 3.
-    kérdés): a kiválasztott berendezéseket felrajzoljuk minden olyan lapra,
-    ahol van szomszédjuk — egy home előfordulás teljes attribútumokkal, és
-    egy-egy reference előfordulás a tag-gel és kevés mással. Az itt feloldott
-    éleket a hívó már nem vágja el off-page connectorral.
+    This is the **identity-based** cross-referencing (splitter.md open question
+    3): the selected equipment gets drawn on every sheet where it has a
+    neighbour — one home occurrence with full attributes, and one reference
+    occurrence per sheet with the tag and little else. Edges resolved this way
+    are no longer cut by the caller with an off-page connector.
     """
     candidates = sorted(
         _equipment_with_cross_sheet_neighbours(plant, node_sheet, config.equipment_classes)
@@ -139,9 +140,9 @@ def _duplicate_equipment(
 def _equipment_with_cross_sheet_neighbours(
     plant: nx.DiGraph[str], node_sheet: dict[str, str], equipment_classes: set[str]
 ) -> list[str]:
-    """Azok a berendezések, amelyeknek van másik lapra eső szomszédja.
+    """The equipment that has a neighbour on another sheet.
 
-    Csak ezek jöhetnek szóba duplikálásra.
+    Only these are eligible for duplication.
     """
     result: list[str] = []
     for node_id, attrs in plant.nodes(data=True):
@@ -162,9 +163,9 @@ def _draw_on_neighbour_sheets(
     config: SplitConfig,
     rng: random.Random,
 ) -> tuple[IdentityGroup, set[tuple[str, str]]]:
-    """Egy kiválasztott berendezést felrajzol minden szomszédos lapjára.
+    """Draw a selected piece of equipment onto every one of its neighbouring sheets.
 
-    A helyi éleket a másolathoz köti azon a lapon, ahol felrajzoltuk.
+    Connects the local edges to the copy on the sheet where it was drawn.
     """
     home_sheet = node_sheet[node_id]
     home_attrs = plant.nodes[node_id]
@@ -201,7 +202,7 @@ def _wire_local_edges(
     sheet_id: str,
     node_sheet: dict[str, str],
 ) -> set[tuple[str, str]]:
-    """A duplikált csomópont azon éleit köti be, amelyek másik végpontja is ezen a lapon lakik."""
+    """Connect the duplicated node's edges whose other endpoint also lives on this sheet."""
     resolved: set[tuple[str, str]] = set()
     for _, target, attrs in plant.out_edges(node_id, data=True):
         if node_sheet[target] == sheet_id:
@@ -215,10 +216,10 @@ def _wire_local_edges(
 
 
 def _tag_variant(tag: str, rng: random.Random) -> str:
-    """Elüti a tagot a home-előfordulástól, hogy a benchmark ne legyen triviálisan összeilleszthető.
+    """Perturb the tag away from the home occurrence, so the benchmark isn't trivially matchable.
 
-    Az OPEN100-on ugyanaz a szivattyú RC-P102A és RCS-PU-102A alakban is
-    szerepel — ezt utánozzuk néhány egyszerű, de nem szabályos átalakítással.
+    On OPEN100, the same pump appears both as RC-P102A and RCS-PU-102A — this
+    imitates that with a few simple, but non-systematic, transformations.
     """
     mutations: list[Any] = [
         lambda t: t.replace("-", ""),  # RC-P102A -> RCP102A

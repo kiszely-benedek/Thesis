@@ -1,8 +1,8 @@
-"""`scale_smoke` tesztje — csak apró méretben (`plant-generator.md` §9 step 7).
+"""Tests for `scale_smoke` — small sizes only (`plant-generator.md` §9 step 7).
 
-A valódi, >=1000 lapos mérést a felhasználó futtatja és írja meg futási
-jegyzetként; ez a teszt csak azt bizonyítja, hogy az eszköz működik és a
-számai önmagukban ellentmondásmentesek, nem a méretét.
+The real, >=1000-sheet measurement is run by the user and written up as a run
+note; this test only proves that the tool works and that its own numbers are
+internally consistent, not that it scales.
 """
 
 from __future__ import annotations
@@ -29,7 +29,7 @@ def test_counts_are_self_consistent() -> None:
     assert result.n_connector_pairs >= 0
 
 
-# ---- tracemalloc bekapcsolva/kikapcsolva (a coordinator 2026-09-20-i mérése) ------------------
+# ---- tracemalloc on/off (from the coordinator's 2026-09-20 measurement) ------------------
 
 
 def test_with_memory_tracing_reports_a_peak_figure() -> None:
@@ -41,9 +41,9 @@ def test_with_memory_tracing_reports_a_peak_figure() -> None:
 
 
 def test_without_memory_tracing_reports_no_peak_figure() -> None:
-    # tracemalloc torzítja az időmérést (a modul docstringje méri, kb. 3-9x az
-    # allokáció-heavy szakaszokon) — --no-memory ezért teljesen kihagyja, és
-    # a hiányzó mérést None-nal jelzi, sosem 0-val
+    # tracemalloc distorts timing (the module docstring measures it, roughly 3-9x
+    # on allocation-heavy stages) — --no-memory skips it entirely, and signals
+    # the missing measurement with None, never 0
     result = run_scale_smoke(n_units=2, sheet_equipment_budget=2, seed=0, trace_memory=False)
 
     assert result.memory_traced is False
@@ -51,8 +51,8 @@ def test_without_memory_tracing_reports_no_peak_figure() -> None:
 
 
 def test_same_inputs_give_the_same_counts() -> None:
-    # a generátor és a splitter is determinisztikus egy seedre (invariáns 3,
-    # splitter.md §4) — ha ez elbukik, valamelyik nem az
+    # both the generator and the splitter are deterministic for a given seed
+    # (invariant 3, splitter.md §4) — if this fails, one of them is not
     first = run_scale_smoke(n_units=3, sheet_equipment_budget=2, seed=1)
     second = run_scale_smoke(n_units=3, sheet_equipment_budget=2, seed=1)
 

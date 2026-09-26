@@ -1,15 +1,15 @@
-"""Kivágja a csatlakozókat a rajzokból, és olvasható lapokra rendezi őket.
+"""Crop the off-page connectors out of the drawings and arrange them onto readable sheets.
 
-Miért így: a csatlakozók feliratát csak a képről lehet megszerezni (az annotációs
-fájlban nincs szöveg, lásd extract.py). Egy 2026-08-25-i próba viszont kimutatta,
-hogy a felirat teljes egészében a szimbólum befoglaló dobozán belül van, és
-kivágás után jól olvasható. Így nem kell OCR-modellt tanítani: elég kivágni és
-elolvasni.
+Why this approach: a connector's label can only be obtained from the image (the
+annotation file has no text at all, see extract.py). A trial run on 2026-08-25
+showed that the label sits entirely within the symbol's bounding box, and reads
+clearly once cropped. So there is no need to train an OCR model — cropping and
+reading it is enough.
 
-A kivágásokat montázsokba fűzzük — egy montázs több tucat csatlakozó képe egymás
-alatt —, mert így egy olvasással sok felirat feldolgozható. Minden sor bal
-oldalára odaírjuk, melyik csatlakozóhoz tartozik, különben a visszaolvasott
-szöveget nem lehetne a helyére tenni.
+The crops are strung into montages — one montage stacks images of a few dozen
+connectors on top of each other — so a single read can process many labels at
+once. Each row gets its connector's identifier written on the left, otherwise
+the text read back off it could not be matched to its source.
 """
 
 from __future__ import annotations
@@ -20,16 +20,16 @@ from PIL import Image, ImageDraw, ImageFont
 
 from plantgraph.benchmark.models import ConnectorObservation
 
-#: Mennyivel nyúljon ki a kivágás oldalra, a doboz szélességének szorosaként.
-#: A felirat a dobozon belül van, de a cső azonosítója mellette — ez a ráhagyás
-#: éri el azt is.
+#: How far the crop extends sideways, as a multiple of the box width.
+#: The label sits inside the box, but the pipe's identifier sits next to it —
+#: this margin reaches that too.
 X_FACTOR = 3.0
 
-#: Függőleges ráhagyás képpontban, hogy a kétsoros felirat kerete elférjen.
+#: Vertical margin in pixels, so a two-line label's frame still fits.
 Y_MARGIN = 25
 
-#: Hány sor kerüljön egy montázsra. Elég sok, hogy megérje egy olvasás, de nem
-#: annyi, hogy a lekicsinyítés miatt olvashatatlanná váljon.
+#: How many rows go on one montage. Enough to make a single read worthwhile,
+#: but not so many that shrinking it down makes it unreadable.
 ROWS_PER_MONTAGE = 12
 
 _ROW_WIDTH = 1500
@@ -38,13 +38,13 @@ _PAD = 14
 
 
 def crop_connector(image: Image.Image, observation: ConnectorObservation) -> Image.Image:
-    """Kivág egy csatlakozót a lapjából, a mellette futó cső azonosítójával együtt."""
+    """Crop a connector out of its sheet, together with the pipe identifier running next to it."""
     box = observation.bbox.expanded(X_FACTOR, Y_MARGIN).clipped_to(*image.size)
     return image.crop(box.as_pixels()).convert("L")
 
 
 def _load_font(size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
-    """Rendes betűtípus, ha található a gépen, különben a PIL apró beépített fontja."""
+    """A proper font if one is found on the machine, otherwise PIL's tiny built-in font."""
     for candidate in ("arial.ttf", "DejaVuSans.ttf"):
         try:
             return ImageFont.truetype(candidate, size)
@@ -54,21 +54,21 @@ def _load_font(size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
 
 
 def _scaled(crop: Image.Image, width: int) -> Image.Image:
-    """Egységes szélességre húzza a kivágást, megtartva az oldalarányt."""
+    """Scale the crop to a uniform width, keeping the aspect ratio."""
     height = max(1, round(width * crop.height / crop.width))
     return crop.resize((width, height), Image.Resampling.LANCZOS)
 
 
 def build_montage(crops: list[tuple[str, Image.Image]], row_width: int = _ROW_WIDTH) -> Image.Image:
-    """Egymás alá fűzi a kivágásokat, mindegyik mellé odaírva az azonosítóját.
+    """Stack the crops on top of each other, writing each one's identifier alongside it.
 
     Args:
-        crops: (azonosító, kép) párok. Az azonosító a bal margóra kerül, hogy a
-            sorból kiolvasott felirat visszavezethető legyen a csatlakozóra.
-        row_width: erre a képpontszélességre skálázzuk a sorokat.
+        crops: (identifier, image) pairs. The identifier is placed on the left
+            margin, so a label read off a row can be traced back to its connector.
+        row_width: the pixel width the rows are scaled to.
 
     Raises:
-        ValueError: ha a crops üres — üres montázst készíteni értelmetlen.
+        ValueError: if crops is empty — building an empty montage makes no sense.
     """
     if not crops:
         raise ValueError("cannot build a montage from zero crops")
@@ -89,10 +89,10 @@ def build_montage(crops: list[tuple[str, Image.Image]], row_width: int = _ROW_WI
 
 
 def montage_tag(observation: ConnectorObservation) -> str:
-    """Rövid sorazonosító: a lap száma, majd a csomópont sorszáma.
+    """A short row identifier: the sheet number, then the node's number.
 
-    Az 5-ös lap 'inlet/outlet47' csomópontjából '5/47' lesz. Elég rövid, hogy
-    elférjen a margón, és a teljes rajzsorozaton belül egyedi.
+    Sheet 5's 'inlet/outlet47' node becomes '5/47'. Short enough to fit the
+    margin, and unique across the whole drawing series.
     """
     digits = "".join(ch for ch in observation.node_id if ch.isdigit())
     return f"{observation.sheet_file}/{digits}"
@@ -104,17 +104,17 @@ def write_montages(
     out_dir: Path,
     rows_per_montage: int = ROWS_PER_MONTAGE,
 ) -> dict[str, str]:
-    """Kiírja az összes csatlakozót lefedő montázsokat, és visszaadja a hozzárendelést.
+    """Write out the montages covering every connector, and return the row-to-connector mapping.
 
     Args:
-        observations: a feldolgozandó csatlakozók, lapsorrendben.
-        image_for_sheet: laponként a megnyitott rajz, a kivágásokhoz.
-        out_dir: ide kerülnek a montage_NN.png fájlok.
-        rows_per_montage: hány csatlakozó jusson egy montázsra.
+        observations: the connectors to process, in sheet order.
+        image_for_sheet: the opened drawing for each sheet, for cropping.
+        out_dir: where the montage_NN.png files are written.
+        rows_per_montage: how many connectors go on one montage.
 
     Returns:
-        {sorazonosító: csatlakozókulcs} — ez a nyomkövetési lánc. Nélküle a
-        montázsról leolvasott felirat nem rendelhető ahhoz, amelyikről származik.
+        {row identifier: connector key} — the traceability chain. Without it, a
+        label read off a montage could not be attributed to its source.
     """
     out_dir.mkdir(parents=True, exist_ok=True)
     tag_to_key = {montage_tag(o): o.key for o in observations}

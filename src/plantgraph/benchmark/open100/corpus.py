@@ -1,13 +1,13 @@
-"""Végigmegy a 12 OPEN100 rajzon, és olvasásra készíti elő a csatlakozóikat.
+"""Walk the 12 OPEN100 drawings and prepare their connectors for reading.
 
-Ez az annotációs munka első fele. A cél, hogy a rajzokból visszanyerjük, melyik
-cső melyik másik lapon folytatódik — ez a megoldókulcs, amihez majd a rendszert
-mérjük. A folyamat két szakasza:
+This is the first half of the annotation work. The goal is to recover from the
+drawings which pipe continues onto which other sheet — this becomes the answer
+key the system will later be measured against. The process has two stages:
 
-  1. **ez a modul**: megkeresi a csatlakozókat és képeket készít róluk olvasásra,
-  2. később: a feliratok értelmezése és a lapok közötti párosítás.
+  1. **this module**: find the connectors and produce images of them for reading,
+  2. later: interpret the labels and pair connectors across sheets.
 
-Részletes terv: docs/private/40-design/open100-annotation.md.
+See docs/private/40-design/open100-annotation.md for the detailed plan.
 """
 
 from __future__ import annotations
@@ -25,19 +25,19 @@ SOURCE_NAME = "PID2Graph/OPEN100"
 
 
 class Open100Corpus:
-    """A 12 OPEN100 rajz és a hozzájuk tartozó annotációs fájlok együtt."""
+    """The 12 OPEN100 drawings together with their annotation files."""
 
     def __init__(self, root: Path) -> None:
-        """Ellenőrzi, hogy mind a 12 lap megvan, mielőtt bármit olvasnánk.
+        """Check that all 12 sheets are present before reading anything.
 
         Args:
-            root: a 'Complete/PID2Graph OPEN100' könyvtár, amelyben a 0.png .. 11.png
-            rajzok és a hozzájuk tartozó .graphml fájlok vannak.
+            root: the 'Complete/PID2Graph OPEN100' directory, holding the 0.png
+            through 11.png drawings and their matching .graphml files.
 
         Raises:
-            FileNotFoundError: ha a könyvtár nincs meg, vagy bármelyik lap hiányzik.
-                Inkább itt bukjon el, mint hogy egy hiányos rajzsorozatból készült
-                megoldókulcsra alapozzunk mérést.
+            FileNotFoundError: if the directory is missing, or any sheet is
+                missing. Better to fail here than to base a measurement on an
+                answer key built from an incomplete drawing series.
         """
         self.root = root
         if not root.is_dir():
@@ -54,14 +54,14 @@ class Open100Corpus:
             )
 
     def image(self, file_stem: str) -> Image.Image:
-        """Megnyitja egy lap rajzát. A hívó dolga lezárni."""
+        """Open one sheet's drawing image. Closing it is the caller's responsibility."""
         return Image.open(self.root / f"{file_stem}.png")
 
     def observations(self) -> list[ConnectorObservation]:
-        """Az összes lapközi csatlakozó mind a 12 rajzról, lapsorrendben.
+        """Every off-page connector from all 12 drawings, in sheet order.
 
-        A rajz szélessége azért kell, mert abból dől el, hogy a csatlakozó a bal
-        vagy a jobb lapszélen van.
+        The drawing's width is needed because it determines whether a connector
+        sits on the left or the right edge of the sheet.
         """
         found: list[ConnectorObservation] = []
         for stem in sorted(SHEETS, key=int):
@@ -71,19 +71,19 @@ class Open100Corpus:
         return found
 
     def prepare_reading(self, out_dir: Path) -> dict[str, str]:
-        """Kiírja a montázsokat és a hozzájuk tartozó két kísérőfájlt.
+        """Write out the montages and their two companion files.
 
-        Amit a kimeneti könyvtárban hagy:
-          - montage_NN.png: a csatlakozók képei, olvasásra,
-          - tag_to_key.json: melyik montázssor melyik csatlakozó (nyomkövetés),
-          - manifest_stage1.json: a megoldókulcs csontváza, egyelőre feliratok nélkül.
+        What it leaves in the output directory:
+          - montage_NN.png: images of the connectors, for reading,
+          - tag_to_key.json: which montage row is which connector (for traceability),
+          - manifest_stage1.json: the answer key's skeleton, without labels yet.
         """
         observations = self.observations()
         images = {stem: self.image(stem) for stem in SHEETS}
         try:
             tag_to_key = crops.write_montages(observations, images, out_dir)
         finally:
-            # A 12 nagy felbontású rajz sok memóriát fog; hiba esetén is engedjük el.
+            # the 12 high-resolution drawings hold a lot of memory; release it even on error
             for img in images.values():
                 img.close()
 
@@ -95,9 +95,9 @@ class Open100Corpus:
         return tag_to_key
 
     def draft_manifest(self, observations: list[ConnectorObservation]) -> SplitManifest:
-        """A megoldókulcs első változata: csak az, hol vannak a csatlakozók.
+        """The answer key's first draft: only where the connectors are.
 
-        A feliratok és a párosítások a második szakaszban kerülnek bele.
+        The labels and the pairings are added in the second stage.
         """
         return SplitManifest(
             source=SOURCE_NAME,

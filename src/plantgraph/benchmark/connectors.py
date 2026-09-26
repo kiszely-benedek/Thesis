@@ -1,8 +1,8 @@
-"""A splitter negyedik lépése: a lapok közötti éleket off-page connector-párokkal vágja el.
+"""The splitter's fourth step: cut cross-sheet edges apart with pairs of off-page connectors.
 
-Amikor egy él két lap között marad (nem oldotta fel az azonosság-alapú
-duplikálás, lásd `splitter.py`), a helyére mindkét lapon egy csonk-csomópont
-kerül, és a kettő a megoldókulcsban egy `ConnectorPair`-ként kapcsolódik össze
+When an edge still runs between two sheets (not resolved by identity-based
+duplication, see `splitter.py`), a stub node is placed on its behalf on each
+sheet, and the two are linked in the answer key as one `ConnectorPair`
 (`plant-generator.md` §5, finding 2a-2c).
 """
 
@@ -26,7 +26,7 @@ def cut_remaining_edges(
     config: SplitConfig,
     rng: random.Random,
 ) -> list[ConnectorPair]:
-    """A duplikációval fel nem oldott, lapok közötti éleket off-page connector-párokkal vágja el."""
+    """Cut apart cross-sheet edges not resolved by duplication: pairs of off-page connectors."""
     counters: dict[str, int] = dict.fromkeys(sheets, 0)
     cross_edges = sorted(
         (source, target)
@@ -49,7 +49,7 @@ def _cut_one_edge(
     config: SplitConfig,
     rng: random.Random,
 ) -> ConnectorPair:
-    """Egy lapok közötti élt vág el: két csonk-csomópont, két OffPageConnector, egy pár."""
+    """Cut one cross-sheet edge apart: two stub nodes, two OffPageConnectors, one pair."""
     sheet_source, sheet_target = node_sheet[source], node_sheet[target]
     edge_attrs = plant.edges[source, target]
     kind = _connector_kind(edge_attrs)
@@ -113,13 +113,13 @@ def _cut_one_edge(
 
 
 def _connector_kind(edge_attrs: dict[str, Any]) -> ConnectorKind:
-    """A vágott él relation attribútuma dönti el a fajtát: send_to -> PIPE, minden más -> SIGNAL."""
+    """The cut edge's relation attribute decides the kind: send_to -> PIPE, else -> SIGNAL."""
     relation = edge_attrs.get("relation", "send_to")
     return ConnectorKind.PIPE if relation == "send_to" else ConnectorKind.SIGNAL
 
 
 def _connector_class(kind: ConnectorKind, direction: Direction) -> str:
-    """A csonk node_class-a: irány és fajta adja ki a megfelelő pyDEXPI connector-osztályt."""
+    """The stub's node_class: direction and kind give the matching pyDEXPI connector class."""
     prefix = "FlowOut" if direction is Direction.OUTGOING else "FlowIn"
     suffix = "Pipe" if kind is ConnectorKind.PIPE else "Signal"
     return f"{prefix}{suffix}OffPageConnector"
@@ -133,10 +133,10 @@ def _stub_node_attrs(
     edge_attrs: dict[str, Any],
     config: SplitConfig,
 ) -> dict[str, Any]:
-    """A csonk-csomópont látható feliratai (splitter.md finding 2b): mit lát a resolver a lapon.
+    """The stub node's visible labels (splitter.md finding 2b): what the resolver sees on the sheet.
 
-    line_number/fluid_code csak akkor kerül rá, ha a vágott élen valóban
-    szerepelt — measured_by/control élen ezek nincsenek.
+    line_number/fluid_code are only added if they were really present on the cut
+    edge — a measured_by/control edge doesn't carry them.
     """
     attrs: dict[str, Any] = {
         "node_class": node_class,
@@ -155,9 +155,9 @@ def _stub_node_attrs(
 def _new_stub(
     sheet_id: str, counters: dict[str, int], config: SplitConfig, rng: random.Random
 ) -> tuple[str, str]:
-    """Egyedi csonk-azonosítót és feliratot gyárt a lapon belül.
+    """Produce a unique stub identifier and label within the sheet.
 
-    A számláló garantálja az egyediséget.
+    The counter guarantees uniqueness.
     """
     index = counters[sheet_id]
     counters[sheet_id] = index + 1
@@ -166,9 +166,9 @@ def _new_stub(
 
 
 def _make_tag(config: SplitConfig, sheet_id: str, index: int, rng: random.Random) -> str:
-    """A csatlakozó felirata a konfigurált konvenció szerint.
+    """The connector's label, following the configured convention.
 
-    A grammatika generátor-paraméter (splitter.md 3. fejezet).
+    The grammar is a generator parameter (splitter.md section 3).
     """
     if config.numbering_scheme is NumberingScheme.PID_STYLE:
         base = f"PID-{sheet_id}-{index}"

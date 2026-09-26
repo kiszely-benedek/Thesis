@@ -1,17 +1,17 @@
-"""Csatlakozó-feliratok kiolvasása egy lokalizált lap csomópont-attribútumaiból.
+"""Read off-page connector labels from a localized sheet's node attributes.
 
-A resolver csak azt láthatja, ami egy valódi rajzon is olvasható lenne: a
-csatlakozó szimbólum saját feliratát és a hozzá kötött egyetlen élét (design
-`kg-construction.md` §5.1). Ez a modul sosem nyúl a `SheetGraph.connectors`
-listához — az a splitter válaszkulcsa, amit `localize()` már kiürített (L2
-szivárgás, §4.1).
+The resolver may see only what would also be readable on a real drawing: a
+connector symbol's own label and the single edge attached to it (design
+`kg-construction.md` §5.1). This module never touches the `SheetGraph.connectors`
+list — that is the splitter's answer key, already emptied out by `localize()`
+(L2 leak, §4.1).
 
-Egy csatlakozó-csomópontnak nem mindig van saját száma és hivatkozott
-rajzszáma: egy importált fájlnál ez a DEXPI-hivatkozás-leképezés még nyitott
-kérdés (`kg-construction.md` §11 OQ1b), a szintetikus `DRAWING_ONLY` dial pedig
-csak a partner saját számát hagyja el, nem a rajzszámot. Egy felirat, aminek
-egyáltalán nincs sem száma, sem hivatkozott rajzszáma, ezért nem hiba —
-`UnresolvedConnector`-ként kerül ki, sosem dob kivételt.
+A connector node does not always have its own number and a referenced drawing
+number: for an imported file, this DEXPI-reference mapping is still an open
+question (`kg-construction.md` §11 OQ1b), and the synthetic `DRAWING_ONLY` dial
+only leaves out the partner's own number, not the drawing number. A label with
+neither its own number nor a referenced drawing number is therefore not an
+error — it comes out as an `UnresolvedConnector`, and never raises.
 """
 
 from __future__ import annotations
@@ -24,8 +24,8 @@ from plantgraph.benchmark.models import ConnectorKind, Direction, UnresolvedConn
 from plantgraph.benchmark.sheet_graph import SheetGraph
 from plantgraph.graph.schema import CONNECTOR_CLASSES, NodeClass
 
-# node_class -> (irány, fajta): a csonk osztálya egyszerre kódolja mindkettőt
-# (connectors.py:_connector_class ugyanezt gyártja, csak ellenkező irányban).
+# node_class -> (direction, kind): the stub's class encodes both at once
+# (connectors.py:_connector_class produces the same thing, in the opposite direction).
 _CONNECTOR_NODE_CLASSES: dict[str, tuple[Direction, ConnectorKind]] = {
     NodeClass.FLOW_OUT_PIPE_OFF_PAGE_CONNECTOR.value: (Direction.OUTGOING, ConnectorKind.PIPE),
     NodeClass.FLOW_IN_PIPE_OFF_PAGE_CONNECTOR.value: (Direction.INCOMING, ConnectorKind.PIPE),
@@ -35,14 +35,14 @@ _CONNECTOR_NODE_CLASSES: dict[str, tuple[Direction, ConnectorKind]] = {
 
 
 class ConnectorLabel(BaseModel):
-    """Amit egy off-page connector szimbólumról egy valódi rajzon le lehetne olvasni.
+    """What could be read off an off-page connector symbol on a real drawing.
 
-    Ez a közös nézet a szintetikus splitter és a majdani OPEN100-adapter
-    (`ConnectorObservation -> ConnectorLabel`, Phase 5) között — a párosítás
-    (`pairing.py`) csak ezt látja, sosem a forrás-specifikus modelleket. Az
-    opcionális mezők hiánya nem hiba: egy gyengébb feliratozási konvenció
-    (`connector_label_detail=DRAWING_ONLY`) egyszerűen nem írja rá a partner
-    saját számát a szimbólumra.
+    This is the shared view between the synthetic splitter and the future
+    OPEN100 adapter (`ConnectorObservation -> ConnectorLabel`, Phase 5) — pairing
+    (`pairing.py`) only ever sees this, never the source-specific models. A
+    missing optional field is not an error: a weaker labelling convention
+    (`connector_label_detail=DRAWING_ONLY`) simply does not print the partner's
+    own number on the symbol.
     """
 
     key: str
@@ -60,12 +60,12 @@ class ConnectorLabel(BaseModel):
 def read_connector_labels(
     sheet: SheetGraph,
 ) -> tuple[list[ConnectorLabel], list[UnresolvedConnector]]:
-    """Egy lokalizált lap összes csatlakozó-csomópontját `ConnectorLabel`-lé alakítja.
+    """Turn every connector node on a localized sheet into a `ConnectorLabel`.
 
     Returns:
-        A feliratok, amikhez volt elég adat, és külön azok, amiknek nincs se saját
-        száma, se hivatkozott rajzszáma — ezek `UnresolvedConnector`-ként kerülnek ki
-        (lásd a modul docstringjét), sosem dobnak kivételt.
+        The labels for which there was enough data, and separately those with
+        neither their own number nor a referenced drawing number — these come
+        out as `UnresolvedConnector` (see the module docstring), never raising.
     """
     labels: list[ConnectorLabel] = []
     unresolved: list[UnresolvedConnector] = []
@@ -105,15 +105,15 @@ def _read_one_label(
 
 
 def _single_incident_edge_attrs(sheet: SheetGraph, node_id: str) -> dict[str, Any]:
-    """A csonk egyetlen élének attribútumai.
+    """The attributes of the stub's single edge.
 
-    Mindkét irányt megnézzük, mert az attól függ, a lap melyik oldalára esett
-    a vágás (`rejoin.py:82-95` ugyanezt a mintát követi).
+    We check both directions, because which one applies depends on which side
+    of the cut the sheet landed on (`rejoin.py:82-95` follows the same pattern).
 
     Raises:
-        ValueError: ha a csomóponthoz nem pontosan egy él kapcsolódik — egy
-            valódi off-page connector szimbólumnak mindig egyetlen csöve vagy
-            jelvezetéke van.
+        ValueError: if the node does not have exactly one incident edge — a
+            real off-page connector symbol always has a single pipe or signal
+            line attached.
     """
     out_edges = [attrs for _, _, attrs in sheet.graph.out_edges(node_id, data=True)]
     in_edges = [attrs for _, _, attrs in sheet.graph.in_edges(node_id, data=True)]

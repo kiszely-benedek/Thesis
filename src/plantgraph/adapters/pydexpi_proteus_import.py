@@ -1,16 +1,19 @@
-"""Betölt egy önálló Proteus XML rajzot egyetlen `SheetGraph`-ként (`kg-construction.md` §3, T1).
+"""Load a standalone Proteus XML drawing as a single `SheetGraph` (`kg-construction.md` §3, T1).
 
-Ez a modul köti össze az EXP-0001 (egylapos) és EXP-0002 (plant-scale) kart: mindkettőnek
-ugyanazon az ajtón — `SheetGraph` → `localize` → `resolve` — kell belépnie, különben egy
-eltérés a kettő közt csővezeték-különbség lenne, nem skálahatás (ADR-0009 indoklása). A
-generátor a saját `plant_graph`-ján át lép be; ez a modul ugyanezt egy külső fájlra teszi meg.
+This module is the link between the EXP-0001 (single-sheet) and EXP-0002
+(plant-scale) experiment arms: both must enter through the same door —
+`SheetGraph` -> `localize` -> `resolve` — otherwise a difference between the
+two would be a piping difference, not a scale effect (ADR-0009's rationale).
+The generator enters via its own `plant_graph`; this module does the same for
+an external file.
 
-**Miért nem tűnhet el semmi csendben.** Egy valódi rajz (pl. `data/external/C01V04-VER.EX01.xml`)
-olyan pyDEXPI-osztályokat is tartalmaz, amikre a séma (`graph.schema`) nincs curated névvel
-felkészítve (`PipeTee`, `BlindFlange`, egy dugattyús szivattyú, ...). ADR-0016 óta ezek sem
-esnek ki: a `pydexpi_generic` fallback `GenericItem`-mé alakítja őket, a pyDEXPI-osztályukat
-megőrizve (§3.1) — ez a modul csak a hívási sorrendet adja, és jelenti, ha mégis maradna
-nyomtalanul elveszett csomópont vagy él.
+**Why nothing may silently disappear.** A real drawing (e.g.
+`data/external/C01V04-VER.EX01.xml`) also contains pyDEXPI classes the schema
+(`graph.schema`) has no curated name for (`PipeTee`, `BlindFlange`, a
+reciprocating pump, ...). Since ADR-0016, these are not dropped either: the
+`pydexpi_generic` fallback converts them to `GenericItem`, preserving their
+pyDEXPI class (§3.1) — this module only supplies the call order, and reports
+if a node or edge would still be lost without a trace.
 """
 
 from __future__ import annotations
@@ -43,7 +46,7 @@ from plantgraph.graph.validation import SchemaViolation, validate_sheet_graph
 
 
 class ImportReport(BaseModel):
-    """Az importálás lefedettségi jelentése: honnan jött a lap-azonosító, mi veszett el, hol."""
+    """The import's coverage report: where the sheet id came from, what was lost, and where."""
 
     source_file: str
     sha256: str
@@ -54,21 +57,22 @@ class ImportReport(BaseModel):
     conceptual_nodes: int
     conceptual_edges: int
     conversion: ConversionReport
-    #: kulcs "SourceClass->TargetClass" — az az él, aminek legalább az egyik vége nem
-    #: térképezett osztály, ezért `ConversionReport.edges_dropped_per_label` nem látja
+    #: key "SourceClass->TargetClass" — an edge with at least one endpoint of an
+    #: unmapped class, so `ConversionReport.edges_dropped_per_label` never sees it
     edges_lost_to_unmapped_endpoints: dict[str, int] = Field(default_factory=dict)
-    #: minden térképezett csomópont a valódi pyDEXPI-osztálya szerint, ismert és
-    #: `GenericItem` egyaránt — a fallback saját lefedettségi számlálója (ADR-0016 §3.1 rule 6)
+    #: every mapped node by its real pyDEXPI class, known and `GenericItem` alike
+    #: — the fallback's own coverage counter (ADR-0016 §3.1 rule 6)
     nodes_per_dexpi_class: dict[str, int] = Field(default_factory=dict)
-    #: hány, egyébként `related_to`-vá váló él ütközött egy már meglévő éllel a pár közt
-    #: (ugyanaz a csomópont-pár, ADR-0016 §3.1 rule 5) — ilyenkor nem lesz duplikátum él
+    #: how many edges that would otherwise become `related_to` collided with an
+    #: existing edge on the same pair (same node pair, ADR-0016 §3.1 rule 5) — no
+    #: duplicate edge results in that case
     related_to_collapsed: int = 0
     violations: list[SchemaViolation] = Field(default_factory=list)
 
 
 @dataclass
 class ImportedSheet:
-    """Egy importált Proteus rajz: a lap gráfja plusz a hozzá tartozó jelentés."""
+    """An imported Proteus drawing: the sheet's graph plus its matching report."""
 
     sheet: SheetGraph
     report: ImportReport
@@ -77,15 +81,16 @@ class ImportedSheet:
 def import_proteus_sheet(
     path: Path, *, sheet_id: str | None = None, plant_id: str | None = None
 ) -> ImportedSheet:
-    """Betölt egy Proteus XML-t, és a séma `DiGraph`-jára fordítva egyetlen `SheetGraph`-ot ad.
+    """Load a Proteus XML file, and produce a single `SheetGraph`, in the schema's `DiGraph` form.
 
-    A csomópontok a pyDEXPI-belső konceptuális azonosítójukról a `proteusId`-jukra kapnak új
-    nevet: az utóbbi stabil két betöltés között, az előbbi nem (§2 mérve) — az importnak ezért
-    determinisztikusnak kell lennie a `proteusId`-n, nem a konceptuális gráf saját id-jén.
+    Nodes are renamed from their internal pyDEXPI conceptual identifier to their
+    `proteusId`: the latter is stable across two loads, the former is not
+    (verified §2) — so the import must be deterministic on `proteusId`, not on
+    the conceptual graph's own id.
 
-    A visszaadott lapnak nincsenek off-page connectorai (`sheet.connectors == []`): a DEXPI
-    csatlakozó-hivatkozások séma-osztályokra fordítása még nyitott kérdés (§11), EX01 pedig
-    egyetlen lap, tehát ezt egyelőre nem is igényli.
+    The returned sheet has no off-page connectors (`sheet.connectors == []`):
+    translating DEXPI connector references into schema classes is still an open
+    question (§11), and EX01 is a single sheet, so it doesn't need this yet.
     """
     model = load_proteus(path.parent, path.name)
     conceptual = _load_conceptual_graph(model)
@@ -94,8 +99,8 @@ def import_proteus_sheet(
     resolved_sheet_id, sheet_id_source = _resolve_sheet_id(sheet_id, model, path)
     _check_no_colon(resolved_sheet_id, "sheet_id")
 
-    # generikus fallback (ADR-0016, §3.1): a séma-ismeretlen osztályokat GenericItem-mé
-    # címkézi egy másolaton, mielőtt az adapter eldobná őket
+    # generic fallback (ADR-0016, §3.1): relabels schema-unknown classes to GenericItem
+    # on a copy, before the adapter would otherwise drop them
     prepared, generic_infos = prepare_generic(conceptual)
     plant, conversion = map_conceptual_graph(prepared, resolved_plant_id, stream_kind={})
     annotate_generic(plant, generic_infos, conceptual)
@@ -148,7 +153,7 @@ def _copy_piping_component_names(
 
 
 def _load_conceptual_graph(model: DexpiModel) -> nx.MultiDiGraph[str]:
-    """A teljes -> konceptuális gráf két lépése egy helyen (§3.6, mint a generátornál)."""
+    """The complete -> conceptual graph's two steps in one place (§3.6, same as the generator's)."""
     complete = load_complete_graph(model)
     return abstract_conceptual_graph(complete)
 
@@ -156,7 +161,7 @@ def _load_conceptual_graph(model: DexpiModel) -> nx.MultiDiGraph[str]:
 def _resolve_sheet_id(
     sheet_id: str | None, model: DexpiModel, path: Path
 ) -> tuple[str, Literal["drawing_number", "file_stem", "argument"]]:
-    """A lap-azonosító forrása: átadott érték > nyomtatott rajzszám > fájlnév (§3 "Rules")."""
+    """The sheet id's source: given value > printed drawing number > file name (§3 "Rules")."""
     if sheet_id is not None:
         return sheet_id, "argument"
     drawing_number = _drawing_number(model)
@@ -166,19 +171,19 @@ def _resolve_sheet_id(
 
 
 def _drawing_number(model: DexpiModel) -> str | None:
-    """A `MetaData.drawingNumber` — a rajzon ténylegesen nyomtatott azonosító, ha van ilyen elem."""
+    """`MetaData.drawingNumber` — the identifier actually printed on the drawing, if present."""
     metadata = model.conceptualModel.metaData if model.conceptualModel is not None else None
     return metadata.drawingNumber if metadata is not None else None
 
 
 def _drawing_name(model: DexpiModel) -> str | None:
-    """A `MetaData.drawingName` — csak tájékoztató mező a jelentésben, semmi nem épül rá."""
+    """`MetaData.drawingName` — an informational field in the report only; nothing depends on it."""
     metadata = model.conceptualModel.metaData if model.conceptualModel is not None else None
     return metadata.drawingName if metadata is not None else None
 
 
 def _check_no_colon(sheet_id: str, field_name: str) -> None:
-    """A `:` a resolver kulcs-elválasztója (`localize.py`, `OffPageConnector.key`) — tiltott."""
+    """`:` is the resolver's key separator (`localize.py`, `OffPageConnector.key`) — forbidden."""
     if ":" in sheet_id:
         raise ValueError(
             f"{field_name} {sheet_id!r} must not contain ':', the resolver's key separator"
@@ -188,15 +193,16 @@ def _check_no_colon(sheet_id: str, field_name: str) -> None:
 def _edges_lost_to_unmapped_endpoints(
     conceptual: nx.MultiDiGraph[str], mapped_ids: set[str]
 ) -> dict[str, int]:
-    """A konceptuális élek, amiket a `ConversionReport` nem számol: az egyik végük nem térképezett.
+    """Conceptual edges the `ConversionReport` doesn't count: one of their ends is unmapped.
 
-    `_map_edges` (`pydexpi_adapter.py`) ezeket némán átlépi, mert csak a mindkét végén térképezett
-    éleket nézi — ez a függvény pótolja a hiányzó számlálást (§2, mérve: 23/39 EX01-en).
+    `_map_edges` (`pydexpi_adapter.py`) silently skips these, since it only looks
+    at edges mapped on both ends — this function supplies the missing count (§2,
+    measured: 23/39 on EX01).
     """
     lost: collections.Counter[str] = collections.Counter()
     for source, target, attrs in conceptual.edges(data=True):
         if attrs.get("attr_name") == "parentStructure":
-            continue  # a struktúra-élt a _fold_parent_structure oldja fel, nem topológia-él
+            continue  # resolved by _fold_parent_structure instead; not a topology edge
         if source in mapped_ids and target in mapped_ids:
             continue
         source_label = conceptual.nodes[source].get("label")
@@ -208,10 +214,10 @@ def _edges_lost_to_unmapped_endpoints(
 def _relabel_to_proteus_ids(
     plant: nx.DiGraph[str], conceptual: nx.MultiDiGraph[str], mapped_ids: set[str]
 ) -> nx.DiGraph[str]:
-    """A térképezett gráfot a konceptuális id-król a stabil `proteusId`-ra nevezi át.
+    """Rename the mapped graph from its conceptual ids to the stable `proteusId`.
 
-    Rendezett beszúrási sorrendben építi újra (mint a generátor `map_conceptual_graph`-ja),
-    hogy két import ugyanazt a fájlt byte-azonos sorrendben adja vissza.
+    Rebuilt in sorted insertion order (like the generator's `map_conceptual_graph`),
+    so two imports of the same file return it in byte-identical order.
     """
     id_map = _proteus_id_map(conceptual, mapped_ids)
     renamed = nx.relabel_nodes(plant, id_map, copy=True)
@@ -224,7 +230,7 @@ def _relabel_to_proteus_ids(
 
 
 def _proteus_id_map(conceptual: nx.MultiDiGraph[str], mapped_ids: set[str]) -> dict[str, str]:
-    """Konceptuális id -> `proteusId` leképezés a térképezett csomópontokra, egyediséget nézve."""
+    """Map conceptual id -> `proteusId` for the mapped nodes, checking uniqueness."""
     id_map: dict[str, str] = {}
     seen: set[str] = set()
     for node_id in mapped_ids:
@@ -240,5 +246,5 @@ def _proteus_id_map(conceptual: nx.MultiDiGraph[str], mapped_ids: set[str]) -> d
 
 
 def _sha256_of_file(path: Path) -> str:
-    """A fájl tartalmának hash-e — a jelentés így önmagában rögzíti, melyik bájtokból készült."""
+    """A hash of the file's contents — lets the report record which bytes it came from."""
     return hashlib.sha256(path.read_bytes()).hexdigest()

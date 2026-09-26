@@ -1,9 +1,8 @@
-"""`pair_connectors` — a két párosító szabály és a rájuk épülő megoldatlan-jelentés.
+"""`pair_connectors` — the two pairing rules, and the unresolved-reporting built on them.
 
-A hibakereséshez kézzel épített `ConnectorLabel`-eken teszteli az egyes
-szabályokat elszigetelten; a design §10 T3 elfogadási feltételét (a predikált
-párok egyeznek a megoldókulccsal) a teljes splitter -> localize -> pairing
-csővezetéken futtatva.
+Tests each rule in isolation on hand-built `ConnectorLabel`s; design §10 T3's
+acceptance condition (the predicted pairs match the answer key) is exercised
+through the full splitter -> localize -> pairing pipeline.
 """
 
 from __future__ import annotations
@@ -24,7 +23,7 @@ _ALL_SHEET_IDS = {"0", "1"}
 
 
 def _generated_plant(seed: int = 8) -> nx.DiGraph[str]:
-    """Egy 4-egységes szintetikus üzem — n_units alapértéke (`GeneratorConfig`)."""
+    """A 4-unit synthetic plant — the default of n_units (`GeneratorConfig`)."""
     config = GeneratorConfig(seed=seed)
     builder = GraphPlantBuilder(config.plant_id)
     plan_plant(config, builder)
@@ -43,7 +42,7 @@ def _label(
     kind: ConnectorKind = ConnectorKind.PIPE,
     relation: str = "send_to",
 ) -> ConnectorLabel:
-    """Kényelmi gyár: csak azt a mezőt kell kiírni a hívónak, ami az adott tesztben számít."""
+    """Convenience factory: caller only needs to spell out the field that matters for this test."""
     return ConnectorLabel(
         key=key,
         sheet_id=sheet_id,
@@ -84,8 +83,8 @@ def test_absent_target_sheet_is_unresolved_with_a_named_reason() -> None:
 
 
 def test_ambiguous_connector_number_falls_back_to_line_number() -> None:
-    """Két azonos connector_number-ű bejövő (valódi duplicate_tag eset, design §2) nem választható
-    szét a legerősebb szabállyal — a line_number viszont igen, a másik pedig megoldatlan marad.
+    """Two incoming labels sharing a connector_number (a real duplicate_tag case, design §2) can't
+    be told apart by the strongest rule — but line_number can, and the other stays unresolved.
     """
     out_label = _label(
         "0:out",
@@ -142,7 +141,7 @@ def test_shared_label_group_with_more_than_two_labels_is_all_unresolved() -> Non
 
 
 def test_service_direction_used_when_no_line_number_is_printed() -> None:
-    """Jelvezeték-vágásnál (measured_by, control, ...) nincs line_number, a gyengébb szabály fut."""
+    """A signal-line cut (measured_by, control, ...) has no line_number, so the weaker rule runs."""
     out_label = _label(
         "0:out", "0", Direction.OUTGOING, "A", "1", kind=ConnectorKind.SIGNAL, relation="control"
     )
@@ -158,23 +157,23 @@ def test_service_direction_used_when_no_line_number_is_printed() -> None:
 def _connector_labels(
     config: SplitConfig,
 ) -> tuple[list[ConnectorLabel], list[ConnectorPair], OccurrenceMap]:
-    """A teljes csővezeték T3-ig: split -> localize -> minden lap feliratai egy listában."""
+    """The full pipeline up to T3: split -> localize -> every sheet's labels in one list."""
     plant = _generated_plant()
     sheets, manifest = split(plant, config)
     localized, occurrence_map = localize(sheets)
     labels = [
         label
         for sheet in localized
-        for label in read_connector_labels(sheet)[0]  # a splitter mindig ad hivatkozott rajzszámot
+        for label in read_connector_labels(sheet)[0]  # the splitter always gives a drawing number
     ]
     return labels, manifest.connector_pairs, occurrence_map
 
 
 def _to_original_pair(pair: ConnectorPair, occurrence_map: OccurrenceMap) -> frozenset[str]:
-    """Egy predikált pár helyi kulcsait az eredeti, lap-minősített kulcsokra fordítja.
+    """Translate a predicted pair's local keys to the original, sheet-qualified keys.
 
-    Csak a teszt fordítja vissza — a resolver sosem kapja meg az `OccurrenceMap`-et
-    (design §4.3, D1 döntés).
+    Only the test translates back — the resolver never receives the
+    `OccurrenceMap` (design §4.3, decision D1).
     """
     return frozenset(
         {occurrence_map.original_key(pair.from_key), occurrence_map.original_key(pair.to_key)}
@@ -182,11 +181,11 @@ def _to_original_pair(pair: ConnectorPair, occurrence_map: OccurrenceMap) -> fro
 
 
 def test_predicted_pairs_equal_the_manifest_at_splitter_defaults() -> None:
-    """Design §10 T3 elfogadás: alapértelmezett feliratozásnál a predikció a megoldókulcs maga.
+    """Design §10 T3 acceptance: under default labelling, the prediction is the answer key itself.
 
-    A budget/seed csak azért tér el az alapértéktől, hogy a 4-egységes üzem
-    ténylegesen több lapra és lapok közötti vágásra essen szét — minden más
-    dial (feliratozás, számozás, egyezés) a `SplitConfig` alapértéke marad.
+    budget/seed only differ from the default so that the 4-unit plant actually
+    splits across several sheets with cross-sheet cuts — every other dial
+    (labelling, numbering, matching) stays at `SplitConfig`'s default.
     """
     config = SplitConfig(sheet_equipment_budget=3, seed=0)
     labels, manifest_pairs, occurrence_map = _connector_labels(config)
@@ -201,8 +200,8 @@ def test_predicted_pairs_equal_the_manifest_at_splitter_defaults() -> None:
 
 
 def test_every_connector_is_paired_or_unresolved_at_drawing_only_detail() -> None:
-    """Design §10 T3 elfogadás: a gyengébb feliratozásnál sem tűnhet el csendben egy csatlakozó,
-    és amit párba tett, annak helyesnek kell lennie (a §5.2 property: pontosság mindig 1.0).
+    """Design §10 T3 acceptance: even under weaker labelling, no connector may silently disappear,
+    and whatever gets paired must be correct (the §5.2 property: precision is always 1.0).
     """
     config = SplitConfig(
         sheet_equipment_budget=3, seed=0, connector_label_detail=ConnectorLabelDetail.DRAWING_ONLY

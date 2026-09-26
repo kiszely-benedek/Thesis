@@ -1,4 +1,4 @@
-"""A gráf séma invariánsai: labels_for és a két validate_* függvény kézzel épített gráfokon."""
+"""Invariants of the graph schema: labels_for and the two validate_* functions, hand-built input."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from plantgraph.graph import schema, validation
 
 
 def _valid_plant() -> nx.DiGraph[str]:
-    """Egy pumpa, egy szelep és egy műszer, mindegyik kötelező mezővel, két topológia-relációval."""
+    """A pump, a valve, and an instrument, each with required fields, two topology relations."""
     plant: nx.DiGraph[str] = nx.DiGraph()
     plant.add_node("p1", node_class="CentrifugalPump", tag="P-101", plant_id="p0", unit_id="u1")
     plant.add_node("v1", node_class="GlobeValve", tag="GV-101", plant_id="p0", unit_id="u1")
@@ -32,14 +32,14 @@ def test_plant_graph_rejects_an_unknown_node_class() -> None:
     plant = _valid_plant()
     plant.nodes["p1"]["node_class"] = "SteamTrap"
     violations = validation.validate_plant_graph(plant)
-    # a rossz node_class a saját csomópontján és a rá illeszkedő éleken is
-    # hibát jelez (bad_endpoint) — itt csak azt nézzük, hogy p1 maga jelentve van
+    # the bad node_class flags a violation both on its own node and on the edges
+    # touching it (bad_endpoint) — here we only check that p1 itself is reported
     assert any(v.kind == "unknown_class" and v.subject == "p1" for v in violations)
 
 
 def test_plant_graph_rejects_a_connector_node() -> None:
-    # off-page connector csonkot csak a splitter tesz lapra — egy teljes
-    # üzemgráfban ez séma-hiba, nem csak "ismeretlen osztály"
+    # an off-page connector stub is only placed by the splitter — in a full
+    # plant graph it is a schema violation, not merely "unknown class"
     plant = _valid_plant()
     plant.add_node(
         "opc1", node_class="FlowOutPipeOffPageConnector", tag="X", plant_id="p0", unit_id="u1"
@@ -61,7 +61,7 @@ def test_plant_graph_reports_missing_required_properties() -> None:
 
 def test_plant_graph_rejects_a_duplicate_tag() -> None:
     plant = _valid_plant()
-    plant.nodes["v1"]["tag"] = "P-101"  # ugyanaz, mint p1 tag-je
+    plant.nodes["v1"]["tag"] = "P-101"  # same as p1's tag
     violations = validation.validate_plant_graph(plant)
     assert [v.kind for v in violations] == ["duplicate_tag"]
     assert violations[0].subject == "v1"
@@ -76,7 +76,7 @@ def test_plant_graph_rejects_an_edge_with_unknown_relation() -> None:
 
 
 def test_plant_graph_rejects_a_bad_endpoint() -> None:
-    # send_to célja csak berendezés/csővezeték lehet, egy műszer nem
+    # send_to's target can only be equipment/piping, never an instrument
     plant = _valid_plant()
     plant.add_edge("p1", "psgf1", relation="send_to")
     violations = validation.validate_plant_graph(plant)
@@ -84,8 +84,8 @@ def test_plant_graph_rejects_a_bad_endpoint() -> None:
 
 
 def test_sheet_graph_allows_a_reference_occurrence_with_only_tag_and_class() -> None:
-    # azonosság-alapú kereszthivatkozás (splitter.md nyitott 3. kérdés): a
-    # reference-előfordulás nem hordoz plant_id-t/unit_id-t
+    # identity-based cross-referencing (splitter.md open question 3): a
+    # reference occurrence carries no plant_id/unit_id
     sheet: nx.DiGraph[str] = nx.DiGraph()
     sheet.add_node("p1", node_class="CentrifugalPump", tag="P-101")
     assert validation.validate_sheet_graph(sheet) == []

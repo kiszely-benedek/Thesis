@@ -1,14 +1,13 @@
-"""AST-alapú őr: a resolver sosem olvashatja a válaszkulcsot (design `kg-construction.md` §5.7).
+"""AST-based guard: the resolver must never read the answer key (design `kg-construction.md` §5.7).
 
-A `resolve()`-nak vakon kell működnie a splitteren és az OPEN100-on — ha
-bármelyik `plantgraph.resolution` modul importálná a `SplitManifest`-et, az
-`OccurrenceMap`-et máshonnan, vagy a splitter belső moduljait
-(`benchmark.splitter`, `benchmark.rejoin`, `benchmark.strategies`) vagy az
-`eval` csomagot, az visszanyitná a szivárgást, amit `localize()` és
-`contract.py` lezárt (design §4). Ez a teszt nem a viselkedést, hanem magát a
-forráskódot ellenőrzi: egyetlen tiltott import is elég ahhoz, hogy a design
-ígérete hamis legyen. `localize.py` maga **definiálja** az `OccurrenceMap`-et
-— ez nem import, ezért nem bukik el rajta.
+`resolve()` must stay blind to the splitter and to OPEN100 — if any
+`plantgraph.resolution` module imported `SplitManifest`, `OccurrenceMap` from
+elsewhere, or the splitter's internal modules (`benchmark.splitter`,
+`benchmark.rejoin`, `benchmark.strategies`) or the `eval` package, that would
+reopen the leak that `localize()` and `contract.py` sealed off (design §4). This
+test checks the source code itself, not runtime behaviour: a single forbidden
+import is enough to break the design's promise. `localize.py` itself
+**defines** `OccurrenceMap` — that is not an import, so it does not trip this test.
 """
 
 from __future__ import annotations
@@ -33,13 +32,13 @@ def _module_files() -> list[Path]:
 
 
 def _imported_modules_and_names(tree: ast.Module) -> tuple[set[str], set[str]]:
-    """Minden import-utasítás teljes elérési útja, és minden `from ... import y` importált neve.
+    """The full dotted path of every import statement, and every name from a `from ... import y`.
 
-    Csak import-utasításokat néz — egy modul saját osztálydefiníciója (mint az
-    `OccurrenceMap` a `localize.py`-ban) sosem import, tehát sosem üti meg a
-    tiltólistát. A `from plantgraph.benchmark import splitter` alak modul-nevet
-    importál almodulként (nem osztályt) — ezért az összerakott
-    "modul.almodul" utat is felvesszük, különben ez a forma megkerülné a tiltást.
+    Only looks at import statements — a module's own class definition (like
+    `OccurrenceMap` in `localize.py`) is never an import, so it never trips the
+    banlist. The form `from plantgraph.benchmark import splitter` imports a module
+    name as a submodule (not a class) — so we also record the joined
+    "module.submodule" path, otherwise this form would slip past the ban.
     """
     modules: set[str] = set()
     names: set[str] = set()

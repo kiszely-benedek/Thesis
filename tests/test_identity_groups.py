@@ -1,12 +1,13 @@
-"""Az azonosság-alapú kereszthivatkozás (IdentityGroup) invariánsai — splitter.md nyitott 3. kérdés.
+"""Invariants of identity-based cross-referencing (IdentityGroup) — splitter.md open question 3.
 
-Ez a benchmark másik fele az off-page connector mellett: nem egy elvágott élt,
-hanem egy kétszer felrajzolt csomópontot ír le. A round-trip teszt (lásd
-test_splitter.py) ezt a felét szerkezetileg nem tudja ellenőrizni, mert
-_copy_sheet_into (rejoin.py) szándékosan eldobja a reference-előfordulások
-attribútumait, és a home adja őket vissza — így egy hibás tag, node_class vagy
-tag_variants a reference oldalon a round-trip tesztet változatlanul zöldre
-hagyná. Ezért kell közvetlenül az IdentityGroup-okra és a lapok tartalmára néznünk.
+This is the benchmark's other half besides the off-page connector: instead of a
+cut edge, it describes a node drawn twice. The round-trip test (see
+test_splitter.py) cannot check this half structurally, because
+_copy_sheet_into (rejoin.py) deliberately discards a reference occurrence's
+attributes and the home occurrence supplies them back — so a wrong tag,
+node_class, or tag_variants on the reference side would leave the round-trip
+test green regardless. That is why we must look directly at the IdentityGroups
+and the sheets' contents.
 """
 
 from __future__ import annotations
@@ -24,7 +25,7 @@ from plantgraph.benchmark.strategies import STRATEGIES
 def _split_with_full_duplication(
     exact_match_tags: bool = True,
 ) -> tuple[object, list[SheetGraph], SplitManifest, SplitConfig]:
-    """duplication_rate=1.0: minden jogosult berendezés duplikálódik, a lista így nem üres."""
+    """duplication_rate=1.0: every eligible equipment gets duplicated, so the list is non-empty."""
     plant = make_plant_graph(chain_length=6, branches=2, utility_fanout=6)
     config = SplitConfig(
         sheet_equipment_budget=2, seed=17, duplication_rate=1.0, exact_match_tags=exact_match_tags
@@ -38,9 +39,9 @@ def _sheet_by_id(sheets: list[SheetGraph], sheet_id: str) -> SheetGraph:
 
 
 def test_reference_occurrence_carries_only_tag_and_node_class() -> None:
-    # splitter.md nyitott 3. kérdés: home = teljes attribútumok, reference = "a
-    # tag-gel és kevés mással". A 'manufacturer' a fixture-ben csak a home-on
-    # jelenik meg — ha egy reference is megkapná, ez az assert buknál el.
+    # splitter.md open question 3: home = full attributes, reference = "the tag
+    # and little else". 'manufacturer' appears only on the home in the fixture —
+    # if a reference got it too, this assert would fail.
     plant, sheets, manifest, _ = _split_with_full_duplication()
     assert manifest.identity_groups, "a fixture-nek legalább egy identity groupot kell adnia"
     for group in manifest.identity_groups:
@@ -56,8 +57,8 @@ def test_tag_variants_populated_and_differ_from_home_when_not_exact_match() -> N
     _, sheets, manifest, _ = _split_with_full_duplication(exact_match_tags=False)
     assert manifest.identity_groups
     for group in manifest.identity_groups:
-        # minden reference tagja eltér a home tagtól — ez a "ne legyen
-        # triviálisan összeilleszthető" követelmény (splitter.md nyitott 3. kérdés)
+        # every reference's tag differs from the home tag — this is the "must not
+        # be trivially matchable" requirement (splitter.md open question 3)
         assert set(group.tag_variants) == set(group.references)
         for reference in group.references:
             sheet_id, node_id = reference.split(":", 1)
@@ -84,11 +85,11 @@ def test_identity_group_shape_is_a_usable_gold_set() -> None:
         home_sheet_id, home_node_id = group.home.split(":", 1)
         reference_sheets = [reference.split(":", 1)[0] for reference in group.references]
 
-        # a home lapja különbözik minden reference lapjától
+        # the home's sheet differs from every reference's sheet
         assert home_sheet_id not in reference_sheets
-        # egy lapon legfeljebb egy előfordulás van ugyanabból a csoportból
+        # at most one occurrence of the same group appears on a given sheet
         assert len(reference_sheets) == len(set(reference_sheets))
-        # minden occurrence-kulcs valódi csomópontra mutat a megnevezett lapon
+        # every occurrence key points to a real node on the sheet it names
         assert home_node_id in _sheet_by_id(sheets, home_sheet_id).graph.nodes
         for reference in group.references:
             sheet_id, node_id = reference.split(":", 1)
@@ -103,8 +104,8 @@ def test_duplication_rate_zero_yields_no_identity_groups() -> None:
 
 
 def test_duplication_rate_one_selects_exactly_the_eligible_equipment() -> None:
-    # duplication_rate=1.0 kell adjon: minden olyan berendezést duplikál,
-    # amelynek van másik lapra eső szomszédja — sem többet, sem kevesebbet.
+    # duplication_rate=1.0 must duplicate every piece of equipment that has a
+    # neighbour on another sheet — no more, no fewer.
     plant, _, manifest, config = _split_with_full_duplication()
     node_sheet = STRATEGIES[config.strategy](plant, config, random.Random(config.seed))
 

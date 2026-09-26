@@ -1,4 +1,4 @@
-"""A `summarize_plant` jellemzői egy valódi legenerált üzemen (`plant-generator.md` §3.2)."""
+"""Properties of `summarize_plant` on a real generated plant (`plant-generator.md` §3.2)."""
 
 from __future__ import annotations
 

@@ -1,29 +1,29 @@
-"""Adatmodell a többlapos benchmark megoldókulcsához.
+"""Data model for the multi-sheet benchmark's answer key.
 
-Fogalmak, mert a kód egy mérnöki szakterületről szól:
+Terms, because the code is about an engineering domain the reader may not know:
 
-- **P&ID**: egy üzem csöveinek és műszereinek műszaki rajza. Egy teljes üzem több
-  száz ilyen lapból áll.
-- **lap (sheet)**: a rajzsorozat egyetlen oldala. Egy csővezeték ritkán fér el egy
-  lapon, ezért átnyúlik a következőre.
-- **off-page connector**: ha egy cső kifut a lap széléről, mindkét érintett lapra
-  egy feliratozott nyíl kerül, amely megmondja, hol folytatódik ("folytatás a
-  120-as rajz 1. lapján, a D-1 mezőben"). Ez a lapok közötti kereszthivatkozás.
-- **megoldókulcs (ground truth)**: az ismerten helyes válaszok, amelyekhez a
-  rendszer kimenetét mérjük.
+- **P&ID**: a piping and instrumentation diagram — the technical drawing of a
+  plant's pipes and instruments. A full plant spans hundreds of such sheets.
+- **sheet**: a single page of the drawing series. A pipe segment rarely fits on
+  one sheet, so it continues onto the next.
+- **off-page connector**: when a pipe runs off the edge of a sheet, a labelled
+  arrow is placed on both affected sheets, stating where it continues ("continues
+  on sheet 1 of drawing 120, in cell D-1"). This is the cross-reference between sheets.
+- **answer key (ground truth)**: the known-correct answers that the system's
+  output is measured against.
 
-Két forrás állítja elő a megoldókulcsot: a szintetikus splitter, amely egy
-üzemgráfot vág lapokra, és az OPEN100 annotáció, amely valódi rajzokból nyeri
-vissza a kapcsolatokat. Mindkettő ugyanezt a SplitManifest-et adja ki, így a
-későbbi kód nem tudja megkülönböztetni a két forrást — és nem is szabad tudnia.
-Lásd: docs/private/40-design/splitter.md.
+Two sources produce the answer key: the synthetic splitter, which cuts a plant
+graph into sheets, and the OPEN100 annotation, which recovers the connections
+from real drawings. Both emit the same SplitManifest, so downstream code cannot
+tell the two sources apart — and must not need to. See:
+docs/private/40-design/splitter.md.
 
-Ez a modul a megoldókulcs sorait és az OPEN100-specifikus leleteket tartalmazza,
-a szintetikus splitter csonk-modelljével (`OffPageConnector`) együtt, mert azt
-a `SplitManifest` listája hordozza. Ami csak a splitter saját beállítása, és a
-manifesttel nem fonódik össze — `SplitConfig` és a hozzá tartozó enumok —, az a
-`split_models.py`-ban van; a kettéválasztás oka a 400 soros fájlkorlát, nem
-fogalmi különbség (`plant-generator.md` §5, "Things to watch").
+This module holds the answer key's rows and the OPEN100-specific findings,
+together with the synthetic splitter's stub model (`OffPageConnector`), because
+a `SplitManifest` list carries it. What is only the splitter's own configuration,
+and doesn't interleave with the manifest — `SplitConfig` and its enums — lives in
+`split_models.py`; the split exists because of the 400-line file limit, not a
+conceptual difference (`plant-generator.md` §5, "Things to watch").
 """
 
 from __future__ import annotations
@@ -35,10 +35,10 @@ from pydantic import BaseModel, Field, model_validator
 
 
 class Side(str, Enum):
-    """Melyik lapszélen van a csatlakozó szimbóluma: a bal vagy a jobb.
+    """Which edge of the sheet the connector symbol sits on: left or right.
 
-    Csak azt rögzíti, hol van a képen — azt nem, hogy be- vagy kifelé megy rajta
-    az anyag. Arra a Direction való.
+    Records only where it is on the image — not whether material flows in or out
+    through it. That is what Direction is for.
     """
 
     LEFT = "left"
@@ -46,11 +46,12 @@ class Side(str, Enum):
 
 
 class Direction(str, Enum):
-    """Be- vagy kifelé áramlik-e az anyag a lapból ezen a csatlakozón át.
+    """Whether material flows into or out of the sheet through this connector.
 
-    Ezt a csatlakozó felirata mondja meg, nem a helyzete. A rajzolók a bejövőket
-    általában balra, a kimenőket jobbra teszik, de ez csak szokás — más rajzoló
-    máshogy csinálja, tehát nem szabad rá építeni.
+    This is stated by the connector's label, not its position. Drafters usually
+    place incoming connectors on the left and outgoing ones on the right, but
+    that is only convention — a different drafter may do it differently, so
+    code must not rely on it.
     """
 
     INCOMING = "incoming"
@@ -58,10 +59,10 @@ class Direction(str, Enum):
 
 
 class BoundingBox(BaseModel):
-    """Egy szimbólum köré húzott téglalap, a kép képpont-koordinátáiban.
+    """A rectangle drawn around a symbol, in the image's pixel coordinates.
 
-    Az annotáció így jelöli meg, hol található egy elem a rajzon: bal-felső és
-    jobb-alsó sarok.
+    This is how the annotation marks an element's location on the drawing:
+    top-left and bottom-right corner.
     """
 
     xmin: float
@@ -77,25 +78,25 @@ class BoundingBox(BaseModel):
 
     @property
     def width(self) -> float:
-        """A doboz szélessége képpontban."""
+        """The box's width in pixels."""
         return self.xmax - self.xmin
 
     @property
     def height(self) -> float:
-        """A doboz magassága képpontban."""
+        """The box's height in pixels."""
         return self.ymax - self.ymin
 
     @property
     def centre_x(self) -> float:
-        """A doboz vízszintes középpontja — ebből dől el, melyik lapszélhez tartozik."""
+        """The box's horizontal centre — this decides which sheet edge it belongs to."""
         return (self.xmin + self.xmax) / 2
 
     def expanded(self, x_factor: float, y_margin: float) -> BoundingBox:
-        """Kitágítja a dobozt: oldalra a saját szélessége szorosával, fel-le képpontban.
+        """Expand the box: sideways by a multiple of its own width, up-down in pixels.
 
-        Azért kell, mert a csatlakozó felirata még a dobozon belül van, de a cső
-        azonosítója (a "line number", pl. SIZE-RCS-100007-SPEC-HC-X) már mellette,
-        a csővezetékre írva. Ha azt is el akarjuk olvasni, oldalra ki kell nyúlni.
+        Needed because the connector's label sits inside the box, but the pipe's
+        identifier (the "line number", e.g. SIZE-RCS-100007-SPEC-HC-X) is written
+        beside it, on the pipe itself. Reading that too requires reaching sideways.
         """
         pad = self.width * x_factor
         return BoundingBox(
@@ -106,7 +107,7 @@ class BoundingBox(BaseModel):
         )
 
     def clipped_to(self, width: int, height: int) -> BoundingBox:
-        """Visszavágja a dobozt a kép határai közé, hogy a kivágás ne lógjon ki."""
+        """Clip the box back inside the image's bounds, so the crop doesn't run off the edge."""
         return BoundingBox(
             xmin=max(0.0, self.xmin),
             ymin=max(0.0, self.ymin),
@@ -115,38 +116,38 @@ class BoundingBox(BaseModel):
         )
 
     def as_pixels(self) -> tuple[int, int, int, int]:
-        """Egész koordináták (bal, felső, jobb, alsó) — a PIL crop metódusa így kéri."""
+        """Integer coordinates (left, top, right, bottom) — the form PIL's crop method wants."""
         return (round(self.xmin), round(self.ymin), round(self.xmax), round(self.ymax))
 
 
 class SheetRef(BaseModel):
-    """Hivatkozás egy rajzlapra: melyik P&ID, és azon belül hányadik lap.
+    """A reference to a drawing sheet: which P&ID, and which sheet number within it.
 
-    Ugyanarra a lapra a rajzok többféleképp hivatkoznak — az OPEN100-ban a
-    'PID 120-1', a 'PID-120-01' és az 'RCS-PID-100-2' alak is előfordul. Ezért
-    egységes alakra hozzuk, és csak úgy hasonlítjuk össze őket; szövegszerű
-    egyezésre építeni itt hibás lenne.
+    The same sheet is referenced in several ways across the drawings — OPEN100
+    uses 'PID 120-1', 'PID-120-01', and 'RCS-PID-100-2' for the same target. So
+    references are normalized to one form before comparing them; relying on
+    literal text equality here would be wrong.
     """
 
     pid: str
     sheet_no: int
 
     def canonical(self) -> str:
-        """Egységes írásmód, pl. PID-120-1 — csak ezt szabad összehasonlítani."""
+        """A normalized spelling, e.g. PID-120-1 — only this form may be compared."""
         return f"PID-{self.pid}-{self.sheet_no}"
 
 
 class ConnectorObservation(BaseModel):
-    """Egy megtalált csatlakozó szimbólum egy lapon, mindazzal, amit tudunk róla.
+    """A found connector symbol on a sheet, with everything we know about it.
 
-    Három lépésben töltjük fel:
-      1. geometria — hol van a képen (ez jön az annotációs fájlból),
-      2. felirat — mi van ráírva (miután a kivágást elolvastuk),
-      3. verified_by_human — ellenőrizte-e valaki kézzel.
+    Filled in over three steps:
+      1. geometry — where it is on the image (comes from the annotation file),
+      2. label — what is written on it (after the crop has been read),
+      3. verified_by_human — whether someone checked it by hand.
 
-    Az opcionális mezők azt jelentik, hogy az értéket még nem ismerjük. Sosem
-    töltjük fel csendben alapértelmezettel: a "nem tudom" és a "nulla" itt két
-    különböző dolog.
+    An optional field being empty means the value isn't known yet. It is never
+    silently filled with a default: "don't know" and "zero" are two different
+    things here.
     """
 
     sheet_file: str
@@ -165,42 +166,44 @@ class ConnectorObservation(BaseModel):
 
     @property
     def key(self) -> str:
-        """Stabil azonosító, amely a teljes rajzsorozaton belül egyedi."""
+        """A stable identifier, unique across the whole drawing series."""
         return f"{self.sheet_file}:{self.node_id}"
 
 
 class MatchRule(str, Enum):
-    """Melyik szabály találta meg a párt — a bizonytalanabb szabályok ellenőrizhetők maradjanak.
+    """Which rule found the pair — the less certain rules stay auditable this way.
 
-    A rangsor 1-4 a docs/private/40-design/open100-annotation.md 3. lépéséből jön,
-    kiegészítve a resolver saját, legerősebb szabályával (`kg-construction.md` §5.2):
-    a sorszám maga a bizalmi szint, 1 a legerősebb.
+    The 1-4 ranking comes from docs/private/40-design/open100-annotation.md
+    step 3, extended with the resolver's own, strongest rule
+    (`kg-construction.md` §5.2): the rank number is itself the confidence level,
+    1 being the strongest.
     """
 
     CONNECTOR_NUMBER = (
-        "connector_number"  # 1. a partner saját száma mindkét oldalról kölcsönösen egyezik
+        "connector_number"  # 1. the partner's own number matches mutually from both sides
     )
-    LINE_NUMBER = "line_number"  # 2. az azonosító megegyezik mindkét lapon — erős jel
-    GRID_MUTUAL = "grid_mutual"  # 3. a célmező mindkét irányból ugyanoda mutat
+    LINE_NUMBER = "line_number"  # 2. the identifier matches on both sheets — a strong signal
+    GRID_MUTUAL = "grid_mutual"  # 3. the target cell points back the same way from both directions
     SERVICE_DIRECTION = (
-        "service_direction"  # 4. csak a rendszer és az irány egyezik — kézi ellenőrzést igényel
+        "service_direction"  # 4. only the system and direction match — needs manual review
     )
-    SYNTHETIC = "synthetic"  # a szintetikus generátor vágta el — nem kell találgatni, tudjuk
+    SYNTHETIC = "synthetic"  # cut by the synthetic generator — no need to guess, we know
 
 
 class ConnectorPair(BaseModel):
-    """Két csatlakozó, amelyekről kiderült, hogy ugyanannak a csőnek a két vége.
+    """Two connectors found to be the two ends of the same pipe.
 
-    Ez a megoldókulcs egy sora: pontosan ezeket a párokat kell a rendszernek
-    megtalálnia, és ezeken mérjük a pontosságát.
+    This is one row of the answer key: exactly these pairs are what the system
+    must find, and this is what its precision is measured against.
 
-    Az original_edge csak a szintetikus generátornál van kitöltve, mert ott mi
-    magunk vágtuk el a gráf élét, tehát tudjuk, mi volt. Valódi rajz annotálásakor
-    a kapcsolat visszanyerhető, de az eredeti él nem — ezért marad None.
+    original_edge is only filled in for the synthetic generator, because there
+    we cut the graph edge ourselves, so we know what it was. When annotating a
+    real drawing, the connection can be recovered, but the original edge cannot
+    — so it stays None.
 
-    A match_rule megmondja, mennyire kell megbízni a párban. Egy line_number
-    találat egy elgépelt felirat miatt tévedhet; egy service_direction találat
-    puszta egybeesés is lehet. Mindkettő bekerül a megoldókulcsba, de más súllyal.
+    match_rule states how much to trust the pair. A line_number match can be
+    wrong because of a typo'd label; a service_direction match could be mere
+    coincidence. Both go into the answer key, but with different weight.
     """
 
     from_key: str
@@ -212,11 +215,11 @@ class ConnectorPair(BaseModel):
 
 
 class ConnectorKind(str, Enum):
-    """Egy off-page connector milyen élt vág el: csővezetéket vagy jelvezetéket.
+    """Which kind of edge an off-page connector cuts: a pipe segment or a signal line.
 
-    Ez dönti el a csonk-csomópont pyDEXPI osztályát (`plant-generator.md`
-    §4.2, finding 2a): egy elvágott `send_to` élből `PipeOffPageConnector`
-    lesz, minden más relációból (`send_signal_to`, `control`, `measured_by`)
+    This decides the stub node's pyDEXPI class (`plant-generator.md` §4.2,
+    finding 2a): a cut `send_to` edge becomes a `PipeOffPageConnector`, every
+    other relation (`send_signal_to`, `control`, `measured_by`) becomes a
     `SignalOffPageConnector`.
     """
 
@@ -225,17 +228,17 @@ class ConnectorKind(str, Enum):
 
 
 class OffPageConnector(BaseModel):
-    """Egy off-page connector csonk, amelyet a szintetikus splitter szúr egy elvágott él helyére.
+    """An off-page connector stub the synthetic splitter inserts in place of a cut edge.
 
-    Amikor a splitter egy élt két lap között kettévág, mindkét lap gráfjába
-    kerül egy ilyen csonk-csomópont — ez a szintetikus megfelelője annak, amit
-    az OPEN100-on ConnectorObservation ír le egy valódi lapról leolvasva.
+    When the splitter cuts an edge between two sheets, a stub node like this is
+    added to both sheets' graphs — this is the synthetic counterpart of what
+    ConnectorObservation describes on OPEN100, read off a real sheet.
 
-    A key alakja szándékosan **ugyanaz**, mint a ConnectorObservation.key-é
-    (f"{lap}:{node_id}"): ez a varrat, ami miatt a ConnectorPair.from_key és
-    to_key közömbös aziránt, hogy a szintetikus splitter vagy az OPEN100
-    annotáció állította-e elő a csatlakozót — mindkettő ugyanabba a
-    SplitManifest-be kerül, és a későbbi kód a kettőt meg sem különbözteti.
+    key's shape is deliberately **the same** as ConnectorObservation.key's
+    (f"{sheet}:{node_id}"): this is the seam that lets ConnectorPair.from_key and
+    to_key stay indifferent to whether the synthetic splitter or the OPEN100
+    annotation produced the connector — both end up in the same SplitManifest,
+    and downstream code never tells the two apart.
     """
 
     tag: str
@@ -250,17 +253,17 @@ class OffPageConnector(BaseModel):
 
     @property
     def key(self) -> str:
-        """Ugyanaz az alak, mint ConnectorObservation.key — lásd az osztály docstringjét."""
+        """The same shape as ConnectorObservation.key — see the class docstring."""
         return f"{self.sheet_id}:{self.attached_node_id}"
 
 
 class DanglingReference(BaseModel):
-    """Csatlakozó, amely olyan lapra hivatkozik, ami nincs a birtokunkban.
+    """A connector referencing a sheet we do not have.
 
-    Nem hiba, hanem a valóság: egy rajzsorozat majdnem mindig csak részhalmaza az
-    üzemnek. Ezekből lesznek a szándékosan megválaszolhatatlan kérdések, ahol a jó
-    válasz az, hogy "ez az információ nincs meg" — és nem az, hogy a rendszer
-    kitalál valamit.
+    Not a bug, but reality: a drawing series is almost always only a subset of
+    the plant. These become the deliberately unanswerable questions, where the
+    right answer is "this information is not available" — not the system making
+    something up.
     """
 
     from_key: str
@@ -269,31 +272,32 @@ class DanglingReference(BaseModel):
 
 
 class IdentityGroup(BaseModel):
-    """Egy fizikai berendezés, amelyet több lapra is felrajzoltak.
+    """One physical piece of equipment that was drawn on more than one sheet.
 
-    Ugyanaz a szivattyú szerepelhet a saját rendszerének lapján és a hűtővíz
-    lapján is: két rajzjel, egyetlen valódi szivattyú. A kettőt össze kell vonni.
+    The same pump might appear on its own system's sheet and on the cooling-water
+    sheet too: two drawing symbols, one real pump. The two must be merged.
 
-    Ez a másik fajta lapok közötti kapcsolat, és ez a veszélyesebb. Egy kihagyott
-    off-page connector látványosan kettészakadt gráfot hagy, ami feltűnik. Egy
-    kihagyott azonosságnál viszont a gráf épnek látszik, csak épp két külön
-    szivattyú van benne egy helyett — így a "mi táplálja ezt a szivattyút?"
-    kérdésre magabiztos, de hiányos válasz érkezik. A csendes fél-igazság rosszabb,
-    mint a látható hiba.
+    This is the other kind of cross-sheet link, and it is the more dangerous one.
+    A missed off-page connector leaves a visibly torn-apart graph, which stands
+    out. A missed identity, though, leaves the graph looking intact — it just has
+    two separate pumps instead of one — so a question like "what feeds this
+    pump?" gets a confident but incomplete answer. The silent half-truth is worse
+    than the visible error.
 
-    A home a részletes előfordulás (teljes adatokkal), a references a többi lapon
-    lévő rövidebb ismétlések.
+    home is the detailed occurrence (full data), references are the shorter
+    repeats on the other sheets.
 
-    Valódi példa az OPEN100-ból, 2026-08-25-én ellenőrizve: az RCS-PU-102A jelű
-    szivattyú szerepel az 5. lapon a folyamatábra részeként, és a 6. lapon is,
-    ahol a "DETAIL A" részletrajz mutatja ugyanazt a gépet. Két rajzjel, egyetlen
-    szivattyú.
+    A real example from OPEN100, verified 2026-08-25: the pump tagged
+    RCS-PU-102A appears on sheet 5 as part of the flow diagram, and again on
+    sheet 6, where the "DETAIL A" close-up shows the same machine. Two drawing
+    symbols, one pump.
 
-    Az írásmód is ingadozhat: ugyanezen az 5. lapon a rajzjel felirata
-    RCS-PU-102A, a lap alján lévő berendezés-jegyzékben viszont RC-P102A áll
-    ugyanarra a gépre. Ez a példa viszont **lapon belüli** eltérés; azt, hogy egy
-    tag laponként is másképp lenne írva, ebben az adathalmazban még nem láttuk
-    igazolva. A tag_variants mező készen áll rá, ha felbukkan.
+    Spelling can vary too: on that same sheet 5, the symbol's label reads
+    RCS-PU-102A, but the equipment list at the bottom of the sheet gives
+    RC-P102A for the same machine. This particular example, though, is a
+    **within-sheet** discrepancy; a tag being spelled differently across
+    sheets has not yet been confirmed in this dataset. The tag_variants field
+    is ready for it, should it turn up.
     """
 
     tag: str
@@ -312,15 +316,15 @@ class IdentityGroup(BaseModel):
 
 
 class UnresolvedConnector(BaseModel):
-    """Egy csatlakozó, amelyről tudjuk, hogy nem lóg — de a párját mégsem találtuk meg.
+    """A connector known not to be dangling — but whose partner still wasn't found.
 
-    Ez a harmadik eset a "párba került" és a "lógó" mellett, és valódi rajzokon
-    elő fog fordulni: a célként megnevezett lap megvan a korpuszban, csak épp
-    rajta nem található hozzáillő csatlakozó. Ennek több oka is lehet — elolvasási
-    hiba, a rajzoló elfelejtette berajzolni a párját, vagy a párja nem
-    "inlet/outlet" címkével van jelölve az annotációban. Egyik sem szabad, hogy
-    csendben eltűnjön: ezért kap saját kategóriát ahelyett, hogy erőltetett párba
-    vagy hibás "lógó" bejegyzésbe kerülne.
+    This is the third case alongside "paired" and "dangling", and it will occur
+    on real drawings: the named target sheet is in the corpus, but no matching
+    connector can be found on it. There can be several reasons — a reading
+    error, the drafter forgot to draw its partner, or the partner isn't marked
+    with the "inlet/outlet" label in the annotation. None of these may silently
+    disappear: hence its own category, instead of being forced into a pair or
+    a wrong "dangling" entry.
     """
 
     from_key: str
@@ -328,7 +332,7 @@ class UnresolvedConnector(BaseModel):
 
 
 class SplitManifest(BaseModel):
-    """Egy többlapos rajzsorozat teljes megoldókulcsa, egyetlen fájlban."""
+    """A multi-sheet drawing series' complete answer key, in a single file."""
 
     source: str
     sheet_files: list[str]
@@ -345,17 +349,17 @@ class SplitManifest(BaseModel):
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     def accounted_for(self) -> bool:
-        """Igaz, ha minden csatlakozó sorsa ismert: párba került, lógó, vagy nyíltan megoldatlan.
+        """True if every connector's fate is known: paired, dangling, or openly unresolved.
 
-        Csatlakozó nem tűnhet el nyomtalanul. "Ismert sorsú" nem azt jelenti, hogy
-        meg is oldottuk — az unresolved lista pont azért létezik, hogy egy valódi,
-        kézzel át nem ellenőrzött esetet be lehessen vallani ahelyett, hogy vagy
-        kimaradna, vagy erőltetett (és ezáltal hamis) párba kerülne.
+        A connector must not disappear without a trace. "Known fate" does not
+        mean it was solved — the unresolved list exists precisely so a real,
+        not-yet-manually-checked case can be admitted instead of either being
+        dropped or forced into a wrong pair.
 
-        A connectors (OPEN100) és az off_page_connectors (szintetikus splitter)
-        listák egyszerre töltődnek: forrásonként csak az egyik nem üres. Az
-        ígéret mindkettőre egyszerre él, hogy egyik forrásnál se veszhessen el
-        csendben egy csatlakozó.
+        connectors (OPEN100) and off_page_connectors (synthetic splitter) are
+        filled at the same time: only one of the two is non-empty per source.
+        The promise holds for both at once, so a connector can't silently vanish
+        from either source.
         """
         placed = {p.from_key for p in self.connector_pairs}
         placed |= {p.to_key for p in self.connector_pairs}

@@ -1,10 +1,10 @@
-"""Csatlakozó-párosítás: melyik kimenő és bejövő felirat ugyanannak a csőnek a két vége.
+"""Connector pairing: which outgoing and incoming label are the two ends of the same pipe.
 
-Két szabály fut sorban, a bizalmi szint szerint csökkenő sorrendben (design
-`kg-construction.md` §5.2): elsőként a partner saját száma (ha a felirat ezt is
-elárulja), másodszor a csővezeték/jel-azonosító és az irány. Ami egyik szabályba
-sem fér bele egyértelműen, `UnresolvedConnector`-ként kerül ki — sosem tűnik el
-csendben (design §10 T3 elfogadási feltétele).
+Two rules run in sequence, in decreasing order of confidence (design
+`kg-construction.md` §5.2): first the partner's own number (if the label reveals
+it too), second the pipe/signal identifier and direction. Whatever fits neither
+rule unambiguously comes out as `UnresolvedConnector` — it never silently
+disappears (design §10 T3's acceptance condition).
 """
 
 from __future__ import annotations
@@ -21,21 +21,22 @@ from plantgraph.benchmark.models import (
 )
 from plantgraph.resolution.connector_labels import ConnectorLabel
 
-# forrás-lap, cél-lap, fajta, reláció, line_number, fluid_code. Kimenő feliratnál
-# a forrás a saját lapja és a cél a hivatkozott lap; bejövőnél fordítva — így egy
-# valódi pár mindig ugyanide esik (§5.2), mert a splitter épp így vágja el az élt
-# (connectors.py:_cut_one_edge): a kimenő referenced_drawing_number a bejövő
-# sheet_id-je, és fordítva.
+# source sheet, target sheet, kind, relation, line_number, fluid_code. For an
+# outgoing label, the source is its own sheet and the target is the referenced
+# sheet; for incoming, the reverse — so a real pair always lands on the same key
+# (§5.2), because the splitter cuts the edge exactly this way
+# (connectors.py:_cut_one_edge): the outgoing referenced_drawing_number is the
+# incoming's sheet_id, and vice versa.
 _GroupKey = tuple[str, str, ConnectorKind | None, str | None, str | None, str | None]
 
 
 def pair_connectors(
     labels: Sequence[ConnectorLabel], sheet_ids: Collection[str]
 ) -> tuple[list[ConnectorPair], list[UnresolvedConnector]]:
-    """Kimenő-bejövő feliratpárokat keres; ami nem párosítható, azt megindokolva jelenti.
+    """Find outgoing-incoming label pairs; report whatever can't be paired, with a reason.
 
-    Csak szótárakat és listákat használ, a lap-lista sosem ismétlődik végig
-    párononként (a SMOKE-03 lelet, `rejoin.py:88`, épp ezt a hibát kerülte).
+    Uses only dictionaries and lists — the sheet list is never iterated once per
+    pair (the SMOKE-03 finding, `rejoin.py:88`, avoided exactly this mistake).
     """
     remaining, unresolved = _drop_absent_targets(labels, sheet_ids)
     outgoing = [label for label in remaining if label.direction is Direction.OUTGOING]
@@ -51,7 +52,7 @@ def pair_connectors(
 def _drop_absent_targets(
     labels: Sequence[ConnectorLabel], sheet_ids: Collection[str]
 ) -> tuple[list[ConnectorLabel], list[UnresolvedConnector]]:
-    """A hivatkozott lap benne van-e a korpuszban — ha nincs, a csatlakozó eleve megoldhatatlan."""
+    """Is the referenced sheet in the corpus — else this connector is unresolvable."""
     remaining: list[ConnectorLabel] = []
     unresolved: list[UnresolvedConnector] = []
     for label in labels:
@@ -67,10 +68,11 @@ def _drop_absent_targets(
 def _pair_by_connector_number(
     outgoing: Sequence[ConnectorLabel], incoming: Sequence[ConnectorLabel]
 ) -> tuple[list[ConnectorPair], set[str]]:
-    """MatchRule.CONNECTOR_NUMBER: a partner saját száma mindkét oldalról kölcsönösen egyezik.
+    """MatchRule.CONNECTOR_NUMBER: the partner's own number matches mutually from both sides.
 
-    Csak akkor talál, ha mindkét felirat ismeri a partnere számát — `DRAWING_ONLY`-nál
-    ez a mező hiányzik, és minden csatlakozó a gyengébb szabályra esik (§5.2).
+    Only finds a match if both labels know their partner's number — under
+    `DRAWING_ONLY` this field is missing, and every connector falls to the
+    weaker rule (§5.2).
     """
     incoming_by_key: dict[tuple[str, str], list[ConnectorLabel]] = defaultdict(list)
     for label in incoming:
@@ -99,11 +101,11 @@ def _pair_by_connector_number(
 def _mutual_connector_number_match(
     label: ConnectorLabel, incoming_by_key: dict[tuple[str, str], list[ConnectorLabel]]
 ) -> ConnectorLabel | None:
-    """A kimenő felirathoz illő bejövőt keresi, vagy `None`-t, ha a szabály nem alkalmazható.
+    """Find the incoming label matching an outgoing one, or `None` if the rule doesn't apply.
 
-    Kétértelmű index-kulcsnál (duplikált connector_number ugyanazon a lapon,
-    lásd EX01 C1/C2 tag-jeit, design §2) szándékosan nem választ: a gyengébb
-    szabályra (`_pair_by_shared_label`) hagyja a döntést.
+    On an ambiguous index key (duplicated connector_number on the same sheet,
+    see EX01's C1/C2 tags, design §2), deliberately makes no choice: leaves the
+    decision to the weaker rule (`_pair_by_shared_label`).
     """
     if label.referenced_connector_number is None:
         return None
@@ -122,11 +124,11 @@ def _mutual_connector_number_match(
 def _pair_by_shared_label(
     labels: Sequence[ConnectorLabel],
 ) -> tuple[list[ConnectorPair], list[UnresolvedConnector]]:
-    """MatchRule.LINE_NUMBER / SERVICE_DIRECTION: csővezeték-szám és irány, csoportba rendezve.
+    """MatchRule.LINE_NUMBER / SERVICE_DIRECTION: pipe-segment number and direction, grouped.
 
-    Egy csoport csak akkor válik párrá, ha pontosan egy kimenő és egy bejövő
-    felirat esik rá — minden más eset (üres, több kimenő, több bejövő)
-    megoldatlan marad, megindokolva.
+    A group only becomes a pair if exactly one outgoing and one incoming label
+    fall into it — every other case (empty, multiple outgoing, multiple
+    incoming) stays unresolved, with a reason attached.
     """
     groups: dict[_GroupKey, list[ConnectorLabel]] = defaultdict(list)
     for label in labels:

@@ -1,16 +1,17 @@
-"""Nyilvántartás arról, melyik OPEN100 fájl melyik rajzot tartalmazza.
+"""Records which OPEN100 file holds which drawing.
 
-A PID2Graph adathalmaz a 12 OPEN100 rajzot csupasz 0.png .. 11.png néven adja,
-minden kísérő adat nélkül. Márpedig ahhoz, hogy egy csatlakozó hivatkozását
-("folytatás a 120-as rajz 1. lapján") fel tudjuk oldani, tudni kell, hogy a 120-as
-rajz melyik fájlban van. Ezt a hozzárendelést tartja nyilván ez a modul.
+The PID2Graph dataset provides the 12 OPEN100 drawings under bare names, 0.png
+through 11.png, with no accompanying metadata. But resolving a connector's
+reference ("continues on sheet 1 of drawing 120") requires knowing which file
+drawing 120 lives in. This module keeps that mapping.
 
-Az adatok a rajzok fejlécéből (title block) származnak, 2026-08-25-én olvastuk ki
-őket; a bizonyítékot lásd a docs/private/10-literature/pid2graph.md fájlban.
+The data comes from the drawings' title blocks (the header box printed on each
+sheet naming the drawing and its number), read off on 2026-08-25; see
+docs/private/10-literature/pid2graph.md for the supporting evidence.
 
-Mind a 12 lap egyetlen üzemhez tartozik: az Energy Impact Center OPEN 100
-atomerőmű-tervéhez, azonos szerzővel és dátummal. Négy rendszer két-két lapra
-terjed ki — ezek adják a legbiztosabb lapközi hivatkozásokat.
+All 12 sheets belong to a single plant: the Energy Impact Center's OPEN 100
+nuclear power plant design, same author and date. Four systems span two sheets
+each — these give the most reliable cross-sheet references.
 """
 
 from __future__ import annotations
@@ -21,7 +22,7 @@ from plantgraph.benchmark.models import SheetRef
 
 
 class Open100Sheet(BaseModel):
-    """Egy OPEN100 rajz: melyik fájl, melyik rendszer, és a sorozat hányadik lapja."""
+    """One OPEN100 drawing: which file, which system, and its position within the sheet series."""
 
     file_stem: str
     system: str
@@ -31,12 +32,12 @@ class Open100Sheet(BaseModel):
 
     @property
     def ref(self) -> SheetRef:
-        """A lap hivatkozási alakja, ahogy a csatlakozók feliratai hivatkoznak rá."""
+        """The sheet's reference form, matching how connector labels refer to it."""
         return SheetRef(pid=self.pid, sheet_no=self.sheet_no)
 
 
 _ROWS: tuple[tuple[str, str, str, int, int], ...] = (
-    # fájlnév, rendszer neve, P&ID szám, hányadik lap, összesen hány lap
+    # file name, system name, P&ID number, sheet number, total sheet count
     ("0", "Main Steam System", "140", 1, 1),
     ("1", "Air Cooled Condenser", "150", 1, 1),
     ("2", "Condensate System", "160", 1, 1),
@@ -56,19 +57,19 @@ SHEETS: dict[str, Open100Sheet] = {
     for stem, system, pid, sheet_no, count in _ROWS
 }
 
-# Visszakereső index: rajz-hivatkozásból fájl. Szándékosan hiányos — a 170-es
-# rendszer 2. lapjára hivatkoznak a rajzok, de az nincs az adathalmazban.
+# Reverse lookup: drawing reference to file. Deliberately incomplete — the
+# drawings reference sheet 2 of system 170, but it is not in the dataset.
 BY_REF: dict[str, Open100Sheet] = {s.ref.canonical(): s for s in SHEETS.values()}
 
-# Rendszerek, amelyekre a 12 lap hivatkozik, de a rajzuk nincs a birtokunkban.
-# Ezekből lesznek a valódi "lógó" hivatkozások: olyan kérdések, amelyekre a helyes
-# válasz az, hogy nem tudjuk. Nem hiba, hanem hasznos teszteset.
+# Systems the 12 sheets reference but whose drawing we do not have. These become
+# the real "dangling" references: questions whose correct answer is "we don't
+# know". Not a bug, but a useful test case.
 #
-# A 2026-08-25-i áttekintés csak 190/240/290-et azonosított; a 2026-08-31-i
-# kézi feliratolvasás (stage 2) találta a többit. A 320-as szám két különböző
-# névvel is előfordul a rajzokon ("RAD WASTE SYSTEM" és "CHEMICAL ADDITION
-# SYSTEM") — vagy egy közös épület két rendszeréről van szó, vagy elgépelés;
-# egyik esetben sem tudjuk feloldani, tehát a megkülönböztetés itt nem számít.
+# The 2026-08-25 review only identified 190/240/290; the 2026-08-31 manual label
+# reading pass (stage 2) found the rest. Number 320 appears under two different
+# names on the drawings ("RAD WASTE SYSTEM" and "CHEMICAL ADDITION SYSTEM") —
+# either it is two systems in one shared building, or a typo; either way we
+# cannot resolve it, so telling the two apart does not matter here.
 KNOWN_ABSENT: dict[str, str] = {
     "130": "Service Water System",
     "190": "High Pressure Steam Drains",
@@ -82,10 +83,10 @@ KNOWN_ABSENT: dict[str, str] = {
 
 
 def resolve(ref: SheetRef) -> Open100Sheet | None:
-    """Megkeresi, melyik fájlban van a hivatkozott rajz.
+    """Find which file holds the referenced drawing.
 
     Returns:
-        A lap, vagy None, ha a hivatkozott rajz nincs az adathalmazban — ez utóbbi
-        várható és megengedett eset, lásd KNOWN_ABSENT.
+        The sheet, or None if the referenced drawing is not in the dataset —
+        the latter is expected and allowed, see KNOWN_ABSENT.
     """
     return BY_REF.get(ref.canonical())

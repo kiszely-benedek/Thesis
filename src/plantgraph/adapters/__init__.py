@@ -1,9 +1,12 @@
-"""A pyDEXPI-t ismerő rétege a projektnek — máshonnan pyDEXPI sosem importálódik.
+"""The project's only layer that knows about pyDEXPI — no other module ever imports it.
 
-Két modul adja a tartalmát: `pydexpi_builder` (a generátor topológia-döntéseiből
-egy valódi `DexpiModel`-t épít) és `pydexpi_adapter` (ebből a modellből állítja
-elő a `graph.schema` szerinti `nx.DiGraph`-ot, pyDEXPI saját betöltő- és
-absztrakciós lépésein át). Ez az egyetlen hely a kódbázisban, ahol a `pydexpi`
-csomag megjelenik (ADR-0003: a pyDEXPI AGPL-3.0 licencű, ezért vékony
-adapter mögé zárva tartjuk — lásd `plant-generator.md` "Import rule").
+pyDEXPI is the third-party library that models P&IDs (piping and instrumentation
+diagrams, the engineering drawings this project reasons about) as typed Python
+objects, following the DEXPI data-exchange standard. Two modules make up this
+package's content: `pydexpi_builder` (builds a real `DexpiModel` from the
+generator's topology decisions) and `pydexpi_adapter` (turns that model into the
+`nx.DiGraph` defined by `graph.schema`, via pyDEXPI's own loading and abstraction
+steps). This is the only place in the codebase where the `pydexpi` package appears
+(ADR-0003: pyDEXPI is AGPL-3.0 licensed, so it is kept behind a thin adapter —
+see the "Import rule" in `plant-generator.md`).
 """

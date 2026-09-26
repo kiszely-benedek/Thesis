@@ -1,8 +1,8 @@
-"""`read_connector_labels` — a csatlakozó-csomópontok kiolvasása (design `kg-construction.md` §5.1).
+"""`read_connector_labels` — reading connector nodes (design `kg-construction.md` §5.1).
 
-Csak a csomópont-attribútumokból és a hozzá kötött egyetlen élből dolgozik,
-sosem a splitter `OffPageConnector`-modelljéből — az a válaszkulcs, amit
-`localize()` már kiürített.
+Works only from the node attributes and the single edge attached to it, never
+from the splitter's `OffPageConnector` model — that is the answer key, already
+emptied out by `localize()`.
 """
 
 from __future__ import annotations
@@ -16,11 +16,11 @@ from plantgraph.resolution.connector_labels import read_connector_labels
 
 
 def _sheet_with_one_stub(node_class: str, edge_direction: str, **extra: str) -> SheetGraph:
-    """Egy laphoz egy csatlakozó-csomópontot és a hozzá kötött egyetlen élet ad.
+    """Give a sheet one connector node plus the single edge attached to it.
 
-    edge_direction "in" -> valaki a csonkba küld (FlowOut jellegű vágás), "out"
-    -> a csonk küld tovább valakinek (FlowIn jellegű vágás) — pontosan úgy, ahogy
-    `connectors.py:_cut_one_edge` felépíti a két oldalt.
+    edge_direction "in" -> someone sends into the stub (a FlowOut-style cut),
+    "out" -> the stub sends on to someone (a FlowIn-style cut) — exactly how
+    `connectors.py:_cut_one_edge` builds the two sides.
     """
     graph: nx.DiGraph[str] = nx.DiGraph()
     graph.add_node(
@@ -78,7 +78,7 @@ def test_non_connector_nodes_are_ignored() -> None:
 
 
 def test_missing_referenced_connector_number_stays_none() -> None:
-    """A `DRAWING_ONLY` dial nem ír fel partner-számot — a mező None marad, nem hiányzik."""
+    """The `DRAWING_ONLY` dial doesn't print a partner number — stays None, not missing."""
     sheet = _sheet_with_one_stub("FlowOutPipeOffPageConnector", "in")
     labels, _unresolved = read_connector_labels(sheet)
     (label,) = labels
@@ -124,12 +124,12 @@ def test_connector_node_with_two_edges_raises() -> None:
         read_connector_labels(sheet)
 
 
-# ---- ADR-0016 §11 OQ1b: egy csonknak nincs se saját száma, se hivatkozott rajzszáma ----------
+# ---- ADR-0016 §11 OQ1b: a stub has neither its own number nor a referenced drawing number ----
 
 
 def test_connector_with_no_reference_label_is_reported_unresolved_not_raised() -> None:
-    """Egy importált fájl csatlakozója, aminek a DEXPI-hivatkozás-leképezése még nincs kész
-    (`kg-construction.md` §11 OQ1b) — se `connector_number`, se `referenced_drawing_number`."""
+    """A connector from an imported file whose DEXPI-reference mapping isn't done yet
+    (`kg-construction.md` §11 OQ1b) — neither `connector_number` nor `referenced_drawing_number`."""
     graph: nx.DiGraph[str] = nx.DiGraph()
     graph.add_node("stub", node_class="FlowOutPipeOffPageConnector")
     graph.add_node("other", node_class="CentrifugalPump", tag="P-1")

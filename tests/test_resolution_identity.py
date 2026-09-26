@@ -1,8 +1,8 @@
-"""`group_identities` — a predikált azonosság-csoportok (design `kg-construction.md` §5.3).
+"""`group_identities` — the predicted identity groups (design `kg-construction.md` §5.3).
 
-Kézzel épített lokalizált lapokon teszteli elszigetelten: a teljes
-splitter -> localize -> identity csővezetéket a resolver gate-jei
-(`test_resolution_resolver.py`) futtatják.
+Tests in isolation, on hand-built localized sheets: the full
+splitter -> localize -> identity pipeline is exercised by the resolver gate
+checks (`test_resolution_resolver.py`).
 """
 
 from __future__ import annotations
@@ -36,11 +36,11 @@ def test_a_tag_on_two_sheets_forms_a_group_with_the_fuller_occurrence_as_home() 
 
 
 def test_tie_in_property_count_is_broken_by_sheet_id_never_by_occurrence_id() -> None:
-    """A holtversenyt a lap-id dönti el — az occurrence id sosem, hisz a G2 kapunál az más lenne.
+    """Ties are broken by sheet id — never by occurrence id, since that would differ at the G2 gate.
 
-    Mindkét előfordulás ugyanannyi tulajdonságot hordoz; az occurrence id
-    szándékosan az ellenkező sorrendben áll, mint a sheet_id, hogy a teszt
-    kibukjon, ha valaki tévedésből az id szerint választana.
+    Both occurrences carry the same number of properties; the occurrence id is
+    deliberately in the opposite order from the sheet_id, so this test fails if
+    someone mistakenly picks based on the id instead.
     """
     sheet_a = _sheet("a", {"zzz": {"node_class": "CentrifugalPump", "tag": "P-1"}})
     sheet_b = _sheet("b", {"aaa": {"node_class": "CentrifugalPump", "tag": "P-1"}})
@@ -68,8 +68,8 @@ def test_a_tag_seen_on_only_one_sheet_forms_no_group() -> None:
 
 
 def test_ambiguous_tag_within_one_sheet_is_excluded_even_with_a_valid_partner_elsewhere() -> None:
-    """EX01-en a C1 tag háromszor fordul elő egyetlen lapon — ilyenkor sehol se szabad csoportba
-    kerülnie, még akkor sem, ha egy másik lapon is felbukkanna."""
+    """On EX01, tag C1 occurs three times on a single sheet — it must not join any group anywhere,
+    even if it also appears on a different sheet."""
     ambiguous_sheet = _sheet(
         "0",
         {
@@ -88,7 +88,7 @@ def test_ambiguous_tag_within_one_sheet_is_excluded_even_with_a_valid_partner_el
 
 
 def test_only_the_given_classes_are_considered() -> None:
-    """Alapértelmezésben csak berendezés csoportosul — a szelep tag-je szakaszonként ismétlődik."""
+    """By default only equipment is grouped — a valve's tag repeats per pipe segment."""
     sheet_a = _sheet("0", {"v1": {"node_class": "GlobeValve", "tag": "C1"}})
     sheet_b = _sheet("1", {"v2": {"node_class": "GlobeValve", "tag": "C1"}})
 

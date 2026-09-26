@@ -1,4 +1,4 @@
-"""A négy particionáló stratégia invariánsai: csomópont-lefedés, lapkeret, együtt utazó műszerek."""
+"""Invariants of the 4 partitioning strategies: node coverage, sheet budget, instrument travel."""
 
 from __future__ import annotations
 
@@ -37,8 +37,8 @@ def test_equipment_count_per_sheet_respects_the_budget(strategy_name: str) -> No
 
 @pytest.mark.parametrize("strategy_name", sorted(STRATEGIES))
 def test_instruments_ride_along_with_their_equipment(strategy_name: str) -> None:
-    # Design-döntés (splitter.md nyitott 2. kérdés): a műszer nem számít a
-    # lapkeretbe, de a lapja meg kell egyezzen azzal a berendezéssel, amelyikre kötve van.
+    # Design decision (splitter.md open question 2): an instrument does not count
+    # against the sheet budget, but its sheet must match the equipment it's attached to.
     plant = make_plant_graph()
     config = SplitConfig(strategy=strategy_name, seed=2)
     node_sheet = STRATEGIES[strategy_name](plant, config, random.Random(config.seed))
@@ -56,8 +56,8 @@ def test_random_partition_ignores_topology_but_stays_seed_stable() -> None:
 
 
 def test_utility_aware_moves_the_high_degree_header_to_its_own_hub_sheet() -> None:
-    # Az utility fejvezeték csak akkor kap saját hub-lapot, ha maga is
-    # "berendezésnek" számít — ezért itt bővítjük az equipment_classes-t.
+    # A utility header only gets its own hub sheet if it counts as "equipment"
+    # itself — so equipment_classes is extended here.
     plant = make_plant_graph(chain_length=3, branches=3, utility_fanout=6)
     config = SplitConfig(
         strategy="utility_aware",
@@ -71,8 +71,8 @@ def test_utility_aware_moves_the_high_degree_header_to_its_own_hub_sheet() -> No
     hub_sheet_members = {
         node_id for node_id, sheet_id in node_sheet.items() if sheet_id == hub_sheet
     }
-    # a hub-lap csak az utility fejvezetéket (és a rá kötött, nem-berendezés
-    # csomópontokat, ha lenne) tartalmazza, a folyamatláncot nem
+    # the hub sheet contains only the utility header (and any non-equipment
+    # nodes attached to it, if there were any), not the process chain
     assert "eq-0-0" not in hub_sheet_members
 
 
@@ -84,7 +84,7 @@ def test_by_unit_never_mixes_units_on_a_sheet() -> None:
     units_per_sheet: dict[str, set[str]] = {}
     for node_id, sheet_id in node_sheet.items():
         unit_id = plant.nodes[node_id].get("unit_id")
-        if unit_id is None:  # a műszereknek nincs saját unit_id-juk, a berendezésükét öröklik
+        if unit_id is None:  # instruments inherit unit_id from their equipment, no own value
             continue
         units_per_sheet.setdefault(sheet_id, set()).add(unit_id)
     assert all(len(units) == 1 for units in units_per_sheet.values())

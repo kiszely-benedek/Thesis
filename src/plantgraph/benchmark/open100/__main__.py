@@ -1,4 +1,4 @@
-"""Az OPEN100 csatlakozók előkészítése olvasásra.
+"""Prepare the OPEN100 off-page connectors for reading.
 
 uv run python -m plantgraph.benchmark.open100 <open100_dir> <out_dir>
 """
@@ -12,7 +12,7 @@ from plantgraph.benchmark.open100.corpus import Open100Corpus
 
 
 def main() -> None:
-    """Parancssori belépési pont: montázsokat készít az OPEN100 csatlakozókról."""
+    """Command-line entry point: builds montages of the OPEN100 off-page connectors."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("open100_dir", type=Path, help="a 'PID2Graph OPEN100' mappa")
     parser.add_argument("out_dir", type=Path, help="ide kerülnek a montázsok")

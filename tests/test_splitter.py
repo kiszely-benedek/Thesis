@@ -1,10 +1,10 @@
-"""A szintetikus splitter invariánsai (splitter.md 4. fejezet).
+"""Invariants of the synthetic splitter (splitter.md section 4).
 
-A kerek-út a fő teszt: split() majd rejoin() pontosan visszaadja az eredeti
-gráfot — csomópontokat, éleket és minden attribútumot. Ez minden négy
-stratégiára és a duplication_rate mindkét ágára (0.0 és >0) lefut, mert a
-csomópont-duplikáció miatt a rejoinnak az azonosság-csoportokat is vissza kell
-olvasztania, mielőtt a gráfok összehasonlíthatók (splitter.md nyitott 3. kérdés).
+The round trip is the main test: split() followed by rejoin() reproduces the
+original graph exactly — nodes, edges, and every attribute. This runs for all
+four strategies and both branches of duplication_rate (0.0 and >0), because
+node duplication means rejoin must also merge the identity groups back before
+the graphs can be compared (splitter.md open question 3).
 """
 
 from __future__ import annotations
@@ -24,9 +24,9 @@ from plantgraph.graph.validation import validate_sheet_graph
 
 
 def assert_graphs_equal(rejoined: nx.DiGraph, original: nx.DiGraph) -> None:
-    """Csomópont- és élhalmaz, plusz minden attribútum egyezését ellenőrzi.
+    """Check that the node set, edge set, and every attribute match.
 
-    Ez maga a round-trip invariáns definíciója.
+    This is the round-trip invariant's own definition.
     """
     assert set(rejoined.nodes) == set(original.nodes)
     for node_id, attrs in original.nodes(data=True):
@@ -55,7 +55,7 @@ def test_round_trip_reproduces_the_original_graph(
 
 def test_every_cross_sheet_edge_yields_exactly_one_pair_and_no_orphans() -> None:
     plant = make_plant_graph(chain_length=6, branches=2)
-    # duplication_rate=0: minden lapok közötti él OPC-vel oldódik, nincs duplikáció
+    # duplication_rate=0: every cross-sheet edge is resolved with an OPC, no duplication
     config = SplitConfig(sheet_equipment_budget=2, seed=5)
     _, manifest = split(plant, config)
 
@@ -93,8 +93,8 @@ def test_connector_partner_references_resolve_on_the_other_sheet() -> None:
 
 
 def test_sheet_equipment_count_respects_the_budget_once_references_are_excluded() -> None:
-    # A duplikált berendezések reference-előfordulásai szándékosan NEM számítanak
-    # a lapkeretbe (splitter.md nyitott 3. kérdés) — ezért zárjuk ki őket itt.
+    # Duplicated equipment's reference occurrences deliberately do NOT count
+    # against the sheet budget (splitter.md open question 3) — so we exclude them here.
     plant = make_plant_graph(chain_length=6, branches=2)
     budget = 3
     config = SplitConfig(sheet_equipment_budget=budget, seed=9, duplication_rate=0.3)
@@ -128,8 +128,8 @@ def test_same_seed_produces_an_identical_manifest() -> None:
     config = SplitConfig(sheet_equipment_budget=2, seed=13, duplication_rate=0.3)
     _, first = split(plant, config)
     _, second = split(plant, config)
-    # created_at az egyetlen mező, ami mindig eltér (aktuális időbélyeg) — minden
-    # más mezőnek pontosan egyeznie kell ugyanazzal a seeddel (splitter.md 2. fejezet).
+    # created_at is the only field that always differs (the current timestamp) —
+    # every other field must match exactly for the same seed (splitter.md section 2).
     assert first.model_dump(exclude={"created_at"}) == second.model_dump(exclude={"created_at"})
 
 
@@ -149,8 +149,8 @@ def test_plant_without_any_equipment_node_raises() -> None:
 @pytest.mark.parametrize("strategy_name", sorted(STRATEGIES))
 def test_every_sheet_graph_is_schema_valid(strategy_name: str) -> None:
     plant = make_plant_graph(chain_length=6, branches=2)
-    # 'utility_header' nincs a sémában (plant_fixtures.py) — csak az
-    # utility_aware stratégia teszteléséhez létezik, itt nem kell
+    # 'utility_header' has no schema entry (plant_fixtures.py) — it only exists
+    # to test the utility_aware strategy, not needed here
     plant.remove_node("utility-steam")
     config = SplitConfig(strategy=strategy_name, sheet_equipment_budget=2, seed=15)
     sheets, _ = split(plant, config)

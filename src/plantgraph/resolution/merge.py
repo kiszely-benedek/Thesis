@@ -1,10 +1,10 @@
-"""Lapokból egyetlen üzemgráf: azonosság szerint egyesít, csatlakozóparonként visszaköt.
+"""Sheets into one plant graph: merge by identity, reconnect pair by pair.
 
-A design `kg-construction.md` §5.4 három dolgot ír elő: egy csomópont a
-reprezentánsa (az azonosság-csoport home-ja) attribútumait kapja, sosem az
-uniót; egy párosított csatlakozó-csonk eltűnik, és a helyén a valódi él áll
-vissza; egy párosítatlan csonk viszont megmarad — ez a jele annak a gate-en,
-hogy egy pár elveszett.
+Design `kg-construction.md` §5.4 requires three things: a node gets its
+representative's (the identity group's home's) attributes, never a union of
+both; a paired connector stub disappears, and the real edge takes its place;
+an unpaired stub, though, stays — this is the gate check's signal that a pair
+was lost.
 """
 
 from __future__ import annotations
@@ -22,12 +22,12 @@ from plantgraph.graph.schema import CONNECTOR_CLASSES
 def build_plant_graph(
     sheets: Sequence[SheetGraph], pairs: Sequence[ConnectorPair], groups: Sequence[IdentityGroup]
 ) -> tuple[nx.DiGraph[str], int]:
-    """Egyesíti a lapokat: azonosság-csoportok reprezentánsra vonva, csatlakozópárok visszakötve.
+    """Merge sheets: identity groups collapsed to their representative, connector pairs reconnected.
 
     Returns:
-        Az egyesített gráf, és az élattribútum-ütközések száma (§5.4) — egy
-        ütközés sosem dob kivételt, csak megszámolódik, és az elsőként
-        beírt (lap-id sorrendben legkorábbi) attribútumhalmaz marad érvényben.
+        The merged graph, and the count of edge-attribute conflicts (§5.4) — a
+        conflict never raises, it is only counted, and the attribute set written
+        first (earliest by sheet-id order) remains in force.
     """
     representative_of = _representative_of(groups)
     sheets_by_id = {sheet.sheet_id: sheet for sheet in sheets}
@@ -42,7 +42,7 @@ def build_plant_graph(
 
 
 def _representative_of(groups: Sequence[IdentityGroup]) -> dict[str, str]:
-    """Minden reference helyi kulcsát a saját csoportja home-jára képezi; a home önmagára képez."""
+    """Map every reference's local key to its own group's home; the home maps to itself."""
     mapping: dict[str, str] = {}
     for group in groups:
         for reference in group.references:
@@ -56,7 +56,7 @@ def _add_representative_nodes(
     representative_of: dict[str, str],
     paired_stub_keys: set[str],
 ) -> None:
-    """Minden nem-csonk csomópontot felvesz a reprezentánsa saját attribútumaival, sosem unióval."""
+    """Add every non-stub node under its representative's own attributes, never a union."""
     attrs_by_key = _non_connector_attrs_by_key(sheets)
     representative_keys = {representative_of.get(key, key) for key in attrs_by_key}
     for representative_key in sorted(representative_keys):
@@ -76,7 +76,7 @@ def _non_connector_attrs_by_key(sheets: Sequence[SheetGraph]) -> dict[str, dict[
 def _add_unpaired_stub_nodes(
     plant: nx.DiGraph[str], sheets: Sequence[SheetGraph], paired_stub_keys: set[str]
 ) -> None:
-    """A párba nem került csonkok csomópontként megmaradnak — a hiány így látszik a gate-en."""
+    """Unpaired stubs stay as nodes — this is how the gap becomes visible at the gate check."""
     for sheet in sheets:
         for node_id, attrs in sheet.graph.nodes(data=True):
             if attrs.get("node_class") not in CONNECTOR_CLASSES:
@@ -92,9 +92,9 @@ def _add_intra_sheet_edges(
     representative_of: dict[str, str],
     paired_stub_keys: set[str],
 ) -> int:
-    """Lapon belüli éleket köt be a reprezentánsok közt; egy párosított csonk élét eldobja.
+    """Add intra-sheet edges between representatives; drop a paired stub's edge.
 
-    Az utóbbit a `_add_reconnected_edges` pótolja a valódi, visszakötött éllel.
+    The latter is replaced by `_add_reconnected_edges` with the real, reconnected edge.
     """
     conflicts = 0
     for sheet in sheets:
@@ -110,7 +110,7 @@ def _add_intra_sheet_edges(
 def _endpoint_or_none(
     sheet: SheetGraph, node_id: str, representative_of: dict[str, str], paired_stub_keys: set[str]
 ) -> str | None:
-    """A csomópont reprezentáns-kulcsa; `None`, ha egy párosított csonk (az éle máshonnan jön)."""
+    """The node's representative key; `None` if a paired stub (its edge comes from elsewhere)."""
     local_key = f"{sheet.sheet_id}:{node_id}"
     if sheet.graph.nodes[node_id].get("node_class") in CONNECTOR_CLASSES:
         return None if local_key in paired_stub_keys else local_key
@@ -123,7 +123,7 @@ def _add_reconnected_edges(
     pairs: Sequence[ConnectorPair],
     representative_of: dict[str, str],
 ) -> int:
-    """Minden párra visszaköti az eredeti élt: a kimenő csonk elődje -> a bejövő csonk utódja."""
+    """Reconnect the original edge for a pair: outgoing predecessor -> incoming successor."""
     conflicts = 0
     for pair in sorted(pairs, key=lambda p: (p.from_key, p.to_key)):
         pred_key, edge_attrs = _stub_predecessor(sheets_by_id, pair.from_key)
@@ -135,7 +135,7 @@ def _add_reconnected_edges(
 
 
 def _stub_predecessor(sheets_by_id: dict[str, SheetGraph], key: str) -> tuple[str, dict[str, Any]]:
-    """A kimenő csonk elődje: az él, amelyen az anyag a csonkba lép a saját lapján belül."""
+    """The outgoing stub's predecessor: the edge material enters it by, on its own sheet."""
     sheet_id, node_id = key.split(":", 1)
     edges = list(sheets_by_id[sheet_id].graph.in_edges(node_id, data=True))
     if len(edges) != 1:
@@ -147,7 +147,7 @@ def _stub_predecessor(sheets_by_id: dict[str, SheetGraph], key: str) -> tuple[st
 
 
 def _stub_successor(sheets_by_id: dict[str, SheetGraph], key: str) -> tuple[str, dict[str, Any]]:
-    """A bejövő csonk utódja: az él, amelyen az anyag a csonkból tovább lép a saját lapján belül."""
+    """The incoming stub's successor: the edge material leaves it by, on its own sheet."""
     sheet_id, node_id = key.split(":", 1)
     edges = list(sheets_by_id[sheet_id].graph.out_edges(node_id, data=True))
     if len(edges) != 1:
@@ -161,11 +161,11 @@ def _stub_successor(sheets_by_id: dict[str, SheetGraph], key: str) -> tuple[str,
 def _add_edge_tracking_conflicts(
     plant: nx.DiGraph[str], source: str, target: str, attrs: dict[str, Any]
 ) -> int:
-    """Felveszi az élt, vagy — ha már más attribútummal létezik — megszámolja az ütközést.
+    """Add the edge, or — if it already exists with different attributes — count the conflict.
 
-    A hívók mindig lap-id (illetve pár-kulcs) sorrendben dolgoznak, ezért az
-    itt már meglévő attribútumhalmaz mindig a korábbi — pont az, amit a §5.4
-    "keep the first" szabálya megkövetel.
+    Callers always process in sheet-id (or pair-key) order, so any attribute set
+    already present here is always the earlier one — exactly what §5.4's
+    "keep the first" rule requires.
     """
     if not plant.has_edge(source, target):
         plant.add_edge(source, target, **attrs)

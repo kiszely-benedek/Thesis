@@ -1,8 +1,8 @@
-"""`build_plant_graph` — egyesítés azonosság szerint, visszakötés csatlakozóparonként.
+"""`build_plant_graph` — merge by identity, reconnect pair by pair.
 
-Kézzel épített lokalizált lapokon teszteli elszigetelten (design
-`kg-construction.md` §5.4); a teljes csővezetéket a resolver gate-jei
-(`test_resolution_resolver.py`) futtatják.
+Tests in isolation, on hand-built localized sheets (design
+`kg-construction.md` §5.4); the full pipeline is exercised by the resolver gate
+checks (`test_resolution_resolver.py`).
 """
 
 from __future__ import annotations

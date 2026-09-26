@@ -1,24 +1,24 @@
-"""Adatmodell a szintetikus üzemgráf-generátorhoz (`plant-generator.md` §3.2, §3.5).
+"""Data model for the synthetic plant-graph generator (`plant-generator.md` §3.2, §3.5).
 
-A modul két, egymástól élesen elváló dolgot ír le:
+The module describes two sharply separate things:
 
-- **mit kér a felhasználó** — `GeneratorConfig`: hány egység, mennyi berendezés
-  egységenként, milyen valószínűséggel kap egy egység recirkulációt (recycle)
-  vagy egy másik egységből induló keresztkötést (cross-link), és így tovább.
-  Minden mező itt szabadon hangolható paraméter, nem beégetett állandó
-  (`plant-generator.md` §3.2 — "All defaults are arbitrary and test-sized").
-- **mit kap vissza egy backend a generátor topológia-döntéseiből** —
-  `ValveSpec`, `LoopSpec` a `PlantBuilder` Protocol hívásaihoz, és
-  `GenerationRecord` a lefutott generálás megoldókulcsaként.
+- **what the user asks for** — `GeneratorConfig`: how many units, how much
+  equipment per unit, how likely a unit is to get recirculation (recycle) or a
+  cross-link starting from another unit, and so on. Every field here is a
+  freely tunable parameter, not a hardcoded constant (`plant-generator.md` §3.2
+  — "All defaults are arbitrary and test-sized").
+- **what a backend gets back from the generator's topology decisions** —
+  `ValveSpec`, `LoopSpec` for the `PlantBuilder` protocol's calls, and
+  `GenerationRecord` as the answer key for a completed generation run.
 
-**Miért Protocol, és miért nincs itt pyDEXPI.** Az offline gépen a pyDEXPI
-csomag nem telepíthető (`plant-generator.md`, "Offline split of step 3"
-jegyzet). A `PlantBuilder` Protocol ezért csak azt írja le, MILYEN hívásokat
-vár a topológia-tervező egy backendtől — hogy a valódi pyDEXPI-backend
-később ugyanezt a Protocolt implementálhassa, a teszteké pedig
-(`tests/graph_plant_builder.py`) most rögtön. `build()` szándékosan nincs a
-Protocolban: az a végleges kimenet előállítása (DEXPI modell vagy gráf),
-backend-specifikus lépés, nem a topológia-tervezés része.
+**Why a Protocol, and why no pyDEXPI here.** On the offline machine, the
+pyDEXPI package cannot be installed (`plant-generator.md`, "Offline split of
+step 3" note). The `PlantBuilder` protocol therefore only describes WHICH
+calls the topology planner expects from a backend — so the real pyDEXPI
+backend can implement this same protocol later, and the tests'
+(`tests/graph_plant_builder.py`) can implement it right now. `build()` is
+deliberately absent from the protocol: producing the final output (a DEXPI
+model or a graph) is a backend-specific step, not part of topology planning.
 """
 
 from __future__ import annotations
@@ -33,24 +33,24 @@ from plantgraph.graph import schema
 
 
 class StreamKind(str, Enum):
-    """Egy csővezeték (`stream`, két berendezés közti anyagáram) honnan ered a topológiában.
+    """Where a pipe segment (`stream`, material flow between two equipment nodes) originates.
 
-    Csak elemzési célra kerül a megoldókulcsba (`GenerationRecord`) — a
-    generált gráfban a `stream_kind` tulajdonság **gold**, sosem a
-    visszakeresés alatt álló tárban (`plant-generator.md` §4.4).
+    Only enters the answer key (`GenerationRecord`) for analysis purposes — in
+    the generated graph, the `stream_kind` property is **gold**, never present
+    in the store under retrieval (`plant-generator.md` §4.4).
     """
 
-    TREE = "tree"  # az egységen belüli véletlen fa éle
-    RECYCLE = "recycle"  # egy későbbi berendezéstől vissza egy korábbihoz, ugyanazon egységen belül
-    CROSS_UNIT = "cross_unit"  # az egységek láncolatát biztosító kötelező kereszt-áram
-    CROSS_LINK = "cross_link"  # egy korábbi egységből induló, nem kötelező extra kereszt-áram
+    TREE = "tree"  # a random tree edge within the unit
+    RECYCLE = "recycle"  # from a later piece of equipment back to an earlier one, same unit
+    CROSS_UNIT = "cross_unit"  # the mandatory cross-flow that chains the units together
+    CROSS_LINK = "cross_link"  # an optional extra cross-flow starting from an earlier unit
 
 
 class GeneratorConfig(BaseModel):
-    """A szintetikus üzemgráf-generátor minden beállítása (`plant-generator.md` §3.2).
+    """Every setting for the synthetic plant-graph generator (`plant-generator.md` §3.2).
 
-    Minden alapérték önkényes és teszt-méretű; egyik sem állítás valódi
-    üzemekről.
+    Every default is arbitrary and test-sized; none of them make a claim about
+    real plants.
     """
 
     plant_id: str = Field(default="plant0", pattern=r"^[a-z0-9]+$")
@@ -94,7 +94,7 @@ class GeneratorConfig(BaseModel):
 
 
 class ValveSpec(BaseModel):
-    """Egy csővezetékbe (`stream`) beépített szelep — a `PlantBuilder.add_stream` egy eleme."""
+    """A valve built into a pipe segment (`stream`) — one item of `PlantBuilder.add_stream`."""
 
     model_config = ConfigDict(frozen=True)
 
@@ -104,12 +104,12 @@ class ValveSpec(BaseModel):
 
 
 class LoopSpec(BaseModel):
-    """Egy szabályozókör (control loop) nyers alkotóelemei — `PlantBuilder.add_control_loop`-nak.
+    """A control loop's raw building blocks — for `PlantBuilder.add_control_loop`.
 
-    A `variable`, `unit_no` és `loop_no` együtt adja ki a három műszer-tag-et
-    (`f"{variable}T-{unit_no}-{loop_no}"` és társai,
-    `plant-generator.md` §3.3 "Ids and tags") — ezért nincs itt külön tag mező,
-    a backend számolja ki a formulából.
+    `variable`, `unit_no`, and `loop_no` together produce the three instrument
+    tags (`f"{variable}T-{unit_no}-{loop_no}"` and its siblings,
+    `plant-generator.md` §3.3 "Ids and tags") — so there is no separate tag
+    field here, the backend computes it from the formula.
     """
 
     model_config = ConfigDict(frozen=True)
@@ -125,11 +125,11 @@ class LoopSpec(BaseModel):
 
 
 class GenerationRecord(BaseModel):
-    """A generálás megoldókulcsa: a seedből és a configból mi lett — **gold**, sosem a tár alatt.
+    """The generation's answer key: what came out of seed and config — **gold**, never stored.
 
-    `generator_config` a bemenő `GeneratorConfig` JSON-alakja, hogy a
-    manifeszthez hasonlóan egyetlen fájl önmagában is reprodukálja a futást
-    (a pyDEXPI-verzióval együtt, amikortól a topológia nem elég).
+    `generator_config` is the input `GeneratorConfig`'s JSON form, so that —
+    like the manifest — a single file can reproduce the run on its own
+    (together with the pyDEXPI version, for whenever the topology alone isn't enough).
     """
 
     plant_id: str
@@ -140,10 +140,10 @@ class GenerationRecord(BaseModel):
 
 
 class PlantSummary(BaseModel):
-    """Egy legenerált üzem gráf-jellemzői — az EXP-0002 skálázási sweep regressziós változói.
+    """Graph stats of a generated plant — regression variables for the EXP-0002 scaling sweep.
 
-    A `plant_graph` (`adapters/pydexpi_adapter.py`) kimenő `DiGraph`-ján
-    számolódik, sosem a `DexpiModel`-en (`plant-generator.md` §3.2).
+    Computed on the `DiGraph` output by `plant_graph`
+    (`adapters/pydexpi_adapter.py`), never on the `DexpiModel` (`plant-generator.md` §3.2).
     """
 
     n_nodes: int
@@ -159,20 +159,20 @@ class PlantSummary(BaseModel):
 
 
 class PlantBuilder(Protocol):
-    """Amit egy backendnek tudnia kell, hogy `plan_plant` fel tudja rajta építeni a topológiát.
+    """What a backend must be able to do, so `plan_plant` can build the topology on top of it.
 
-    A pyDEXPI-backend (később) és `tests/graph_plant_builder.py` (most) egyaránt
-    ezt implementálja — `plan_plant` egyiket sem ismeri, csak ezt a szerződést
+    Both the pyDEXPI backend (later) and `tests/graph_plant_builder.py` (right
+    now) implement this — `plan_plant` knows neither, only this contract
     (`plant-generator.md`, "Offline split of step 3").
     """
 
     @property
     def backend_version(self) -> str:
-        """A backend azonosítója — ez kerül a `GenerationRecord.pydexpi_version` mezőjébe."""
+        """The backend's identifier — this ends up in `GenerationRecord.pydexpi_version`."""
         ...
 
     def add_section(self, unit_no: int) -> None:
-        """Felvesz egy technológiai egységet (`PlantSection`)."""
+        """Add one process unit (`PlantSection`)."""
         ...
 
     def add_equipment(
@@ -184,7 +184,7 @@ class PlantBuilder(Protocol):
         tag_prefix: str,
         tag_seq: int,
     ) -> None:
-        """Felvesz egy berendezést egy egységbe."""
+        """Add one piece of equipment into a unit."""
         ...
 
     def add_stream(
@@ -195,9 +195,9 @@ class PlantBuilder(Protocol):
         dst_id: str,
         valves: Sequence[ValveSpec],
     ) -> None:
-        """Felvesz egy csővezetéket két berendezés között, a rajta lévő szelepekkel együtt."""
+        """Add one pipe segment between two pieces of equipment, together with its valves."""
         ...
 
     def add_control_loop(self, loop: LoopSpec) -> None:
-        """Felvesz egy szabályozókört: érzékelés a berendezésen, avatkozás egy szelepen."""
+        """Add one control loop: sensing on the equipment, actuation on a valve."""
         ...

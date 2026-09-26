@@ -1,14 +1,14 @@
-"""A szintetikus splitter saját konfigurációja.
+"""Configuration used only by the synthetic splitter.
 
-Amit csak a szintetikus splitter használ — nem kell az OPEN100 annotációnak,
-amely valódi rajzokból nyeri vissza a kapcsolatokat. A két forrás közös
-megoldókulcs-modelljei (`ConnectorPair`, `OffPageConnector`, `IdentityGroup`,
-`SplitManifest`, ...) a `models.py`-ban maradtak; ez a modul azért vált külön
-onnan, mert együtt túllépték volna a 400 soros fájlkorlátot, nem fogalmi okból
-(`plant-generator.md` §5, "Things to watch"). `OffPageConnector` szándékosan
-**nem** költözött ide: a `SplitManifest` (models.py) egy listája ilyen elemeket
-tartalmaz, és e modul importálná a `Direction`-t a models.py-ból — a kettő
-együtt körkörös importot adna.
+Holds what only the synthetic splitter needs — not required by the OPEN100
+annotation pipeline, which recovers connections from real drawings instead. The
+answer-key models shared by both sources (`ConnectorPair`, `OffPageConnector`,
+`IdentityGroup`, `SplitManifest`, ...) stay in `models.py`; this module was split
+out only because together they would have exceeded the 400-line file limit, not
+for a conceptual reason (`plant-generator.md` §5, "Things to watch").
+`OffPageConnector` deliberately did **not** move here: a list of them lives inside
+`SplitManifest` (models.py), and this module would then need to import
+`Direction` from models.py — the two would import each other in a circle.
 """
 
 from __future__ import annotations
@@ -21,24 +21,24 @@ from plantgraph.graph import schema
 
 
 class NumberingScheme(str, Enum):
-    """A csatlakozók felirat-konvenciója — szándékosan variálható, nem állandó.
+    """The labelling convention for off-page connectors — deliberately variable, not fixed.
 
-    A splitter.md 3. fejezete szerint a lapszámozás és a feliratozás
-    generátor-paraméter: ha egy downstream komponens csak az egyik alakra
-    működik, azt a benchmarknak fel kell fednie, nem elrejtenie.
+    Per splitter.md section 3, sheet numbering and labelling are generator
+    parameters: if a downstream component only works for one such convention,
+    the benchmark should expose that, not hide it.
     """
 
-    SEQUENTIAL = "sequential"  # pl. "SHEET-3-OPC-07"
-    PID_STYLE = "pid_style"  # pl. "PID-120-1" — az OPEN100-on megfigyelt alak
+    SEQUENTIAL = "sequential"  # e.g. "SHEET-3-OPC-07"
+    PID_STYLE = "pid_style"  # e.g. "PID-120-1" — the form observed on OPEN100
 
 
 class ConnectorLabelDetail(str, Enum):
-    """Mennyi felirat kerül egy csatlakozó csonkra — a nehezebb EXP-0004 feltétel is választható.
+    """How much label text a connector stub carries — the harder EXP-0004 condition too.
 
-    FULL alatt a csonk a partnere saját feliratát (`referenced_connector_number`)
-    is megkapja. DRAWING_ONLY ezt elhagyja: a resolvernek ilyenkor a
-    `line_number` és a `fluid_code` alapján kell megkülönböztetnie két,
-    ugyanazon lappár közti csatlakozót (`plant-generator.md` §5, finding 2b).
+    Under FULL, the stub also carries its partner's own label
+    (`referenced_connector_number`). DRAWING_ONLY leaves that out: the resolver
+    must then tell apart two connectors on the same sheet pair using the
+    `line_number` and `fluid_code` instead (`plant-generator.md` §5, finding 2b).
     """
 
     FULL = "full"
@@ -46,11 +46,11 @@ class ConnectorLabelDetail(str, Enum):
 
 
 class SplitConfig(BaseModel):
-    """A szintetikus splitter minden beállítása — a stratégiától a feliratozási konvencióig.
+    """Every setting for the synthetic splitter — strategy to labelling convention.
 
-    Minden itt szereplő mező szándékosan paraméter, nem beégetett állandó
-    (splitter.md 3. fejezet): a kutatási kérdés pont az, hogy ezek a
-    konvenciók hogyan hatnak a visszakeresés pontosságára.
+    Every field here is deliberately a parameter, not a hardcoded constant
+    (splitter.md section 3): the research question is precisely how these
+    conventions affect retrieval accuracy.
     """
 
     strategy: str = "flow_greedy"

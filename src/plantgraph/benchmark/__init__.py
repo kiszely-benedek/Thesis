@@ -1,8 +1,9 @@
-"""A többlapos benchmark: szintetikus üzemgráf-generátor, splitter és OPEN100 megoldókulcs-építő.
+"""The multi-sheet benchmark: synthetic plant-graph generator, splitter, and OPEN100 answer key.
 
-`generator.py`/`generator_models.py` egy üzem topológiáját tervezi meg,
-`splitter.py` (a hozzá tartozó `strategies.py`, `connectors.py`, `rejoin.py`
-segédmodulokkal) lapokra vágja, `open100/` pedig ugyanezt a megoldókulcs-alakot
-(`models.py`) valódi rajzokból nyeri vissza. Lásd `models.py` modul-docstringjét
-a két forrás közös szerződéséről.
+`generator.py`/`generator_models.py` design a plant's topology (its equipment and
+piping layout), `splitter.py` (with its `strategies.py`, `connectors.py`, `rejoin.py`
+helper modules) cuts that topology into sheets — the individual drawing pages a real
+P&ID set is split across — and `open100/` recovers the same answer-key shape
+(`models.py`) from real drawings instead. See the module docstring of `models.py`
+for the contract shared by both sources.
 """

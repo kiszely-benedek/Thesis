@@ -1,14 +1,13 @@
-"""`resolve()` végponttól végpontig, és a design `kg-construction.md` §5.6 három kapuja.
+"""`resolve()` end to end, and the three gate checks of design `kg-construction.md` §5.6.
 
-- **G1** egyenlőség: `resolve(localize(split(plant)))`, eredeti id-kre fordítva,
-  megegyezik az eredeti üzemgráffal — minden stratégián és mindkét
-  duplikációs rátán.
-- **G2** átnevezés: két különböző `localize`-salt ugyanazt a (fordított)
-  eredményt adja — a resolver egyetlen döntése sem függhet az occurrence
-  id-től.
-- **G4** nehezebb dial-ok: a gyengébb feliratozási/számozási konvenciók
-  kivétel nélkül lefutnak, és amit a resolver párba tesz, az mindig helyes
-  (pontosság 1.0) — a fedettséget itt nem állítjuk, csak jelentjük (§5.2).
+- **G1** equality: `resolve(localize(split(plant)))`, translated back to
+  original ids, matches the original plant graph — across every strategy and
+  both duplication rates.
+- **G2** renaming: two different `localize` salts give the same (translated)
+  result — none of the resolver's decisions may depend on the occurrence id.
+- **G4** harder dials: the weaker labelling/numbering conventions run to
+  completion without exception, and whatever the resolver pairs is always
+  correct (precision 1.0) — coverage is not asserted here, only reported (§5.2).
 """
 
 from __future__ import annotations
@@ -41,7 +40,7 @@ _EX01_PATH = Path(__file__).resolve().parent.parent / "data" / "external" / "C01
 
 
 def _generated_plant(seed: int = 8) -> nx.DiGraph[str]:
-    """Egy 4-egységes szintetikus üzem — n_units alapértéke (`GeneratorConfig`)."""
+    """A 4-unit synthetic plant — the default of n_units (`GeneratorConfig`)."""
     config = GeneratorConfig(seed=seed)
     builder = GraphPlantBuilder(config.plant_id)
     plan_plant(config, builder)
@@ -56,7 +55,7 @@ def _resolve_from_scratch(
     return resolve(localized), occurrence_map, manifest
 
 
-# --- G1: resolve(localize(split(plant))) == plant, minden stratégián és dup-rátán ---
+# --- G1: resolve(localize(split(plant))) == plant, across every strategy and duplication rate ---
 
 
 @pytest.mark.parametrize("strategy_name", sorted(STRATEGIES))
@@ -87,7 +86,7 @@ def _assert_g1(plant: nx.DiGraph[str], config: SplitConfig) -> None:
     assert differences == [], differences
 
 
-# --- G2: egy másik localize-salt ugyanazt az (eredeti kulcsokra fordított) eredményt adja ---
+# --- G2: a different localize salt gives the same (translated-to-original-keys) result ---
 
 
 def test_g2_a_different_salt_gives_the_same_resolution_up_to_the_mapping() -> None:
@@ -146,7 +145,7 @@ def _mapped_unresolved(
     return {(occurrence_map.original_key(entry.from_key), entry.reason) for entry in unresolved}
 
 
-# --- G4: nehezebb dial-ok kivétel nélkül lefutnak, és a pontosság mindig 1.0 ---
+# --- G4: harder dials run to completion without exception, and precision is always 1.0 ---
 
 
 def _to_original_pair(pair: ConnectorPair, occurrence_map: OccurrenceMap) -> frozenset[str]:
@@ -171,7 +170,7 @@ def _to_original_pair(pair: ConnectorPair, occurrence_map: OccurrenceMap) -> fro
 )
 def test_g4_harder_dials_run_to_completion_with_perfect_pair_precision(config: SplitConfig) -> None:
     plant = _generated_plant()
-    resolution, occurrence_map, manifest = _resolve_from_scratch(plant, config)  # nem dob kivételt
+    resolution, occurrence_map, manifest = _resolve_from_scratch(plant, config)  # does not raise
 
     accounted = {pair.from_key for pair in resolution.connector_pairs}
     accounted |= {pair.to_key for pair in resolution.connector_pairs}
@@ -185,15 +184,15 @@ def test_g4_harder_dials_run_to_completion_with_perfect_pair_precision(config: S
     assert predicted_original <= gold_pairs, predicted_original - gold_pairs
 
 
-# --- design §10 T4b/T1b elfogadás: az importált EX01 lapon 36 csomópont, 0 pár ---
-# (T1b előtt 23 csomópontot vártunk — az off-page connector osztályok akkor még kiestek
-# importáláskor; ADR-0016 fallbackje óta mind a 36 csomópont megvan, lásd test_proteus_import.py)
+# --- design §10 T4b/T1b acceptance: the imported EX01 sheet has 36 nodes, 0 pairs ---
+# (before T1b we expected 23 nodes — the off-page connector classes used to be dropped
+# on import back then; since ADR-0016's fallback, all 36 nodes are present (test_proteus_import.py)
 
 
 def test_resolve_on_the_imported_ex01_sheet() -> None:
-    """A generikus fallback (ADR-0016) óta mind a 36 csomópont megvan, a két connector-csomópont
-    viszont hivatkozott rajzszám nélkül maradt (§11 OQ1b) — a resolvernek ezt megoldatlanként
-    kell jelentenie, sosem kivétellel."""
+    """Since the generic fallback (ADR-0016), all 36 nodes are present, but the two connector
+    nodes are left without a referenced drawing number (§11 OQ1b) — the resolver must report
+    this as unresolved, never with an exception."""
     if not _EX01_PATH.exists():
         pytest.skip(f"{_EX01_PATH} is absent; data/ is untracked (see CLAUDE.md)")
     imported = import_proteus_sheet(_EX01_PATH)

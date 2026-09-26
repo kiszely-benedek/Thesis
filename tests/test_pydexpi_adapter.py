@@ -1,9 +1,9 @@
-"""A pyDEXPI-modell -> séma `DiGraph` adapter invariánsai (`plant-generator.md` §3.4, §3.6).
+"""Invariants of the pyDEXPI model -> schema `DiGraph` adapter (`plant-generator.md` §3.4, §3.6).
 
-`SEEDS` kicsi, mert minden elem egy valódi pyDEXPI-modellt épít fel és fut
-végig a `GraphAbstractor`-on — ez lassabb, mint az oracle-builderes
-`test_generator.py`, ezért csak azokat az invariánsokat futtatjuk itt újra,
-amik magára az adapterre vonatkoznak (§9 step 3a: "using small sizes").
+`SEEDS` is small, because every element builds a real pyDEXPI model and runs it
+through the `GraphAbstractor` — slower than the oracle-builder-based
+`test_generator.py`, so only the invariants specific to the adapter itself are
+rerun here (§9 step 3a: "using small sizes").
 """
 
 from __future__ import annotations
@@ -45,7 +45,7 @@ def _sorted_edges(graph: nx.DiGraph[str]) -> list[tuple[str, str, dict[str, obje
     return sorted((source, target, dict(attrs)) for source, target, attrs in graph.edges(data=True))
 
 
-# ---- invariáns 1: alapszerkezet ------------------------------------------------------------
+# ---- invariant 1: basic structure ------------------------------------------------------------
 
 
 @pytest.mark.parametrize("seed", SEEDS)
@@ -55,7 +55,7 @@ def test_plant_graph_is_a_digraph_without_self_loops(seed: int) -> None:
     assert nx.number_of_selfloops(plant) == 0
 
 
-# ---- invariáns 2: séma-érvényesség ----------------------------------------------------------
+# ---- invariant 2: schema validity ----------------------------------------------------------
 
 
 @pytest.mark.parametrize("seed", SEEDS)
@@ -63,7 +63,7 @@ def test_plant_graph_is_schema_valid(seed: int) -> None:
     assert validation.validate_plant_graph(_plant(seed)) == []
 
 
-# ---- invariáns 3: reprodukálhatóság ---------------------------------------------------------
+# ---- invariant 3: reproducibility ---------------------------------------------------------
 
 
 def test_same_seed_gives_the_same_graph_and_report() -> None:
@@ -79,7 +79,7 @@ def test_seed_0_and_seed_1_differ() -> None:
     assert _sorted_nodes(_plant(0)) != _sorted_nodes(_plant(1))
 
 
-# ---- invariáns 5: alapkapcsoltság -----------------------------------------------------------
+# ---- invariant 5: basic connectivity -----------------------------------------------------------
 
 
 @pytest.mark.parametrize("seed", SEEDS)
@@ -92,7 +92,7 @@ def test_plant_graph_is_weakly_connected_and_unit1s_first_equipment_has_in_degre
     assert plant.in_degree(f"{config.plant_id}-u1-eq1") == 0
 
 
-# ---- invariáns 6: legalább egy elágazás a seedek felett --------------------------------------
+# ---- invariant 6: at least one branch point across the seeds ----------------------------
 
 
 def test_at_least_one_equipment_has_two_or_more_outgoing_streams_across_seeds() -> None:
@@ -114,7 +114,7 @@ def _send_to_out_degree(plant: nx.DiGraph[str], node_id: str) -> int:
     )
 
 
-# ---- invariáns 9: byte-azonos JSON export -----------------------------------------------------
+# ---- invariant 9: byte-identical JSON export -----------------------------------------------------
 
 
 def test_json_export_is_byte_identical_for_the_same_seed_and_differs_across_seeds() -> None:
@@ -128,7 +128,7 @@ def test_json_export_is_byte_identical_for_the_same_seed_and_differs_across_seed
     assert bytes_a != bytes_other_seed
 
 
-# ---- invariáns 10: nincs uuid-alakú id ---------------------------------------------------------
+# ---- invariant 10: no uuid-shaped id ---------------------------------------------------------
 
 _UUID_PATTERN = re.compile(
     r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", re.IGNORECASE
@@ -142,12 +142,12 @@ def test_no_dexpi_object_has_a_uuid_shaped_id() -> None:
     assert uuid_shaped == [], f"uuid-shaped id(s) found: {uuid_shaped}"
 
 
-# ---- invariáns 11: lineáris loader == stock GraphLoader ----------------------------------------
+# ---- invariant 11: linear loader == stock GraphLoader ----------------------------------------
 
 
 @pytest.mark.parametrize("seed", range(5))
 def test_linear_graph_loader_equals_the_stock_graph_loader(seed: int) -> None:
-    # a stock GraphLoader négyzetes, ezért kicsi n_units-szal fut (§9 step 3a)
+    # the stock GraphLoader is quadratic, so this runs with small n_units (§9 step 3a)
     model = generate_plant(GeneratorConfig(seed=seed, n_units=5)).model
     linear = LinearGraphLoader().dexpi_to_graph(model)
     stock = GraphLoader().dexpi_to_graph(model)
@@ -170,7 +170,7 @@ def _canonical_edges(
     )
 
 
-# ---- invariáns 12: teljes lefedettség --------------------------------------------------------
+# ---- invariant 12: complete coverage --------------------------------------------------------
 
 
 @pytest.mark.parametrize("seed", SEEDS)
@@ -182,7 +182,7 @@ def test_conversion_report_has_no_unmapped_topology_edges_and_resolves_every_val
     assert report.valve_units_unresolved == 0
 
 
-# ---- invariáns 13: JSON kerek-út --------------------------------------------------------------
+# ---- invariant 13: JSON round trip --------------------------------------------------------------
 
 
 def test_json_round_trip_gives_the_same_plant_graph(tmp_path: Path) -> None:
@@ -197,7 +197,7 @@ def test_json_round_trip_gives_the_same_plant_graph(tmp_path: Path) -> None:
     assert _sorted_edges(plant_before) == _sorted_edges(plant_after)
 
 
-# ---- invariáns 14: rendezett beszúrási sorrend ------------------------------------------------
+# ---- invariant 14: sorted insertion order ------------------------------------------------
 
 
 @pytest.mark.parametrize("seed", SEEDS)
@@ -207,13 +207,13 @@ def test_plant_graph_nodes_and_edges_are_inserted_in_sorted_order(seed: int) -> 
     assert list(plant.edges) == sorted(plant.edges)
 
 
-# ---- oracle-egyenlőségi invariáns (a "3-pyDEXPI" boxed jegyzet) --------------------------------
+# ---- oracle-equality invariant (the "3-pyDEXPI" boxed note) --------------------------------
 
-#: mindkét oldal ezeket a csomópont-tulajdonságokat hordozza; a real pipeline
-#: emellett nem termel semmi olyat, amit az oracle nem — a §4.8 adatok
-#: kikapcsolva maradnak (step 3b, ezen a lépésen kívül esik)
+#: both sides carry these node properties; besides them, the real pipeline
+#: produces nothing the oracle doesn't — the §4.8 data stays switched off
+#: (step 3b, out of scope for this step)
 _COMMON_NODE_KEYS = ("node_class", "tag", "plant_id", "unit_id", "loop_tag", "measured_variable")
-#: a `stream_kind` csak a real pipeline élein jelenik meg (az oracle nem írja rá) — ezért nem közös
+#: `stream_kind` only appears on real-pipeline edges (the oracle doesn't write it) — not shared
 _COMMON_EDGE_KEYS = ("relation", "line_number", "fluid_code")
 
 
@@ -252,7 +252,7 @@ def test_plant_graph_matches_the_oracle_builder_on_their_shared_properties(seed:
     )
 
 
-# ---- splitter-integráció valódi legenerált üzemen (invariáns 7, 8 real pipeline-on) ------------
+# ---- splitter integration on a real generated plant (invariants 7, 8 on the real pipeline) ----
 
 
 @pytest.mark.parametrize("strategy_name", sorted(STRATEGIES))

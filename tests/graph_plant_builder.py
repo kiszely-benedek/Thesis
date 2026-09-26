@@ -1,14 +1,14 @@
-"""Teszt-only `PlantBuilder`: a generátor topológia-döntéseiből séma szerinti `nx.DiGraph`-ot épít.
+"""Test-only `PlantBuilder`: builds a schema-conformant `nx.DiGraph` from the generator's topology.
 
-Ez az oracle, amihez a majdani pyDEXPI-adapter kimenetét kell hasonlítani —
-nem egy második éles útvonal (`plant-generator.md`, "Offline split of step 3",
-"New invariant for step 3a": "The test-only builder is an oracle, not a
-second production path"). Ezért szándékosan a lehető legegyszerűbb: minden
-`PlantBuilder`-hívás közvetlenül egy-egy networkx csomópontot/élt ad hozzá,
-a `graph.schema`-ban rögzített tulajdonságokkal.
+This is the oracle that the future pyDEXPI adapter's output must be compared
+against — not a second production path (`plant-generator.md`, "Offline split of
+step 3", "New invariant for step 3a": "The test-only builder is an oracle, not
+a second production path"). It is therefore deliberately as simple as
+possible: every `PlantBuilder` call directly adds one networkx node/edge, with
+the properties fixed in `graph.schema`.
 
-Nincs "test_" előtagja, ezért a pytest nem gyűjti be tesztként — ugyanúgy,
-ahogy `plant_fixtures.py` sem.
+No "test_" prefix, so pytest does not collect this as a test module — same as
+`plant_fixtures.py`.
 """
 
 from __future__ import annotations
@@ -22,7 +22,7 @@ from plantgraph.graph.schema import Relation
 
 
 class GraphPlantBuilder:
-    """A `PlantBuilder` Protocol séma-hű, csak tesztekhez való implementációja."""
+    """A schema-conformant, test-only implementation of the `PlantBuilder` protocol."""
 
     backend_version = "graph-test-builder"
 
@@ -31,7 +31,7 @@ class GraphPlantBuilder:
         self.graph: nx.DiGraph[str] = nx.DiGraph()
 
     def add_section(self, unit_no: int) -> None:
-        """Nincs teendő: a `PlantSection` a struktúra-rétegben él, itt nem csomópont (§4.1)."""
+        """Nothing to do: `PlantSection` lives in the structural layer, not a node here (§4.1)."""
         return None
 
     def add_equipment(
@@ -43,7 +43,7 @@ class GraphPlantBuilder:
         tag_prefix: str,
         tag_seq: int,
     ) -> None:
-        """Felvesz egy berendezés-csomópontot."""
+        """Add one equipment node."""
         self.graph.add_node(
             node_id, node_class=node_class, tag=tag, plant_id=self.plant_id, unit_id=str(unit_no)
         )
@@ -56,9 +56,9 @@ class GraphPlantBuilder:
         dst_id: str,
         valves: Sequence[ValveSpec],
     ) -> None:
-        """Berajzolja a csővezetéket: `src -> v1 -> ... -> vn -> dst`, `send_to` éleken."""
-        # a szelep a forrás egységéhez tartozik (§3.3 lépés 4); a forrás már fel
-        # van véve add_equipment-tel, tehát az unit_id attribútuma innen olvasható
+        """Draw the pipe segment: `src -> v1 -> ... -> vn -> dst`, on `send_to` edges."""
+        # the valve belongs to the source's unit (§3.3 step 4); the source was
+        # already added via add_equipment, so its unit_id attribute is readable here
         unit_id = self.graph.nodes[src_id]["unit_id"]
         chain = [src_id]
         for valve in valves:
@@ -72,7 +72,7 @@ class GraphPlantBuilder:
             chain.append(valve.node_id)
         chain.append(dst_id)
 
-        # chain[1:] szándékosan eggyel rövidebb: ez adja az egymást követő párokat
+        # chain[1:] is deliberately one shorter: this produces consecutive pairs
         for upstream, downstream in zip(chain, chain[1:], strict=False):
             self.graph.add_edge(
                 upstream,
@@ -83,7 +83,7 @@ class GraphPlantBuilder:
             )
 
     def add_control_loop(self, loop: LoopSpec) -> None:
-        """Berajzolja a kört: equipment -measured_by-> PSGF -> PIF -> AF -control-> valve (§4.3)."""
+        """Draw the loop: equipment -measured_by-> PSGF -> PIF -> AF -control-> valve (§4.3)."""
         unit_id = self.graph.nodes[loop.equipment_id]["unit_id"]
         pif_tag = f"{loop.variable}IC-{loop.unit_no}-{loop.loop_no}"
 
@@ -121,7 +121,7 @@ class GraphPlantBuilder:
         variable: str,
         loop_tag: str,
     ) -> None:
-        """Egy műszer-csomópontot vesz fel; `loop_tag` mindig a PIF saját tag-je (§3.6)."""
+        """Add one instrument node; `loop_tag` is always the PIF's own tag (§3.6)."""
         self.graph.add_node(
             node_id,
             node_class=node_class,

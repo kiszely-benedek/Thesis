@@ -1,12 +1,11 @@
-"""Azonosság-csoportosítás: ugyanaz a berendezés több lapon is (design `kg-construction.md` §5.3).
+"""Identity grouping: the same equipment drawn on several sheets (design `kg-construction.md` §5.3).
 
-A splitter némely berendezést több lapra is felrajzol (`splitter.py:_duplicate_equipment`):
-egy teljes attribútumú home-előfordulás, és minden szomszédos lapon egy csonkolt
-reference (csak tag és node_class). A `localize()` már lezárta a közös node_id-t
-(L1 szivárgás, design §4.1), ezért ez a modul csak a tag-en és az osztályon
-keresztül ismerheti fel, hogy két előfordulás ugyanaz a fizikai berendezés —
-pontosan úgy, ahogy egy valódi berendezés-jegyzék is csak a tag alapján
-azonosítana.
+The splitter draws some equipment on more than one sheet (`splitter.py:_duplicate_equipment`):
+one full-attribute home occurrence, and on every neighbouring sheet a stripped-down
+reference (tag and node_class only). `localize()` has already closed off the
+shared node_id (L1 leak, design §4.1), so this module can only recognize that two
+occurrences are the same physical equipment via the tag and the class — exactly
+as a real equipment register would identify it, by tag alone.
 """
 
 from __future__ import annotations
@@ -19,13 +18,13 @@ from plantgraph.benchmark.models import IdentityGroup
 from plantgraph.benchmark.sheet_graph import SheetGraph
 from plantgraph.graph.schema import EQUIPMENT_CLASSES
 
-#: (tag, node_class) — ez azonosítja a fizikai berendezést, sosem az occurrence id
-#: (design §5.3: a home kiválasztása ne függjön a salt-tal átnevezett helyi kulcstól).
+#: (tag, node_class) — this identifies the physical equipment, never the occurrence id
+#: (design §5.3: home selection must not depend on a salt-renamed local key).
 _TagKey = tuple[str, str]
 
 
 class _Occurrence(NamedTuple):
-    """Egy tag-kulcs egyetlen előfordulása egy lokalizált lapon."""
+    """A single occurrence of a tag key on one localized sheet."""
 
     sheet_id: str
     local_key: str
@@ -35,15 +34,15 @@ class _Occurrence(NamedTuple):
 def group_identities(
     sheets: Sequence[SheetGraph], classes: frozenset[str] = EQUIPMENT_CLASSES
 ) -> tuple[list[IdentityGroup], int]:
-    """(tag, node_class) szerint csoportosítja az előfordulásokat, és megkeresi a predikált home-ot.
+    """Group occurrences by (tag, node_class), and pick the predicted home for each.
 
-    Csak `classes` osztályaira nézi (alapértelmezetten csak berendezés): a
-    szelepek tag-je csővezeték-szakaszonként ismétlődik, azok laponkénti
-    összevonása hamis egyesítést adna (design §5.3).
+    Only looks at `classes` (equipment only, by default): valve tags repeat per
+    pipe segment, so merging those across sheets would produce a false merge
+    (design §5.3).
 
     Returns:
-        A megtalált csoportok (rendezve tag szerint), és a lapon belül
-        kétértelmű — ezért kizárt — tag-kulcsok száma.
+        The groups found (sorted by tag), and the count of tag keys that were
+        ambiguous within a single sheet — and therefore excluded.
     """
     occurrences_by_key = _occurrences_by_tag_key(sheets, classes)
     ambiguous_tag_keys = _drop_ambiguous_within_a_sheet(occurrences_by_key)
@@ -73,10 +72,10 @@ def _occurrences_by_tag_key(
 
 
 def _drop_ambiguous_within_a_sheet(occurrences_by_key: dict[_TagKey, list[_Occurrence]]) -> int:
-    """Kihagy egy tag-kulcsot, ha egy laponon belül nem egyedi (pl. EX01 duplikált szelep-tagjei).
+    """Drop a tag key if it is not unique within a single sheet (e.g. EX01's duplicated valve tags).
 
-    A kizárt kulcs egyik előfordulása sem kerül csoportba — a resolver inkább
-    egyáltalán nem dönt, mint hogy találgasson, melyik a helyes pár.
+    None of an excluded key's occurrences join any group — the resolver would
+    rather make no decision at all than guess which occurrence is the right match.
     """
     ambiguous_keys = [
         key
@@ -89,10 +88,10 @@ def _drop_ambiguous_within_a_sheet(occurrences_by_key: dict[_TagKey, list[_Occur
 
 
 def _build_group(tag: str, occurrences: list[_Occurrence]) -> IdentityGroup:
-    """A legtöbb tulajdonságú előfordulás lesz a predikált home; holtversenyt a lap-id dönt el.
+    """The occurrence with the most properties becomes the predicted home; ties break on sheet id.
 
-    Sosem az occurrence id: a G2 kapu (salt-tal átnevezett gráf) ugyanazt a
-    home-ot kell adja, pedig az id-k teljesen mások lennének.
+    Never the occurrence id: the G2 gate check (a salt-renamed graph) must
+    produce the same home, even though the ids would be completely different.
     """
     home = min(occurrences, key=lambda occ: (-occ.property_count, occ.sheet_id))
     references = sorted(occ.local_key for occ in occurrences if occ.local_key != home.local_key)

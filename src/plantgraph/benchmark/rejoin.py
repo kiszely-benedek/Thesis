@@ -1,10 +1,10 @@
-"""A splitter inverze: lapokból és a megoldókulcsból visszaállítja az eredeti üzemgráfot.
+"""The splitter's inverse: rebuilds the original plant graph from sheets and the answer key.
 
-Csak a tesztek használják — annak ellenőrzésére, hogy split() nem veszít és nem
-told hozzá semmit (splitter.md 4. fejezet, "round-trip invariant"). Két dolgot
-kell visszacsinálnia: az off-page connector csonkokat vissza kell kötni a
-tényleges élre, és az azonosság-csoportok reference-előfordulásait a home
-csomópontba kell olvasztani, mielőtt a gráfok összehasonlíthatók.
+Used only by the tests — to check that split() loses nothing and adds nothing
+(splitter.md section 4, "round-trip invariant"). It has to undo two things: the
+off-page connector stubs must be reconnected into the real edge, and the
+identity groups' reference occurrences must be merged back into the home node
+before the graphs can be compared.
 """
 
 from __future__ import annotations
@@ -18,11 +18,11 @@ from plantgraph.benchmark.sheet_graph import SheetGraph
 
 
 def rejoin(sheets: list[SheetGraph], manifest: SplitManifest) -> nx.DiGraph[str]:
-    """Visszaállítja az eredeti gráfot a lapokból és a megoldókulcsból.
+    """Rebuild the original graph from sheets and the answer key.
 
-    Két lépésben: leszedi az OPC-csonkokat és visszaköti a vágott éleket,
-    majd egyesíti az azonosság-csoportok reference-előfordulásait a home
-    csomópontba (lásd a modul docstringjét).
+    In two steps: strip the off-page connector stubs and reconnect the cut
+    edges, then merge the identity groups' reference occurrences into the home
+    node (see the module docstring).
     """
     stub_keys = {connector.key for sheet in sheets for connector in sheet.connectors}
     reference_keys = {
@@ -40,18 +40,18 @@ def rejoin(sheets: list[SheetGraph], manifest: SplitManifest) -> nx.DiGraph[str]
 def _copy_sheet_into(
     merged: nx.DiGraph[str], sheet: SheetGraph, stub_keys: set[str], reference_keys: set[str]
 ) -> None:
-    """Egy lap csomópontjait/éleit átteszi a közös gráfba, kihagyva az OPC-csonkokat.
+    """Copy one sheet's nodes/edges into the merged graph, skipping the off-page connector stubs.
 
-    A reference-csomópont attribútumait szándékosan nem másoljuk át: azok
-    csak a rajzon látszó, csonkolt adatok, az igazi attribútumokat a home
-    előfordulás adja. Az élei viszont valódiak, azokat átvesszük.
+    Reference node attributes are deliberately not copied over: those are only
+    the stripped-down data visible on the drawing, the real attributes come from
+    the home occurrence. Its edges are real, though, so those are copied.
     """
     for node_id, attrs in sheet.graph.nodes(data=True):
         key = f"{sheet.sheet_id}:{node_id}"
         if key in stub_keys:
             continue
         if key in reference_keys:
-            merged.add_node(node_id)  # a teljes attribútumokat a home előfordulás adja majd
+            merged.add_node(node_id)  # the full attributes will come from the home occurrence
             continue
         merged.add_node(node_id, **attrs)
 
@@ -59,14 +59,14 @@ def _copy_sheet_into(
         source_key = f"{sheet.sheet_id}:{source}"
         target_key = f"{sheet.sheet_id}:{target}"
         if source_key in stub_keys or target_key in stub_keys:
-            continue  # az elvágott él egyik fele — a _reconnect állítja helyre a valódi élt
+            continue  # one half of a cut edge — _reconnect restores the real edge
         merged.add_edge(source, target, **attrs)
 
 
 def _reconnect(merged: nx.DiGraph[str], sheets: list[SheetGraph], pair: ConnectorPair) -> None:
-    """Egy off-page connector pár helyére visszateszi az eredeti élt.
+    """Put the original edge back in place of an off-page connector pair.
 
-    Az attribútumokat a csonk-él őrizte meg, ezért innen olvassuk vissza.
+    The stub edge preserved the attributes, so we read them back from there.
     """
     original_edge = pair.original_edge
     if original_edge is None:
@@ -80,14 +80,14 @@ def _reconnect(merged: nx.DiGraph[str], sheets: list[SheetGraph], pair: Connecto
 
 
 def _stub_edge_attrs(sheets: list[SheetGraph], key: str) -> dict[str, object]:
-    """Megkeresi egy csonk-csomópont egyetlen élét.
+    """Find a stub node's single edge.
 
-    Mindkét oldali csonk ugyanazt az eredeti-él adatot hordozza, ezért bármelyiket olvashatjuk.
+    Both sides of a stub carry the same original-edge data, so either can be read.
     """
     sheet_id, node_id = key.split(":", 1)
     sheet = next(candidate for candidate in sheets if candidate.sheet_id == sheet_id)
-    # egy csonknak pontosan egy éle van; az irány (be- vagy kimenő) attól függ,
-    # melyik oldalára esett a vágásnak — ezért nézzük mindkét irányt
+    # a stub has exactly one edge; whether it is outgoing or incoming depends on
+    # which side of the cut it landed on — so check both directions
     for _, _, attrs in sheet.graph.out_edges(node_id, data=True):
         return cast(dict[str, object], attrs)
     for _, _, attrs in sheet.graph.in_edges(node_id, data=True):

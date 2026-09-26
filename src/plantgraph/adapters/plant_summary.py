@@ -1,9 +1,9 @@
-"""A `pydexpi_adapter.plant_graph` kimenetének jellemzőit gyűjti össze (`plant-generator.md` §3.2).
+"""Gathers summary stats from `pydexpi_adapter.plant_graph`'s output (`plant-generator.md` §3.2).
 
-Ez a modul sosem lát pyDEXPI-objektumot, csak a séma szerinti `nx.DiGraph`-ot
-— attól vált külön a `pydexpi_adapter.py`-tól, hogy az ne lépje túl a 400 soros
-fájlkorlátot, nem fogalmi okból: a `PlantSummary` az EXP-0002 skálázási sweep
-regressziós változóit adja minden legenerált üzem mellé.
+This module never sees a pyDEXPI object, only the schema's `nx.DiGraph` — it
+was split out of `pydexpi_adapter.py` so that module would not exceed the
+400-line file limit, not for a conceptual reason: `PlantSummary` supplies the
+regression variables for the EXP-0002 scaling sweep alongside every generated plant.
 """
 
 from __future__ import annotations
@@ -17,7 +17,7 @@ from plantgraph.graph import schema
 
 
 def summarize_plant(plant: nx.DiGraph[str]) -> PlantSummary:
-    """A séma-gráf jellemzőit gyűjti — csak a `DiGraph`-ot nézi, a pyDEXPI-modellt nem (§3.2)."""
+    """Gather summary stats from the schema graph — only the `DiGraph`, never pyDEXPI (§3.2)."""
     nodes_per_class = collections.Counter(
         str(attrs.get("node_class")) for _, attrs in plant.nodes(data=True)
     )
@@ -53,10 +53,10 @@ def summarize_plant(plant: nx.DiGraph[str]) -> PlantSummary:
 
 
 def _line_number_kinds(plant: nx.DiGraph[str]) -> dict[str, str]:
-    """Csővezeték (line_number) -> stream_kind, a `send_to` élek tulajdonságaiból.
+    """Map pipe segment (`line_number`) -> `stream_kind`, read off `send_to` edge attributes.
 
-    "unknown" ha egy `send_to` élnek nincs `stream_kind`-je — ez egy külső,
-    `GenerationRecord` nélküli DEXPI-fájlnál (pl. EXP-0001) várható, nem hiba.
+    Returns "unknown" if a `send_to` edge has no `stream_kind` — expected for an
+    external DEXPI file without a `GenerationRecord` (e.g. EXP-0001), not an error.
     """
     return {
         str(attrs["line_number"]): str(attrs.get("stream_kind", "unknown"))
@@ -66,7 +66,7 @@ def _line_number_kinds(plant: nx.DiGraph[str]) -> dict[str, str]:
 
 
 def _send_to_out_degree(plant: nx.DiGraph[str], node_id: str) -> int:
-    """Hány csővezetéket indít a csomópont — csak a `send_to` éleket számolja."""
+    """Count how many pipe segments a node starts — counts only `send_to` edges."""
     return sum(
         1
         for _, _, attrs in plant.out_edges(node_id, data=True)

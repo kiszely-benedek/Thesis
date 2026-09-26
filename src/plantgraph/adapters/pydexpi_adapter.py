@@ -1,16 +1,15 @@
-"""A pyDEXPI-modellből a séma szerinti `DiGraph`-ot állítja elő (`plant-generator.md` §3.6).
+"""Produces the schema's `DiGraph` from a pyDEXPI model (`plant-generator.md` §3.6).
 
-Három lépésben: egy gyors (lineáris idejű) csomópont-gyűjtés, majd pyDEXPI saját
-`GraphAbstractor`-a, ami a nyers "minden objektum és minden attribútum" gráfot
-(**complete graph**) a lényegi (**conceptual graph**) alakra vonja össze — ezt
-az utat futná be egy valódi DEXPI-fájl is, ezért ezen az adapteren át
-hasonlítható össze az egylapos alapmérés (`DEXPIEX01.xml`) és a plant-scale
-generátor kimenete (§8). A harmadik lépés a mienk: a pyDEXPI-osztályneveket és
-él-attribútumokat a `graph.schema` relációira és tulajdonságaira fordítja.
+In three steps: a fast (linear-time) node collection, then pyDEXPI's own `GraphAbstractor`,
+which condenses the raw "every object and every attribute" graph (the **complete graph**)
+into its essential form (the **conceptual graph**) — a real DEXPI file goes through this
+same path, so this adapter lets the single-sheet baseline (`DEXPIEX01.xml`) be compared
+against the plant-scale generator's output (§8). The third step is ours: translating
+pyDEXPI class names and edge attributes into `graph.schema`'s relations and properties.
 
-Az így kapott `DiGraph` jellemzőinek összegzését (`summarize_plant`) a
-`plant_summary.py` adja — külön modul, mert 400 sor fölé vinné ezt a fájlt, és
-a logikája amúgy sem néz pyDEXPI-objektumot, csak a kimenő `DiGraph`-ot.
+Summary statistics for the resulting `DiGraph` (`summarize_plant`) live in `plant_summary.py`
+instead — a separate module, since it would push this file past 400 lines, and its logic
+never touches a pyDEXPI object anyway.
 """
 
 from __future__ import annotations
@@ -31,19 +30,19 @@ from plantgraph.graph import schema
 
 
 class LinearGraphLoader(GraphLoader):
-    """pyDEXPI `GraphLoader`, lineáris idejű csomópont-gyűjtéssel.
+    """A pyDEXPI `GraphLoader`, with linear-time node collection.
 
-    A stock `GraphLoader.parse_dexpi_to_graph` a `model_toolkit.get_all_instances_in_model`
-    függvényt hívja, ami `obj not in list` dedupliká: ez pydantic `__eq__`
-    hívásokban négyzetes (`plant-generator.md` §3.6, mérve: 140 s 250 egységnél,
-    lásd §7). Ez az osztály csak a bejárást cseréli objektum-**azonosság**
-    (`id(obj)`) szerinti deduplikálásra, a csomópont/él-építést pyDEXPI saját,
-    változatlan `_add_nodes`/`_add_edges` metódusaira hagyva — invariáns 11
-    ellenőrzi, hogy a kettő ugyanazt a gráfot adja.
+    The stock `GraphLoader.parse_dexpi_to_graph` calls
+    `model_toolkit.get_all_instances_in_model`, which deduplicates with `obj not
+    in list`: quadratic in pydantic `__eq__` calls (`plant-generator.md` §3.6,
+    measured at 140 s for 250 units, see §7). This class only replaces the
+    traversal with deduplication by object **identity** (`id(obj)`), leaving
+    node/edge construction to pyDEXPI's own `_add_nodes`/`_add_edges` methods —
+    invariant 11 checks that the two produce the same graph.
     """
 
     def parse_dexpi_to_graph(self, dexpi_model: DexpiModel) -> nx.MultiDiGraph[str]:
-        """A pyDEXPI `GraphLoader` felülírt belépési pontja — lásd az osztály docstringjét."""
+        """The pyDEXPI `GraphLoader`'s overridden entry point — see the class docstring."""
         if dexpi_model.conceptualModel is None:
             raise ValueError("dexpi_model.conceptualModel is None; nothing to convert")
         graph: nx.MultiDiGraph[str] = nx.MultiDiGraph()
@@ -56,7 +55,7 @@ class LinearGraphLoader(GraphLoader):
 
 
 def _collect_instances(root: DexpiBaseModel) -> list[DexpiBaseModel]:
-    """DFS bejárás a kompozíciós fán, objektum-azonosság szerint deduplikálva."""
+    """A DFS walk over the composition tree, deduplicated by object identity."""
     seen: set[int] = set()
     ordered: list[DexpiBaseModel] = []
     stack: list[DexpiBaseModel] = [root]
@@ -71,7 +70,7 @@ def _collect_instances(root: DexpiBaseModel) -> list[DexpiBaseModel]:
 
 
 def _composition_children(obj: DexpiBaseModel) -> list[DexpiBaseModel]:
-    """Egy objektum kompozíciós (tulajdonolt, nem csak hivatkozott) gyermekei."""
+    """An object's composition children (owned, not merely referenced)."""
     children: list[DexpiBaseModel] = []
     for value in base_model_utils.get_composition_attributes(obj).values():
         if isinstance(value, list):
@@ -82,7 +81,7 @@ def _composition_children(obj: DexpiBaseModel) -> list[DexpiBaseModel]:
 
 
 class ConversionReport(BaseModel):
-    """A pyDEXPI -> séma `DiGraph` leképezés lefedettsége — semmi nem tűnik el nyomtalanul."""
+    """Coverage of the pyDEXPI -> schema `DiGraph` mapping — nothing disappears without a trace."""
 
     nodes_mapped: int = 0
     nodes_dropped_per_class: dict[str, int] = Field(default_factory=dict)
@@ -94,22 +93,22 @@ class ConversionReport(BaseModel):
 
 
 def load_complete_graph(model: DexpiModel) -> nx.MultiDiGraph[str]:
-    """A teljes (complete) gráf: minden pyDEXPI-objektum és attribútum, lineáris betöltővel.
+    """The complete graph: every pyDEXPI object and attribute, via the linear loader.
 
-    Külön, publikus lépés (§3.6 1. lépése), hogy a `scale_smoke` (§9 step 7)
-    ezt a szakaszt önmagában, `perf_counter`-rel mérhesse — anélkül, hogy
-    pyDEXPI-t kellene importálnia (ADR-0003: csak `adapters/pydexpi_*.py` tehet ilyet).
+    A separate, public step (§3.6 step 1), so `scale_smoke` (§9 step 7) can time
+    this stage on its own with `perf_counter` — without having to import pyDEXPI
+    itself (ADR-0003: only `adapters/pydexpi_*.py` may do that).
     """
     return LinearGraphLoader().dexpi_to_graph(model)
 
 
 def abstract_conceptual_graph(complete: nx.MultiDiGraph[str]) -> nx.MultiDiGraph[str]:
-    """A lényegi (conceptual) gráf, pyDEXPI saját összevonásával, önálló szakaszként (§3.6)."""
+    """The conceptual graph, via pyDEXPI's own consolidation, as a standalone stage (§3.6)."""
     return GraphAbstractor.build_conceptual_graph(complete)
 
 
 def plant_graph(generated: GeneratedPlant) -> tuple[nx.DiGraph[str], ConversionReport]:
-    """Előállítja a séma `DiGraph`-ot és a lefedettségi jelentést a `GeneratedPlant` modelljéből."""
+    """Produce the schema's `DiGraph` and the coverage report from a `GeneratedPlant`'s model."""
     complete = load_complete_graph(generated.model)
     conceptual = abstract_conceptual_graph(complete)
     return map_conceptual_graph(conceptual, generated.record.plant_id, generated.record.stream_kind)
@@ -118,10 +117,11 @@ def plant_graph(generated: GeneratedPlant) -> tuple[nx.DiGraph[str], ConversionR
 def map_conceptual_graph(
     conceptual: nx.MultiDiGraph[str], plant_id: str, stream_kind: Mapping[str, StreamKind]
 ) -> tuple[nx.DiGraph[str], ConversionReport]:
-    """A pyDEXPI konceptuális gráfot a séma `DiGraph`-jára fordítja (§3.6 3. lépése).
+    """Translate the pyDEXPI conceptual graph to the schema's `DiGraph` (§3.6 step 3).
 
-    `plant_id` és `stream_kind` külön paraméter, nem egy `GenerationRecord`: egy importált
-    fájlnak nincs megoldókulcsa, és egy hamisítottat átadni gold-típust csempészne az importba.
+    `plant_id` and `stream_kind` are separate parameters, not a `GenerationRecord`:
+    an imported file has no answer key, and passing a fabricated one would smuggle
+    gold-standard data into the import.
     """
     section_code = _section_codes(conceptual)
     mapped_nodes, nodes_dropped = _map_nodes(conceptual, plant_id)
@@ -131,7 +131,7 @@ def map_conceptual_graph(
     )
 
     plant: nx.DiGraph[str] = nx.DiGraph()
-    for node_id in sorted(mapped_nodes):  # invariáns 14: rendezett beszúrási sorrend
+    for node_id in sorted(mapped_nodes):  # invariant 14: sorted insertion order
         plant.add_node(node_id, **mapped_nodes[node_id])
     for source, target in sorted(chosen_edges):
         relation, edge_attrs = chosen_edges[(source, target)]
@@ -152,11 +152,11 @@ def map_conceptual_graph(
     return plant, report
 
 
-# ---- csomópontok --------------------------------------------------------------------------
+# ---- nodes --------------------------------------------------------------------------
 
 
 def _section_codes(conceptual: nx.MultiDiGraph[str]) -> dict[str, str]:
-    """`PlantSection`-csomópont id -> `plantSectionIdentificationCode` ("unit" szám, §4.2)."""
+    """`PlantSection` node id -> `plantSectionIdentificationCode` (the "unit" number, §4.2)."""
     return {
         node_id: str(attrs.get("plantSectionIdentificationCode"))
         for node_id, attrs in conceptual.nodes(data=True)
@@ -167,11 +167,11 @@ def _section_codes(conceptual: nx.MultiDiGraph[str]) -> dict[str, str]:
 def _map_nodes(
     conceptual: nx.MultiDiGraph[str], plant_id: str
 ) -> tuple[dict[str, dict[str, object]], dict[str, int]]:
-    """A topológia-osztályú csomópontokat gyűjti; a struktúra- és ismeretlen osztályok kiesnek.
+    """Collect nodes of a topology class; structural and unknown classes are dropped.
 
-    Ami kiesik, az a `ConversionReport`-ba kerül — a `PlantSection`/`ProcessPlant`
-    kiesése szándékos (§4.1: a struktúra-réteg sosem a splitter bemenő gráfjának
-    csomópontja), nem hiba.
+    Whatever is dropped goes into the `ConversionReport` — dropping
+    `PlantSection`/`ProcessPlant` is deliberate (§4.1: the structural layer is
+    never a node in the splitter's input graph), not a bug.
     """
     mapped: dict[str, dict[str, object]] = {}
     dropped: collections.Counter[str] = collections.Counter()
@@ -190,11 +190,11 @@ def _map_nodes(
 
 
 def topology_node_class(label: str) -> str | None:
-    """A pyDEXPI osztálynevet a séma egy topológia-osztályára fordítja, ős-osztályokon át (§6).
+    """Translate a pyDEXPI class name to one of the schema's topology classes, via ancestors (§6).
 
-    A generátor mindig pontos névtalálatot ad; az ős-osztály ág az EXP-0001
-    útvonalhoz kell, ahol egy valódi DEXPI-fájl finomabb alosztályokat használ
-    (pl. `ReciprocatingPump`), amiknek nincs saját sémabeli neve.
+    The generator always gives an exact name match; the ancestor-class branch is needed
+    for the EXP-0001 path, where a real DEXPI file uses finer-grained subclasses (e.g.
+    `ReciprocatingPump`) with no name of their own in the schema.
     """
     if label in schema.IMPORTABLE_CLASSES:
         return label
@@ -208,7 +208,7 @@ def topology_node_class(label: str) -> str | None:
 
 
 def _tag_of(node_class: str, attrs: Mapping[str, object]) -> str | None:
-    """Egy csomópont tagje a `GraphLoader` már belapított attribútumaiból (§3.6 "Node rules")."""
+    """A node's tag, from attributes the `GraphLoader` flattened onto it (§3.6 "Node rules")."""
     if node_class in schema.EQUIPMENT_CLASSES:
         return _as_str(attrs.get("tagName"))
     if node_class in schema.VALVE_CLASSES:
@@ -234,7 +234,7 @@ def _fold_parent_structure(
     mapped_nodes: dict[str, dict[str, object]],
     section_code: dict[str, str],
 ) -> int:
-    """A `parentStructure` élt a forrás `unit_id` mezőjébe olvasztja, nem élként veszi át (§4.1)."""
+    """Fold the `parentStructure` edge into the source's `unit_id` field, not as an edge (§4.1)."""
     folded = 0
     for source, target, attrs in conceptual.edges(data=True):
         if attrs.get("attr_name") != "parentStructure" or target not in section_code:
@@ -245,18 +245,18 @@ def _fold_parent_structure(
     return folded
 
 
-# ---- élek ----------------------------------------------------------------------------------
+# ---- edges ----------------------------------------------------------------------------------
 
-#: egy rendezett csomópont-pár még el nem döntött jelöltje: reláció és él-tulajdonságok
+#: an as-yet-undecided candidate for an ordered node pair: relation and edge properties
 _EdgeCandidate = tuple[tuple[str, str], schema.Relation, dict[str, object]]
-#: a végleges, párhuzamos-él-ütközés nélküli leképezés rendezett pár -> (reláció, tulajdonságok)
+#: the final mapping, free of parallel-edge conflicts: ordered pair -> (relation, properties)
 _ChosenEdges = dict[tuple[str, str], tuple[schema.Relation, dict[str, object]]]
 
 _PIPE_LABELS = frozenset({"Pipe", "DirectPipingConnection"})
 _SIGNAL_LABELS = frozenset(
     {"MeasuringLineFunction", "SignalLineFunction", "SignalConveyingFunction"}
 )
-#: melyik reláció győz, ha két pyDEXPI-él ugyanarra a rendezett csomópont-párra esne (§6)
+#: which relation wins if two pyDEXPI edges would fall on the same ordered node pair (§6)
 _RELATION_PRIORITY = (
     schema.Relation.SEND_TO,
     schema.Relation.SEND_SIGNAL_TO,
@@ -266,7 +266,7 @@ _RELATION_PRIORITY = (
 
 
 def _relation_of(attrs: Mapping[str, object]) -> tuple[schema.Relation, bool] | None:
-    """Egy pyDEXPI konceptuális él sémabeli relációja, és hogy az irányát meg kell-e fordítani."""
+    """A pyDEXPI conceptual edge's schema relation, and whether its direction must be reversed."""
     label, attr_name = attrs.get("label"), attrs.get("attr_name")
     if label in _PIPE_LABELS:
         return schema.Relation.SEND_TO, False
@@ -275,7 +275,7 @@ def _relation_of(attrs: Mapping[str, object]) -> tuple[schema.Relation, bool] | 
     if label == "OperatedValveReference":
         return schema.Relation.CONTROL, False
     if label == "reference" and attr_name == "sensingLocation":
-        # a PSGF hivatkozik az érzékelt helyre, de a sémában equipment -> PSGF a mérés iránya
+        # the PSGF references the sensed location; equipment -> PSGF is the measurement direction
         return schema.Relation.MEASURED_BY, True
     return None
 
@@ -283,7 +283,7 @@ def _relation_of(attrs: Mapping[str, object]) -> tuple[schema.Relation, bool] | 
 def _edge_properties(
     relation: schema.Relation, attrs: Mapping[str, object], stream_kind: Mapping[str, StreamKind]
 ) -> dict[str, object]:
-    """A `send_to` él tulajdonságai; a többi relációnak a sémában nincs saját él-tulajdonsága."""
+    """The `send_to` edge's properties; every other relation has no edge properties of its own."""
     if relation is not schema.Relation.SEND_TO:
         return {}
     line_number = attrs.get("lineNumber")
@@ -301,20 +301,20 @@ def _map_edges(
     mapped_nodes: dict[str, dict[str, object]],
     stream_kind: Mapping[str, StreamKind],
 ) -> tuple[_ChosenEdges, dict[str, int], dict[str, int], int]:
-    """A topológia-éleket gyűjti és párhuzamos-él prioritással egy `DiGraph`-ra oldja fel.
+    """Collect the topology edges and resolve them onto a `DiGraph` by parallel-edge priority.
 
-    Visszaadja a végleges (rendezett pár -> reláció, tulajdonságok) leképezést,
-    a végleges (győztes) élek relációnkénti darabszámát, az el nem fogadott
-    él-fajták darabszámát, és hány párhuzamos élet nyelt el a prioritás.
+    Returns the final (ordered pair -> relation, properties) mapping, the count of
+    winning edges per relation, the count of rejected edge kinds, and how many
+    parallel edges the priority rule collapsed.
     """
     candidates: list[_EdgeCandidate] = []
     dropped: collections.Counter[str] = collections.Counter()
 
     for source, target, attrs in conceptual.edges(data=True):
         if attrs.get("attr_name") == "parentStructure":
-            continue  # már feloldva unit_id-ra (_fold_parent_structure)
+            continue  # already resolved into unit_id (_fold_parent_structure)
         if source not in mapped_nodes or target not in mapped_nodes:
-            continue  # az egyik végpont struktúra- vagy ismeretlen osztály — nem topológia-él
+            continue  # one endpoint is a structural or unknown class — not a topology edge
         mapped = _relation_of(attrs)
         if mapped is None:
             dropped[f"{attrs.get('label')}/{attrs.get('attr_name')}"] += 1
@@ -329,7 +329,7 @@ def _map_edges(
 
 
 def _resolve_parallel_edges(candidates: list[_EdgeCandidate]) -> tuple[_ChosenEdges, int]:
-    """Ha két él ugyanarra a rendezett párra esik, csak a magasabb prioritásút tartja meg."""
+    """If two edges fall on the same ordered pair, keep only the higher-priority one."""
     chosen: _ChosenEdges = {}
     collapsed = 0
     for pair, relation, edge_attrs in candidates:
@@ -337,13 +337,13 @@ def _resolve_parallel_edges(candidates: list[_EdgeCandidate]) -> tuple[_ChosenEd
         if current is not None:
             collapsed += 1
             if _RELATION_PRIORITY.index(relation) >= _RELATION_PRIORITY.index(current[0]):
-                continue  # a jelenlegi magasabb (vagy egyenlő) prioritású, marad
+                continue  # the current one has higher (or equal) priority, so it stays
         chosen[pair] = (relation, edge_attrs)
     return chosen, collapsed
 
 
 def _assign_valve_units(plant: nx.DiGraph[str]) -> int:
-    """A szelepnek nincs DEXPI `parentStructure`-je; a forrás felé sétálva örökli az `unit_id`-t.
+    """A valve has no DEXPI `parentStructure`; it inherits `unit_id` by walking towards its source.
 
     (§3.6: "owned by the source's unit")
     """
@@ -353,8 +353,8 @@ def _assign_valve_units(plant: nx.DiGraph[str]) -> int:
             continue
         owner = _walk_to_owning_equipment(plant, node_id)
         if owner is None or "unit_id" not in plant.nodes[owner]:
-            # a birtokosnak sincs unit_id-je egy PlantSection nélküli fájlnál (importált EX01,
-            # kg-construction.md §2) — ez is megoldatlan eset, nem KeyError
+            # the owner has no unit_id either, on a file without a PlantSection (imported EX01,
+            # kg-construction.md §2) — this too is an unresolved case, not a KeyError
             unresolved += 1
             continue
         plant.nodes[node_id]["unit_id"] = plant.nodes[owner]["unit_id"]
@@ -362,7 +362,7 @@ def _assign_valve_units(plant: nx.DiGraph[str]) -> int:
 
 
 def _walk_to_owning_equipment(plant: nx.DiGraph[str], node_id: str) -> str | None:
-    """Visszafelé lépked a `send_to` láncon egy szelepről, amíg berendezéshez nem ér."""
+    """Walk backward along the `send_to` chain from a valve until it reaches equipment."""
     current = node_id
     while plant.nodes[current]["node_class"] in schema.VALVE_CLASSES:
         upstream = [
@@ -386,7 +386,7 @@ _INSTRUMENT_CLASSES = frozenset(
 
 
 def _assign_loop_tags(plant: nx.DiGraph[str]) -> None:
-    """A PIF saját tag-jét ráírja önmagára és a PSGF/AF szomszédaira, `loop_tag`-ként (§3.6)."""
+    """Write the PIF's own tag onto itself and its PSGF/AF neighbours, as `loop_tag` (§3.6)."""
     pif_class = schema.NodeClass.PROCESS_INSTRUMENTATION_FUNCTION.value
     for node_id in sorted(plant.nodes):
         if plant.nodes[node_id]["node_class"] != pif_class:

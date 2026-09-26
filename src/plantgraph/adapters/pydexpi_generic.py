@@ -1,18 +1,17 @@
-"""A séma-ismeretlen pyDEXPI osztályok generikus fallback-ja (ADR-0016, `kg-construction.md` §3.1).
+"""Generic fallback for pyDEXPI classes not in the schema (ADR-0016, `kg-construction.md` §3.1).
 
-Egy valódi rajz jóval több pyDEXPI-osztályt használ, mint amennyit a séma
-(`graph.schema`) curated (a generátor és a splitter által ismert 12+4 osztály)
-— pl. `PipeTee`, `BlindFlange`, egy dugattyús szivattyú (`ReciprocatingPump`).
-A `pydexpi_adapter.py` ezeket eddig némán eldobta (`kg-construction.md` §2).
-ADR-0016 döntése szerint egyik sem veszhet el: egy ismeretlen osztály a
-`GenericItem` node_class-t kapja, a pyDEXPI-osztálynevét (`dexpi_class`) és egy
-curated ős-lánc-előtagot (`dexpi_labels`) megőrizve rendes csomópont-
-tulajdonságként.
+A real drawing uses far more pyDEXPI classes than the schema (`graph.schema`)
+curates (the 12+4 classes known to the generator and the splitter) — e.g.
+`PipeTee`, `BlindFlange`, a reciprocating pump (`ReciprocatingPump`).
+`pydexpi_adapter.py` used to silently drop these (`kg-construction.md` §2).
+Under ADR-0016, none may be lost: an unknown class gets the `GenericItem`
+node_class, keeping its real pyDEXPI class name (`dexpi_class`) and a curated
+ancestor-chain prefix (`dexpi_labels`) as ordinary node properties.
 
-Ez a modul azért él külön a `pydexpi_adapter.py`-tól, nem mert fogalmilag más
-réteg volna, hanem mert az már a 400 soros fájlkorlátnál van (§3.1 "Where the
-code lives") — pontosan az a helyzet, mint `graph/schema.py` és
-`graph/validation.py` között.
+This module lives apart from `pydexpi_adapter.py` not because it is a
+conceptually different layer, but because that module is already at the
+400-line file limit (§3.1 "Where the code lives") — the same situation as
+between `graph/schema.py` and `graph/validation.py`.
 """
 
 from __future__ import annotations
@@ -26,33 +25,35 @@ import pydexpi.dexpi_classes.pydantic_classes as pydexpi_classes
 import pydexpi.toolkits.base_model_utils as base_model_utils
 from pydantic import BaseModel
 
-# `_relation_of` privát, de ez a modul csak a 400 soros korlát miatt vált külön a
-# pydexpi_adapter.py-tól (lásd a modul docstringjét) — egy adapter-család két fájlja.
-# Enélkül a related_to-átalakításnak (rule 5) újra kellene fejtenie az irány-megfordítás
-# szabályát (pl. `measured_by` a "reference"/"sensingLocation" élt megfordítja), és tévesen
-# "elveszettnek" látná az így már helyesen leképezett éleket.
+# `_relation_of` is private, but this module split off from pydexpi_adapter.py
+# only because of the 400-line limit (see the module docstring) — two files of one
+# adapter family. Without this import, the related_to conversion (rule 5) would
+# have to re-derive the direction-flipping rule (e.g. `measured_by` flips the
+# "reference"/"sensingLocation" edge), and would wrongly treat already correctly
+# mapped edges as "lost".
 from plantgraph.adapters.pydexpi_adapter import _relation_of, topology_node_class
 from plantgraph.graph import schema
 
-#: a `_map_nodes` szándékosan struktúra-rétegbe foglalja ezeket (`pydexpi_adapter.py`
-#: docstringje) — sosem generikus csomópont, még ha a séma nem is ismeri fel őket
+#: `_map_nodes` deliberately folds these into the structural layer
+#: (`pydexpi_adapter.py` docstring) — never a generic node, even though the
+#: schema doesn't recognize them either
 _STRUCTURE_LABELS = frozenset({"PlantSection", "ProcessPlant"})
 
-#: pyDEXPI ős-osztálynév -> séma-kategória, amit "gyökérnek" tekintünk (§3.1 "Label cut-off").
-#: A gyökér utáni pyDEXPI-lánc mixin-osztályokba fut (`CustomAttributeOwner`, ...), amik nem
-#: kategóriák — ezért áll meg a bejárás itt, nem a lánc végén.
+#: pyDEXPI ancestor class name -> schema category, treated as the "root" (§3.1 "Label cut-off").
+#: Past the root, pyDEXPI's chain runs into mixin classes (`CustomAttributeOwner`, ...), which
+#: are not categories — so the walk stops here, not at the end of the chain.
 _CATEGORY_ROOTS: dict[str, schema.NodeCategory] = {
     "Equipment": schema.NodeCategory.EQUIPMENT,
     "PipingComponent": schema.NodeCategory.PIPING,
 }
 
-#: biztonságos Neo4j-címke alak — mind a curated lánc, mind a fallback egy elemű lánca
-#: ez ellen ellenőrződik, mielőtt a store (T6) egyáltalán megkapná (§3.1 rule 7)
+#: safe Neo4j label shape — both the curated chain and the fallback's single-item
+#: chain are checked against this before the store (T6) ever receives it (§3.1 rule 7)
 _LABEL_PATTERN = re.compile(r"^[A-Z][A-Za-z0-9]*$")
 
 
 class GenericInfo(BaseModel):
-    """Amit egy `GenericItem`-mé fordított csomópont megőriz a valódi pyDEXPI-azonosságából."""
+    """What a node translated to `GenericItem` keeps of its real pyDEXPI identity."""
 
     dexpi_class: str
     category: schema.NodeCategory
@@ -60,14 +61,14 @@ class GenericInfo(BaseModel):
 
 
 def classify(label: str) -> GenericInfo:
-    """Egy pyDEXPI osztálynevet kategóriává és Neo4j-címkeláncra bont (§3.1 rule 2).
+    """Split a pyDEXPI class name into a category and a Neo4j label chain (§3.1 rule 2).
 
-    A pyDEXPI saját ős-láncán sétál a legelső kategória-gyökérig (`Equipment` vagy
-    `PipingComponent`), azt is beleértve. Gyökér nélkül, vagy ha `label` nem is
-    pyDEXPI-osztály neve, a kategória `other`, és a lánc csak önmaga.
+    Walks pyDEXPI's own ancestor chain up to and including the first category
+    root (`Equipment` or `PipingComponent`). Without a root, or if `label` isn't
+    even a pyDEXPI class name, the category is `other` and the chain is just itself.
 
     Raises:
-        ValueError: ha egy címkelánc-elem nem biztonságos Neo4j-címke alak.
+        ValueError: if a chain element is not a safe Neo4j label shape.
     """
     dexpi_class = getattr(pydexpi_classes, label, None)
     if dexpi_class is None:
@@ -86,7 +87,7 @@ def classify(label: str) -> GenericInfo:
 
 
 def _checked(labels: tuple[str, ...]) -> tuple[str, ...]:
-    """Minden láncelemet a Neo4j-címke alakhoz köt — a store (T6) erre épít, injekció nélkül."""
+    """Enforce the Neo4j label shape on every chain element — the store (T6) relies on this."""
     for label in labels:
         if not _LABEL_PATTERN.match(label):
             raise ValueError(
@@ -98,12 +99,12 @@ def _checked(labels: tuple[str, ...]) -> tuple[str, ...]:
 def prepare_generic(
     conceptual: nx.MultiDiGraph[str],
 ) -> tuple[nx.MultiDiGraph[str], dict[str, GenericInfo]]:
-    """Egy másolaton minden eldobandó csomópontot `GenericItem`-re címkéz át (§3.1 rule 1).
+    """Relabel every node that would otherwise be dropped to `GenericItem`, on a copy (§3.1 rule 1).
 
-    A séma-ismeretlen osztályok így már ismert osztályként (`GenericItem` a
-    `schema.IMPORTABLE_CLASSES`-ben van) érik el `map_conceptual_graph`-ot, ahelyett
-    hogy az eldobná őket. A struktúra-osztályokat (`PlantSection`, `ProcessPlant`)
-    szándékosan érintetlenül hagyja — azokat az adapter másképp dolgozza fel.
+    Schema-unknown classes thus reach `map_conceptual_graph` as an already known
+    class (`GenericItem` is in `schema.IMPORTABLE_CLASSES`), instead of being
+    dropped by it. Structural classes (`PlantSection`, `ProcessPlant`) are
+    deliberately left untouched — the adapter processes those differently.
     """
     prepared = conceptual.copy()
     infos: dict[str, GenericInfo] = {}
@@ -119,14 +120,14 @@ def prepare_generic(
 def annotate_generic(
     plant: nx.DiGraph[str], infos: Mapping[str, GenericInfo], conceptual: nx.MultiDiGraph[str]
 ) -> None:
-    """Ráírja a `dexpi_class`/`category`/`dexpi_labels`-t és a tag-et minden generikus node-ra.
+    """Write `dexpi_class`/`category`/`dexpi_labels` and the tag onto every generic node.
 
-    A `map_conceptual_graph` és a `proteusId`-ra való átnevezés között fut (§3.1 rule 4),
-    amíg a csomópont-id-k még megegyeznek `infos` és `conceptual` kulcsaival.
+    Runs between `map_conceptual_graph` and the rename to `proteusId` (§3.1 rule
+    4), while node ids still match `infos` and `conceptual`'s keys.
     """
     for node_id, info in infos.items():
         if node_id not in plant.nodes:
-            continue  # nem ez a fallback dobta el — más okból esett ki (pl. jövőbeli szabály)
+            continue  # not dropped by this fallback — excluded for another reason (future rule?)
         attrs = plant.nodes[node_id]
         attrs["dexpi_class"] = info.dexpi_class
         attrs["category"] = info.category.value
@@ -158,20 +159,22 @@ def _as_str(value: object) -> str | None:
 def add_related_to_edges(
     plant: nx.DiGraph[str], conceptual: nx.MultiDiGraph[str]
 ) -> tuple[dict[str, int], int]:
-    """`related_to` élt ad minden élhez, amit `_map_edges` ismeretlen címke miatt eldobott.
+    """Add a `related_to` edge for every edge `_map_edges` dropped due to an unknown label.
 
-    Mindkét végnek már térképezett `plant`-csomópontnak kell lennie — egy el nem ért
-    végpontú él ehelyett `edges_lost_to_unmapped_endpoints`, más könyvelési tétel (§3.1 rule 5).
+    Both ends must already be mapped `plant` nodes — an edge with an unreached
+    endpoint instead becomes `edges_lost_to_unmapped_endpoints`, a different
+    bookkeeping entry (§3.1 rule 5).
 
     Returns:
-        A hozzáadott `related_to` élek száma `dexpi_label` szerint, és hány pár volt már
-        él (`ImportReport.related_to_collapsed`) — ilyenkor a duplikátum nem kerül be.
+        The count of added `related_to` edges by `dexpi_label`, and how many
+        pairs were already an edge (`ImportReport.related_to_collapsed`) — in
+        that case the duplicate is not added.
     """
     added: collections.Counter[str] = collections.Counter()
     collapsed = 0
     for source, target, attrs in conceptual.edges(data=True):
         if attrs.get("attr_name") == "parentStructure" or _relation_of(attrs) is not None:
-            continue  # már feloldva máshogy, vagy a séma egyik ismert relációjára térképezve
+            continue  # already resolved another way, or mapped to a known schema relation
         if source not in plant.nodes or target not in plant.nodes:
             continue
         dexpi_label = f"{attrs.get('label')}/{attrs.get('attr_name')}"
@@ -188,11 +191,11 @@ def add_related_to_edges(
 def count_nodes_per_dexpi_class(
     conceptual: nx.MultiDiGraph[str], mapped_ids: Iterable[str]
 ) -> dict[str, int]:
-    """Minden térképezett csomópontot a valódi pyDEXPI-osztálya szerint számol (§3.1 rule 6).
+    """Count every mapped node by its real pyDEXPI class (§3.1 rule 6).
 
-    Ismert és generikus osztályra egyaránt — ez a fallback saját lefedettségi
-    ellenőrzése: az összegnek egyeznie kell a konceptuális gráf címke-számaival, mínusz
-    a szándékosan struktúrába foglalt csomópontok.
+    For both known and generic classes alike — this is the fallback's own
+    coverage check: the total must match the conceptual graph's label counts,
+    minus the nodes deliberately folded into the structural layer.
     """
     labels = (str(conceptual.nodes[node_id]["label"]) for node_id in mapped_ids)
     return dict(collections.Counter(labels))

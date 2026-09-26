@@ -1,4 +1,4 @@
-"""A `GeneratorConfig` validátorai (`plant-generator.md` §3.2)."""
+"""The `GeneratorConfig` validators (`plant-generator.md` §3.2)."""
 
 from __future__ import annotations
 

@@ -1,4 +1,4 @@
-"""A benchmark adatmodell invariánsai."""
+"""Invariants of the benchmark data model."""
 
 from __future__ import annotations
 
@@ -45,7 +45,7 @@ def test_clipping_keeps_the_box_inside_the_image() -> None:
 
 
 def test_sheet_reference_normalises_spelling() -> None:
-    # A rajzokon 'PID 120-1' és 'PID-120-01' is előfordul ugyanarra a lapra.
+    # Both 'PID 120-1' and 'PID-120-01' occur on the drawings for the same sheet.
     assert SheetRef(pid="120", sheet_no=1).canonical() == "PID-120-1"
 
 
@@ -77,8 +77,8 @@ def test_manifest_notices_a_dropped_connector() -> None:
 
 
 def test_manifest_accepts_an_openly_unresolved_connector() -> None:
-    # Valódi rajzokon előfordul, hogy a célként megnevezett lap megvan, de nincs
-    # rajta hozzáilló csatlakozó. Ez nem hiba — csak be kell vallani, nem eltüntetni.
+    # On real drawings, the named target sheet sometimes exists but has no matching
+    # connector on it. Not a bug — it just needs to be reported, not hidden.
     stuck = observation("11", "inlet/outlet22")
     manifest = SplitManifest(
         source="test",

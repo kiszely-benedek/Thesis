@@ -1,10 +1,10 @@
-"""A resolver-határ szerződésének ellenőrzése — a `localize()` kimenetének kapuja.
+"""Checking the resolver-boundary contract — the gate on `localize()`'s output.
 
-`check_contract` mindazokat a szivárgásokat keresi, amelyeket `localize.py`-nak
-zárnia kellett (design §4.1): nyers splitter-kimenet ezen mindig elbukik, a
-`localize()` kimenete sosem. A `resolve()` (T4) ezt hívja először, hogy egy
-elfelejtett `localize()` hívás azonnal, beszédes hibával bukjon el, ne csendben
-szivárogtassa tovább a válaszkulcsot.
+`check_contract` looks for every leak that `localize.py` was supposed to seal off
+(design §4.1): raw splitter output always fails this check, `localize()`'s
+output never does. `resolve()` (T4) calls this first, so a forgotten
+`localize()` call fails immediately with a clear error, instead of silently
+leaking the answer key further downstream.
 """
 
 from __future__ import annotations
@@ -16,15 +16,15 @@ from plantgraph.graph import schema
 
 
 def check_contract(sheets: Sequence[SheetGraph]) -> None:
-    """Elbukik, ha a lapok bármelyike a resolver-határ szerződését sérti.
+    """Fail if any sheet violates the resolver-boundary contract.
 
     Raises:
-        ValueError: a sértő lapot és csomópontot/élt megnevezve, ha
-            - egy csomópont-id egynél több lapon fordul elő (L1),
-            - egy csomópont vagy él a V-fehérlistán kívüli tulajdonságot hordoz
+        ValueError: naming the offending sheet and node/edge, if
+            - a node id occurs on more than one sheet (L1),
+            - a node or edge carries a property outside the V-whitelist
               (L2/L6),
-            - egy lap `connectors` listája nem üres (L2),
-            - egy `sheet_id` duplikált vagy ':'-t tartalmaz.
+            - a sheet's `connectors` list is non-empty (L2),
+            - a `sheet_id` is duplicated or contains ':'.
     """
     _check_sheet_ids(sheets)
     for sheet in sheets:
@@ -35,7 +35,7 @@ def check_contract(sheets: Sequence[SheetGraph]) -> None:
 
 
 def _check_sheet_ids(sheets: Sequence[SheetGraph]) -> None:
-    """A ':' a local-key elválasztója (`localize.py`) — egy sheet_id sosem tartalmazhatja."""
+    """':' is the local-key separator (`localize.py`) — a sheet_id must never contain it."""
     seen: set[str] = set()
     for sheet in sheets:
         if ":" in sheet.sheet_id:
@@ -46,7 +46,7 @@ def _check_sheet_ids(sheets: Sequence[SheetGraph]) -> None:
 
 
 def _check_no_connectors(sheet: SheetGraph) -> None:
-    """L2 szivárgás: `OffPageConnector.partner_tag`/`partner_sheet_id` a párosítás válaszkulcsa."""
+    """L2 leak: `OffPageConnector.partner_tag`/`partner_sheet_id` is the pairing answer key."""
     if sheet.connectors:
         raise ValueError(
             f"sheet {sheet.sheet_id!r} still carries {len(sheet.connectors)} OffPageConnector "
@@ -75,7 +75,7 @@ def _check_edge_properties(sheet: SheetGraph) -> None:
 
 
 def _check_node_ids_unique_across_sheets(sheets: Sequence[SheetGraph]) -> None:
-    """L1 szivárgás: a splitter egy reference-előfordulásnak a home-éval azonos id-t ad."""
+    """L1 leak: the splitter gives a reference occurrence the same id as its home occurrence."""
     home_sheet_of: dict[str, str] = {}
     for sheet in sheets:
         for node_id in sheet.graph.nodes:
