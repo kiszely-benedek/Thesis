@@ -172,14 +172,18 @@ class ConnectorObservation(BaseModel):
 class MatchRule(str, Enum):
     """Melyik szabály találta meg a párt — a bizonytalanabb szabályok ellenőrizhetők maradjanak.
 
-    A rangsor a docs/private/40-design/open100-annotation.md 3. lépéséből jön:
+    A rangsor 1-4 a docs/private/40-design/open100-annotation.md 3. lépéséből jön,
+    kiegészítve a resolver saját, legerősebb szabályával (`kg-construction.md` §5.2):
     a sorszám maga a bizalmi szint, 1 a legerősebb.
     """
 
-    LINE_NUMBER = "line_number"  # 1. az azonosító megegyezik mindkét lapon — ez a legerősebb jel
-    GRID_MUTUAL = "grid_mutual"  # 2. a célmező mindkét irányból ugyanoda mutat
+    CONNECTOR_NUMBER = (
+        "connector_number"  # 1. a partner saját száma mindkét oldalról kölcsönösen egyezik
+    )
+    LINE_NUMBER = "line_number"  # 2. az azonosító megegyezik mindkét lapon — erős jel
+    GRID_MUTUAL = "grid_mutual"  # 3. a célmező mindkét irányból ugyanoda mutat
     SERVICE_DIRECTION = (
-        "service_direction"  # 3. csak a rendszer és az irány egyezik — kézi ellenőrzést igényel
+        "service_direction"  # 4. csak a rendszer és az irány egyezik — kézi ellenőrzést igényel
     )
     SYNTHETIC = "synthetic"  # a szintetikus generátor vágta el — nem kell találgatni, tudjuk
 
