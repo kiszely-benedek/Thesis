@@ -206,29 +206,35 @@ def _owner_graph(plant: nx.DiGraph[str], node_owner: dict[str, str]) -> nx.DiGra
 
 
 def _flow_order(owner_graph: nx.DiGraph[str], equipment_owners: set[str]) -> list[str]:
-    """Szélességi bejárás a feed-berendezésekből (nincs bejövő élük) lefelé.
+    """Depth-first preorder walk from the feed equipment (zero in-degree) downstream.
 
-    Így a lapszámozás a folyamatirányt követi.
+    Depth-first, not breadth-first (ADR-0017): a breadth-first walk visits one
+    step of every chain before the second step of any of them, so under a
+    fixed sheet budget the two ends of an edge end up dozens of chains apart —
+    nearly every inter-cluster edge gets cut. Depth-first walks one chain to
+    its end before starting the next, so a chain mostly stays on one sheet.
     """
     feeds = sorted(owner for owner in equipment_owners if owner_graph.in_degree(owner) == 0)
     if not feeds and owner_graph.number_of_nodes() > 0:
-        # ciklikus gráfban nincs valódi feed (nulla bejövő fokszámú csomópont) —
-        # determinisztikus tartalék, hogy a bejárás akkor is elinduljon
+        # a cyclic graph has no true feed (zero in-degree node) —
+        # deterministic fallback so the walk still starts somewhere
         feeds = [sorted(owner_graph.nodes)[0]]
 
     order: list[str] = []
     visited: set[str] = set()
-    queue: deque[str] = deque(feeds)
+    # a stack, not a queue: LIFO order gives depth-first rather than breadth-first
+    stack: list[str] = list(reversed(feeds))
     while len(visited) < owner_graph.number_of_nodes():
-        if not queue:
+        if not stack:
             remaining = sorted(set(owner_graph.nodes) - visited)
-            queue.append(remaining[0])
-        node_id = queue.popleft()
+            stack.append(remaining[0])
+        node_id = stack.pop()
         if node_id in visited:
             continue
         visited.add(node_id)
         order.append(node_id)
-        queue.extend(sorted(owner_graph.successors(node_id)))
+        # reversed so sorted() order comes off the stack first (smallest successor next)
+        stack.extend(sorted(owner_graph.successors(node_id), reverse=True))
     return order
 
 

@@ -9,7 +9,7 @@ import pytest
 
 from plant_fixtures import make_plant_graph
 from plantgraph.benchmark.split_models import SplitConfig
-from plantgraph.benchmark.strategies import STRATEGIES
+from plantgraph.benchmark.strategies import STRATEGIES, _flow_order
 from plantgraph.graph import schema
 
 
@@ -88,6 +88,39 @@ def test_by_unit_never_mixes_units_on_a_sheet() -> None:
             continue
         units_per_sheet.setdefault(sheet_id, set()).add(unit_id)
     assert all(len(units) == 1 for units in units_per_sheet.values())
+
+
+def _count_cross_sheet_edges(plant: nx.DiGraph, node_sheet: dict[str, str]) -> int:
+    return sum(1 for source, target in plant.edges() if node_sheet[source] != node_sheet[target])
+
+
+def test_flow_greedy_cuts_fewer_edges_than_random_at_equal_budget() -> None:
+    # ADR-0017 regression test: flow_greedy should keep a process chain together
+    # under a sheet budget, so it should cut markedly fewer edges than the
+    # random control at the same budget. This alone does not prove the fix is
+    # depth-first rather than breadth-first (kg-construction.md open question
+    # 9) -- see test_flow_order_is_depth_first_not_breadth_first for that.
+    plant = make_plant_graph(chain_length=10, branches=6)
+    budget = 3
+    flow_config = SplitConfig(strategy="flow_greedy", sheet_equipment_budget=budget, seed=0)
+    random_config = SplitConfig(strategy="random", sheet_equipment_budget=budget, seed=0)
+
+    flow_sheet = STRATEGIES["flow_greedy"](plant, flow_config, random.Random(flow_config.seed))
+    random_sheet = STRATEGIES["random"](plant, random_config, random.Random(random_config.seed))
+
+    assert _count_cross_sheet_edges(plant, flow_sheet) < _count_cross_sheet_edges(
+        plant, random_sheet
+    )
+
+
+def test_flow_order_is_depth_first_not_breadth_first() -> None:
+    # Hand-built owner graph where breadth-first and depth-first orders
+    # differ: breadth-first would visit level by level (feed, a, b, a1, b1);
+    # depth-first walks chain "a" to its end before starting chain "b".
+    owner_graph: nx.DiGraph[str] = nx.DiGraph()
+    owner_graph.add_edges_from([("feed", "a"), ("feed", "b"), ("a", "a1"), ("b", "b1")])
+    order = _flow_order(owner_graph, {"feed", "a", "b", "a1", "b1"})
+    assert order == ["feed", "a", "a1", "b", "b1"]
 
 
 def test_by_unit_raises_without_unit_id() -> None:
