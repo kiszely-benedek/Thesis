@@ -7,3 +7,6 @@ __pycache__/
 
 # third-party reference files (e.g. the DEXPI example C01V04-VER.EX01.xml); tests skip when absent
 data/external/
+
+# local secrets (Neo4j and OpenRouter credentials) — never committed
+.env
