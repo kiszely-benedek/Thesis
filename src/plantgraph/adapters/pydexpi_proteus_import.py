@@ -6,10 +6,11 @@ eltérés a kettő közt csővezeték-különbség lenne, nem skálahatás (ADR-
 generátor a saját `plant_graph`-ján át lép be; ez a modul ugyanezt egy külső fájlra teszi meg.
 
 **Miért nem tűnhet el semmi csendben.** Egy valódi rajz (pl. `data/external/C01V04-VER.EX01.xml`)
-olyan pyDEXPI-osztályokat is tartalmaz, amikre a séma (`graph.schema`) még nincs felkészítve
-(`PipeTee`, `BlindFlange`, egy dugattyús szivattyú, ...). Ezeknek a sémába illesztése külön ADR
-tárgya (§11 nyitott kérdés) — ez a modul addig is **jelenti** minden elveszett csomópontot és élt
-osztályonként, sosem hagyja őket nyomtalanul kiesni.
+olyan pyDEXPI-osztályokat is tartalmaz, amikre a séma (`graph.schema`) nincs curated névvel
+felkészítve (`PipeTee`, `BlindFlange`, egy dugattyús szivattyú, ...). ADR-0016 óta ezek sem
+esnek ki: a `pydexpi_generic` fallback `GenericItem`-mé alakítja őket, a pyDEXPI-osztályukat
+megőrizve (§3.1) — ez a modul csak a hívási sorrendet adja, és jelenti, ha mégis maradna
+nyomtalanul elveszett csomópont vagy él.
 """
 
 from __future__ import annotations
@@ -29,6 +30,12 @@ from plantgraph.adapters.pydexpi_adapter import (
     abstract_conceptual_graph,
     load_complete_graph,
     map_conceptual_graph,
+)
+from plantgraph.adapters.pydexpi_generic import (
+    add_related_to_edges,
+    annotate_generic,
+    count_nodes_per_dexpi_class,
+    prepare_generic,
 )
 from plantgraph.adapters.pydexpi_io import load_proteus
 from plantgraph.benchmark.sheet_graph import SheetGraph
@@ -50,6 +57,12 @@ class ImportReport(BaseModel):
     #: kulcs "SourceClass->TargetClass" — az az él, aminek legalább az egyik vége nem
     #: térképezett osztály, ezért `ConversionReport.edges_dropped_per_label` nem látja
     edges_lost_to_unmapped_endpoints: dict[str, int] = Field(default_factory=dict)
+    #: minden térképezett csomópont a valódi pyDEXPI-osztálya szerint, ismert és
+    #: `GenericItem` egyaránt — a fallback saját lefedettségi számlálója (ADR-0016 §3.1 rule 6)
+    nodes_per_dexpi_class: dict[str, int] = Field(default_factory=dict)
+    #: hány, egyébként `related_to`-vá váló él ütközött egy már meglévő éllel a pár közt
+    #: (ugyanaz a csomópont-pár, ADR-0016 §3.1 rule 5) — ilyenkor nem lesz duplikátum él
+    related_to_collapsed: int = 0
     violations: list[SchemaViolation] = Field(default_factory=list)
 
 
@@ -81,9 +94,20 @@ def import_proteus_sheet(
     resolved_sheet_id, sheet_id_source = _resolve_sheet_id(sheet_id, model, path)
     _check_no_colon(resolved_sheet_id, "sheet_id")
 
-    plant, conversion = map_conceptual_graph(conceptual, resolved_plant_id, stream_kind={})
+    # generikus fallback (ADR-0016, §3.1): a séma-ismeretlen osztályokat GenericItem-mé
+    # címkézi egy másolaton, mielőtt az adapter eldobná őket
+    prepared, generic_infos = prepare_generic(conceptual)
+    plant, conversion = map_conceptual_graph(prepared, resolved_plant_id, stream_kind={})
+    annotate_generic(plant, generic_infos, conceptual)
+    _related_to_added, related_to_collapsed = add_related_to_edges(plant, conceptual)
+
     mapped_ids = set(plant.nodes)
+    # the one piece of a file's own data this importer keeps — equipment/datasheet data is
+    # out of scope (ADR-0021); the generator path never calls this, so a generated sheet gains
+    # nothing from it
+    _copy_piping_component_names(plant, conceptual, mapped_ids)
     lost_edges = _edges_lost_to_unmapped_endpoints(conceptual, mapped_ids)
+    nodes_per_class = count_nodes_per_dexpi_class(conceptual, mapped_ids)
 
     localized_plant = _relabel_to_proteus_ids(plant, conceptual, mapped_ids)
     violations = validate_sheet_graph(localized_plant)
@@ -99,10 +123,28 @@ def import_proteus_sheet(
         conceptual_edges=conceptual.number_of_edges(),
         conversion=conversion,
         edges_lost_to_unmapped_endpoints=lost_edges,
+        nodes_per_dexpi_class=nodes_per_class,
+        related_to_collapsed=related_to_collapsed,
         violations=violations,
     )
     sheet = SheetGraph(sheet_id=resolved_sheet_id, graph=localized_plant, connectors=[])
     return ImportedSheet(sheet=sheet, report=report)
+
+
+def _copy_piping_component_names(
+    plant: nx.DiGraph[str], conceptual: nx.MultiDiGraph[str], mapped_ids: set[str]
+) -> None:
+    """Copies each piping component's printed name onto its node, e.g. valve "66KL21".
+
+    This is the one piece of a real file's own data this importer keeps: it is an identifier
+    (ChatP&ID's flow-path answers name valves by it), not equipment/datasheet data — the rest of
+    a file's own attributes (lengths, powers, pressures, ...) is out of scope, not part of this
+    thesis (ADR-0021).
+    """
+    for node_id in mapped_ids:
+        name = conceptual.nodes[node_id].get("pipingComponentName")
+        if isinstance(name, str):
+            plant.nodes[node_id]["piping_component_name"] = name
 
 
 def _load_conceptual_graph(model: DexpiModel) -> nx.MultiDiGraph[str]:

@@ -162,7 +162,11 @@ def _connector_labels(
     plant = _generated_plant()
     sheets, manifest = split(plant, config)
     localized, occurrence_map = localize(sheets)
-    labels = [label for sheet in localized for label in read_connector_labels(sheet)]
+    labels = [
+        label
+        for sheet in localized
+        for label in read_connector_labels(sheet)[0]  # a splitter mindig ad hivatkozott rajzszámot
+    ]
     return labels, manifest.connector_pairs, occurrence_map
 
 

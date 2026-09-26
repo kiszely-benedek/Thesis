@@ -16,6 +16,7 @@ from pydantic import BaseModel
 from plantgraph.graph.schema import (
     CONNECTOR_CLASSES,
     GENERATOR_CLASSES,
+    IMPORTABLE_CLASSES,
     KNOWN_CLASSES,
     RELATION_ENDPOINTS,
     TOPOLOGY_RELATIONS,
@@ -70,15 +71,17 @@ def _validate_plant_node(
 
 
 def validate_sheet_graph(sheet: nx.DiGraph[str]) -> list[SchemaViolation]:
-    """Ellenőrzi a splitter egy lapját: generátor- és connector-osztályok is megengedettek.
+    """Ellenőrzi a splitter egy lapját: generátor-, connector- és `GenericItem` is megengedett.
 
     A reference-előfordulások (azonosság-alapú kereszthivatkozás,
     `plant-generator.md` §4.4) csak `tag`-et és `node_class`-t hordoznak, ezért
     itt nem várjuk el a `plant_id`/`unit_id`-t — az csak a home előforduláson van.
+    `IMPORTABLE_CLASSES` a `GenericItem`-et is tartalmazza (ADR-0016): egy valódi
+    Proteus-import lapja máskülönben minden fallback-csomópontot elutasítana.
     """
     violations: list[SchemaViolation] = []
     tags_seen: dict[str, str] = {}
-    allowed = GENERATOR_CLASSES | CONNECTOR_CLASSES
+    allowed = IMPORTABLE_CLASSES
     for node_id in sorted(sheet.nodes):
         violations.extend(_validate_sheet_node(node_id, sheet.nodes[node_id], allowed, tags_seen))
     for source, target in sorted(sheet.edges):

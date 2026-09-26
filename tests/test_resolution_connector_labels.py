@@ -55,7 +55,9 @@ def test_direction_and_kind_come_from_the_node_class(
     expected_kind: ConnectorKind,
 ) -> None:
     sheet = _sheet_with_one_stub(node_class, edge_direction)
-    (label,) = read_connector_labels(sheet)
+    labels, unresolved = read_connector_labels(sheet)
+    assert unresolved == []
+    (label,) = labels
     assert label.direction is expected_direction
     assert label.kind is expected_kind
     assert label.key == "0:stub"
@@ -63,21 +65,23 @@ def test_direction_and_kind_come_from_the_node_class(
 
 def test_relation_comes_from_the_stub_edge_not_the_node() -> None:
     sheet = _sheet_with_one_stub("FlowOutPipeOffPageConnector", "in")
-    (label,) = read_connector_labels(sheet)
+    labels, _unresolved = read_connector_labels(sheet)
+    (label,) = labels
     assert label.relation == "send_to"
     assert label.line_number == "PL-1"
 
 
 def test_non_connector_nodes_are_ignored() -> None:
     sheet = _sheet_with_one_stub("FlowOutPipeOffPageConnector", "in")
-    labels = read_connector_labels(sheet)
+    labels, _unresolved = read_connector_labels(sheet)
     assert {label.key for label in labels} == {"0:stub"}, "a 'other' berendezés nem csatlakozó"
 
 
 def test_missing_referenced_connector_number_stays_none() -> None:
     """A `DRAWING_ONLY` dial nem ír fel partner-számot — a mező None marad, nem hiányzik."""
     sheet = _sheet_with_one_stub("FlowOutPipeOffPageConnector", "in")
-    (label,) = read_connector_labels(sheet)
+    labels, _unresolved = read_connector_labels(sheet)
+    (label,) = labels
     assert label.referenced_connector_number is None
 
 
@@ -85,7 +89,8 @@ def test_referenced_connector_number_is_read_when_present() -> None:
     sheet = _sheet_with_one_stub(
         "FlowOutPipeOffPageConnector", "in", referenced_connector_number="SHEET-1-OPC-00"
     )
-    (label,) = read_connector_labels(sheet)
+    labels, _unresolved = read_connector_labels(sheet)
+    (label,) = labels
     assert label.referenced_connector_number == "SHEET-1-OPC-00"
 
 
@@ -117,3 +122,23 @@ def test_connector_node_with_two_edges_raises() -> None:
     sheet = SheetGraph(sheet_id="0", graph=graph)
     with pytest.raises(ValueError, match="has 2 incident edges"):
         read_connector_labels(sheet)
+
+
+# ---- ADR-0016 §11 OQ1b: egy csonknak nincs se saját száma, se hivatkozott rajzszáma ----------
+
+
+def test_connector_with_no_reference_label_is_reported_unresolved_not_raised() -> None:
+    """Egy importált fájl csatlakozója, aminek a DEXPI-hivatkozás-leképezése még nincs kész
+    (`kg-construction.md` §11 OQ1b) — se `connector_number`, se `referenced_drawing_number`."""
+    graph: nx.DiGraph[str] = nx.DiGraph()
+    graph.add_node("stub", node_class="FlowOutPipeOffPageConnector")
+    graph.add_node("other", node_class="CentrifugalPump", tag="P-1")
+    graph.add_edge("other", "stub", relation="send_to")
+    sheet = SheetGraph(sheet_id="0", graph=graph)
+
+    labels, unresolved = read_connector_labels(sheet)
+
+    assert labels == []
+    (entry,) = unresolved
+    assert entry.from_key == "0:stub"
+    assert entry.reason == "no reference label"

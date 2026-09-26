@@ -12,25 +12,33 @@ from pathlib import Path
 import networkx as nx
 import pytest
 
-from plantgraph.adapters.pydexpi_adapter import map_conceptual_graph
+from plantgraph.adapters.pydexpi_adapter import map_conceptual_graph, plant_graph
 from plantgraph.adapters.pydexpi_builder import generate_plant
 from plantgraph.adapters.pydexpi_io import save_proteus_equipment_only
 from plantgraph.adapters.pydexpi_proteus_import import ImportedSheet, import_proteus_sheet
 from plantgraph.benchmark.generator_models import GeneratorConfig
 from plantgraph.graph import schema
+from plantgraph.resolution.contract import check_contract
+from plantgraph.resolution.localize import localize
 
 EX01_PATH = Path(__file__).resolve().parent.parent / "data" / "external" / "C01V04-VER.EX01.xml"
 
-#: EX01-en mérve (kg-construction.md §2): ezek az osztályok nincsenek a séma leképezésében
-_EX01_DROPPED_CLASSES = {
-    "FlowInPipeOffPageConnector": 1,
-    "FlowOutPipeOffPageConnector": 1,
+#: EX01-en mérve (kg-construction.md §2, §3.1): a séma ezeket az osztályokat nem curálja
+#: közvetlenül, de ADR-0016 óta a generikus fallback (`GenericItem`) mindet megtartja —
+#: a régi "dropped" lista most `nodes_per_dexpi_class`-ként, megtartva jelenik meg.
+_EX01_GENERIC_CLASSES = {
     "ButterflyValve": 1,
     "PipeReducer": 1,
     "SpringLoadedGlobeSafetyValve": 1,
     "PipeTee": 5,
     "BlindFlange": 2,
     "ReciprocatingPump": 1,
+}
+#: a két off-page connector osztály — ADR-0016 rule 3: ezek a saját séma-osztályukra
+#: térképeznek, nem generikusak, és `sheet.connectors` marad üresen (§4)
+_EX01_CONNECTOR_CLASSES = {
+    "FlowInPipeOffPageConnector": 1,
+    "FlowOutPipeOffPageConnector": 1,
 }
 
 
@@ -47,6 +55,9 @@ def _assert_accounting_invariant(imported: ImportedSheet) -> None:
         report.conversion.nodes_dropped_per_class.values()
     )
     assert nodes_accounted == report.conceptual_nodes
+    # a fallback saját számlálója (ADR-0016 §3.1 rule 6): ugyanannyi térképezett csomópontot
+    # kell adnia, csak a pyDEXPI-osztály szerint bontva, nem a séma node_class szerint
+    assert sum(report.nodes_per_dexpi_class.values()) == report.conversion.nodes_mapped
 
     edges_kept = (
         sum(report.conversion.edges_mapped_per_relation.values())
@@ -72,34 +83,90 @@ def test_ex01_sheet_id_comes_from_the_printed_drawing_number() -> None:
     assert imported.report.drawing_name == "DEXPI example PID"
 
 
-def test_ex01_maps_23_of_36_nodes_and_16_of_39_edges() -> None:
+def test_ex01_maps_36_of_36_nodes_and_39_of_39_edges() -> None:
+    """T1b (ADR-0016) gate: the generic fallback keeps every node and edge (was 23/36, 16/39)."""
     imported = import_proteus_sheet(_ex01_or_skip())
     report = imported.report
     assert report.conceptual_nodes == 36
     assert report.conceptual_edges == 39
-    assert report.conversion.nodes_mapped == 23
-    assert sum(report.conversion.edges_mapped_per_relation.values()) == 16
-    assert imported.sheet.graph.number_of_nodes() == 23
-    assert imported.sheet.graph.number_of_edges() == 16
+    assert report.conversion.nodes_mapped == 36
+    assert sum(report.conversion.edges_mapped_per_relation.values()) == 39
+    assert imported.sheet.graph.number_of_nodes() == 36
+    assert imported.sheet.graph.number_of_edges() == 39
 
 
-def test_ex01_drops_exactly_the_classes_the_schema_does_not_map() -> None:
-    imported = import_proteus_sheet(_ex01_or_skip())
-    assert imported.report.conversion.nodes_dropped_per_class == _EX01_DROPPED_CLASSES
-
-
-def test_ex01_counts_every_edge_lost_to_a_dropped_endpoint() -> None:
+def test_ex01_drops_nothing_and_keeps_the_previously_lost_classes_as_generic() -> None:
+    """Renamed from `test_ex01_drops_exactly_the_classes_the_schema_does_not_map` (T1b): nothing
+    is dropped any more, so this now checks the fallback's own coverage counter instead."""
     imported = import_proteus_sheet(_ex01_or_skip())
     report = imported.report
-    # a bug, amit ez a jelentés fed fel: a meglévő ConversionReport ezt nem számolja (§2)
+    assert report.conversion.nodes_dropped_per_class == {}
+    for dexpi_class, count in _EX01_GENERIC_CLASSES.items():
+        assert report.nodes_per_dexpi_class[dexpi_class] == count
+    for dexpi_class, count in _EX01_CONNECTOR_CLASSES.items():
+        assert report.nodes_per_dexpi_class[dexpi_class] == count
+    assert sum(report.nodes_per_dexpi_class.values()) == 36
+
+
+def test_ex01_loses_no_edge_to_an_unmapped_endpoint_any_more() -> None:
+    """Renamed from `test_ex01_counts_every_edge_lost_to_a_dropped_endpoint` (T1b): 23 -> 0, since
+    every endpoint the fallback used to drop is now a `GenericItem` node."""
+    imported = import_proteus_sheet(_ex01_or_skip())
+    report = imported.report
     assert report.conversion.edges_dropped_per_label == {}
-    assert sum(report.edges_lost_to_unmapped_endpoints.values()) == 23
+    assert report.edges_lost_to_unmapped_endpoints == {}
+    assert report.related_to_collapsed == 0
 
 
-def test_ex01_reports_three_duplicate_valve_tags_but_does_not_raise() -> None:
+def test_p4712_is_a_generic_reciprocating_pump_and_t4750_is_a_known_tank() -> None:
+    """§10 T1b acceptance: P4712's `dexpi_labels`/`category`, and its exact tag (OQ1c)."""
+    imported = import_proteus_sheet(_ex01_or_skip())
+    p4712 = imported.sheet.graph.nodes[_node_id_by_tag(imported.sheet.graph, "P4712")]
+    assert p4712["dexpi_labels"] == ["ReciprocatingPump", "Pump", "Equipment"]
+    assert p4712["category"] == "equipment"
+    assert p4712["dexpi_class"] == "ReciprocatingPump"
+    assert p4712["node_class"] == "GenericItem"
+
+    t4750 = imported.sheet.graph.nodes[_node_id_by_tag(imported.sheet.graph, "T4750")]
+    assert t4750["node_class"] == "Tank"  # not generic: Tank is already a schema class
+
+
+def test_t4750_reaches_p4712_by_a_send_to_path() -> None:
+    """§10 T1b acceptance: T4750 -> P4712 is a `send_to` path (not necessarily a single edge)."""
+    imported = import_proteus_sheet(_ex01_or_skip())
+    t4750 = _node_id_by_tag(imported.sheet.graph, "T4750")
+    p4712 = _node_id_by_tag(imported.sheet.graph, "P4712")
+
+    send_to_graph: nx.DiGraph[str] = nx.DiGraph()
+    send_to_graph.add_nodes_from(imported.sheet.graph.nodes)
+    send_to_graph.add_edges_from(
+        (source, target)
+        for source, target, attrs in imported.sheet.graph.edges(data=True)
+        if attrs.get("relation") == "send_to"
+    )
+    assert nx.has_path(send_to_graph, t4750, p4712)
+
+
+def _node_id_by_tag(graph: nx.DiGraph[str], tag: str) -> str:
+    matches = [node_id for node_id, attrs in graph.nodes(data=True) if attrs.get("tag") == tag]
+    assert len(matches) == 1, f"expected exactly one node tagged {tag!r}, found {len(matches)}"
+    return matches[0]
+
+
+def test_ex01_sheet_has_no_off_page_connectors_recorded() -> None:
+    """§4: an imported sheet's `connectors` list stays empty even though the two connector
+    classes are now mapped nodes — DEXPI reference-to-schema mapping is still open (§11 OQ1b)."""
+    imported = import_proteus_sheet(_ex01_or_skip())
+    assert imported.sheet.connectors == []
+
+
+def test_ex01_reports_seven_duplicate_valve_tags_but_does_not_raise() -> None:
+    """Renamed from `..._three_duplicate_valve_tags...` (T1b): 3 -> 7. The fallback surfaces
+    fitting classes (`PipeTee`, `BlindFlange`, ...) that reuse the same piping-component tag
+    (`C1`..`C4`) as the valves already visible before T1b — a real sheet does this."""
     imported = import_proteus_sheet(_ex01_or_skip())
     duplicate_tags = [v for v in imported.report.violations if v.kind == "duplicate_tag"]
-    assert len(duplicate_tags) == 3
+    assert len(duplicate_tags) == 7
 
 
 def test_ex01_node_ids_are_identical_across_two_imports() -> None:
@@ -112,6 +179,45 @@ def test_ex01_node_ids_are_identical_across_two_imports() -> None:
 def test_ex01_accounting_invariant_holds() -> None:
     imported = import_proteus_sheet(_ex01_or_skip())
     _assert_accounting_invariant(imported)
+
+
+# ---- the printed piping-component name: an identifier, not equipment/datasheet data, which is
+# ---- out of scope — not part of this thesis (ADR-0021) --------------------------------------
+
+
+def test_ex01_valve_66kl21_is_findable_by_its_printed_piping_component_name() -> None:
+    """ChatP&ID's flow-path reference answers name valves this way; `resolve()` cannot, because
+    its tag comes from `pipingComponentNumber`, a different field that repeats across fittings
+    (this valve's tag is "C1", shared with unrelated pipe fittings on the same sheet)."""
+    imported = import_proteus_sheet(_ex01_or_skip())
+    graph = imported.sheet.graph
+    valve_66kl21 = _node_id_by_property(graph, "piping_component_name", "66KL21")
+    assert graph.nodes[valve_66kl21]["tag"] == "C1"
+
+
+def test_ex01_check_contract_passes_after_localize() -> None:
+    imported = import_proteus_sheet(_ex01_or_skip())
+    localized, _ = localize([imported.sheet])
+    check_contract(localized)  # does not raise
+
+
+def test_a_generated_plant_gains_no_new_property_from_import() -> None:
+    """A generated plant carries no imported-file data at all (ADR-0018 A1).
+
+    `plant_graph` is the generator's own entry point (§3.6) — it never touches
+    `piping_component_name`, the one property an import can add.
+    """
+    generated = generate_plant(GeneratorConfig(seed=4, n_units=4))
+    plant, _report = plant_graph(generated)
+
+    for _, attrs in plant.nodes(data=True):
+        assert "piping_component_name" not in attrs
+
+
+def _node_id_by_property(graph: nx.DiGraph[str], key: str, value: str) -> str:
+    matches = [node_id for node_id, attrs in graph.nodes(data=True) if attrs.get(key) == value]
+    assert len(matches) == 1, f"expected one node with {key}={value!r}, found {len(matches)}"
+    return matches[0]
 
 
 # ---- mindig futó eset: egy legenerált üzem oda-vissza Proteuson keresztül ----------------------

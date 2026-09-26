@@ -5,6 +5,13 @@ csatlakozó szimbólum saját feliratát és a hozzá kötött egyetlen élét (
 `kg-construction.md` §5.1). Ez a modul sosem nyúl a `SheetGraph.connectors`
 listához — az a splitter válaszkulcsa, amit `localize()` már kiürített (L2
 szivárgás, §4.1).
+
+Egy csatlakozó-csomópontnak nem mindig van saját száma és hivatkozott
+rajzszáma: egy importált fájlnál ez a DEXPI-hivatkozás-leképezés még nyitott
+kérdés (`kg-construction.md` §11 OQ1b), a szintetikus `DRAWING_ONLY` dial pedig
+csak a partner saját számát hagyja el, nem a rajzszámot. Egy felirat, aminek
+egyáltalán nincs sem száma, sem hivatkozott rajzszáma, ezért nem hiba —
+`UnresolvedConnector`-ként kerül ki, sosem dob kivételt.
 """
 
 from __future__ import annotations
@@ -13,7 +20,7 @@ from typing import Any, cast
 
 from pydantic import BaseModel
 
-from plantgraph.benchmark.models import ConnectorKind, Direction
+from plantgraph.benchmark.models import ConnectorKind, Direction, UnresolvedConnector
 from plantgraph.benchmark.sheet_graph import SheetGraph
 from plantgraph.graph.schema import CONNECTOR_CLASSES, NodeClass
 
@@ -50,16 +57,37 @@ class ConnectorLabel(BaseModel):
     fluid_code: str | None = None
 
 
-def read_connector_labels(sheet: SheetGraph) -> list[ConnectorLabel]:
-    """Egy lokalizált lap összes csatlakozó-csomópontját `ConnectorLabel`-lé alakítja."""
-    return [
-        _read_one_label(sheet, node_id, attrs)
-        for node_id, attrs in sheet.graph.nodes(data=True)
-        if attrs.get("node_class") in CONNECTOR_CLASSES
-    ]
+def read_connector_labels(
+    sheet: SheetGraph,
+) -> tuple[list[ConnectorLabel], list[UnresolvedConnector]]:
+    """Egy lokalizált lap összes csatlakozó-csomópontját `ConnectorLabel`-lé alakítja.
+
+    Returns:
+        A feliratok, amikhez volt elég adat, és külön azok, amiknek nincs se saját
+        száma, se hivatkozott rajzszáma — ezek `UnresolvedConnector`-ként kerülnek ki
+        (lásd a modul docstringjét), sosem dobnak kivételt.
+    """
+    labels: list[ConnectorLabel] = []
+    unresolved: list[UnresolvedConnector] = []
+    for node_id, attrs in sheet.graph.nodes(data=True):
+        if attrs.get("node_class") not in CONNECTOR_CLASSES:
+            continue
+        label = _read_one_label(sheet, node_id, attrs)
+        if label is None:
+            from_key = f"{sheet.sheet_id}:{node_id}"
+            unresolved.append(UnresolvedConnector(from_key=from_key, reason="no reference label"))
+        else:
+            labels.append(label)
+    return labels, unresolved
 
 
-def _read_one_label(sheet: SheetGraph, node_id: str, attrs: dict[str, Any]) -> ConnectorLabel:
+def _read_one_label(
+    sheet: SheetGraph, node_id: str, attrs: dict[str, Any]
+) -> ConnectorLabel | None:
+    connector_number = attrs.get("connector_number")
+    referenced_drawing_number = attrs.get("referenced_drawing_number")
+    if connector_number is None or referenced_drawing_number is None:
+        return None
     direction, kind = _CONNECTOR_NODE_CLASSES[attrs["node_class"]]
     edge_attrs = _single_incident_edge_attrs(sheet, node_id)
     return ConnectorLabel(
@@ -68,8 +96,8 @@ def _read_one_label(sheet: SheetGraph, node_id: str, attrs: dict[str, Any]) -> C
         direction=direction,
         kind=kind,
         relation=cast("str | None", edge_attrs.get("relation")),
-        connector_number=attrs["connector_number"],
-        referenced_drawing_number=attrs["referenced_drawing_number"],
+        connector_number=connector_number,
+        referenced_drawing_number=referenced_drawing_number,
         referenced_connector_number=attrs.get("referenced_connector_number"),
         line_number=attrs.get("line_number"),
         fluid_code=attrs.get("fluid_code"),

@@ -177,7 +177,7 @@ def _map_nodes(
     dropped: collections.Counter[str] = collections.Counter()
     for node_id, attrs in conceptual.nodes(data=True):
         label = str(attrs.get("label"))
-        node_class = _topology_node_class(label)
+        node_class = topology_node_class(label)
         if node_class is None:
             dropped[label] += 1
             continue
@@ -189,20 +189,20 @@ def _map_nodes(
     return mapped, dict(dropped)
 
 
-def _topology_node_class(label: str) -> str | None:
+def topology_node_class(label: str) -> str | None:
     """A pyDEXPI osztálynevet a séma egy topológia-osztályára fordítja, ős-osztályokon át (§6).
 
     A generátor mindig pontos névtalálatot ad; az ős-osztály ág az EXP-0001
     útvonalhoz kell, ahol egy valódi DEXPI-fájl finomabb alosztályokat használ
     (pl. `ReciprocatingPump`), amiknek nincs saját sémabeli neve.
     """
-    if label in schema.GENERATOR_CLASSES:
+    if label in schema.IMPORTABLE_CLASSES:
         return label
     dexpi_class = getattr(pydexpi_classes, label, None)
     if dexpi_class is None:
         return None
     for ancestor in base_model_utils.get_inheritance_from_dexpi_class(dexpi_class):
-        if ancestor.__name__ in schema.GENERATOR_CLASSES:
+        if ancestor.__name__ in schema.IMPORTABLE_CLASSES:
             return ancestor.__name__
     return None
 

@@ -38,6 +38,9 @@ class NodeCategory(str, Enum):
     INSTRUMENTATION = "instrumentation"
     CONNECTOR = "connector"
     STRUCTURE = "structure"
+    #: a `GenericItem` fallback kategóriája, ha a pyDEXPI ős-láncban nincs curated gyökér
+    #: (ADR-0016, kg-construction.md §3.1 "Label cut-off")
+    OTHER = "other"
 
 
 class NodeClass(str, Enum):
@@ -69,6 +72,8 @@ class NodeClass(str, Enum):
     PLANT_SECTION = "PlantSection"
     DRAWING_SET = "DrawingSet"
     SHEET = "Sheet"
+    #: fallback for a real file's pyDEXPI class the schema has not curated (ADR-0016)
+    GENERIC_ITEM = "GenericItem"
 
 
 class Relation(str, Enum):
@@ -83,6 +88,9 @@ class Relation(str, Enum):
     IS_DRAWN_ON = "is_drawn_on"
     CONTINUES_AS = "continues_as"
     SAME_TAGGED_ITEM_AS = "same_tagged_item_as"
+    #: a `GenericItem` fallback's edge relation, for a pyDEXPI edge label the schema does not
+    #: curate — kept, never dropped (ADR-0016)
+    RELATED_TO = "related_to"
 
 
 class ClassSpec(BaseModel):
@@ -176,6 +184,9 @@ CLASS_SPECS: dict[NodeClass, ClassSpec] = {
     NodeClass.PLANT_SECTION: ClassSpec(labels=("PlantSection",), category=NodeCategory.STRUCTURE),
     NodeClass.DRAWING_SET: ClassSpec(labels=("DrawingSet",), category=NodeCategory.STRUCTURE),
     NodeClass.SHEET: ClassSpec(labels=("Sheet",), category=NodeCategory.STRUCTURE),
+    # a per-instance ős-lánc (`dexpi_labels`) egy node tulajdonsága, nem ez a séma-szintű
+    # bejegyzés — ez utóbbi csak a class-szintű Neo4j-címkét adja (`adapters/pydexpi_generic.py`)
+    NodeClass.GENERIC_ITEM: ClassSpec(labels=("GenericItem",), category=NodeCategory.OTHER),
 }
 
 
@@ -205,10 +216,27 @@ GENERATOR_CLASSES: frozenset[str] = (
 )
 KNOWN_CLASSES: frozenset[str] = frozenset(node_class.value for node_class in NodeClass)
 
+# amit egy Proteus-importáló elfogadhat csomópont-osztálynak: a generátor osztályai, a
+# csonk-osztályok, plusz a curated ős-lánc nélküli fallback (ADR-0016, kg-construction.md §3.1).
+# GENERATOR_CLASSES önmagában nem bővül — a generátor sosem termel ismeretlen osztályt.
+IMPORTABLE_CLASSES: frozenset[str] = (
+    GENERATOR_CLASSES | CONNECTOR_CLASSES | {NodeClass.GENERIC_ITEM.value}
+)
+
+#: `GenericItem` a séma minden topológia-relációjának mindkét végén megengedett: az
+#: ellenőrzés nem ismerheti a fallback szemantikáját — az a promóció (ADR-0016 4. szabály) dolga.
+_GENERIC_ITEM: frozenset[str] = frozenset({NodeClass.GENERIC_ITEM.value})
+
 RELATION_ENDPOINTS: dict[Relation, tuple[frozenset[str], frozenset[str]]] = {
     Relation.SEND_TO: (
-        EQUIPMENT_CLASSES | VALVE_CLASSES | {NodeClass.FLOW_IN_PIPE_OFF_PAGE_CONNECTOR.value},
-        EQUIPMENT_CLASSES | VALVE_CLASSES | {NodeClass.FLOW_OUT_PIPE_OFF_PAGE_CONNECTOR.value},
+        EQUIPMENT_CLASSES
+        | VALVE_CLASSES
+        | _GENERIC_ITEM
+        | {NodeClass.FLOW_IN_PIPE_OFF_PAGE_CONNECTOR.value},
+        EQUIPMENT_CLASSES
+        | VALVE_CLASSES
+        | _GENERIC_ITEM
+        | {NodeClass.FLOW_OUT_PIPE_OFF_PAGE_CONNECTOR.value},
     ),
     Relation.SEND_SIGNAL_TO: (
         frozenset(
@@ -217,36 +245,44 @@ RELATION_ENDPOINTS: dict[Relation, tuple[frozenset[str], frozenset[str]]] = {
                 NodeClass.PROCESS_INSTRUMENTATION_FUNCTION.value,
                 NodeClass.FLOW_IN_SIGNAL_OFF_PAGE_CONNECTOR.value,
             }
-        ),
+        )
+        | _GENERIC_ITEM,
         frozenset(
             {
                 NodeClass.PROCESS_INSTRUMENTATION_FUNCTION.value,
                 NodeClass.ACTUATING_FUNCTION.value,
                 NodeClass.FLOW_OUT_SIGNAL_OFF_PAGE_CONNECTOR.value,
             }
-        ),
+        )
+        | _GENERIC_ITEM,
     ),
     Relation.CONTROL: (
         frozenset(
             {NodeClass.ACTUATING_FUNCTION.value, NodeClass.FLOW_IN_SIGNAL_OFF_PAGE_CONNECTOR.value}
-        ),
+        )
+        | _GENERIC_ITEM,
         frozenset(
             {
                 NodeClass.GLOBE_VALVE.value,
                 NodeClass.BALL_VALVE.value,
                 NodeClass.FLOW_OUT_SIGNAL_OFF_PAGE_CONNECTOR.value,
             }
-        ),
+        )
+        | _GENERIC_ITEM,
     ),
     Relation.MEASURED_BY: (
-        EQUIPMENT_CLASSES | {NodeClass.FLOW_IN_SIGNAL_OFF_PAGE_CONNECTOR.value},
+        EQUIPMENT_CLASSES | {NodeClass.FLOW_IN_SIGNAL_OFF_PAGE_CONNECTOR.value} | _GENERIC_ITEM,
         frozenset(
             {
                 NodeClass.PROCESS_SIGNAL_GENERATING_FUNCTION.value,
                 NodeClass.FLOW_OUT_SIGNAL_OFF_PAGE_CONNECTOR.value,
             }
-        ),
+        )
+        | _GENERIC_ITEM,
     ),
+    # a fallback él-relációja: bármelyik importálható osztály mindkét végponton állhat
+    # (ADR-0016 2. szabály) — a séma nem ismeri a jelentését, csak megőrzi
+    Relation.RELATED_TO: (IMPORTABLE_CLASSES, IMPORTABLE_CLASSES),
 }
 
 # a struktúra-relációknak (is_located_in, has_sheet, ...) nincs itt végpont-halmazuk:
@@ -266,9 +302,18 @@ VISIBLE_NODE_PROPERTIES: frozenset[str] = frozenset(
         "referenced_connector_number",
         "line_number",
         "fluid_code",
+        # a fallback saját jelentése: melyik pyDEXPI osztályt/címkéket látta a rajz (ADR-0016)
+        "dexpi_class",
+        "category",
+        "dexpi_labels",
+        # a part's printed name, e.g. valve "66KL21" — an identifier, not datasheet data;
+        # equipment/datasheet data is out of scope — not part of this thesis (ADR-0021)
+        "piping_component_name",
     }
 )
-VISIBLE_EDGE_PROPERTIES: frozenset[str] = frozenset({"relation", "line_number", "fluid_code"})
+VISIBLE_EDGE_PROPERTIES: frozenset[str] = frozenset(
+    {"relation", "line_number", "fluid_code", "dexpi_label"}
+)
 
 
 def labels_for(node_class: str) -> tuple[str, ...]:
