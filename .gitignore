@@ -4,3 +4,6 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 .mypy_cache/
+
+# third-party reference files (e.g. the DEXPI example C01V04-VER.EX01.xml); tests skip when absent
+data/external/
