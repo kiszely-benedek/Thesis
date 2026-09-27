@@ -14,6 +14,7 @@ from pathlib import Path
 import pytest
 
 from plantgraph.ingest import __main__ as ingest_main
+from plantgraph.ingest.models import IngestResult
 from plantgraph.store import neo4j_settings
 
 _EX01_PATH = Path(__file__).resolve().parent.parent / "data" / "external" / "C01V04-VER.EX01.xml"
@@ -119,3 +120,91 @@ def test_missing_neo4j_settings_without_no_neo4j_names_all_three_variables() -> 
     message = str(excinfo.value)
     for variable in ("NEO4J_URI", "NEO4J_USERNAME", "NEO4J_PASSWORD"):
         assert variable in message
+
+
+# --- --out: writing the IngestResult to disk (design `qa-system.md` §2.1 R6, QA-T0) --------
+
+
+def test_out_writes_ingest_json_matching_stdout(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    out_dir = tmp_path / "corpus"
+
+    ingest_main.main(
+        [
+            "synthetic",
+            "--n-units",
+            "4",
+            "--budget",
+            "3",
+            "--no-neo4j",
+            "--check",
+            "--out",
+            str(out_dir),
+        ]
+    )
+
+    stdout_result = IngestResult.model_validate_json(capsys.readouterr().out)
+    written_path = out_dir / "ingest.json"
+    file_result = IngestResult.model_validate_json(written_path.read_text(encoding="utf-8"))
+    assert file_result == stdout_result
+
+
+def test_out_creates_missing_parent_directories(tmp_path: Path) -> None:
+    out_dir = tmp_path / "does" / "not" / "exist" / "yet"
+
+    ingest_main.main(["synthetic", "--n-units", "4", "--no-neo4j", "--out", str(out_dir)])
+
+    assert (out_dir / "ingest.json").exists()
+
+
+def test_out_is_deterministic_ignoring_wall_clock_timings(tmp_path: Path) -> None:
+    """Same seed twice gives the same config, counts and gate result — timing floats aside."""
+    for label in ("first", "second"):
+        ingest_main.main(
+            [
+                "synthetic",
+                "--n-units",
+                "4",
+                "--budget",
+                "3",
+                "--seed",
+                "0",
+                "--no-neo4j",
+                "--check",
+                "--out",
+                str(tmp_path / label),
+            ]
+        )
+    first = IngestResult.model_validate_json(
+        (tmp_path / "first" / "ingest.json").read_text(encoding="utf-8")
+    )
+    second = IngestResult.model_validate_json(
+        (tmp_path / "second" / "ingest.json").read_text(encoding="utf-8")
+    )
+    assert first.model_copy(update={"stage_seconds": {}}) == second.model_copy(
+        update={"stage_seconds": {}}
+    )
+    assert set(first.stage_seconds) == set(second.stage_seconds)
+
+
+def test_out_is_absent_by_default(capsys: pytest.CaptureFixture[str]) -> None:
+    """No `--out` flag: no behaviour change from before QA-T0 (only stdout is written)."""
+    args = ingest_main._parse_args(["synthetic", "--n-units", "4"])
+    assert args.out is None
+
+
+def test_proteus_out_writes_ingest_json_matching_stdout(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    if not _EX01_PATH.exists():
+        pytest.skip(f"{_EX01_PATH} is absent; data/ is untracked (see CLAUDE.md)")
+    out_dir = tmp_path / "ex01"
+
+    ingest_main.main(["proteus", str(_EX01_PATH), "--no-neo4j", "--out", str(out_dir)])
+
+    stdout_result = IngestResult.model_validate_json(capsys.readouterr().out)
+    file_result = IngestResult.model_validate_json(
+        (out_dir / "ingest.json").read_text(encoding="utf-8")
+    )
+    assert file_result == stdout_result

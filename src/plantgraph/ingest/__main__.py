@@ -8,6 +8,11 @@ touches any of the three.
 
 Exit code is non-zero if `--check` fails (gate G1, `synthetic` only) or if the
 Neo4j load's own verification step fails.
+
+`--out DIR` additionally writes that same `IngestResult` to `DIR/ingest.json`,
+as UTF-8 with no BOM (design `qa-system.md` §2.1 R6, QA-T0). It is written
+with `Path.write_text`, never a shell redirect: a PowerShell `>` redirect
+writes UTF-16, which `qa/corpus.py` would then fail to parse back.
 """
 
 from __future__ import annotations
@@ -31,6 +36,9 @@ _REQUIRED_NEO4J_VARS = ("NEO4J_URI", "NEO4J_USERNAME", "NEO4J_PASSWORD")
 #: (a file stem) into a safe default corpus_id, never to validate one.
 _CORPUS_ID_UNSAFE_CHARS = re.compile(r"[^A-Za-z0-9_.-]")
 
+#: the file `--out DIR` writes into; `qa/corpus.py` reads the same name back.
+_INGEST_RESULT_FILENAME = "ingest.json"
+
 
 def main(argv: list[str] | None = None) -> None:
     """Parse argv, run the requested pipeline, print its `IngestResult`, and set the exit code."""
@@ -43,8 +51,22 @@ def main(argv: list[str] | None = None) -> None:
         result = _run_proteus(args, settings)
 
     print(result.model_dump_json())
+    if args.out is not None:
+        _write_result(result, args.out)
     if result.gate_equal is False:
         sys.exit(1)
+
+
+def _write_result(result: IngestResult, out_dir: Path) -> None:
+    """Write `result` as UTF-8 JSON to `out_dir/ingest.json`, creating `out_dir` if needed.
+
+    Pydantic's `model_dump_json` always orders fields the way the model
+    declares them, so the same corpus config produces byte-identical bytes
+    run to run — the "deterministic, documented layout" the design asks for.
+    """
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_path = out_dir / _INGEST_RESULT_FILENAME
+    out_path.write_text(result.model_dump_json(indent=2), encoding="utf-8")
 
 
 def _run_synthetic(args: argparse.Namespace, settings: Neo4jSettings | None) -> IngestResult:
@@ -123,6 +145,15 @@ def _add_synthetic_subparser(
         "--check", action="store_true", help="run gate G1: does resolve(split(plant)) == plant?"
     )
     parser.add_argument("--no-neo4j", action="store_true", help="skip the Neo4j load entirely")
+    parser.add_argument(
+        "--out",
+        type=Path,
+        default=None,
+        help=(
+            f"directory to also write this run's {_INGEST_RESULT_FILENAME} into, e.g. "
+            "data/runs/<corpus-id> (git-ignored); not written unless this is given"
+        ),
+    )
 
 
 def _add_proteus_subparser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) -> None:
@@ -130,6 +161,15 @@ def _add_proteus_subparser(subparsers: argparse._SubParsersAction[argparse.Argum
     parser.add_argument("path", type=Path, help="the Proteus XML file")
     parser.add_argument("--corpus-id", default=None, help="defaults to the sanitized file stem")
     parser.add_argument("--no-neo4j", action="store_true", help="skip the Neo4j load entirely")
+    parser.add_argument(
+        "--out",
+        type=Path,
+        default=None,
+        help=(
+            f"directory to also write this run's {_INGEST_RESULT_FILENAME} into, e.g. "
+            "data/runs/<corpus-id> (git-ignored); not written unless this is given"
+        ),
+    )
 
 
 if __name__ == "__main__":
