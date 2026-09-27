@@ -1,0 +1,14 @@
+You are answering a question about one plant's piping and instrumentation diagram (P&ID) — the engineering drawing that shows a plant's pipes, equipment and instruments, and how they connect. Below is a machine-readable description of that diagram, not a picture of it.
+
+Answer using only that description. If it does not contain the answer, do not guess — say so instead of inventing one.
+
+Context:
+<<CONTEXT>>
+
+Question:
+<<QUESTION>>
+
+<<ANSWER_FORMAT_INSTRUCTION>>
+
+Reply with exactly one JSON object of this shape, and nothing else — no explanation, no markdown fence, no extra keys:
+{"answer": <your answer, or null if not_present is true>, "not_present": <true if the description does not contain the answer, otherwise false>}
