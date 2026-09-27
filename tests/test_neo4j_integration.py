@@ -2,10 +2,11 @@
 
 The whole module is skipped unless `NEO4J_URI`, `NEO4J_USERNAME` and
 `NEO4J_PASSWORD` are all set (directly, or via the git-ignored `.env` file
-`neo4j_settings.py` reads) — no other test in the suite touches a live
-database. Every test here loads a dedicated, disposable `corpus_id` and wipes
-it again in a `finally`, so a run can never leave data behind or collide with
-another corpus in the same database.
+`neo4j_settings.py` reads) *and* the database actually answers within a few
+seconds (`conftest.neo4j_skip_reason`) — no other test in the suite touches a
+live database. Every test here loads a dedicated, disposable `corpus_id` and
+wipes it again in a `finally`, so a run can never leave data behind or
+collide with another corpus in the same database.
 
 Only a tiny corpus is loaded here: a 4-unit generated plant, and EX01 (36
 nodes) when the file is present. The first load at plant scale (SMOKE-05,
@@ -19,6 +20,7 @@ from pathlib import Path
 
 import pytest
 
+from conftest import neo4j_skip_reason
 from graph_plant_builder import GraphPlantBuilder
 from plantgraph.adapters.pydexpi_proteus_import import import_proteus_sheet
 from plantgraph.benchmark.generator import plan_plant
@@ -31,18 +33,15 @@ from plantgraph.resolution.models import Resolution
 from plantgraph.resolution.resolver import resolve
 from plantgraph.store.neo4j_loader import LoadReport, load_corpus, wipe_corpus
 from plantgraph.store.neo4j_plan import build_load_plan
-from plantgraph.store.neo4j_settings import Neo4jSettings, from_env, missing_required_vars
+from plantgraph.store.neo4j_settings import Neo4jSettings, from_env
 
 _EX01_PATH = Path(__file__).resolve().parent.parent / "data" / "external" / "C01V04-VER.EX01.xml"
 
 #: never a real experiment's id, so this test can never collide with one.
 _CORPUS_ID = "pytest-kg-construction"
 
-_missing = missing_required_vars()
-pytestmark = pytest.mark.skipif(
-    bool(_missing),
-    reason=f"Neo4j integration test needs {_missing} (set in the shell or in .env)",
-)
+_skip_reason = neo4j_skip_reason()
+pytestmark = pytest.mark.skipif(_skip_reason is not None, reason=_skip_reason or "")
 
 
 def _small_corpus() -> tuple[list[SheetGraph], Resolution]:

@@ -7,5 +7,7 @@ statements and parameter batches with no database connection at all, so the
 query shape can be tested without a live Neo4j instance; `neo4j_settings.py`
 and `neo4j_loader.py` (T7) add the driver that actually runs them: settings
 say where and how to connect, and the loader wipes, writes and verifies one
-corpus's `LoadPlan` against a real server.
+corpus's `LoadPlan` against a real server. `neo4j_probe.py` answers one
+narrower question fast — is the server there at all — so a stopped database
+is reported in seconds rather than found by waiting for the loader to time out.
 """

@@ -1,14 +1,14 @@
 """Executes a `LoadPlan` against a live Neo4j database (design `kg-construction.md` §7.4, T7).
 
 `neo4j_plan.py` computes what to write with no database connection at all;
-this module is the only place in `plantgraph.store` that imports the `neo4j`
-driver, and the only place that actually talks to a server. Its steps, each
-timed separately for `LoadReport`, are wipe -> schema -> nodes -> relationships
--> verify. Verify counts nodes by label and relationships by type for one
-`corpus_id` and raises if either disagrees with the plan's `expected_*` —
-this is the loader's own accuracy check, catching a row that silently failed
-to match its endpoints or a batch that was skipped, not a claim that the
-sheets it was given are themselves correct.
+this module is where that plan is actually sent to a server (the only other
+place that opens a driver is `neo4j_probe.py`'s reachability check). Its
+steps, each timed separately for `LoadReport`, are wipe -> schema -> nodes ->
+relationships -> verify. Verify counts nodes by label and relationships by
+type for one `corpus_id` and raises if either disagrees with the plan's
+`expected_*` — this is the loader's own accuracy check, catching a row that
+silently failed to match its endpoints or a batch that was skipped, not a
+claim that the sheets it was given are themselves correct.
 """
 
 from __future__ import annotations
@@ -21,6 +21,7 @@ from pydantic import BaseModel
 
 from plantgraph.store.neo4j_plan import CypherStatement, LoadPlan
 from plantgraph.store.neo4j_plan import wipe_statement as build_wipe_statement
+from plantgraph.store.neo4j_probe import DEFAULT_CONNECTION_TIMEOUT_S
 from plantgraph.store.neo4j_settings import Neo4jSettings
 
 
@@ -95,8 +96,13 @@ def wipe_corpus(settings: Neo4jSettings, corpus_id: str, batch_size: int = 5000)
 
 
 def _open_driver(settings: Neo4jSettings) -> Driver:
+    # Same short timeout the reachability probe uses (`neo4j_probe.py`), so a
+    # real load against a stopped database fails fast with a clear driver
+    # error instead of hanging on the driver's own 30s default.
     return GraphDatabase.driver(
-        settings.uri, auth=(settings.username, settings.password.get_secret_value())
+        settings.uri,
+        auth=(settings.username, settings.password.get_secret_value()),
+        connection_timeout=DEFAULT_CONNECTION_TIMEOUT_S,
     )
 
 

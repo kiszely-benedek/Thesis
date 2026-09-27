@@ -1,10 +1,11 @@
 """Opt-in integration test: the `synthetic` pipeline against a live Neo4j (design §7.7, §8).
 
 Skipped unless `NEO4J_URI`, `NEO4J_USERNAME` and `NEO4J_PASSWORD` are all set
-(directly, or via the git-ignored `.env`), exactly like `test_neo4j_integration.py`.
-Uses its own dedicated `corpus_id`, distinct from every other test's, and wipes
-it again in a `finally` — no other test in the suite touches a live database
-from this module.
+(directly, or via the git-ignored `.env`) *and* the database actually
+answers within a few seconds (`conftest.neo4j_skip_reason`), exactly like
+`test_neo4j_integration.py`. Uses its own dedicated `corpus_id`, distinct
+from every other test's, and wipes it again in a `finally` — no other test
+in the suite touches a live database from this module.
 
 **Do not run anything large here.** SMOKE-04/05 (1,000/2,900 units) belong to
 the main session, not to a pytest run (T8's own instructions).
@@ -14,20 +15,18 @@ from __future__ import annotations
 
 import pytest
 
+from conftest import neo4j_skip_reason
 from plantgraph.benchmark.generator_models import GeneratorConfig
 from plantgraph.benchmark.split_models import SplitConfig
 from plantgraph.ingest.pipeline import run_synthetic
 from plantgraph.store.neo4j_loader import wipe_corpus
-from plantgraph.store.neo4j_settings import Neo4jSettings, from_env, missing_required_vars
+from plantgraph.store.neo4j_settings import Neo4jSettings, from_env
 
 #: never a real experiment's id, so this test can never collide with one.
 _CORPUS_ID = "pytest-ingest-integration"
 
-_missing = missing_required_vars()
-pytestmark = pytest.mark.skipif(
-    bool(_missing),
-    reason=f"ingest integration test needs {_missing} (set in the shell or in .env)",
-)
+_skip_reason = neo4j_skip_reason()
+pytestmark = pytest.mark.skipif(_skip_reason is not None, reason=_skip_reason or "")
 
 
 def _settings() -> Neo4jSettings:

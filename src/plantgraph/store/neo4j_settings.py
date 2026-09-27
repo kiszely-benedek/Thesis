@@ -5,7 +5,8 @@ Real environment variables always win. A `.env` file at the repository root
 so a developer does not have to export four variables in every shell before
 running the opt-in integration test. Nothing here ever prints or logs the
 password: it is a Pydantic `SecretStr`, masked in `repr` and `str`, and its
-raw value is only ever read once, by `neo4j_loader.py`, to authenticate.
+raw value is only ever read to authenticate — by `neo4j_loader.py`, and by
+`neo4j_probe.py`'s reachability check.
 """
 
 from __future__ import annotations
