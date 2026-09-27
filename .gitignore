@@ -10,3 +10,8 @@ data/external/
 
 # local secrets (Neo4j and OpenRouter credentials) — never committed
 .env
+
+# generated question sets, run outputs and the LLM response cache (whether any of these is released is undecided)
+data/questions/
+data/runs/
+data/llm-cache/
