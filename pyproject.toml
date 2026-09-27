@@ -12,6 +12,7 @@ dependencies = [
     "pydexpi==1.2.0",
     "neo4j>=6.3.1",
     "python-dotenv>=1.2.3",
+    "openai>=3.19.2",
 ]
 
 [project.optional-dependencies]
@@ -31,6 +32,9 @@ packages = ["src/plantgraph"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = [
+    "live_llm: makes a real, paid OpenRouter call; runs only with --live-llm (see tests/conftest.py)",
+]
 
 [tool.ruff]
 line-length = 100
