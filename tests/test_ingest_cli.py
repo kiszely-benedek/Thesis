@@ -45,6 +45,39 @@ def test_synthetic_defaults_match_the_adr_0017_headline_configuration() -> None:
     assert args.no_neo4j is False
 
 
+def test_synthetic_split_flags_default_to_todays_behaviour() -> None:
+    args = ingest_main._parse_args(["synthetic", "--n-units", "4"])
+
+    assert args.label_detail == "full"
+    assert args.duplication_rate == 0.0
+    assert args.inexact_tags is False
+
+
+def test_label_detail_flag_accepts_drawing_only() -> None:
+    args = ingest_main._parse_args(
+        ["synthetic", "--n-units", "4", "--label-detail", "drawing_only"]
+    )
+
+    assert args.label_detail == "drawing_only"
+
+
+def test_label_detail_flag_rejects_an_unknown_value() -> None:
+    with pytest.raises(SystemExit):
+        ingest_main._parse_args(["synthetic", "--n-units", "4", "--label-detail", "verbose"])
+
+
+def test_duplication_rate_flag_parses_a_float() -> None:
+    args = ingest_main._parse_args(["synthetic", "--n-units", "4", "--duplication-rate", "0.5"])
+
+    assert args.duplication_rate == 0.5
+
+
+def test_inexact_tags_flag_is_a_switch() -> None:
+    args = ingest_main._parse_args(["synthetic", "--n-units", "4", "--inexact-tags"])
+
+    assert args.inexact_tags is True
+
+
 def test_synthetic_requires_n_units() -> None:
     with pytest.raises(SystemExit):
         ingest_main._parse_args(["synthetic"])
@@ -90,6 +123,118 @@ def test_synthetic_default_corpus_id_encodes_units_budget_and_seed(
 
     payload = json.loads(capsys.readouterr().out)
     assert payload["corpus_id"] == "syn-u4-b3-s7"
+
+
+# --- synthetic, ADR-0023 split flags: drawing-only labels, duplication, inexact tags -------
+
+
+def test_drawing_only_labels_pass_the_gate_with_nothing_unresolved(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    ingest_main.main(
+        [
+            "synthetic",
+            "--n-units",
+            "4",
+            "--budget",
+            "3",
+            "--label-detail",
+            "drawing_only",
+            "--check",
+            "--no-neo4j",
+        ]
+    )
+
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["gate_equal"] is True
+    assert payload["counts"]["n_unresolved"] == 0
+    assert payload["resolution"]["unresolved_by_reason"] == {}
+    assert payload["config"]["split"]["connector_label_detail"] == "drawing_only"
+
+
+def test_duplication_and_exact_tags_still_pass_the_gate(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    ingest_main.main(
+        [
+            "synthetic",
+            "--n-units",
+            "4",
+            "--budget",
+            "3",
+            "--duplication-rate",
+            "0.5",
+            "--check",
+            "--no-neo4j",
+        ]
+    )
+
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["gate_equal"] is True
+    assert payload["config"]["split"]["duplication_rate"] == 0.5
+    assert payload["resolution"]["n_identity_groups"] > 0, "0.5 duplication must create groups"
+
+
+def test_duplication_with_inexact_tags_runs_and_records_its_config(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """No `--check`: with inexact tags the resolver leaves identity groups unmerged, and the
+    gate's `to_original_ids` raises on that rather than reporting a failed comparison."""
+    ingest_main.main(
+        [
+            "synthetic",
+            "--n-units",
+            "4",
+            "--budget",
+            "3",
+            "--duplication-rate",
+            "0.5",
+            "--inexact-tags",
+            "--no-neo4j",
+        ]
+    )
+
+    split_config = json.loads(capsys.readouterr().out)["config"]["split"]
+    assert split_config["duplication_rate"] == 0.5
+    assert split_config["exact_match_tags"] is False
+
+
+def test_split_flags_reach_the_ingest_json_written_by_out(tmp_path: Path) -> None:
+    ingest_main.main(
+        [
+            "synthetic",
+            "--n-units",
+            "4",
+            "--budget",
+            "3",
+            "--label-detail",
+            "drawing_only",
+            "--duplication-rate",
+            "0.5",
+            "--inexact-tags",
+            "--no-neo4j",
+            "--out",
+            str(tmp_path),
+        ]
+    )
+
+    written = IngestResult.model_validate_json(
+        (tmp_path / "ingest.json").read_text(encoding="utf-8")
+    )
+    assert written.config["split"]["connector_label_detail"] == "drawing_only"
+    assert written.config["split"]["duplication_rate"] == 0.5
+    assert written.config["split"]["exact_match_tags"] is False
+
+
+def test_default_split_config_is_unchanged_in_the_printed_json(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    ingest_main.main(["synthetic", "--n-units", "4", "--budget", "3", "--no-neo4j"])
+
+    split_config = json.loads(capsys.readouterr().out)["config"]["split"]
+    assert split_config["connector_label_detail"] == "full"
+    assert split_config["duplication_rate"] == 0.0
+    assert split_config["exact_match_tags"] is True
 
 
 # --- proteus, --no-neo4j -------------------------------------------------------------------

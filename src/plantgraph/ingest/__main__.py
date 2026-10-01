@@ -23,7 +23,7 @@ import sys
 from pathlib import Path
 
 from plantgraph.benchmark.generator_models import GeneratorConfig
-from plantgraph.benchmark.split_models import SplitConfig
+from plantgraph.benchmark.split_models import ConnectorLabelDetail, SplitConfig
 from plantgraph.ingest.models import IngestResult
 from plantgraph.ingest.pipeline import run_proteus, run_synthetic
 from plantgraph.store.neo4j_settings import Neo4jSettings, from_env, missing_required_vars
@@ -73,7 +73,12 @@ def _run_synthetic(args: argparse.Namespace, settings: Neo4jSettings | None) -> 
     corpus_id = args.corpus_id or _default_synthetic_corpus_id(args.n_units, args.budget, args.seed)
     generator_config = GeneratorConfig(n_units=args.n_units, seed=args.seed)
     split_config = SplitConfig(
-        strategy=args.strategy, sheet_equipment_budget=args.budget, seed=args.seed
+        strategy=args.strategy,
+        sheet_equipment_budget=args.budget,
+        seed=args.seed,
+        connector_label_detail=ConnectorLabelDetail(args.label_detail),
+        duplication_rate=args.duplication_rate,
+        exact_match_tags=not args.inexact_tags,
     )
     return run_synthetic(
         corpus_id=corpus_id,
@@ -139,6 +144,29 @@ def _add_synthetic_subparser(
         "--strategy",
         default="flow_greedy",
         help="splitter strategy (ADR-0017 headline: flow_greedy)",
+    )
+    parser.add_argument(
+        "--label-detail",
+        choices=[detail.value for detail in ConnectorLabelDetail],
+        default=ConnectorLabelDetail.FULL.value,
+        help=(
+            "what an off-page connector stub shows: 'full' also prints its partner's label, "
+            "'drawing_only' does not (ADR-0023 headline corpora: drawing_only)"
+        ),
+    )
+    parser.add_argument(
+        "--duplication-rate",
+        type=float,
+        default=0.0,
+        help=(
+            "share, in [0, 1], of equipment with cross-sheet neighbours that is also "
+            "re-drawn as a reference on those neighbouring sheets (default 0.0)"
+        ),
+    )
+    parser.add_argument(
+        "--inexact-tags",
+        action="store_true",
+        help="re-drawn equipment carries a slightly altered tag (only matters with duplication)",
     )
     parser.add_argument("--corpus-id", default=None, help="defaults to syn-u{N}-b{B}-s{S}")
     parser.add_argument(
