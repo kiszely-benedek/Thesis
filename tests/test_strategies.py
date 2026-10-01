@@ -2,15 +2,26 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 import random
 
 import networkx as nx
 import pytest
 
 from plant_fixtures import make_plant_graph
+from plantgraph.benchmark.generator_models import GeneratorConfig
 from plantgraph.benchmark.split_models import SplitConfig
-from plantgraph.benchmark.strategies import STRATEGIES, _flow_order
+from plantgraph.benchmark.splitter import split
+from plantgraph.benchmark.strategies import (
+    STRATEGIES,
+    _balanced_sizes,
+    _chunk_by_sizes,
+    _cluster_owners,
+    _flow_order,
+)
 from plantgraph.graph import schema
+from plantgraph.ingest.pipeline import generate_plant_graph
 
 
 @pytest.mark.parametrize("strategy_name", sorted(STRATEGIES))
@@ -131,3 +142,87 @@ def test_by_unit_raises_without_unit_id() -> None:
     config = SplitConfig(strategy="by_unit", equipment_classes={"CentrifugalPump"})
     with pytest.raises(ValueError, match="by_unit needs unit_id"):
         STRATEGIES["by_unit"](plant, config, random.Random(config.seed))
+
+
+# Manifest hashes of the four other strategies, computed with the code as it was
+# BEFORE RU-T2 (unit-aware owners must not change them). Fixed plant and configs below.
+_GOLDEN_MANIFEST_HASHES = {
+    "flow_greedy": "d51f0ca50dbfe0bcd01e58aa9e01481d4099765c927f9edf7c84492c135ee8dc",
+    "modularity": "7727c892168253bd290c76ccfcaf7e09b8190d07450ee9e4428ab99001c6a1b5",
+    "utility_aware": "f2913eef3592745315be01511a48a9979a15c1c267d5760d32759ed710c0b6b4",
+    "random": "428454d812206594833cba7daeb3746f373fe8c1db0a15df1d66c5821997513e",
+}
+
+
+@pytest.mark.parametrize("strategy_name", sorted(_GOLDEN_MANIFEST_HASHES))
+def test_other_strategies_keep_their_pre_ru_t2_manifest_bytes(strategy_name: str) -> None:
+    plant = generate_plant_graph(
+        GeneratorConfig(seed=7, n_units=4, equipment_per_unit_min=6, equipment_per_unit_max=10)
+    )
+    config = SplitConfig(strategy=strategy_name, seed=3, sheet_equipment_budget=4)
+    _, manifest = split(plant, config)
+    fields = manifest.model_dump(mode="json")
+    fields.pop("created_at")  # wall-clock stamp: the only field that differs between runs
+    digest = hashlib.sha256(json.dumps(fields, sort_keys=True).encode()).hexdigest()
+    assert digest == _GOLDEN_MANIFEST_HASHES[strategy_name]
+
+
+@pytest.mark.parametrize(
+    ("n_equipment", "budget", "expected"),
+    [(36, 18, [18, 18]), (19, 18, [10, 9]), (20, 6, [5, 5, 5, 5]), (7, 3, [3, 2, 2]), (0, 5, [0])],
+)
+def test_balanced_sizes_differ_by_at_most_one_larger_first(
+    n_equipment: int, budget: int, expected: list[int]
+) -> None:
+    assert _balanced_sizes(n_equipment, budget) == expected
+
+
+def test_chunk_by_sizes_cuts_at_the_sizes_and_riders_follow_their_equipment() -> None:
+    order = ["a", "a-valve", "b", "c", "c-valve", "d"]
+    sheets = _chunk_by_sizes(order, {"a", "b", "c", "d"}, [2, 2])
+    assert sheets == [["a", "a-valve", "b"], ["c", "c-valve", "d"]]
+
+
+def _two_unit_plant() -> nx.DiGraph[str]:
+    """Two pumps joined by a pipe segment that declares unit u2; the pump P-1 is unit u1."""
+    plant: nx.DiGraph[str] = nx.DiGraph()
+    plant.add_node("p1", node_class="CentrifugalPump", unit_id="u1")
+    plant.add_node("pipe", node_class="PipingNetworkSegment", unit_id="u2")
+    plant.add_node("p2", node_class="CentrifugalPump", unit_id="u2")
+    plant.add_edges_from([("p1", "pipe"), ("pipe", "p2")])
+    return plant
+
+
+def test_cluster_owners_same_unit_keeps_a_node_out_of_a_foreign_unit_owner() -> None:
+    plant = _two_unit_plant()
+    classes = {"CentrifugalPump"}
+    _, default_owner = _cluster_owners(plant, classes)
+    _, unit_owner = _cluster_owners(plant, classes, same_unit=True)
+    assert default_owner["pipe"] == "p1"  # today's rule: nearest equipment, alphabetical tie-break
+    assert unit_owner["pipe"] == "p2"
+
+
+def test_by_unit_on_a_generated_plant_balances_sheets_and_never_mixes_units() -> None:
+    plant = generate_plant_graph(
+        GeneratorConfig(seed=0, n_units=5, equipment_per_unit_min=10, equipment_per_unit_max=20)
+    )
+    config = SplitConfig(strategy="by_unit", sheet_equipment_budget=6, seed=0)
+    node_sheet = STRATEGIES["by_unit"](plant, config, random.Random(0))
+
+    units_of_sheet: dict[str, set[str]] = {}
+    equipment_of: dict[str, dict[str, int]] = {}
+    for node_id, sheet_id in node_sheet.items():
+        attrs = plant.nodes[node_id]
+        unit_id = attrs.get("unit_id")
+        if unit_id is None:
+            continue
+        units_of_sheet.setdefault(sheet_id, set()).add(unit_id)
+        if attrs["node_class"] in config.equipment_classes:
+            counts = equipment_of.setdefault(unit_id, {})
+            counts[sheet_id] = counts.get(sheet_id, 0) + 1
+    assert all(len(units) == 1 for units in units_of_sheet.values())
+
+    for counts in equipment_of.values():
+        total = sum(counts.values())
+        assert len(counts) == -(-total // 6)
+        assert max(counts.values()) - min(counts.values()) <= 1

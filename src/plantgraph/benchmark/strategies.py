@@ -15,6 +15,7 @@ WHAT ORDER they let clusters onto a sheet: the actual chunking into sheets
 
 from __future__ import annotations
 
+import math
 import random
 import statistics
 from collections import deque
@@ -73,7 +74,7 @@ def by_unit(plant: nx.DiGraph[str], config: SplitConfig, rng: random.Random) -> 
     Raises:
         ValueError: if not a single piece of equipment has a unit_id attribute.
     """
-    equipment_owners, node_owner = _cluster_owners(plant, config.equipment_classes)
+    equipment_owners, node_owner = _cluster_owners(plant, config.equipment_classes, same_unit=True)
     owner_graph = _owner_graph(plant, node_owner)
     order = _flow_order(owner_graph, equipment_owners)
     unit_of = {owner: str(plant.nodes[owner].get("unit_id", "")) for owner in order}
@@ -84,9 +85,9 @@ def by_unit(plant: nx.DiGraph[str], config: SplitConfig, rng: random.Random) -> 
     owner_sheets: list[list[str]] = []
     for unit_id in _units_in_flow_order(order, unit_of):
         owners_in_unit = [owner for owner in order if unit_of[owner] == unit_id]
-        owner_sheets += _chunk_by_budget(
-            owners_in_unit, equipment_owners, config.sheet_equipment_budget
-        )
+        n_equipment = sum(1 for owner in owners_in_unit if owner in equipment_owners)
+        sizes = _balanced_sizes(n_equipment, config.sheet_equipment_budget)
+        owner_sheets += _chunk_by_sizes(owners_in_unit, equipment_owners, sizes)
     return _expand_to_nodes(owner_sheets, node_owner)
 
 
@@ -156,7 +157,7 @@ STRATEGIES: dict[str, StrategyFn] = {
 
 
 def _cluster_owners(
-    plant: nx.DiGraph[str], equipment_classes: set[str]
+    plant: nx.DiGraph[str], equipment_classes: set[str], *, same_unit: bool = False
 ) -> tuple[set[str], dict[str, str]]:
     """Assign every node to its nearest equipment.
 
@@ -167,6 +168,10 @@ def _cluster_owners(
     question 2). If a node cannot reach any equipment at all (an isolated
     instrument subnetwork), it becomes its own cluster; a rare case, and it
     does not count against the sheet budget, since it isn't equipment.
+
+    With same_unit=True (by_unit only), a node carrying a unit_id is never
+    claimed by an owner of a different unit; nodes without unit_id are claimed
+    as usual.
     """
     equipment_owners = {
         node_id
@@ -184,6 +189,8 @@ def _cluster_owners(
         for neighbour in sorted(undirected.neighbors(node_id)):
             if neighbour in owner:
                 continue
+            if same_unit and _crosses_unit(plant, neighbour, owner[node_id]):
+                continue
             owner[neighbour] = owner[node_id]
             queue.append(neighbour)
 
@@ -192,6 +199,12 @@ def _cluster_owners(
             owner[node_id] = node_id
 
     return equipment_owners, owner
+
+
+def _crosses_unit(plant: nx.DiGraph[str], node_id: str, owner_id: str) -> bool:
+    """True if the node declares a unit_id that differs from the owner's."""
+    node_unit = plant.nodes[node_id].get("unit_id")
+    return node_unit is not None and node_unit != plant.nodes[owner_id].get("unit_id")
 
 
 def _owner_graph(plant: nx.DiGraph[str], node_owner: dict[str, str]) -> nx.DiGraph[str]:
@@ -264,6 +277,35 @@ def _chunk_by_budget(order: list[str], equipment_owners: set[str], budget: int) 
     for owner in order:
         is_equipment = owner in equipment_owners
         if is_equipment and equipment_count >= budget and sheets[-1]:
+            sheets.append([])
+            equipment_count = 0
+        sheets[-1].append(owner)
+        if is_equipment:
+            equipment_count += 1
+    return sheets
+
+
+def _balanced_sizes(n_equipment: int, budget: int) -> list[int]:
+    """Split n equipment into ceil(n/budget) sheet sizes differing by at most 1, larger first.
+
+    A unit with no equipment gets one empty size, so its riders still land on a sheet.
+    """
+    if n_equipment == 0:
+        return [0]
+    sheet_count = math.ceil(n_equipment / budget)
+    base, extra = divmod(n_equipment, sheet_count)
+    return [base + 1] * extra + [base] * (sheet_count - extra)
+
+
+def _chunk_by_sizes(
+    order: list[str], equipment_owners: set[str], sizes: list[int]
+) -> list[list[str]]:
+    """Cut an ordered list of clusters at exact equipment counts; riders follow their equipment."""
+    sheets: list[list[str]] = [[]]
+    equipment_count = 0
+    for owner in order:
+        is_equipment = owner in equipment_owners
+        if is_equipment and equipment_count >= sizes[len(sheets) - 1] and sheets[-1]:
             sheets.append([])
             equipment_count = 0
         sheets[-1].append(owner)
