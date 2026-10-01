@@ -7,9 +7,14 @@ categorization, the pre/post pass, and the `related_to` edge on hand-built input
 
 from __future__ import annotations
 
-import networkx as nx
-import pytest
+import inspect
 
+import networkx as nx
+import pydexpi.dexpi_classes.pydantic_classes as pydexpi_classes
+import pytest
+from pydantic import BaseModel
+
+from plantgraph.adapters.pydexpi_adapter import topology_node_class
 from plantgraph.adapters.pydexpi_generic import (
     GenericInfo,
     add_related_to_edges,
@@ -19,6 +24,22 @@ from plantgraph.adapters.pydexpi_generic import (
     prepare_generic,
 )
 from plantgraph.graph.schema import NodeCategory
+
+
+def _is_own_model_class(name: str, obj: object) -> bool:
+    """True for a class pyDEXPI defines under this exact name — not a re-exported alias."""
+    return (
+        inspect.isclass(obj)
+        and name == obj.__name__
+        and issubclass(obj, BaseModel)
+        and obj is not BaseModel
+    )
+
+
+def _all_pydexpi_model_classes() -> list[str]:
+    """Every pyDEXPI data-model class name (465 on pyDEXPI 1.2.0), for a full-sweep test."""
+    return [name for name, obj in vars(pydexpi_classes).items() if _is_own_model_class(name, obj)]
+
 
 # ---- classify: category and label chain (§3.1 rule 2) --------------------------------------------
 
@@ -40,6 +61,37 @@ def test_a_label_that_is_not_a_pydexpi_class_falls_to_other() -> None:
     info = classify("NotARealDexpiClass")
     assert info.category is NodeCategory.OTHER
     assert info.labels == ("NotARealDexpiClass",)
+
+
+def test_an_unknown_instrument_subclass_roots_at_process_signal_generating_system() -> None:
+    """`FlowDetector` is the exact gap `kg-construction.md` §3.1 flagged as unhandled."""
+    info = classify("FlowDetector")
+    assert info.category is NodeCategory.INSTRUMENTATION
+    assert info.labels == ("FlowDetector", "ProcessSignalGeneratingSystem")
+
+
+def test_an_unknown_subclass_of_a_known_instrumentation_function_is_instrumentation_too() -> None:
+    """`ProcessControlFunction` never actually reaches `classify` in the real pipeline — its
+    nearest known ancestor, `ProcessInstrumentationFunction`, is a curated schema class, so
+    `topology_node_class` maps it first (`prepare_generic` skips it). But `classify` is also
+    called on its own, so it must not silently fall to `other` if it ever is.
+    """
+    info = classify("ProcessControlFunction")
+    assert info.category is NodeCategory.INSTRUMENTATION
+    assert info.labels == ("ProcessControlFunction", "ProcessInstrumentationFunction")
+
+
+def test_an_unknown_instrument_subclass_roots_at_signal_conveying_function() -> None:
+    info = classify("MeasuringLineFunction")
+    assert info.category is NodeCategory.INSTRUMENTATION
+    assert info.labels == ("MeasuringLineFunction", "SignalConveyingFunction")
+
+
+def test_a_graphics_class_is_not_instrumentation() -> None:
+    """`Label` is a drawing annotation, not a plant item — it must stay `other`, not be swept in."""
+    info = classify("Label")
+    assert info.category is NodeCategory.OTHER
+    assert info.labels == ("Label",)
 
 
 def test_a_chain_entry_that_fails_the_label_regex_is_rejected() -> None:
@@ -186,6 +238,37 @@ def test_count_nodes_per_dexpi_class_counts_by_the_real_pydexpi_label() -> None:
     counts = count_nodes_per_dexpi_class(conceptual, {"a", "b", "c"})
 
     assert counts == {"ReciprocatingPump": 2, "CentrifugalPump": 1}
+
+
+# ---- full sweep over every pyDEXPI model class: no errors, no equipment/piping regressions ------
+
+
+def test_classify_never_errors_on_any_real_pydexpi_class() -> None:
+    """Every class pyDEXPI ships must classify without raising (§3.1 rule 7's regex included)."""
+    for label in _all_pydexpi_model_classes():
+        classify(label)  # would raise on an unsafe chain entry; must not, for a real class
+
+
+def test_full_sweep_category_counts_match_the_measured_baseline() -> None:
+    """The `equipment`/`piping` counts are exactly what they were before the instrumentation roots
+    were added (106 and 56, measured on pyDEXPI 1.2.0) — proof that no equipment or piping class
+    was pulled into `instrumentation` by the new roots. `other` shrinks by exactly the 7 classes
+    that used to have nowhere to go (`FlowDetector`, `MeasuringLineFunction`, ...).
+    """
+    all_classes = _all_pydexpi_model_classes()
+    assert len(all_classes) == 465
+
+    known = {label for label in all_classes if topology_node_class(label) is not None}
+    assert len(known) == 33
+
+    categories = [classify(label).category for label in all_classes if label not in known]
+    counted = {category: categories.count(category) for category in set(categories)}
+    assert counted == {
+        NodeCategory.EQUIPMENT: 106,
+        NodeCategory.PIPING: 56,
+        NodeCategory.INSTRUMENTATION: 7,
+        NodeCategory.OTHER: 263,
+    }
 
 
 def test_generic_info_is_immutable_and_hashable_via_tuple_labels() -> None:

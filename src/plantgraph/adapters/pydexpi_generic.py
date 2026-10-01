@@ -42,9 +42,30 @@ _STRUCTURE_LABELS = frozenset({"PlantSection", "ProcessPlant"})
 #: pyDEXPI ancestor class name -> schema category, treated as the "root" (§3.1 "Label cut-off").
 #: Past the root, pyDEXPI's chain runs into mixin classes (`CustomAttributeOwner`, ...), which
 #: are not categories — so the walk stops here, not at the end of the chain.
+#:
+#: Unlike `Equipment`/`PipingComponent`, pyDEXPI has no single instrumentation root — signal and
+#: control concepts split into several independent trees. Three of them
+#: (`ProcessInstrumentationFunction`, `ProcessSignalGeneratingFunction`, `ActuatingFunction`) are
+#: already curated schema classes, so in the real pipeline `topology_node_class` maps their
+#: subclasses (e.g. `ProcessControlFunction`) before this fallback ever runs — but `classify` is
+#: also a public function in its own right, and must categorize such a class correctly if called
+#: directly, so they are listed here too. The remaining four (`ActuatingSystem`,
+#: `InstrumentationLoopFunction`, `ProcessSignalGeneratingSystem`, `SignalConveyingFunction`) have
+#: no curated class above them at all — every subclass of theirs reaches this fallback for real.
+#: Precedence: the walk stops at the *first* root it meets, so where an instrumentation root and
+#: `Equipment`/`PipingComponent` could both be reached, whichever sits closer to the class wins.
+#: Verified over pyDEXPI 1.2.0's full class set: no class that already rooted at `Equipment` or
+#: `PipingComponent` changes category when the instrumentation roots are added.
 _CATEGORY_ROOTS: dict[str, schema.NodeCategory] = {
     "Equipment": schema.NodeCategory.EQUIPMENT,
     "PipingComponent": schema.NodeCategory.PIPING,
+    "ProcessInstrumentationFunction": schema.NodeCategory.INSTRUMENTATION,
+    "ProcessSignalGeneratingFunction": schema.NodeCategory.INSTRUMENTATION,
+    "ActuatingFunction": schema.NodeCategory.INSTRUMENTATION,
+    "ActuatingSystem": schema.NodeCategory.INSTRUMENTATION,
+    "InstrumentationLoopFunction": schema.NodeCategory.INSTRUMENTATION,
+    "ProcessSignalGeneratingSystem": schema.NodeCategory.INSTRUMENTATION,
+    "SignalConveyingFunction": schema.NodeCategory.INSTRUMENTATION,
 }
 
 #: safe Neo4j label shape — both the curated chain and the fallback's single-item
@@ -64,8 +85,8 @@ def classify(label: str) -> GenericInfo:
     """Split a pyDEXPI class name into a category and a Neo4j label chain (§3.1 rule 2).
 
     Walks pyDEXPI's own ancestor chain up to and including the first category
-    root (`Equipment` or `PipingComponent`). Without a root, or if `label` isn't
-    even a pyDEXPI class name, the category is `other` and the chain is just itself.
+    root in `_CATEGORY_ROOTS`. Without a root, or if `label` isn't even a
+    pyDEXPI class name, the category is `other` and the chain is just itself.
 
     Raises:
         ValueError: if a chain element is not a safe Neo4j label shape.
