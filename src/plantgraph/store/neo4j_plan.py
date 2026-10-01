@@ -269,4 +269,8 @@ _SCHEMA_STATEMENTS: tuple[CypherStatement, ...] = (
         query="CREATE INDEX corpus_node_tag IF NOT EXISTS FOR (n:CorpusNode) ON (n.tag)",
         parameters={},
     ),
+    CypherStatement(
+        query="CREATE INDEX corpus_node_unit_id IF NOT EXISTS FOR (n:CorpusNode) ON (n.unit_id)",
+        parameters={},
+    ),
 )

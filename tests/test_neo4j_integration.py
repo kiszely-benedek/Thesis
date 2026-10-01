@@ -73,7 +73,32 @@ def _settings() -> Neo4jSettings:
 
 def _expected_node_count(sheets: list[SheetGraph]) -> int:
     corpus_and_sheets = 1 + len(sheets)
-    return corpus_and_sheets + sum(sheet.graph.number_of_nodes() for sheet in sheets)
+    occurrences = sum(sheet.graph.number_of_nodes() for sheet in sheets)
+    units = len(_drawn_values(sheets, "unit_id"))
+    plants = len(_drawn_values(sheets, "plant_id"))
+    return corpus_and_sheets + occurrences + units + plants
+
+
+def _drawn_values(sheets: list[SheetGraph], key: str) -> set[object]:
+    """Distinct values of one visible node property, read straight from the sheets."""
+    return {
+        attrs[key]
+        for sheet in sheets
+        for _node_id, attrs in sheet.graph.nodes(data=True)
+        if key in attrs
+    }
+
+
+def _located_in_count(sheets: list[SheetGraph]) -> int:
+    """Occurrences that show a unit, plus one unit -> plant link per unit with a plant."""
+    with_unit = [
+        attrs
+        for sheet in sheets
+        for _node_id, attrs in sheet.graph.nodes(data=True)
+        if "unit_id" in attrs
+    ]
+    units_in_plants = {attrs["unit_id"] for attrs in with_unit if "plant_id" in attrs}
+    return len(with_unit) + len(units_in_plants)
 
 
 def _expected_relationship_count(sheets: list[SheetGraph], resolution: Resolution) -> int:
@@ -82,7 +107,8 @@ def _expected_relationship_count(sheets: list[SheetGraph], resolution: Resolutio
     topology = sum(sheet.graph.number_of_edges() for sheet in sheets)
     continues_as = len(resolution.connector_pairs)
     same_tagged_item_as = sum(len(group.references) for group in resolution.identity_groups)
-    return has_sheet + is_drawn_on + topology + continues_as + same_tagged_item_as
+    is_located_in = _located_in_count(sheets)
+    return has_sheet + is_drawn_on + topology + continues_as + same_tagged_item_as + is_located_in
 
 
 def _assert_matches_the_plan(

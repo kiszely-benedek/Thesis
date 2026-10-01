@@ -84,32 +84,41 @@ def _occurrence_label_counts(items: list[ItemRecord]) -> dict[str, int]:
     return dict(counts)
 
 
+_STRUCTURE_LABELS = ("CorpusNode", "Sheet", "DrawingSet", "PlantSection", "ProcessPlant")
+_STRUCTURE_RELATIONS = (
+    schema.Relation.HAS_SHEET.value,
+    schema.Relation.IS_DRAWN_ON.value,
+    schema.Relation.IS_LOCATED_IN.value,
+)
+
+
 def _plan_occurrence_label_counts(plan: LoadPlan) -> dict[str, int]:
     """`plan.expected_node_labels`, with the structural bookkeeping labels removed.
 
-    Those three labels (`CorpusNode`, `Sheet`, `DrawingSet`) count the
-    corpus marker and the per-sheet nodes the store adds — `NetworkxGraphView`
-    never materializes either as a node (§5: `sheet_id` is an attribute
-    instead), so they are not part of what this comparison checks.
+    Those labels count the corpus marker, the per-sheet nodes and the unit and
+    plant nodes the store adds (ADR-0026) — `NetworkxGraphView` never
+    materializes any of them as a node (§5: `sheet_id` and `unit_id` are
+    attributes instead), so they are not part of what this comparison checks.
     """
     return {
         label: count
         for label, count in plan.expected_node_labels.items()
-        if label not in ("CorpusNode", "Sheet", "DrawingSet")
+        if label not in _STRUCTURE_LABELS
     }
 
 
 def _plan_topology_relationship_counts(plan: LoadPlan) -> dict[str, int]:
-    """`plan.expected_relationship_types`, with the two structural relations removed.
+    """`plan.expected_relationship_types`, with the structural relations removed.
 
     `has_sheet` and `is_drawn_on` describe edges to a `Sheet` node that this
-    view never creates; the acceptance check (`qa-system.md` §18 QA-T3)
-    compares those two counts separately, "from the sheet attribute".
+    view never creates (QA-T3 compares those two counts separately, "from the
+    sheet attribute"); `is_located_in` links to unit and plant nodes it never
+    creates either (ADR-0026).
     """
     return {
         relation: count
         for relation, count in plan.expected_relationship_types.items()
-        if relation not in (schema.Relation.HAS_SHEET.value, schema.Relation.IS_DRAWN_ON.value)
+        if relation not in _STRUCTURE_RELATIONS
     }
 
 

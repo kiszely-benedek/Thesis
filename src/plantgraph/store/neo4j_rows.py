@@ -82,6 +82,53 @@ def all_node_rows(corpus_id: str, sheets: Sequence[SheetGraph]) -> list[NodeRow]
     for sheet in sheets:
         rows.append(_sheet_row(corpus_id, sheet))
         rows += _occurrence_rows(corpus_id, sheet)
+    rows += _plant_section_rows(corpus_id, sheets)
+    rows += _process_plant_rows(corpus_id, sheets)
+    return rows
+
+
+def plant_section_uid(corpus_id: str, unit_id: str) -> str:
+    """The uid of one unit's `PlantSection` (ADR-0026); `unit:` cannot clash with `sheet:occ`."""
+    return uid(corpus_id, f"unit:{unit_id}")
+
+
+def process_plant_uid(corpus_id: str, plant_id: str) -> str:
+    """The uid of the `ProcessPlant` for one plant id (ADR-0026)."""
+    return uid(corpus_id, f"plant:{plant_id}")
+
+
+def _visible_ids(sheets: Sequence[SheetGraph], key: str) -> set[str]:
+    """Every distinct string value of one visible property (`unit_id` or `plant_id`)."""
+    found: set[str] = set()
+    for sheet in sheets:
+        for _node_id, attrs in sheet.graph.nodes(data=True):
+            value = attrs.get(key)
+            if isinstance(value, str):
+                found.add(value)
+    return found
+
+
+def _plant_section_rows(corpus_id: str, sheets: Sequence[SheetGraph]) -> list[NodeRow]:
+    """One `PlantSection` per distinct `unit_id` drawn on the sheets — never from the answer key."""
+    labels = ("CorpusNode", schema.NodeClass.PLANT_SECTION.value)
+    rows = []
+    for unit_id in sorted(_visible_ids(sheets, "unit_id")):
+        row_uid = plant_section_uid(corpus_id, unit_id)
+        rows.append(
+            NodeRow(labels, row_uid, {"uid": row_uid, "corpus_id": corpus_id, "unit_id": unit_id})
+        )
+    return rows
+
+
+def _process_plant_rows(corpus_id: str, sheets: Sequence[SheetGraph]) -> list[NodeRow]:
+    """One `ProcessPlant` per distinct `plant_id` drawn on the sheets."""
+    labels = ("CorpusNode", schema.NodeClass.PROCESS_PLANT.value)
+    rows = []
+    for plant_id in sorted(_visible_ids(sheets, "plant_id")):
+        row_uid = process_plant_uid(corpus_id, plant_id)
+        rows.append(
+            NodeRow(labels, row_uid, {"uid": row_uid, "corpus_id": corpus_id, "plant_id": plant_id})
+        )
     return rows
 
 
@@ -160,8 +207,51 @@ def all_relationship_rows(
         rows.append(_has_sheet_row(corpus_id, sheet_uid))
         rows += _is_drawn_on_rows(corpus_id, sheet, sheet_uid)
         rows += _topology_rows(corpus_id, sheet)
+    rows += _located_in_rows(corpus_id, sheets)
     rows += _continues_as_rows(corpus_id, resolution, asserted_by)
     rows += _same_tagged_item_as_rows(corpus_id, resolution, asserted_by)
+    return rows
+
+
+def _located_in_rows(corpus_id: str, sheets: Sequence[SheetGraph]) -> list[RelationshipRow]:
+    """`is_located_in`: occurrence -> its unit, and unit -> its plant (ADR-0026).
+
+    Only occurrences that carry a `unit_id` get one. A reference occurrence or a
+    connector stub shows none on the drawing, so it reaches its unit through
+    `same_tagged_item_as` instead.
+    """
+    relation = schema.Relation.IS_LOCATED_IN.value
+    rows = []
+    plants_of_unit: dict[str, set[str]] = {}
+    for sheet in sheets:
+        for node_id, attrs in sheet.graph.nodes(data=True):
+            unit_id = attrs.get("unit_id")
+            if not isinstance(unit_id, str):
+                continue
+            source = uid(corpus_id, f"{sheet.sheet_id}:{node_id}")
+            rows.append(
+                RelationshipRow(relation, source, plant_section_uid(corpus_id, unit_id), {})
+            )
+            plant_id = attrs.get("plant_id")
+            if isinstance(plant_id, str):
+                plants_of_unit.setdefault(unit_id, set()).add(plant_id)
+    return rows + _section_in_plant_rows(corpus_id, plants_of_unit)
+
+
+def _section_in_plant_rows(
+    corpus_id: str, plants_of_unit: Mapping[str, set[str]]
+) -> list[RelationshipRow]:
+    relation = schema.Relation.IS_LOCATED_IN.value
+    rows = []
+    for unit_id, plant_ids in sorted(plants_of_unit.items()):
+        if len(plant_ids) != 1:
+            raise ValueError(
+                f"unit {unit_id!r} is drawn with plant ids {sorted(plant_ids)}; "
+                "expected exactly one"
+            )
+        (plant_id,) = plant_ids
+        source = plant_section_uid(corpus_id, unit_id)
+        rows.append(RelationshipRow(relation, source, process_plant_uid(corpus_id, plant_id), {}))
     return rows
 
 

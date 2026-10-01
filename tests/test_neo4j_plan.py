@@ -57,7 +57,38 @@ def _expected_node_uids(corpus_id: str, sheets: list[SheetGraph]) -> set[str]:
     for sheet in sheets:
         uids.add(f"{corpus_id}|{sheet.sheet_id}")
         uids |= {f"{corpus_id}|{sheet.sheet_id}:{node_id}" for node_id in sheet.graph.nodes}
+    uids |= {f"{corpus_id}|unit:{unit_id}" for unit_id in _drawn_values(sheets, "unit_id")}
+    uids |= {f"{corpus_id}|plant:{plant_id}" for plant_id in _drawn_values(sheets, "plant_id")}
     return uids
+
+
+def _drawn_values(sheets: list[SheetGraph], key: str) -> set[str]:
+    """Distinct values of one visible node property, read straight from the sheets."""
+    return {
+        attrs[key]
+        for sheet in sheets
+        for _node_id, attrs in sheet.graph.nodes(data=True)
+        if key in attrs
+    }
+
+
+def _units_in_plants(sheets: list[SheetGraph]) -> set[str]:
+    """Units that have at least one occurrence carrying a `plant_id`."""
+    return {
+        attrs["unit_id"]
+        for sheet in sheets
+        for _node_id, attrs in sheet.graph.nodes(data=True)
+        if "unit_id" in attrs and "plant_id" in attrs
+    }
+
+
+def _occurrences_with_unit(sheets: list[SheetGraph]) -> int:
+    return sum(
+        1
+        for sheet in sheets
+        for _node_id, attrs in sheet.graph.nodes(data=True)
+        if "unit_id" in attrs
+    )
 
 
 def _actual_node_rows(plan: LoadPlan) -> list[dict[str, object]]:
@@ -84,7 +115,8 @@ def _expected_relationship_count(sheets: list[SheetGraph], resolution: Resolutio
     topology = sum(sheet.graph.number_of_edges() for sheet in sheets)
     continues_as = len(resolution.connector_pairs)
     same_tagged_item_as = sum(len(group.references) for group in resolution.identity_groups)
-    return has_sheet + is_drawn_on + topology + continues_as + same_tagged_item_as
+    is_located_in = _occurrences_with_unit(sheets) + len(_units_in_plants(sheets))
+    return has_sheet + is_drawn_on + topology + continues_as + same_tagged_item_as + is_located_in
 
 
 def _actual_relationship_rows(plan: LoadPlan) -> list[dict[str, object]]:
@@ -207,6 +239,12 @@ def test_expected_counts_match_an_independent_tally() -> None:
         for _node_id, attrs in sheet.graph.nodes(data=True):
             for label in _expected_occurrence_labels(attrs):
                 label_counts[label] = label_counts.get(label, 0) + 1
+    units = _drawn_values(sheets, "unit_id")
+    plants = _drawn_values(sheets, "plant_id")
+    assert units and plants, "the toy plant must show units, or this test checks nothing"
+    label_counts["CorpusNode"] += len(units) + len(plants)
+    label_counts["PlantSection"] = len(units)
+    label_counts["ProcessPlant"] = len(plants)
 
     assert plan.expected_node_labels == label_counts
 
@@ -224,6 +262,9 @@ def test_expected_counts_match_an_independent_tally() -> None:
     same_tagged = sum(len(group.references) for group in resolution.identity_groups)
     if same_tagged:
         relationship_counts[schema.Relation.SAME_TAGGED_ITEM_AS.value] = same_tagged
+    relationship_counts[schema.Relation.IS_LOCATED_IN.value] = _occurrences_with_unit(sheets) + len(
+        _units_in_plants(sheets)
+    )
 
     assert plan.expected_relationship_types == relationship_counts
 
