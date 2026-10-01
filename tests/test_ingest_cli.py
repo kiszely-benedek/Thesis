@@ -78,9 +78,10 @@ def test_inexact_tags_flag_is_a_switch() -> None:
     assert args.inexact_tags is True
 
 
-def test_synthetic_requires_n_units() -> None:
-    with pytest.raises(SystemExit):
-        ingest_main._parse_args(["synthetic"])
+def test_synthetic_requires_a_size_flag() -> None:
+    # n-units is no longer an argparse-required flag: --target-sheets is its alternative
+    with pytest.raises(SystemExit, match="--n-units and --target-sheets"):
+        ingest_main.main(["synthetic", "--no-neo4j"])
 
 
 def test_proteus_requires_a_path() -> None:

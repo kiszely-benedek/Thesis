@@ -20,10 +20,18 @@ from __future__ import annotations
 import argparse
 import re
 import sys
+import time
+from dataclasses import dataclass
 from pathlib import Path
 
 from plantgraph.benchmark.generator_models import GeneratorConfig
 from plantgraph.benchmark.split_models import ConnectorLabelDetail, SplitConfig
+from plantgraph.ingest.headline import (
+    HeadlinePreset,
+    SizeSearchResult,
+    check_realized_sheets,
+    smallest_n_units,
+)
 from plantgraph.ingest.models import IngestResult
 from plantgraph.ingest.pipeline import run_proteus, run_synthetic
 from plantgraph.store.neo4j_settings import Neo4jSettings, from_env, missing_required_vars
@@ -45,16 +53,27 @@ def main(argv: list[str] | None = None) -> None:
     args = _parse_args(argv)
     settings = None if args.no_neo4j else _settings_from_env_or_raise()
 
+    search: SizeSearchResult | None = None
     if args.command == "synthetic":
-        result = _run_synthetic(args, settings)
+        result, search = _run_synthetic(args, settings)
     else:
         result = _run_proteus(args, settings)
 
     print(result.model_dump_json())
     if args.out is not None:
         _write_result(result, args.out)
+    if search is not None:
+        _exit_if_search_missed(search, result)
     if result.gate_equal is False:
         sys.exit(1)
+
+
+def _exit_if_search_missed(search: SizeSearchResult, result: IngestResult) -> None:
+    """The search predicts, the build decides: stop with a message if they disagree."""
+    try:
+        check_realized_sheets(search, result.counts.n_sheets)
+    except ValueError as error:
+        raise SystemExit(f"error: size search disagrees with the built corpus: {error}") from error
 
 
 def _write_result(result: IngestResult, out_dir: Path) -> None:
@@ -69,23 +88,91 @@ def _write_result(result: IngestResult, out_dir: Path) -> None:
     out_path.write_text(result.model_dump_json(indent=2), encoding="utf-8")
 
 
-def _run_synthetic(args: argparse.Namespace, settings: Neo4jSettings | None) -> IngestResult:
-    corpus_id = args.corpus_id or _default_synthetic_corpus_id(args.n_units, args.budget, args.seed)
-    generator_config = GeneratorConfig(n_units=args.n_units, seed=args.seed)
-    split_config = SplitConfig(
+@dataclass(frozen=True)
+class _SyntheticSetup:
+    """The generator and splitter settings a `synthetic` run resolved from its flags."""
+
+    n_units: int
+    generator_config: GeneratorConfig
+    split_config: SplitConfig
+    search: SizeSearchResult | None
+
+
+def _run_synthetic(
+    args: argparse.Namespace, settings: Neo4jSettings | None
+) -> tuple[IngestResult, SizeSearchResult | None]:
+    setup = _synthetic_setup(args)
+    corpus_id = args.corpus_id or _default_synthetic_corpus_id(
+        setup.n_units, setup.split_config.sheet_equipment_budget, args.seed
+    )
+    result = run_synthetic(
+        corpus_id=corpus_id,
+        generator_config=setup.generator_config,
+        split_config=setup.split_config,
+        check=args.check,
+        settings=settings,
+    )
+    return result, setup.search
+
+
+def _synthetic_setup(args: argparse.Namespace) -> _SyntheticSetup:
+    """Turn the flags into configs: the headline preset, a size search, or the plain flags."""
+    _check_size_flags(args)
+    if not args.headline:
+        generator_config = GeneratorConfig(
+            n_units=args.n_units,
+            seed=args.seed,
+            **_equipment_range_overrides(args),
+        )
+        return _SyntheticSetup(args.n_units, generator_config, _split_config_from_flags(args), None)
+
+    preset = HeadlinePreset()
+    search = _search_size(args.target_sheets, preset, args.seed) if args.target_sheets else None
+    n_units = search.n_units if search else args.n_units
+    return _SyntheticSetup(
+        n_units, preset.generator_config(n_units, args.seed), preset.split_config(args.seed), search
+    )
+
+
+def _check_size_flags(args: argparse.Namespace) -> None:
+    """Exactly one of --n-units/--target-sheets; the search and the eq range follow the preset."""
+    if (args.n_units is None) == (args.target_sheets is None):
+        raise SystemExit("error: give exactly one of --n-units and --target-sheets")
+    if args.target_sheets is not None and not args.headline:
+        raise SystemExit("error: --target-sheets needs --headline (the search assumes the preset)")
+    if args.headline and (args.eq_min is not None or args.eq_max is not None):
+        raise SystemExit("error: --eq-min/--eq-max do not combine with --headline (preset values)")
+
+
+def _search_size(target_sheets: int, preset: HeadlinePreset, seed: int) -> SizeSearchResult:
+    """Run the size search and report it on stderr, so stdout stays one JSON line."""
+    start = time.perf_counter()
+    search = smallest_n_units(target_sheets, preset, seed)
+    print(
+        f"size search: target {target_sheets} sheets -> {search.n_units} units "
+        f"({search.predicted_sheets} predicted) in {time.perf_counter() - start:.2f} s",
+        file=sys.stderr,
+    )
+    return search
+
+
+def _equipment_range_overrides(args: argparse.Namespace) -> dict[str, int]:
+    """Only the bounds the user gave, so the generator's own defaults stay the fallback."""
+    overrides = {
+        "equipment_per_unit_min": args.eq_min,
+        "equipment_per_unit_max": args.eq_max,
+    }
+    return {name: value for name, value in overrides.items() if value is not None}
+
+
+def _split_config_from_flags(args: argparse.Namespace) -> SplitConfig:
+    return SplitConfig(
         strategy=args.strategy,
         sheet_equipment_budget=args.budget,
         seed=args.seed,
         connector_label_detail=ConnectorLabelDetail(args.label_detail),
         duplication_rate=args.duplication_rate,
         exact_match_tags=not args.inexact_tags,
-    )
-    return run_synthetic(
-        corpus_id=corpus_id,
-        generator_config=generator_config,
-        split_config=split_config,
-        check=args.check,
-        settings=settings,
     )
 
 
@@ -130,7 +217,26 @@ def _add_synthetic_subparser(
     parser = subparsers.add_parser(
         "synthetic", help="generate a synthetic plant, split it, resolve it, and load it"
     )
-    parser.add_argument("--n-units", type=int, required=True, help="number of process units")
+    parser.add_argument("--n-units", type=int, default=None, help="number of process units")
+    parser.add_argument(
+        "--target-sheets",
+        type=int,
+        default=None,
+        help="instead of --n-units: the fewest units whose corpus has at least this many sheets "
+        "(needs --headline)",
+    )
+    parser.add_argument(
+        "--headline",
+        action="store_true",
+        help="apply the headline preset (ADR-0025/0028): by_unit, budget 18, drawing_only labels, "
+        "duplication 0.25, exact tags, 18-36 equipment per unit; it overrides the split flags",
+    )
+    parser.add_argument(
+        "--eq-min", type=int, default=None, help="equipment per unit, lower bound (not headline)"
+    )
+    parser.add_argument(
+        "--eq-max", type=int, default=None, help="equipment per unit, upper bound (not headline)"
+    )
     parser.add_argument(
         "--budget",
         type=int,
