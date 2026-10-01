@@ -17,7 +17,7 @@ from plantgraph.benchmark.sheet_graph import SheetGraph
 from plantgraph.graph.schema import EQUIPMENT_CLASSES, VALVE_CLASSES, Relation
 from plantgraph.qa.models import AnswerType, Question, QuestionFamily
 from plantgraph.qa.questions.common import build_question, unit_of
-from plantgraph.qa.questions.evidence import Evidence, connector_cut
+from plantgraph.qa.questions.evidence import Evidence, SheetIndex, connector_cut
 from plantgraph.qa.questions.templates import count_in_unit_text, cross_unit_text
 
 _TEMPLATE_VERSION = "1"
@@ -59,20 +59,21 @@ def cross_unit_candidates(
     question tests nothing a strategy could get wrong, so it is skipped.
     """
     cut = connector_cut(manifest)
+    index = SheetIndex.from_sheets(sheets)
     leaving: dict[str, list[tuple[str, str]]] = {}
     for source_id, target_id in _send_to_edges(plant):
         source_unit, target_unit = unit_of(plant, source_id), unit_of(plant, target_id)
         if source_unit is not None and target_unit is not None and source_unit != target_unit:
             leaving.setdefault(source_unit, []).append((source_id, target_id))
     return [
-        _cross_unit_question(plant, sheets, cut, unit_id, edges, corpus_id=corpus_id, seed=seed)
+        _cross_unit_question(plant, index, cut, unit_id, edges, corpus_id=corpus_id, seed=seed)
         for unit_id, edges in sorted(leaving.items())
     ]
 
 
 def _cross_unit_question(
     plant: nx.DiGraph[str],
-    sheets: list[SheetGraph],
+    index: SheetIndex,
     cut: frozenset[tuple[str, str]],
     unit_id: str,
     edges: list[tuple[str, str]],
@@ -95,7 +96,7 @@ def _cross_unit_question(
         evidence=evidence,
         anchors=[unit_id],
         plant=plant,
-        sheets=sheets,
+        index=index,
         cut=cut,
         seed=seed,
     )
@@ -111,6 +112,7 @@ def count_in_unit_candidates(
 ) -> list[Question]:
     """One candidate per `(unit, class)` pair that has at least one counted node."""
     cut = connector_cut(manifest)
+    index = SheetIndex.from_sheets(sheets)
     counted = _counted_nodes_by_unit(plant)
     questions = []
     for unit_id, node_ids in sorted(counted.items()):
@@ -129,7 +131,7 @@ def count_in_unit_candidates(
                     evidence=evidence,
                     anchors=[unit_id, node_class],
                     plant=plant,
-                    sheets=sheets,
+                    index=index,
                     cut=cut,
                     seed=seed,
                 )

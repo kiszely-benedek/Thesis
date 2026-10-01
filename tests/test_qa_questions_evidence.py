@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from plantgraph.qa.questions.evidence import (
     Evidence,
+    SheetIndex,
     connector_cut,
     evidence_k,
     evidence_sheets,
@@ -66,7 +67,7 @@ def test_evidence_sheets_lists_every_sheet_that_draws_an_evidence_node() -> None
     # TANK is drawn on S1, VALVE on S2 — the evidence spans both.
     evidence = Evidence(nodes=frozenset({N_TANK, N_VALVE}), edges=frozenset())
 
-    assert evidence_sheets(evidence, sheets) == [SHEET_1, SHEET_2]
+    assert evidence_sheets(evidence, SheetIndex.from_sheets(sheets)) == [SHEET_1, SHEET_2]
 
 
 def test_evidence_tags_reads_the_printed_tag_not_the_internal_id() -> None:

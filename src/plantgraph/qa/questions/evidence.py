@@ -56,11 +56,34 @@ def evidence_k(evidence: Evidence, cut: frozenset[tuple[str, str]]) -> int:
     return len(evidence.edges & cut)
 
 
-def evidence_sheets(evidence: Evidence, sheets: Sequence[SheetGraph]) -> list[str]:
+class SheetIndex:
+    """Which sheets draw each plant node, built once per corpus.
+
+    The question build asks "which sheets does this evidence touch?" for
+    every candidate. Scanning all sheets per question is O(sheets) each and
+    did not finish at 1,000 sheets; with this node -> sheets map it costs
+    O(evidence nodes).
+    """
+
+    def __init__(self, sheets_of: dict[str, frozenset[str]]) -> None:
+        self.sheets_of = sheets_of
+
+    @classmethod
+    def from_sheets(cls, sheets: Sequence[SheetGraph]) -> SheetIndex:
+        """Invert the sheets' node lists into node -> sheet ids."""
+        collected: dict[str, set[str]] = {}
+        for sheet in sheets:
+            for node_id in sheet.graph.nodes:
+                collected.setdefault(str(node_id), set()).add(sheet.sheet_id)
+        return cls({node_id: frozenset(ids) for node_id, ids in collected.items()})
+
+
+def evidence_sheets(evidence: Evidence, index: SheetIndex) -> list[str]:
     """Every sheet that draws at least one evidence node, sorted for determinism."""
-    return sorted(
-        sheet.sheet_id for sheet in sheets if not evidence.nodes.isdisjoint(sheet.graph.nodes)
-    )
+    drawn_on: set[str] = set()
+    for node_id in evidence.nodes:
+        drawn_on |= index.sheets_of.get(node_id, frozenset())
+    return sorted(drawn_on)
 
 
 def evidence_tags(evidence: Evidence, plant: nx.DiGraph[str]) -> list[str]:

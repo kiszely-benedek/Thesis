@@ -9,23 +9,20 @@ reads instead.
 
 from __future__ import annotations
 
+import random
+from dataclasses import dataclass
+
 import networkx as nx
 
 from plantgraph.benchmark.models import SplitManifest
 from plantgraph.benchmark.sheet_graph import SheetGraph
 from plantgraph.qa.models import AnswerType, Question, QuestionFamily
+from plantgraph.qa.questions.availability import KBin, k_bin_of_k
 from plantgraph.qa.questions.common import build_question, send_to_successors, tagged_nodes_by_tag
-from plantgraph.qa.questions.evidence import Evidence, connector_cut
+from plantgraph.qa.questions.evidence import Evidence, SheetIndex, connector_cut
 from plantgraph.qa.questions.templates import flow_path_text, neighbours_downstream_text
 
 _TEMPLATE_VERSION = "1"
-
-#: How many `send_to` hops a FLOW_PATH candidate may span. Keeps candidate
-#: enumeration bounded on a large plant instead of computing a path between
-#: every pair of nodes (design §9, "Sampling": "a bounded forward BFS ...
-#: rather than enumerating all pairs"). QA-T7's sampler may pass its own
-#: bound; this is only the default used when none is given.
-DEFAULT_MAX_PATH_EDGES = 6
 
 
 def neighbours_downstream_candidates(
@@ -38,6 +35,7 @@ def neighbours_downstream_candidates(
 ) -> list[Question]:
     """One candidate per node with at least one direct `send_to` successor."""
     cut = connector_cut(manifest)
+    index = SheetIndex.from_sheets(sheets)
     questions = []
     for node_id, tag in tagged_nodes_by_tag(plant):
         successor_ids = send_to_successors(plant, node_id)
@@ -59,7 +57,7 @@ def neighbours_downstream_candidates(
                 evidence=evidence,
                 anchors=[tag],
                 plant=plant,
-                sheets=sheets,
+                index=index,
                 cut=cut,
                 seed=seed,
             )
@@ -74,33 +72,59 @@ def flow_path_candidates(
     *,
     corpus_id: str,
     seed: int,
-    max_path_edges: int = DEFAULT_MAX_PATH_EDGES,
 ) -> list[Question]:
-    """One candidate per `(source, target)` pair within `max_path_edges` `send_to` hops."""
+    """At most one `FLOW_PATH` candidate per `(source, k-bin)`, over every reachable target.
+
+    There is no hop cap: how well a strategy answers across sheet and unit
+    boundaries is the thing under test (ADR-0029). One forward walk per
+    source finds every target's path and `k` cheaply; only the one target
+    drawn per bin is turned into a `Question`, because building a question
+    for every pair did not finish at 1,000 sheets.
+    """
     cut = connector_cut(manifest)
+    index = SheetIndex.from_sheets(sheets)
+    successors = {node_id: send_to_successors(plant, node_id) for node_id in plant.nodes}
     questions = []
     for source_id, source_tag in tagged_nodes_by_tag(plant):
-        paths = _lexicographically_smallest_paths_from(plant, source_id, max_path_edges)
-        del paths[source_id]  # a path from a node to itself is not a question
-        for target_id in sorted(paths):
+        reached = _reach_from(plant, successors, source_id, cut)
+        del reached[source_id]  # a path from a node to itself is not a question
+        rng = random.Random(f"{seed}:{source_id}")  # one stream per source: draws stay independent
+        for target_id in _one_target_per_bin(reached, rng):
+            path = _path_to(reached, source_id, target_id)
             questions.append(
                 _flow_path_question(
                     plant,
-                    sheets,
+                    index,
                     cut,
                     corpus_id=corpus_id,
                     seed=seed,
                     source_tag=source_tag,
                     target_tag=str(plant.nodes[target_id]["tag"]),
-                    path=paths[target_id],
+                    path=path,
                 )
             )
     return questions
 
 
+@dataclass(frozen=True)
+class _Reached:
+    """How a walk got to one node: the node before it, and the cut edges on the way."""
+
+    parent: str | None
+    k: int
+
+
+def _one_target_per_bin(reached: dict[str, _Reached], rng: random.Random) -> list[str]:
+    """One reachable target for each k-bin that has any, drawn with `rng`, in bin order."""
+    by_bin: dict[KBin, list[str]] = {}
+    for target_id in sorted(reached):
+        by_bin.setdefault(k_bin_of_k(reached[target_id].k), []).append(target_id)
+    return [rng.choice(by_bin[k_bin]) for k_bin in KBin if k_bin in by_bin]
+
+
 def _flow_path_question(
     plant: nx.DiGraph[str],
-    sheets: list[SheetGraph],
+    index: SheetIndex,
     cut: frozenset[tuple[str, str]],
     *,
     corpus_id: str,
@@ -121,54 +145,90 @@ def _flow_path_question(
         evidence=evidence,
         anchors=[source_tag, target_tag],
         plant=plant,
-        sheets=sheets,
+        index=index,
         cut=cut,
         seed=seed,
     )
 
 
-def _lexicographically_smallest_paths_from(
-    plant: nx.DiGraph[str], source_id: str, max_hops: int
-) -> dict[str, list[str]]:
-    """Shortest (by hop count) `send_to` paths from `source_id`, up to `max_hops` edges.
+def _path_to(reached: dict[str, _Reached], source_id: str, target_id: str) -> list[str]:
+    """Rebuild the walk's path to `target_id` by following parents back to the source."""
+    path = [target_id]
+    while path[-1] != source_id:
+        parent = reached[path[-1]].parent
+        if parent is None:
+            raise ValueError(
+                f"expected a parent chain ending at {source_id!r}, broke at {path[-1]!r}"
+            )
+        path.append(parent)
+    return path[::-1]
 
-    Among several equal-length shortest paths to the same node, keeps the
-    one whose *tag* sequence is lexicographically smallest (design §9,
-    FLOW_PATH: "ties broken by the lexicographic tag sequence"). This is
-    found a whole BFS layer at a time: every node discovered while expanding
-    one layer is reachable in the same number of hops, so the smallest
-    candidate path seen while expanding that layer is provably the smallest
-    shortest path overall — no need to compare against later, longer paths.
+
+def _reach_from(
+    plant: nx.DiGraph[str],
+    successors: dict[str, list[str]],
+    source_id: str,
+    cut: frozenset[tuple[str, str]],
+) -> dict[str, _Reached]:
+    """Every node reachable from `source_id` over `send_to`, by a shortest path.
+
+    Among equal-length shortest paths to a node, keeps the one whose *tag*
+    sequence is lexicographically smallest (design §9, FLOW_PATH). The walk
+    goes one BFS layer at a time: every node first met in one layer is the
+    same number of hops away, so the best parent seen in that layer wins
+    outright. Only parents are stored; full paths are rebuilt for the few
+    targets that become questions.
     """
-    paths: dict[str, list[str]] = {source_id: [source_id]}
+    reached = {source_id: _Reached(parent=None, k=0)}
     frontier = [source_id]
-    hops = 0
-    while frontier and hops < max_hops:
-        hops += 1
-        newly_reached = _expand_one_layer(plant, frontier, paths)
-        paths.update(newly_reached)
-        frontier = sorted(newly_reached)
-    return paths
+    while frontier:
+        found: dict[str, _Reached] = {}
+        for node_id in frontier:
+            _offer_successors(plant, successors, node_id, reached, found, cut, source_id)
+        reached.update(found)
+        frontier = sorted(found)
+    return reached
 
 
-def _expand_one_layer(
-    plant: nx.DiGraph[str], frontier: list[str], paths: dict[str, list[str]]
-) -> dict[str, list[str]]:
-    """One BFS layer: for every not-yet-reached successor, the smallest-tag path that reaches it."""
-    best_by_target: dict[str, list[str]] = {}
-    for node_id in frontier:
-        for successor_id in send_to_successors(plant, node_id):
-            if successor_id in paths:
-                continue
-            candidate = [*paths[node_id], successor_id]
-            current_best = best_by_target.get(successor_id)
-            if current_best is None or _is_smaller_tag_sequence(plant, candidate, current_best):
-                best_by_target[successor_id] = candidate
-    return best_by_target
+def _offer_successors(
+    plant: nx.DiGraph[str],
+    successors: dict[str, list[str]],
+    node_id: str,
+    reached: dict[str, _Reached],
+    found: dict[str, _Reached],
+    cut: frozenset[tuple[str, str]],
+    source_id: str,
+) -> None:
+    """Offer `node_id` as parent of each of its new successors; keep the smaller-tag parent."""
+    for successor_id in successors[node_id]:
+        if successor_id in reached:
+            continue
+        current = found.get(successor_id)
+        if current is not None and not _path_is_smaller(
+            plant, reached, source_id, node_id, current
+        ):
+            continue
+        k = reached[node_id].k + ((node_id, successor_id) in cut)
+        found[successor_id] = _Reached(parent=node_id, k=k)
 
 
-def _is_smaller_tag_sequence(plant: nx.DiGraph[str], left: list[str], right: list[str]) -> bool:
-    """Compare two equal-length node-id paths by their printed tags, not their internal ids."""
-    left_tags = [plant.nodes[node_id]["tag"] for node_id in left]
-    right_tags = [plant.nodes[node_id]["tag"] for node_id in right]
-    return left_tags < right_tags
+def _path_is_smaller(
+    plant: nx.DiGraph[str],
+    reached: dict[str, _Reached],
+    source_id: str,
+    new_parent: str,
+    current: _Reached,
+) -> bool:
+    """Whether the path through `new_parent` has smaller printed tags than the one via `current`."""
+    if current.parent is None:
+        raise ValueError("expected a stored non-source parent when comparing tie candidates")
+    return _tag_sequence(plant, reached, source_id, new_parent) < _tag_sequence(
+        plant, reached, source_id, current.parent
+    )
+
+
+def _tag_sequence(
+    plant: nx.DiGraph[str], reached: dict[str, _Reached], source_id: str, node_id: str
+) -> list[str]:
+    """Printed tags along the walk's path to `node_id` — never the internal ids."""
+    return [str(plant.nodes[n]["tag"]) for n in _path_to(reached, source_id, node_id)]

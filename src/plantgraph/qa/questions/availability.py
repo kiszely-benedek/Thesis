@@ -27,13 +27,18 @@ class KBin(str, Enum):
     UNANSWERABLE = "unanswerable"
 
 
+def k_bin_of_k(k: int) -> KBin:
+    """The bin of an answerable question with `k` crossings."""
+    if k >= 3:
+        return KBin.K3_PLUS
+    return KBin(str(k))
+
+
 def k_bin_of(question: Question) -> KBin:
     """The bin a question falls in; an unanswerable question has `k=None` and gets its own."""
     if question.k is None:
         return KBin.UNANSWERABLE
-    if question.k >= 3:
-        return KBin.K3_PLUS
-    return KBin(str(question.k))
+    return k_bin_of_k(question.k)
 
 
 class BinTargets(BaseModel):

@@ -143,24 +143,27 @@ def test_flow_path_k_counts_every_cut_edge_on_the_chosen_path() -> None:
     manifest = build_toy_manifest()
     sheets = build_toy_sheets(plant)
 
-    questions = flow_path_candidates(plant, manifest, sheets, corpus_id=_CORPUS_ID, seed=_SEED)
+    # Hand-counted (source, target) -> (path, k). The cut is TANK->VALVE, VALVE->PUMP,
+    # PUMP->VESSEL; VESSEL->TANK_U2 stays on S4.
+    hand_values = {
+        # full chain: three of its four edges are cut
+        (TAG_TANK, TAG_TANK_U2): ([TAG_TANK, TAG_VALVE, TAG_PUMP, TAG_VESSEL, TAG_TANK_U2], 3),
+        # PUMP->VESSEL is cut, VESSEL->TANK_U2 is not
+        (TAG_PUMP, TAG_TANK_U2): ([TAG_PUMP, TAG_VESSEL, TAG_TANK_U2], 1),
+        # both edges cut
+        (TAG_VALVE, TAG_VESSEL): ([TAG_VALVE, TAG_PUMP, TAG_VESSEL], 2),
+    }
+    seen: set[tuple[str, str]] = set()
+    # The sampler draws one target per (source, bin), so a given pair appears only for
+    # some seeds; across several seeds every hand-counted pair must show up and be right.
+    for seed in range(10):
+        for q in flow_path_candidates(plant, manifest, sheets, corpus_id=_CORPUS_ID, seed=seed):
+            pair = (q.anchors[0], q.anchors[1])
+            if pair in hand_values:
+                assert (q.reference, q.k) == hand_values[pair]
+                seen.add(pair)
 
-    # TANK -> TANK_U2: the full chain TANK->VALVE->PUMP->VESSEL->TANK_U2.
-    # Three of its four edges are cut (TANK->VALVE, VALVE->PUMP,
-    # PUMP->VESSEL); VESSEL->TANK_U2 stays on S4: k=3.
-    full_path = next(q for q in questions if q.anchors == [TAG_TANK, TAG_TANK_U2])
-    assert full_path.reference == [TAG_TANK, TAG_VALVE, TAG_PUMP, TAG_VESSEL, TAG_TANK_U2]
-    assert full_path.k == 3
-
-    # PUMP -> TANK_U2: PUMP->VESSEL->TANK_U2. Only PUMP->VESSEL is cut: k=1.
-    pump_to_u2 = next(q for q in questions if q.anchors == [TAG_PUMP, TAG_TANK_U2])
-    assert pump_to_u2.reference == [TAG_PUMP, TAG_VESSEL, TAG_TANK_U2]
-    assert pump_to_u2.k == 1
-
-    # VALVE -> VESSEL: VALVE->PUMP->VESSEL. Both edges are cut: k=2.
-    valve_to_vessel = next(q for q in questions if q.anchors == [TAG_VALVE, TAG_VESSEL])
-    assert valve_to_vessel.reference == [TAG_VALVE, TAG_PUMP, TAG_VESSEL]
-    assert valve_to_vessel.k == 2
+    assert seen == set(hand_values)
 
 
 def test_no_question_text_names_an_internal_node_id() -> None:

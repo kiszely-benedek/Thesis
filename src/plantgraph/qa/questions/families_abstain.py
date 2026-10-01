@@ -32,10 +32,9 @@ from plantgraph.qa.questions.templates import (
 
 _TEMPLATE_VERSION = "1"
 
-#: Bounds on candidate enumeration, so a plant-scale corpus does not yield one
-#: question per tag or per node pair. They cap what the sampler may choose
-#: from; they are not the per-bin question counts (those come from the pilot).
-DEFAULT_MAX_UNANSWERABLE_TAGS = 20
+#: How many unreachable targets `NO_PATH` draws per source, so a plant-scale
+#: corpus does not yield one question per node pair. `UNANSWERABLE_TAG` has
+#: no such cap (ADR-0029): it is one tag per (prefix, unit).
 DEFAULT_PAIRS_PER_SOURCE = 3
 
 _TAG_GRAMMAR = re.compile(r"^(?P<prefix>.+)-(?P<unit>\d+)-(?P<seq>\d+)$")
@@ -55,8 +54,8 @@ def _highest_seq_by_group(plant: nx.DiGraph[str]) -> dict[tuple[str, str], int]:
     return highest
 
 
-def absent_tags(plant: nx.DiGraph[str], max_tags: int, rng: random.Random) -> list[str]:
-    """Well-formed tags absent from the plant: one per `(prefix, unit)` group, at most `max_tags`.
+def absent_tags(plant: nx.DiGraph[str]) -> list[str]:
+    """Well-formed tags absent from the plant: one per `(prefix, unit)` group.
 
     Each is the group's highest sequence number plus one, so it looks like a
     real neighbour of existing tags. If that tag is somehow taken (a loop tag
@@ -64,11 +63,8 @@ def absent_tags(plant: nx.DiGraph[str], max_tags: int, rng: random.Random) -> li
     """
     taken = {str(data["tag"]) for _, data in plant.nodes(data=True) if "tag" in data}
     highest = _highest_seq_by_group(plant)
-    groups = sorted(highest)
-    if len(groups) > max_tags:
-        groups = sorted(rng.sample(groups, max_tags))
     tags = []
-    for prefix, unit in groups:
+    for prefix, unit in sorted(highest):
         seq = highest[(prefix, unit)] + 1
         while f"{prefix}-{unit}-{seq}" in taken:
             seq += 1
@@ -83,7 +79,6 @@ def unanswerable_tag_candidates(
     *,
     corpus_id: str,
     seed: int,
-    max_tags: int = DEFAULT_MAX_UNANSWERABLE_TAGS,
 ) -> list[Question]:
     """Three candidates (type, neighbours, flow path) per absent tag.
 
@@ -96,7 +91,7 @@ def unanswerable_tag_candidates(
     if not real_tags:
         raise ValueError("expected at least one equipment item in the plant, found none")
     questions = []
-    for absent_tag in absent_tags(plant, max_tags, rng):
+    for absent_tag in absent_tags(plant):
         questions.extend(_three_templates(absent_tag, rng.choice(real_tags), corpus_id, seed))
     return questions
 

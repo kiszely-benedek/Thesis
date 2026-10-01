@@ -13,7 +13,7 @@ from plantgraph.benchmark.models import SplitManifest
 from plantgraph.benchmark.sheet_graph import SheetGraph
 from plantgraph.qa.models import AnswerType, Question, QuestionFamily
 from plantgraph.qa.questions.common import build_question, tagged_nodes_by_tag
-from plantgraph.qa.questions.evidence import Evidence, connector_cut
+from plantgraph.qa.questions.evidence import Evidence, SheetIndex, connector_cut
 from plantgraph.qa.questions.templates import lookup_type_text
 
 _TEMPLATE_VERSION = "1"
@@ -29,6 +29,7 @@ def lookup_type_candidates(
 ) -> list[Question]:
     """One `LOOKUP_TYPE` candidate per tagged node, ordered by tag."""
     cut = connector_cut(manifest)
+    index = SheetIndex.from_sheets(sheets)
     return [
         build_question(
             corpus_id=corpus_id,
@@ -41,7 +42,7 @@ def lookup_type_candidates(
             evidence=Evidence(nodes=frozenset({node_id}), edges=frozenset()),
             anchors=[tag],
             plant=plant,
-            sheets=sheets,
+            index=index,
             cut=cut,
             seed=seed,
         )
@@ -59,6 +60,7 @@ def lookup_unit_candidates(
 ) -> list[Question]:
     """One `LOOKUP_UNIT` candidate per tagged node, ordered by tag."""
     cut = connector_cut(manifest)
+    index = SheetIndex.from_sheets(sheets)
     return [
         build_question(
             corpus_id=corpus_id,
@@ -71,7 +73,7 @@ def lookup_unit_candidates(
             evidence=Evidence(nodes=frozenset({node_id}), edges=frozenset()),
             anchors=[tag],
             plant=plant,
-            sheets=sheets,
+            index=index,
             cut=cut,
             seed=seed,
         )

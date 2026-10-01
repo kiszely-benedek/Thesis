@@ -18,7 +18,7 @@ from plantgraph.benchmark.sheet_graph import SheetGraph
 from plantgraph.graph.schema import NodeClass, Relation
 from plantgraph.qa.models import AnswerType, Question, QuestionFamily
 from plantgraph.qa.questions.common import build_question, single_predecessor, single_successor
-from plantgraph.qa.questions.evidence import Evidence, connector_cut
+from plantgraph.qa.questions.evidence import Evidence, SheetIndex, connector_cut
 
 _TEMPLATE_VERSION = "1"
 
@@ -36,6 +36,7 @@ def loop_actuated_valve_candidates(
     Reference path: controller `-send_signal_to->` actuator `-control->` valve.
     """
     cut = connector_cut(manifest)
+    index = SheetIndex.from_sheets(sheets)
     questions = []
     for pif_id, loop_tag in _controllers_by_tag(plant):
         af_id = single_successor(
@@ -60,7 +61,7 @@ def loop_actuated_valve_candidates(
                 evidence=evidence,
                 anchors=[loop_tag],
                 plant=plant,
-                sheets=sheets,
+                index=index,
                 cut=cut,
                 seed=seed,
             )
@@ -81,6 +82,7 @@ def loop_measured_equipment_candidates(
     Reference path: equipment `-measured_by->` sensor `-send_signal_to->` controller.
     """
     cut = connector_cut(manifest)
+    index = SheetIndex.from_sheets(sheets)
     questions = []
     for pif_id, loop_tag in _controllers_by_tag(plant):
         psgf_id = single_predecessor(
@@ -105,7 +107,7 @@ def loop_measured_equipment_candidates(
                 evidence=evidence,
                 anchors=[loop_tag],
                 plant=plant,
-                sheets=sheets,
+                index=index,
                 cut=cut,
                 seed=seed,
             )

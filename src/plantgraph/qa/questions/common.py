@@ -7,14 +7,17 @@ None of this reads an equipment attribute (ADR-0021, ADR-0018 A1) — only
 
 from __future__ import annotations
 
-from collections.abc import Sequence
-
 import networkx as nx
 
-from plantgraph.benchmark.sheet_graph import SheetGraph
 from plantgraph.graph.schema import Relation
 from plantgraph.qa.models import AnswerType, AnswerValue, Question, QuestionFamily
-from plantgraph.qa.questions.evidence import Evidence, evidence_k, evidence_sheets, evidence_tags
+from plantgraph.qa.questions.evidence import (
+    Evidence,
+    SheetIndex,
+    evidence_k,
+    evidence_sheets,
+    evidence_tags,
+)
 
 
 def tagged_nodes_by_tag(plant: nx.DiGraph[str]) -> list[tuple[str, str]]:
@@ -97,7 +100,7 @@ def build_question(
     evidence: Evidence,
     anchors: list[str],
     plant: nx.DiGraph[str],
-    sheets: Sequence[SheetGraph],
+    index: SheetIndex,
     cut: frozenset[tuple[str, str]],
     seed: int,
 ) -> Question:
@@ -118,7 +121,7 @@ def build_question(
         answerable=True,
         reference=reference,
         evidence_tags=evidence_tags(evidence, plant),
-        evidence_sheets=evidence_sheets(evidence, sheets),
+        evidence_sheets=evidence_sheets(evidence, index),
         k=evidence_k(evidence, cut),
         anchors=anchors,
         generator_seed=seed,

@@ -6,6 +6,7 @@ import re
 
 import networkx as nx
 
+from plantgraph.graph.schema import EQUIPMENT_CLASSES, VALVE_CLASSES
 from plantgraph.qa.models import Question
 from plantgraph.qa.questions.families_abstain import (
     no_path_candidates,
@@ -101,11 +102,25 @@ def test_unanswerable_tags_are_well_formed_absent_and_have_no_k() -> None:
 def test_unanswerable_tags_depend_on_the_seed_only() -> None:
     def ids(seed: int) -> list[str]:
         found = unanswerable_tag_candidates(
-            _PLANT, _MANIFEST, _SHEETS, corpus_id=_CORPUS, seed=seed, max_tags=2
+            _PLANT, _MANIFEST, _SHEETS, corpus_id=_CORPUS, seed=seed
         )
         return [q.question_id for q in found]
 
     assert ids(3) == ids(3)
+
+
+def test_unanswerable_tags_are_not_capped_one_absent_tag_per_prefix_and_unit_group() -> None:
+    questions = unanswerable_tag_candidates(_PLANT, _MANIFEST, _SHEETS, corpus_id=_CORPUS, seed=0)
+    groups = {
+        tuple(re.match(r"^(.+)-(\d+)-\d+$", str(data["tag"])).groups())  # type: ignore[union-attr]
+        for _, data in _PLANT.nodes(data=True)
+        if data["node_class"] in EQUIPMENT_CLASSES | VALVE_CLASSES
+    }
+    absent = {q.anchors[-1] for q in questions}
+
+    # The toy plant has more groups than the old cap of 2 would have allowed through.
+    assert len(groups) > 2
+    assert len(absent) == len(groups)
 
 
 def test_no_path_pairs_are_present_and_truly_unreachable() -> None:
