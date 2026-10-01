@@ -66,21 +66,17 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--ingest-json", required=True, type=Path, help="the corpus's ingest.json")
     parser.add_argument("--seed", required=True, type=int)
     parser.add_argument("--out", type=Path, help="output directory (default data/questions/<id>)")
-    for name in ("k0", "k1", "k2", "k3-plus", "unanswerable"):
-        parser.add_argument(f"--n-{name}", required=True, type=int, help=f"questions in bin {name}")
+    parser.add_argument("--n-per-bin", required=True, type=int, help="questions per k-bin")
+    parser.add_argument(
+        "--n-unanswerable", required=True, type=int, help="questions in the unanswerable bin"
+    )
     return parser.parse_args(argv)
 
 
 def main(argv: list[str] | None = None) -> None:
     """Parse argv, build the question set and write it."""
     args = _parse_args(argv)
-    targets = BinTargets(
-        k0=args.n_k0,
-        k1=args.n_k1,
-        k2=args.n_k2,
-        k3_plus=args.n_k3_plus,
-        unanswerable=args.n_unanswerable,
-    )
+    targets = BinTargets(per_bin=args.n_per_bin, unanswerable=args.n_unanswerable)
     artifacts = load_corpus_artifacts(args.corpus_id, args.ingest_json)
     questions, report = build_question_set(artifacts, targets, args.seed)
     out_dir = args.out or _DEFAULT_OUT_ROOT / args.corpus_id

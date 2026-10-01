@@ -9,6 +9,7 @@ thousands of candidates) from crowding the others out of a bin.
 from __future__ import annotations
 
 import random
+import time
 
 import networkx as nx
 
@@ -64,14 +65,12 @@ def draw_sample(
     """The sampled questions (bin order, then draw order) and the matching availability report."""
     grouped = group_by_bin(candidates)
     sample: list[Question] = []
-    drawn_per_bin: dict[KBin, int] = {}
     for k_bin in KBin:
         # one RNG per bin: a bin's draw does not shift when another bin's target changes
         rng = random.Random(f"{seed}:{k_bin.value}")
         bin_questions = draw_bin(grouped[k_bin], targets.for_bin(k_bin), rng)
-        drawn_per_bin[k_bin] = len(bin_questions)
         sample.extend(bin_questions)
-    report = build_report(candidates, targets, drawn_per_bin, corpus_id=corpus_id, seed=seed)
+    report = build_report(candidates, targets, sample, corpus_id=corpus_id, seed=seed)
     return sample, report
 
 
@@ -85,5 +84,8 @@ def generate_question_set(
     seed: int,
 ) -> tuple[list[Question], AvailabilityReport]:
     """Enumerate every family's candidates on one corpus and sample from them."""
+    started = time.perf_counter()
     candidates = all_candidates(plant, manifest, sheets, corpus_id=corpus_id, seed=seed)
-    return draw_sample(candidates, targets, corpus_id=corpus_id, seed=seed)
+    build_seconds = time.perf_counter() - started
+    sample, report = draw_sample(candidates, targets, corpus_id=corpus_id, seed=seed)
+    return sample, report.model_copy(update={"build_seconds": build_seconds})

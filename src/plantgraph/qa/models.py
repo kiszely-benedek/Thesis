@@ -116,6 +116,10 @@ class Question(BaseModel):
     #: Off-page connectors crossed by the evidence; `None` for an
     #: unanswerable question, where there is no evidence to cross anything.
     k: int | None = None
+    #: Units crossed: evidence edges whose two endpoints carry different
+    #: `unit_id`s (a unit is one process section of the plant). A second
+    #: difficulty axis beside `k`; `None` for an unanswerable question.
+    u: int | None = None
     anchors: list[str] = Field(default_factory=list)
     generator_seed: int
 

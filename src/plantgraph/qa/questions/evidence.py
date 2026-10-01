@@ -56,6 +56,20 @@ def evidence_k(evidence: Evidence, cut: frozenset[tuple[str, str]]) -> int:
     return len(evidence.edges & cut)
 
 
+def evidence_u(evidence: Evidence, plant: nx.DiGraph[str]) -> int:
+    """Units crossed: evidence edges whose endpoints both carry a `unit_id` and the ids differ.
+
+    An endpoint with no `unit_id` is not a unit boundary, so it never counts.
+    """
+    crossed = 0
+    for source_id, target_id in evidence.edges:
+        source_unit = plant.nodes[source_id].get("unit_id")
+        target_unit = plant.nodes[target_id].get("unit_id")
+        if source_unit is not None and target_unit is not None and source_unit != target_unit:
+            crossed += 1
+    return crossed
+
+
 class SheetIndex:
     """Which sheets draw each plant node, built once per corpus.
 

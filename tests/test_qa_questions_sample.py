@@ -13,6 +13,7 @@ from plantgraph.ingest.__main__ import main as ingest_main
 from plantgraph.ingest.pipeline import SyntheticCorpus, build_synthetic_corpus
 from plantgraph.qa.models import Question, QuestionFamily
 from plantgraph.qa.questions.availability import (
+    MIN_POWERED_CANDIDATES,
     AvailabilityReport,
     BinTargets,
     KBin,
@@ -24,7 +25,7 @@ from plantgraph.qa.questions.families import all_candidates
 from plantgraph.qa.questions.sample import draw_sample, generate_question_set
 
 # Arbitrary counts for the tests only: the real ones come from the paid pilot.
-_TARGETS = BinTargets(k0=12, k1=9, k2=6, k3_plus=3, unanswerable=8)
+_TARGETS = BinTargets(per_bin=12, unanswerable=8)
 
 
 def _corpus(budget: int = 16) -> SyntheticCorpus:
@@ -47,7 +48,14 @@ def test_same_seed_gives_byte_identical_jsonl(tmp_path: Path) -> None:
         paths.append(write_question_set(tmp_path / run, questions, report))
 
     assert paths[0][0].read_bytes() == paths[1][0].read_bytes()
-    assert paths[0][1].read_bytes() == paths[1][1].read_bytes()
+    # availability.json carries wall-clock `build_seconds`, which legitimately differs per run
+    reports = [
+        AvailabilityReport.model_validate_json(path.read_text(encoding="utf-8")).model_copy(
+            update={"build_seconds": 0.0}
+        )
+        for _, path in paths
+    ]
+    assert reports[0] == reports[1]
     assert b"\r" not in paths[0][0].read_bytes()
 
 
@@ -83,12 +91,14 @@ def test_a_bin_is_dealt_round_robin_over_its_families() -> None:
 
 def test_a_short_bin_takes_everything_and_is_flagged_underpowered() -> None:
     candidates = all_candidates(*_plant_inputs(_corpus()), corpus_id="t7", seed=0)
-    greedy = BinTargets(k0=1, k1=1, k2=1, k3_plus=10_000, unanswerable=1)
+    greedy = BinTargets(per_bin=1, unanswerable=1)
 
     questions, report = draw_sample(candidates, greedy, corpus_id="t7", seed=0)
 
-    assert KBin.K3_PLUS in report.underpowered
-    assert report.drawn[KBin.K3_PLUS] == report.candidates_per_bin[KBin.K3_PLUS]
+    # a 10-unit corpus has no k >= 33 question: that bin is short, empty and flagged
+    assert report.candidates_per_bin[KBin.K33_PLUS] == 0
+    assert KBin.K33_PLUS in report.underpowered
+    assert report.drawn[KBin.K33_PLUS] == 0
     assert KBin.K0 not in report.underpowered
     assert len(questions) == sum(report.drawn.values())
 
@@ -136,7 +146,7 @@ def test_every_answerable_k_is_zero_on_a_one_sheet_corpus() -> None:
 
 
 def test_bin_targets_have_no_default() -> None:
-    with pytest.raises(ValueError, match="k0"):
+    with pytest.raises(ValueError, match="per_bin"):
         BinTargets()  # type: ignore[call-arg]
 
 
@@ -169,14 +179,8 @@ def test_cli_writes_the_jsonl_and_report_from_an_ingest_json(
         "0",
         "--out",
         str(tmp_path / "q"),
-        "--n-k0",
-        "4",
-        "--n-k1",
-        "3",
-        "--n-k2",
+        "--n-per-bin",
         "2",
-        "--n-k3-plus",
-        "1",
         "--n-unanswerable",
         "3",
     ]
@@ -189,3 +193,15 @@ def test_cli_writes_the_jsonl_and_report_from_an_ingest_json(
     )
     assert len(lines) == sum(report.drawn.values())
     assert all(Question.model_validate_json(line).corpus_id == "pytest-t7-cli" for line in lines)
+
+
+def test_report_records_build_seconds_powered_bins_and_the_u_histogram() -> None:
+    questions, report = _sample(_corpus(), seed=0)
+
+    assert report.build_seconds > 0
+    for k_bin in KBin:
+        assert report.powered[k_bin] == (report.candidates_per_bin[k_bin] >= MIN_POWERED_CANDIDATES)
+    answerable = [q for q in questions if q.u is not None]
+    assert sum(report.u_histogram.values()) == len(answerable)
+    assert all(q.u is not None for q in questions if q.answerable)
+    assert all(q.u is None for q in questions if not q.answerable)

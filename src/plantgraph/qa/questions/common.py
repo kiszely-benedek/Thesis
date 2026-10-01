@@ -17,6 +17,7 @@ from plantgraph.qa.questions.evidence import (
     evidence_k,
     evidence_sheets,
     evidence_tags,
+    evidence_u,
 )
 
 
@@ -104,7 +105,7 @@ def build_question(
     cut: frozenset[tuple[str, str]],
     seed: int,
 ) -> Question:
-    """Assemble one answerable `Question`, filling `k`, `evidence_sheets` and `evidence_tags`.
+    """Assemble one answerable `Question`, filling `k`, `u`, `evidence_sheets` and `evidence_tags`.
 
     `question_id` is built from the family and the anchors alone, so
     re-running candidate generation on the same corpus gives byte-identical
@@ -123,6 +124,7 @@ def build_question(
         evidence_tags=evidence_tags(evidence, plant),
         evidence_sheets=evidence_sheets(evidence, index),
         k=evidence_k(evidence, cut),
+        u=evidence_u(evidence, plant),
         anchors=anchors,
         generator_seed=seed,
     )
