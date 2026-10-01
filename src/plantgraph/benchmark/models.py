@@ -250,6 +250,7 @@ class OffPageConnector(BaseModel):
     kind: ConnectorKind = ConnectorKind.PIPE
     line_number: str | None = None
     fluid_code: str | None = None
+    loop_tag: str | None = None  # signal cuts only: the control loop's number (ADR-0027)
 
     @property
     def key(self) -> str:

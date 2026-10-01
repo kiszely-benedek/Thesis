@@ -55,6 +55,7 @@ class ConnectorLabel(BaseModel):
     referenced_connector_number: str | None = None
     line_number: str | None = None
     fluid_code: str | None = None
+    loop_tag: str | None = None
 
 
 def read_connector_labels(
@@ -101,6 +102,7 @@ def _read_one_label(
         referenced_connector_number=attrs.get("referenced_connector_number"),
         line_number=attrs.get("line_number"),
         fluid_code=attrs.get("fluid_code"),
+        loop_tag=attrs.get("loop_tag"),
     )
 
 

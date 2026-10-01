@@ -21,13 +21,13 @@ from plantgraph.benchmark.models import (
 )
 from plantgraph.resolution.connector_labels import ConnectorLabel
 
-# source sheet, target sheet, kind, relation, line_number, fluid_code. For an
+# source sheet, target sheet, kind, relation, line_number, fluid_code, loop_tag. For an
 # outgoing label, the source is its own sheet and the target is the referenced
 # sheet; for incoming, the reverse — so a real pair always lands on the same key
 # (§5.2), because the splitter cuts the edge exactly this way
 # (connectors.py:_cut_one_edge): the outgoing referenced_drawing_number is the
 # incoming's sheet_id, and vice versa.
-_GroupKey = tuple[str, str, ConnectorKind | None, str | None, str | None, str | None]
+_GroupKey = tuple[str, str, ConnectorKind | None, str | None, str | None, str | None, str | None]
 
 
 def pair_connectors(
@@ -166,6 +166,7 @@ def _group_key(label: ConnectorLabel) -> _GroupKey:
         label.relation,
         label.line_number,
         label.fluid_code,
+        label.loop_tag,
     )
 
 

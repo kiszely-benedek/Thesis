@@ -41,6 +41,7 @@ def _label(
     fluid_code: str | None = None,
     kind: ConnectorKind = ConnectorKind.PIPE,
     relation: str = "send_to",
+    loop_tag: str | None = None,
 ) -> ConnectorLabel:
     """Convenience factory: caller only needs to spell out the field that matters for this test."""
     return ConnectorLabel(
@@ -54,6 +55,7 @@ def _label(
         referenced_connector_number=referenced_connector_number,
         line_number=line_number,
         fluid_code=fluid_code,
+        loop_tag=loop_tag,
     )
 
 
@@ -218,3 +220,47 @@ def test_every_connector_is_paired_or_unresolved_at_drawing_only_detail() -> Non
     for pair in predicted:
         original_pair = _to_original_pair(pair, occurrence_map)
         assert original_pair in expected, f"wrong pair: {original_pair}"
+
+
+def test_two_signal_loops_between_the_same_sheets_pair_by_loop_tag() -> None:
+    """Without loop_tag these four labels would form one ambiguous group (ADR-0027)."""
+
+    def signal(key: str, sheet: str, direction: Direction, other: str, loop: str) -> ConnectorLabel:
+        return _label(
+            key,
+            sheet,
+            direction,
+            f"C-{key}",
+            other,
+            kind=ConnectorKind.SIGNAL,
+            relation="measured_by",
+            loop_tag=loop,
+        )
+
+    labels = [
+        signal("0:o1", "0", Direction.OUTGOING, "1", "FIC-1"),
+        signal("0:o2", "0", Direction.OUTGOING, "1", "TIC-2"),
+        signal("1:i1", "1", Direction.INCOMING, "0", "FIC-1"),
+        signal("1:i2", "1", Direction.INCOMING, "0", "TIC-2"),
+    ]
+    pairs, unresolved = pair_connectors(labels, _ALL_SHEET_IDS)
+
+    assert unresolved == []
+    assert {(pair.from_key, pair.to_key) for pair in pairs} == {
+        ("0:o1", "1:i1"),
+        ("0:o2", "1:i2"),
+    }
+
+
+def test_four_unit_plant_at_drawing_only_pairs_with_precision_one() -> None:
+    config = SplitConfig(
+        sheet_equipment_budget=3, seed=0, connector_label_detail=ConnectorLabelDetail.DRAWING_ONLY
+    )
+    labels, manifest_pairs, occurrence_map = _connector_labels(config)
+    predicted, unresolved = pair_connectors(labels, {label.sheet_id for label in labels})
+
+    expected = {frozenset({pair.from_key, pair.to_key}) for pair in manifest_pairs}
+    predicted_original = {_to_original_pair(pair, occurrence_map) for pair in predicted}
+    assert predicted_original <= expected, "pair precision must stay 1.0"
+    assert unresolved == []
+    assert predicted_original == expected

@@ -14,7 +14,7 @@ from pathlib import Path
 import pytest
 
 from plantgraph.benchmark.generator_models import GeneratorConfig
-from plantgraph.benchmark.split_models import SplitConfig
+from plantgraph.benchmark.split_models import ConnectorLabelDetail, SplitConfig
 from plantgraph.eval.graph_equality import graph_differences, to_original_ids, visible_view
 from plantgraph.ingest.models import IngestResult
 from plantgraph.ingest.pipeline import (
@@ -51,6 +51,22 @@ def test_run_synthetic_without_neo4j_and_with_check_passes_the_gate() -> None:
     assert result.neo4j_version is None
 
 
+def test_run_synthetic_at_drawing_only_passes_the_gate() -> None:
+    result = run_synthetic(
+        corpus_id=_CORPUS_ID,
+        generator_config=GeneratorConfig(n_units=4, seed=0),
+        split_config=SplitConfig(
+            sheet_equipment_budget=3,
+            seed=0,
+            connector_label_detail=ConnectorLabelDetail.DRAWING_ONLY,
+        ),
+        check=True,
+        settings=None,
+    )
+
+    assert result.gate_equal is True
+
+
 def test_run_synthetic_without_check_leaves_the_gate_unset() -> None:
     result = _tiny_synthetic(check=False)
 
@@ -77,9 +93,13 @@ def test_run_synthetic_counts_match_an_independent_tally() -> None:
     """Recomputed from scratch, not from the plan the pipeline itself built — a real cross-check."""
     result = _tiny_synthetic(check=True)
 
-    # a corpus and sheet node each, plus one node per occurrence — see neo4j_plan.py's store shape
+    # a corpus node, a sheet node each, one node per occurrence, and (ADR-0026) one
+    # PlantSection per unit plus one ProcessPlant — see neo4j_plan.py's store shape
+    n_units, n_plants = 4, 1
     assert result.counts.n_sheets > 0
-    assert result.counts.n_nodes == result.resolution.n_occurrences + result.counts.n_sheets + 1
+    assert result.counts.n_nodes == (
+        result.resolution.n_occurrences + result.counts.n_sheets + 1 + n_units + n_plants
+    )
     assert result.counts.n_connector_pairs_predicted == sum(
         result.resolution.pairs_by_rule.values()
     )
@@ -118,8 +138,8 @@ def test_run_synthetic_tiny_plant_numbers_match_the_pre_qa_t0_refactor() -> None
 
     assert result.counts.model_dump() == {
         "n_sheets": 8,
-        "n_nodes": 106,
-        "n_relationships": 210,
+        "n_nodes": 111,
+        "n_relationships": 281,
         "n_connector_pairs_predicted": 15,
         "n_unresolved": 0,
     }

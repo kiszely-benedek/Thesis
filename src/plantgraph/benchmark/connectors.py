@@ -53,6 +53,7 @@ def _cut_one_edge(
     sheet_source, sheet_target = node_sheet[source], node_sheet[target]
     edge_attrs = plant.edges[source, target]
     kind = _connector_kind(edge_attrs)
+    loop_tag = _signal_loop_tag(plant, source, target) if kind is ConnectorKind.SIGNAL else None
 
     stub_out_id, tag_out = _new_stub(sheet_source, counters, config, rng)
     stub_in_id, tag_in = _new_stub(sheet_target, counters, config, rng)
@@ -66,6 +67,7 @@ def _cut_one_edge(
             tag_in,
             edge_attrs,
             config,
+            loop_tag,
         ),
     )
     sheets[sheet_source].graph.add_edge(source, stub_out_id, **edge_attrs)
@@ -78,6 +80,7 @@ def _cut_one_edge(
             tag_out,
             edge_attrs,
             config,
+            loop_tag,
         ),
     )
     sheets[sheet_target].graph.add_edge(stub_in_id, target, **edge_attrs)
@@ -92,6 +95,7 @@ def _cut_one_edge(
         kind=kind,
         line_number=edge_attrs.get("line_number"),
         fluid_code=edge_attrs.get("fluid_code"),
+        loop_tag=loop_tag,
     )
     connector_in = OffPageConnector(
         tag=tag_in,
@@ -103,6 +107,7 @@ def _cut_one_edge(
         kind=kind,
         line_number=edge_attrs.get("line_number"),
         fluid_code=edge_attrs.get("fluid_code"),
+        loop_tag=loop_tag,
     )
     sheets[sheet_source].connectors.append(connector_out)
     sheets[sheet_target].connectors.append(connector_in)
@@ -116,6 +121,15 @@ def _connector_kind(edge_attrs: dict[str, Any]) -> ConnectorKind:
     """The cut edge's relation attribute decides the kind: send_to -> PIPE, else -> SIGNAL."""
     relation = edge_attrs.get("relation", "send_to")
     return ConnectorKind.PIPE if relation == "send_to" else ConnectorKind.SIGNAL
+
+
+def _signal_loop_tag(plant: nx.DiGraph[str], source: str, target: str) -> str | None:
+    """The control loop a signal cut belongs to: the source's loop_tag, else the target's.
+
+    A signal line has no line number, so this loop number is what a real drawing
+    prints on its off-page connector to tell two signal cuts apart (ADR-0027).
+    """
+    return plant.nodes[source].get("loop_tag") or plant.nodes[target].get("loop_tag")
 
 
 def _connector_class(kind: ConnectorKind, direction: Direction) -> str:
@@ -132,11 +146,13 @@ def _stub_node_attrs(
     partner_tag: str,
     edge_attrs: dict[str, Any],
     config: SplitConfig,
+    loop_tag: str | None,
 ) -> dict[str, Any]:
     """The stub node's visible labels (splitter.md finding 2b): what the resolver sees on the sheet.
 
     line_number/fluid_code are only added if they were really present on the cut
-    edge — a measured_by/control edge doesn't carry them.
+    edge — a measured_by/control edge doesn't carry them. loop_tag is set only
+    on signal cuts (ADR-0027).
     """
     attrs: dict[str, Any] = {
         "node_class": node_class,
@@ -147,6 +163,8 @@ def _stub_node_attrs(
         value = edge_attrs.get(name)
         if value is not None:
             attrs[name] = value
+    if loop_tag is not None:
+        attrs["loop_tag"] = loop_tag
     if config.connector_label_detail is ConnectorLabelDetail.FULL:
         attrs["referenced_connector_number"] = partner_tag
     return attrs

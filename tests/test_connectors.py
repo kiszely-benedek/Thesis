@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import networkx as nx
 
+from plantgraph.benchmark.models import OffPageConnector
 from plantgraph.benchmark.sheet_graph import SheetGraph
 from plantgraph.benchmark.split_models import ConnectorLabelDetail, SplitConfig
 from plantgraph.benchmark.splitter import split
@@ -79,3 +80,42 @@ def test_drawing_only_detail_omits_the_referenced_connector_number() -> None:
         plant, connector_label_detail=ConnectorLabelDetail.DRAWING_ONLY
     )
     assert "referenced_connector_number" not in _stub_attrs(sheet_a)
+
+
+def test_signal_stubs_and_connectors_carry_the_source_loop_tag() -> None:
+    plant = _two_equipment_plant("measured_by")
+    plant.nodes["a"]["loop_tag"] = "FIC-101"
+    sheet_a, sheet_b = _split_two_equipment(plant)
+
+    assert _stub_attrs(sheet_a)["loop_tag"] == "FIC-101"
+    assert _stub_attrs(sheet_b)["loop_tag"] == "FIC-101"
+    assert sheet_a.connectors[0].loop_tag == "FIC-101"
+    assert sheet_b.connectors[0].loop_tag == "FIC-101"
+
+
+def test_signal_loop_tag_falls_back_to_the_target_node() -> None:
+    plant = _two_equipment_plant("measured_by")
+    plant.nodes["b"]["loop_tag"] = "TIC-202"
+    sheet_a, _ = _split_two_equipment(plant)
+
+    assert _stub_attrs(sheet_a)["loop_tag"] == "TIC-202"
+
+
+def test_pipe_stubs_carry_no_loop_tag_even_if_the_nodes_have_one() -> None:
+    plant = _two_equipment_plant("send_to", line_number="PL-100")
+    plant.nodes["a"]["loop_tag"] = "FIC-101"
+    sheet_a, sheet_b = _split_two_equipment(plant)
+
+    assert "loop_tag" not in _stub_attrs(sheet_a)
+    assert sheet_a.connectors[0].loop_tag is None
+    assert sheet_b.connectors[0].loop_tag is None
+
+
+def test_off_page_connector_with_a_loop_tag_round_trips_through_json() -> None:
+    plant = _two_equipment_plant("measured_by")
+    plant.nodes["a"]["loop_tag"] = "FIC-101"
+    sheet_a, _ = _split_two_equipment(plant)
+
+    connector = sheet_a.connectors[0]
+    restored = OffPageConnector.model_validate_json(connector.model_dump_json())
+    assert restored == connector
