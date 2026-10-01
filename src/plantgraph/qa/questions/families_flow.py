@@ -16,6 +16,7 @@ from plantgraph.benchmark.sheet_graph import SheetGraph
 from plantgraph.qa.models import AnswerType, Question, QuestionFamily
 from plantgraph.qa.questions.common import build_question, send_to_successors, tagged_nodes_by_tag
 from plantgraph.qa.questions.evidence import Evidence, connector_cut
+from plantgraph.qa.questions.templates import flow_path_text, neighbours_downstream_text
 
 _TEMPLATE_VERSION = "1"
 
@@ -52,7 +53,7 @@ def neighbours_downstream_candidates(
                 family=QuestionFamily.NEIGHBOURS_DOWNSTREAM,
                 template_id="NEIGHBOURS_DOWNSTREAM",
                 template_version=_TEMPLATE_VERSION,
-                text=f"Which equipment items and valves receive flow directly from {tag}?",
+                text=neighbours_downstream_text(tag),
                 answer_type=AnswerType.TAG_SET,
                 reference=sorted(str(plant.nodes[n]["tag"]) for n in successor_ids),
                 evidence=evidence,
@@ -114,10 +115,7 @@ def _flow_path_question(
         family=QuestionFamily.FLOW_PATH,
         template_id="FLOW_PATH",
         template_version=_TEMPLATE_VERSION,
-        text=(
-            f"Trace the process flow path from {source_tag} to {target_tag}. "
-            "List every equipment item and valve in order."
-        ),
+        text=flow_path_text(source_tag, target_tag),
         answer_type=AnswerType.TAG_PATH,
         reference=[str(plant.nodes[node_id]["tag"]) for node_id in path],
         evidence=evidence,

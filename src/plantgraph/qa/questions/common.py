@@ -123,3 +123,52 @@ def build_question(
         anchors=anchors,
         generator_seed=seed,
     )
+
+
+def build_unanswerable_question(
+    *,
+    corpus_id: str,
+    family: QuestionFamily,
+    template_id: str,
+    template_version: str,
+    text: str,
+    answer_type: AnswerType,
+    anchors: list[str],
+    seed: int,
+) -> Question:
+    """Assemble one `Question` whose correct reply is "not present" (`k=None`, no evidence).
+
+    Several templates share one family (`UNANSWERABLE_TAG` wraps three), so
+    `template_id` goes into `question_id` too; anchors alone would collide.
+    `answer_type` is the shape the underlying template would have had if the
+    question were answerable, since `AnswerType` has no "not present" member.
+    """
+    return Question(
+        question_id=f"{corpus_id}:{family.value}:{template_id}:{'|'.join(anchors)}",
+        corpus_id=corpus_id,
+        family=family,
+        template_id=template_id,
+        template_version=template_version,
+        text=text,
+        answer_type=answer_type,
+        answerable=False,
+        reference=None,
+        k=None,
+        anchors=anchors,
+        generator_seed=seed,
+    )
+
+
+def unit_of(plant: nx.DiGraph[str], node_id: str) -> str | None:
+    """The `unit_id` of a node, or `None` when the node carries none."""
+    unit_id = plant.nodes[node_id].get("unit_id")
+    return None if unit_id is None else str(unit_id)
+
+
+def nodes_of_classes(plant: nx.DiGraph[str], node_classes: frozenset[str]) -> list[str]:
+    """Node ids whose `node_class` is in `node_classes`, ordered by printed tag."""
+    return [
+        node_id
+        for node_id, _ in tagged_nodes_by_tag(plant)
+        if plant.nodes[node_id]["node_class"] in node_classes
+    ]

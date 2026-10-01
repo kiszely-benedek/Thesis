@@ -14,7 +14,7 @@ from collections import Counter
 from plantgraph.benchmark.generator_models import GeneratorConfig
 from plantgraph.benchmark.split_models import SplitConfig
 from plantgraph.ingest.pipeline import build_synthetic_corpus
-from plantgraph.qa.models import Question
+from plantgraph.qa.models import Question, QuestionFamily
 from plantgraph.qa.questions.families import all_candidates
 from plantgraph.qa.questions.families_flow import (
     flow_path_candidates,
@@ -47,6 +47,7 @@ from qa_toy_plant import (
 
 _CORPUS_ID = "qa-toy"
 _SEED = 0
+_UNANSWERABLE_FAMILIES = {QuestionFamily.UNANSWERABLE_TAG, QuestionFamily.NO_PATH}
 
 # Every internal node id in the toy plant — used to prove a question never
 # names an item by its gold id (design "Question text refers to items by
@@ -202,7 +203,9 @@ def test_every_k_is_zero_on_a_single_sheet_corpus() -> None:
 
     for family, questions in candidates.items():
         assert questions, f"{family} produced no candidates on the single-sheet corpus"
-        assert all(q.k == 0 for q in questions), f"{family} had a nonzero k with nothing cut"
+        # an unanswerable question has no evidence, hence no k at all (design 9)
+        expected_k = None if family in _UNANSWERABLE_FAMILIES else 0
+        assert all(q.k == expected_k for q in questions), f"{family} had a wrong k, nothing cut"
 
 
 def test_candidate_counts_and_k_distribution_on_a_25_unit_corpus() -> None:

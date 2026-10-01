@@ -14,6 +14,7 @@ from plantgraph.benchmark.sheet_graph import SheetGraph
 from plantgraph.qa.models import AnswerType, Question, QuestionFamily
 from plantgraph.qa.questions.common import build_question, tagged_nodes_by_tag
 from plantgraph.qa.questions.evidence import Evidence, connector_cut
+from plantgraph.qa.questions.templates import lookup_type_text
 
 _TEMPLATE_VERSION = "1"
 
@@ -34,7 +35,7 @@ def lookup_type_candidates(
             family=QuestionFamily.LOOKUP_TYPE,
             template_id="LOOKUP_TYPE",
             template_version=_TEMPLATE_VERSION,
-            text=f"What type of item is {tag}?",
+            text=lookup_type_text(tag),
             answer_type=AnswerType.CLASS_NAME,
             reference=str(plant.nodes[node_id]["node_class"]),
             evidence=Evidence(nodes=frozenset({node_id}), edges=frozenset()),

@@ -11,10 +11,14 @@ retrieval strategy under test later answers it.
   crosses (`k`), and which sheets show that evidence.
 - `common.py`: small graph-walk helpers and `Question` assembly, shared by
   every family module.
-- `families_lookup.py`, `families_flow.py`, `families_loop.py`: one
-  candidate-generating function per question family (design §9's table).
-- `families.py`: collects every family implemented so far under one name
-  per `QuestionFamily`, for tests and for QA-T7's sampler.
+- `templates.py`: the one wording of each question template.
+- `families_lookup.py`, `families_flow.py`, `families_loop.py`,
+  `families_isolation.py`, `families_aggregate.py`, `families_abstain.py`:
+  one candidate-generating function per question family (design §9's table).
+- `families.py`: collects every family under one name per `QuestionFamily`.
+- `availability.py`, `sample.py`: k-bins, the seeded stratified draw, and the
+  report of candidates per family and bin.
+- `cli.py`: `python -m plantgraph.qa.questions` writes the JSONL and report.
 """
 
 from __future__ import annotations
