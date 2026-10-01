@@ -18,6 +18,7 @@ from plantgraph.benchmark.split_models import SplitConfig
 from plantgraph.eval.graph_equality import graph_differences, to_original_ids, visible_view
 from plantgraph.ingest.models import IngestResult
 from plantgraph.ingest.pipeline import (
+    _MAX_UNMERGED_EXAMPLES,
     build_proteus_corpus,
     build_synthetic_corpus,
     run_proteus,
@@ -202,3 +203,49 @@ def test_build_proteus_corpus_matches_run_proteus() -> None:
 
     assert result.import_report == corpus.imported.report
     assert result.resolution == corpus.resolution.report
+
+
+# --- gate G1 with inexact tags: an unmerged identity group is reported, not raised --------
+
+
+def _duplicated_synthetic(*, exact_match_tags: bool) -> IngestResult:
+    return run_synthetic(
+        corpus_id=_CORPUS_ID,
+        generator_config=GeneratorConfig(n_units=4, seed=0),
+        split_config=SplitConfig(
+            sheet_equipment_budget=3,
+            seed=0,
+            duplication_rate=0.5,
+            exact_match_tags=exact_match_tags,
+        ),
+        check=True,
+        settings=None,
+    )
+
+
+def test_gate_reports_an_unmerged_identity_group_instead_of_crashing() -> None:
+    result = _duplicated_synthetic(exact_match_tags=False)
+
+    assert result.gate_equal is False
+    assert result.gate_differences[0].startswith("identity group left unmerged:")
+    assert "map to several resolved nodes" in result.gate_differences[0]
+    # header plus at most the bounded number of examples
+    assert 2 <= len(result.gate_differences) <= 1 + _MAX_UNMERGED_EXAMPLES
+
+
+def test_resolution_score_is_present_when_the_gate_fails() -> None:
+    result = _duplicated_synthetic(exact_match_tags=False)
+
+    score = result.resolution_score
+    assert score is not None
+    assert score.identity.recall is not None
+    assert score.identity.recall < 1.0
+    assert score.connector_pairs.f1 == 1.0
+
+
+def test_gate_still_passes_with_exact_tags_and_duplication() -> None:
+    result = _duplicated_synthetic(exact_match_tags=True)
+
+    assert result.gate_equal is True
+    assert result.gate_differences == []
+    assert result.resolution_score is not None

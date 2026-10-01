@@ -56,6 +56,9 @@ from plantgraph.store.neo4j_loader import LoadReport, load_corpus
 from plantgraph.store.neo4j_plan import CypherStatement, LoadPlan, build_load_plan
 from plantgraph.store.neo4j_settings import Neo4jSettings
 
+# how many unmerged original items the gate spells out; the header line carries the total
+_MAX_UNMERGED_EXAMPLES = 5
+
 
 @dataclass
 class SyntheticCorpus:
@@ -251,12 +254,46 @@ def _check_gate(
     occurrence_map: OccurrenceMap,
     manifest: SplitManifest,
 ) -> tuple[bool, list[str], ResolutionScore]:
-    """Gate G1 (design §5.6): does `resolve(localize(split(plant)))` reproduce `plant`?"""
-    actual = to_original_ids(resolution.plant, occurrence_map)
-    expected = visible_view(plant)
-    differences = graph_differences(actual, expected)
+    """Gate G1 (design §5.6): does `resolve(localize(split(plant)))` reproduce `plant`?
+
+    The resolution score is computed first and always returned: it is exactly
+    the number an inexact-tags experiment wants, so a failed gate must not hide it.
+    """
     score = score_resolution(resolution, manifest, occurrence_map)
+    unmerged = _unmerged_identity_differences(resolution.plant, occurrence_map)
+    if unmerged:
+        # `to_original_ids` would raise here; an unmerged group is a result to report, not a crash
+        return False, unmerged, score
+    actual = to_original_ids(resolution.plant, occurrence_map)
+    differences = graph_differences(actual, visible_view(plant))
     return differences == [], differences, score
+
+
+def _unmerged_identity_differences(
+    resolved: nx.DiGraph[str], occurrence_map: OccurrenceMap, limit: int = _MAX_UNMERGED_EXAMPLES
+) -> list[str]:
+    """Describe original items that the resolver left as several nodes (empty if none).
+
+    One physical item drawn on several sheets should come out of `resolve` as a
+    single node. If two resolved nodes still translate to the same original id,
+    the resolver failed to merge that identity group.
+    """
+    resolved_keys_by_original_id: dict[str, list[str]] = {}
+    for local_key in resolved.nodes:
+        original_id = occurrence_map.original_node_id(local_key)
+        resolved_keys_by_original_id.setdefault(original_id, []).append(local_key)
+
+    unmerged = {oid: keys for oid, keys in resolved_keys_by_original_id.items() if len(keys) > 1}
+    if not unmerged:
+        return []
+    examples = [
+        f"original {oid!r} -> resolved nodes {keys}" for oid, keys in sorted(unmerged.items())
+    ]
+    header = (
+        f"identity group left unmerged: {len(unmerged)} original items "
+        f"map to several resolved nodes"
+    )
+    return [header, *examples[:limit]]
 
 
 def _load_if_requested(
