@@ -16,7 +16,12 @@ from pathlib import Path
 import pytest
 
 _QA_DIR = Path(__file__).resolve().parent.parent / "src" / "plantgraph" / "qa"
-_CHECKED_FILES = (_QA_DIR / "graph_view.py", _QA_DIR / "serialize.py")
+_CHECKED_FILES = (
+    _QA_DIR / "graph_view.py",
+    _QA_DIR / "serialize.py",
+    _QA_DIR / "anchors.py",
+    _QA_DIR / "routing.py",
+)
 _BANNED_MODULES = (
     "plantgraph.qa.corpus",
     "plantgraph.qa.questions",
