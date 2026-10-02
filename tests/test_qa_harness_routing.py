@@ -115,3 +115,5 @@ def test_run_reports_routing_recall_from_gold_evidence(
     )
 
     assert summary.routing_recall == {"routed_stub": expected}
+    # relaxed is never below strict; with every sheet routed it is 1 as well
+    assert summary.relaxed_routing_recall["routed_stub"] >= expected

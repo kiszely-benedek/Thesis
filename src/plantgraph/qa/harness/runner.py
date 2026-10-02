@@ -26,14 +26,10 @@ from plantgraph.qa.harness.clients import build_chat_client
 from plantgraph.qa.harness.corpus_record import build_corpus_record
 from plantgraph.qa.harness.cypher_setup import CypherSourceFactory, open_checked_neo4j_view
 from plantgraph.qa.harness.freeze import check_reportable, prompt_hashes, question_set_sha256
-from plantgraph.qa.harness.gold import (
-    ROUTING_HIT_TRACE_KEY,
-    GoldScoring,
-    build_gold_scoring,
-    routing_hit,
-)
+from plantgraph.qa.harness.gold import GoldScoring, build_gold_scoring
 from plantgraph.qa.harness.question_set import load_questions, questions_path
 from plantgraph.qa.harness.registry import CypherDeps, LlmDeps, build_strategy
+from plantgraph.qa.harness.routing_gold import RoutingGold, add_routing_metrics, build_routing_gold
 from plantgraph.qa.harness.run_dir import RowKey, RunDir, row_key
 from plantgraph.qa.harness.summary import RunSummary, summarize_rows
 from plantgraph.qa.models import CorpusRecord, Outcome, Question, QuestionResult, RunConfig
@@ -50,6 +46,7 @@ class _Corpus:
 
     view: NetworkxGraphView
     gold: GoldScoring
+    routing_gold: RoutingGold
     record: CorpusRecord
     #: The checked database for CypherRAG; `None` when the run does not include it.
     cypher: CypherSource | None
@@ -182,12 +179,18 @@ def _load_corpus(
     plant = artifacts.gold.plant
     if plant is None:
         raise ValueError(f"expected a ground-truth plant for {corpus_id!r}, found none")
+    manifest = artifacts.gold.manifest
+    if manifest is None:
+        raise ValueError(f"expected a split manifest for {corpus_id!r}, found none")
     view = NetworkxGraphView(corpus_id, artifacts.localized_sheets, artifacts.resolution)
     # the pre-check: opened and verified here, before the run is frozen or any call is made
     wants_cypher = CypherRag.name in config.strategies
     return _Corpus(
         view=view,
         gold=build_gold_scoring(plant, view),
+        routing_gold=build_routing_gold(
+            plant, artifacts.gold.sheets, manifest, artifacts.gold.occurrence_map
+        ),
         record=build_corpus_record(artifacts, ingest_path, corpus_roles[corpus_id]),
         cypher=cypher_source_factory(artifacts.load_plan) if wants_cypher else None,
     )
@@ -334,9 +337,7 @@ def _attempt(
         valid_edges=corpus.gold.valid_edges,
     )
     trace = dict(step.trace)
-    hit = routing_hit(item.question, trace)
-    if hit is not None:
-        trace[ROUTING_HIT_TRACE_KEY] = hit
+    add_routing_metrics(trace, item.question, corpus.routing_gold)
     response = step.response
     return QuestionResult(
         run_id=config.run_id,

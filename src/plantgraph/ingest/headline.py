@@ -8,6 +8,13 @@ generated and split, so no run can drift from it by retyping flags. The claim's
 size axis is counted in **sheets** (drawing pages; ADR-0015: about 10, 100,
 1,000), but the generator is sized in **units** (process areas), so
 `smallest_n_units` converts one into the other.
+
+**D1000**, the dev corpus Hierarchical's routing modes are chosen on (ADR-0030), is the
+headline preset at 1,000 sheets with seed 1 (the test corpora use seed 0). It never
+touches Neo4j, so a retrieval-only run needs no database(one command, split over two lines here)::
+
+    uv run python -m plantgraph.ingest synthetic --headline --target-sheets 1000
+        --seed 1 --corpus-id D1000 --out data/corpora/D1000 --no-neo4j
 """
 
 from __future__ import annotations
