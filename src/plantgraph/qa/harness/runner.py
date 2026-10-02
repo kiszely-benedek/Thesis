@@ -19,9 +19,12 @@ import httpx2
 from plantgraph.llm.client import ChatClient
 from plantgraph.llm.models import ChatRequest, ChatResponse, ProviderError
 from plantgraph.qa.corpus import load_corpus_artifacts
+from plantgraph.qa.cypher import CypherSource
+from plantgraph.qa.final_answer import SendChatRequest
 from plantgraph.qa.graph_view import NetworkxGraphView
 from plantgraph.qa.harness.clients import build_chat_client
 from plantgraph.qa.harness.corpus_record import build_corpus_record
+from plantgraph.qa.harness.cypher_setup import CypherSourceFactory, open_checked_neo4j_view
 from plantgraph.qa.harness.freeze import check_reportable, prompt_hashes, question_set_sha256
 from plantgraph.qa.harness.gold import (
     ROUTING_HIT_TRACE_KEY,
@@ -30,12 +33,13 @@ from plantgraph.qa.harness.gold import (
     routing_hit,
 )
 from plantgraph.qa.harness.question_set import load_questions, questions_path
-from plantgraph.qa.harness.registry import build_strategy
+from plantgraph.qa.harness.registry import CypherDeps, build_strategy
 from plantgraph.qa.harness.run_dir import RowKey, RunDir, row_key
 from plantgraph.qa.harness.summary import RunSummary, summarize_rows
 from plantgraph.qa.models import CorpusRecord, Outcome, Question, QuestionResult, RunConfig
 from plantgraph.qa.scoring import score_answer
 from plantgraph.qa.strategies.base import Strategy, answer_question
+from plantgraph.qa.strategies.cypher_rag import CypherRag
 
 ProgressSink = Callable[[str], None]
 
@@ -47,6 +51,8 @@ class _Corpus:
     view: NetworkxGraphView
     gold: GoldScoring
     record: CorpusRecord
+    #: The checked database for CypherRAG; `None` when the run does not include it.
+    cypher: CypherSource | None
 
 
 @dataclass(frozen=True)
@@ -67,6 +73,7 @@ def run_harness(
     http_client: httpx2.Client | None = None,
     cost_per_question_usd: float | None = None,
     progress: ProgressSink = print,
+    cypher_source_factory: CypherSourceFactory = open_checked_neo4j_view,
 ) -> RunSummary:
     """Run (or resume, or replay) the run `config` describes.
 
@@ -80,16 +87,20 @@ def run_harness(
         http_client: the HTTP layer; tests pass the fake transport here.
         cost_per_question_usd: the pilot's estimate, echoed before a paid run.
         progress: receives one-line status messages.
+        cypher_source_factory: opens and checks the database for a run that
+            includes CypherRAG; tests pass a stub, the default uses `NEO4J_*`.
 
     Raises:
         ValueError: a reported run with an incomplete config, inputs that no
             longer match the frozen hashes, or an unknown strategy name.
+        StoreMismatch: CypherRAG is in the run and the database is not exactly
+            the run's corpus (`neo4j_view.check_store`).
         CacheMiss: a replay run needs a response the cache does not hold.
     """
     check_reportable(config)  # before anything is read or written
     questions = _load_all_questions(config, questions_root)
     _check_inputs_match_config(config, questions_root)
-    corpora = _load_corpora(config, corpus_roles, corpora_root)
+    corpora = _load_corpora(config, corpus_roles, corpora_root, cypher_source_factory)
     run_dir = RunDir(runs_root / config.run_id)
     # The guard is this invocation's flag, never a stored one: a run started
     # with --allow-paid-calls and resumed without it must not call out.
@@ -117,6 +128,7 @@ def run_harness(
         )
     finally:
         cache.close()
+        _close_cypher_sources(corpora)
     return summarize_rows(config.run_id, run_dir.read_rows(), questions, n_new_rows)
 
 
@@ -140,23 +152,51 @@ def _check_inputs_match_config(config: RunConfig, questions_root: Path) -> None:
 
 
 def _load_corpora(
-    config: RunConfig, corpus_roles: dict[str, str], corpora_root: Path
+    config: RunConfig,
+    corpus_roles: dict[str, str],
+    corpora_root: Path,
+    cypher_source_factory: CypherSourceFactory,
 ) -> dict[str, _Corpus]:
     """Rebuild each corpus once: the view for strategies, gold for scoring, its record."""
     corpora: dict[str, _Corpus] = {}
-    for corpus_id in config.corpora:
-        ingest_path = corpora_root / corpus_id / "ingest.json"
-        artifacts = load_corpus_artifacts(corpus_id, ingest_path)
-        plant = artifacts.gold.plant
-        if plant is None:
-            raise ValueError(f"expected a ground-truth plant for {corpus_id!r}, found none")
-        view = NetworkxGraphView(corpus_id, artifacts.localized_sheets, artifacts.resolution)
-        corpora[corpus_id] = _Corpus(
-            view=view,
-            gold=build_gold_scoring(plant, view),
-            record=build_corpus_record(artifacts, ingest_path, corpus_roles[corpus_id]),
-        )
+    try:
+        for corpus_id in config.corpora:
+            corpora[corpus_id] = _load_corpus(
+                config, corpus_id, corpus_roles, corpora_root, cypher_source_factory
+            )
+    except Exception:
+        _close_cypher_sources(corpora)  # a later corpus failed its check: free the earlier ones
+        raise
     return corpora
+
+
+def _load_corpus(
+    config: RunConfig,
+    corpus_id: str,
+    corpus_roles: dict[str, str],
+    corpora_root: Path,
+    cypher_source_factory: CypherSourceFactory,
+) -> _Corpus:
+    ingest_path = corpora_root / corpus_id / "ingest.json"
+    artifacts = load_corpus_artifacts(corpus_id, ingest_path)
+    plant = artifacts.gold.plant
+    if plant is None:
+        raise ValueError(f"expected a ground-truth plant for {corpus_id!r}, found none")
+    view = NetworkxGraphView(corpus_id, artifacts.localized_sheets, artifacts.resolution)
+    # the pre-check: opened and verified here, before the run is frozen or any call is made
+    wants_cypher = CypherRag.name in config.strategies
+    return _Corpus(
+        view=view,
+        gold=build_gold_scoring(plant, view),
+        record=build_corpus_record(artifacts, ingest_path, corpus_roles[corpus_id]),
+        cypher=cypher_source_factory(artifacts.load_plan) if wants_cypher else None,
+    )
+
+
+def _close_cypher_sources(corpora: dict[str, _Corpus]) -> None:
+    for corpus in corpora.values():
+        if corpus.cypher is not None:
+            corpus.cypher.close()
 
 
 def _fill_answers(
@@ -172,8 +212,11 @@ def _fill_answers(
     """Answer every row not yet on disk; return how many rows this call wrote."""
     dropped = run_dir.drop_provider_error_rows()
     done = {row_key(row) for row in run_dir.read_rows()}
+    cypher_send = _cypher_sender(client, config)
     items = {
-        corpus_id: list(_work_items(config, corpus_id, questions, corpora[corpus_id], done))
+        corpus_id: list(
+            _work_items(config, corpus_id, questions, corpora[corpus_id], done, cypher_send)
+        )
         for corpus_id in config.corpora
     }
     n_pending = sum(len(corpus_items) for corpus_items in items.values())
@@ -226,15 +269,31 @@ def _work_items(
     questions: list[Question],
     corpus: _Corpus,
     done: set[RowKey],
+    cypher_send: SendChatRequest,
 ) -> Iterator[_WorkItem]:
     """Strategy, then question, then repeat, skipping rows already on disk."""
     corpus_questions = [q for q in questions if q.corpus_id == corpus_id]
+    cypher = (
+        CypherDeps(corpus.cypher, config.answer_pin, cypher_send)
+        if corpus.cypher is not None
+        else None
+    )
     for name, params in config.strategies.items():
-        strategy = build_strategy(name, params, corpus.view)
+        strategy = build_strategy(name, params, corpus.view, cypher)
         for question in corpus_questions:
             for repeat in range(config.repeats):
                 if (question.question_id, name, repeat) not in done:
                     yield _WorkItem(strategy, question, repeat)
+
+
+def _cypher_sender(client: ChatClient, config: RunConfig) -> SendChatRequest:
+    """Sends CypherRAG's query-writing call through the run's client (cache, guard and log)."""
+
+    def send(request: ChatRequest) -> ChatResponse:
+        # retrieval sees only the question text, so the call is logged without a question id
+        return client.complete(request, run_id=config.run_id, strategy=CypherRag.name)
+
+    return send
 
 
 def _attempt(

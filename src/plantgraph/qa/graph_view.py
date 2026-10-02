@@ -37,6 +37,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from plantgraph.benchmark.sheet_graph import SheetGraph
 from plantgraph.graph import schema
+from plantgraph.qa.cypher import CypherResult
 from plantgraph.qa.scoring import normalize_scalar
 from plantgraph.resolution.contract import check_contract
 from plantgraph.resolution.models import Resolution
@@ -133,7 +134,7 @@ class GraphView(Protocol):
         """The induced subgraph of the occurrences drawn on `sheet_ids`."""
         ...
 
-    def run_cypher(self, query: str, timeout_s: float, row_cap: int) -> list[dict[str, Any]]:
+    def run_cypher(self, query: str, timeout_s: float, row_cap: int) -> CypherResult:
         """Run a read-only Cypher query; `Neo4jGraphView` only (CypherRAG, D9)."""
         ...
 
@@ -236,7 +237,7 @@ class NetworkxGraphView:
         kept = [key for key, attrs in self._graph.nodes(data=True) if attrs["sheet_id"] in wanted]
         return nx.DiGraph(self._graph.subgraph(kept))
 
-    def run_cypher(self, query: str, timeout_s: float, row_cap: int) -> list[dict[str, Any]]:
+    def run_cypher(self, query: str, timeout_s: float, row_cap: int) -> CypherResult:
         """Raises `NotImplementedError`: this view holds no database (D9)."""
         raise NotImplementedError(
             "NetworkxGraphView holds no database; only Neo4jGraphView answers Cypher (D9)"

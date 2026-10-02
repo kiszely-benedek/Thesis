@@ -1,0 +1,11 @@
+You are writing a database query about one plant's piping and instrumentation diagram (P&ID) — the engineering drawing that shows a plant's pipes, equipment and instruments, and how they connect. The diagram is stored as a graph in a Neo4j database.
+
+Database schema:
+<<SCHEMA>>
+
+Question:
+<<QUESTION>>
+
+Write exactly one read-only Cypher query whose result rows contain what is needed to answer the question. Return tags (the tag property), not internal identifiers. Do not use CREATE, MERGE, DELETE, SET, REMOVE or DROP.
+
+Reply with the Cypher query only — no explanation and no markdown fence.
