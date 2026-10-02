@@ -35,6 +35,7 @@ from plantgraph.llm.models import (
 )
 from plantgraph.qa.fit import check_fit, handle_overflow
 from plantgraph.qa.models import AnswerType, FinalAnswer, Outcome
+from plantgraph.qa.scoring import normalize_boolean
 
 _TEMPLATE_PATH = Path(__file__).parent / "prompts" / "final_answer.txt"
 
@@ -63,6 +64,7 @@ _FIXED_FORMAT_INSTRUCTIONS: dict[AnswerType, str] = {
         "List equipment items and valves only, and omit off-page connectors."
     ),
     AnswerType.COUNT: "Answer with a single integer.",
+    AnswerType.BOOLEAN: 'Answer with "yes" or "no".',
     AnswerType.FREE_TEXT: "Answer in a short paragraph of plain text.",
 }
 
@@ -193,6 +195,9 @@ def _validate_answer_shape(answer_type: AnswerType, final_answer: FinalAnswer) -
     if answer_type is AnswerType.COUNT:
         _validate_count_shape(answer)
         return
+    if answer_type is AnswerType.BOOLEAN:
+        _validate_boolean_shape(answer)
+        return
     raise ValueError(f"final_answer.py has no shape rule for answer_type {answer_type!r}")
 
 
@@ -207,6 +212,24 @@ def _validate_count_shape(answer: object) -> None:
     raise ValueError(f"COUNT needs an int or a numeric string, got {answer!r}")
 
 
+def _validate_boolean_shape(answer: object) -> None:
+    """A `BOOLEAN` answer must be a string reading as yes or no (`true` became "yes" earlier)."""
+    if not isinstance(answer, str) or normalize_boolean(answer) is None:
+        raise ValueError(f"BOOLEAN needs a yes/no answer, got {answer!r}")
+
+
+def _spell_json_bool(payload: dict[str, Any], answer_type: AnswerType) -> dict[str, Any]:
+    """Turn a JSON `true`/`false` answer into "yes"/"no" for a `BOOLEAN` question.
+
+    `FinalAnswer.answer` has no bool member and pydantic would silently read `true` as the
+    integer 1, so the bool is spelled out before validation.
+    """
+    answer = payload.get("answer")
+    if answer_type is AnswerType.BOOLEAN and isinstance(answer, bool):
+        return {**payload, "answer": "yes" if answer else "no"}
+    return payload
+
+
 def parse_final_answer(raw_text: str, answer_type: AnswerType) -> FinalAnswer:
     """Parse a model's raw reply into a `FinalAnswer`, or raise `FinalAnswerParseError` (§8).
 
@@ -217,7 +240,7 @@ def parse_final_answer(raw_text: str, answer_type: AnswerType) -> FinalAnswer:
     if payload is None:
         raise FinalAnswerParseError(f"no JSON object found in model reply: {raw_text!r}")
     try:
-        final_answer = FinalAnswer.model_validate(payload)
+        final_answer = FinalAnswer.model_validate(_spell_json_bool(payload, answer_type))
     except ValidationError as exc:
         raise FinalAnswerParseError(
             f"reply JSON does not match the FinalAnswer schema: {payload!r} ({exc})"

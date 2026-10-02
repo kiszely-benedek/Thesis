@@ -9,6 +9,8 @@ is what lets a run be re-scored later from `answers.jsonl` alone (ADR-0013's
 
 - `CLASS_NAME`, `TAG`, `UNIT_ID`: exact match after normalization.
 - `COUNT`: integer equality; a numeric string counts the same as an int.
+- `BOOLEAN`: the reference is `"yes"`/`"no"`; an answer may be that string, `true`/`false`
+  or a JSON bool read back as `1`/`0`, all case-folded.
 - `TAG_SET`, `UNIT_SET`, `SHEET_SET`: correct only for an **exact set match** — the
   precision/recall/F1 numbers are a *lenient* secondary view, reported
   alongside but never substituted for `correct`.
@@ -85,6 +87,30 @@ def score_count(reference: int, answer: int | str) -> bool:
         return reference == int(answer.strip())
     except ValueError:
         return False
+
+
+_YES_WORDS = frozenset({"YES", "TRUE", "1"})
+_NO_WORDS = frozenset({"NO", "FALSE", "0"})
+
+
+def normalize_boolean(value: str | int) -> bool | None:
+    """Read `"Yes"`, `"no"`, `"true"`, `1` ... as a bool; `None` when it is neither yes nor no."""
+    word = normalize_scalar(str(value))
+    if word in _YES_WORDS:
+        return True
+    return False if word in _NO_WORDS else None
+
+
+def score_boolean(reference: str, answer: str | int) -> bool:
+    """Yes/no equality after normalization; an unreadable answer is wrong, not an error.
+
+    Raises:
+        ValueError: `reference` is not a yes/no word (the generator always writes one).
+    """
+    expected = normalize_boolean(reference)
+    if expected is None:
+        raise ValueError(f"expected a yes/no BOOLEAN reference, found {reference!r}")
+    return expected is normalize_boolean(answer)
 
 
 class SetScore(BaseModel):
@@ -282,6 +308,8 @@ def _score_present_answer(
         return ScoredAnswer(correct=score_unit_id(_as_str(reference), _as_str(answer)), f1=None)
     if answer_type is AnswerType.COUNT:
         return ScoredAnswer(correct=score_count(_as_int(reference), _as_count(answer)), f1=None)
+    if answer_type is AnswerType.BOOLEAN:
+        return ScoredAnswer(correct=score_boolean(_as_str(reference), _as_yes_no(answer)), f1=None)
     if answer_type in (AnswerType.TAG_SET, AnswerType.UNIT_SET, AnswerType.SHEET_SET):
         # a sheet id is folded like a tag (case and whitespace); only unit ids lose a label
         normalize: Literal["scalar", "unit_id"] = (
@@ -322,6 +350,13 @@ def _as_count(value: AnswerValue) -> int | str:
     if isinstance(value, int | str):
         return value
     raise ValueError(f"expected an int or a numeric string COUNT answer, got {value!r}")
+
+
+def _as_yes_no(value: AnswerValue) -> str | int:
+    """Read a `BOOLEAN` answer: a yes/no word, or `1`/`0` when a JSON bool was parsed as an int."""
+    if isinstance(value, int | str):
+        return value
+    raise ValueError(f"expected a yes/no string for a BOOLEAN answer, got {value!r}")
 
 
 def _as_str_list(value: AnswerValue) -> list[str]:

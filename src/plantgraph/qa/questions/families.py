@@ -6,7 +6,7 @@ availability report and the tests.
 
 from __future__ import annotations
 
-from collections.abc import Callable
+from collections.abc import Callable, Collection
 
 import networkx as nx
 
@@ -20,6 +20,16 @@ from plantgraph.qa.questions.families_abstain import (
 from plantgraph.qa.questions.families_aggregate import (
     count_in_unit_candidates,
     cross_unit_candidates,
+)
+from plantgraph.qa.questions.families_dev2_local import (
+    instruments_of_item_candidates,
+    loops_near_item_candidates,
+    same_unit_candidates,
+)
+from plantgraph.qa.questions.families_dev2_reach import (
+    connected_candidates,
+    downstream_in_unit_candidates,
+    upstream_sources_candidates,
 )
 from plantgraph.qa.questions.families_flow import (
     flow_path_candidates,
@@ -37,8 +47,8 @@ from plantgraph.qa.questions.families_loop import (
 #: so `all_candidates` below can call them uniformly.
 CandidateGenerator = Callable[..., list[Question]]
 
-#: Every family this task implements, keyed by its `QuestionFamily` value.
-FAMILY_CANDIDATE_GENERATORS: dict[QuestionFamily, CandidateGenerator] = {
+#: The 12 families built first (dev-old, design `question-aware-retrieval.md` §8.1).
+DEV_OLD_GENERATORS: dict[QuestionFamily, CandidateGenerator] = {
     QuestionFamily.LOOKUP_TYPE: lookup_type_candidates,
     QuestionFamily.LOOKUP_UNIT: lookup_unit_candidates,
     QuestionFamily.NEIGHBOURS_DOWNSTREAM: neighbours_downstream_candidates,
@@ -53,6 +63,22 @@ FAMILY_CANDIDATE_GENERATORS: dict[QuestionFamily, CandidateGenerator] = {
     QuestionFamily.SHEETS_OF_TAG: sheets_of_tag_candidates,
 }
 
+#: The 6 visible families added with the plant API (dev-new, §8.2).
+DEV_NEW_GENERATORS: dict[QuestionFamily, CandidateGenerator] = {
+    QuestionFamily.CONNECTED: connected_candidates,
+    QuestionFamily.DOWNSTREAM_IN_UNIT: downstream_in_unit_candidates,
+    QuestionFamily.INSTRUMENTS_OF_ITEM: instruments_of_item_candidates,
+    QuestionFamily.UPSTREAM_SOURCES: upstream_sources_candidates,
+    QuestionFamily.SAME_UNIT: same_unit_candidates,
+    QuestionFamily.LOOPS_NEAR_ITEM: loops_near_item_candidates,
+}
+
+#: Every family implemented, keyed by its `QuestionFamily` value.
+FAMILY_CANDIDATE_GENERATORS: dict[QuestionFamily, CandidateGenerator] = {
+    **DEV_OLD_GENERATORS,
+    **DEV_NEW_GENERATORS,
+}
+
 
 def all_candidates(
     plant: nx.DiGraph[str],
@@ -61,13 +87,18 @@ def all_candidates(
     *,
     corpus_id: str,
     seed: int,
+    families: Collection[QuestionFamily] | None = None,
 ) -> dict[QuestionFamily, list[Question]]:
-    """Every implemented family's candidates on one corpus, keyed by family.
+    """Candidates of `families` (default: every implemented family) on one corpus, by family.
 
     Feeds the sampler and the availability report (design §9, "Sampling");
     the harness reads the sampled, seeded JSONL instead.
     """
+    wanted = FAMILY_CANDIDATE_GENERATORS if families is None else families
     return {
-        family: generator(plant, manifest, sheets, corpus_id=corpus_id, seed=seed)
-        for family, generator in FAMILY_CANDIDATE_GENERATORS.items()
+        family: FAMILY_CANDIDATE_GENERATORS[family](
+            plant, manifest, sheets, corpus_id=corpus_id, seed=seed
+        )
+        for family in FAMILY_CANDIDATE_GENERATORS
+        if family in wanted
     }

@@ -15,7 +15,10 @@ retrieval strategy under test later answers it.
 - `families_lookup.py`, `families_flow.py`, `families_loop.py`,
   `families_isolation.py`, `families_aggregate.py`, `families_abstain.py`:
   one candidate-generating function per question family (design §9's table).
-- `families.py`: collects every family under one name per `QuestionFamily`.
+- `families_dev2_reach.py`, `families_dev2_local.py`: the six dev-new families (design
+  `question-aware-retrieval.md` §8.2), including the two yes/no ones.
+- `families.py`: collects every family under one name per `QuestionFamily`, split into the
+  12 dev-old and the 6 dev-new generators.
 - `availability.py`, `sample.py`: k-bins, the seeded stratified draw, and the
   report of candidates per family and bin.
 - `cli.py`: `python -m plantgraph.qa.questions` writes the JSONL and report.

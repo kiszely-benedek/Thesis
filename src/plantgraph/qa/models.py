@@ -63,6 +63,14 @@ class QuestionFamily(str, Enum):
     UNANSWERABLE_TAG = "UNANSWERABLE_TAG"
     NO_PATH = "NO_PATH"
     SHEETS_OF_TAG = "SHEETS_OF_TAG"
+    # The six dev-new families (design `question-aware-retrieval.md` §8.2): visible to
+    # strategy authors, unlike the sealed held-out ones.
+    CONNECTED = "CONNECTED"
+    DOWNSTREAM_IN_UNIT = "DOWNSTREAM_IN_UNIT"
+    INSTRUMENTS_OF_ITEM = "INSTRUMENTS_OF_ITEM"
+    UPSTREAM_SOURCES = "UPSTREAM_SOURCES"
+    SAME_UNIT = "SAME_UNIT"
+    LOOPS_NEAR_ITEM = "LOOPS_NEAR_ITEM"
 
 
 class AnswerType(str, Enum):
@@ -82,6 +90,8 @@ class AnswerType(str, Enum):
     SHEET_SET = "SHEET_SET"
     TAG_PATH = "TAG_PATH"
     COUNT = "COUNT"
+    #: A yes/no question; the reference is stored as the string `"yes"` or `"no"`.
+    BOOLEAN = "BOOLEAN"
     FREE_TEXT = "FREE_TEXT"
 
 

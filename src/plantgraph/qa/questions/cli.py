@@ -12,11 +12,13 @@ The per-bin counts are required arguments: the paid pilot fixes them (design
 from __future__ import annotations
 
 import argparse
+from collections.abc import Collection
 from pathlib import Path
 
 from plantgraph.qa.corpus import CorpusArtifacts, load_corpus_artifacts
-from plantgraph.qa.models import Question
+from plantgraph.qa.models import Question, QuestionFamily
 from plantgraph.qa.questions.availability import AvailabilityReport, BinTargets
+from plantgraph.qa.questions.families import DEV_OLD_GENERATORS
 from plantgraph.qa.questions.sample import generate_question_set
 
 QUESTIONS_FILENAME = "questions.jsonl"
@@ -42,7 +44,10 @@ def write_question_set(
 
 
 def build_question_set(
-    artifacts: CorpusArtifacts, targets: BinTargets, seed: int
+    artifacts: CorpusArtifacts,
+    targets: BinTargets,
+    seed: int,
+    families: Collection[QuestionFamily] | None = None,
 ) -> tuple[list[Question], AvailabilityReport]:
     """Sample from a rebuilt corpus's ground truth.
 
@@ -56,7 +61,13 @@ def build_question_set(
             "has none (a Proteus import has no answer key, design §1)"
         )
     return generate_question_set(
-        plant, manifest, artifacts.gold.sheets, targets, corpus_id=artifacts.corpus_id, seed=seed
+        plant,
+        manifest,
+        artifacts.gold.sheets,
+        targets,
+        corpus_id=artifacts.corpus_id,
+        seed=seed,
+        families=families,
     )
 
 
@@ -70,6 +81,11 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument(
         "--n-unanswerable", required=True, type=int, help="questions in the unanswerable bin"
     )
+    parser.add_argument(
+        "--dev-old-only",
+        action="store_true",
+        help="only the 12 first families: reproduces the question sets drawn before dev-new",
+    )
     return parser.parse_args(argv)
 
 
@@ -78,7 +94,8 @@ def main(argv: list[str] | None = None) -> None:
     args = _parse_args(argv)
     targets = BinTargets(per_bin=args.n_per_bin, unanswerable=args.n_unanswerable)
     artifacts = load_corpus_artifacts(args.corpus_id, args.ingest_json)
-    questions, report = build_question_set(artifacts, targets, args.seed)
+    families = list(DEV_OLD_GENERATORS) if args.dev_old_only else None
+    questions, report = build_question_set(artifacts, targets, args.seed, families)
     out_dir = args.out or _DEFAULT_OUT_ROOT / args.corpus_id
     questions_path, report_path = write_question_set(out_dir, questions, report)
     print(f"wrote {len(questions)} questions to {questions_path} and {report_path}")

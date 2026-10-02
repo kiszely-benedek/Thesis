@@ -83,11 +83,11 @@ def flow_path_candidates(
     successors = {node_id: send_to_successors(plant, node_id) for node_id in plant.nodes}
     questions = []
     for source_id, source_tag in tagged_nodes_by_tag(plant):
-        reached = _reach_from(plant, successors, source_id, index)
+        reached = reach_from(plant, successors, source_id, index)
         del reached[source_id]  # a path from a node to itself is not a question
         rng = random.Random(f"{seed}:{source_id}")  # one stream per source: draws stay independent
-        for target_id in _one_target_per_bin(reached, rng):
-            path = _path_to(reached, source_id, target_id)
+        for target_id in one_target_per_bin(reached, rng):
+            path = path_to(reached, source_id, target_id)
             questions.append(
                 _flow_path_question(
                     plant,
@@ -103,14 +103,14 @@ def flow_path_candidates(
 
 
 @dataclass(frozen=True)
-class _Reached:
+class Reached:
     """How a walk got to one node: the node before it, and the sheet-crossing edges on the way."""
 
     parent: str | None
     k: int
 
 
-def _one_target_per_bin(reached: dict[str, _Reached], rng: random.Random) -> list[str]:
+def one_target_per_bin(reached: dict[str, Reached], rng: random.Random) -> list[str]:
     """One reachable target for each k-bin that has any, drawn with `rng`, in bin order."""
     by_bin: dict[KBin, list[str]] = {}
     for target_id in sorted(reached):
@@ -145,7 +145,7 @@ def _flow_path_question(
     )
 
 
-def _path_to(reached: dict[str, _Reached], source_id: str, target_id: str) -> list[str]:
+def path_to(reached: dict[str, Reached], source_id: str, target_id: str) -> list[str]:
     """Rebuild the walk's path to `target_id` by following parents back to the source."""
     path = [target_id]
     while path[-1] != source_id:
@@ -158,12 +158,12 @@ def _path_to(reached: dict[str, _Reached], source_id: str, target_id: str) -> li
     return path[::-1]
 
 
-def _reach_from(
+def reach_from(
     plant: nx.DiGraph[str],
     successors: dict[str, list[str]],
     source_id: str,
     index: SheetIndex,
-) -> dict[str, _Reached]:
+) -> dict[str, Reached]:
     """Every node reachable from `source_id` over `send_to`, by a shortest path.
 
     Among equal-length shortest paths to a node, keeps the one whose *tag*
@@ -173,10 +173,10 @@ def _reach_from(
     outright. Only parents are stored; full paths are rebuilt for the few
     targets that become questions.
     """
-    reached = {source_id: _Reached(parent=None, k=0)}
+    reached = {source_id: Reached(parent=None, k=0)}
     frontier = [source_id]
     while frontier:
-        found: dict[str, _Reached] = {}
+        found: dict[str, Reached] = {}
         for node_id in frontier:
             _offer_successors(plant, successors, node_id, reached, found, index, source_id)
         reached.update(found)
@@ -188,8 +188,8 @@ def _offer_successors(
     plant: nx.DiGraph[str],
     successors: dict[str, list[str]],
     node_id: str,
-    reached: dict[str, _Reached],
-    found: dict[str, _Reached],
+    reached: dict[str, Reached],
+    found: dict[str, Reached],
     index: SheetIndex,
     source_id: str,
 ) -> None:
@@ -203,15 +203,15 @@ def _offer_successors(
         ):
             continue
         k = reached[node_id].k + index.crosses(node_id, successor_id)
-        found[successor_id] = _Reached(parent=node_id, k=k)
+        found[successor_id] = Reached(parent=node_id, k=k)
 
 
 def _path_is_smaller(
     plant: nx.DiGraph[str],
-    reached: dict[str, _Reached],
+    reached: dict[str, Reached],
     source_id: str,
     new_parent: str,
-    current: _Reached,
+    current: Reached,
 ) -> bool:
     """Whether the path through `new_parent` has smaller printed tags than the one via `current`."""
     if current.parent is None:
@@ -222,7 +222,7 @@ def _path_is_smaller(
 
 
 def _tag_sequence(
-    plant: nx.DiGraph[str], reached: dict[str, _Reached], source_id: str, node_id: str
+    plant: nx.DiGraph[str], reached: dict[str, Reached], source_id: str, node_id: str
 ) -> list[str]:
     """Printed tags along the walk's path to `node_id` — never the internal ids."""
-    return [str(plant.nodes[n]["tag"]) for n in _path_to(reached, source_id, node_id)]
+    return [str(plant.nodes[n]["tag"]) for n in path_to(reached, source_id, node_id)]

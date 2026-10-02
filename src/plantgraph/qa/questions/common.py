@@ -37,7 +37,12 @@ def tagged_nodes_by_tag(plant: nx.DiGraph[str]) -> list[tuple[str, str]]:
 
 def send_to_successors(plant: nx.DiGraph[str], node_id: str) -> list[str]:
     """Every node `node_id` sends material to directly, sorted by node_id."""
-    return _relation_successors(plant, node_id, Relation.SEND_TO)
+    return relation_successors(plant, node_id, Relation.SEND_TO)
+
+
+def send_to_predecessors(plant: nx.DiGraph[str], node_id: str) -> list[str]:
+    """Every node that sends material to `node_id` directly, sorted by node_id."""
+    return relation_predecessors(plant, node_id, Relation.SEND_TO)
 
 
 def single_successor(
@@ -50,7 +55,7 @@ def single_successor(
             meaning the plant does not match the generator's own invariant
             this family relies on (`tests/graph_plant_builder.py`).
     """
-    matches = _relation_successors(plant, node_id, relation)
+    matches = relation_successors(plant, node_id, relation)
     if len(matches) != 1:
         raise ValueError(
             f"expected exactly one {relation.value!r} successor of {node_id!r} ({context}), "
@@ -63,7 +68,7 @@ def single_predecessor(
     plant: nx.DiGraph[str], node_id: str, relation: Relation, *, context: str
 ) -> str:
     """The one node that reaches `node_id` over `relation` — the mirror of `single_successor`."""
-    matches = _relation_predecessors(plant, node_id, relation)
+    matches = relation_predecessors(plant, node_id, relation)
     if len(matches) != 1:
         raise ValueError(
             f"expected exactly one {relation.value!r} predecessor of {node_id!r} ({context}), "
@@ -72,7 +77,8 @@ def single_predecessor(
     return matches[0]
 
 
-def _relation_successors(plant: nx.DiGraph[str], node_id: str, relation: Relation) -> list[str]:
+def relation_successors(plant: nx.DiGraph[str], node_id: str, relation: Relation) -> list[str]:
+    """Every node `node_id` reaches over one `relation` edge, sorted by node_id."""
     return sorted(
         successor_id
         for successor_id in plant.successors(node_id)
@@ -80,7 +86,8 @@ def _relation_successors(plant: nx.DiGraph[str], node_id: str, relation: Relatio
     )
 
 
-def _relation_predecessors(plant: nx.DiGraph[str], node_id: str, relation: Relation) -> list[str]:
+def relation_predecessors(plant: nx.DiGraph[str], node_id: str, relation: Relation) -> list[str]:
+    """Every node that reaches `node_id` over one `relation` edge, sorted by node_id."""
     return sorted(
         predecessor_id
         for predecessor_id in plant.predecessors(node_id)

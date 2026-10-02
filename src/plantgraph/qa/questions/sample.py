@@ -10,12 +10,13 @@ from __future__ import annotations
 
 import random
 import time
+from collections.abc import Collection
 
 import networkx as nx
 
 from plantgraph.benchmark.models import SplitManifest
 from plantgraph.benchmark.sheet_graph import SheetGraph
-from plantgraph.qa.models import Question, QuestionFamily
+from plantgraph.qa.models import AnswerType, Question, QuestionFamily
 from plantgraph.qa.questions.availability import (
     AvailabilityReport,
     BinTargets,
@@ -37,16 +38,34 @@ def group_by_bin(
     return grouped
 
 
+def _ordered_pool(questions: list[Question], rng: random.Random) -> list[Question]:
+    """The family's candidates in draw order, to be taken from the END of the list.
+
+    Sorted then shuffled, so the order depends on the seed only. A yes/no family is dealt
+    yes, no, yes, no ... (starting side seeded) so a small draw stays balanced.
+    """
+    pool = sorted(questions, key=lambda q: q.question_id)
+    if not pool or pool[0].answer_type is not AnswerType.BOOLEAN:
+        rng.shuffle(pool)
+        return pool
+    yes = [q for q in pool if q.reference == "yes"]
+    no = [q for q in pool if q.reference != "yes"]
+    rng.shuffle(yes)
+    rng.shuffle(no)
+    first, second = (yes, no) if rng.random() < 0.5 else (no, yes)
+    dealt = [q for pair in zip(first, second, strict=False) for q in pair]
+    dealt += first[len(second) :] + second[len(first) :]  # the longer side's leftovers
+    return dealt[::-1]
+
+
 def draw_bin(
     by_family: dict[QuestionFamily, list[Question]], target: int, rng: random.Random
 ) -> list[Question]:
     """Up to `target` questions from one bin, dealt round-robin over its families."""
     # Families sorted by name, pools sorted then shuffled: the result depends on the seed only.
-    pools = []
-    for family in sorted(by_family, key=lambda f: f.value):
-        pool = sorted(by_family[family], key=lambda q: q.question_id)
-        rng.shuffle(pool)
-        pools.append(pool)
+    pools = [
+        _ordered_pool(by_family[family], rng) for family in sorted(by_family, key=lambda f: f.value)
+    ]
     drawn: list[Question] = []
     while len(drawn) < target and any(pools):
         for pool in pools:
@@ -82,10 +101,13 @@ def generate_question_set(
     *,
     corpus_id: str,
     seed: int,
+    families: Collection[QuestionFamily] | None = None,
 ) -> tuple[list[Question], AvailabilityReport]:
-    """Enumerate every family's candidates on one corpus and sample from them."""
+    """Enumerate the candidates of `families` (default all) on one corpus and sample from them."""
     started = time.perf_counter()
-    candidates = all_candidates(plant, manifest, sheets, corpus_id=corpus_id, seed=seed)
+    candidates = all_candidates(
+        plant, manifest, sheets, corpus_id=corpus_id, seed=seed, families=families
+    )
     build_seconds = time.perf_counter() - started
     sample, report = draw_sample(candidates, targets, corpus_id=corpus_id, seed=seed)
     return sample, report.model_copy(update={"build_seconds": build_seconds})
