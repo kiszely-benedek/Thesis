@@ -1,7 +1,7 @@
 """LOOKUP_TYPE and LOOKUP_UNIT: single-node questions, always k = 0 (design §9).
 
 Both read exactly one node's own property — `node_class` or `unit_id` — and
-no edge at all. Since `k` counts cut *edges* the evidence crosses
+no edge at all. Since `k` counts evidence *edges* that cross sheets
 (`evidence.py`), a question with no evidence edge can never cross one.
 """
 
@@ -13,7 +13,7 @@ from plantgraph.benchmark.models import SplitManifest
 from plantgraph.benchmark.sheet_graph import SheetGraph
 from plantgraph.qa.models import AnswerType, Question, QuestionFamily
 from plantgraph.qa.questions.common import build_question, tagged_nodes_by_tag
-from plantgraph.qa.questions.evidence import Evidence, SheetIndex, connector_cut
+from plantgraph.qa.questions.evidence import Evidence, SheetIndex
 from plantgraph.qa.questions.templates import lookup_type_text
 
 _TEMPLATE_VERSION = "1"
@@ -28,8 +28,7 @@ def lookup_type_candidates(
     seed: int,
 ) -> list[Question]:
     """One `LOOKUP_TYPE` candidate per tagged node, ordered by tag."""
-    cut = connector_cut(manifest)
-    index = SheetIndex.from_sheets(sheets)
+    index = SheetIndex.from_sheets(sheets, manifest)
     return [
         build_question(
             corpus_id=corpus_id,
@@ -43,7 +42,6 @@ def lookup_type_candidates(
             anchors=[tag],
             plant=plant,
             index=index,
-            cut=cut,
             seed=seed,
         )
         for node_id, tag in tagged_nodes_by_tag(plant)
@@ -59,8 +57,7 @@ def lookup_unit_candidates(
     seed: int,
 ) -> list[Question]:
     """One `LOOKUP_UNIT` candidate per tagged node, ordered by tag."""
-    cut = connector_cut(manifest)
-    index = SheetIndex.from_sheets(sheets)
+    index = SheetIndex.from_sheets(sheets, manifest)
     return [
         build_question(
             corpus_id=corpus_id,
@@ -74,7 +71,6 @@ def lookup_unit_candidates(
             anchors=[tag],
             plant=plant,
             index=index,
-            cut=cut,
             seed=seed,
         )
         for node_id, tag in tagged_nodes_by_tag(plant)

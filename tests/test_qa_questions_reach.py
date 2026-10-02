@@ -108,7 +108,7 @@ def test_sheet_index_equals_the_old_scan_on_three_seeds() -> None:
         corpus = build_synthetic_corpus(
             GeneratorConfig(n_units=6, seed=seed), SplitConfig(sheet_equipment_budget=8, seed=seed)
         )
-        index = SheetIndex.from_sheets(corpus.sheets)
+        index = SheetIndex.from_sheets(corpus.sheets, corpus.manifest)
         node_ids = sorted(corpus.plant.nodes)
         for start in range(0, len(node_ids), 7):
             evidence = Evidence(nodes=frozenset(node_ids[start : start + 5]), edges=frozenset())

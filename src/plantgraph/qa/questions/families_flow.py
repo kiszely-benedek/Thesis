@@ -19,7 +19,7 @@ from plantgraph.benchmark.sheet_graph import SheetGraph
 from plantgraph.qa.models import AnswerType, Question, QuestionFamily
 from plantgraph.qa.questions.availability import KBin, k_bin_of_k
 from plantgraph.qa.questions.common import build_question, send_to_successors, tagged_nodes_by_tag
-from plantgraph.qa.questions.evidence import Evidence, SheetIndex, connector_cut
+from plantgraph.qa.questions.evidence import Evidence, SheetIndex
 from plantgraph.qa.questions.templates import flow_path_text, neighbours_downstream_text
 
 _TEMPLATE_VERSION = "1"
@@ -34,8 +34,7 @@ def neighbours_downstream_candidates(
     seed: int,
 ) -> list[Question]:
     """One candidate per node with at least one direct `send_to` successor."""
-    cut = connector_cut(manifest)
-    index = SheetIndex.from_sheets(sheets)
+    index = SheetIndex.from_sheets(sheets, manifest)
     questions = []
     for node_id, tag in tagged_nodes_by_tag(plant):
         successor_ids = send_to_successors(plant, node_id)
@@ -58,7 +57,6 @@ def neighbours_downstream_candidates(
                 anchors=[tag],
                 plant=plant,
                 index=index,
-                cut=cut,
                 seed=seed,
             )
         )
@@ -81,12 +79,11 @@ def flow_path_candidates(
     drawn per bin is turned into a `Question`, because building a question
     for every pair did not finish at 1,000 sheets.
     """
-    cut = connector_cut(manifest)
-    index = SheetIndex.from_sheets(sheets)
+    index = SheetIndex.from_sheets(sheets, manifest)
     successors = {node_id: send_to_successors(plant, node_id) for node_id in plant.nodes}
     questions = []
     for source_id, source_tag in tagged_nodes_by_tag(plant):
-        reached = _reach_from(plant, successors, source_id, cut)
+        reached = _reach_from(plant, successors, source_id, index)
         del reached[source_id]  # a path from a node to itself is not a question
         rng = random.Random(f"{seed}:{source_id}")  # one stream per source: draws stay independent
         for target_id in _one_target_per_bin(reached, rng):
@@ -95,7 +92,6 @@ def flow_path_candidates(
                 _flow_path_question(
                     plant,
                     index,
-                    cut,
                     corpus_id=corpus_id,
                     seed=seed,
                     source_tag=source_tag,
@@ -108,7 +104,7 @@ def flow_path_candidates(
 
 @dataclass(frozen=True)
 class _Reached:
-    """How a walk got to one node: the node before it, and the cut edges on the way."""
+    """How a walk got to one node: the node before it, and the sheet-crossing edges on the way."""
 
     parent: str | None
     k: int
@@ -125,7 +121,6 @@ def _one_target_per_bin(reached: dict[str, _Reached], rng: random.Random) -> lis
 def _flow_path_question(
     plant: nx.DiGraph[str],
     index: SheetIndex,
-    cut: frozenset[tuple[str, str]],
     *,
     corpus_id: str,
     seed: int,
@@ -146,7 +141,6 @@ def _flow_path_question(
         anchors=[source_tag, target_tag],
         plant=plant,
         index=index,
-        cut=cut,
         seed=seed,
     )
 
@@ -168,7 +162,7 @@ def _reach_from(
     plant: nx.DiGraph[str],
     successors: dict[str, list[str]],
     source_id: str,
-    cut: frozenset[tuple[str, str]],
+    index: SheetIndex,
 ) -> dict[str, _Reached]:
     """Every node reachable from `source_id` over `send_to`, by a shortest path.
 
@@ -184,7 +178,7 @@ def _reach_from(
     while frontier:
         found: dict[str, _Reached] = {}
         for node_id in frontier:
-            _offer_successors(plant, successors, node_id, reached, found, cut, source_id)
+            _offer_successors(plant, successors, node_id, reached, found, index, source_id)
         reached.update(found)
         frontier = sorted(found)
     return reached
@@ -196,7 +190,7 @@ def _offer_successors(
     node_id: str,
     reached: dict[str, _Reached],
     found: dict[str, _Reached],
-    cut: frozenset[tuple[str, str]],
+    index: SheetIndex,
     source_id: str,
 ) -> None:
     """Offer `node_id` as parent of each of its new successors; keep the smaller-tag parent."""
@@ -208,7 +202,7 @@ def _offer_successors(
             plant, reached, source_id, node_id, current
         ):
             continue
-        k = reached[node_id].k + ((node_id, successor_id) in cut)
+        k = reached[node_id].k + index.crosses(node_id, successor_id)
         found[successor_id] = _Reached(parent=node_id, k=k)
 
 

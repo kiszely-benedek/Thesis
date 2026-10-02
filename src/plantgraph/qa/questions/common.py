@@ -14,10 +14,9 @@ from plantgraph.qa.models import AnswerType, AnswerValue, Question, QuestionFami
 from plantgraph.qa.questions.evidence import (
     Evidence,
     SheetIndex,
-    evidence_k,
+    crossings,
     evidence_sheets,
     evidence_tags,
-    evidence_u,
 )
 
 
@@ -102,15 +101,15 @@ def build_question(
     anchors: list[str],
     plant: nx.DiGraph[str],
     index: SheetIndex,
-    cut: frozenset[tuple[str, str]],
     seed: int,
 ) -> Question:
-    """Assemble one answerable `Question`, filling `k`, `u`, `evidence_sheets` and `evidence_tags`.
+    """Assemble one answerable `Question`, filling `k` (and its two parts), `u`, sheets and tags.
 
     `question_id` is built from the family and the anchors alone, so
     re-running candidate generation on the same corpus gives byte-identical
     ids (design §9, "Deterministic").
     """
+    crossed = crossings(evidence, index, plant)
     return Question(
         question_id=f"{corpus_id}:{family.value}:{'|'.join(anchors)}",
         corpus_id=corpus_id,
@@ -123,8 +122,10 @@ def build_question(
         reference=reference,
         evidence_tags=evidence_tags(evidence, plant),
         evidence_sheets=evidence_sheets(evidence, index),
-        k=evidence_k(evidence, cut),
-        u=evidence_u(evidence, plant),
+        k=crossed.k,
+        k_connector=crossed.k_connector,
+        k_identity=crossed.k_identity,
+        u=crossed.u,
         anchors=anchors,
         generator_seed=seed,
     )

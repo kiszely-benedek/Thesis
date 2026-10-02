@@ -113,9 +113,13 @@ class Question(BaseModel):
     # Gold evidence, read by the harness only — never by a strategy
     evidence_tags: list[str] = Field(default_factory=list)
     evidence_sheets: list[str] = Field(default_factory=list)
-    #: Off-page connectors crossed by the evidence; `None` for an
-    #: unanswerable question, where there is no evidence to cross anything.
+    #: Evidence edges whose two ends have different home sheets (ADR-0028);
+    #: `None` for an unanswerable question, where there is no evidence.
     k: int | None = None
+    #: The part of `k` resolved by an off-page connector pair.
+    k_connector: int | None = None
+    #: The part of `k` resolved because the item is drawn on both sheets.
+    k_identity: int | None = None
     #: Units crossed: evidence edges whose two endpoints carry different
     #: `unit_id`s (a unit is one process section of the plant). A second
     #: difficulty axis beside `k`; `None` for an unanswerable question.

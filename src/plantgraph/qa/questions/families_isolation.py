@@ -16,7 +16,7 @@ from plantgraph.benchmark.sheet_graph import SheetGraph
 from plantgraph.graph.schema import EQUIPMENT_CLASSES, OPERATED_VALVE_CLASSES, Relation
 from plantgraph.qa.models import AnswerType, Question, QuestionFamily
 from plantgraph.qa.questions.common import build_question, nodes_of_classes
-from plantgraph.qa.questions.evidence import Evidence, SheetIndex, connector_cut
+from plantgraph.qa.questions.evidence import Evidence, SheetIndex
 from plantgraph.qa.questions.templates import upstream_isolation_text
 
 _TEMPLATE_VERSION = "1"
@@ -81,8 +81,7 @@ def upstream_isolation_candidates(
     seed: int,
 ) -> list[Question]:
     """One candidate per equipment item whose every upstream route has an operated valve."""
-    cut = connector_cut(manifest)
-    index = SheetIndex.from_sheets(sheets)
+    index = SheetIndex.from_sheets(sheets, manifest)
     questions = []
     for node_id in nodes_of_classes(plant, EQUIPMENT_CLASSES):
         walk = _upstream_walk(plant, node_id)
@@ -106,7 +105,6 @@ def upstream_isolation_candidates(
                 anchors=[tag],
                 plant=plant,
                 index=index,
-                cut=cut,
                 seed=seed,
             )
         )
