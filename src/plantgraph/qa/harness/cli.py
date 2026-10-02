@@ -10,9 +10,11 @@ resumes it.
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 from plantgraph.llm.cache import DEFAULT_CACHE_PATH
 from plantgraph.llm.models import CacheMiss, ContextWall, ModelPin
@@ -36,6 +38,11 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         "--corpus", action="append", required=True, metavar="ID:ROLE", help="ROLE is dev or test"
     )
     parser.add_argument("--strategy", action="append", required=True, help="e.g. context_rag")
+    parser.add_argument(
+        "--strategy-params-json",
+        type=Path,
+        help='JSON {"<strategy name>": {parameters}}; frozen in the run config',
+    )
     parser.add_argument("--repeats", type=int, default=1)
     parser.add_argument("--pin-json", required=True, type=Path, help="a ModelPin as JSON")
     parser.add_argument("--wall-json", type=Path, help="a ContextWall as JSON (pilot output)")
@@ -59,6 +66,26 @@ def _split_corpus_arg(value: str) -> tuple[str, str]:
     return corpus_id, role
 
 
+def _read_strategy_params(
+    path: Path | None, strategy_names: list[str]
+) -> dict[str, dict[str, Any]]:
+    """One parameter dict per `--strategy`; `{}` for a strategy the file does not mention.
+
+    Raises:
+        SystemExit: the file is not a JSON object of objects, or names a strategy
+            that was not asked for (a typo would otherwise be ignored silently).
+    """
+    given: object = {} if path is None else json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(given, dict) or not all(isinstance(v, dict) for v in given.values()):
+        raise SystemExit(
+            f"error: expected {path} to hold a JSON object of objects, found {given!r}"
+        )
+    unused = sorted(set(given) - set(strategy_names))
+    if unused:
+        raise SystemExit(f"error: expected params only for {strategy_names}, found {unused}")
+    return {name: dict(given.get(name, {})) for name in strategy_names}
+
+
 def _build_config(args: argparse.Namespace, corpus_ids: list[str]) -> RunConfig:
     commit, dirty = read_git_state(_REPO_ROOT)
     files = [questions_path(args.questions_root, corpus_id) for corpus_id in corpus_ids]
@@ -70,7 +97,7 @@ def _build_config(args: argparse.Namespace, corpus_ids: list[str]) -> RunConfig:
         experiment=args.experiment,
         reported=args.reported,
         corpora=corpus_ids,
-        strategies={name: {} for name in args.strategy},
+        strategies=_read_strategy_params(args.strategy_params_json, args.strategy),
         answer_pin=ModelPin.model_validate_json(args.pin_json.read_text(encoding="utf-8")),
         prompt_hashes=prompt_hashes(),
         question_set_sha256=question_set_sha256(files),
