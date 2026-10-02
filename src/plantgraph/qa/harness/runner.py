@@ -33,7 +33,7 @@ from plantgraph.qa.harness.gold import (
     routing_hit,
 )
 from plantgraph.qa.harness.question_set import load_questions, questions_path
-from plantgraph.qa.harness.registry import CypherDeps, build_strategy
+from plantgraph.qa.harness.registry import CypherDeps, LlmDeps, build_strategy
 from plantgraph.qa.harness.run_dir import RowKey, RunDir, row_key
 from plantgraph.qa.harness.summary import RunSummary, summarize_rows
 from plantgraph.qa.models import CorpusRecord, Outcome, Question, QuestionResult, RunConfig
@@ -212,10 +212,10 @@ def _fill_answers(
     """Answer every row not yet on disk; return how many rows this call wrote."""
     dropped = run_dir.drop_provider_error_rows()
     done = {row_key(row) for row in run_dir.read_rows()}
-    cypher_send = _cypher_sender(client, config)
+    sender_for = _sender_factory(client, config)
     items = {
         corpus_id: list(
-            _work_items(config, corpus_id, questions, corpora[corpus_id], done, cypher_send)
+            _work_items(config, corpus_id, questions, corpora[corpus_id], done, sender_for)
         )
         for corpus_id in config.corpora
     }
@@ -269,31 +269,38 @@ def _work_items(
     questions: list[Question],
     corpus: _Corpus,
     done: set[RowKey],
-    cypher_send: SendChatRequest,
+    sender_for: Callable[[str], SendChatRequest],
 ) -> Iterator[_WorkItem]:
     """Strategy, then question, then repeat, skipping rows already on disk."""
     corpus_questions = [q for q in questions if q.corpus_id == corpus_id]
     cypher = (
-        CypherDeps(corpus.cypher, config.answer_pin, cypher_send)
+        CypherDeps(corpus.cypher, config.answer_pin, sender_for(CypherRag.name))
         if corpus.cypher is not None
         else None
     )
     for name, params in config.strategies.items():
-        strategy = build_strategy(name, params, corpus.view, cypher)
+        llm = LlmDeps(config.answer_pin, sender_for(name))
+        strategy = build_strategy(name, params, corpus.view, cypher, llm)
         for question in corpus_questions:
             for repeat in range(config.repeats):
                 if (question.question_id, name, repeat) not in done:
                     yield _WorkItem(strategy, question, repeat)
 
 
-def _cypher_sender(client: ChatClient, config: RunConfig) -> SendChatRequest:
-    """Sends CypherRAG's query-writing call through the run's client (cache, guard and log)."""
+def _sender_factory(client: ChatClient, config: RunConfig) -> Callable[[str], SendChatRequest]:
+    """For a strategy name, a sender for its own LLM calls (query writing, router fallback).
 
-    def send(request: ChatRequest) -> ChatResponse:
-        # retrieval sees only the question text, so the call is logged without a question id
-        return client.complete(request, run_id=config.run_id, strategy=CypherRag.name)
+    They go through the run's client, so the cache, the paid-call guard and the log all apply.
+    """
 
-    return send
+    def sender_for(strategy_name: str) -> SendChatRequest:
+        def send(request: ChatRequest) -> ChatResponse:
+            # retrieval sees only the question text, so the call is logged without a question id
+            return client.complete(request, run_id=config.run_id, strategy=strategy_name)
+
+        return send
+
+    return sender_for
 
 
 def _attempt(

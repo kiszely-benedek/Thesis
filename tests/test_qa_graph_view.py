@@ -23,6 +23,7 @@ from plantgraph.benchmark.split_models import SplitConfig
 from plantgraph.benchmark.splitter import split
 from plantgraph.graph import schema
 from plantgraph.qa.graph_view import ItemRecord, NetworkxGraphView
+from plantgraph.qa.scoring import normalize_scalar
 from plantgraph.qa.serialize import serialize_occurrence_graph
 from plantgraph.resolution.localize import localize
 from plantgraph.resolution.models import Resolution, ResolutionReport
@@ -191,6 +192,47 @@ def test_find_by_tag_is_case_and_whitespace_insensitive() -> None:
     known_tag = next(item.tag for item in view.items() if item.tag is not None)
 
     assert view.find_by_tag(known_tag) == view.find_by_tag(f"  {known_tag.lower()}  ")
+
+
+def _scan_for_tag(view: NetworkxGraphView, tag: str) -> list[ItemRecord]:
+    """What `find_by_tag` returned before it had an index: a scan of every occurrence."""
+    wanted = normalize_scalar(tag)
+    matches = []
+    for item in view.items():
+        if item.node_class in schema.CONNECTOR_CLASSES:
+            continue
+        names = [name for name in (item.tag, item.piping_component_name) if name is not None]
+        if any(normalize_scalar(name) == wanted for name in names):
+            matches.append(item)
+    return matches
+
+
+@pytest.mark.parametrize("corpus", ["generated", "ex01"])
+def test_indexed_tag_lookup_equals_the_full_scan(corpus: str) -> None:
+    sheets, resolution = _four_unit_corpus(0.25) if corpus == "generated" else _ex01_corpus()
+    view = NetworkxGraphView(_CORPUS_ID, sheets, resolution)
+    printed_names = {
+        name
+        for item in view.items()
+        for name in (item.tag, item.piping_component_name)
+        if name is not None
+    }
+    # every real name spelled three ways, plus names that do not exist
+    asked = [spelling for name in printed_names for spelling in (name, name.lower(), f" {name} ")]
+    asked += ["", "NO-SUCH-TAG", "P 1"]
+
+    assert printed_names
+    for tag in asked:
+        assert view.find_by_tag(tag) == _scan_for_tag(view, tag), tag
+
+
+def test_a_tag_drawn_on_several_sheets_is_found_on_all_of_them() -> None:
+    sheets, resolution = _four_unit_corpus(0.25)
+    view = NetworkxGraphView(_CORPUS_ID, sheets, resolution)
+    repeated = [group.tag for group in resolution.identity_groups if group.references]
+
+    assert repeated, "the 0.25 duplication corpus must repeat some item"
+    assert len(view.find_by_tag(repeated[0])) >= 2
 
 
 def test_find_by_tag_matches_ex01_valve_by_piping_component_name() -> None:

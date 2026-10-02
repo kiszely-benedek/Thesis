@@ -21,6 +21,10 @@ _CHECKED_FILES = (
     _QA_DIR / "serialize.py",
     _QA_DIR / "anchors.py",
     _QA_DIR / "routing.py",
+    _QA_DIR / "sheet_selection.py",
+    _QA_DIR / "context_budget.py",
+    _QA_DIR / "unit_router.py",
+    _QA_DIR / "strategies" / "hierarchical.py",
 )
 _BANNED_MODULES = (
     "plantgraph.qa.corpus",

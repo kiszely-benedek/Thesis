@@ -30,6 +30,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from collections.abc import Iterable, Mapping, Sequence
+from dataclasses import dataclass
 from typing import Any, Protocol
 
 import networkx as nx
@@ -159,6 +160,8 @@ class NetworkxGraphView:
         self._graph = _build_occurrence_graph(localized_sheets, resolution)
         self._sheet_ids = sorted({sheet.sheet_id for sheet in localized_sheets})
         self._sheet_adjacency = _sheet_adjacency(resolution)
+        # Built on the first lookup, not here: a run that never looks up a tag pays nothing.
+        self._lookup: _LookupIndex | None = None
 
     def corpus_id(self) -> str:
         """Which corpus this view was built for."""
@@ -191,34 +194,21 @@ class NetworkxGraphView:
         place (`connectors.py`'s stubs set `connector_number` instead) — the
         check is still explicit here, since the design calls it out (§5).
         """
-        wanted = normalize_scalar(tag)
-        matches = [
-            _item_record(local_key, attrs)
-            for local_key, attrs in self._graph.nodes(data=True)
-            if attrs.get("node_class") not in schema.CONNECTOR_CLASSES
-            and _matches_tag(attrs, wanted)
-        ]
-        return sorted(matches, key=lambda item: item.local_key)
+        keys = self._lookup_index().keys_by_tag.get(normalize_scalar(tag), ())
+        return [_item_record(key, self._graph.nodes[key]) for key in sorted(keys)]
 
     def unit_ids(self) -> list[str]:
         """Every unit id an occurrence carries, sorted."""
-        return sorted(
-            {
-                attrs["unit_id"]
-                for _, attrs in self._graph.nodes(data=True)
-                if isinstance(attrs.get("unit_id"), str)
-            }
-        )
+        return sorted(self._lookup_index().sheets_by_unit)
 
     def sheets_of_unit(self, unit_id: str) -> list[str]:
         """The sheets showing an occurrence with this `unit_id` (§2.1: there are no unit nodes)."""
-        return sorted(
-            {
-                attrs["sheet_id"]
-                for _, attrs in self._graph.nodes(data=True)
-                if attrs.get("unit_id") == unit_id
-            }
-        )
+        return sorted(self._lookup_index().sheets_by_unit.get(unit_id, ()))
+
+    def _lookup_index(self) -> _LookupIndex:
+        if self._lookup is None:
+            self._lookup = _build_lookup_index(self._graph)
+        return self._lookup
 
     def sheet_neighbours(self, sheet_id: str) -> list[str]:
         """Sheets reachable by one `continues_as` hop, in either direction (symmetric)."""
@@ -291,12 +281,35 @@ def _sheet_adjacency(resolution: Resolution) -> dict[str, set[str]]:
     return adjacency
 
 
-def _matches_tag(attrs: Mapping[str, Any], normalized_tag: str) -> bool:
-    for key in ("tag", "piping_component_name"):
-        value = attrs.get(key)
-        if isinstance(value, str) and normalize_scalar(value) == normalized_tag:
-            return True
-    return False
+@dataclass
+class _LookupIndex:
+    """What a question's anchor lookup needs, built in one pass over the nodes.
+
+    Anchor extraction asks `find_by_tag` for every token and token pair of a
+    question; scanning all nodes each time cost ~1 s per question at 1,000
+    sheets (H-T1 measurement), so the answers are tabulated once instead.
+    """
+
+    #: Normalized tag or printed name -> local keys of the matching non-stub occurrences.
+    keys_by_tag: dict[str, set[str]]
+    #: Unit id -> the sheets showing an occurrence of that unit.
+    sheets_by_unit: dict[str, set[str]]
+
+
+def _build_lookup_index(graph: nx.DiGraph[str]) -> _LookupIndex:
+    keys_by_tag: dict[str, set[str]] = defaultdict(set)
+    sheets_by_unit: dict[str, set[str]] = defaultdict(set)
+    for local_key, attrs in graph.nodes(data=True):
+        unit_id = attrs.get("unit_id")
+        if isinstance(unit_id, str):
+            sheets_by_unit[unit_id].add(attrs["sheet_id"])
+        if attrs.get("node_class") in schema.CONNECTOR_CLASSES:
+            continue  # stubs are a drawing artefact, never a tag match (design §5)
+        for property_name in ("tag", "piping_component_name"):
+            value = attrs.get(property_name)
+            if isinstance(value, str):
+                keys_by_tag[normalize_scalar(value)].add(local_key)
+    return _LookupIndex(keys_by_tag=dict(keys_by_tag), sheets_by_unit=dict(sheets_by_unit))
 
 
 def _item_record(local_key: str, attrs: Mapping[str, Any]) -> ItemRecord:

@@ -1,0 +1,8 @@
+You are helping to find the right part of a large plant's piping and instrumentation diagram (P&ID) — the engineering drawing that shows a plant's pipes, equipment and instruments. The plant is divided into units, each a group of equipment operated together. The question below names no equipment tag, so the units that hold the answer must be chosen from this plant map, one line per unit with the equipment tags it contains:
+
+<<PLANT_MAP>>
+
+Question:
+<<QUESTION>>
+
+Reply with a JSON object listing the ids of the units whose drawings are needed to answer the question, for example {"units": ["7", "12"]}. Use only unit ids that appear in the plant map. Reply with the JSON object only — no explanation and no markdown fence.
