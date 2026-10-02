@@ -1,0 +1,109 @@
+"""`python -m plantgraph.qa.harness` -- start, resume or replay a run.
+
+**Paid calls are off unless `--allow-paid-calls` is typed.** Without it the
+run reads only the LLM cache and stops at the first cache miss, whatever keys
+are set in the environment (`qa-system.md` §6). A run is frozen
+(`run_config.json`) before its first call; running the same `--run-id` again
+resumes it.
+"""
+
+from __future__ import annotations
+
+import argparse
+import sys
+from datetime import UTC, datetime
+from pathlib import Path
+
+from plantgraph.llm.cache import DEFAULT_CACHE_PATH
+from plantgraph.llm.models import CacheMiss, ContextWall, ModelPin
+from plantgraph.qa.harness.freeze import prompt_hashes, question_set_sha256, read_git_state
+from plantgraph.qa.harness.question_set import questions_path
+from plantgraph.qa.harness.runner import run_harness
+from plantgraph.qa.models import RunConfig
+
+_REPO_ROOT = Path(__file__).resolve().parents[4]
+_DEFAULT_RUNS_ROOT = Path("data") / "runs"
+_DEFAULT_CORPORA_ROOT = Path("data") / "corpora"
+_DEFAULT_QUESTIONS_ROOT = Path("data") / "questions"
+
+
+def _parse_args(argv: list[str] | None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(prog="python -m plantgraph.qa.harness", description=__doc__)
+    parser.add_argument("--run-id", required=True)
+    parser.add_argument("--experiment", required=True, help='e.g. "EXP-0002", or a tooling name')
+    parser.add_argument("--reported", action="store_true", help="the numbers may be cited")
+    parser.add_argument(
+        "--corpus", action="append", required=True, metavar="ID:ROLE", help="ROLE is dev or test"
+    )
+    parser.add_argument("--strategy", action="append", required=True, help="e.g. context_rag")
+    parser.add_argument("--repeats", type=int, default=1)
+    parser.add_argument("--pin-json", required=True, type=Path, help="a ModelPin as JSON")
+    parser.add_argument("--wall-json", type=Path, help="a ContextWall as JSON (pilot output)")
+    parser.add_argument("--corpora-root", type=Path, default=_DEFAULT_CORPORA_ROOT)
+    parser.add_argument("--questions-root", type=Path, default=_DEFAULT_QUESTIONS_ROOT)
+    parser.add_argument("--runs-root", type=Path, default=_DEFAULT_RUNS_ROOT)
+    parser.add_argument("--cache-path", type=Path, default=DEFAULT_CACHE_PATH)
+    parser.add_argument(
+        "--allow-paid-calls", action="store_true", help="permit real, billed model calls"
+    )
+    parser.add_argument(
+        "--cost-per-question-usd", type=float, help="the pilot's estimate, echoed before a paid run"
+    )
+    return parser.parse_args(argv)
+
+
+def _split_corpus_arg(value: str) -> tuple[str, str]:
+    corpus_id, separator, role = value.partition(":")
+    if not separator or not corpus_id or role not in ("dev", "test"):
+        raise SystemExit(f"error: expected --corpus ID:dev or ID:test, found {value!r}")
+    return corpus_id, role
+
+
+def _build_config(args: argparse.Namespace, corpus_ids: list[str]) -> RunConfig:
+    commit, dirty = read_git_state(_REPO_ROOT)
+    files = [questions_path(args.questions_root, corpus_id) for corpus_id in corpus_ids]
+    wall = None
+    if args.wall_json is not None:
+        wall = ContextWall.model_validate_json(args.wall_json.read_text(encoding="utf-8"))
+    return RunConfig(
+        run_id=args.run_id,
+        experiment=args.experiment,
+        reported=args.reported,
+        corpora=corpus_ids,
+        strategies={name: {} for name in args.strategy},
+        answer_pin=ModelPin.model_validate_json(args.pin_json.read_text(encoding="utf-8")),
+        prompt_hashes=prompt_hashes(),
+        question_set_sha256=question_set_sha256(files),
+        context_wall=wall,
+        git_commit=commit,
+        git_dirty=dirty,
+        created_at=datetime.now(UTC),
+        repeats=args.repeats,
+        allow_paid_calls=args.allow_paid_calls,  # only ever from the flag, never the environment
+    )
+
+
+def main(argv: list[str] | None = None) -> None:
+    """Parse argv, run the harness, print the summary as JSON."""
+    args = _parse_args(argv)
+    corpus_roles = dict(_split_corpus_arg(value) for value in args.corpus)
+    config = _build_config(args, list(corpus_roles))
+    try:
+        summary = run_harness(
+            config=config,
+            corpus_roles=corpus_roles,
+            corpora_root=args.corpora_root,
+            questions_root=args.questions_root,
+            runs_root=args.runs_root,
+            cache_path=args.cache_path,
+            cost_per_question_usd=args.cost_per_question_usd,
+        )
+    except CacheMiss as error:
+        print(f"stopped at a cache miss: {error}", file=sys.stderr)
+        print(
+            "rerun with the same --run-id to resume; fill the cache with --allow-paid-calls "
+            "only after approving the spend",
+            file=sys.stderr,
+        )
+        raise SystemExit(2) from error
+    print(summary.model_dump_json(indent=2))

@@ -268,6 +268,9 @@ class RunConfig(BaseModel):
     git_commit: str
     git_dirty: bool
     created_at: datetime
+    #: How many times each (question, strategy) pair is asked; part of the
+    #: freeze because resume and replay must agree on the number of rows.
+    repeats: int = Field(default=1, ge=1)
     #: Set only by an explicit CLI flag the user types, never by an
     #: environment variable (`qa-system.md` §6): a key being present is not permission to spend.
     allow_paid_calls: bool = False
