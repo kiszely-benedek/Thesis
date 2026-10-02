@@ -54,6 +54,10 @@ _FIXED_FORMAT_INSTRUCTIONS: dict[AnswerType, str] = {
     AnswerType.TAG: "Answer with a single tag, exactly as printed on the diagram.",
     AnswerType.TAG_SET: "Answer with a JSON list of tags, one per equipment item or valve.",
     AnswerType.UNIT_SET: "Answer with a JSON list of unit identifiers.",
+    AnswerType.SHEET_SET: (
+        "Answer with a JSON list of sheet ids, exactly as printed on the sheets, "
+        "one entry per sheet."
+    ),
     AnswerType.TAG_PATH: (
         "Answer with a JSON list of tags, in order from the start item to the end item. "
         "List equipment items and valves only, and omit off-page connectors."
@@ -172,7 +176,12 @@ def _validate_answer_shape(answer_type: AnswerType, final_answer: FinalAnswer) -
         return
     answer = final_answer.answer
     scalar_types = (AnswerType.CLASS_NAME, AnswerType.TAG, AnswerType.UNIT_ID, AnswerType.FREE_TEXT)
-    list_types = (AnswerType.TAG_SET, AnswerType.UNIT_SET, AnswerType.TAG_PATH)
+    list_types = (
+        AnswerType.TAG_SET,
+        AnswerType.UNIT_SET,
+        AnswerType.SHEET_SET,
+        AnswerType.TAG_PATH,
+    )
     if answer_type in scalar_types:
         if not isinstance(answer, str):
             raise ValueError(f"{answer_type} needs a string answer, got {answer!r}")

@@ -305,3 +305,21 @@ def test_run_final_step_lets_a_non_overflow_provider_error_propagate() -> None:
             wall=None,
             send=send,
         )
+
+
+def test_render_sheet_set_format_instruction_asks_for_sheet_ids_as_printed() -> None:
+    request = render_final_answer_request(
+        pin=_pin(), context="c", question_text="q", answer_type=AnswerType.SHEET_SET
+    )
+
+    assert "sheet ids, exactly as printed on the sheets" in request.messages[0].content
+
+
+def test_sheet_set_parses_a_list_and_rejects_a_scalar() -> None:
+    parsed = parse_final_answer(
+        '{"answer": ["1", "2"], "not_present": false}', AnswerType.SHEET_SET
+    )
+
+    assert parsed.answer == ["1", "2"]
+    with pytest.raises(FinalAnswerParseError, match="list of strings"):
+        parse_final_answer('{"answer": "1", "not_present": false}', AnswerType.SHEET_SET)

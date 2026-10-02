@@ -37,7 +37,7 @@ from plantgraph.benchmark.split_models import SplitConfig
 from plantgraph.llm.models import ContextWall, ModelPin
 
 #: A value an answer or a reference can take. `list[str]` covers both a
-#: `TAG_SET`/`UNIT_SET` (an unordered collection) and a `TAG_PATH` (an
+#: `TAG_SET`/`UNIT_SET`/`SHEET_SET` (an unordered collection) and a `TAG_PATH` (an
 #: ordered one, since a Python list keeps insertion order — no separate
 #: "path" container is needed).
 AnswerValue = str | int | list[str] | None
@@ -78,6 +78,8 @@ class AnswerType(str, Enum):
     TAG = "TAG"
     TAG_SET = "TAG_SET"
     UNIT_SET = "UNIT_SET"
+    #: Sheet ids as printed on the sheets, for `SHEETS_OF_TAG` (ADR-0028).
+    SHEET_SET = "SHEET_SET"
     TAG_PATH = "TAG_PATH"
     COUNT = "COUNT"
     FREE_TEXT = "FREE_TEXT"

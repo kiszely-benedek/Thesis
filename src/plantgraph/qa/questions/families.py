@@ -1,9 +1,7 @@
 """Every question family implemented so far, collected under one name (design §9).
 
 One place to iterate every family, for the sampler (`sample.py`), the
-availability report and the tests. `SHEETS_OF_TAG` is the one family of the
-design table not built: it needs `duplication_rate > 0`, and the headline
-corpora use 0.0.
+availability report and the tests.
 """
 
 from __future__ import annotations
@@ -27,6 +25,7 @@ from plantgraph.qa.questions.families_flow import (
     flow_path_candidates,
     neighbours_downstream_candidates,
 )
+from plantgraph.qa.questions.families_identity import sheets_of_tag_candidates
 from plantgraph.qa.questions.families_isolation import upstream_isolation_candidates
 from plantgraph.qa.questions.families_lookup import lookup_type_candidates, lookup_unit_candidates
 from plantgraph.qa.questions.families_loop import (
@@ -51,6 +50,7 @@ FAMILY_CANDIDATE_GENERATORS: dict[QuestionFamily, CandidateGenerator] = {
     QuestionFamily.COUNT_IN_UNIT: count_in_unit_candidates,
     QuestionFamily.UNANSWERABLE_TAG: unanswerable_tag_candidates,
     QuestionFamily.NO_PATH: no_path_candidates,
+    QuestionFamily.SHEETS_OF_TAG: sheets_of_tag_candidates,
 }
 
 

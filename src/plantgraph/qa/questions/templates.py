@@ -32,6 +32,11 @@ def upstream_isolation_text(tag: str) -> str:
     return f"To isolate {tag} from all upstream equipment, which valves must be closed?"
 
 
+def sheets_of_tag_text(tag: str) -> str:
+    """The SHEETS_OF_TAG question about `tag`."""
+    return f"On which sheets is {tag} drawn?"
+
+
 def cross_unit_text(unit_id: str) -> str:
     """The CROSS_UNIT question about unit `unit_id`."""
     return f"Which other units receive process flow directly from unit {unit_id}?"

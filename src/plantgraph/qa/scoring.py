@@ -9,7 +9,7 @@ is what lets a run be re-scored later from `answers.jsonl` alone (ADR-0013's
 
 - `CLASS_NAME`, `TAG`, `UNIT_ID`: exact match after normalization.
 - `COUNT`: integer equality; a numeric string counts the same as an int.
-- `TAG_SET`, `UNIT_SET`: correct only for an **exact set match** — the
+- `TAG_SET`, `UNIT_SET`, `SHEET_SET`: correct only for an **exact set match** — the
   precision/recall/F1 numbers are a *lenient* secondary view, reported
   alongside but never substituted for `correct`.
 - `TAG_PATH`: correct if the path (after off-page connectors are stripped
@@ -88,7 +88,7 @@ def score_count(reference: int, answer: int | str) -> bool:
 
 
 class SetScore(BaseModel):
-    """Precision, recall, F1 and exact-match for a `TAG_SET` / `UNIT_SET` answer."""
+    """Precision, recall, F1 and exact-match for a `TAG_SET` / `UNIT_SET` / `SHEET_SET` answer."""
 
     model_config = ConfigDict(frozen=True)
 
@@ -282,7 +282,8 @@ def _score_present_answer(
         return ScoredAnswer(correct=score_unit_id(_as_str(reference), _as_str(answer)), f1=None)
     if answer_type is AnswerType.COUNT:
         return ScoredAnswer(correct=score_count(_as_int(reference), _as_count(answer)), f1=None)
-    if answer_type in (AnswerType.TAG_SET, AnswerType.UNIT_SET):
+    if answer_type in (AnswerType.TAG_SET, AnswerType.UNIT_SET, AnswerType.SHEET_SET):
+        # a sheet id is folded like a tag (case and whitespace); only unit ids lose a label
         normalize: Literal["scalar", "unit_id"] = (
             "unit_id" if answer_type is AnswerType.UNIT_SET else "scalar"
         )

@@ -205,6 +205,10 @@ def test_every_k_is_zero_on_a_single_sheet_corpus() -> None:
     )
 
     for family, questions in candidates.items():
+        if family is QuestionFamily.SHEETS_OF_TAG:
+            # nothing is drawn twice on one sheet, so there is no identity group to ask about
+            assert questions == []
+            continue
         assert questions, f"{family} produced no candidates on the single-sheet corpus"
         # an unanswerable question has no evidence, hence no k at all (design 9)
         expected_k = None if family in _UNANSWERABLE_FAMILIES else 0
@@ -214,7 +218,9 @@ def test_every_k_is_zero_on_a_single_sheet_corpus() -> None:
 def test_candidate_counts_and_k_distribution_on_a_25_unit_corpus() -> None:
     """Measures (not estimates) how many candidates each family yields at a realistic size."""
     corpus = build_synthetic_corpus(
-        GeneratorConfig(n_units=25, seed=0), SplitConfig(sheet_equipment_budget=16, seed=0)
+        GeneratorConfig(n_units=25, seed=0),
+        # duplication on (the headline rate): SHEETS_OF_TAG has candidates only then
+        SplitConfig(sheet_equipment_budget=16, seed=0, duplication_rate=0.25),
     )
 
     candidates = all_candidates(
