@@ -69,3 +69,29 @@ def test_qa_graph_view_and_serialize_never_import_the_answer_key(path: Path) -> 
 
     leaked_names = names & _BANNED_NAMES
     assert not leaked_names, f"{path.name} imports the answer key: {leaked_names}"
+
+
+# The plant API (QAR-T2, `question-aware-retrieval.md` §13) also bans `qa.harness`, where the
+# gold-side API-01 check lives. Every module of the package is checked, found by glob so a new
+# module cannot be added unguarded.
+_PLANT_API_FILES = tuple(sorted((_QA_DIR / "plant_api").glob("*.py")))
+_PLANT_API_BANNED_MODULES = (*_BANNED_MODULES, "plantgraph.qa.harness")
+
+
+def test_the_plant_api_package_is_found_by_the_glob() -> None:
+    assert {path.name for path in _PLANT_API_FILES} >= {"item_graph.py", "primitives.py"}
+
+
+@pytest.mark.parametrize("path", _PLANT_API_FILES, ids=lambda path: path.name)
+def test_plant_api_never_imports_the_answer_key_or_the_harness(path: Path) -> None:
+    tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+    modules, names = _imported_modules_and_names(tree)
+
+    for banned in _PLANT_API_BANNED_MODULES:
+        matching = {
+            module for module in modules if module == banned or module.startswith(f"{banned}.")
+        }
+        assert not matching, f"{path.name} imports banned module(s) {matching}"
+
+    leaked_names = names & _BANNED_NAMES
+    assert not leaked_names, f"{path.name} imports the answer key: {leaked_names}"

@@ -54,6 +54,12 @@ class ToyCorpus:
         self.flow(sheet_b, in_id, node_b)
         self._pairs.append(ConnectorPair(from_key=key(sheet_a, out_id), to_key=key(sheet_b, in_id)))
 
+    def dangling_stub(self, sheet: str, node: str, name: str) -> None:
+        """An outgoing stub after `node` that the resolver found no partner for."""
+        stub_id = f"out_{name}"
+        self._graphs[sheet].add_node(stub_id, node_class=_OUT_STUB)
+        self.flow(sheet, node, stub_id)
+
     def identity(self, tag: str, home: tuple[str, str], references: list[tuple[str, str]]) -> None:
         self._groups.append(
             IdentityGroup(
