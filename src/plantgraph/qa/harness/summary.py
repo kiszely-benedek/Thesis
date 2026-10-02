@@ -43,6 +43,11 @@ class RunSummary(BaseModel):
     routing_metrics_by_k_bin: dict[str, dict[str, dict[str, float]]]
     #: strategy -> rate name -> share of the rows that report the trace key (see `_RATES`).
     trace_rates: dict[str, dict[str, float]]
+    #: strategy -> mean total cost per question (final call plus retrieval-side calls), USD;
+    #: rows with an unreported cost are left out.
+    mean_total_cost_usd: dict[str, float]
+    #: True when the hard spend cap ended the run early; rerun to resume.
+    stopped_by_spend_cap: bool
 
 
 #: Row-trace keys the harness adds, by the metric name used in the summary.
@@ -63,7 +68,12 @@ _RATES: dict[str, tuple[str, Callable[[Any], bool]]] = {
 
 
 def summarize_rows(
-    run_id: str, rows: list[QuestionResult], questions: list[Question], n_new_rows: int
+    run_id: str,
+    rows: list[QuestionResult],
+    questions: list[Question],
+    n_new_rows: int,
+    *,
+    stopped_by_spend_cap: bool = False,
 ) -> RunSummary:
     """Count `rows` by strategy, the k-bin of their question, and outcome."""
     bin_of = {question.question_id: k_bin_of(question).value for question in questions}
@@ -88,7 +98,18 @@ def summarize_rows(
             for metric, key in _ROUTING_METRIC_KEYS.items()
         },
         trace_rates=_trace_rates(rows),
+        mean_total_cost_usd=_mean_total_cost(rows),
+        stopped_by_spend_cap=stopped_by_spend_cap,
     )
+
+
+def _mean_total_cost(rows: list[QuestionResult]) -> dict[str, float]:
+    costs: dict[str, list[float]] = {}
+    for row in rows:
+        total = row.total_cost_usd
+        if total is not None:
+            costs.setdefault(row.strategy, []).append(total)
+    return {strategy: sum(found) / len(found) for strategy, found in costs.items()}
 
 
 def _mean_by_strategy(rows: list[QuestionResult], key: str) -> dict[str, float]:

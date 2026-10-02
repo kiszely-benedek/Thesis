@@ -19,7 +19,13 @@ _PROMPTS_DIR = Path(__file__).resolve().parents[1] / "prompts"
 
 #: `RunConfig` fields that may differ between the original run and a resume or
 #: replay of it: they say when, where and how the run was started, not what it measures.
-_FIELDS_ALLOWED_TO_CHANGE = {"created_at", "git_commit", "git_dirty", "allow_paid_calls"}
+_FIELDS_ALLOWED_TO_CHANGE = {
+    "created_at",
+    "git_commit",
+    "git_dirty",
+    "allow_paid_calls",
+    "max_spend_usd",
+}
 
 
 def prompt_hashes() -> dict[str, str]:

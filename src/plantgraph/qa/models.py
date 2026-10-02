@@ -176,6 +176,29 @@ class RetrievalResult(BaseModel):
     trace: dict[str, Any] = Field(default_factory=dict)
 
 
+class CallUsage(BaseModel):
+    """What the retrieval-side model calls of one question used (CypherRAG's query, a router).
+
+    The final call is not in here: it stays in `QuestionResult`'s own fields.
+    """
+
+    model_config = ConfigDict(frozen=True)
+
+    n_calls: int = 0
+    prompt_tokens: int = 0
+    completion_tokens: int = 0
+    #: Sum as billed when each call was first made (the cache keeps it); `None` if one lacked it.
+    cost_usd: float | None = 0.0
+    n_cost_missing: int = 0
+    #: Sum of the recorded call latencies.
+    llm_latency_s: float = 0.0
+    #: The next two differ between a live run and its replay, so they are kept out of
+    #: `answers.jsonl` (replay must stay byte-identical); `timings.jsonl` carries them.
+    n_cached: int = Field(default=0, exclude=True)
+    #: Cost of the calls not served from the cache in this invocation.
+    spent_usd: float = Field(default=0.0, exclude=True)
+
+
 class QuestionResult(BaseModel):
     """One scored row of a run's `answers.jsonl`: one strategy's answer to one question, once."""
 
@@ -205,6 +228,34 @@ class QuestionResult(BaseModel):
     #: did-not-fit and context-wall analysis.
     context_chars: int
     trace: dict[str, Any] = Field(default_factory=dict)
+    #: The retrieval-side calls (query writing, routing); `None` for a row that never measured them.
+    retrieval_usage: CallUsage | None = None
+
+    @property
+    def total_cost_usd(self) -> float | None:
+        """Final call plus every retrieval-side call; `None` if a retrieval call lacked a cost.
+
+        A final cost of `None` counts as 0: it is `None` mostly because no final call was made.
+        """
+        if self.retrieval_usage is None:
+            return self.cost_usd
+        if self.retrieval_usage.cost_usd is None:
+            return None
+        return (self.cost_usd or 0.0) + self.retrieval_usage.cost_usd
+
+    @property
+    def total_tokens(self) -> int:
+        """Prompt plus completion tokens of the final call and the retrieval-side calls."""
+        extra = self.retrieval_usage
+        retrieval = extra.prompt_tokens + extra.completion_tokens if extra else 0
+        return self.prompt_tokens + self.completion_tokens + retrieval
+
+    @property
+    def total_llm_latency_s(self) -> float:
+        """Recorded latency of the final call plus the retrieval-side calls."""
+        return self.latency_s + (
+            self.retrieval_usage.llm_latency_s if self.retrieval_usage else 0.0
+        )
 
 
 class CorpusRecord(BaseModel):
@@ -274,3 +325,7 @@ class RunConfig(BaseModel):
     #: Set only by an explicit CLI flag the user types, never by an
     #: environment variable (`qa-system.md` §6): a key being present is not permission to spend.
     allow_paid_calls: bool = False
+    #: Hard spend cap in USD for a paid run (required with `allow_paid_calls`). The
+    #: harness stops before a question that could push the run's cost over it. Like
+    #: `allow_paid_calls` it is this invocation's setting, so a resume may raise it.
+    max_spend_usd: float | None = Field(default=None, gt=0)

@@ -84,6 +84,8 @@ def make_config(toy: Toy, **overrides: Any) -> RunConfig:
         "repeats": 1,
         "allow_paid_calls": False,
     }
+    if overrides.get("allow_paid_calls"):
+        fields["max_spend_usd"] = 100.0  # a paid run needs a cap; generous so it never binds
     fields.update(overrides)
     return RunConfig.model_validate(fields)
 

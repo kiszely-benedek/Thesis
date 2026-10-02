@@ -56,6 +56,11 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument(
         "--cost-per-question-usd", type=float, help="the pilot's estimate, echoed before a paid run"
     )
+    parser.add_argument(
+        "--max-spend-usd",
+        type=float,
+        help="hard spend cap in USD; required with --allow-paid-calls, recorded in the run config",
+    )
     return parser.parse_args(argv)
 
 
@@ -107,12 +112,15 @@ def _build_config(args: argparse.Namespace, corpus_ids: list[str]) -> RunConfig:
         created_at=datetime.now(UTC),
         repeats=args.repeats,
         allow_paid_calls=args.allow_paid_calls,  # only ever from the flag, never the environment
+        max_spend_usd=args.max_spend_usd,
     )
 
 
 def main(argv: list[str] | None = None) -> None:
     """Parse argv, run the harness, print the summary as JSON."""
     args = _parse_args(argv)
+    if args.allow_paid_calls and args.max_spend_usd is None:
+        raise SystemExit("error: --allow-paid-calls needs --max-spend-usd (a hard spend cap)")
     corpus_roles = dict(_split_corpus_arg(value) for value in args.corpus)
     config = _build_config(args, list(corpus_roles))
     try:
@@ -134,3 +142,6 @@ def main(argv: list[str] | None = None) -> None:
         )
         raise SystemExit(2) from error
     print(summary.model_dump_json(indent=2))
+    if summary.stopped_by_spend_cap:
+        print("stopped by the spend cap; rerun with the same --run-id to resume", file=sys.stderr)
+        raise SystemExit(3)

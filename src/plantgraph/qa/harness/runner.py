@@ -17,46 +17,34 @@ from pathlib import Path
 import httpx2
 
 from plantgraph.llm.client import ChatClient
-from plantgraph.llm.models import ChatRequest, ChatResponse, ProviderError
+from plantgraph.llm.models import ProviderError
 from plantgraph.qa.corpus import load_corpus_artifacts
-from plantgraph.qa.cypher import CypherSource
 from plantgraph.qa.final_answer import SendChatRequest
 from plantgraph.qa.graph_view import NetworkxGraphView
+from plantgraph.qa.harness.attempt import (
+    Answered,
+    LoadedCorpus,
+    WorkItem,
+    attempt,
+    provider_error_row,
+    sender_factory,
+)
 from plantgraph.qa.harness.clients import build_chat_client
 from plantgraph.qa.harness.corpus_record import build_corpus_record
 from plantgraph.qa.harness.cypher_setup import CypherSourceFactory, open_checked_neo4j_view
 from plantgraph.qa.harness.freeze import check_reportable, prompt_hashes, question_set_sha256
-from plantgraph.qa.harness.gold import GoldScoring, build_gold_scoring
+from plantgraph.qa.harness.gold import build_gold_scoring
 from plantgraph.qa.harness.question_set import load_questions, questions_path
 from plantgraph.qa.harness.registry import CypherDeps, LlmDeps, build_strategy
-from plantgraph.qa.harness.routing_gold import RoutingGold, add_routing_metrics, build_routing_gold
+from plantgraph.qa.harness.routing_gold import build_routing_gold
 from plantgraph.qa.harness.run_dir import RowKey, RunDir, row_key
+from plantgraph.qa.harness.spend_cap import SpendCapReached, SpendGuard
 from plantgraph.qa.harness.summary import RunSummary, summarize_rows
-from plantgraph.qa.models import CorpusRecord, Outcome, Question, QuestionResult, RunConfig
-from plantgraph.qa.scoring import score_answer
-from plantgraph.qa.strategies.base import Strategy, answer_question
+from plantgraph.qa.harness.usage_meter import UsageMeter
+from plantgraph.qa.models import Question, QuestionResult, RunConfig
 from plantgraph.qa.strategies.cypher_rag import CypherRag
 
 ProgressSink = Callable[[str], None]
-
-
-@dataclass(frozen=True)
-class _Corpus:
-    """One corpus's view for the strategies and its gold scoring inputs for the harness."""
-
-    view: NetworkxGraphView
-    gold: GoldScoring
-    routing_gold: RoutingGold
-    record: CorpusRecord
-    #: The checked database for CypherRAG; `None` when the run does not include it.
-    cypher: CypherSource | None
-
-
-@dataclass(frozen=True)
-class _WorkItem:
-    strategy: Strategy
-    question: Question
-    repeat: int
 
 
 def run_harness(
@@ -95,6 +83,7 @@ def run_harness(
         CacheMiss: a replay run needs a response the cache does not hold.
     """
     check_reportable(config)  # before anything is read or written
+    _require_cap_for_paid_run(config)
     questions = _load_all_questions(config, questions_root)
     _check_inputs_match_config(config, questions_root)
     corpora = _load_corpora(config, corpus_roles, corpora_root, cypher_source_factory)
@@ -102,6 +91,7 @@ def run_harness(
     # The guard is this invocation's flag, never a stored one: a run started
     # with --allow-paid-calls and resumed without it must not call out.
     allow_paid_calls = config.allow_paid_calls
+    max_spend_usd = config.max_spend_usd  # likewise: a resume may raise the cap
     config = run_dir.freeze(config)  # from here on, nothing may change the config
     run_dir.write_corpus_records([corpus.record for corpus in corpora.values()])
 
@@ -113,20 +103,33 @@ def run_harness(
         http_client=http_client,
     )
     try:
-        n_new_rows = _fill_answers(
+        n_new_rows, stopped_by_cap = _fill_answers(
             config,
-            allow_paid_calls,
+            _Invocation(allow_paid_calls, max_spend_usd, cost_per_question_usd),
             questions,
             corpora,
             run_dir,
             client,
-            cost_per_question_usd,
             progress,
         )
     finally:
         cache.close()
         _close_cypher_sources(corpora)
-    return summarize_rows(config.run_id, run_dir.read_rows(), questions, n_new_rows)
+    return summarize_rows(
+        config.run_id,
+        run_dir.read_rows(),
+        questions,
+        n_new_rows,
+        stopped_by_spend_cap=stopped_by_cap,
+    )
+
+
+def _require_cap_for_paid_run(config: RunConfig) -> None:
+    if config.allow_paid_calls and config.max_spend_usd is None:
+        raise ValueError(
+            "expected --max-spend-usd together with --allow-paid-calls (a paid run needs a "
+            "hard spend cap); found none, so nothing was started"
+        )
 
 
 def _load_all_questions(config: RunConfig, questions_root: Path) -> list[Question]:
@@ -153,9 +156,9 @@ def _load_corpora(
     corpus_roles: dict[str, str],
     corpora_root: Path,
     cypher_source_factory: CypherSourceFactory,
-) -> dict[str, _Corpus]:
+) -> dict[str, LoadedCorpus]:
     """Rebuild each corpus once: the view for strategies, gold for scoring, its record."""
-    corpora: dict[str, _Corpus] = {}
+    corpora: dict[str, LoadedCorpus] = {}
     try:
         for corpus_id in config.corpora:
             corpora[corpus_id] = _load_corpus(
@@ -173,7 +176,7 @@ def _load_corpus(
     corpus_roles: dict[str, str],
     corpora_root: Path,
     cypher_source_factory: CypherSourceFactory,
-) -> _Corpus:
+) -> LoadedCorpus:
     ingest_path = corpora_root / corpus_id / "ingest.json"
     artifacts = load_corpus_artifacts(corpus_id, ingest_path)
     plant = artifacts.gold.plant
@@ -185,7 +188,7 @@ def _load_corpus(
     view = NetworkxGraphView(corpus_id, artifacts.localized_sheets, artifacts.resolution)
     # the pre-check: opened and verified here, before the run is frozen or any call is made
     wants_cypher = CypherRag.name in config.strategies
-    return _Corpus(
+    return LoadedCorpus(
         view=view,
         gold=build_gold_scoring(plant, view),
         routing_gold=build_routing_gold(
@@ -196,26 +199,41 @@ def _load_corpus(
     )
 
 
-def _close_cypher_sources(corpora: dict[str, _Corpus]) -> None:
+def _close_cypher_sources(corpora: dict[str, LoadedCorpus]) -> None:
     for corpus in corpora.values():
         if corpus.cypher is not None:
             corpus.cypher.close()
 
 
+@dataclass(frozen=True)
+class _Invocation:
+    """Settings of this call that a resume may change; the frozen config does not decide them."""
+
+    allow_paid_calls: bool
+    max_spend_usd: float | None
+    cost_per_question_usd: float | None
+
+
 def _fill_answers(
     config: RunConfig,
-    allow_paid_calls: bool,
+    invocation: _Invocation,
     questions: list[Question],
-    corpora: dict[str, _Corpus],
+    corpora: dict[str, LoadedCorpus],
     run_dir: RunDir,
     client: ChatClient,
-    cost_per_question_usd: float | None,
     progress: ProgressSink,
-) -> int:
-    """Answer every row not yet on disk; return how many rows this call wrote."""
+) -> tuple[int, bool]:
+    """Answer every row not yet on disk.
+
+    Returns:
+        How many rows this call wrote, and whether the spend cap stopped it early.
+    """
     dropped = run_dir.drop_provider_error_rows()
-    done = {row_key(row) for row in run_dir.read_rows()}
-    sender_for = _sender_factory(client, config)
+    rows_on_disk = run_dir.read_rows()
+    done = {row_key(row) for row in rows_on_disk}
+    guard = _spend_guard(invocation, rows_on_disk)
+    meter = UsageMeter(guard)
+    sender_for = sender_factory(client, config, meter)
     items = {
         corpus_id: list(
             _work_items(config, corpus_id, questions, corpora[corpus_id], done, sender_for)
@@ -226,40 +244,61 @@ def _fill_answers(
     progress(f"run {config.run_id}: {n_pending} rows to answer, {len(done)} already on disk")
     if dropped:
         progress(f"re-queued {dropped} rows that ended in PROVIDER_ERROR last time")
-    _announce_mode(allow_paid_calls, n_pending, cost_per_question_usd, progress)
+    _announce_mode(invocation, n_pending, progress)
 
     written = 0
-    retry_later: list[tuple[str, _WorkItem]] = []
-    for corpus_id, corpus_items in items.items():
-        for item in corpus_items:
-            outcome = _attempt(item, config, corpora[corpus_id], client)
+    retry_later: list[tuple[str, WorkItem]] = []
+    try:
+        for corpus_id, corpus_items in items.items():
+            for item in corpus_items:
+                guard.check_before_question()
+                outcome = attempt(item, config, corpora[corpus_id], client, meter)
+                if isinstance(outcome, ProviderError):
+                    retry_later.append((corpus_id, item))
+                    continue
+                _record(run_dir, guard, outcome)
+                written += 1
+        for corpus_id, item in retry_later:  # one more try each, then record the error
+            guard.check_before_question()
+            outcome = attempt(item, config, corpora[corpus_id], client, meter)
             if isinstance(outcome, ProviderError):
-                retry_later.append((corpus_id, item))
-                continue
-            run_dir.append_row(outcome)
+                run_dir.append_row(provider_error_row(item, config, outcome))
+            else:
+                _record(run_dir, guard, outcome)
             written += 1
-    for corpus_id, item in retry_later:  # one more try each, then record the error
-        outcome = _attempt(item, config, corpora[corpus_id], client)
-        run_dir.append_row(
-            _provider_error_row(item, config, outcome)
-            if isinstance(outcome, ProviderError)
-            else outcome
-        )
-        written += 1
-    return written
+    except SpendCapReached as stop:
+        # rows are appended whole and the cache keeps this question's calls, so a resume is clean
+        progress(f"STOPPED by the spend cap: {stop}. Rerun with the same --run-id to resume.")
+        return written, True
+    return written, False
 
 
-def _announce_mode(
-    allow_paid_calls: bool,
-    n_pending: int,
-    cost_per_question_usd: float | None,
-    progress: ProgressSink,
-) -> None:
+def _spend_guard(invocation: _Invocation, rows_on_disk: list[QuestionResult]) -> SpendGuard:
+    """Seed the guard with what earlier invocations recorded as their total cost."""
+    totals = [row.total_cost_usd or 0.0 for row in rows_on_disk]
+    return SpendGuard(
+        invocation.max_spend_usd if invocation.allow_paid_calls else None,
+        recorded_usd=sum(totals),
+        max_question_usd=max(totals, default=0.0),
+        estimate_usd=invocation.cost_per_question_usd,
+    )
+
+
+def _record(run_dir: RunDir, guard: SpendGuard, answered: Answered) -> None:
+    run_dir.append_row(answered.row)
+    run_dir.append_timing(answered.timing)
+    guard.end_question(answered.timing.spent_usd)
+
+
+def _announce_mode(invocation: _Invocation, n_pending: int, progress: ProgressSink) -> None:
     """Say before the first call whether this run can spend money, and roughly how much."""
-    if not allow_paid_calls:
+    if not invocation.allow_paid_calls:
         progress("replay mode: cache only, no network; stops at the first cache miss")
         return
-    progress(f"paid mode: up to {n_pending} model calls")
+    progress(
+        f"paid mode: up to {n_pending} model calls; hard spend cap {invocation.max_spend_usd} USD"
+    )
+    cost_per_question_usd = invocation.cost_per_question_usd
     if cost_per_question_usd is None:
         progress("no cost-per-question estimate given (the pilot has not provided one)")
     else:
@@ -270,10 +309,10 @@ def _work_items(
     config: RunConfig,
     corpus_id: str,
     questions: list[Question],
-    corpus: _Corpus,
+    corpus: LoadedCorpus,
     done: set[RowKey],
     sender_for: Callable[[str], SendChatRequest],
-) -> Iterator[_WorkItem]:
+) -> Iterator[WorkItem]:
     """Strategy, then question, then repeat, skipping rows already on disk."""
     corpus_questions = [q for q in questions if q.corpus_id == corpus_id]
     cypher = (
@@ -287,91 +326,4 @@ def _work_items(
         for question in corpus_questions:
             for repeat in range(config.repeats):
                 if (question.question_id, name, repeat) not in done:
-                    yield _WorkItem(strategy, question, repeat)
-
-
-def _sender_factory(client: ChatClient, config: RunConfig) -> Callable[[str], SendChatRequest]:
-    """For a strategy name, a sender for its own LLM calls (query writing, router fallback).
-
-    They go through the run's client, so the cache, the paid-call guard and the log all apply.
-    """
-
-    def sender_for(strategy_name: str) -> SendChatRequest:
-        def send(request: ChatRequest) -> ChatResponse:
-            # retrieval sees only the question text, so the call is logged without a question id
-            return client.complete(request, run_id=config.run_id, strategy=strategy_name)
-
-        return send
-
-    return sender_for
-
-
-def _attempt(
-    item: _WorkItem, config: RunConfig, corpus: _Corpus, client: ChatClient
-) -> QuestionResult | ProviderError:
-    """Answer one item; a provider error that outlived the transport retries is returned."""
-
-    def send(request: ChatRequest) -> ChatResponse:
-        return client.complete(
-            request,
-            run_id=config.run_id,
-            question_id=item.question.question_id,
-            strategy=item.strategy.name,
-        )
-
-    try:
-        step = answer_question(
-            item.strategy,
-            item.question,
-            pin=config.answer_pin,
-            wall=config.context_wall,
-            send=send,
-        )
-    except ProviderError as error:
-        return error
-    scored = score_answer(
-        item.question,
-        step.outcome,
-        step.final_answer,
-        connector_tags=corpus.gold.connector_tags,
-        valid_edges=corpus.gold.valid_edges,
-    )
-    trace = dict(step.trace)
-    add_routing_metrics(trace, item.question, corpus.routing_gold)
-    response = step.response
-    return QuestionResult(
-        run_id=config.run_id,
-        question_id=item.question.question_id,
-        strategy=item.strategy.name,
-        repeat=item.repeat,
-        outcome=step.outcome,
-        final_answer=step.final_answer,
-        correct=scored.correct,
-        f1=scored.f1,
-        prompt_tokens=response.prompt_tokens if response else 0,
-        completion_tokens=response.completion_tokens if response else 0,
-        cost_usd=response.cost_usd if response else None,
-        latency_s=response.latency_s if response else 0.0,
-        # 0 when retrieval failed before any prompt was built
-        context_chars=int(trace.get("prompt_chars", 0)),
-        trace=trace,
-    )
-
-
-def _provider_error_row(item: _WorkItem, config: RunConfig, error: ProviderError) -> QuestionResult:
-    return QuestionResult(
-        run_id=config.run_id,
-        question_id=item.question.question_id,
-        strategy=item.strategy.name,
-        repeat=item.repeat,
-        outcome=Outcome.PROVIDER_ERROR,
-        final_answer=None,
-        correct=False,
-        f1=None,
-        prompt_tokens=0,
-        completion_tokens=0,
-        cost_usd=None,
-        latency_s=0.0,
-        context_chars=0,
-        trace={"provider_error": str(error)},
-    )
+                    yield WorkItem(strategy, question, repeat)
