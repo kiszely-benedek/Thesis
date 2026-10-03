@@ -154,7 +154,7 @@ def test_every_relationship_is_covered_exactly_once(corpus_factory) -> None:  # 
 
 
 def _expected_occurrence_labels(attrs: dict[str, object]) -> tuple[str, ...]:
-    """Reimplemented independently of `neo4j_rows._occurrence_labels`, from the design rule."""
+    """Reimplemented independently of `neo4j_rows.occurrence_labels`, from the design rule."""
     node_class = attrs["node_class"]
     assert isinstance(node_class, str)
     if node_class == schema.NodeClass.GENERIC_ITEM.value:

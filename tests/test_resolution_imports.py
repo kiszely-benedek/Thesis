@@ -1,4 +1,6 @@
-"""AST-based guard: the resolver must never read the answer key (design `kg-construction.md` §5.7).
+"""AST-based guard: the resolver, and the plant rows built from it, must never read the answer key.
+
+Design `kg-construction.md` §5.7.
 
 `resolve()` must stay blind to the splitter and to OPEN100 — if any
 `plantgraph.resolution` module imported `SplitManifest`, `OccurrenceMap` from
@@ -18,6 +20,8 @@ from pathlib import Path
 import pytest
 
 _RESOLUTION_DIR = Path(__file__).resolve().parent.parent / "src" / "plantgraph" / "resolution"
+#: the plant layer's rows are built from a `Resolution` alone, so they carry the same ban (ADR-0036)
+_PLANT_ROWS_FILE = _RESOLUTION_DIR.parent / "store" / "plant_rows.py"
 _BANNED_MODULES = (
     "plantgraph.benchmark.splitter",
     "plantgraph.benchmark.rejoin",
@@ -28,7 +32,7 @@ _BANNED_NAMES = frozenset({"SplitManifest", "OccurrenceMap"})
 
 
 def _module_files() -> list[Path]:
-    return sorted(_RESOLUTION_DIR.glob("*.py"))
+    return [*sorted(_RESOLUTION_DIR.glob("*.py")), _PLANT_ROWS_FILE]
 
 
 def _imported_modules_and_names(tree: ast.Module) -> tuple[set[str], set[str]]:

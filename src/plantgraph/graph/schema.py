@@ -78,7 +78,7 @@ class NodeClass(str, Enum):
 
 
 class Relation(str, Enum):
-    """Every edge type in the schema: 4 topology relations and 5 structural relations (§4.3)."""
+    """Every edge type in the schema: topology, the `related_to` fallback, and structural."""
 
     SEND_TO = "send_to"
     SEND_SIGNAL_TO = "send_signal_to"
@@ -92,6 +92,9 @@ class Relation(str, Enum):
     #: a `GenericItem` fallback's edge relation, for a pyDEXPI edge label the schema does not
     #: curate — kept, never dropped (ADR-0016)
     RELATED_TO = "related_to"
+    #: merged plant item -> each drawn occurrence of it; only in the store's plant layer
+    #: (ADR-0036), structural, so it can never appear in a sheet
+    DRAWN_AS = "drawn_as"
 
 
 class ClassSpec(BaseModel):
@@ -315,6 +318,14 @@ VISIBLE_NODE_PROPERTIES: frozenset[str] = frozenset(
 VISIBLE_EDGE_PROPERTIES: frozenset[str] = frozenset(
     {"relation", "line_number", "fluid_code", "dexpi_label"}
 )
+
+
+#: extra Neo4j label on every merged plant item (ADR-0036); no `NodeClass`, so no validator changes
+PLANT_ITEM_LABEL = "PlantItem"
+#: label of a line end whose continuation was never found; equals `plant_api.model`'s class name
+UNRESOLVED_CONNECTOR_LABEL = "UnresolvedOffPageConnector"
+#: relationship properties only the plant layer adds, and the model may see
+PLANT_EDGE_PROVENANCE_PROPERTIES: frozenset[str] = frozenset({"crossed_sheets"})
 
 
 def labels_for(node_class: str) -> tuple[str, ...]:

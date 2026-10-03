@@ -6,6 +6,8 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict
 
+from plantgraph.graph.schema import UNRESOLVED_CONNECTOR_LABEL
+
 #: The four topology relations an item edge can carry (`graph.schema.Relation`).
 ItemRelation = Literal["send_to", "send_signal_to", "control", "measured_by"]
 #: Which relations a primitive follows: material flow, instrument signals, or both.
@@ -21,7 +23,7 @@ RELATION_GROUPS: dict[RelationGroup, frozenset[str]] = {
 }
 
 #: `node_class` of an off-page connector whose partner the resolver did not find.
-UNRESOLVED_CONNECTOR_CLASS = "UnresolvedOffPageConnector"
+UNRESOLVED_CONNECTOR_CLASS = UNRESOLVED_CONNECTOR_LABEL
 
 
 class PlantApiError(ValueError):

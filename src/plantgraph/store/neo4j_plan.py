@@ -23,7 +23,8 @@ Design decision D2 (§7.1) is to store the **occurrence graph**: every node of
 every sheet, stubs included, plus the resolver's cross-sheet links — not a
 single collapsed plant graph. This keeps the store lossless with respect to
 what was actually drawn, at the cost of the resolver having to be re-applied
-by any retrieval strategy that wants a merged view.
+by any retrieval strategy that wants a merged view. ADR-0036 adds the merged
+view to the store as a second layer (`plant_rows.py`), loaded by `profile`.
 
 Decision D3 (§7.3) is `UNWIND`-batched writes: one `CREATE` per distinct
 Neo4j label combination (a "label set") and one per relationship type, each
@@ -55,6 +56,14 @@ from plantgraph.store.neo4j_rows import (
     all_relationship_rows,
     check_unique_uids,
 )
+from plantgraph.store.plant_rows import (
+    StoreProfile,
+    drawn_as_rows,
+    plant_node_rows,
+    plant_relationship_rows,
+    plant_structure_node_rows,
+    plant_structure_relationship_rows,
+)
 
 #: `corpus_id` becomes part of every generated uid and a literal Cypher property
 #: value — never part of query text — but this shape check still guards against
@@ -85,6 +94,8 @@ class LoadPlan(BaseModel):
     relationship_statements: list[CypherStatement]
     expected_node_labels: dict[str, int]
     expected_relationship_types: dict[str, int]
+    #: which layers these statements write (ADR-0036); consumers must read the matching schema
+    profile: StoreProfile = "occurrence"
 
 
 def build_load_plan(
@@ -93,6 +104,7 @@ def build_load_plan(
     resolution: Resolution,
     asserted_by: Literal["resolver", "oracle"] = "resolver",
     batch_size: int = 5000,
+    profile: StoreProfile = "occurrence",
 ) -> LoadPlan:
     """Turn localized sheets and their resolution into one corpus's Cypher load plan.
 
@@ -110,22 +122,25 @@ def build_load_plan(
             (§7.2, not built yet).
         batch_size: rows per `UNWIND` batch; a starting value, not measured
             (§7.4).
+        profile: `occurrence` (every drawing, the default), `plant` (one node
+            per physical item) or `both`, linked by `drawn_as` (ADR-0036).
 
     Raises:
         ValueError: if `corpus_id` or `batch_size` has an unsafe shape, the
             sheets fail `check_contract`, a node's `node_class` is unknown, a
             `GenericItem`'s `dexpi_labels` contains an unsafe label, an edge's
             `relation` is outside the topology whitelist, or two nodes would
-            share one uid.
+            share one uid, or the plant layer meets a chain of connector pairs.
     """
     _validate_corpus_id(corpus_id)
     _validate_batch_size(batch_size)
     check_contract(sheets)
     ordered_sheets = sorted(sheets, key=lambda sheet: sheet.sheet_id)
 
-    node_rows = all_node_rows(corpus_id, ordered_sheets)
+    node_rows, relationship_rows = _rows_for_profile(
+        profile, corpus_id, ordered_sheets, resolution, asserted_by
+    )
     check_unique_uids(node_rows)
-    relationship_rows = all_relationship_rows(corpus_id, ordered_sheets, resolution, asserted_by)
 
     return LoadPlan(
         corpus_id=corpus_id,
@@ -135,6 +150,35 @@ def build_load_plan(
         relationship_statements=_relationship_statements(relationship_rows, batch_size),
         expected_node_labels=_count_labels(node_rows),
         expected_relationship_types=_count_types(relationship_rows),
+        profile=profile,
+    )
+
+
+def _rows_for_profile(
+    profile: StoreProfile,
+    corpus_id: str,
+    sheets: Sequence[SheetGraph],
+    resolution: Resolution,
+    asserted_by: Literal["resolver", "oracle"],
+) -> tuple[list[NodeRow], list[RelationshipRow]]:
+    """The occurrence layer, the plant layer, or both joined by `drawn_as`."""
+    if profile == "occurrence":
+        return (
+            all_node_rows(corpus_id, sheets),
+            all_relationship_rows(corpus_id, sheets, resolution, asserted_by),
+        )
+    plant_nodes = plant_node_rows(corpus_id, sheets, resolution)
+    plant_relationships = plant_relationship_rows(corpus_id, sheets, resolution, asserted_by)
+    if profile == "plant":
+        return (
+            plant_structure_node_rows(corpus_id, sheets, resolution) + plant_nodes,
+            plant_structure_relationship_rows(corpus_id, sheets, resolution) + plant_relationships,
+        )
+    return (
+        all_node_rows(corpus_id, sheets) + plant_nodes,
+        all_relationship_rows(corpus_id, sheets, resolution, asserted_by)
+        + plant_relationships
+        + drawn_as_rows(corpus_id, sheets, resolution, asserted_by),
     )
 
 

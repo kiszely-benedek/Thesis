@@ -14,7 +14,7 @@ under one `corpus_id` (`neo4j_plan.py`'s docstring has the fuller glossary).
 from __future__ import annotations
 
 import re
-from collections.abc import Mapping, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from typing import Literal, NamedTuple
 
 from plantgraph.benchmark.sheet_graph import SheetGraph
@@ -78,12 +78,12 @@ def check_unique_uids(rows: Sequence[NodeRow]) -> None:
 
 def all_node_rows(corpus_id: str, sheets: Sequence[SheetGraph]) -> list[NodeRow]:
     """Every node row for one corpus: the corpus itself, each sheet, and each occurrence."""
-    rows = [_corpus_row(corpus_id)]
+    rows = [corpus_row(corpus_id)]
     for sheet in sheets:
-        rows.append(_sheet_row(corpus_id, sheet))
+        rows.append(sheet_row(corpus_id, sheet))
         rows += _occurrence_rows(corpus_id, sheet)
-    rows += _plant_section_rows(corpus_id, sheets)
-    rows += _process_plant_rows(corpus_id, sheets)
+    rows += plant_section_rows(corpus_id, _visible_ids(sheets, "unit_id"))
+    rows += process_plant_rows(corpus_id, _visible_ids(sheets, "plant_id"))
     return rows
 
 
@@ -108,11 +108,11 @@ def _visible_ids(sheets: Sequence[SheetGraph], key: str) -> set[str]:
     return found
 
 
-def _plant_section_rows(corpus_id: str, sheets: Sequence[SheetGraph]) -> list[NodeRow]:
-    """One `PlantSection` per distinct `unit_id` drawn on the sheets — never from the answer key."""
+def plant_section_rows(corpus_id: str, unit_ids: Iterable[str]) -> list[NodeRow]:
+    """One `PlantSection` per distinct `unit_id` the caller read off the drawings — never gold."""
     labels = ("CorpusNode", schema.NodeClass.PLANT_SECTION.value)
     rows = []
-    for unit_id in sorted(_visible_ids(sheets, "unit_id")):
+    for unit_id in sorted(set(unit_ids)):
         row_uid = plant_section_uid(corpus_id, unit_id)
         rows.append(
             NodeRow(labels, row_uid, {"uid": row_uid, "corpus_id": corpus_id, "unit_id": unit_id})
@@ -120,11 +120,11 @@ def _plant_section_rows(corpus_id: str, sheets: Sequence[SheetGraph]) -> list[No
     return rows
 
 
-def _process_plant_rows(corpus_id: str, sheets: Sequence[SheetGraph]) -> list[NodeRow]:
-    """One `ProcessPlant` per distinct `plant_id` drawn on the sheets."""
+def process_plant_rows(corpus_id: str, plant_ids: Iterable[str]) -> list[NodeRow]:
+    """One `ProcessPlant` per distinct `plant_id` the caller read off the drawings."""
     labels = ("CorpusNode", schema.NodeClass.PROCESS_PLANT.value)
     rows = []
-    for plant_id in sorted(_visible_ids(sheets, "plant_id")):
+    for plant_id in sorted(set(plant_ids)):
         row_uid = process_plant_uid(corpus_id, plant_id)
         rows.append(
             NodeRow(labels, row_uid, {"uid": row_uid, "corpus_id": corpus_id, "plant_id": plant_id})
@@ -132,14 +132,16 @@ def _process_plant_rows(corpus_id: str, sheets: Sequence[SheetGraph]) -> list[No
     return rows
 
 
-def _corpus_row(corpus_id: str) -> NodeRow:
+def corpus_row(corpus_id: str) -> NodeRow:
+    """The one `DrawingSet` node that stands for the whole corpus."""
     row_uid = uid(corpus_id, _CORPUS_LOCAL_KEY)
     labels = ("CorpusNode", schema.NodeClass.DRAWING_SET.value)
     props = _drop_none({"uid": row_uid, "corpus_id": corpus_id, "drawing_set_id": corpus_id})
     return NodeRow(labels, row_uid, props)
 
 
-def _sheet_row(corpus_id: str, sheet: SheetGraph) -> NodeRow:
+def sheet_row(corpus_id: str, sheet: SheetGraph) -> NodeRow:
+    """The `Sheet` node of one sheet."""
     row_uid = uid(corpus_id, sheet.sheet_id)
     labels = ("CorpusNode", schema.NodeClass.SHEET.value)
     props = _drop_none({"uid": row_uid, "corpus_id": corpus_id, "sheet_id": sheet.sheet_id})
@@ -152,13 +154,13 @@ def _occurrence_rows(corpus_id: str, sheet: SheetGraph) -> list[NodeRow]:
     for node_id, attrs in sheet.graph.nodes(data=True):
         local_key = f"{sheet.sheet_id}:{node_id}"
         row_uid = uid(corpus_id, local_key)
-        labels = _occurrence_labels(sheet.sheet_id, node_id, attrs)
+        labels = occurrence_labels(sheet.sheet_id, node_id, attrs)
         props = _drop_none({"uid": row_uid, "corpus_id": corpus_id, **attrs})
         rows.append(NodeRow(labels, row_uid, props))
     return rows
 
 
-def _occurrence_labels(sheet_id: str, node_id: str, attrs: Mapping[str, object]) -> tuple[str, ...]:
+def occurrence_labels(sheet_id: str, node_id: str, attrs: Mapping[str, object]) -> tuple[str, ...]:
     """The Neo4j label set for one occurrence: `CorpusNode` plus its class chain.
 
     A known class's chain comes straight from `labels_for`. A `GenericItem`
@@ -204,7 +206,7 @@ def all_relationship_rows(
     rows: list[RelationshipRow] = []
     for sheet in sheets:
         sheet_uid = uid(corpus_id, sheet.sheet_id)
-        rows.append(_has_sheet_row(corpus_id, sheet_uid))
+        rows.append(has_sheet_row(corpus_id, sheet_uid))
         rows += _is_drawn_on_rows(corpus_id, sheet, sheet_uid)
         rows += _topology_rows(corpus_id, sheet)
     rows += _located_in_rows(corpus_id, sheets)
@@ -235,12 +237,13 @@ def _located_in_rows(corpus_id: str, sheets: Sequence[SheetGraph]) -> list[Relat
             plant_id = attrs.get("plant_id")
             if isinstance(plant_id, str):
                 plants_of_unit.setdefault(unit_id, set()).add(plant_id)
-    return rows + _section_in_plant_rows(corpus_id, plants_of_unit)
+    return rows + section_in_plant_rows(corpus_id, plants_of_unit)
 
 
-def _section_in_plant_rows(
+def section_in_plant_rows(
     corpus_id: str, plants_of_unit: Mapping[str, set[str]]
 ) -> list[RelationshipRow]:
+    """`is_located_in`: each unit's `PlantSection` -> its one `ProcessPlant`."""
     relation = schema.Relation.IS_LOCATED_IN.value
     rows = []
     for unit_id, plant_ids in sorted(plants_of_unit.items()):
@@ -255,7 +258,8 @@ def _section_in_plant_rows(
     return rows
 
 
-def _has_sheet_row(corpus_id: str, sheet_uid: str) -> RelationshipRow:
+def has_sheet_row(corpus_id: str, sheet_uid: str) -> RelationshipRow:
+    """`has_sheet`: the corpus node -> one sheet."""
     corpus_uid = uid(corpus_id, _CORPUS_LOCAL_KEY)
     return RelationshipRow(schema.Relation.HAS_SHEET.value, corpus_uid, sheet_uid, {})
 

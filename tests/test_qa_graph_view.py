@@ -70,7 +70,7 @@ def _empty_resolution() -> Resolution:
 
 
 def _class_chain(item: ItemRecord) -> tuple[str, ...]:
-    """The label chain `neo4j_rows._occurrence_labels` would give this item, minus `CorpusNode`."""
+    """The label chain `neo4j_rows.occurrence_labels` would give this item, minus `CorpusNode`."""
     if item.node_class == schema.NodeClass.GENERIC_ITEM.value:
         dexpi_labels = item.properties["dexpi_labels"]
         assert isinstance(dexpi_labels, list)
