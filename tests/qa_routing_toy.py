@@ -47,8 +47,8 @@ class ToyCorpus:
         self.sheet(sheet)
         self._graphs[sheet].add_node(node, node_class=node_class.value, tag=tag, **properties)
 
-    def flow(self, sheet: str, source: str, target: str) -> None:
-        self._graphs[sheet].add_edge(source, target, relation=Relation.SEND_TO.value)
+    def flow(self, sheet: str, source: str, target: str, **properties: str) -> None:
+        self._graphs[sheet].add_edge(source, target, relation=Relation.SEND_TO.value, **properties)
 
     def cut(self, sheet_a: str, node_a: str, sheet_b: str, node_b: str, name: str) -> None:
         """Replace the pipe `node_a -> node_b` by `node_a -> out-stub ~ in-stub -> node_b`."""

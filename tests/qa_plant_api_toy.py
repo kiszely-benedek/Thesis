@@ -68,6 +68,7 @@ def build_graph(items: ItemSpecs, edges: EdgeSpecs) -> ItemGraph:
             unit_id=unit,
             sheets=sheets,
             occurrence_keys=(f"{sheets[0]}:{tag.lower()}",),
+            properties={"tag": tag},
         )
         for tag, (node_class, unit, sheets) in items.items()
     ]

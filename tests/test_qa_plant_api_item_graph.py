@@ -12,7 +12,7 @@ from plantgraph.benchmark.split_models import SplitConfig
 from plantgraph.benchmark.splitter import split
 from plantgraph.graph import schema
 from plantgraph.qa.graph_view import NetworkxGraphView
-from plantgraph.qa.harness.api_fidelity import compare_edges_by_tag
+from plantgraph.qa.harness.api_fidelity import compare_edges_by_tag, compare_properties_by_tag
 from plantgraph.qa.plant_api.item_graph import ItemGraph, build_item_graph
 from plantgraph.qa.plant_api.model import UNRESOLVED_CONNECTOR_CLASS, ItemEdge, ItemFilter
 from plantgraph.resolution.localize import localize
@@ -129,6 +129,87 @@ def test_api_01_reports_a_missing_and_an_extra_edge() -> None:
     assert fidelity.missing_sample == (("T1", "send_to", "V2"),)
     assert fidelity.extra_sample == (("T1", "send_to", "BV1"),)
     assert fidelity.precision == fidelity.recall == 10 / 11
+
+
+def test_an_item_keeps_its_home_drawings_visible_properties_and_a_missing_unit_is_filled() -> None:
+    toy = ToyCorpus()
+    toy.item("S1", "a", "TA", unit_id="U1", loop_tag="L-1", measured_variable="FLOW")
+    toy.item("S2", "p", "P-1")  # the home drawing carries no unit
+    toy.item("S3", "p_ref", "P-1", unit_id="U3")
+    toy.identity("P-1", home=("S2", "p"), references=[("S3", "p_ref")])
+
+    graph = build_item_graph(toy.view())
+    tank = graph.item(graph.ids_for_tag("TA")[0])
+    pump = graph.item(graph.ids_for_tag("P-1")[0])
+
+    assert tank.properties == {
+        "tag": "TA",
+        "unit_id": "U1",
+        "loop_tag": "L-1",
+        "measured_variable": "FLOW",
+    }
+    assert pump.unit_id == pump.properties["unit_id"] == "U3"  # filled from the reference drawing
+
+
+def test_item_of_key_maps_every_drawing_to_its_item_and_a_paired_stub_to_none() -> None:
+    toy = ToyCorpus()
+    toy.item("S1", "a", "TA")
+    toy.item("S2", "p", "P-1")
+    toy.cut("S1", "a", "S2", "p", "c1")
+    toy.item("S3", "p_ref", "P-1")
+    toy.identity("P-1", home=("S2", "p"), references=[("S3", "p_ref")])
+    toy.dangling_stub("S1", "a", "x")
+
+    graph = build_item_graph(toy.view())
+
+    assert graph.item_of_key(key("S2", "p")) == key("S2", "p")
+    assert graph.item_of_key(key("S3", "p_ref")) == key("S2", "p")  # a reference -> its home
+    assert graph.item_of_key(key("S1", "out_c1")) is None  # paired stubs are not items
+    assert graph.item_of_key(key("S2", "in_c1")) is None
+    assert graph.item_of_key(key("S1", "out_x")) is not None  # an unpaired stub is its own item
+    assert graph.item_of_key("S9:nope") is None
+
+
+def test_an_edge_across_a_stub_pair_keeps_the_edge_into_the_outgoing_stubs_properties() -> None:
+    toy = ToyCorpus()
+    toy.item("S1", "a", "TA")
+    toy.item("S2", "b", "TB")
+    toy.cut("S1", "a", "S2", "b", "c1")
+    toy.flow("S1", "a", "out_c1", line_number="L-7")  # the toy's cut() adds this edge bare
+    toy.flow("S2", "in_c1", "b", line_number="IGNORED")
+
+    (edge,) = build_item_graph(toy.view()).edges
+
+    assert edge.properties == {"line_number": "L-7"}
+
+
+@pytest.mark.parametrize("duplication_rate", [0.0, 0.5])
+def test_item_and_edge_properties_equal_the_gold_plants(duplication_rate: float) -> None:
+    gold, view = _split_corpus(duplication_rate)
+
+    fidelity = compare_properties_by_tag(build_item_graph(view), gold)
+
+    assert fidelity.n_items > 50
+    assert fidelity.n_edges > 50
+    assert fidelity.all_match, fidelity.mismatch_sample
+
+
+def test_the_property_check_reports_a_differing_item_and_a_differing_edge() -> None:
+    graph = toy_graph()
+    gold: nx.DiGraph[str] = nx.DiGraph()
+    for source, relation, target in sorted(_edges_by_tag(graph)):
+        gold.add_node(source, tag=source)
+        gold.add_node(target, tag=target)
+        gold.add_edge(source, target, relation=relation)
+    gold.nodes["T1"]["loop_tag"] = "L-1"
+    gold.edges["T1", "BV1"]["line_number"] = "L-7"
+
+    fidelity = compare_properties_by_tag(graph, gold)
+
+    assert (fidelity.n_items, fidelity.n_items_matching) == (10, 9)
+    assert (fidelity.n_edges, fidelity.n_edges_matching) == (11, 10)
+    assert not fidelity.all_match
+    assert len(fidelity.mismatch_sample) == 2
 
 
 def _n_drawings(view: NetworkxGraphView) -> int:

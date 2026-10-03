@@ -18,7 +18,8 @@ from typing import cast, get_args
 
 from plantgraph.graph import schema
 from plantgraph.qa.graph_view import EdgeRecord
-from plantgraph.qa.plant_api.model import ItemEdge, ItemRelation
+from plantgraph.qa.plant_api.model import ItemEdge, ItemRelation, PropertyValue
+from plantgraph.qa.serialize import graphml_safe
 
 _OUT_STUBS = frozenset(
     {
@@ -29,6 +30,10 @@ _OUT_STUBS = frozenset(
 _ITEM_RELATIONS: frozenset[str] = frozenset(get_args(ItemRelation))
 _CONTINUES_AS = schema.Relation.CONTINUES_AS.value
 _SAME_ITEM = schema.Relation.SAME_TAGGED_ITEM_AS.value
+_EDGE_PROPERTY_KEYS = schema.VISIBLE_EDGE_PROPERTIES - {"relation"}
+
+#: One contracted edge: (source, target, relation, stubs crossed, visible edge properties).
+_Walked = tuple[str, str, ItemRelation, tuple[str, ...], dict[str, PropertyValue]]
 
 
 @dataclass(frozen=True)
@@ -68,8 +73,9 @@ def contract(classes: Mapping[str, str], edges: Sequence[EdgeRecord]) -> Contrac
             target=home_of.get(target, target),
             relation=relation,
             via=via,
+            properties=properties,
         )
-        for source, target, relation, via in walker.contracted_edges()
+        for source, target, relation, via, properties in walker.contracted_edges()
     ]
     return Contraction(home_of=home_of, partner_of_out=partner_of_out, edges=_dedupe(merged))
 
@@ -123,22 +129,26 @@ class _StubWalker:
     in_stubs: frozenset[str]
     outgoing: Mapping[str, list[EdgeRecord]]
 
-    def contracted_edges(self) -> list[tuple[str, str, ItemRelation, tuple[str, ...]]]:
-        """(source, target, relation, via) for every edge, with stub pairs walked through."""
-        found: list[tuple[str, str, ItemRelation, tuple[str, ...]]] = []
+    def contracted_edges(self) -> list[_Walked]:
+        """Every edge, with stub pairs walked through; properties come from the walked-in edge."""
+        found: list[_Walked] = []
         for source in sorted(self.outgoing):
             for edge in self.outgoing[source]:
                 found.extend(self._edges_from(edge))
         return found
 
-    def _edges_from(self, edge: EdgeRecord) -> list[tuple[str, str, ItemRelation, tuple[str, ...]]]:
+    def _edges_from(self, edge: EdgeRecord) -> list[_Walked]:
         if edge.source in self.in_stubs:
             return []  # consumed when the matching outgoing stub's incoming edge is walked
         self._require_expected_roles(edge)
         relation = _item_relation(edge.relation)
+        properties = _edge_properties(edge)
         if edge.target not in self.partner_of_out:
-            return [(edge.source, edge.target, relation, ())]
-        return [(edge.source, final, relation, via) for final, via in self._cross(edge.target, ())]
+            return [(edge.source, edge.target, relation, (), properties)]
+        return [
+            (edge.source, final, relation, via, properties)
+            for final, via in self._cross(edge.target, ())
+        ]
 
     def _require_expected_roles(self, edge: EdgeRecord) -> None:
         if edge.source in self.partner_of_out or edge.target in self.in_stubs:
@@ -166,6 +176,14 @@ def _item_relation(value: str) -> ItemRelation:
     if value not in _ITEM_RELATIONS:
         raise ValueError(f"expected one of {sorted(_ITEM_RELATIONS)}, found relation {value!r}")
     return cast(ItemRelation, value)
+
+
+def _edge_properties(edge: EdgeRecord) -> dict[str, PropertyValue]:
+    return {
+        key: graphml_safe(value)
+        for key, value in sorted(edge.properties.items())
+        if key in _EDGE_PROPERTY_KEYS and value is not None
+    }
 
 
 def _dedupe(edges: list[ItemEdge]) -> list[ItemEdge]:

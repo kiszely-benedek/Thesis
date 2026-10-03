@@ -17,9 +17,14 @@ from plantgraph.qa.plant_api.model import (
     ItemFilter,
     ItemRecord,
     PlantApiError,
+    PropertyValue,
     RelationGroup,
 )
 from plantgraph.qa.scoring import normalize_scalar, normalize_unit_id
+from plantgraph.qa.serialize import graphml_safe
+
+#: Home-drawing properties an item keeps; `node_class` is already a field of the record.
+_ITEM_PROPERTY_KEYS = schema.VISIBLE_NODE_PROPERTIES - {"node_class"}
 
 
 class ItemGraph:
@@ -43,6 +48,7 @@ class ItemGraph:
         self._classes = {item.node_class.lower() for item in self._items.values()}
         self._units = {normalize_unit_id(u) for i in self._items.values() if (u := i.unit_id)}
         self._sheets = sorted({sheet for item in self._items.values() for sheet in item.sheets})
+        self._item_of_key = {k: i.item_id for i in self._items.values() for k in i.occurrence_keys}
 
     @property
     def edges(self) -> tuple[ItemEdge, ...]:
@@ -60,6 +66,10 @@ class ItemGraph:
             return self._items[item_id]
         except KeyError:
             raise PlantApiError(f"expected a known item id, found {item_id!r}") from None
+
+    def item_of_key(self, local_key: str) -> str | None:
+        """The item an occurrence key is a drawing of; `None` for a paired stub, which vanishes."""
+        return self._item_of_key.get(local_key)
 
     def all_ids(self) -> list[str]:
         """Every item id in result order."""
@@ -188,15 +198,29 @@ def _item_record(item_id: str, members: list[OccurrenceRecord]) -> ItemRecord:
         )
     is_stub = home.node_class in schema.CONNECTOR_CLASSES
     node_class = UNRESOLVED_CONNECTOR_CLASS if is_stub else home.node_class
+    unit_id = next((m.unit_id for m in [home, *members] if m.unit_id), None)
     return ItemRecord(
         item_id=item_id,
         tag=home.tag or home.piping_component_name,
         node_class=node_class,
         labels=(node_class,) if is_stub else _labels(home),
-        unit_id=next((m.unit_id for m in [home, *members] if m.unit_id), None),
+        unit_id=unit_id,
         sheets=tuple(sorted({m.sheet_id for m in members})),
         occurrence_keys=tuple(sorted(m.local_key for m in members)),
+        properties=_visible_properties(home, unit_id),
     )
+
+
+def _visible_properties(home: OccurrenceRecord, unit_id: str | None) -> dict[str, PropertyValue]:
+    """The home drawing's visible properties; a repeated drawing's unit fills a missing one."""
+    found = {
+        key: graphml_safe(value)
+        for key, value in sorted(home.properties.items())
+        if key in _ITEM_PROPERTY_KEYS and value is not None
+    }
+    if unit_id is not None:
+        found["unit_id"] = unit_id
+    return found
 
 
 def _labels(occurrence: OccurrenceRecord) -> tuple[str, ...]:

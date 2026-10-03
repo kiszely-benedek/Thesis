@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from plantgraph.graph.schema import UNRESOLVED_CONNECTOR_LABEL
 
@@ -15,6 +15,8 @@ RelationGroup = Literal["flow", "signal", "any"]
 #: "downstream" follows edge direction, "upstream" reverses it, "both" ignores it.
 Direction = Literal["downstream", "upstream", "both"]
 GroupBy = Literal["node_class", "unit", "sheet"]
+#: A property value as a prompt or a GraphML file can hold it (lists are joined into a string).
+PropertyValue = str | int | float | bool
 
 RELATION_GROUPS: dict[RelationGroup, frozenset[str]] = {
     "flow": frozenset({"send_to"}),
@@ -51,6 +53,9 @@ class ItemRecord(BaseModel):
     sheets: tuple[str, ...]
     #: Local keys of every drawing of the item, for the trace and evidence recall.
     occurrence_keys: tuple[str, ...]
+    #: Visible properties of the home drawing (`graph.schema.VISIBLE_NODE_PROPERTIES` without
+    #: `node_class`, which is a field), with `unit_id` filled as the field is.
+    properties: dict[str, PropertyValue] = Field(default_factory=dict)
 
 
 class ItemEdge(BaseModel):
@@ -63,6 +68,9 @@ class ItemEdge(BaseModel):
     relation: ItemRelation
     #: Local keys of the connector stubs crossed (out-stub, in-stub, ...); empty on one sheet.
     via: tuple[str, ...] = ()
+    #: Visible edge properties (`line_number`, `fluid_code`, `dexpi_label`) of the drawn edge;
+    #: across a stub pair, the edge into the outgoing stub, as `resolution/merge.py` keeps it.
+    properties: dict[str, PropertyValue] = Field(default_factory=dict)
 
 
 class ItemFilter(BaseModel):

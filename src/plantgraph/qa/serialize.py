@@ -88,7 +88,7 @@ def _visible_node_attrs(
     if not isinstance(attrs.get("sheet_id"), str):
         raise ValueError(f"occurrence {local_key!r} has no sheet_id attribute: {dict(attrs)!r}")
     return {
-        key: _graphml_safe(value)
+        key: graphml_safe(value)
         for key, value in sorted(attrs.items())
         if key in _NODE_ALLOWED_KEYS and value is not None
     }
@@ -96,13 +96,13 @@ def _visible_node_attrs(
 
 def _visible_edge_attrs(attrs: Mapping[str, Any]) -> dict[str, str | int | float | bool]:
     return {
-        key: _graphml_safe(value)
+        key: graphml_safe(value)
         for key, value in sorted(attrs.items())
         if key in _EDGE_ALLOWED_KEYS and value is not None
     }
 
 
-def _graphml_safe(value: Any) -> str | int | float | bool:
+def graphml_safe(value: Any) -> str | int | float | bool:
     """GraphML has no list type (`networkx.generate_graphml` rejects one outright).
 
     `dexpi_labels`, an imported `GenericItem`'s ancestor-class chain
