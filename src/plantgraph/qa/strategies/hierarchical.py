@@ -9,7 +9,7 @@ sub-corpus* with the same serializer and the same final step. Steps (design
 3. core sheets = sheets of the anchors, plus the route between tag anchors
    (`route_mode`: `sheet_graph` or `flow_path`) and `sheet_hops` rings around them;
 4. over `max_context_chars`: cut by `budget_mode` (`context_budget.py`);
-5. serialize.
+5. render with the strategy's renderer: the occurrence graph, or the merged plant (ADR-0039).
 
 Both modes of both choices are built because which is better is measured
 (ADR-0030). Only the question text is read, never a gold field.
@@ -22,6 +22,7 @@ from typing import Any
 from plantgraph.llm.models import ContextOverflow
 from plantgraph.qa.anchors import Anchors, extract_anchors
 from plantgraph.qa.context_budget import BUDGET_MODES, BudgetMode, FittedContext, fit_to_budget
+from plantgraph.qa.context_render import ContextRenderer, OccurrenceRenderer, Representation
 from plantgraph.qa.graph_view import GraphView
 from plantgraph.qa.models import Outcome, RetrievalResult
 from plantgraph.qa.sheet_selection import (
@@ -34,10 +35,13 @@ from plantgraph.qa.sheet_selection import (
 from plantgraph.qa.unit_router import UnitChoice, UnitRouter, UnitRouterError
 
 
-class Hierarchical:
-    """Routes between the named items and serializes the sheets the route needs."""
+def hierarchical_name(representation: Representation) -> str:
+    """`hierarchical` for the occurrence graph, `hierarchical_plant` for the merged plant."""
+    return "hierarchical" if representation == "occurrence" else f"hierarchical_{representation}"
 
-    name = "hierarchical"
+
+class Hierarchical:
+    """Routes between the named items and renders the sheets the route needs."""
 
     def __init__(
         self,
@@ -48,8 +52,12 @@ class Hierarchical:
         sheet_hops: int,
         max_context_chars: int,
         unit_router: UnitRouter | None = None,
+        renderer: ContextRenderer | None = None,
     ) -> None:
         """`unit_router=None` is for free, retrieval-only runs: a question with no anchor fails.
+
+        `renderer` is the occurrence graph without a legend by default (today's text); the
+        strategy's name follows the renderer's representation.
 
         Raises:
             ValueError: a mode is not one of the built ones, or a number is out of range.
@@ -62,6 +70,8 @@ class Hierarchical:
                 f"found {sheet_hops} and {max_context_chars}"
             )
         self._view = view
+        self._renderer = renderer or OccurrenceRenderer(view)
+        self.name = hierarchical_name(self._renderer.representation)
         self._graphs = RoutingGraphs(view)
         self._route_mode: RouteMode = route_mode
         self._budget_mode: BudgetMode = budget_mode
@@ -93,9 +103,11 @@ class Hierarchical:
             route_mode=self._route_mode,
             sheet_hops=self._sheet_hops,
         )
-        fitted = fit_to_budget(self._view, selection, self._budget_mode, self._max_context_chars)
+        fitted = fit_to_budget(
+            self._view, selection, self._budget_mode, self._max_context_chars, self._renderer
+        )
         trace.update(_selection_trace(selection))
-        trace.update(_fitted_trace(fitted))
+        trace.update(_fitted_trace(fitted, self._renderer.representation))
         return RetrievalResult(context=fitted.text, failure=None, trace=trace)
 
     def _ask_router(self, question_text: str, trace: dict[str, Any]) -> UnitChoice | None:
@@ -136,8 +148,12 @@ def _selection_trace(selection: SheetSelection) -> dict[str, Any]:
     return {"route_found": selection.route_found, "route_fallback": selection.route_fallback}
 
 
-def _fitted_trace(fitted: FittedContext) -> dict[str, Any]:
+def _fitted_trace(fitted: FittedContext, representation: Representation) -> dict[str, Any]:
     return {
+        "representation": representation,
+        "serialized_items": fitted.items,
+        "frontier_items": fitted.frontier_items,
+        "context_sheets": list(fitted.context_sheets),
         "routed_sheets": list(fitted.sheets),
         "through_line_sheets": list(fitted.through_line_sheets),
         "serialized_keys": list(fitted.keys),

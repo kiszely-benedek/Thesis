@@ -24,6 +24,7 @@ from typing import Any
 
 from plantgraph.qa.anchors import Anchors, extract_anchors
 from plantgraph.qa.context_budget import BudgetMode
+from plantgraph.qa.context_render import ContextRenderer, OccurrenceRenderer, Representation
 from plantgraph.qa.graph_view import GraphView
 from plantgraph.qa.models import RetrievalResult
 from plantgraph.qa.need.classifiers import NeedClassifier, NeedDecision, build_need_input
@@ -40,9 +41,10 @@ from plantgraph.qa.unit_router import UnitRouter
 _UNCAPPED = 2**62
 
 
-def need_strategy_name(classifier_name: str) -> str:
-    """The strategy name of a classifier: `rules` gives `hierarchical_need_rules`."""
-    return f"hierarchical_need_{classifier_name}"
+def need_strategy_name(classifier_name: str, representation: Representation = "occurrence") -> str:
+    """The strategy name: `rules` gives `hierarchical_need_rules`, plant adds `_plant`."""
+    base = f"hierarchical_need_{classifier_name}"
+    return base if representation == "occurrence" else f"{base}_{representation}"
 
 
 class NeedAwareHierarchical:
@@ -59,18 +61,26 @@ class NeedAwareHierarchical:
         max_context_chars: int,
         tau: float = 0.0,
         unit_router: UnitRouter | None = None,
+        renderer: ContextRenderer | None = None,
+        item_graph: ItemGraph | None = None,
     ) -> None:
         """The mode, hops and router parameters belong to the fallback `Hierarchical`.
 
         `tau` is the lowest classifier score that is acted on; a classifier that gives no
         score (the rules) ignores it. `max_context_chars` limits both paths.
 
+        `renderer` (occurrence, no legend, by default) writes both paths' text, the fallback's
+        included. `item_graph` is the plant the programs run on; pass the one a plant renderer
+        was built from, so the plant is merged once.
+
         Raises:
             ValueError: `tau` is outside [0, 1], or the fallback rejects a parameter.
         """
         if not 0.0 <= tau <= 1.0:
             raise ValueError(f"expected tau in [0, 1], found {tau}")
-        self.name = need_strategy_name(classifier.name)
+        self._renderer = renderer or OccurrenceRenderer(view)
+        self.name = need_strategy_name(classifier.name, self._renderer.representation)
+        self._given_item_graph = item_graph
         self._view = view
         self._classifier = classifier
         self._tau = tau
@@ -84,12 +94,13 @@ class NeedAwareHierarchical:
             sheet_hops=sheet_hops,
             max_context_chars=max_context_chars,
             unit_router=unit_router,
+            renderer=self._renderer,
         )
 
     @cached_property
     def _item_graph(self) -> ItemGraph:
-        """The plant as merged items, built on the first question that needs a program."""
-        return build_item_graph(self._view)
+        """The plant as merged items: the one given, else built on the first program run."""
+        return self._given_item_graph or build_item_graph(self._view)
 
     def retrieve(self, question_text: str) -> RetrievalResult:
         """Classify, then either run the label's program or hand the question to Hierarchical."""
@@ -143,6 +154,7 @@ class NeedAwareHierarchical:
             core_sheets(self._view, anchors),
             selection,
             self._max_context_chars,
+            self._renderer,
         )
         trace = {
             **self._hierarchical_style_trace(anchors, context),
@@ -173,6 +185,10 @@ class NeedAwareHierarchical:
             "truncated": context.need_items_dropped > 0,
             "over_budget": context.over_budget,
             "context_chars": len(context.text),
+            "representation": self._renderer.representation,
+            "serialized_items": context.items,
+            "frontier_items": context.frontier_items,
+            "context_sheets": list(context.context_sheets),
         }
 
 

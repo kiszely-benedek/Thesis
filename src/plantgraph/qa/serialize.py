@@ -19,7 +19,7 @@ future switch to S2 — the resolver's merged `Resolution.plant` — is calling
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from typing import Any
 
 import networkx as nx
@@ -57,9 +57,29 @@ def serialize_graph(graph: nx.DiGraph[str]) -> SerializedContext:
         ValueError: a node has no `sheet_id` attribute, meaning `graph` was
             not built by `NetworkxGraphView` or an equivalent producer.
     """
-    clean = _visible_only_copy(graph)
-    text = "\n".join(nx.generate_graphml(clean))
+    text = _graphml_text(_visible_only_copy(graph))
     return SerializedContext(text=text, character_count=len(text))
+
+
+def serialize_attributed_graph(
+    nodes: Mapping[str, Mapping[str, str | int | float | bool]],
+    edges: Sequence[tuple[str, str, Mapping[str, str | int | float | bool]]],
+) -> str:
+    """GraphML for a graph whose attributes are already visible-only (the plant rendering).
+
+    Same writer and same sorted order as `serialize_graph`, so the two representations
+    differ only in what their nodes and edges say. The caller has done the whitelisting.
+    """
+    graph: nx.DiGraph[str] = nx.DiGraph()
+    for node_id in sorted(nodes):
+        graph.add_node(node_id, **nodes[node_id])
+    for source, target, attrs in sorted(edges, key=lambda edge: edge[:2]):
+        graph.add_edge(source, target, **attrs)
+    return _graphml_text(graph)
+
+
+def _graphml_text(graph: nx.DiGraph[str]) -> str:
+    return "\n".join(nx.generate_graphml(graph))
 
 
 def serialize_occurrence_graph(view: GraphView) -> SerializedContext:

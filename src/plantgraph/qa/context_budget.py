@@ -20,10 +20,8 @@ from collections.abc import Iterator
 from dataclasses import dataclass, replace
 from typing import Literal
 
-import networkx as nx
-
+from plantgraph.qa.context_render import ContextRenderer, OccurrenceRenderer, Rendered
 from plantgraph.qa.graph_view import GraphView
-from plantgraph.qa.serialize import serialize_graph
 from plantgraph.qa.sheet_selection import SheetSelection
 
 BudgetMode = Literal["drop_rings", "through_line"]
@@ -45,6 +43,11 @@ class FittedContext:
     truncated: bool
     #: True when even the thinnest plan is longer than the limit.
     over_budget: bool
+    #: Plant items shown, frontier included (0 for the occurrence representation).
+    items: int
+    frontier_items: int
+    #: Every sheet any shown node is drawn on, sorted.
+    context_sheets: tuple[str, ...]
 
 
 @dataclass(frozen=True)
@@ -57,10 +60,18 @@ class _Plan:
 
 
 def fit_to_budget(
-    view: GraphView, selection: SheetSelection, budget_mode: BudgetMode, max_context_chars: int
+    view: GraphView,
+    selection: SheetSelection,
+    budget_mode: BudgetMode,
+    max_context_chars: int,
+    renderer: ContextRenderer | None = None,
 ) -> FittedContext:
-    """The fullest plan whose serialized text is within `max_context_chars`, else the thinnest."""
-    fitter = _Fitter(view, selection, budget_mode)
+    """The fullest plan whose rendered text is within `max_context_chars`, else the thinnest.
+
+    `renderer` defaults to the occurrence representation, as before; the plans and the order
+    of cuts do not depend on it, only the lengths do.
+    """
+    fitter = _Fitter(renderer or OccurrenceRenderer(view), selection, budget_mode)
     chosen = fitter.full_plan
     for chosen in fitter.plans():  # fullest first, so the first plan that fits is the best one
         rendered = fitter.render(chosen)
@@ -74,20 +85,17 @@ def fit_to_budget(
         rings_dropped=len(selection.rings) - chosen.rings_kept,
         truncated=chosen != fitter.full_plan,
         over_budget=len(rendered.text) > max_context_chars,
+        items=rendered.items,
+        frontier_items=rendered.frontier_items,
+        context_sheets=rendered.context_sheets,
     )
 
 
-@dataclass(frozen=True)
-class _Rendered:
-    text: str
-    sheets: tuple[str, ...]
-    through_line_sheets: tuple[str, ...]
-    keys: tuple[str, ...]
-
-
 class _Fitter:
-    def __init__(self, view: GraphView, selection: SheetSelection, budget_mode: BudgetMode) -> None:
-        self._view = view
+    def __init__(
+        self, renderer: ContextRenderer, selection: SheetSelection, budget_mode: BudgetMode
+    ) -> None:
+        self._renderer = renderer
         self._selection = selection
         self._budget_mode = budget_mode
         # Ascending, so "drop the highest id first" keeps a prefix of this list.
@@ -122,7 +130,7 @@ class _Fitter:
             plan = replace(plan, route_sheets_compressed=compressed)
             yield plan
 
-    def render(self, plan: _Plan) -> _Rendered:
+    def render(self, plan: _Plan) -> Rendered:
         selection = self._selection
         compressed = self._compress_order[: plan.route_sheets_compressed]
         through = {sheet: selection.through_lines[sheet] for sheet in compressed}
@@ -137,27 +145,4 @@ class _Fitter:
             - set(dropped_units)
             - set(compressed)
         )
-        graph = subgraph_with_through_lines(self._view, full, through)
-        return _Rendered(
-            text=serialize_graph(graph).text,
-            sheets=tuple(sorted(full | set(through))),
-            through_line_sheets=tuple(sorted(through)),
-            keys=tuple(sorted(graph.nodes)),
-        )
-
-
-def subgraph_with_through_lines(
-    view: GraphView, full_sheets: frozenset[str], through: dict[str, tuple[str, ...]]
-) -> nx.DiGraph[str]:
-    """Whole sheets plus, on each through-line sheet, only its listed occurrences.
-
-    Taking the induced graph of all sheets first and then deleting the unlisted
-    nodes keeps the edges between a through-line and its neighbouring sheets.
-    """
-    graph = view.subgraph([*full_sheets, *through])
-    kept = {key for keys in through.values() for key in keys}
-    unlisted = [
-        key for key in graph.nodes if graph.nodes[key]["sheet_id"] in through and key not in kept
-    ]
-    graph.remove_nodes_from(unlisted)
-    return graph
+        return self._renderer.render(frozenset(full), through)

@@ -17,11 +17,10 @@ from collections import defaultdict
 from dataclasses import dataclass
 
 from plantgraph.qa.anchors import Anchors
-from plantgraph.qa.context_budget import subgraph_with_through_lines
+from plantgraph.qa.context_render import ContextRenderer, OccurrenceRenderer, Rendered
 from plantgraph.qa.graph_view import GraphView
 from plantgraph.qa.need.programs import NeedSelection, SelectedItem
 from plantgraph.qa.plant_api.model import ItemEdge, sheet_of_key
-from plantgraph.qa.serialize import serialize_graph
 
 
 @dataclass(frozen=True)
@@ -39,6 +38,11 @@ class NeedContext:
     need_items: int
     need_items_dropped: int
     over_budget: bool
+    #: Plant items shown, frontier included (0 for the occurrence representation).
+    items: int
+    frontier_items: int
+    #: Every sheet any shown node is drawn on, sorted.
+    context_sheets: tuple[str, ...]
 
 
 @dataclass(frozen=True)
@@ -61,6 +65,7 @@ def build_need_context(
     core: frozenset[str],
     selection: NeedSelection,
     max_context_chars: int,
+    renderer: ContextRenderer | None = None,
 ) -> NeedContext:
     """Serialize the core plus as much of the need part as fits.
 
@@ -68,19 +73,24 @@ def build_need_context(
         view: the corpus the sheets and keys come from.
         core: the sheets sent whole (`core_sheets`).
         selection: what the program reached.
-        max_context_chars: the limit on the serialized text.
+        max_context_chars: the limit on the rendered text.
+        renderer: occurrence by default; the plant renderer maps the same keys to items.
     """
+    renderer = renderer or OccurrenceRenderer(view)
     cuttable = _cuttable_items(core, selection)
-    kept = _most_that_fits(view, core, cuttable, max_context_chars)
-    text, sheets, through, keys = _render(view, core, cuttable[:kept])
+    kept = _most_that_fits(renderer, core, cuttable, max_context_chars)
+    rendered = _render(renderer, core, cuttable[:kept])
     return NeedContext(
-        text=text,
-        sheets=sheets,
-        through_line_sheets=through,
-        keys=keys,
+        text=rendered.text,
+        sheets=rendered.sheets,
+        through_line_sheets=rendered.through_line_sheets,
+        keys=rendered.keys,
         need_items=len(cuttable),
         need_items_dropped=len(cuttable) - kept,
-        over_budget=len(text) > max_context_chars,
+        over_budget=len(rendered.text) > max_context_chars,
+        items=rendered.items,
+        frontier_items=rendered.frontier_items,
+        context_sheets=rendered.context_sheets,
     )
 
 
@@ -110,37 +120,33 @@ def _outside(local_key: str, core: frozenset[str]) -> bool:
 
 
 def _most_that_fits(
-    view: GraphView, core: frozenset[str], cuttable: list[_Cuttable], max_chars: int
+    renderer: ContextRenderer, core: frozenset[str], cuttable: list[_Cuttable], max_chars: int
 ) -> int:
     """How many of the nearest need items fit; 0 when even the bare core is too long.
 
     Binary search: text length only grows as items are added, so "fits" is true for a prefix.
     """
-    if _length(view, core, cuttable) <= max_chars:
+    if _length(renderer, core, cuttable) <= max_chars:
         return len(cuttable)
     low, high = 0, len(cuttable) - 1  # `len(cuttable)` was just ruled out
     while low < high:
         middle = (low + high + 1) // 2
-        if _length(view, core, cuttable[:middle]) <= max_chars:
+        if _length(renderer, core, cuttable[:middle]) <= max_chars:
             low = middle
         else:
             high = middle - 1
     return low
 
 
-def _length(view: GraphView, core: frozenset[str], kept: list[_Cuttable]) -> int:
-    return len(_render(view, core, kept)[0])
+def _length(renderer: ContextRenderer, core: frozenset[str], kept: list[_Cuttable]) -> int:
+    return len(_render(renderer, core, kept).text)
 
 
-def _render(
-    view: GraphView, core: frozenset[str], kept: list[_Cuttable]
-) -> tuple[str, tuple[str, ...], tuple[str, ...], tuple[str, ...]]:
-    """(text, sheets, through-line sheets, keys) of the core plus the `kept` need items."""
+def _render(renderer: ContextRenderer, core: frozenset[str], kept: list[_Cuttable]) -> Rendered:
+    """The core whole plus, on the other sheets, only the `kept` need items' drawings."""
     by_sheet: dict[str, list[str]] = defaultdict(list)
     for cut in kept:
         for key in cut.keys:
             by_sheet[sheet_of_key(key)].append(key)
     through = {sheet: tuple(keys) for sheet, keys in by_sheet.items()}
-    graph = subgraph_with_through_lines(view, core, through)
-    sheets = tuple(sorted(core | set(through)))
-    return serialize_graph(graph).text, sheets, tuple(sorted(through)), tuple(sorted(graph.nodes))
+    return renderer.render(core, through)
