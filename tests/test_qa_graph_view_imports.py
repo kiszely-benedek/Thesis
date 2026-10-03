@@ -76,14 +76,30 @@ def test_qa_graph_view_and_serialize_never_import_the_answer_key(path: Path) -> 
 # module cannot be added unguarded.
 _PLANT_API_FILES = tuple(sorted((_QA_DIR / "plant_api").glob("*.py")))
 _PLANT_API_BANNED_MODULES = (*_BANNED_MODULES, "plantgraph.qa.harness")
+# The need layer (QAR-T4, §13) is held to the same ban, and it holds the strategy's programs:
+# the harness's canonical programs and gold labels must never reach it.
+_NEED_FILES = (
+    *sorted((_QA_DIR / "need").glob("*.py")),
+    _QA_DIR / "strategies" / "hierarchical_need.py",
+)
 
 
 def test_the_plant_api_package_is_found_by_the_glob() -> None:
     assert {path.name for path in _PLANT_API_FILES} >= {"item_graph.py", "primitives.py"}
 
 
-@pytest.mark.parametrize("path", _PLANT_API_FILES, ids=lambda path: path.name)
-def test_plant_api_never_imports_the_answer_key_or_the_harness(path: Path) -> None:
+def test_the_need_layer_is_found_by_the_glob() -> None:
+    assert {path.name for path in _NEED_FILES} >= {
+        "rules.py",
+        "programs.py",
+        "hierarchical_need.py",
+    }
+
+
+@pytest.mark.parametrize(
+    "path", [*_PLANT_API_FILES, *_NEED_FILES], ids=lambda path: f"{path.parent.name}/{path.name}"
+)
+def test_plant_api_and_need_layer_never_import_the_answer_key_or_the_harness(path: Path) -> None:
     tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
     modules, names = _imported_modules_and_names(tree)
 

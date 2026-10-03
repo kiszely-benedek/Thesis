@@ -137,7 +137,7 @@ class _Fitter:
             - set(dropped_units)
             - set(compressed)
         )
-        graph = _subgraph_with_through_lines(self._view, full, through)
+        graph = subgraph_with_through_lines(self._view, full, through)
         return _Rendered(
             text=serialize_graph(graph).text,
             sheets=tuple(sorted(full | set(through))),
@@ -146,7 +146,7 @@ class _Fitter:
         )
 
 
-def _subgraph_with_through_lines(
+def subgraph_with_through_lines(
     view: GraphView, full_sheets: frozenset[str], through: dict[str, tuple[str, ...]]
 ) -> nx.DiGraph[str]:
     """Whole sheets plus, on each through-line sheet, only its listed occurrences.

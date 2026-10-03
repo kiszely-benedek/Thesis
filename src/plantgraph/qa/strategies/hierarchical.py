@@ -75,7 +75,7 @@ class Hierarchical:
         trace: dict[str, Any] = {
             "route_mode": self._route_mode,
             "budget_mode": self._budget_mode,
-            "anchors": _anchor_names(anchors),
+            "anchors": anchor_names(anchors),
             "fallback_needed": anchors.is_empty,
             "fallback_used": False,
         }
@@ -127,7 +127,7 @@ def _require_choice(name: str, value: str, allowed: tuple[str, ...]) -> None:
         raise ValueError(f"expected {name} in {list(allowed)}, found {value!r}")
 
 
-def _anchor_names(anchors: Anchors) -> list[str]:
+def anchor_names(anchors: Anchors) -> list[str]:
     """Tags as written in the question, then units as `unit <id>`."""
     return [tag.text for tag in anchors.tags] + [f"unit {unit.unit_id}" for unit in anchors.units]
 

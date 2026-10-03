@@ -84,6 +84,33 @@ def extract_anchors(question_text: str, view: GraphView) -> Anchors:
     return Anchors(tags=tuple(_find_tags(tokens, view)), units=tuple(units))
 
 
+def mask_anchors(question_text: str, anchors: Anchors) -> str:
+    """Replace each tag by `<TAG>` and each unit id by `<UNIT>`, so wording can be matched alone.
+
+    `unit 7` becomes `unit <UNIT>`: the word stays, only the id is hidden.
+    """
+    spans = [(tag.position, _tag_end(question_text, tag), "<TAG>") for tag in anchors.tags]
+    spans += [_unit_id_span(question_text, unit) for unit in anchors.units]
+    masked = question_text
+    for start, end, placeholder in sorted(spans, reverse=True):  # right to left keeps offsets valid
+        masked = masked[:start] + placeholder + masked[end:]
+    return masked
+
+
+def _tag_end(question_text: str, tag: TagAnchor) -> int:
+    """End offset of a tag; a two-token tag may be spaced differently from its normalized text."""
+    pattern = r"\s+".join(re.escape(part) for part in tag.text.split())
+    match = re.compile(pattern).match(question_text, tag.position)
+    return match.end() if match else tag.position + len(tag.text)
+
+
+def _unit_id_span(question_text: str, unit: UnitAnchor) -> tuple[int, int, str]:
+    match = _UNIT_RE.match(question_text, unit.position)
+    if match is None:
+        raise ValueError(f"expected 'unit <id>' at offset {unit.position}, found a different text")
+    return match.start(1), match.end(1), "<UNIT>"
+
+
 def _find_units(question_text: str, view: GraphView) -> tuple[list[UnitAnchor], list[range]]:
     """Units named as `unit <id>`, plus the text spans they occupy (so tag lookup skips them)."""
     known = {normalize_scalar(unit_id): unit_id for unit_id in view.unit_ids()}

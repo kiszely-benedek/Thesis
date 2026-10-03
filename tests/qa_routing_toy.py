@@ -35,11 +35,17 @@ class ToyCorpus:
     def sheet(self, sheet: str) -> None:
         self._graphs.setdefault(sheet, nx.DiGraph())
 
-    def item(self, sheet: str, node: str, tag: str, **properties: str) -> None:
+    def item(
+        self,
+        sheet: str,
+        node: str,
+        tag: str,
+        *,
+        node_class: NodeClass = NodeClass.CENTRIFUGAL_PUMP,
+        **properties: str,
+    ) -> None:
         self.sheet(sheet)
-        self._graphs[sheet].add_node(
-            node, node_class=NodeClass.CENTRIFUGAL_PUMP.value, tag=tag, **properties
-        )
+        self._graphs[sheet].add_node(node, node_class=node_class.value, tag=tag, **properties)
 
     def flow(self, sheet: str, source: str, target: str) -> None:
         self._graphs[sheet].add_edge(source, target, relation=Relation.SEND_TO.value)
