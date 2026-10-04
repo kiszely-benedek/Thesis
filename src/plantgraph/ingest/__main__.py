@@ -23,6 +23,7 @@ import sys
 import time
 from dataclasses import dataclass
 from pathlib import Path
+from typing import get_args
 
 from plantgraph.benchmark.generator_models import GeneratorConfig
 from plantgraph.benchmark.split_models import ConnectorLabelDetail, SplitConfig
@@ -35,6 +36,7 @@ from plantgraph.ingest.headline import (
 from plantgraph.ingest.models import IngestResult
 from plantgraph.ingest.pipeline import run_proteus, run_synthetic
 from plantgraph.store.neo4j_settings import Neo4jSettings, from_env, missing_required_vars
+from plantgraph.store.plant_rows import StoreProfile
 
 #: the three variables `neo4j_settings.from_env` needs — named here too, so a
 #: user who forgot `--no-neo4j` sees exactly what to set without reading that module.
@@ -111,6 +113,7 @@ def _run_synthetic(
         split_config=setup.split_config,
         check=args.check,
         settings=settings,
+        store_profile=args.store_profile,
     )
     return result, setup.search
 
@@ -178,7 +181,12 @@ def _split_config_from_flags(args: argparse.Namespace) -> SplitConfig:
 
 def _run_proteus(args: argparse.Namespace, settings: Neo4jSettings | None) -> IngestResult:
     corpus_id = args.corpus_id or _sanitize_corpus_id(args.path.stem)
-    return run_proteus(corpus_id=corpus_id, path=args.path, settings=settings)
+    return run_proteus(
+        corpus_id=corpus_id,
+        path=args.path,
+        settings=settings,
+        store_profile=args.store_profile,
+    )
 
 
 def _settings_from_env_or_raise() -> Neo4jSettings:
@@ -209,6 +217,18 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     _add_synthetic_subparser(subparsers)
     _add_proteus_subparser(subparsers)
     return parser.parse_args(argv)
+
+
+def _add_store_profile_argument(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "--store-profile",
+        choices=list(get_args(StoreProfile)),
+        default="both",
+        help=(
+            "which graph layers to store (ADR-0036): 'occurrence' = every drawn symbol, "
+            "'plant' = one node per physical item, 'both' = both, linked by drawn_as"
+        ),
+    )
 
 
 def _add_synthetic_subparser(
@@ -279,6 +299,7 @@ def _add_synthetic_subparser(
         "--check", action="store_true", help="run gate G1: does resolve(split(plant)) == plant?"
     )
     parser.add_argument("--no-neo4j", action="store_true", help="skip the Neo4j load entirely")
+    _add_store_profile_argument(parser)
     parser.add_argument(
         "--out",
         type=Path,
@@ -295,6 +316,7 @@ def _add_proteus_subparser(subparsers: argparse._SubParsersAction[argparse.Argum
     parser.add_argument("path", type=Path, help="the Proteus XML file")
     parser.add_argument("--corpus-id", default=None, help="defaults to the sanitized file stem")
     parser.add_argument("--no-neo4j", action="store_true", help="skip the Neo4j load entirely")
+    _add_store_profile_argument(parser)
     parser.add_argument(
         "--out",
         type=Path,

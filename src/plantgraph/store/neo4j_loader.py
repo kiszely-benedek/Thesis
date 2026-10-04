@@ -23,6 +23,7 @@ from plantgraph.store.neo4j_plan import CypherStatement, LoadPlan
 from plantgraph.store.neo4j_plan import wipe_statement as build_wipe_statement
 from plantgraph.store.neo4j_probe import DEFAULT_CONNECTION_TIMEOUT_S
 from plantgraph.store.neo4j_settings import Neo4jSettings
+from plantgraph.store.plant_invariants import InvariantStatement
 
 
 class LoadReport(BaseModel):
@@ -39,6 +40,8 @@ class LoadReport(BaseModel):
     verify_s: float
     total_s: float
     neo4j_version: str | None
+    #: how many invariant queries passed (`plant_invariants.py`); 0 for an `occurrence` load
+    invariants_checked: int = 0
 
 
 def load_corpus(settings: Neo4jSettings, plan: LoadPlan) -> LoadReport:
@@ -46,7 +49,8 @@ def load_corpus(settings: Neo4jSettings, plan: LoadPlan) -> LoadReport:
 
     Raises:
         RuntimeError: if, after loading, the node-label or relationship-type
-            counts found for `plan.corpus_id` do not match `plan.expected_*`.
+            counts found for `plan.corpus_id` do not match `plan.expected_*`,
+            or an invariant query reports a non-zero violation count.
     """
     driver = _open_driver(settings)
     try:
@@ -74,6 +78,7 @@ def load_corpus(settings: Neo4jSettings, plan: LoadPlan) -> LoadReport:
         verify_s=verify_s,
         total_s=total_s,
         neo4j_version=neo4j_version,
+        invariants_checked=len(plan.invariant_statements),
     )
 
 
@@ -164,6 +169,27 @@ def _verify(session: Session, plan: LoadPlan) -> None:
     _raise_on_mismatch(
         "relationship type", actual_relationship_types, plan.expected_relationship_types
     )
+    for statement in plan.invariant_statements:
+        _check_invariant(session, statement)
+
+
+def _check_invariant(session: Session, statement: InvariantStatement) -> None:
+    """Run one invariant read-only; it must return one row whose `violations` is 0."""
+
+    def _read(tx: ManagedTransaction) -> int:
+        record = tx.run(statement.query, statement.parameters).single()
+        if record is None:
+            raise RuntimeError(
+                f"{statement.invariant_id} returned no row; expected one 'violations' count"
+            )
+        return int(record["violations"])
+
+    violations = session.execute_read(_read)
+    if violations != 0:
+        raise RuntimeError(
+            f"invariant {statement.invariant_id} ({statement.description}) failed: "
+            f"expected 0 violations, found {violations}"
+        )
 
 
 def _count_node_labels(session: Session, corpus_id: str) -> dict[str, int]:

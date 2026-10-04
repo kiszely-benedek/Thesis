@@ -44,7 +44,7 @@ from collections import Counter, defaultdict
 from collections.abc import Iterator, Sequence
 from typing import Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from plantgraph.benchmark.sheet_graph import SheetGraph
 from plantgraph.resolution.contract import check_contract
@@ -56,6 +56,7 @@ from plantgraph.store.neo4j_rows import (
     all_relationship_rows,
     check_unique_uids,
 )
+from plantgraph.store.plant_invariants import InvariantStatement, invariant_statements
 from plantgraph.store.plant_rows import (
     StoreProfile,
     drawn_as_rows,
@@ -96,6 +97,9 @@ class LoadPlan(BaseModel):
     expected_relationship_types: dict[str, int]
     #: which layers these statements write (ADR-0036); consumers must read the matching schema
     profile: StoreProfile = "occurrence"
+    #: read-only checks the loader runs after the count verify (ADR-0036). Excluded from dumps
+    #: so the `occurrence` plan JSON stays byte-identical to the one before the plant layer.
+    invariant_statements: list[InvariantStatement] = Field(default_factory=list, exclude=True)
 
 
 def build_load_plan(
@@ -151,6 +155,7 @@ def build_load_plan(
         expected_node_labels=_count_labels(node_rows),
         expected_relationship_types=_count_types(relationship_rows),
         profile=profile,
+        invariant_statements=invariant_statements(corpus_id, profile),
     )
 
 

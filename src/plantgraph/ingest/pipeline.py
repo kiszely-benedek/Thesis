@@ -48,13 +48,15 @@ from plantgraph.benchmark.split_models import SplitConfig
 from plantgraph.benchmark.splitter import split
 from plantgraph.eval.graph_equality import graph_differences, to_original_ids, visible_view
 from plantgraph.eval.resolution_scoring import ResolutionScore, score_resolution
-from plantgraph.ingest.models import IngestCounts, IngestResult
+from plantgraph.graph import schema
+from plantgraph.ingest.models import IngestCounts, IngestResult, LayerCounts
 from plantgraph.resolution.localize import OccurrenceMap, localize
 from plantgraph.resolution.models import Resolution
 from plantgraph.resolution.resolver import resolve
 from plantgraph.store.neo4j_loader import LoadReport, load_corpus
 from plantgraph.store.neo4j_plan import CypherStatement, LoadPlan, build_load_plan
 from plantgraph.store.neo4j_settings import Neo4jSettings
+from plantgraph.store.plant_rows import StoreProfile
 
 # how many unmerged original items the gate spells out; the header line carries the total
 _MAX_UNMERGED_EXAMPLES = 5
@@ -155,6 +157,7 @@ def run_synthetic(
     split_config: SplitConfig,
     check: bool,
     settings: Neo4jSettings | None,
+    store_profile: StoreProfile = "occurrence",
 ) -> IngestResult:
     """Generate a synthetic plant, split it into sheets, resolve, and (optionally) load it.
 
@@ -178,7 +181,9 @@ def run_synthetic(
         gate_equal, gate_differences, resolution_score = check_result
 
     plan, stage_seconds["plan"] = _timed(
-        lambda: build_load_plan(corpus_id, corpus.localized_sheets, corpus.resolution)
+        lambda: build_load_plan(
+            corpus_id, corpus.localized_sheets, corpus.resolution, profile=store_profile
+        )
     )
     load_report = _load_if_requested(settings, plan, stage_seconds)
 
@@ -189,6 +194,8 @@ def run_synthetic(
             "split": split_config.model_dump(mode="json"),
         },
         counts=compute_ingest_counts(corpus.localized_sheets, corpus.resolution, plan),
+        store_profile=store_profile,
+        layer_counts=compute_layer_counts(plan),
         stage_seconds=stage_seconds,
         resolution=corpus.resolution.report,
         load_report=load_report,
@@ -199,7 +206,13 @@ def run_synthetic(
     )
 
 
-def run_proteus(*, corpus_id: str, path: Path, settings: Neo4jSettings | None) -> IngestResult:
+def run_proteus(
+    *,
+    corpus_id: str,
+    path: Path,
+    settings: Neo4jSettings | None,
+    store_profile: StoreProfile = "occurrence",
+) -> IngestResult:
     """Import one Proteus XML drawing as a single-sheet corpus, resolve, and (optionally) load it.
 
     There is no `check` argument here: a lone imported file has no answer key
@@ -211,7 +224,9 @@ def run_proteus(*, corpus_id: str, path: Path, settings: Neo4jSettings | None) -
     stage_seconds = dict(corpus.stage_seconds)
 
     plan, stage_seconds["plan"] = _timed(
-        lambda: build_load_plan(corpus_id, corpus.localized_sheets, corpus.resolution)
+        lambda: build_load_plan(
+            corpus_id, corpus.localized_sheets, corpus.resolution, profile=store_profile
+        )
     )
     load_report = _load_if_requested(settings, plan, stage_seconds)
 
@@ -219,6 +234,8 @@ def run_proteus(*, corpus_id: str, path: Path, settings: Neo4jSettings | None) -
         corpus_id=corpus_id,
         config={"source_file": str(path)},
         counts=compute_ingest_counts(corpus.localized_sheets, corpus.resolution, plan),
+        store_profile=store_profile,
+        layer_counts=compute_layer_counts(plan),
         stage_seconds=stage_seconds,
         resolution=corpus.resolution.report,
         import_report=corpus.imported.report,
@@ -332,6 +349,27 @@ def compute_ingest_counts(
         n_relationships=_row_count(plan.relationship_statements),
         n_connector_pairs_predicted=len(resolution.connector_pairs),
         n_unresolved=len(resolution.unresolved),
+    )
+
+
+def compute_layer_counts(plan: LoadPlan) -> LayerCounts:
+    """Split a plan's nodes into occurrences, plant items and structure (design §A.5)."""
+    labels = plan.expected_node_labels
+    n_items = labels.get(schema.PLANT_ITEM_LABEL, 0)
+    structure_labels = (
+        schema.NodeClass.DRAWING_SET,
+        schema.NodeClass.SHEET,
+        schema.NodeClass.PROCESS_PLANT,
+        schema.NodeClass.PLANT_SECTION,
+    )
+    n_structure = sum(labels.get(label.value, 0) for label in structure_labels)
+    n_nodes = labels["CorpusNode"]  # every node carries it, so it is the node total
+    return LayerCounts(
+        n_occurrences=n_nodes - n_items - n_structure,
+        n_plant_items=n_items,
+        n_structure_nodes=n_structure,
+        n_drawn_as=plan.expected_relationship_types.get(schema.Relation.DRAWN_AS.value, 0),
+        n_invariants=len(plan.invariant_statements),
     )
 
 

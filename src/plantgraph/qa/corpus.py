@@ -146,7 +146,12 @@ def _rebuild_synthetic_artifacts(result: IngestResult) -> CorpusArtifacts:
     generator_config = GeneratorConfig.model_validate(result.config["generator"])
     split_config = SplitConfig.model_validate(result.config["split"])
     corpus = build_synthetic_corpus(generator_config, split_config)
-    load_plan = build_load_plan(result.corpus_id, corpus.localized_sheets, corpus.resolution)
+    load_plan = build_load_plan(
+        result.corpus_id,
+        corpus.localized_sheets,
+        corpus.resolution,
+        profile=result.store_profile,
+    )
     return CorpusArtifacts(
         corpus_id=result.corpus_id,
         generator_config=generator_config,
@@ -171,7 +176,12 @@ def _rebuild_synthetic_artifacts(result: IngestResult) -> CorpusArtifacts:
 def _rebuild_proteus_artifacts(result: IngestResult) -> CorpusArtifacts:
     path = Path(result.config["source_file"])
     corpus = build_proteus_corpus(path)
-    load_plan = build_load_plan(result.corpus_id, corpus.localized_sheets, corpus.resolution)
+    load_plan = build_load_plan(
+        result.corpus_id,
+        corpus.localized_sheets,
+        corpus.resolution,
+        profile=result.store_profile,
+    )
     return CorpusArtifacts(
         corpus_id=result.corpus_id,
         generator_config=None,
