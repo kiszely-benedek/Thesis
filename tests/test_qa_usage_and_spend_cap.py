@@ -29,7 +29,7 @@ _CYPHER_PARAMS = {"timeout_s": 5, "row_cap": 3}
 
 @pytest.fixture(scope="module")
 def toy(tmp_path_factory: pytest.TempPathFactory) -> Toy:
-    return build_toy(tmp_path_factory.mktemp("usage-toy"))
+    return build_toy(tmp_path_factory.mktemp("usage-toy"), store_profile="occurrence")
 
 
 def _response(cost: float | None, *, cached: bool = False, latency: float = 1.0) -> ChatResponse:

@@ -5,7 +5,10 @@ properties exist in the database, so it can write a query that matches. The
 lists are generated from the corpus's own `LoadPlan` (what was actually
 loaded) and checked against `graph/schema.py` (what is allowed to exist), so
 the text cannot drift from the code. The one fixed paragraph explains the
-shape of the store: sheets, off-page connectors and the links between them.
+shape of the store. Which paragraph depends on the plan's store profile
+(ADR-0036): `occurrence` describes every drawing as drawn (sheets, off-page
+connectors and the links between them); `plant` describes one node per
+physical item, with the sheet-crossing lines already joined.
 
 Bookkeeping the store adds for its own use (`CorpusNode`, `uid`, `corpus_id`)
 is never mentioned: it is noise to the model and not part of the drawing.
@@ -54,6 +57,32 @@ How the graph is organised:
   general label such as :Equipment to cover a whole family."""
 
 
+#: The merged plant layer, written against `store/plant_rows.py` and read back from a loaded
+#: store. The instrument chain below is the one in `prompts/legend_plant.txt`; the actuator has
+#: no tag (ADR-0044), so the paragraph says so as the occurrence one does.
+_PLANT_PARAGRAPH = """How the graph is organised:
+- Every plant item (equipment, valve, instrument function) is one (:PlantItem) node, however many
+  sheets it is drawn on. It also has its class labels, a specific class and the general ones above
+  it, for example :PlantItem:CentrifugalPump:Pump:Equipment, so MATCH on a general label such as
+  :Equipment to cover a family.
+- Material flows along -[:send_to]->: (a)-[:send_to]->(b) means flow runs from a to b, also when a
+  and b are drawn on different sheets: lines that continue on another sheet are already joined, so
+  one send_to relationship replaces the off-page connector hop. A relationship that crosses sheets
+  has crossed_sheets, the sheet the line leaves and the sheet it continues on.
+- Instrument wiring uses send_signal_to, control and measured_by, and reads source to target:
+  equipment -measured_by-> transmitter -send_signal_to-> controller -send_signal_to-> actuator
+  -control-> valve. Actuators have no tag.
+- (item)-[:is_drawn_on]->(:Sheet {sheet_id}) for every sheet the item appears on;
+  (:DrawingSet)-[:has_sheet]->(:Sheet). Items have no sheet_id property.
+- (item)-[:is_located_in]->(:PlantSection {unit_id})-[:is_located_in]->(:ProcessPlant {plant_id}).
+  unit_id is also an item property.
+- tag is the identifier printed next to an item, for example P-101. piping_component_name is the
+  printed name of an imported valve. Instrument functions carry loop_tag, the number of their
+  control loop.
+- A (:PlantItem:UnresolvedOffPageConnector) is a line end whose continuation was not found; the
+  line stops there."""
+
+
 def _known_labels() -> frozenset[str]:
     return frozenset(label for spec in schema.CLASS_SPECS.values() for label in spec.labels)
 
@@ -92,15 +121,31 @@ def schema_relationship_types(plan: LoadPlan) -> list[str]:
     return types
 
 
+def _paragraph_for(plan: LoadPlan) -> str:
+    if plan.profile == "occurrence":
+        return _STRUCTURE_PARAGRAPH
+    if plan.profile == "plant":
+        return _PLANT_PARAGRAPH
+    raise ValueError(
+        f"expected a load plan with profile 'occurrence' or 'plant', found {plan.profile!r}: "
+        "a store holding both layers answers the same pattern twice, so no LLM arm reads it"
+    )
+
+
 def build_schema_text(plan: LoadPlan) -> str:
-    """The schema text for the corpus `plan` describes.
+    """The schema text for the corpus `plan` describes, by the plan's store profile.
 
     Raises:
-        ValueError: the plan holds a label or relationship type the schema does not allow.
+        ValueError: the plan holds a label or relationship type the schema does not allow, or
+            its profile is `both`.
     """
+    paragraph = _paragraph_for(plan)  # first: a `both` plan fails before anything is listed
     node_properties = sorted(schema.VISIBLE_NODE_PROPERTIES)
     # `relation` is the relationship's type, not a stored property
-    edge_properties = sorted(schema.VISIBLE_EDGE_PROPERTIES - {"relation"})
+    visible_edge = set(schema.VISIBLE_EDGE_PROPERTIES) - {"relation"}
+    if plan.profile == "plant":
+        visible_edge |= schema.PLANT_EDGE_PROVENANCE_PROPERTIES
+    edge_properties = sorted(visible_edge)
     return "\n".join(
         [
             "Node labels: " + ", ".join(schema_labels(plan)),
@@ -110,6 +155,6 @@ def build_schema_text(plan: LoadPlan) -> str:
             "Relationship properties: " + ", ".join(edge_properties),
             "Sheet nodes have sheet_id; DrawingSet nodes have drawing_set_id.",
             "",
-            _STRUCTURE_PARAGRAPH,
+            paragraph,
         ]
     )

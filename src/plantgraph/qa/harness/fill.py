@@ -27,7 +27,6 @@ from plantgraph.qa.harness.run_dir import RowKey, RunDir, row_key
 from plantgraph.qa.harness.spend_cap import Reservation, SpendCapReached, SpendGuard
 from plantgraph.qa.harness.usage_meter import UsageMeter
 from plantgraph.qa.models import Question, QuestionResult, RunConfig
-from plantgraph.qa.strategies.cypher_rag import CypherRag
 
 ProgressSink = Callable[[str], None]
 Outcome = Answered | ProviderError
@@ -210,12 +209,12 @@ def _work_items(
 ) -> Iterator[WorkItem]:
     """Strategy, then question, then repeat, skipping rows already on disk."""
     corpus_questions = [q for q in questions if q.corpus_id == corpus_id]
-    cypher = (
-        CypherDeps(corpus.cypher, config.answer_pin, sender_for(CypherRag.name), config.primer)
-        if corpus.cypher is not None
-        else None
-    )
     for name, params in config.strategies.items():
+        cypher = (
+            CypherDeps(corpus.cypher, config.answer_pin, sender_for(name), config.primer)
+            if corpus.cypher is not None
+            else None
+        )
         llm = LlmDeps(config.answer_pin, sender_for(name))
         strategy = build_strategy(name, params, corpus.view, cypher, llm)
         for question in corpus_questions:

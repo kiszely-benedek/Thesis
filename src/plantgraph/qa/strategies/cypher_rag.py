@@ -15,7 +15,7 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from plantgraph.llm.models import ChatMessage, ChatRequest, ChatResponse, ContextOverflow, ModelPin
 from plantgraph.qa.cypher import CypherExecutionError, CypherResult, CypherSource, WriteClauseError
@@ -65,10 +65,24 @@ def format_context(query: str, result: CypherResult, row_cap: int) -> str:
     )
 
 
-class CypherRag:
-    """Asks the LLM for one Cypher query, runs it, and returns the rows as context."""
+#: Which graph the arm queries: every drawing as drawn, or one node per physical item (ADR-0036).
+CypherProfile = Literal["occurrence", "plant"]
 
-    name = "cypher_rag"
+OCCURRENCE_NAME = "cypher_rag"
+PLANT_NAME = "cypher_rag_plant"
+#: Strategy name -> the store profile that arm reads.
+PROFILE_OF_NAME: dict[str, CypherProfile] = {OCCURRENCE_NAME: "occurrence", PLANT_NAME: "plant"}
+
+
+class CypherRag:
+    """Asks the LLM for one Cypher query, runs it, and returns the rows as context.
+
+    The two arms share all code; `profile` only decides the name. The schema text the
+    model sees comes from the database source, built for the same profile.
+    """
+
+    #: the occurrence arm's name, kept for callers that name the class; an instance has its own
+    name = OCCURRENCE_NAME
 
     def __init__(
         self,
@@ -79,7 +93,10 @@ class CypherRag:
         timeout_s: float,
         row_cap: int,
         primer: bool = False,
+        profile: CypherProfile = "occurrence",
     ) -> None:
+        self.name = _name_of(profile)
+        self.profile = profile
         self._source = source
         self._pin = pin
         self._send = send
@@ -116,6 +133,10 @@ class CypherRag:
             n_rows=len(result.rows), truncated=result.truncated, empty_result=not result.rows
         )
         return RetrievalResult(context=context, failure=None, trace=trace)
+
+
+def _name_of(profile: CypherProfile) -> str:
+    return PLANT_NAME if profile == "plant" else OCCURRENCE_NAME
 
 
 def _failure(trace: dict[str, Any]) -> RetrievalResult:

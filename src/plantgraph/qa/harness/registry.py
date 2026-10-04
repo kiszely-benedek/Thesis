@@ -5,7 +5,8 @@ connection and a way to call the LLM, so it is built from `CypherDeps`;
 Hierarchical, and the need-aware variant built on it, need a way to call the LLM
 only for the router fallback, so they take `LlmDeps`. The runner supplies both. Each of the two
 exists in two representations, told apart by name and never by a parameter (ADR-0039): the
-unsuffixed one prints the occurrence graph, the `_plant` one the merged plant. Add a strategy
+unsuffixed one prints the occurrence graph, the `_plant` one the merged plant; CypherRAG has the
+same pair, `cypher_rag` and `cypher_rag_plant`, reading differently loaded stores. Add a strategy
 here when it is built; the harness needs no other change.
 """
 
@@ -30,7 +31,7 @@ from plantgraph.qa.need.rules import RuleNeedClassifier
 from plantgraph.qa.plant_api.item_graph import ItemGraph, build_item_graph
 from plantgraph.qa.strategies.base import Strategy
 from plantgraph.qa.strategies.context_rag import ContextRag
-from plantgraph.qa.strategies.cypher_rag import CypherRag
+from plantgraph.qa.strategies.cypher_rag import PROFILE_OF_NAME, CypherRag
 from plantgraph.qa.strategies.hierarchical import Hierarchical, hierarchical_name
 from plantgraph.qa.strategies.hierarchical_need import NeedAwareHierarchical, need_strategy_name
 from plantgraph.qa.unit_router import UnitRouter
@@ -85,8 +86,8 @@ def build_strategy(
             variant is asked for without a parameter it has no default for (all set on
             dev corpora).
     """
-    if name == CypherRag.name:
-        return _build_cypher_rag(params, cypher)
+    if name in PROFILE_OF_NAME:
+        return _build_cypher_rag(name, params, cypher)
     if name in _HIERARCHICAL_NAMES:
         return _build_hierarchical(name, _HIERARCHICAL_NAMES[name], params, view, llm)
     if name in _NEED_RULES_NAMES:
@@ -94,19 +95,19 @@ def build_strategy(
     factory = STRATEGY_FACTORIES.get(name)
     if factory is None:
         known = sorted(
-            [*STRATEGY_FACTORIES, CypherRag.name, *_HIERARCHICAL_NAMES, *_NEED_RULES_NAMES]
+            [*STRATEGY_FACTORIES, *PROFILE_OF_NAME, *_HIERARCHICAL_NAMES, *_NEED_RULES_NAMES]
         )
         raise ValueError(f"expected a strategy in {known}, found {name!r}")
     return factory(view, params)
 
 
-def _build_cypher_rag(params: dict[str, Any], cypher: CypherDeps | None) -> CypherRag:
+def _build_cypher_rag(name: str, params: dict[str, Any], cypher: CypherDeps | None) -> CypherRag:
     if cypher is None:
-        raise ValueError("expected a database connection for cypher_rag, found none")
+        raise ValueError(f"expected a database connection for {name}, found none")
     missing = [key for key in ("timeout_s", "row_cap") if key not in params]
     if missing:
         # no default: both are set in the pilot, on dev corpora (`qa-system.md` §7)
-        raise ValueError(f"expected cypher_rag params to include {missing}, found {sorted(params)}")
+        raise ValueError(f"expected {name} params to include {missing}, found {sorted(params)}")
     return CypherRag(
         cypher.source,
         cypher.pin,
@@ -114,6 +115,7 @@ def _build_cypher_rag(params: dict[str, Any], cypher: CypherDeps | None) -> Cyph
         timeout_s=float(params["timeout_s"]),
         row_cap=int(params["row_cap"]),
         primer=cypher.primer,
+        profile=PROFILE_OF_NAME[name],
     )
 
 

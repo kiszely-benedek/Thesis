@@ -30,13 +30,15 @@ from plantgraph.store.neo4j_plan import LoadPlan
 from plantgraph.store.neo4j_probe import DEFAULT_CONNECTION_TIMEOUT_S
 from plantgraph.store.neo4j_settings import Neo4jSettings
 
-#: Store bookkeeping that is never shown to the model (`qa-system.md` §2.1 R3).
-_HIDDEN_PROPERTIES = frozenset({"uid", "corpus_id"})
+#: Store bookkeeping that is never shown to the model (`qa-system.md` §2.1 R3);
+#: `via_connector_uids` lists the off-page connector stubs a plant edge was joined through.
+_HIDDEN_PROPERTIES = frozenset({"uid", "corpus_id", "via_connector_uids"})
 _HIDDEN_LABELS = frozenset({"CorpusNode"})
 
 _REFUSE_HINT = (
     "wipe the other corpora with plantgraph.store.neo4j_loader.wipe_corpus, or load this "
-    "corpus into its own database (NEO4J_DATABASE) with `python -m plantgraph.ingest`"
+    "corpus into its own database (NEO4J_DATABASE) with `python -m plantgraph.ingest ... "
+    "--store-profile occurrence|plant` (the profile the arm reads)"
 )
 
 
@@ -66,7 +68,8 @@ def check_counts(
         raise StoreMismatch(
             f"expected the stored {kind} counts of {corpus_id!r} to equal the load plan's "
             f"{dict(expected)}; found {dict(found)}. The store and the in-memory corpus differ; "
-            f"reload it with `python -m plantgraph.ingest`"
+            f"reload it with `python -m plantgraph.ingest ... --store-profile occurrence|plant` "
+            f"(the profile the arm reads)"
         )
 
 

@@ -20,7 +20,12 @@ from plantgraph.qa.graph_view import NetworkxGraphView
 from plantgraph.qa.harness.attempt import LoadedCorpus
 from plantgraph.qa.harness.clients import build_chat_client
 from plantgraph.qa.harness.corpus_record import build_corpus_record
-from plantgraph.qa.harness.cypher_setup import CypherSourceFactory, open_checked_neo4j_view
+from plantgraph.qa.harness.cypher_setup import (
+    CypherSourceFactory,
+    check_store_profile,
+    open_checked_neo4j_view,
+    required_cypher_profile,
+)
 from plantgraph.qa.harness.fill import Invocation, ProgressSink, fill_answers
 from plantgraph.qa.harness.freeze import check_reportable, prompt_hashes, question_set_sha256
 from plantgraph.qa.harness.gold import build_gold_scoring
@@ -30,7 +35,7 @@ from plantgraph.qa.harness.routing_gold import build_routing_gold
 from plantgraph.qa.harness.run_dir import RunDir
 from plantgraph.qa.harness.summary import RunSummary, summarize_rows
 from plantgraph.qa.models import Question, RunConfig
-from plantgraph.qa.strategies.cypher_rag import CypherRag
+from plantgraph.qa.strategies.cypher_rag import CypherProfile
 
 
 def run_harness(
@@ -74,9 +79,12 @@ def run_harness(
     check_reportable(config)  # before anything is read or written
     _require_cap_for_paid_run(config)
     _check_concurrency(config, concurrency, cost_per_question_usd)
+    cypher_profile = required_cypher_profile(config.strategies)  # refuses two Cypher arms
     questions = _load_all_questions(config, questions_root)
     _check_inputs_match_config(config, questions_root)
-    corpora = _load_corpora(config, corpus_roles, corpora_root, cypher_source_factory)
+    corpora = _load_corpora(
+        config, corpus_roles, corpora_root, cypher_source_factory, cypher_profile
+    )
     run_dir = RunDir(runs_root / config.run_id)
     # The guard is this invocation's flag, never a stored one: a run started
     # with --allow-paid-calls and resumed without it must not call out.
@@ -159,13 +167,14 @@ def _load_corpora(
     corpus_roles: dict[str, str],
     corpora_root: Path,
     cypher_source_factory: CypherSourceFactory,
+    cypher_profile: CypherProfile | None,
 ) -> dict[str, LoadedCorpus]:
     """Rebuild each corpus once: the view for strategies, gold for scoring, its record."""
     corpora: dict[str, LoadedCorpus] = {}
     try:
         for corpus_id in config.corpora:
             corpora[corpus_id] = _load_corpus(
-                config, corpus_id, corpus_roles, corpora_root, cypher_source_factory
+                config, corpus_id, corpus_roles, corpora_root, cypher_source_factory, cypher_profile
             )
     except Exception:
         _close_cypher_sources(corpora)  # a later corpus failed its check: free the earlier ones
@@ -179,6 +188,7 @@ def _load_corpus(
     corpus_roles: dict[str, str],
     corpora_root: Path,
     cypher_source_factory: CypherSourceFactory,
+    cypher_profile: CypherProfile | None,
 ) -> LoadedCorpus:
     ingest_path = corpora_root / corpus_id / "ingest.json"
     artifacts = load_corpus_artifacts(corpus_id, ingest_path)
@@ -190,7 +200,8 @@ def _load_corpus(
         raise ValueError(f"expected a split manifest for {corpus_id!r}, found none")
     view = NetworkxGraphView(corpus_id, artifacts.localized_sheets, artifacts.resolution)
     # the pre-check: opened and verified here, before the run is frozen or any call is made
-    wants_cypher = CypherRag.name in config.strategies
+    if cypher_profile is not None:
+        check_store_profile(artifacts.load_plan, cypher_profile)
     return LoadedCorpus(
         view=view,
         gold=build_gold_scoring(plant, view),
@@ -198,7 +209,7 @@ def _load_corpus(
             plant, artifacts.gold.sheets, manifest, artifacts.gold.occurrence_map
         ),
         record=build_corpus_record(artifacts, ingest_path, corpus_roles[corpus_id]),
-        cypher=cypher_source_factory(artifacts.load_plan) if wants_cypher else None,
+        cypher=cypher_source_factory(artifacts.load_plan) if cypher_profile is not None else None,
     )
 
 

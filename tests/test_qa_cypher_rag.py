@@ -226,7 +226,7 @@ def test_registry_requires_the_database_and_its_pilot_parameters(tmp_path: Path)
 
 @pytest.fixture(scope="module")
 def toy(tmp_path_factory: pytest.TempPathFactory) -> Toy:
-    return build_toy(tmp_path_factory.mktemp("cypher-toy"))
+    return build_toy(tmp_path_factory.mktemp("cypher-toy"), store_profile="occurrence")
 
 
 def _run(toy: Toy, tmp_path: Path, fake: FakeTransport, factory: object) -> None:

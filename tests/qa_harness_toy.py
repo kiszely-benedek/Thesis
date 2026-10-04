@@ -42,11 +42,16 @@ class Toy:
     questions: list[Question]
 
 
-def build_toy(root: Path) -> Toy:
-    """Generate a 2-unit corpus, then sample a few questions per bin from its ground truth."""
+def build_toy(root: Path, store_profile: str | None = None) -> Toy:
+    """Generate a 2-unit corpus, then sample a few questions per bin from its ground truth.
+
+    `store_profile` is passed to the ingest CLI when given; otherwise the CLI's default applies.
+    """
     corpora_root, questions_root = root / "corpora", root / "questions"
     argv = ["synthetic", "--n-units", "2", "--budget", "3", "--seed", "0"]
     argv += ["--corpus-id", CORPUS_ID, "--no-neo4j", "--out", str(corpora_root / CORPUS_ID)]
+    if store_profile is not None:
+        argv += ["--store-profile", store_profile]
     with contextlib.redirect_stdout(io.StringIO()):  # the CLI prints the IngestResult
         ingest_main(argv)
     artifacts = load_corpus_artifacts(CORPUS_ID, corpora_root / CORPUS_ID / "ingest.json")
