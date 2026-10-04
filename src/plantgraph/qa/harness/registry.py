@@ -59,6 +59,8 @@ class CypherDeps:
     source: CypherSource
     pin: ModelPin
     send: SendChatRequest
+    #: Whether the query-writing prompt carries the P&ID reading primer (`RunConfig.primer`).
+    primer: bool = False
 
 
 @dataclass(frozen=True)
@@ -111,6 +113,7 @@ def _build_cypher_rag(params: dict[str, Any], cypher: CypherDeps | None) -> Cyph
         cypher.send,
         timeout_s=float(params["timeout_s"]),
         row_cap=int(params["row_cap"]),
+        primer=cypher.primer,
     )
 
 

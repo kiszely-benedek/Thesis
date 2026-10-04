@@ -21,6 +21,7 @@ from plantgraph.llm.models import ChatMessage, ChatRequest, ChatResponse, Contex
 from plantgraph.qa.cypher import CypherExecutionError, CypherResult, CypherSource, WriteClauseError
 from plantgraph.qa.final_answer import SendChatRequest
 from plantgraph.qa.models import Outcome, RetrievalResult
+from plantgraph.qa.primer import fill_primer_slot
 
 _TEMPLATE_PATH = Path(__file__).resolve().parents[1] / "prompts" / "cypher_query.txt"
 _SCHEMA_PLACEHOLDER = "<<SCHEMA>>"
@@ -30,10 +31,12 @@ _QUESTION_PLACEHOLDER = "<<QUESTION>>"
 _FENCED = re.compile(r"```[A-Za-z]*\s*(.*?)```", re.DOTALL)
 
 
-def render_cypher_request(*, pin: ModelPin, schema_text: str, question_text: str) -> ChatRequest:
+def render_cypher_request(
+    *, pin: ModelPin, schema_text: str, question_text: str, primer: bool = False
+) -> ChatRequest:
     """The one prompt that asks the LLM for a Cypher query (`cypher_query.txt`)."""
     rendered = (
-        _TEMPLATE_PATH.read_text(encoding="utf-8")
+        fill_primer_slot(_TEMPLATE_PATH.read_text(encoding="utf-8"), primer=primer)
         .replace(_SCHEMA_PLACEHOLDER, schema_text)
         .replace(_QUESTION_PLACEHOLDER, question_text)
     )
@@ -75,12 +78,14 @@ class CypherRag:
         *,
         timeout_s: float,
         row_cap: int,
+        primer: bool = False,
     ) -> None:
         self._source = source
         self._pin = pin
         self._send = send
         self._timeout_s = timeout_s
         self._row_cap = row_cap
+        self._primer = primer
 
     def retrieve(self, question_text: str) -> RetrievalResult:
         """Write, run and format one query; a failed query is `RETRIEVAL_ERROR`, not a raise.
@@ -89,7 +94,10 @@ class CypherRag:
         the harness's to handle, as for every other call.
         """
         request = render_cypher_request(
-            pin=self._pin, schema_text=self._source.schema_text(), question_text=question_text
+            pin=self._pin,
+            schema_text=self._source.schema_text(),
+            question_text=question_text,
+            primer=self._primer,
         )
         try:
             response = self._send(request)

@@ -35,6 +35,7 @@ from plantgraph.llm.models import (
 )
 from plantgraph.qa.fit import check_fit, handle_overflow
 from plantgraph.qa.models import AnswerType, FinalAnswer, Outcome
+from plantgraph.qa.primer import fill_primer_slot
 from plantgraph.qa.scoring import normalize_boolean
 
 _TEMPLATE_PATH = Path(__file__).parent / "prompts" / "final_answer.txt"
@@ -88,17 +89,22 @@ def template_sha256() -> str:
 
 
 def render_final_answer_request(
-    *, pin: ModelPin, context: str, question_text: str, answer_type: AnswerType
+    *,
+    pin: ModelPin,
+    context: str,
+    question_text: str,
+    answer_type: AnswerType,
+    primer: bool = False,
 ) -> ChatRequest:
     """Build the one shared final-answer request every strategy ends with (§8; ADR-0013 point 6).
 
     Only `context` differs between strategies: the instruction, the question
     and the answer-format rule all come from the same template and the same
     `answer_type`, so the JSON-output contract never depends on which
-    strategy produced the context.
+    strategy produced the context. `primer` adds the P&ID reading primer (`primer.py`).
     """
     rendered = (
-        template_text()
+        fill_primer_slot(template_text(), primer=primer)
         .replace(_CONTEXT_PLACEHOLDER, context)
         .replace(_QUESTION_PLACEHOLDER, question_text)
         .replace(_ANSWER_FORMAT_PLACEHOLDER, _answer_format_instruction(answer_type))
@@ -292,6 +298,7 @@ def run_final_step(
     answer_type: AnswerType,
     wall: ContextWall | None,
     send: SendChatRequest,
+    primer: bool = False,
 ) -> FinalStepResult:
     """Run the one shared final-answer step every strategy ends with (§7, §8; ADR-0013 point 6).
 
@@ -303,7 +310,11 @@ def run_final_step(
     paths.
     """
     request = render_final_answer_request(
-        pin=pin, context=context, question_text=question_text, answer_type=answer_type
+        pin=pin,
+        context=context,
+        question_text=question_text,
+        answer_type=answer_type,
+        primer=primer,
     )
     prompt_chars = len(request.messages[0].content)
     decision = check_fit(prompt_chars, wall)

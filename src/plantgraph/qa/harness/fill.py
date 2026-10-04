@@ -211,7 +211,7 @@ def _work_items(
     """Strategy, then question, then repeat, skipping rows already on disk."""
     corpus_questions = [q for q in questions if q.corpus_id == corpus_id]
     cypher = (
-        CypherDeps(corpus.cypher, config.answer_pin, sender_for(CypherRag.name))
+        CypherDeps(corpus.cypher, config.answer_pin, sender_for(CypherRag.name), config.primer)
         if corpus.cypher is not None
         else None
     )

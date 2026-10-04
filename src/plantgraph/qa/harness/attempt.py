@@ -127,7 +127,12 @@ def _attempt(
     started = time.monotonic()
     try:
         step = answer_question(
-            item.strategy, item.question, pin=config.answer_pin, wall=config.context_wall, send=send
+            item.strategy,
+            item.question,
+            pin=config.answer_pin,
+            wall=config.context_wall,
+            send=send,
+            primer=config.primer,
         )
     except ProviderError as error:
         return error

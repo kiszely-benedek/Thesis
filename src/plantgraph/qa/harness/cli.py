@@ -44,6 +44,12 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         type=Path,
         help='JSON {"<strategy name>": {parameters}}; frozen in the run config',
     )
+    parser.add_argument(
+        "--no-primer",
+        action="store_true",
+        help="leave the P&ID reading primer out of the prompts (the ablation arm); "
+        "the primer is on by default",
+    )
     parser.add_argument("--repeats", type=int, default=1)
     parser.add_argument("--pin-json", required=True, type=Path, help="a ModelPin as JSON")
     parser.add_argument("--wall-json", type=Path, help="a ContextWall as JSON (pilot output)")
@@ -116,6 +122,7 @@ def _build_config(args: argparse.Namespace, corpus_ids: list[str]) -> RunConfig:
         answer_pin=ModelPin.model_validate_json(args.pin_json.read_text(encoding="utf-8")),
         prompt_hashes=prompt_hashes(),
         question_set_sha256=question_set_sha256(files),
+        primer=not args.no_primer,
         context_wall=wall,
         git_commit=commit,
         git_dirty=dirty,

@@ -1,5 +1,7 @@
 You are answering a question about one plant's piping and instrumentation diagram (P&ID) — the engineering drawing that shows a plant's pipes, equipment and instruments, and how they connect. Below is a machine-readable description of that diagram, not a picture of it.
 
+<<PRIMER>>
+
 Answer using only that description. If it does not contain the answer, do not guess — say so instead of inventing one.
 
 Context:

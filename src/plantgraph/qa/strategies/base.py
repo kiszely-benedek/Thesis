@@ -32,12 +32,13 @@ def answer_question(
     pin: ModelPin,
     wall: ContextWall | None,
     send: SendChatRequest,
+    primer: bool = False,
 ) -> FinalStepResult:
     """Retrieve with `strategy`, then run the shared final step (§7, §8).
 
     `question.answer_type` is used only by the final step, to word the answer
-    format; retrieval receives `question.text` alone. A failed retrieval
-    returns its `failure` outcome and makes no call.
+    format; retrieval receives `question.text` alone. `primer` is passed on to the final
+    step. A failed retrieval returns its `failure` outcome and makes no call.
     """
     retrieval = strategy.retrieve(question.text)
     trace = {"retrieval": retrieval.trace}
@@ -57,5 +58,6 @@ def answer_question(
         answer_type=question.answer_type,
         wall=wall,
         send=send,
+        primer=primer,
     )
     return final.model_copy(update={"trace": {**trace, **final.trace}})

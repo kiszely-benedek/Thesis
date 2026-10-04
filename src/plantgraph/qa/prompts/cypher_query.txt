@@ -1,5 +1,7 @@
 You are writing a database query about one plant's piping and instrumentation diagram (P&ID) — the engineering drawing that shows a plant's pipes, equipment and instruments, and how they connect. The diagram is stored as a graph in a Neo4j database.
 
+<<PRIMER>>
+
 Database schema:
 <<SCHEMA>>
 

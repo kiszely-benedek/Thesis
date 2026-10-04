@@ -220,3 +220,24 @@ def test_cli_without_the_flag_is_replay_only_and_stops_at_a_cache_miss(
     assert "replay mode" in capsys.readouterr().out
     config_text = (tmp_path / "runs" / "cli-toy" / "run_config.json").read_text("utf-8")
     assert RunConfig.model_validate_json(config_text).allow_paid_calls is False
+
+
+def _stored_primer_after_cli_run(toy: Toy, tmp_path: Path, *extra: str) -> bool:
+    pin_path = tmp_path / "pin.json"
+    pin_path.write_text(pin().model_dump_json(), encoding="utf-8")
+    argv = ["--run-id", "cli-primer", "--experiment", "TOOLING", "--corpus", f"{CORPUS_ID}:dev"]
+    argv += ["--strategy", "context_rag", "--pin-json", str(pin_path), *extra]
+    argv += ["--corpora-root", str(toy.corpora_root), "--questions-root", str(toy.questions_root)]
+    argv += ["--runs-root", str(tmp_path / "runs"), "--cache-path", str(tmp_path / "cache.sqlite")]
+    with pytest.raises(SystemExit):  # replay mode stops at the first cache miss; the config is kept
+        cli_main(argv)
+    config_text = (tmp_path / "runs" / "cli-primer" / "run_config.json").read_text("utf-8")
+    return RunConfig.model_validate_json(config_text).primer
+
+
+def test_cli_turns_the_primer_on_by_default(toy: Toy, tmp_path: Path) -> None:
+    assert _stored_primer_after_cli_run(toy, tmp_path) is True
+
+
+def test_cli_no_primer_flag_turns_it_off_and_records_that(toy: Toy, tmp_path: Path) -> None:
+    assert _stored_primer_after_cli_run(toy, tmp_path, "--no-primer") is False

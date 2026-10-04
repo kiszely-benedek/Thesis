@@ -1,0 +1,12 @@
+- P&IDs show equipment (pumps, tanks, exchangers), piping, valves, fittings and instruments.
+- Arrows on lines show flow direction.
+- Instrument signal lines differ from process piping.
+- Gate valves and conventional ball valves start or stop flow; globe valves also regulate it.
+- Valve + actuator = control valve, moved remotely or by a controller. No actuator shown: assume hand-operated.
+- Control valve stations generally have block valves and a bypass; control valves are not generally suitable for isolation.
+- Check (non-return) valves are self-acting: flow opens them, reverse flow closes them. Without a screw-down stop they are unsuitable for isolation.
+- Relief/safety valves open on overpressure to protect equipment.
+- Tag = measured-variable letter (F flow, L level, P pressure, T temperature) + function letters (I indicator, C controller, T transmitter, V valve) + loop number; one loop shares it: FIC045, FT045.
+- Loop: transmitter -> controller -> final control element (e.g. control valve).
+- A line continued on another sheet ends in a connector; both ends reference each other.
+- Lines to other units or utilities end in boxes naming the service and the other unit/drawing.

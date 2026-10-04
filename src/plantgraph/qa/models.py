@@ -324,6 +324,9 @@ class RunConfig(BaseModel):
     #: Prompt file name to its sha256, so a prompt edit is visible in the run record (§3).
     prompt_hashes: dict[str, str] = Field(default_factory=dict)
     question_set_sha256: str
+    #: Whether the prompts carry the P&ID reading primer (`primer.py`). Defaults to off so a
+    #: config stored before the field existed loads, and replays, as it ran.
+    primer: bool = False
     #: `None` until the pilot has measured it (§12); required before `reported=True`.
     context_wall: ContextWall | None = None
     git_commit: str
