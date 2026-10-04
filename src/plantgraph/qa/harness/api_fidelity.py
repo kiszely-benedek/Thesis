@@ -47,7 +47,11 @@ class EdgeFidelity(BaseModel):
 
 def compare_edges_by_tag(item_graph: ItemGraph, plant: nx.DiGraph[str]) -> EdgeFidelity:
     """Compare the item graph's edge set with the gold plant's topology edges, by tag."""
-    found = _item_graph_edges(item_graph)
+    return compare_tag_edges(_item_graph_edges(item_graph), plant)
+
+
+def compare_tag_edges(found: set[TagEdge], plant: nx.DiGraph[str]) -> EdgeFidelity:
+    """Compare any set of edges-by-tag (item graph, stored layer) with the gold plant's."""
     gold = _gold_edges(plant)
     matched = found & gold
     return EdgeFidelity(
