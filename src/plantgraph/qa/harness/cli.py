@@ -19,6 +19,7 @@ from typing import Any
 from plantgraph.llm.cache import DEFAULT_CACHE_PATH
 from plantgraph.llm.models import CacheMiss, ContextWall, ModelPin
 from plantgraph.qa.harness.freeze import prompt_hashes, question_set_sha256, read_git_state
+from plantgraph.qa.harness.pool import MAX_CONCURRENCY
 from plantgraph.qa.harness.question_set import questions_path
 from plantgraph.qa.harness.runner import run_harness
 from plantgraph.qa.models import RunConfig
@@ -60,6 +61,15 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         "--max-spend-usd",
         type=float,
         help="hard spend cap in USD; required with --allow-paid-calls, recorded in the run config",
+    )
+    parser.add_argument(
+        "--concurrency",
+        type=int,
+        default=1,
+        choices=range(1, MAX_CONCURRENCY + 1),
+        metavar=f"1..{MAX_CONCURRENCY}",
+        help="items answered at once; rows are still written in order. A paid run above 1 "
+        "needs --cost-per-question-usd",
     )
     return parser.parse_args(argv)
 
@@ -121,6 +131,11 @@ def main(argv: list[str] | None = None) -> None:
     args = _parse_args(argv)
     if args.allow_paid_calls and args.max_spend_usd is None:
         raise SystemExit("error: --allow-paid-calls needs --max-spend-usd (a hard spend cap)")
+    if args.allow_paid_calls and args.concurrency > 1 and args.cost_per_question_usd is None:
+        raise SystemExit(
+            "error: --concurrency > 1 on a paid run needs --cost-per-question-usd "
+            "(the spend cap reserves that much for each item in flight)"
+        )
     corpus_roles = dict(_split_corpus_arg(value) for value in args.corpus)
     config = _build_config(args, list(corpus_roles))
     try:
@@ -132,6 +147,7 @@ def main(argv: list[str] | None = None) -> None:
             runs_root=args.runs_root,
             cache_path=args.cache_path,
             cost_per_question_usd=args.cost_per_question_usd,
+            concurrency=args.concurrency,
         )
     except CacheMiss as error:
         print(f"stopped at a cache miss: {error}", file=sys.stderr)

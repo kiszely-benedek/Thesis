@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import time
 from collections.abc import Callable
+from contextvars import ContextVar
 from dataclasses import dataclass
 
 from plantgraph.llm.client import ChatClient
@@ -51,16 +52,26 @@ class Answered:
     timing: TimingRow
 
 
-def sender_factory(
-    client: ChatClient, config: RunConfig, meter: UsageMeter
-) -> Callable[[str], SendChatRequest]:
+#: The meter of the item this thread is answering. Strategies are built once and keep one
+#: retrieval sender, so the sender finds the right item's meter here (one per thread).
+_ACTIVE_METER: ContextVar[UsageMeter | None] = ContextVar("active_meter", default=None)
+
+
+def sender_factory(client: ChatClient, config: RunConfig) -> Callable[[str], SendChatRequest]:
     """For a strategy name, a sender for its own LLM calls (query writing, router fallback).
 
     They go through the run's client, so the cache, the paid-call guard and the log all apply.
+    The call is metered on the item the calling thread is inside `attempt` for.
     """
 
     def sender_for(strategy_name: str) -> SendChatRequest:
         def send(request: ChatRequest) -> ChatResponse:
+            meter = _ACTIVE_METER.get()
+            if meter is None:
+                raise RuntimeError(
+                    "expected a retrieval call to be made inside `attempt`, which sets the "
+                    "item's meter; found none"
+                )
             # the strategy sees only the text; the harness reads the question id from the meter
             return meter.timed_call(
                 lambda: client.complete(
@@ -84,7 +95,24 @@ def attempt(
     client: ChatClient,
     meter: UsageMeter,
 ) -> Answered | ProviderError:
-    """Answer one item; a provider error that outlived the transport retries is returned."""
+    """Answer one item; a provider error that outlived the transport retries is returned.
+
+    `meter` belongs to this item alone.
+    """
+    token = _ACTIVE_METER.set(meter)
+    try:
+        return _attempt(item, config, corpus, client, meter)
+    finally:
+        _ACTIVE_METER.reset(token)
+
+
+def _attempt(
+    item: WorkItem,
+    config: RunConfig,
+    corpus: LoadedCorpus,
+    client: ChatClient,
+    meter: UsageMeter,
+) -> Answered | ProviderError:
     question_id = item.question.question_id
 
     def send(request: ChatRequest) -> ChatResponse:

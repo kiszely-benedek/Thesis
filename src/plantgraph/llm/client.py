@@ -23,6 +23,7 @@ is never mistaken for permission to spend money.
 from __future__ import annotations
 
 import logging
+import threading
 import time
 from datetime import UTC, datetime
 from pathlib import Path
@@ -44,6 +45,7 @@ from plantgraph.llm.models import (
     canonical_hash,
 )
 from plantgraph.llm.openrouter_settings import OpenRouterSettings
+from plantgraph.llm.single_flight import SingleFlight
 
 logger = logging.getLogger(__name__)
 
@@ -160,6 +162,8 @@ class ChatClient:
             http_client=http_client,
         )
         self._calls_log_path.parent.mkdir(parents=True, exist_ok=True)
+        self._log_lock = threading.Lock()  # appends to calls.jsonl may come from several threads
+        self._single_flight = SingleFlight()
 
     def __repr__(self) -> str:
         return f"ChatClient(backend={self._backend!r}, base_url={self._sdk_client.base_url!r})"
@@ -230,6 +234,13 @@ class ChatClient:
             ContextOverflow: the provider reported the prompt exceeded its context window.
             ProviderError: any other provider error, after transport retries were exhausted.
         """
+        # one call per prompt at a time: a second thread asking the same thing finds the cache full
+        with self._single_flight.hold(cache_key(request)):
+            return self._complete(request, run_id, question_id, strategy)
+
+    def _complete(
+        self, request: ChatRequest, run_id: str, question_id: str | None, strategy: str | None
+    ) -> ChatResponse:
         cached = self._cache.get(request)  # raises CacheMiss itself in "replay" mode
         if cached is not None:
             # The stored value's own `from_cache` is whatever it was when

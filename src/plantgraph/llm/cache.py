@@ -9,6 +9,7 @@ second paid call.
 from __future__ import annotations
 
 import sqlite3
+import threading
 from pathlib import Path
 from typing import Literal
 
@@ -39,12 +40,19 @@ def cache_key(request: ChatRequest) -> str:
 
 
 class SqliteCache:
-    """Maps a `ChatRequest`'s cache key to its `ChatResponse`, in one SQLite file."""
+    """Maps a `ChatRequest`'s cache key to its `ChatResponse`, in one SQLite file.
+
+    Safe to share between threads (the harness's `--concurrency N`): one connection,
+    opened without SQLite's same-thread check, and every use serialized by a lock.
+    """
 
     def __init__(self, path: Path, mode: CacheMode) -> None:
         self._mode = mode
         path.parent.mkdir(parents=True, exist_ok=True)
-        self._connection = sqlite3.connect(path)
+        # SQLite refuses a connection used from another thread by default; the lock below
+        # makes sharing it safe, so the check is switched off.
+        self._connection = sqlite3.connect(path, check_same_thread=False)
+        self._lock = threading.Lock()
         self._connection.execute(
             "CREATE TABLE IF NOT EXISTS responses "
             "(key TEXT PRIMARY KEY, response_json TEXT NOT NULL)"
@@ -62,9 +70,10 @@ class SqliteCache:
                 fall back to a real call.
         """
         key = cache_key(request)
-        row = self._connection.execute(
-            "SELECT response_json FROM responses WHERE key = ?", (key,)
-        ).fetchone()
+        with self._lock:
+            row = self._connection.execute(
+                "SELECT response_json FROM responses WHERE key = ?", (key,)
+            ).fetchone()
         if row is not None:
             return ChatResponse.model_validate_json(row[0])
         if self._mode == "replay":
@@ -76,15 +85,17 @@ class SqliteCache:
     def put(self, request: ChatRequest, response: ChatResponse) -> None:
         """Store `response` under `request`'s cache key, replacing any existing entry."""
         key = cache_key(request)
-        self._connection.execute(
-            "INSERT OR REPLACE INTO responses (key, response_json) VALUES (?, ?)",
-            (key, response.model_dump_json()),
-        )
-        self._connection.commit()
+        with self._lock:
+            self._connection.execute(
+                "INSERT OR REPLACE INTO responses (key, response_json) VALUES (?, ?)",
+                (key, response.model_dump_json()),
+            )
+            self._connection.commit()
 
     def close(self) -> None:
         """Close the underlying SQLite connection."""
-        self._connection.close()
+        with self._lock:
+            self._connection.close()
 
     def __enter__(self) -> SqliteCache:
         return self

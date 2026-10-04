@@ -13,6 +13,8 @@ from __future__ import annotations
 
 import hashlib
 import json
+import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -73,6 +75,9 @@ class FakeTransport:
             request's raw `Authorization` header value in its body — used
             only by the key-hygiene test, to prove `ChatClient` redacts it
             before the value can reach an exception, a log or `calls.jsonl`.
+        latency_for_prompt: if set, called with a request's message text; the handler
+            sleeps that many seconds before replying. Scripts slow and out-of-order
+            replies for the harness's concurrency tests.
     """
 
     default_reply: ScriptedReply = field(default_factory=lambda: ScriptedReply(text="ok"))
@@ -81,6 +86,7 @@ class FakeTransport:
     fail_status: int = 429
     context_wall_chars: int | None = None
     echo_authorization_header: bool = False
+    latency_for_prompt: Callable[[str], float] | None = None
     #: Every request this transport has handled, in order — assert on its
     #: length to prove a code path made zero (or exactly N) transport calls.
     requests: list[httpx2.Request] = field(default_factory=list, init=False)
@@ -95,6 +101,9 @@ class FakeTransport:
         body = json.loads(request.content.decode("utf-8"))
         messages: list[dict[str, Any]] = body.get("messages", [])
         prompt_chars = sum(len(message.get("content", "")) for message in messages)
+        if self.latency_for_prompt is not None:
+            prompt_text = " ".join(message.get("content", "") for message in messages)
+            time.sleep(self.latency_for_prompt(prompt_text))
 
         if self.context_wall_chars is not None and prompt_chars > self.context_wall_chars:
             return self._error_response(

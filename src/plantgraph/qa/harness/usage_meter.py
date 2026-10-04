@@ -15,20 +15,29 @@ from collections.abc import Callable
 from pydantic import BaseModel, ConfigDict
 
 from plantgraph.llm.models import ChatResponse
-from plantgraph.qa.harness.spend_cap import SpendGuard
+from plantgraph.qa.harness.spend_cap import Reservation, SpendGuard
 from plantgraph.qa.models import CallUsage
 
 
 class UsageMeter:
-    """Tallies one question at a time: `begin`, then `record` per call, then `end`."""
+    """Tallies one question: `begin`, then `record` per call, then `end`.
 
-    def __init__(self, guard: SpendGuard, clock: Callable[[], float] = time.monotonic) -> None:
+    One meter per work item, so items running at once never share a tally.
+    """
+
+    def __init__(
+        self,
+        guard: SpendGuard,
+        clock: Callable[[], float] = time.monotonic,
+        reservation: Reservation | None = None,
+    ) -> None:
         self.question_id: str | None = None
         #: Seconds spent inside model calls, retrieval-side and final, for the current question.
         self.seconds_in_calls = 0.0
         #: Cost of the current question's calls that missed the cache, final call included.
         self.spent_usd = 0.0
         self._guard = guard
+        self._reservation = reservation  # this item's share of the cap, if it has one
         self._clock = clock
         self._responses: list[ChatResponse] = []
 
@@ -41,7 +50,7 @@ class UsageMeter:
 
     def timed_call(self, call: Callable[[], ChatResponse], *, is_final: bool) -> ChatResponse:
         """Run one model call behind the spend guard, then `record` it."""
-        self._guard.check_before_call()
+        self._guard.check_before_call(self._reservation)
         started = self._clock()
         response = call()
         self.record(response, self._clock() - started, is_final=is_final)
