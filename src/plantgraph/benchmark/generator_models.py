@@ -106,10 +106,11 @@ class ValveSpec(BaseModel):
 class LoopSpec(BaseModel):
     """A control loop's raw building blocks — for `PlantBuilder.add_control_loop`.
 
-    `variable`, `unit_no`, and `loop_no` together produce the three instrument
-    tags (`f"{variable}T-{unit_no}-{loop_no}"` and its siblings,
-    `plant-generator.md` §3.3 "Ids and tags") — so there is no separate tag
-    field here, the backend computes it from the formula.
+    `variable`, `unit_no`, and `loop_no` together produce the instrument tags
+    (`f"{variable}T-{unit_no}-{loop_no}"` and its siblings, `plant-generator.md`
+    §3.3 "Ids and tags") and the operated valve's tag (`control_valve_tag`,
+    ADR-0044) — so there is no separate tag field here, the backend computes
+    them. The actuator (`af_id`) carries no tag of its own.
     """
 
     model_config = ConfigDict(frozen=True)
@@ -122,6 +123,15 @@ class LoopSpec(BaseModel):
     psgf_id: str
     pif_id: str
     af_id: str
+
+
+def control_valve_tag(variable: str, unit_no: int, loop_no: int) -> str:
+    """The tag of the valve a control loop operates, e.g. `FV-30-6` (ADR-0044).
+
+    On a real P&ID the control valve (valve body plus actuator) is printed with
+    one tag whose third letter V says "valve"; both builders use this formula.
+    """
+    return f"{variable}V-{unit_no}-{loop_no}"
 
 
 class GenerationRecord(BaseModel):

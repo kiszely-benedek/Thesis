@@ -146,11 +146,13 @@ def test_by_unit_raises_without_unit_id() -> None:
 
 # Manifest hashes of the four other strategies, computed with the code as it was
 # BEFORE RU-T2 (unit-aware owners must not change them). Fixed plant and configs below.
+# Re-recorded for ADR-0044 (control-valve tags changed the plant hash; the sheet partition did
+# not: tests/test_control_valve_tagging.py pins the tag-blind topology).
 _GOLDEN_MANIFEST_HASHES = {
-    "flow_greedy": "d51f0ca50dbfe0bcd01e58aa9e01481d4099765c927f9edf7c84492c135ee8dc",
-    "modularity": "7727c892168253bd290c76ccfcaf7e09b8190d07450ee9e4428ab99001c6a1b5",
-    "utility_aware": "f2913eef3592745315be01511a48a9979a15c1c267d5760d32759ed710c0b6b4",
-    "random": "428454d812206594833cba7daeb3746f373fe8c1db0a15df1d66c5821997513e",
+    "flow_greedy": "9decff9a850351a7c31db6c57133f9b54672a2e0af86eb1fbf993e2689173436",
+    "modularity": "09e2635bcb1ebb17b746800f56c30704dd1d7651ba7a53eae67e9f5815fadeed",
+    "utility_aware": "09936def6c5d531e644f821cca97e492860d0f57b380fbf08d23f269827d75a1",
+    "random": "b498c2cd09ca563761d3684ca2b05a8416f13c1de25a96b68bd6caa3e7cda5f6",
 }
 
 

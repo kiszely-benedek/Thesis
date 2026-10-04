@@ -27,6 +27,7 @@ from plantgraph.benchmark.generator_models import (
     GeneratorConfig,
     LoopSpec,
     ValveSpec,
+    control_valve_tag,
 )
 
 #: Fixed export timestamp, so two runs with the same seed produce byte-identical
@@ -153,6 +154,8 @@ class DexpiPlantBuilder:
     def add_control_loop(self, loop: LoopSpec) -> None:
         """Add one control loop: sensing nozzle, PSGF, PIF, AF, and the valve reference.
 
+        The operated valve is renamed to the loop's valve tag (ADR-0044).
+
         The sensing nozzle is a **dedicated nozzle of its own** on the equipment,
         not the existing stream nozzle — DEXPI does not allow equipment as a
         `sensingLocation`, and pyDEXPI's abstraction would not consolidate a
@@ -176,11 +179,11 @@ class DexpiPlantBuilder:
             processInstrumentationFunctionNumber=f"{loop.unit_no}-{loop.loop_no}",
             parentStructure=section,
         )
-        af = dexpi.ActuatingFunction(
-            id=loop.af_id,
-            actuatingFunctionNumber=f"{loop.variable}V-{loop.unit_no}-{loop.loop_no}",
-            parentStructure=section,
-        )
+        # the operated valve takes the loop's valve tag; the actuator carries none (ADR-0044)
+        valve_tag = control_valve_tag(loop.variable, loop.unit_no, loop.loop_no)
+        # the base class has no number field; the operated valves (globe, ball) all do
+        cast(dexpi.GlobeValve | dexpi.BallValve, valve).pipingComponentNumber = valve_tag
+        af = dexpi.ActuatingFunction(id=loop.af_id, parentStructure=section)
         instrumentation_toolkit.add_signal_generating_function_to_instrumentation_function(
             pif, psgf, dexpi.MeasuringLineFunction(id=f"{loop.pif_id}-ml")
         )
@@ -188,7 +191,11 @@ class DexpiPlantBuilder:
             pif, af, dexpi.SignalLineFunction(id=f"{loop.pif_id}-sl")
         )
         reference = dexpi.OperatedValveReference(id=f"{loop.pif_id}-ov", valve=valve)
-        system = dexpi.ActuatingSystem(id=f"{loop.pif_id}-as", operatedValveReference=reference)
+        system = dexpi.ActuatingSystem(
+            id=f"{loop.pif_id}-as",
+            actuatingSystemNumber=valve_tag,
+            operatedValveReference=reference,
+        )
         af.systems = system
         loop_function = dexpi.InstrumentationLoopFunction(
             id=f"{loop.pif_id}-lp",

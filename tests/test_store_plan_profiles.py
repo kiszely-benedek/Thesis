@@ -21,9 +21,10 @@ _CORPUS = "acme-plant-01"
 
 #: sha256 of today's `occurrence` plan JSON (without the new `profile` field), taken from the
 #: code as it stood before the plant layer existed (commit eba87c0), generated plants seed 7.
+#: Re-recorded for ADR-0044 (control-valve tags changed; plan structure did not).
 _GOLDEN_OCCURRENCE_PLAN_HASH = {
-    0.0: "0451f7b7db3fde95245211ceb24ce9cf1241762f49a1936940981c76f9d5b23c",
-    0.5: "834348e1b6f651ba7dcc82cbbd5135648a6db65bcba6c2e890ecc8cac23b92c2",
+    0.0: "57a9d7c2717ac3c6157aaa1272eb3beb7c249a60012bb4ced95a52e87cd0c830",
+    0.5: "f329fd7615463fc5d9da71630fdea4234839604ab4b610683faf16b94f9766c6",
 }
 
 

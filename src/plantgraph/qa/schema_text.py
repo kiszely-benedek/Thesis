@@ -40,7 +40,8 @@ How the graph is organised:
   continues. Going from one sheet to the next therefore takes three relationships:
   (item)-[:send_to]->(FlowOut connector)-[:continues_as]->(FlowIn connector)
   -[:send_to]->(next item).
-  Connector nodes have no tag. Signal connectors carry loop_tag, the number of their control loop.
+  Connector and actuator nodes have no tag. Signal connectors carry loop_tag, the number of their
+  control loop.
 - tag is the identifier printed next to an item, for example P-101. piping_component_name is the
   printed name of an imported valve.
 - (:PlantSection {unit_id}) is one unit, a group of equipment operated together. An item that

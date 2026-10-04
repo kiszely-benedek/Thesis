@@ -17,7 +17,7 @@ from collections.abc import Sequence
 
 import networkx as nx
 
-from plantgraph.benchmark.generator_models import LoopSpec, ValveSpec
+from plantgraph.benchmark.generator_models import LoopSpec, ValveSpec, control_valve_tag
 from plantgraph.graph.schema import Relation
 
 
@@ -99,12 +99,11 @@ class GraphPlantBuilder:
             loop.pif_id, "ProcessInstrumentationFunction", pif_tag, unit_id, loop.variable, pif_tag
         )
         self._add_instrument_node(
-            loop.af_id,
-            "ActuatingFunction",
-            f"{loop.variable}V-{loop.unit_no}-{loop.loop_no}",
-            unit_id,
-            loop.variable,
-            pif_tag,
+            loop.af_id, "ActuatingFunction", None, unit_id, loop.variable, pif_tag
+        )
+        # ADR-0044: the operated valve takes the loop's valve tag, the actuator has none
+        self.graph.nodes[loop.valve_id]["tag"] = control_valve_tag(
+            loop.variable, loop.unit_no, loop.loop_no
         )
 
         self.graph.add_edge(loop.equipment_id, loop.psgf_id, relation=Relation.MEASURED_BY.value)
@@ -116,18 +115,22 @@ class GraphPlantBuilder:
         self,
         node_id: str,
         node_class: str,
-        tag: str,
+        tag: str | None,
         unit_id: str,
         variable: str,
         loop_tag: str,
     ) -> None:
-        """Add one instrument node; `loop_tag` is always the PIF's own tag (§3.6)."""
+        """Add one instrument node; `loop_tag` is always the PIF's own tag (§3.6).
+
+        `tag=None` leaves the `tag` key out, as the importer does (ADR-0044).
+        """
         self.graph.add_node(
             node_id,
             node_class=node_class,
-            tag=tag,
             plant_id=self.plant_id,
             unit_id=unit_id,
             loop_tag=loop_tag,
             measured_variable=variable,
         )
+        if tag is not None:
+            self.graph.nodes[node_id]["tag"] = tag
