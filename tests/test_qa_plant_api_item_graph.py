@@ -14,7 +14,12 @@ from plantgraph.graph import schema
 from plantgraph.qa.graph_view import NetworkxGraphView
 from plantgraph.qa.harness.api_fidelity import compare_edges_by_tag, compare_properties_by_tag
 from plantgraph.qa.plant_api.item_graph import ItemGraph, build_item_graph
-from plantgraph.qa.plant_api.model import UNRESOLVED_CONNECTOR_CLASS, ItemEdge, ItemFilter
+from plantgraph.qa.plant_api.model import (
+    UNRESOLVED_CONNECTOR_CLASS,
+    ItemEdge,
+    ItemFilter,
+    ItemRecord,
+)
 from plantgraph.resolution.localize import localize
 from plantgraph.resolution.resolver import resolve
 from qa_plant_api_toy import toy_graph
@@ -226,3 +231,50 @@ def _split_corpus(duplication_rate: float) -> tuple[nx.DiGraph[str], NetworkxGra
     sheets, _manifest = split(builder.graph, split_config)
     localized, _occurrence_map = localize(sheets)
     return builder.graph, NetworkxGraphView("toy", localized, resolve(localized))
+
+
+def _untagged_actuator_toy() -> tuple[ItemGraph, nx.DiGraph[str]]:
+    """FIC -> actuator (no tag) -> BV1: the item graph and its gold plant, both untagged there."""
+    specs = [
+        ("FIC", schema.NodeClass.PROCESS_INSTRUMENTATION_FUNCTION.value, "FIC"),
+        ("AF", schema.NodeClass.ACTUATING_FUNCTION.value, None),
+        ("BV1", schema.NodeClass.BALL_VALVE.value, "BV1"),
+    ]
+    records = [
+        ItemRecord(
+            item_id=f"id-{name}",
+            tag=tag,
+            node_class=node_class,
+            labels=schema.labels_for(node_class),
+            unit_id="1",
+            sheets=("S1",),
+            occurrence_keys=(f"S1:{name}",),
+        )
+        for name, node_class, tag in specs
+    ]
+    edges = [
+        ItemEdge(source="id-FIC", target="id-AF", relation="send_signal_to", via=()),
+        ItemEdge(source="id-AF", target="id-BV1", relation="control", via=()),
+    ]
+    graph = ItemGraph(records, edges, {"fic": ("id-FIC",), "bv1": ("id-BV1",)})
+    gold: nx.DiGraph[str] = nx.DiGraph()
+    gold.add_node("FIC", tag="FIC")
+    gold.add_node("AF")  # an actuator has no tag key
+    gold.add_node("BV1", tag="BV1")
+    gold.add_edge("FIC", "AF", relation="send_signal_to")
+    gold.add_edge("AF", "BV1", relation="control")
+    return graph, gold
+
+
+def test_api_01_is_exact_on_untagged_actuators_and_still_sees_an_edge_change() -> None:
+    graph, gold = _untagged_actuator_toy()
+
+    fidelity = compare_edges_by_tag(graph, gold)
+    assert (fidelity.precision, fidelity.recall) == (1.0, 1.0)
+    assert compare_properties_by_tag(graph, gold).n_items == 2  # the actuator is not compared
+
+    gold.remove_edge("AF", "BV1")
+    gold.add_edge("FIC", "BV1", relation="control")
+    changed = compare_edges_by_tag(graph, gold)
+    assert changed.missing_sample == (("FIC", "control", "BV1"),)
+    assert changed.extra_sample == (("<untagged>", "control", "BV1"),)

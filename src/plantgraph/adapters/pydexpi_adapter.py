@@ -181,11 +181,10 @@ def _map_nodes(
         if node_class is None:
             dropped[label] += 1
             continue
-        mapped[node_id] = {
-            "node_class": node_class,
-            "tag": _tag_of(node_class, attrs),
-            "plant_id": plant_id,
-        }
+        mapped[node_id] = {"node_class": node_class, "plant_id": plant_id}
+        tag = _tag_of(node_class, attrs)
+        if tag is not None:  # an untagged node has no "tag" key, like a connector stub
+            mapped[node_id]["tag"] = tag
     return mapped, dict(dropped)
 
 

@@ -166,7 +166,6 @@ CLASS_SPECS: dict[NodeClass, ClassSpec] = {
     NodeClass.ACTUATING_FUNCTION: ClassSpec(
         labels=("ActuatingFunction",),
         category=NodeCategory.INSTRUMENTATION,
-        tag_prefix="{var}V",
     ),
     NodeClass.FLOW_OUT_PIPE_OFF_PAGE_CONNECTOR: ClassSpec(
         labels=("FlowOutPipeOffPageConnector", "PipeOffPageConnector"),
@@ -210,6 +209,10 @@ OPERATED_VALVE_CLASSES: frozenset[str] = frozenset(
     {NodeClass.GLOBE_VALVE.value, NodeClass.BALL_VALVE.value}
 )
 CONNECTOR_CLASSES: frozenset[str] = _classes_in_category(NodeCategory.CONNECTOR)
+# Classes whose nodes may have no printed tag. A connector stub is a drawing symbol, not a tagged
+# item. An actuator is drawn as part of its control valve and shares the valve's printed tag
+# (ADR-0044: ISA *Control Loop Foundation* Figs. 7-16..7-19; DEXPI C01 example).
+UNTAGGED_CLASSES: frozenset[str] = CONNECTOR_CLASSES | {NodeClass.ACTUATING_FUNCTION.value}
 
 # produced only by the generator (equipment + piping component + instrumentation) —
 # this is the plant graph's "known class" set, without the connector and structural classes.

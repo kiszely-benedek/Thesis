@@ -76,10 +76,16 @@ def _gold_edges(plant: nx.DiGraph[str]) -> set[TagEdge]:
     """The plant's four topology relations; structural or fallback edges are not API edges."""
     relations = RELATION_GROUPS["any"]
     return {
-        (str(plant.nodes[source]["tag"]), relation, str(plant.nodes[target]["tag"]))
+        (_gold_tag(plant, source), relation, _gold_tag(plant, target))
         for source, target, attrs in plant.edges(data=True)
         if (relation := attrs.get("relation")) in relations
     }
+
+
+def _gold_tag(plant: nx.DiGraph[str], node_id: str) -> str:
+    """A gold node's tag; `<untagged>` for a node with none, as on the item-graph side."""
+    tag = plant.nodes[node_id].get("tag")
+    return _UNTAGGED if tag is None else str(tag)
 
 
 class PropertyFidelity(BaseModel):
@@ -153,7 +159,7 @@ def _gold_item_properties(plant: nx.DiGraph[str]) -> dict[str, dict[str, Propert
 def _gold_edge_properties(plant: nx.DiGraph[str]) -> dict[TagEdge, dict[str, PropertyValue]]:
     relations = RELATION_GROUPS["any"]
     return {
-        (str(plant.nodes[source]["tag"]), relation, str(plant.nodes[target]["tag"])): _visible(
+        (_gold_tag(plant, source), relation, _gold_tag(plant, target)): _visible(
             attrs, _EDGE_PROPERTY_KEYS
         )
         for source, target, attrs in plant.edges(data=True)

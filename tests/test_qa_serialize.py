@@ -11,6 +11,7 @@ using them as an oracle, the same way `test_neo4j_plan.py` does.
 
 from __future__ import annotations
 
+import hashlib
 from pathlib import Path
 
 import networkx as nx
@@ -149,3 +150,8 @@ def test_ex01_serializes_with_a_measured_character_count() -> None:
 
     assert serialized.character_count == len(serialized.text)
     assert "66KL21" in serialized.text
+    # PROMPT-03 (2026-09-27); unchanged by ADR-0044's untagged-node handling
+    assert serialized.character_count == 17_693
+    assert hashlib.sha256(serialized.text.encode()).hexdigest() == (
+        "1bbec3f836fbbed046479dcd78e3e5430016ac7cf394e5b08102f2335f44eb9c"
+    )

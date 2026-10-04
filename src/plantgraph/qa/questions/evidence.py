@@ -170,5 +170,9 @@ def evidence_sheets(evidence: Evidence, index: SheetIndex) -> list[str]:
 
 
 def evidence_tags(evidence: Evidence, plant: nx.DiGraph[str]) -> list[str]:
-    """The printed tag of every evidence node, sorted — never the gold `node_id`s themselves."""
-    return sorted(str(plant.nodes[node_id]["tag"]) for node_id in evidence.nodes)
+    """The printed tag of every tagged evidence node, sorted — never the gold `node_id`s.
+
+    A node with no tag (an actuator, `schema.UNTAGGED_CLASSES`) is skipped.
+    """
+    tags = (plant.nodes[node_id].get("tag") for node_id in evidence.nodes)
+    return sorted(str(tag) for tag in tags if tag is not None)

@@ -20,6 +20,7 @@ from plantgraph.graph.schema import (
     KNOWN_CLASSES,
     RELATION_ENDPOINTS,
     TOPOLOGY_RELATIONS,
+    UNTAGGED_CLASSES,
     Relation,
 )
 
@@ -63,7 +64,10 @@ def _validate_plant_node(
     class_violation = _check_node_class(node_id, node_class, allowed=GENERATOR_CLASSES)
     if class_violation is not None:
         return [class_violation]
-    violations = _check_required_properties(node_id, attrs, _PLANT_REQUIRED_PROPERTIES)
+    required = _PLANT_REQUIRED_PROPERTIES
+    if node_class in UNTAGGED_CLASSES:
+        required = tuple(name for name in required if name != "tag")
+    violations = _check_required_properties(node_id, attrs, required)
     duplicate = _check_duplicate_tag(node_id, attrs.get("tag"), tags_seen)
     if duplicate is not None:
         violations.append(duplicate)
@@ -103,12 +107,21 @@ def _validate_sheet_node(
     class_violation = _check_node_class(node_id, node_class, allowed=allowed_classes)
     if class_violation is not None:
         return [class_violation]
-    required = _CONNECTOR_REQUIRED_PROPERTIES if node_class in CONNECTOR_CLASSES else ("tag",)
+    required = _sheet_required_properties(node_class)
     violations = _check_required_properties(node_id, attrs, required)
     duplicate = _check_duplicate_tag(node_id, attrs.get("tag"), tags_seen)
     if duplicate is not None:
         violations.append(duplicate)
     return violations
+
+
+def _sheet_required_properties(node_class: object) -> tuple[str, ...]:
+    """A connector has its own fields; an untagged class needs none; every other class a tag."""
+    if node_class in CONNECTOR_CLASSES:
+        return _CONNECTOR_REQUIRED_PROPERTIES
+    if node_class in UNTAGGED_CLASSES:
+        return ()
+    return ("tag",)
 
 
 def _check_node_class(

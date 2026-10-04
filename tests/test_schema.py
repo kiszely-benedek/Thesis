@@ -143,3 +143,27 @@ def test_labels_for_raises_on_an_unknown_class() -> None:
         assert "SteamTrap" in str(error)
     else:
         raise AssertionError("expected labels_for to raise on an unknown node_class")
+
+
+def test_plant_graph_allows_an_actuator_with_no_tag_but_not_an_untagged_valve() -> None:
+    plant = _valid_plant()
+    plant.add_node("af1", node_class="ActuatingFunction", plant_id="p0", unit_id="u1")
+    assert validation.validate_plant_graph(plant) == []
+
+    del plant.nodes["v1"]["tag"]
+    violations = validation.validate_plant_graph(plant)
+    assert [(v.kind, v.subject) for v in violations] == [("missing_property", "v1")]
+
+
+def test_sheet_graph_allows_an_actuator_with_no_tag_but_not_an_untagged_valve() -> None:
+    sheet: nx.DiGraph[str] = nx.DiGraph()
+    sheet.add_node("af1", node_class="ActuatingFunction")
+    assert validation.validate_sheet_graph(sheet) == []
+
+    sheet.add_node("v1", node_class="GlobeValve")
+    violations = validation.validate_sheet_graph(sheet)
+    assert [(v.kind, v.subject) for v in violations] == [("missing_property", "v1")]
+
+
+def test_untagged_classes_are_the_connectors_and_the_actuator() -> None:
+    assert schema.UNTAGGED_CLASSES == schema.CONNECTOR_CLASSES | {"ActuatingFunction"}

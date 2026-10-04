@@ -174,3 +174,11 @@ def test_flow_path_through_a_duplicated_item_counts_the_identity_crossing() -> N
 
     tank_to_pump = by_anchors[(TAG_TANK, TAG_PUMP)]
     assert (tank_to_pump.k, tank_to_pump.k_connector, tank_to_pump.k_identity) == (2, 1, 1)
+
+
+def test_evidence_tags_skips_a_node_with_no_tag() -> None:
+    plant = build_toy_plant()
+    del plant.nodes[N_ACTUATOR]["tag"]
+    evidence = Evidence(nodes=frozenset({N_TANK, N_ACTUATOR}), edges=frozenset())
+
+    assert evidence_tags(evidence, plant) == [TAG_TANK]

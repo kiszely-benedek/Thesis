@@ -18,7 +18,7 @@ from pydexpi.loaders.graph_loader import GraphLoader
 from pydexpi.loaders.json_serializer import JsonSerializer
 
 from graph_plant_builder import GraphPlantBuilder
-from plantgraph.adapters.pydexpi_adapter import LinearGraphLoader, plant_graph
+from plantgraph.adapters.pydexpi_adapter import LinearGraphLoader, _map_nodes, plant_graph
 from plantgraph.adapters.pydexpi_builder import GeneratedPlant, generate_plant
 from plantgraph.adapters.pydexpi_io import load_json, save_json
 from plantgraph.benchmark.generator import plan_plant
@@ -272,3 +272,17 @@ def test_split_then_rejoin_reproduces_a_pydexpi_generated_plant(strategy_name: s
     for sheet in sheets:
         violations = validation.validate_sheet_graph(sheet.graph)
         assert violations == [], f"sheet {sheet.sheet_id}: {violations}"
+
+
+# ---- a node with no printed tag --------------------------------------------------------
+
+
+def test_map_nodes_leaves_out_the_tag_key_when_the_node_has_none() -> None:
+    conceptual: nx.MultiDiGraph[str] = nx.MultiDiGraph()
+    conceptual.add_node("a1", label="ActuatingFunction")  # no actuatingFunctionNumber
+    conceptual.add_node("a2", label="ActuatingFunction", actuatingFunctionNumber="FV-1-1")
+
+    mapped, _dropped = _map_nodes(conceptual, "plant-0")
+
+    assert "tag" not in mapped["a1"]
+    assert mapped["a2"]["tag"] == "FV-1-1"
