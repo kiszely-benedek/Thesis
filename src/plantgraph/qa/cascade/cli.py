@@ -1,4 +1,4 @@
-"""`python -m plantgraph.qa.cascade {join,needed}` -- check a join, or write a tier's subset."""
+"""`python -m plantgraph.qa.cascade {join,needed,report}` -- check, subset or report."""
 
 from __future__ import annotations
 
@@ -15,6 +15,9 @@ from plantgraph.qa.cascade.join import (
 )
 from plantgraph.qa.cascade.models import CascadePolicy
 from plantgraph.qa.cascade.needed import write_needed
+from plantgraph.qa.cascade.policy import load_policy
+from plantgraph.qa.cascade.report import build_report
+from plantgraph.qa.cascade.report_render import write_report
 
 
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
@@ -32,9 +35,44 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
             metavar="TIER=RUN_DIR[@QUESTIONS_ROOT]",
             help="a tier's stored run; the questions root defaults to --questions-root",
         )
+    _add_report_arguments(commands.add_parser("report"))
     commands.choices["needed"].add_argument("--tier", required=True)
     commands.choices["needed"].add_argument("--out-root", type=Path, default=DEFAULT_QSUB_ROOT)
     return parser.parse_args(argv)
+
+
+def _add_report_arguments(command: argparse.ArgumentParser) -> None:
+    command.add_argument("--policy", action="append", type=Path, help="JSON; default: all shipped")
+    command.add_argument("--corpus", action="append", required=True, help="repeat for several")
+    command.add_argument("--questions-root", required=True, type=Path)
+    command.add_argument("--out", required=True, type=Path, help="directory for report.md/.json")
+    command.add_argument(
+        "--run",
+        action="append",
+        required=True,
+        metavar="CORPUS:TIER=RUN_DIR[@QUESTIONS_ROOT]",
+        help="a tier's stored run on one corpus; the questions root defaults to --questions-root",
+    )
+
+
+def _parse_corpus_run(value: str) -> tuple[str, str, TierSource]:
+    corpus, separator, rest = value.partition(":")
+    if not separator or not corpus:
+        raise SystemExit(f"error: expected --run CORPUS:TIER=RUN_DIR[@ROOT], found {value!r}")
+    tier, source = _parse_run(rest)
+    return corpus, tier, source
+
+
+def _run_report(args: argparse.Namespace) -> None:
+    sources: dict[str, dict[str, TierSource]] = {}
+    for value in args.run:
+        corpus, tier, source = _parse_corpus_run(value)
+        sources.setdefault(corpus, {})[tier] = source
+    policies = [load_policy(path) for path in args.policy] if args.policy else None
+    report = build_report(args.corpus, sources, args.questions_root, policies)
+    markdown, json_path = write_report(report, args.out)
+    print(markdown.read_text(encoding="utf-8"))
+    print(f"wrote {markdown} and {json_path}")
 
 
 def _parse_run(value: str) -> tuple[str, TierSource]:
@@ -61,8 +99,11 @@ def _summary(joined: JoinedCorpus) -> str:
 
 
 def main(argv: list[str] | None = None) -> None:
-    """Run the `join` (print a summary) or `needed` (write a subset file) sub-command."""
+    """Run the `join` (print a summary), `needed` (write a subset file) or `report` sub-command."""
     args = _parse_args(argv)
+    if args.command == "report":
+        _run_report(args)
+        return
     policies = [
         CascadePolicy.model_validate_json(path.read_text(encoding="utf-8")) for path in args.policy
     ]
