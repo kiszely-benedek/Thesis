@@ -1,0 +1,22 @@
+{
+  "name": "n_first_v1_t3_glmlow",
+  "tiers": [
+    {
+      "name": "need-default",
+      "strategy": "hierarchical_need_rules_plant",
+      "pin_sha256": "738bd42f5f9cb48f13aafa238d74dd9de98899f2e793e41a699368242def03be",
+      "accept": [
+        "answered"
+      ]
+    },
+    {
+      "name": "need-low",
+      "strategy": "hierarchical_need_rules_plant",
+      "pin_sha256": "e9f5e35f890f30c1a4b8a29f225c13ad5fcf66745e5db32765c975667f6cadab",
+      "accept": [
+        "answered"
+      ]
+    }
+  ],
+  "fallback_to_first_answer": true
+}

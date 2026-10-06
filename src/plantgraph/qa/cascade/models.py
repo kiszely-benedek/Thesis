@@ -46,6 +46,8 @@ class CascadePolicy(BaseModel):
     fallback_to_first_answer: bool = True
     #: Variants only: skip the tiers before this index for a question with this need label.
     start_tier_by_label: dict[NeedLabel, int] = Field(default_factory=dict)
+    #: Variants only: never go past this tier index (inclusive) for a question with this label.
+    last_tier_by_label: dict[NeedLabel, int] = Field(default_factory=dict)
 
 
 class Signals(BaseModel):

@@ -1,0 +1,40 @@
+{
+  "name": "label_router_dev",
+  "tiers": [
+    {
+      "name": "cypher-low",
+      "strategy": "cypher_rag_plant",
+      "pin_sha256": "e9f5e35f890f30c1a4b8a29f225c13ad5fcf66745e5db32765c975667f6cadab",
+      "accept": [
+        "answered",
+        "not_abstained",
+        "rows"
+      ]
+    },
+    {
+      "name": "need-default",
+      "strategy": "hierarchical_need_rules_plant",
+      "pin_sha256": "738bd42f5f9cb48f13aafa238d74dd9de98899f2e793e41a699368242def03be",
+      "accept": [
+        "answered"
+      ]
+    }
+  ],
+  "fallback_to_first_answer": true,
+  "start_tier_by_label": {
+    "SIGNAL_CHAIN": 1,
+    "GENERIC": 1,
+    "UPSTREAM_TO_FIRST_VALVE": 1
+  },
+  "last_tier_by_label": {
+    "PATH": 0,
+    "UNIT_SCOPE": 0,
+    "DOWNSTREAM_ALL": 0,
+    "SIGNAL_CHAIN": 1,
+    "ITEM": 0,
+    "GENERIC": 1,
+    "NEIGHBOURS_DOWNSTREAM": 0,
+    "UPSTREAM_TO_FIRST_VALVE": 1,
+    "UPSTREAM_ALL": 0
+  }
+}

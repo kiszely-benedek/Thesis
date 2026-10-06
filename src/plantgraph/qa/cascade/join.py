@@ -50,6 +50,8 @@ class JoinedCorpus:
     #: tier name -> question id -> signals (only questions the tier has a row for).
     signals: dict[str, dict[str, Signals]]
     need_labels: dict[str, NeedLabel] = field(default_factory=dict)
+    #: tier name -> the loaded run; the evaluation reads `correct` from its rows (gold side).
+    runs: dict[str, LoadedRun] = field(default_factory=dict)
 
 
 def join_corpus(
@@ -94,6 +96,7 @@ def join_corpus(
         question_ids=list(reference_digests),
         signals=signals,
         need_labels=labels,
+        runs=runs,
     )
 
 

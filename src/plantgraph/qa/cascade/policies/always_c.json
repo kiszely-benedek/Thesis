@@ -1,0 +1,16 @@
+{
+  "name": "always_c",
+  "tiers": [
+    {
+      "name": "cypher-low",
+      "strategy": "cypher_rag_plant",
+      "pin_sha256": "e9f5e35f890f30c1a4b8a29f225c13ad5fcf66745e5db32765c975667f6cadab",
+      "accept": [
+        "answered",
+        "not_abstained",
+        "rows"
+      ]
+    }
+  ],
+  "fallback_to_first_answer": true
+}
