@@ -3,7 +3,8 @@
 Most strategies need only the corpus view. CypherRAG also needs a database
 connection and a way to call the LLM, so it is built from `CypherDeps`;
 Hierarchical, and the need-aware variant built on it, need a way to call the LLM
-only for the router fallback, so they take `LlmDeps`. The runner supplies both. Each of the two
+only for the router fallback, so they take `LlmDeps`; the two agents (`graph_agent`, `hier_agent`)
+call it at every step and always read the merged plant. The runner supplies both. Each of the two
 exists in two representations, told apart by name and never by a parameter (ADR-0039): the
 unsuffixed one prints the occurrence graph, the `_plant` one the merged plant; CypherRAG has the
 same pair, `cypher_rag` and `cypher_rag_plant`, reading differently loaded stores. Add a strategy
@@ -17,6 +18,8 @@ from dataclasses import dataclass
 from typing import Any
 
 from plantgraph.llm.models import ModelPin
+from plantgraph.qa.agent.models import AgentParams
+from plantgraph.qa.agent.strategies import GRAPH_AGENT_NAME, HIER_AGENT_NAME, GraphAgent, HierAgent
 from plantgraph.qa.context_render import (
     REPRESENTATIONS,
     ContextRenderer,
@@ -48,6 +51,8 @@ _NEED_RULES_NAMES: dict[str, Representation] = {
     need_strategy_name(RuleNeedClassifier.name, rep): rep for rep in REPRESENTATIONS
 }
 
+_AGENT_NAMES = (GRAPH_AGENT_NAME, HIER_AGENT_NAME)
+
 STRATEGY_FACTORIES: dict[str, StrategyFactory] = {
     ContextRag.name: lambda view, _params: ContextRag(view),
 }
@@ -70,6 +75,8 @@ class LlmDeps:
 
     pin: ModelPin
     send: SendChatRequest
+    #: Whether an agent's system prompt carries the P&ID reading primer (`RunConfig.primer`).
+    primer: bool = False
 
 
 def build_strategy(
@@ -92,10 +99,18 @@ def build_strategy(
         return _build_hierarchical(name, _HIERARCHICAL_NAMES[name], params, view, llm)
     if name in _NEED_RULES_NAMES:
         return _build_need_rules(name, _NEED_RULES_NAMES[name], params, view, llm)
+    if name in _AGENT_NAMES:
+        return _build_agent(name, params, view, llm)
     factory = STRATEGY_FACTORIES.get(name)
     if factory is None:
         known = sorted(
-            [*STRATEGY_FACTORIES, *PROFILE_OF_NAME, *_HIERARCHICAL_NAMES, *_NEED_RULES_NAMES]
+            [
+                *STRATEGY_FACTORIES,
+                *PROFILE_OF_NAME,
+                *_HIERARCHICAL_NAMES,
+                *_NEED_RULES_NAMES,
+                *_AGENT_NAMES,
+            ]
         )
         raise ValueError(f"expected a strategy in {known}, found {name!r}")
     return factory(view, params)
@@ -164,6 +179,19 @@ def _build_need_rules(
         renderer=renderer,
         item_graph=plant,
     )
+
+
+def _build_agent(
+    name: str, params: dict[str, Any], view: GraphView, llm: LlmDeps | None
+) -> GraphAgent:
+    """An agent over the merged plant; `params` may override the loop limits (`AgentParams`)."""
+    if llm is None:
+        raise ValueError(f"expected a model sender for {name} (it calls the model), found none")
+    loop_params = AgentParams.model_validate(params)  # unknown keys are an error
+    plant = build_item_graph(view)
+    if name == HIER_AGENT_NAME:
+        return HierAgent(view, plant, llm.pin, llm.send, params=loop_params, primer=llm.primer)
+    return GraphAgent(plant, llm.pin, llm.send, params=loop_params, primer=llm.primer)
 
 
 def _plant_of(representation: Representation, view: GraphView) -> ItemGraph | None:

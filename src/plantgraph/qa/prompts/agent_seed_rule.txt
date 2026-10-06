@@ -1,0 +1,1 @@
+The first message may carry a seed map: a guess, made by fixed rules without a model, at the part of the plant the question is about. It lists items and edges in the same format as a tool result, and it can be incomplete or aimed at the wrong thing. If it already holds everything the question needs, reply {"done": true} at once; otherwise call tools to fetch what is missing.

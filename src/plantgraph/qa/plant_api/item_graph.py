@@ -67,6 +67,10 @@ class ItemGraph:
         except KeyError:
             raise PlantApiError(f"expected a known item id, found {item_id!r}") from None
 
+    def has_item(self, item_id: str) -> bool:
+        """True when `item_id` is an item id (how an untagged item is named)."""
+        return item_id in self._items
+
     def item_of_key(self, local_key: str) -> str | None:
         """The item an occurrence key is a drawing of; `None` for a paired stub, which vanishes."""
         return self._item_of_key.get(local_key)

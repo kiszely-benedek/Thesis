@@ -16,7 +16,8 @@ from plantgraph.qa.plant_api.model import GroupBy, ItemEdge, ItemRecord, sheet_o
 
 DEFAULT_MAX_CHARS = 4_000
 DEFAULT_MAX_ITEMS = 50
-_NOT_SHOWN = "({n} more not shown; narrow with filter or aggregate)"
+_NOT_SHOWN_WORDS = "more not shown"
+_NOT_SHOWN = "({n} " + _NOT_SHOWN_WORDS + "; narrow with filter or aggregate)"
 
 
 class ItemSet(BaseModel):
@@ -39,7 +40,7 @@ class ItemSet(BaseModel):
         shown = self.items[:max_items]
         lines = [item_line(item) for item in shown]
         header = f"{self.handle}: {self.total} items"
-        return _frame(header, lines, self.total - len(shown), max_chars)
+        return frame_text(header, lines, self.total - len(shown), max_chars)
 
 
 class SubgraphMember(BaseModel):
@@ -83,7 +84,7 @@ class Subgraph(BaseModel):
         lines += [edge_line(edge, names) for edge in edges]
         header = f"{self.handle}: {self.total_items} items, {self.total_edges} edges"
         hidden = (self.total_items - len(members)) + (self.total_edges - len(edges))
-        return _frame(header, lines, hidden, max_chars)
+        return frame_text(header, lines, hidden, max_chars)
 
 
 class PathResult(BaseModel):
@@ -115,7 +116,7 @@ class PathResult(BaseModel):
         """Header with hop count and sheets, then the items in order, then the edges."""
         if self.hops is None:
             header = f"{self.handle}: no path from {self.source} to {self.target}"
-            return _frame(header, [], 0, max_chars)
+            return frame_text(header, [], 0, max_chars)
         shown = self.items[:max_items]
         names = {item.item_id: item for item in shown}
         edges = [edge for edge in self.edges if edge.source in names and edge.target in names]
@@ -126,7 +127,7 @@ class PathResult(BaseModel):
             f"sheets {','.join(self.sheets)}"
         )
         hidden = (self.hops + 1) - len(shown)
-        return _frame(header, lines, hidden, max_chars)
+        return frame_text(header, lines, hidden, max_chars)
 
 
 class TableRow(BaseModel):
@@ -166,7 +167,7 @@ class Table(BaseModel):
             f"{self.handle}: {self.total_items} items in {self.total_groups} groups "
             f"by {self.group_by}"
         )
-        return _frame(header, lines, self.total_groups - len(shown), max_chars)
+        return frame_text(header, lines, self.total_groups - len(shown), max_chars)
 
 
 #: Anything a primitive can return.
@@ -177,8 +178,12 @@ PlantResult = ItemSet | Subgraph | PathResult | Table
 
 
 def item_label(item: ItemRecord) -> str:
-    """The tag, or a class placeholder for an untagged item such as a stub."""
-    return item.tag if item.tag is not None else f"[untagged {item.node_class}]"
+    """The tag, or the item's id for an untagged item (an actuator, a stub).
+
+    The id is what the plant rendering (`context_render.PlantRenderer`) calls the item, and
+    `PlantApi` accepts it wherever it accepts a tag, so an agent can still refer to the item.
+    """
+    return item.tag if item.tag is not None else item.item_id
 
 
 def item_line(item: ItemRecord) -> str:
@@ -209,7 +214,12 @@ def _keys_of(items: Iterable[ItemRecord]) -> tuple[str, ...]:
     return tuple(sorted({key for item in items for key in item.occurrence_keys}))
 
 
-def _frame(header: str, lines: Sequence[str], hidden: int, max_chars: int) -> str:
+def render_was_cut(text: str, max_chars: int) -> bool:
+    """True when a rendering dropped lines: its header says so, or it hit the character limit."""
+    return len(text) >= max_chars or _NOT_SHOWN_WORDS in text.partition("\n")[0]
+
+
+def frame_text(header: str, lines: Sequence[str], hidden: int, max_chars: int) -> str:
     """Header plus as many lines as fit in `max_chars`; `hidden` lines were already cut upstream."""
     kept = list(lines)
     while True:

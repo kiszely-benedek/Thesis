@@ -148,13 +148,17 @@ class PlantApi:
         return handle
 
     def _resolve(self, ref: str) -> tuple[str, ...]:
-        """A handle's items, or every item carrying the tag; never empty."""
+        """A handle's items, every item carrying the tag, or the untagged item with this id."""
         if ref.startswith(_HANDLE_PREFIX):
             return self._stored(ref)
         ids = self._graph.ids_for_tag(ref)
-        if not ids:
-            raise PlantApiError(f"expected a tag in the plant or a handle, found {ref!r}")
-        return tuple(ids)
+        if ids:
+            return tuple(ids)
+        if self._graph.has_item(ref):  # an untagged item is named by its id (`item_label`)
+            return (ref,)
+        raise PlantApiError(
+            f"expected a tag in the plant, the id of an untagged item or a handle, found {ref!r}"
+        )
 
     def _stored(self, handle: str) -> tuple[str, ...]:
         if handle not in self._sets:
@@ -185,9 +189,11 @@ class PlantApi:
             )
             for item_id in shown
         )
-        visible = {*starts, *shown}
+        listed_starts = starts[: self._max_items]
+        # an edge is listed only if both ends are listed, or its line could not name them
+        visible = {*listed_starts, *shown}
         edges = [e for e in reached.edges if e.source in visible and e.target in visible]
-        start_records = tuple(self._graph.item(item_id) for item_id in starts[: self._max_items])
+        start_records = tuple(self._graph.item(item_id) for item_id in listed_starts)
         # A handle holds the whole reached set, not just the listed part.
         handle = self._store(ordered)
         return Subgraph(

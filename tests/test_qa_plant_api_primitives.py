@@ -87,6 +87,21 @@ def test_neighbours_of_a_handle_expand_every_member() -> None:
     assert member_tags(downstream) == ["P1", "V2"]
 
 
+def test_a_cut_start_list_lists_no_edge_from_an_unlisted_start() -> None:
+    # regression (QAR-P2 pilot): with more start items than max_items, an edge from a start
+    # item beyond the cut was listed although its line could not name that item
+    api = toy_api(max_items=1)
+    valves = api.find(_OPERATED)
+
+    downstream = api.neighbours(valves.handle, "downstream", "flow")
+
+    listed = {item.item_id for item in downstream.start} | {
+        member.item.item_id for member in downstream.members
+    }
+    assert all(e.source in listed and e.target in listed for e in downstream.edges)
+    downstream.render()
+
+
 # --- traverse -----------------------------------------------------------------
 
 
@@ -231,7 +246,7 @@ def test_bad_handles_and_tags_raise_with_what_was_found() -> None:
 
     with pytest.raises(PlantApiError, match=r"handles \['\$r1'\].*'\$r7'"):
         api.filter("$r7", ItemFilter())
-    with pytest.raises(PlantApiError, match="tag in the plant or a handle.*'NOPE'"):
+    with pytest.raises(PlantApiError, match="tag in the plant.*or a handle.*'NOPE'"):
         api.neighbours("NOPE", "both", "any")
 
 

@@ -41,7 +41,7 @@ class ItemRecord(BaseModel):
 
     model_config = ConfigDict(frozen=True)
 
-    #: The home occurrence's local key; opaque, never printed to a model.
+    #: The home occurrence's local key; shown to a model only as the name of an untagged item.
     item_id: str
     #: The drawn tag (e.g. `P-101`), else an imported valve's printed name; `None` for a stub.
     tag: str | None

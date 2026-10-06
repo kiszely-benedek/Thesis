@@ -1,0 +1,60 @@
+"""A scripted stand-in for the model, shared by the agent tests: it replays a list of replies."""
+
+from __future__ import annotations
+
+import json
+from datetime import datetime
+
+from plantgraph.llm.models import ChatRequest, ChatResponse, ContextOverflow, ModelPin
+
+PIN = ModelPin(
+    backend="openrouter",
+    model_id="openai/gpt-5-mini",
+    route_provider="openai",
+    temperature=0.0,
+    seed=1,
+    max_output_tokens=64,
+)
+
+CALL_COST = 0.01
+DONE = '{"done": true}'
+
+
+def call(tool: str, **args: object) -> str:
+    """The JSON reply that calls `tool`."""
+    return json.dumps({"call": {"tool": tool, "args": args}})
+
+
+class ScriptedModel:
+    """A `SendChatRequest`: serves `replies` in order and keeps every request it was sent.
+
+    Past the end of the script it keeps answering `done`; with `overflow_at` set, the call with
+    that 0-based index raises `ContextOverflow`.
+    """
+
+    def __init__(self, replies: list[str], *, overflow_at: int | None = None) -> None:
+        self._replies = replies
+        self._overflow_at = overflow_at
+        self.requests: list[ChatRequest] = []
+
+    def __call__(self, request: ChatRequest) -> ChatResponse:
+        index = len(self.requests)
+        self.requests.append(request)
+        if index == self._overflow_at:
+            raise ContextOverflow("scripted overflow")
+        text = self._replies[index] if index < len(self._replies) else DONE
+        return ChatResponse(
+            text=text,
+            prompt_tokens=10,
+            completion_tokens=5,
+            cost_usd=CALL_COST,
+            latency_s=0.5,
+            provider_response_id=None,
+            finish_reason="stop",
+            from_cache=False,
+            created_at=datetime(2026, 10, 6),
+        )
+
+    def last_user_text(self, request_index: int = -1) -> str:
+        """The text of the last message of a request (the latest observation)."""
+        return self.requests[request_index].messages[-1].content

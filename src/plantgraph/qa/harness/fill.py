@@ -215,7 +215,7 @@ def _work_items(
             if corpus.cypher is not None
             else None
         )
-        llm = LlmDeps(config.answer_pin, sender_for(name))
+        llm = LlmDeps(config.answer_pin, sender_for(name), config.primer)
         strategy = build_strategy(name, params, corpus.view, cypher, llm)
         for question in corpus_questions:
             for repeat in range(config.repeats):

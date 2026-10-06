@@ -29,7 +29,9 @@ from pydantic import BaseModel, ConfigDict, Field
 #: What an LLM call is *for*. Logged on every `CallRecord` so the run log can
 #: be broken down by step; deliberately **not** part of the cache key (§6),
 #: because the same prompt gets the same answer regardless of who asked.
-CallPurpose = Literal["answer", "cypher", "route", "judge", "probe", "pathrag_step", "embed"]
+CallPurpose = Literal[
+    "answer", "cypher", "route", "judge", "probe", "pathrag_step", "embed", "agent_step"
+]
 
 
 def canonical_hash(payload: Any) -> str:
