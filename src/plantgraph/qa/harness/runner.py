@@ -15,6 +15,7 @@ from pathlib import Path
 
 import httpx2
 
+from plantgraph.infra.environment import collect_run_environment
 from plantgraph.qa.corpus import load_corpus_artifacts
 from plantgraph.qa.graph_view import NetworkxGraphView
 from plantgraph.qa.harness.attempt import LoadedCorpus
@@ -36,6 +37,9 @@ from plantgraph.qa.harness.run_dir import RunDir
 from plantgraph.qa.harness.summary import RunSummary, summarize_rows
 from plantgraph.qa.models import Question, RunConfig
 from plantgraph.qa.strategies.cypher_rag import CypherProfile
+
+#: Where git is asked for the commit the environment record carries.
+_REPO_ROOT = Path(__file__).resolve().parents[4]
 
 
 def run_harness(
@@ -92,6 +96,7 @@ def run_harness(
     max_spend_usd = config.max_spend_usd  # likewise: a resume may raise the cap
     config = run_dir.freeze(config)  # from here on, nothing may change the config
     run_dir.write_corpus_records([corpus.record for corpus in corpora.values()])
+    run_dir.append_environment(collect_run_environment(_REPO_ROOT, concurrency))
 
     client, cache = build_chat_client(
         pin=config.answer_pin,

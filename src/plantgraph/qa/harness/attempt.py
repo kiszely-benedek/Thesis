@@ -28,6 +28,13 @@ from plantgraph.qa.harness.attempt_models import AttemptSettings, UnscoredAnswer
 from plantgraph.qa.harness.gold import GoldScoring
 from plantgraph.qa.harness.routing_gold import RoutingGold, add_routing_metrics
 from plantgraph.qa.harness.usage_meter import TimingRow, UsageMeter
+from plantgraph.qa.local_timer import (
+    DB_CLIENT,
+    DB_SERVER,
+    GRAPH_API,
+    LocalTimer,
+    deactivate,
+)
 from plantgraph.qa.models import (
     CorpusRecord,
     Outcome,
@@ -150,10 +157,14 @@ def run_unscored(
     `meter` belongs to this question alone.
     """
     token = _ACTIVE_METER.set(meter)
+    timer = LocalTimer()
+    timer_token = timer.activate()
     try:
-        return _answer_unscored(strategy, asked, settings, client, meter)
+        answer = _answer_unscored(strategy, asked, settings, client, meter)
     finally:
+        deactivate(timer_token)
         _ACTIVE_METER.reset(token)
+    return answer if isinstance(answer, ProviderError) else replace(answer, local_timer=timer)
 
 
 def _answer_unscored(
@@ -176,7 +187,7 @@ def _answer_unscored(
         )
 
     meter.begin(asked.question_id)
-    started = time.monotonic()
+    started = time.perf_counter()
     try:
         step = answer_question(
             strategy,
@@ -190,9 +201,9 @@ def _answer_unscored(
         return error
     except (RequestTimedOut, QuestionDeadline) as error:
         cause = "request" if isinstance(error, RequestTimedOut) else "deadline"
-        wall_s = time.monotonic() - started
+        wall_s = time.perf_counter() - started
         return _timed_out(strategy, settings, meter, {"timed_out": cause}, wall_s=wall_s)
-    wall_s = time.monotonic() - started
+    wall_s = time.perf_counter() - started
     if step.outcome is Outcome.TIMED_OUT:  # the final call ran out; retrieval's trace is kept
         return _timed_out(strategy, settings, meter, dict(step.trace), wall_s=wall_s)
     trace = dict(step.trace)
@@ -248,7 +259,22 @@ def _timing_row(item: WorkItem, answer: UnscoredAnswer) -> TimingRow:
         local_compute_s=answer.local_compute_s,
         spent_usd=answer.spent_usd,
         n_cached_retrieval_calls=usage.n_cached if usage else 0,
+        clock="perf_counter",
+        wall_s=answer.wall_s,
+        **_split_timings(answer.local_timer),
     )
+
+
+def _split_timings(timer: LocalTimer | None) -> dict[str, float | int]:
+    """The `TimingRow` split fields from a question's timer (all zero without one)."""
+    timer = timer or LocalTimer()
+    return {
+        "db_client_s": timer.seconds_of(DB_CLIENT),
+        "db_server_s": timer.seconds_of(DB_SERVER),
+        "n_db_queries": timer.calls_of(DB_CLIENT),
+        "graph_api_s": timer.seconds_of(GRAPH_API),
+        "n_graph_api_calls": timer.calls_of(GRAPH_API),
+    }
 
 
 def _timed_out(

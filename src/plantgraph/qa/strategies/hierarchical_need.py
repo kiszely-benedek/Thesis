@@ -26,6 +26,7 @@ from plantgraph.qa.anchors import Anchors, extract_anchors
 from plantgraph.qa.context_budget import BudgetMode
 from plantgraph.qa.context_render import ContextRenderer, OccurrenceRenderer, Representation
 from plantgraph.qa.graph_view import GraphView
+from plantgraph.qa.local_timer import GRAPH_API, local_timer
 from plantgraph.qa.models import RetrievalResult
 from plantgraph.qa.need.classifiers import NeedClassifier, NeedDecision, build_need_input
 from plantgraph.qa.need.context import NeedContext, build_need_context, core_sheets
@@ -111,7 +112,8 @@ class NeedAwareHierarchical:
             return self._fall_back(question_text, decision, reason)
         api = PlantApi(self._item_graph, max_items=_UNCAPPED)
         try:
-            selection = run_program(decision.label, anchors, api)
+            with local_timer(GRAPH_API):
+                selection = run_program(decision.label, anchors, api)
         except NeedPreconditionError as error:
             return self._fall_back(question_text, decision, "precondition", detail=str(error))
         return self._need_result(decision, anchors, selection)

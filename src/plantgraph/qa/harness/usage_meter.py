@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import time
 from collections.abc import Callable
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict
 
@@ -37,7 +38,7 @@ class UsageMeter:
     def __init__(
         self,
         guard: SpendGuard,
-        clock: Callable[[], float] = time.monotonic,
+        clock: Callable[[], float] = time.perf_counter,
         reservation: Reservation | None = None,
         deadline_s: float | None = None,
     ) -> None:
@@ -152,3 +153,15 @@ class TimingRow(BaseModel):
     #: Cost of this question's calls that missed the cache, retrieval-side and final.
     spent_usd: float
     n_cached_retrieval_calls: int
+    #: Which clock measured the wall time. Rows written before the clock fix say `monotonic`
+    #: (Windows: 15.6 ms resolution, so most fast questions read as 0 or a multiple of it).
+    clock: Literal["monotonic", "perf_counter"] = "monotonic"
+    #: Wall time of retrieval and answering; `None` on rows written before it was recorded.
+    wall_s: float | None = None
+    #: Database round-trips as the client sees them, and the server's own share (`LocalTimer`).
+    db_client_s: float = 0.0
+    db_server_s: float = 0.0
+    n_db_queries: int = 0
+    #: Plant-API tool and program time, and how many calls.
+    graph_api_s: float = 0.0
+    n_graph_api_calls: int = 0

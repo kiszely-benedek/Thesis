@@ -14,6 +14,7 @@ from dataclasses import dataclass
 
 from plantgraph.qa.anchors import Anchors, extract_anchors
 from plantgraph.qa.graph_view import GraphView
+from plantgraph.qa.local_timer import GRAPH_API, local_timer
 from plantgraph.qa.need.classifiers import NeedClassifier, build_need_input
 from plantgraph.qa.need.labels import NeedLabel
 from plantgraph.qa.need.programs import NeedPreconditionError, NeedSelection, run_program
@@ -95,7 +96,9 @@ def _run_label(
     if anchors.is_empty:
         return nothing, "no_anchor"
     try:
-        return run_program(label, anchors, PlantApi(graph, max_items=_UNCAPPED)), None
+        api = PlantApi(graph, max_items=_UNCAPPED)
+        with local_timer(GRAPH_API):
+            return run_program(label, anchors, api), None
     except NeedPreconditionError as error:
         return nothing, f"precondition: {error}"
 

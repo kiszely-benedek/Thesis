@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from plantgraph.llm.models import ContextWall, ModelPin
+from plantgraph.qa.local_timer import LocalTimer
 from plantgraph.qa.models import CallUsage, FinalAnswer, Outcome, QuestionResult, RunConfig
 
 
@@ -55,6 +56,8 @@ class UnscoredAnswer:
     spent_usd: float
     #: Whether the final call came from the cache; `None` when no final call was made.
     final_call_cached: bool | None
+    #: The question's split timers (`timings.jsonl` only); `None` when none was running.
+    local_timer: LocalTimer | None = None
 
     def as_row(
         self,

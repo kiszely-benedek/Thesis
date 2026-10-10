@@ -6,6 +6,7 @@ import pytest
 
 from plantgraph.graph.schema import NodeClass
 from plantgraph.qa.graph_view import EdgeRecord
+from plantgraph.qa.local_timer import LocalTimer, deactivate
 from plantgraph.qa.plant_api.contraction import contract
 from plantgraph.qa.plant_api.model import PlantApiError
 from plantgraph.qa.plant_api.results import ItemSet, PathResult, Subgraph, Table
@@ -131,3 +132,13 @@ def test_a_chain_of_stub_pairs_contracts_to_one_edge_through_every_stub() -> Non
     assert [(e.source, e.target, e.via) for e in contracted.edges] == [
         ("S1:a", "S3:b", ("S1:o1", "S2:i1", "S2:o2", "S3:i2"))
     ]
+
+
+def test_call_tool_counts_one_graph_api_call_on_the_active_timer() -> None:
+    timer = LocalTimer()
+    token = timer.activate()
+    try:
+        call_tool(toy_api(), "find", {"where": {"label": "OperatedValve"}})
+    finally:
+        deactivate(token)
+    assert timer.calls_of("graph_api") == 1

@@ -15,6 +15,7 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, ValidationError
 
+from plantgraph.qa.local_timer import GRAPH_API, local_timer
 from plantgraph.qa.plant_api.model import (
     Direction,
     GroupBy,
@@ -172,7 +173,8 @@ def call_tool(api: PlantApi, name: str, arguments: Mapping[str, Any]) -> PlantRe
         args = spec.args_model.model_validate(dict(arguments))
     except ValidationError as error:
         raise PlantApiError(f"invalid arguments for {name}: {_summarize(error)}") from error
-    return spec.run(api, args)
+    with local_timer(GRAPH_API):
+        return spec.run(api, args)
 
 
 def _summarize(error: ValidationError) -> str:

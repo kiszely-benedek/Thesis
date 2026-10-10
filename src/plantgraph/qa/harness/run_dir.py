@@ -7,6 +7,7 @@
     answers.jsonl     one QuestionResult per line
     calls.jsonl       one CallRecord per model call (written by the LLM client)
     timings.jsonl     one TimingRow per answered item: wall-clock and live-only numbers
+    environment.jsonl one RunEnvironment per invocation: machine, clock, commit, concurrency
 ```
 
 Rows are appended in binary with a bare newline, so the file is byte-identical
@@ -17,6 +18,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from plantgraph.infra.environment import RunEnvironment
 from plantgraph.qa.harness.freeze import differing_fields
 from plantgraph.qa.harness.usage_meter import TimingRow
 from plantgraph.qa.models import CorpusRecord, Outcome, QuestionResult, RunConfig
@@ -40,6 +42,7 @@ class RunDir:
         self.calls_path = path / "calls.jsonl"
         self.corpora_path = path / "corpora.json"
         self.timings_path = path / "timings.jsonl"
+        self.environment_path = path / "environment.jsonl"
 
     def freeze(self, config: RunConfig) -> RunConfig:
         """Write `config` if this run is new; otherwise check it against the stored one.
@@ -114,3 +117,8 @@ class RunDir:
         """Append one `timings.jsonl` line; never part of the byte-identical replay."""
         with self.timings_path.open("ab") as handle:
             handle.write((timing.model_dump_json() + "\n").encode("utf-8"))
+
+    def append_environment(self, environment: RunEnvironment) -> None:
+        """Append this invocation's environment; a resumed run gets one line per invocation."""
+        with self.environment_path.open("ab") as handle:
+            handle.write((environment.model_dump_json() + "\n").encode("utf-8"))

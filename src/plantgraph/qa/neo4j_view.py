@@ -19,12 +19,13 @@ from itertools import islice
 from typing import Any
 
 import networkx as nx
-from neo4j import READ_ACCESS, Driver, GraphDatabase, Query, Record, Session
+from neo4j import READ_ACCESS, Driver, GraphDatabase, Query, Record, ResultSummary, Session
 from neo4j.exceptions import Neo4jError
 from neo4j.graph import Node, Path, Relationship
 
 from plantgraph.qa.cypher import CypherExecutionError, CypherResult, reject_write_clauses
 from plantgraph.qa.graph_view import EdgeRecord, ItemRecord
+from plantgraph.qa.local_timer import DB_CLIENT, DB_SERVER, add_local_seconds, local_timer
 from plantgraph.qa.schema_text import build_schema_text
 from plantgraph.store.neo4j_plan import LoadPlan
 from plantgraph.store.neo4j_probe import DEFAULT_CONNECTION_TIMEOUT_S
@@ -123,13 +124,14 @@ class Neo4jGraphView:
             raise ValueError(f"row_cap must be a positive integer, got {row_cap}")
         reject_write_clauses(query)  # before the driver is touched: a rejected query is never sent
         try:
-            with self._open_session() as session:
+            with local_timer(DB_CLIENT), self._open_session() as session:
                 result = session.run(Query(query, timeout=timeout_s))
                 # one row past the cap tells us whether anything was cut off
                 records = list(islice(result, row_cap + 1))
-                result.consume()
+                summary = result.consume()
         except Neo4jError as error:
             raise CypherExecutionError(f"{error.code}: {error.message}") from error
+        add_local_seconds(DB_SERVER, _server_seconds(summary))
         kept = records[:row_cap]
         rows = [_row_dict(record) for record in kept]
         return CypherResult(rows=rows, truncated=len(records) > row_cap)
@@ -212,6 +214,15 @@ def _not_served(name: str) -> NotImplementedError:
         f"Neo4jGraphView does not implement {name}; only CypherRAG reads Neo4j (D9), "
         "every other strategy uses NetworkxGraphView"
     )
+
+
+def _server_seconds(summary: ResultSummary) -> float:
+    """The server's own time for a query: until the first row was ready, plus streaming the rest.
+
+    The summary reports milliseconds, and either part may be missing.
+    """
+    milliseconds = (summary.result_available_after or 0) + (summary.result_consumed_after or 0)
+    return milliseconds / 1000
 
 
 def _row_dict(record: Record) -> dict[str, Any]:
