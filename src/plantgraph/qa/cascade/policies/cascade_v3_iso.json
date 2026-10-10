@@ -1,0 +1,27 @@
+{
+  "name": "cascade_v3_iso",
+  "tiers": [
+    {
+      "name": "cypher-luna",
+      "strategy": "cypher_rag_plant",
+      "pin_sha256": "acf24178d47dd4873fc2a36e7f67efbf2dc7ab5de694711f3b934e6ef4f4c21d",
+      "accept": [
+        "answered",
+        "not_abstained",
+        "rows"
+      ]
+    },
+    {
+      "name": "agent-luna",
+      "strategy": "graph_agent_low_steps",
+      "pin_sha256": "acf24178d47dd4873fc2a36e7f67efbf2dc7ab5de694711f3b934e6ef4f4c21d",
+      "accept": [
+        "answered"
+      ]
+    }
+  ],
+  "fallback_to_first_answer": true,
+  "start_tier_by_label": {
+    "UPSTREAM_TO_FIRST_VALVE": 1
+  }
+}

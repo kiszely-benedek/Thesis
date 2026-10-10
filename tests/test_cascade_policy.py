@@ -289,6 +289,16 @@ def test_compare_gives_policy_minus_reference(tmp_path: Path) -> None:
 
 GLM = "z-ai/glm-5.3-flash"
 LOW = {"reasoning": {"effort": "low"}}
+# ADR-0050: GPT-6 Luna, host pinned; the host takes no temperature, so none is sent.
+_LUNA_PIN = ModelPin(
+    backend="openrouter",
+    model_id="openai/gpt-6-luna",
+    route_provider="openai",
+    temperature=None,
+    seed=0,
+    max_output_tokens=16384,
+    extra=LOW,
+)
 
 
 def _pin_hash(model: str, max_tokens: int, extra: dict[str, Any]) -> str:
@@ -312,6 +322,8 @@ def test_policy_files_load_with_the_pins_the_note_names() -> None:
         "need-low": _pin_hash(GLM, 16384, LOW),
         "need-default-64k": _pin_hash(GLM, 65536, {}),
         "agent-low-steps": _pin_hash(GLM, 16384, {}),
+        "cypher-luna": _LUNA_PIN.pin_hash(),
+        "agent-luna": _LUNA_PIN.pin_hash(),
     }
 
     assert set(policies) == {
@@ -319,6 +331,7 @@ def test_policy_files_load_with_the_pins_the_note_names() -> None:
         "cascade_v1_t3_mimo", "cascade_v1_t3_glmlow", "cascade_v1_t3_glm64k",
         "n_first_v1_t3_mimo", "n_first_v1_t3_glmlow", "n_first_v1_t3_glm64k",
         "always_g", "cascade_v2", "cascade_v2_iso",
+        "cascade_v3", "cascade_v3_iso", "cascade_v3_mixed", "always_g_luna",
     }  # fmt: skip
     for loaded in policies.values():
         for tier in loaded.tiers:
