@@ -9,9 +9,9 @@ from __future__ import annotations
 
 from typing import Protocol
 
-from plantgraph.llm.models import ContextWall, ModelPin
+from plantgraph.llm.models import ContextWall, ModelPin, QuestionDeadline, RequestTimedOut
 from plantgraph.qa.final_answer import FinalStepResult, SendChatRequest, run_final_step
-from plantgraph.qa.models import Question, RetrievalResult
+from plantgraph.qa.models import Outcome, Question, RetrievalResult
 
 
 class Strategy(Protocol):
@@ -38,7 +38,9 @@ def answer_question(
 
     `question.answer_type` is used only by the final step, to word the answer
     format; retrieval receives `question.text` alone. `primer` is passed on to the final
-    step. A failed retrieval returns its `failure` outcome and makes no call.
+    step. A failed retrieval returns its `failure` outcome and makes no call. A final call
+    that runs out of time returns `TIMED_OUT` with the retrieval trace kept, so the row can
+    still be diagnosed (`trace["timed_out"]` says which limit was hit).
     """
     retrieval = strategy.retrieve(question.text)
     trace = {"retrieval": retrieval.trace}
@@ -51,13 +53,22 @@ def answer_question(
             f"strategy {strategy.name!r} returned neither a context nor a failure "
             f"for question {question.question_id!r}"
         )
-    final = run_final_step(
-        pin=pin,
-        context=retrieval.context,
-        question_text=question.text,
-        answer_type=question.answer_type,
-        wall=wall,
-        send=send,
-        primer=primer,
-    )
+    try:
+        final = run_final_step(
+            pin=pin,
+            context=retrieval.context,
+            question_text=question.text,
+            answer_type=question.answer_type,
+            wall=wall,
+            send=send,
+            primer=primer,
+        )
+    except (RequestTimedOut, QuestionDeadline) as error:
+        cause = "request" if isinstance(error, RequestTimedOut) else "deadline"
+        return FinalStepResult(
+            outcome=Outcome.TIMED_OUT,
+            final_answer=None,
+            response=None,
+            trace={**trace, "timed_out": cause},
+        )
     return final.model_copy(update={"trace": {**trace, **final.trace}})

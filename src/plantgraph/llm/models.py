@@ -21,6 +21,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+from collections.abc import Iterator
+from contextlib import contextmanager
+from contextvars import ContextVar
 from datetime import UTC, datetime
 from typing import Any, Literal
 
@@ -186,3 +189,24 @@ class RequestTimedOut(Exception):
 
 class QuestionDeadline(Exception):
     """The question's recorded call time already reached its deadline, so no call was started."""
+
+
+#: Seconds of the question's time budget that calls sent right now must leave untouched.
+#: The agent loop sets it around a step request so the final answer keeps its reserve; the
+#: harness's meter reads it when it sets the call's time limit. 0 means "no reserve".
+_RESERVED_FOR_FINAL_S: ContextVar[float] = ContextVar("reserved_for_final_s", default=0.0)
+
+
+def reserved_for_final_s() -> float:
+    """The reserve the call being sent must leave for the final answer (0 outside a step)."""
+    return _RESERVED_FOR_FINAL_S.get()
+
+
+@contextmanager
+def keeping_in_reserve(seconds: float) -> Iterator[None]:
+    """Within the block, model calls may not use the last `seconds` of the question's budget."""
+    token = _RESERVED_FOR_FINAL_S.set(seconds)
+    try:
+        yield
+    finally:
+        _RESERVED_FOR_FINAL_S.reset(token)

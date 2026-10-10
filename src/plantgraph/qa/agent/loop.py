@@ -25,6 +25,7 @@ from plantgraph.llm.models import (
     ModelPin,
     QuestionDeadline,
     RequestTimedOut,
+    keeping_in_reserve,
 )
 from plantgraph.qa.agent.actions import Done, InvalidAction, ToolCall, parse_action
 from plantgraph.qa.agent.models import AgentParams, AgentRun, AgentStep, GatheredResult, StopReason
@@ -108,7 +109,9 @@ class _Loop:
             if self._prompt_chars_sent + request_chars > self._params.max_prompt_chars_total:
                 return "prompt_budget"
             try:
-                response = self._send(request)
+                # the step may not eat the final answer's reserve (no effect without a deadline)
+                with keeping_in_reserve(self._params.final_reserve_s):
+                    response = self._send(request)
             except ContextOverflow:
                 return "overflow"
             except (QuestionDeadline, RequestTimedOut):

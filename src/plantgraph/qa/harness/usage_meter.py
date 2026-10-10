@@ -18,7 +18,12 @@ from collections.abc import Callable
 
 from pydantic import BaseModel, ConfigDict
 
-from plantgraph.llm.models import ChatResponse, QuestionDeadline, RequestTimedOut
+from plantgraph.llm.models import (
+    ChatResponse,
+    QuestionDeadline,
+    RequestTimedOut,
+    reserved_for_final_s,
+)
 from plantgraph.qa.harness.spend_cap import Reservation, SpendGuard
 from plantgraph.qa.models import CallUsage
 
@@ -75,13 +80,14 @@ class UsageMeter:
     ) -> ChatResponse:
         """Run one model call behind the deadline and the spend guard, then `record` it.
 
-        `call` receives the time it may take (`None` without a deadline).
+        `call` receives the time it may take (`None` without a deadline). A retrieval-side
+        call inside `keeping_in_reserve` gets that much less, so the final call keeps it.
 
         Raises:
             QuestionDeadline: the budget is already spent; no call is started.
             RequestTimedOut: the call outlived its budget (counted before it is re-raised).
         """
-        timeout_s = self._remaining_s()
+        timeout_s = self._remaining_s(reserve_s=0.0 if is_final else reserved_for_final_s())
         self._guard.check_before_call(self._reservation)
         started = self._clock()
         try:
@@ -94,11 +100,11 @@ class UsageMeter:
         self.record(response, self._clock() - started, is_final=is_final)
         return response
 
-    def _remaining_s(self) -> float | None:
-        """The budget left for the next call; raises when none is left."""
+    def _remaining_s(self, reserve_s: float) -> float | None:
+        """The budget left for the next call, minus `reserve_s`; raises when none is left."""
         if self._deadline_s is None:
             return None
-        remaining = self._deadline_s - self._recorded_elapsed_s
+        remaining = self._deadline_s - self._recorded_elapsed_s - reserve_s
         if remaining <= 0:
             raise QuestionDeadline(
                 f"expected recorded call time under the {self._deadline_s:g} s deadline, "

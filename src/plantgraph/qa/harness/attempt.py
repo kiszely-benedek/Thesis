@@ -9,6 +9,7 @@ import time
 from collections.abc import Callable
 from contextvars import ContextVar
 from dataclasses import dataclass
+from typing import Any
 
 from plantgraph.llm.client import ChatClient
 from plantgraph.llm.models import (
@@ -157,8 +158,12 @@ def _attempt(
     except ProviderError as error:
         return error
     except (RequestTimedOut, QuestionDeadline) as error:
-        return _timed_out(item, config, meter, error, wall_s=time.monotonic() - started)
+        cause = "request" if isinstance(error, RequestTimedOut) else "deadline"
+        trace = {"timed_out": cause}
+        return _timed_out(item, config, meter, trace, wall_s=time.monotonic() - started)
     wall_s = time.monotonic() - started
+    if step.outcome is Outcome.TIMED_OUT:  # the final call ran out; retrieval's trace is kept
+        return _timed_out(item, config, meter, dict(step.trace), wall_s=wall_s)
     scored = score_answer(
         item.question,
         step.outcome,
@@ -207,16 +212,19 @@ def _timed_out(
     item: WorkItem,
     config: RunConfig,
     meter: UsageMeter,
-    error: RequestTimedOut | QuestionDeadline,
+    trace: dict[str, Any],
     *,
     wall_s: float,
 ) -> Answered:
     """The ordinary, committed row of a question that ran out of its call-time budget.
 
-    Everything in it comes from recorded latencies, so a replay writes the same bytes.
+    `trace` holds `timed_out` (the cause) and any retrieval trace gathered before the timeout.
+    Everything in the row comes from recorded latencies, so a replay writes the same bytes.
     """
     usage = meter.end()
-    cause = "request" if isinstance(error, RequestTimedOut) else "deadline"
+    # `latency_s` is the final call's share, like on every row, so the cascade's total
+    # (final + retrieval-side latency) comes to the recorded elapsed time, not twice that
+    final_call_s = max(0.0, meter.recorded_elapsed_s - usage.llm_latency_s)
     row = QuestionResult(
         run_id=config.run_id,
         question_id=item.question.question_id,
@@ -229,10 +237,10 @@ def _timed_out(
         prompt_tokens=0,
         completion_tokens=0,
         cost_usd=None,
-        latency_s=meter.recorded_elapsed_s,
+        latency_s=final_call_s,
         context_chars=0,
         trace={
-            "timed_out": cause,
+            **trace,
             "question_deadline_s": config.question_deadline_s,
             "recorded_elapsed_s": meter.recorded_elapsed_s,
         },
