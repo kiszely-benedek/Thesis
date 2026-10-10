@@ -299,6 +299,9 @@ _LUNA_PIN = ModelPin(
     max_output_tokens=16384,
     extra=LOW,
 )
+# The agent tier's steps run at low effort whatever the pin says; its final answer takes the
+# pin's effort, and high there was adopted after round 3.
+_LUNA_FINAL_HIGH_PIN = _LUNA_PIN.model_copy(update={"extra": {"reasoning": {"effort": "high"}}})
 
 
 def _pin_hash(model: str, max_tokens: int, extra: dict[str, Any]) -> str:
@@ -323,7 +326,7 @@ def test_policy_files_load_with_the_pins_the_note_names() -> None:
         "need-default-64k": _pin_hash(GLM, 65536, {}),
         "agent-low-steps": _pin_hash(GLM, 16384, {}),
         "cypher-luna": _LUNA_PIN.pin_hash(),
-        "agent-luna": _LUNA_PIN.pin_hash(),
+        "agent-luna": _LUNA_FINAL_HIGH_PIN.pin_hash(),
     }
 
     assert set(policies) == {

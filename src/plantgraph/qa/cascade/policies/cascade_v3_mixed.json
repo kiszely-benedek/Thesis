@@ -14,7 +14,7 @@
     {
       "name": "agent-luna",
       "strategy": "graph_agent_low_steps",
-      "pin_sha256": "acf24178d47dd4873fc2a36e7f67efbf2dc7ab5de694711f3b934e6ef4f4c21d",
+      "pin_sha256": "ffc026d3f42b3ddcc5fe43175a3c288bdd19f36063997fec2c8645a95fe70157",
       "accept": [
         "answered"
       ]
