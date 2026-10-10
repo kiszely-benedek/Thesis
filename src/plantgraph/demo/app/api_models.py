@@ -21,8 +21,6 @@ class AskRequest(BaseModel):
     answer_type: AnswerType = AnswerType.FREE_TEXT
     #: When set, the benchmark question's own text and answer type are used.
     benchmark_question_id: str | None = None
-    #: The user's confirmation that this question may spend money (needs the server flag too).
-    allow_paid: bool = False
     #: Skip tier 1 even if the store holds the corpus.
     tier2_only: bool = False
 

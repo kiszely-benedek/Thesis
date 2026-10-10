@@ -6,6 +6,7 @@ test reads like a timetable. Only the cache-miss test uses the real replay clien
 
 from __future__ import annotations
 
+import argparse
 import ast
 from datetime import datetime
 from pathlib import Path
@@ -18,6 +19,7 @@ from plantgraph.llm.models import ChatRequest, ChatResponse, ModelPin
 from plantgraph.qa.cascade import live as live_module
 from plantgraph.qa.cascade.cli import main
 from plantgraph.qa.cascade.live import LiveCascade, LivePolicyRefused, LiveTier
+from plantgraph.qa.cascade.live_ask import add_ask_arguments
 from plantgraph.qa.cascade.live_build import OpenedCascade
 from plantgraph.qa.cascade.live_models import FreeTextQuestion, LiveAnswer, NeedsPaidCall
 from plantgraph.qa.cascade.models import AcceptRule, CascadePolicy, Decision, TierSpec
@@ -298,16 +300,35 @@ def test_the_ask_command_exits_2_on_a_cache_miss(
         _tier(policy.tiers[1], StubStrategy("stub-agent", None), ScriptedClient(YES, 1.0), "high"),
     ]
     opened = OpenedCascade(LiveCascade("T1", policy, tiers), [cache], None)
-    argv = ["ask", "--corpus", "T1", "--policy", "toy", "--run", "t1=x", "Is V-1 connected?"]
+    argv = ["ask", "--corpus", "T1", "--policy", "toy", "--run", "t1=x", "--replay-only"]
+    argv.append("Is V-1 connected?")
 
     with pytest.raises(SystemExit) as exit_info:
         main(argv, open_cascade=lambda _args: opened)
 
     assert exit_info.value.code == 2
-    assert "--allow-paid-calls" in capsys.readouterr().err
+    assert "without --replay-only" in capsys.readouterr().err
 
 
 def test_free_text_questions_get_a_stable_id() -> None:
     first = FreeTextQuestion.from_text("What is V-1?")
     assert first == FreeTextQuestion.from_text("What is V-1?")
     assert first.question_id != FreeTextQuestion.from_text("What is V-2?").question_id
+
+
+def _ask_namespace(*extra: str) -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+    add_ask_arguments(parser)
+    return parser.parse_args(["--corpus", "T1", "--policy", "toy", "--run", "t1=x", *extra])
+
+
+def test_ask_allows_paid_calls_with_a_two_dollar_cap_by_default() -> None:
+    args = _ask_namespace("question")
+
+    assert args.replay_only is False and args.session_cap_usd == 2.0
+
+
+def test_ask_replay_only_and_the_cap_flag_are_parsed() -> None:
+    args = _ask_namespace("--replay-only", "--session-cap-usd", "0.5", "question")
+
+    assert args.replay_only is True and args.session_cap_usd == 0.5

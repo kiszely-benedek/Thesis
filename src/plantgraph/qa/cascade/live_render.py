@@ -34,7 +34,8 @@ def render_needs_paid_call(needed: NeedsPaidCall) -> str:
     """Why nothing was answered in replay mode, and how to allow the call."""
     return (
         f"cache miss at tier {needed.missing_tier!r}: {needed.reason}\n"
-        "no network call was made; rerun with --allow-paid-calls --session-cap-usd N to ask live"
+        "no network call was made; rerun without --replay-only to ask live "
+        "(paid, within --session-cap-usd)"
     )
 
 

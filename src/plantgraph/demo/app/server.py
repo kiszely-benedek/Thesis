@@ -26,7 +26,6 @@ from plantgraph.demo.app.state import (
     AppState,
     Busy,
     CorpusNotReady,
-    PaidCallsNotAllowed,
     UnknownCorpus,
     UnknownJob,
 )
@@ -43,7 +42,6 @@ _STATUS_OF: dict[type[Exception], int] = {
     UnknownBenchmarkQuestion: 404,
     CorpusNotReady: 409,
     Busy: 409,
-    PaidCallsNotAllowed: 403,
 }
 
 

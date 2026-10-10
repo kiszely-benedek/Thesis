@@ -131,14 +131,13 @@ function onBenchmarkChosen() {
 
 /* ---------- asking ---------- */
 
-function askBody(allowPaid) {
+function askBody() {
   const benchmarkId = $("benchmark-select").value;
-  if (benchmarkId) return { corpus_id: page.corpusId, benchmark_question_id: benchmarkId, allow_paid: allowPaid };
+  if (benchmarkId) return { corpus_id: page.corpusId, benchmark_question_id: benchmarkId };
   return {
     corpus_id: page.corpusId,
     text: $("question-text").value,
     answer_type: $("answer-type").value,
-    allow_paid: allowPaid,
   };
 }
 
@@ -149,8 +148,8 @@ function showMessage(text, isError) {
   box.className = isError ? "message error" : "message";
 }
 
-/** Ask once; a cache miss that the user confirms asks again with `allowPaid` set. */
-async function ask(allowPaid) {
+/** Ask once; the server answers from the cache or, within the session cap, with a paid call. */
+async function ask() {
   showMessage(null);
   $("result").replaceChildren();
   page.asking = true;
@@ -160,7 +159,7 @@ async function ask(allowPaid) {
     const { job_id } = await api("/api/ask", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(askBody(allowPaid)),
+      body: JSON.stringify(askBody()),
     });
     const job = await waitForJob(job_id);
     await onJobEnded(job);
@@ -194,37 +193,9 @@ async function onJobEnded(job) {
   page.status.spend = job.spend;
   renderStatus();
   if (job.state === "done") { renderResult(job.result); return; }
-  if (job.state === "needs_paid") { await onNeedsPaid(job); return; }
-  showMessage(job.message ?? job.state, true); // refused or error
-}
-
-async function onNeedsPaid(job) {
-  if (!page.status.paid_allowed) { showMessage(STRINGS.needsPaidOff, true); return; }
-  if (await confirmPaid(job)) {
-    page.asking = false; // the nested ask() takes over the button and the timer
-    await ask(true);
-  }
-}
-
-/** Show the estimate and spend in the dialog; resolves to true when the user confirms. */
-function confirmPaid(job) {
-  const body = $("paid-body");
-  body.replaceChildren(
-    el("p", {}, STRINGS.paidIntro(job.needs_paid.missing_tier)),
-    el("p", { className: "hint" }, job.needs_paid.reason),
-    el("h2", {}, STRINGS.paidEstimateHead),
-  );
-  for (const [tier, stats] of Object.entries(job.estimate.per_tier)) {
-    body.append(el("div", {}, STRINGS.paidTierRow(tier, stats)));
-  }
-  body.append(el("p", {}, el("strong", {}, STRINGS.paidReservation(job.estimate.reservation_usd))));
-  body.append(el("p", {}, spendText(page.status)));
-  const dialog = $("paid-dialog");
-  return new Promise((resolve) => {
-    dialog.onclose = () => resolve(dialog.returnValue === "confirm");
-    dialog.returnValue = "cancel"; // Esc closes without setting it
-    dialog.showModal();
-  });
+  if (job.state === "needs_paid") { showMessage(STRINGS.needsPaidOff, true); return; } // replay-only
+  if (job.state === "refused") { showMessage(STRINGS.capReached(usd(job.spend.session_cap_usd ?? 0), usd(job.spend.session_spent_usd)), true); return; }
+  showMessage(job.message ?? job.state, true); // error
 }
 
 /* ---------- the answer ---------- */
@@ -341,9 +312,6 @@ function setLabels() {
   $("question-label").textContent = STRINGS.question;
   $("answer-type-label").textContent = STRINGS.answerType;
   $("ask-button").textContent = STRINGS.ask;
-  $("paid-title").textContent = STRINGS.paidTitle;
-  $("paid-cancel").textContent = STRINGS.paidCancel;
-  $("paid-confirm").textContent = STRINGS.paidConfirm;
   for (const [value, label] of Object.entries(STRINGS.answerTypes)) {
     $("answer-type").append(el("option", { value, textContent: label }));
   }
@@ -354,9 +322,7 @@ function wireEvents() {
   $("dwg-input").addEventListener("keydown", (e) => { if (e.key === "Enter") goToDrawing(); });
   $("corpus-select").addEventListener("change", (e) => selectCorpus(e.target.value));
   $("benchmark-select").addEventListener("change", onBenchmarkChosen);
-  $("ask-button").addEventListener("click", () => ask(false));
-  $("paid-cancel").addEventListener("click", () => $("paid-dialog").close("cancel"));
-  $("paid-confirm").addEventListener("click", () => $("paid-dialog").close("confirm"));
+  $("ask-button").addEventListener("click", () => ask());
 }
 
 async function start() {

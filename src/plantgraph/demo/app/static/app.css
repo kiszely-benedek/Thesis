@@ -74,5 +74,3 @@ td.num { text-align: right; font-variant-numeric: tabular-nums; }
 .chip { padding: 2px 9px; border: 1px solid var(--accent); color: var(--accent); background: white; border-radius: 12px; font-size: 13px; }
 .chip:hover { background: #e8f1fb; }
 
-dialog { border: 1px solid var(--line); border-radius: 6px; max-width: 460px; }
-.dialog-buttons { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }

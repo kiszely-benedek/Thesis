@@ -52,6 +52,8 @@ class DemoConfig(BaseModel):
     policy: str
     #: The cascade's cutoff C: a question gets this many seconds across all its tiers.
     question_deadline_s: float = 120.0
+    #: Hard cap on one server session's paid calls (USD); `--session-cap-usd` overrides it.
+    session_cap_usd: float = 2.0
     #: The demo's own answer cache and call log: demo answers never mix into experiment caches.
     cache_path: Path
     calls_log_path: Path

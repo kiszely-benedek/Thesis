@@ -65,15 +65,23 @@ def run_job(
     request: AskRequest,
     asked: AskedQuestion,
     session: SessionSpend,
+    *,
+    allow_paid: bool,
 ) -> None:
-    """Answer the question and record the outcome on `job`; never raises."""
+    """Answer the question and record the outcome on `job`; never raises.
+
+    The answer cache is tried first (free, never refused). Only a miss goes on to a paid call,
+    and only when `allow_paid` is set; otherwise the job ends as `needs_paid`.
+    """
     reservation: Reservation | None = None
     spent_before = session.guard.spent_usd
     try:
-        # a confirmed paid question sets money aside first, so the cap holds even in a race
-        reservation = session.reserve() if request.allow_paid else None
-        asker = corpus.source.asker(paid=request.allow_paid, tier2_only=request.tier2_only)
-        _record(job, corpus, asked, asker.ask(asked))
+        result = corpus.source.asker(paid=False, tier2_only=request.tier2_only).ask(asked)
+        if isinstance(result, NeedsPaidCall) and allow_paid:
+            # money is set aside first, so the cap holds even when questions race
+            reservation = session.reserve()
+            result = corpus.source.asker(paid=True, tier2_only=request.tier2_only).ask(asked)
+        _record(job, corpus, asked, result)
     except SpendCapReached as error:
         job.message = str(error)
         job.end("refused")

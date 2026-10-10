@@ -43,10 +43,6 @@ class Busy(RuntimeError):
     """A question is already running; the demo answers one at a time."""
 
 
-class PaidCallsNotAllowed(PermissionError):
-    """The request wants to spend money but the server was started without paid calls."""
-
-
 class UnknownJob(LookupError):
     """No job has this id."""
 
@@ -176,12 +172,9 @@ class AppState:
         """Start a question job on a worker thread and return its id.
 
         Raises:
-            PaidCallsNotAllowed: `allow_paid` without the server flag.
             UnknownCorpus, CorpusNotReady, UnknownBenchmarkQuestion: bad target.
             Busy: another question is running.
         """
-        if request.allow_paid and not self.allow_paid_calls:
-            raise PaidCallsNotAllowed("expected the server started with --allow-paid-calls")
         corpus = self.ready_corpus(request.corpus_id)
         asked = asked_question(corpus, request)
         if not self._busy.acquire(blocking=False):
@@ -197,7 +190,7 @@ class AppState:
         self, job: Job, corpus: LoadedCorpus, request: AskRequest, asked: AskedQuestion
     ) -> None:
         try:
-            run_job(job, corpus, request, asked, self.session)
+            run_job(job, corpus, request, asked, self.session, allow_paid=self.allow_paid_calls)
         finally:
             self._busy.release()
 
@@ -216,26 +209,23 @@ class AppState:
 def build_app_state(
     config: DemoConfig,
     *,
-    allow_paid_calls: bool,
-    session_cap_usd: float | None,
+    allow_paid_calls: bool = True,
+    session_cap_usd: float | None = None,
     cypher_source_factory: CypherSourceFactory = open_checked_neo4j_view,
     http_client: httpx2.Client | None = None,
 ) -> AppState:
     """Wire a real app: policy, cost estimates, spend guard and the corpus loader.
 
     Raises:
-        ValueError: paid calls without a session cap.
         NoCostEvidence: a tier has no recorded run to estimate its cost from.
     """
-    if allow_paid_calls and session_cap_usd is None:
-        raise ValueError("expected --session-cap-usd with --allow-paid-calls, found none")
+    # paid calls are on by default; the cap is the safety net (the config's, unless overridden)
+    cap_usd = config.session_cap_usd if session_cap_usd is None else session_cap_usd
     policy = resolve_policy(config.policy)
     estimates = {c.corpus_id: _estimate(policy, c) for c in config.corpora}
     # one guard serves every corpus, so its reservation is the dearest corpus's
     dearest = max(estimates.values(), key=lambda e: e.reservation_usd)
-    session = SessionSpend(
-        session_cap_usd if allow_paid_calls else None, dearest, config.calls_log_path
-    )
+    session = SessionSpend(cap_usd if allow_paid_calls else None, dearest, config.calls_log_path)
     loader = CorpusLoader(
         config,
         policy,

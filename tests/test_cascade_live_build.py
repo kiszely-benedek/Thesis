@@ -140,6 +140,7 @@ def test_the_ask_command_end_to_end_replays_a_cached_answer(
             "--cache-path", str(tmp_path / "cache.sqlite"),
             "--calls-log", str(tmp_path / "calls.jsonl"),
             "--answer-type", question.answer_type.value,
+            "--replay-only",  # paid is the default; a replay needs no API key
             question.text,
         ]
     )  # fmt: skip

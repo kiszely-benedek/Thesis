@@ -19,22 +19,16 @@ const STRINGS = {
   stateLabels: { waiting: "vár a betöltésre", loading: "betöltés…", ready: "kész", error: "hiba" },
   noPdf: "nincs rajz-PDF",
   noTier1: "az adatbázis-szint nem elérhető, csak a 2. szint válaszol",
-  paidOff: "Csak gyorsítótár (fizetős hívás tiltva)",
+  paidOff: "Csak gyorsítótár (--replay-only, fizetős hívás tiltva)",
   spend: (spent, cap) => `Munkamenet költése: ${spent} / limit ${cap}`,
   running: "Fut…",
   elapsed: (s) => `${s.toFixed(1)} s`,
   needsPaidOff:
     "Ehhez a kérdéshez nincs gyorsítótárazott válasz, a szerver pedig csak visszajátszó módban fut. " +
-    "Fizetős hívásokhoz indítsd újra a szervert --allow-paid-calls és --session-cap-usd kapcsolóval.",
-  paidTitle: "Fizetős kérdés",
-  paidIntro: (tier) => `A(z) „${tier}” szint válasza nincs a gyorsítótárban; az élő hívás pénzbe kerül.`,
-  paidEstimateHead: "Becsült költség szintenként (kérdésenként)",
-  paidTierRow: (tier, st) =>
-    `${tier}: medián ${usd(st.median_usd)}, max ${usd(st.max_usd)} (${st.n_questions} kérdés` +
-    `${st.other_corpus ? ", másik korpuszból" : ""})`,
-  paidReservation: (r) => `Foglalás ehhez a kérdéshez: ${usd(r)}`,
-  paidCancel: "Mégse",
-  paidConfirm: "Élő kérdezés",
+    "Fizetős hívásokhoz indítsd újra a szervert a --replay-only kapcsoló nélkül.",
+  capReached: (cap, spent) =>
+    `A kérdést nem válaszoltuk meg: a munkamenet költési limitje (${cap}) elfogyna, eddig ${spent} ment el. ` +
+    "Indítsd újra a szervert nagyobb --session-cap-usd értékkel, vagy kérdezz gyorsítótárazott kérdést.",
   answer: "Válasz",
   noAnswer: "(nincs válasz)",
   notPresent: "A rendszer szerint az információ nincs a rajzokon.",

@@ -24,6 +24,7 @@ OpenCascade = Callable[[argparse.Namespace], OpenedCascade]
 
 _DEMO_DIR = Path("data") / "runs" / "cv1" / "demo"
 _DEFAULT_CUTOFF_S = 120.0
+_DEFAULT_SESSION_CAP_USD = 2.0
 
 
 def add_ask_arguments(command: argparse.ArgumentParser) -> None:
@@ -49,12 +50,19 @@ def add_ask_arguments(command: argparse.ArgumentParser) -> None:
     command.add_argument("--cache-path", type=Path, default=_DEMO_DIR / "cache.sqlite")
     command.add_argument("--calls-log", type=Path, default=_DEMO_DIR / "calls.jsonl")
     command.add_argument("--cutoff-s", type=float, default=_DEFAULT_CUTOFF_S)
-    command.add_argument("--allow-paid-calls", action="store_true")
-    command.add_argument("--session-cap-usd", type=float, help="required with --allow-paid-calls")
+    command.add_argument(
+        "--replay-only", action="store_true", help="turn paid calls off: cached answers only"
+    )
+    command.add_argument(
+        "--session-cap-usd",
+        type=float,
+        default=_DEFAULT_SESSION_CAP_USD,
+        help="hard cap on the paid calls of this run (USD)",
+    )
 
 
 def ask_command(args: argparse.Namespace, open_cascade: OpenCascade) -> None:
-    """Ask, print the answer and the tier table; exit 2 on a cache miss in replay mode."""
+    """Ask, print the answer and the tier table; exit 2 on a cache miss with --replay-only."""
     asked = _asked_question(args)
     with open_cascade(args) as opened:
         result = opened.cascade.ask(asked)
@@ -65,9 +73,7 @@ def ask_command(args: argparse.Namespace, open_cascade: OpenCascade) -> None:
 
 
 def open_for_ask(args: argparse.Namespace) -> OpenedCascade:
-    """Load the corpus and open the cascade the arguments describe (replay unless paid)."""
-    if args.allow_paid_calls and args.session_cap_usd is None:
-        raise SystemExit("error: --allow-paid-calls needs --session-cap-usd (a hard spend cap)")
+    """Load the corpus and open the cascade the arguments describe (live unless `--replay-only`)."""
     artifacts = load_corpus_artifacts(args.corpus, args.corpora_root / args.corpus / "ingest.json")
     return open_live_cascade(
         corpus_id=args.corpus,
@@ -77,9 +83,9 @@ def open_for_ask(args: argparse.Namespace) -> OpenedCascade:
         tier_run_dirs=_tier_run_dirs(args.run),
         cache_path=args.cache_path,
         calls_log_path=args.calls_log,
-        allow_paid_calls=args.allow_paid_calls,
+        allow_paid_calls=not args.replay_only,
         cutoff_s=args.cutoff_s,
-        guard=SpendGuard(args.session_cap_usd if args.allow_paid_calls else None),
+        guard=SpendGuard(None if args.replay_only else args.session_cap_usd),
     )
 
 
