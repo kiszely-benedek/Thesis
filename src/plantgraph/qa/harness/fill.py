@@ -17,6 +17,7 @@ from plantgraph.qa.harness.attempt import (
     Answered,
     LoadedCorpus,
     WorkItem,
+    active_remaining_s,
     attempt,
     provider_error_row,
     sender_factory,
@@ -218,7 +219,7 @@ def _work_items(
             if corpus.cypher is not None
             else None
         )
-        llm = LlmDeps(config.answer_pin, sender_for(name), config.primer)
+        llm = LlmDeps(config.answer_pin, sender_for(name), config.primer, active_remaining_s)
         strategy = build_strategy(name, params, corpus.view, cypher, llm)
         for question in corpus_questions:
             for repeat in range(config.repeats):
