@@ -4,16 +4,28 @@ The loop needs only a sender (a function from `ChatRequest` to `ChatResponse`), 
 it with a scripted fake and the harness gives it the metered sender that counts every call
 towards the question's cost and the run's spend cap.
 
-Four things end it: `done`, `max_steps` replies, a cumulative prompt size over the cap
-(`prompt_budget`), and two bad replies in a row (`errors`).
+Seven things end it: `done` (a reply of `{"done": true}`, or a call sent with `"done": true`
+that succeeded), `max_steps` replies, a cumulative prompt size over the cap (`prompt_budget`), two
+bad replies in a row (`errors`), a context overflow (`overflow`), a reply that used the whole output
+cap (`runaway`) and a spent time budget (`deadline`). However it ends, the caller still runs the
+final answer step on what was gathered.
 """
 
 from __future__ import annotations
 
 import json
+from collections.abc import Callable
 from typing import Any
 
-from plantgraph.llm.models import ChatMessage, ChatRequest, ChatResponse, ContextOverflow, ModelPin
+from plantgraph.llm.models import (
+    ChatMessage,
+    ChatRequest,
+    ChatResponse,
+    ContextOverflow,
+    ModelPin,
+    QuestionDeadline,
+    RequestTimedOut,
+)
 from plantgraph.qa.agent.actions import Done, InvalidAction, ToolCall, parse_action
 from plantgraph.qa.agent.models import AgentParams, AgentRun, AgentStep, GatheredResult, StopReason
 from plantgraph.qa.final_answer import SendChatRequest
@@ -25,6 +37,9 @@ from plantgraph.qa.plant_api.tool_registry import call_tool
 #: Two replies in a row that fail (malformed or refused) mean the model is not recovering.
 _MAX_ERRORS_IN_A_ROW = 2
 
+#: Seconds of the question's time budget still unspent, or `None` when the run has no deadline.
+RemainingSeconds = Callable[[], float | None]
+
 
 def run_agent_loop(
     *,
@@ -34,12 +49,15 @@ def run_agent_loop(
     system_prompt: str,
     first_user_message: str,
     params: AgentParams,
+    remaining_s: RemainingSeconds | None = None,
 ) -> AgentRun:
     """Run the loop for one question; never raises for a bad reply, only reports it.
 
+    `remaining_s` tells how much of the question's time budget is left; below
+    `params.final_reserve_s` the loop stops so the final answer still fits.
     A provider error from `send` is not caught: the harness records it for the question.
     """
-    loop = _Loop(pin, send, api, params, system_prompt, first_user_message)
+    loop = _Loop(pin, send, api, params, system_prompt, first_user_message, remaining_s)
     stop_reason = loop.run()
     return AgentRun(
         steps=tuple(loop.steps),
@@ -61,8 +79,10 @@ class _Loop:
         params: AgentParams,
         system_prompt: str,
         first_user_message: str,
+        remaining_s: RemainingSeconds | None,
     ) -> None:
-        self._pin = pin
+        self._pin = _step_pin(pin, params)
+        self._remaining_s = remaining_s
         self._send = send
         self._api = api
         self._params = params
@@ -79,6 +99,8 @@ class _Loop:
 
     def run(self) -> StopReason:
         for index in range(1, self._params.max_steps + 1):
+            if self._budget_is_short():
+                return "deadline"
             request = ChatRequest(
                 pin=self._pin, messages=list(self._messages), json_mode=True, purpose="agent_step"
             )
@@ -89,15 +111,32 @@ class _Loop:
                 response = self._send(request)
             except ContextOverflow:
                 return "overflow"
+            except (QuestionDeadline, RequestTimedOut):
+                return "deadline"  # the harness ran out of time inside this step
             self._prompt_chars_sent += request_chars
+            if response.completion_tokens >= self._pin.max_output_tokens:
+                self._record_runaway(index, response)
+                return "runaway"
             if self._take_reply(index, response):
                 return "done"
             if self._errors_in_a_row >= _MAX_ERRORS_IN_A_ROW:
                 return "errors"
         return "max_steps"
 
+    def _budget_is_short(self) -> bool:
+        remaining = None if self._remaining_s is None else self._remaining_s()
+        return remaining is not None and remaining < self._params.final_reserve_s
+
+    def _record_runaway(self, index: int, response: ChatResponse) -> None:
+        """A reply cut off at the output cap is not trusted, even if the cut text parses."""
+        self.invalid_actions += 1
+        message = (
+            f"error: reply used all {self._pin.max_output_tokens} output tokens and was cut off"
+        )
+        self.steps.append(_step(index, response, None, None, message, False, message, ()))
+
     def _take_reply(self, index: int, response: ChatResponse) -> bool:
-        """Handle one reply; True when it was `done`."""
+        """Handle one reply; True when the loop should stop (`done`, or a call sent with done)."""
         try:
             action = parse_action(response.text)
         except InvalidAction as error:
@@ -108,16 +147,17 @@ class _Loop:
             self._errors_in_a_row = 0
             self.steps.append(_step(index, response, None, None, "", False, None, ()))
             return True
-        self._run_tool(index, response, action)
-        return False
+        succeeded = self._run_tool(index, response, action)
+        return succeeded and action.finish  # a refused call with done: keep going
 
-    def _run_tool(self, index: int, response: ChatResponse, action: ToolCall) -> None:
+    def _run_tool(self, index: int, response: ChatResponse, action: ToolCall) -> bool:
+        """Run the call; False when the plant API refused it."""
         try:
             result = call_tool(self._api, action.tool, action.args)
         except PlantApiError as error:
             self.tool_errors += 1
             self._record_error(index, response, f"error: {error}", action.tool, action.args)
-            return
+            return False
         self._errors_in_a_row = 0
         text = result.render(self._params.observation_chars, self._params.max_items_listed)
         truncated = render_was_cut(text, self._params.observation_chars)
@@ -136,6 +176,7 @@ class _Loop:
             )
         )
         self._show(response, f"Result {result.handle}:\n{text}")
+        return True
 
     def _record_error(
         self,
@@ -153,6 +194,13 @@ class _Loop:
         """Add the model's reply and our answer to it, ready for the next step."""
         self._messages.append(ChatMessage(role="assistant", content=response.text))
         self._messages.append(ChatMessage(role="user", content=observation))
+
+
+def _step_pin(pin: ModelPin, params: AgentParams) -> ModelPin:
+    """The pin for step requests: low reasoning effort if asked, else the run's pin unchanged."""
+    if params.step_effort == "default":
+        return pin
+    return pin.model_copy(update={"extra": {**pin.extra, "reasoning": {"effort": "low"}}})
 
 
 def _step(

@@ -45,9 +45,8 @@ def test_a_fenced_reply_is_still_read() -> None:
     [
         ("not json", "not JSON"),
         ("[1, 2]", "found list"),
-        ("{}", "exactly one of"),
-        ('{"call": {"tool": "find"}, "done": true}', "exactly one of"),
-        ('{"done": false}', "exactly one of"),
+        ("{}", "found keys"),
+        ('{"done": false}', "found keys"),
         ('{"call": "find"}', 'expected "call"'),
         ('{"call": {"tool": "find", "args": [1]}}', 'expected "args"'),
     ],

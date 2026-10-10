@@ -23,6 +23,8 @@ class ToolCall(BaseModel):
 
     tool: str
     args: dict[str, Any]
+    #: `{"call": ..., "done": true}`: run the call, then stop if it succeeds.
+    finish: bool = False
 
 
 class Done(BaseModel):
@@ -39,20 +41,22 @@ class InvalidAction(ValueError):
 
 
 def parse_action(reply_text: str) -> Action:
-    """Read a reply as a `ToolCall` or `Done`.
+    """Read a reply as a `ToolCall` (with `finish` when `done` rides along) or `Done`.
 
     Raises:
-        InvalidAction: not a JSON object, or neither a call nor `done`, or both.
+        InvalidAction: not a JSON object, or neither a call nor `done`.
     """
     payload = _load_object(reply_text)
     has_call = "call" in payload
     is_done = payload.get("done") is True
-    if has_call == is_done:  # both present, or neither
+    if not has_call and not is_done:
         raise InvalidAction(
-            f'expected exactly one of {{"call": ...}} or {{"done": true}}, found keys '
-            f"{sorted(payload)}"
+            f'expected {{"call": ...}}, {{"call": ..., "done": true}} or {{"done": true}}, '
+            f"found keys {sorted(payload)}"
         )
-    return _read_call(payload["call"]) if has_call else Done()
+    if not has_call:
+        return Done()
+    return _read_call(payload["call"], finish=is_done)
 
 
 def _load_object(reply_text: str) -> dict[str, Any]:
@@ -69,7 +73,7 @@ def _load_object(reply_text: str) -> dict[str, Any]:
     return payload
 
 
-def _read_call(call: Any) -> ToolCall:
+def _read_call(call: Any, *, finish: bool) -> ToolCall:
     if not isinstance(call, dict) or not isinstance(call.get("tool"), str):
         raise InvalidAction(
             f'expected "call" to be {{"tool": <name>, "args": {{...}}}}, found {call!r}'
@@ -77,4 +81,4 @@ def _read_call(call: Any) -> ToolCall:
     args = call.get("args", {})
     if not isinstance(args, dict):
         raise InvalidAction(f'expected "args" to be a JSON object, found {args!r}')
-    return ToolCall(tool=call["tool"], args=args)
+    return ToolCall(tool=call["tool"], args=args, finish=finish)

@@ -14,7 +14,7 @@ from __future__ import annotations
 from typing import Any
 
 from plantgraph.llm.models import ModelPin
-from plantgraph.qa.agent.loop import run_agent_loop
+from plantgraph.qa.agent.loop import RemainingSeconds, run_agent_loop
 from plantgraph.qa.agent.models import AgentParams, AgentRun
 from plantgraph.qa.agent.prompts import first_user_message, plant_summary, render_system_prompt
 from plantgraph.qa.agent.seed import Seed, build_seed
@@ -27,6 +27,8 @@ from plantgraph.qa.plant_api.primitives import PlantApi
 
 GRAPH_AGENT_NAME = "graph_agent"
 HIER_AGENT_NAME = "hier_agent"
+#: `graph_agent` with `step_effort="low"`: a separate name so one run can hold both variants.
+GRAPH_AGENT_LOW_STEPS_NAME = "graph_agent_low_steps"
 
 _CONTEXT_HEADING = "Tool results gathered for this question:"
 
@@ -45,11 +47,16 @@ class GraphAgent:
         *,
         params: AgentParams | None = None,
         primer: bool = False,
+        remaining_s: RemainingSeconds | None = None,
     ) -> None:
-        """`send` is the harness's metered sender; `primer` adds the P&ID reading primer."""
+        """`send` is the harness's metered sender; `primer` adds the P&ID reading primer.
+
+        `remaining_s` reports the question's unspent time budget (`None` return: no deadline).
+        """
         self._graph = item_graph
         self._pin = pin
         self._send = send
+        self._remaining_s = remaining_s
         self.params = params or AgentParams()
         self._system_prompt = render_system_prompt(self.params, primer=primer, seeded=self._seeded)
         self._summary = plant_summary(item_graph)
@@ -71,6 +78,7 @@ class GraphAgent:
                 self._summary, question_text, None if seed is None else seed.text
             ),
             params=self.params,
+            remaining_s=self._remaining_s,
         )
         context = _context(seed, run)
         trace = _trace(run, seed, context)
@@ -78,6 +86,25 @@ class GraphAgent:
 
     def _seed(self, question_text: str) -> Seed | None:
         return None
+
+
+class GraphAgentLowSteps(GraphAgent):
+    """`GraphAgent` whose step requests ask for low reasoning effort (design `cascade-v2` §5.3)."""
+
+    name = GRAPH_AGENT_LOW_STEPS_NAME
+
+    def __init__(
+        self,
+        item_graph: ItemGraph,
+        pin: ModelPin,
+        send: SendChatRequest,
+        *,
+        params: AgentParams | None = None,
+        primer: bool = False,
+        remaining_s: RemainingSeconds | None = None,
+    ) -> None:
+        low = (params or AgentParams()).model_copy(update={"step_effort": "low"})
+        super().__init__(item_graph, pin, send, params=low, primer=primer, remaining_s=remaining_s)
 
 
 class HierAgent(GraphAgent):

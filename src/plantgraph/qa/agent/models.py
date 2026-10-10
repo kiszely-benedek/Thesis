@@ -7,7 +7,11 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict
 
 #: Why the loop ended. `overflow`: the model's context window rejected the next prompt.
-StopReason = Literal["done", "max_steps", "prompt_budget", "errors", "overflow"]
+#: `runaway`: a step reply used the whole output-token cap (the model reasoned until cut off).
+#: `deadline`: too little of the question's time budget was left to take another step.
+StopReason = Literal[
+    "done", "max_steps", "prompt_budget", "errors", "overflow", "runaway", "deadline"
+]
 
 
 class AgentParams(BaseModel):
@@ -25,6 +29,10 @@ class AgentParams(BaseModel):
     max_prompt_chars_total: int = 150_000
     #: Longest seed map (`hier_agent` only).
     seed_chars: int = 12_000
+    #: `low` asks for low reasoning effort on step requests only; the final answer keeps the pin.
+    step_effort: Literal["default", "low"] = "default"
+    #: Seconds of the question budget kept for the final answer; stepping stops below it.
+    final_reserve_s: float = 30.0
 
 
 class AgentStep(BaseModel):

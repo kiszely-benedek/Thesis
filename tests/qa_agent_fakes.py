@@ -29,12 +29,22 @@ class ScriptedModel:
     """A `SendChatRequest`: serves `replies` in order and keeps every request it was sent.
 
     Past the end of the script it keeps answering `done`; with `overflow_at` set, the call with
-    that 0-based index raises `ContextOverflow`.
+    that 0-based index raises `ContextOverflow`. `completion_tokens_at` overrides the reported
+    completion tokens of a call (a cap-hit reply), `raise_at` makes a call raise the given error.
     """
 
-    def __init__(self, replies: list[str], *, overflow_at: int | None = None) -> None:
+    def __init__(
+        self,
+        replies: list[str],
+        *,
+        overflow_at: int | None = None,
+        completion_tokens_at: dict[int, int] | None = None,
+        raise_at: dict[int, Exception] | None = None,
+    ) -> None:
         self._replies = replies
         self._overflow_at = overflow_at
+        self._completion_tokens_at = completion_tokens_at or {}
+        self._raise_at = raise_at or {}
         self.requests: list[ChatRequest] = []
 
     def __call__(self, request: ChatRequest) -> ChatResponse:
@@ -42,11 +52,13 @@ class ScriptedModel:
         self.requests.append(request)
         if index == self._overflow_at:
             raise ContextOverflow("scripted overflow")
+        if index in self._raise_at:
+            raise self._raise_at[index]
         text = self._replies[index] if index < len(self._replies) else DONE
         return ChatResponse(
             text=text,
             prompt_tokens=10,
-            completion_tokens=5,
+            completion_tokens=self._completion_tokens_at.get(index, 5),
             cost_usd=CALL_COST,
             latency_s=0.5,
             provider_response_id=None,
