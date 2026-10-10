@@ -54,6 +54,7 @@ from plantgraph.llm.models import (
 )
 from plantgraph.llm.openrouter_settings import OpenRouterSettings
 from plantgraph.llm.request_kwargs import build_request_kwargs
+from plantgraph.llm.served_by import served_by
 from plantgraph.llm.single_flight import SingleFlight
 from plantgraph.llm.status_errors import classify_status_error, redact
 
@@ -364,15 +365,15 @@ class ChatClient:
             text=choice.message.content or "",
             prompt_tokens=usage.prompt_tokens if usage is not None else 0,
             completion_tokens=usage.completion_tokens if usage is not None else 0,
-            # OpenRouter's `usage` block extends the standard OpenAI shape
-            # with a `cost` field (§4); the SDK keeps unknown fields, so it
-            # is read as a plain attribute rather than a typed one.
+            # OpenRouter's `usage` block adds a `cost` field (§4); the SDK keeps
+            # unknown fields, so it is read as a plain attribute, not a typed one.
             cost_usd=getattr(usage, "cost", None) if usage is not None else None,
             latency_s=latency_s,
             provider_response_id=completion.id,
             finish_reason=choice.finish_reason,
             from_cache=False,
             created_at=datetime.now(UTC),
+            provider=served_by(completion),  # OpenRouter's top-level `provider` field
         )
 
     def _log_call(
@@ -394,6 +395,6 @@ class ChatClient:
             response=response,
             error_kind=error_kind,
         )
-        with self._calls_log_path.open("a", encoding="utf-8") as handle:
-            handle.write(record.model_dump_json())
-            handle.write("\n")
+        line = record.model_dump_json() + "\n"
+        with self._log_lock, self._calls_log_path.open("a", encoding="utf-8") as handle:
+            handle.write(line)

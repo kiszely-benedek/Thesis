@@ -27,7 +27,7 @@ from contextvars import ContextVar
 from datetime import UTC, datetime
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, SerializerFunctionWrapHandler, model_serializer
 
 #: What an LLM call is *for*. Logged on every `CallRecord` so the run log can
 #: be broken down by step; deliberately **not** part of the cache key (§6),
@@ -112,6 +112,18 @@ class ChatResponse(BaseModel):
     #: True when this `ChatResponse` came from the cache rather than a live call.
     from_cache: bool
     created_at: datetime
+    #: The host that served a live call, as OpenRouter reports it in the response body's
+    #: top-level `provider` field. `None` for entries written before this field existed and
+    #: for backends that do not report one. Not part of the cache key (that hashes the request).
+    provider: str | None = None
+
+    @model_serializer(mode="wrap")
+    def _omit_missing_provider(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
+        """Drop an unknown `provider`, so rows written before the field stay byte-identical."""
+        data: dict[str, Any] = handler(self)
+        if data.get("provider") is None:
+            data.pop("provider", None)
+        return data
 
 
 CallErrorKind = Literal["context_overflow", "provider_error", "timeout", "late_after_timeout"]

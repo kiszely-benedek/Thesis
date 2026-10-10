@@ -56,6 +56,8 @@ class ScriptedReply:
     completion_tokens: int = 5
     cost_usd: float | None = 0.0001
     finish_reason: str = "stop"
+    #: Echoed as the body's top-level `provider`, as OpenRouter does; `None` omits the field.
+    provider: str | None = None
 
 
 @dataclass
@@ -136,6 +138,8 @@ class FakeTransport:
                 "cost": reply.cost_usd,
             },
         }
+        if reply.provider is not None:
+            payload["provider"] = reply.provider
         return httpx2.Response(200, json=payload)
 
     def _error_response(
