@@ -214,8 +214,9 @@ class ChatClient:
         timeout_s: float | None,
     ) -> ChatResponse:
         cached = self._cache.get(request)  # raises CacheMiss itself in "replay" mode
+        if cached is not None:
+            self._raise_if_over_budget(cached, timeout_s, request, origin)
         if cached is not None and cached.finish_reason == TIMEOUT_FINISH_REASON:
-            self._raise_if_tombstone_applies(cached, timeout_s, request, origin)
             cached = None  # a tombstone of a smaller budget: this call may try again
         if cached is not None:
             # The stored value's own `from_cache` is whatever it was when
@@ -242,20 +243,27 @@ class ChatClient:
         self._log_call(request, origin, response=response, error_kind=None)
         return response
 
-    def _raise_if_tombstone_applies(
+    def _raise_if_over_budget(
         self,
-        tombstone: ChatResponse,
+        cached: ChatResponse,
         timeout_s: float | None,
         request: ChatRequest,
         origin: CallOrigin,
     ) -> None:
-        """Replay an earlier timeout if it ran for at least as long as this call may."""
-        if timeout_s is None or tombstone.latency_s < timeout_s:
+        """Replay a timeout when the stored entry could not have fitted this call's budget.
+
+        A tombstone counts if it ran at least as long as `timeout_s`; a stored answer counts
+        if it took longer, since live the call would have been abandoned at `timeout_s`.
+        """
+        if timeout_s is None:
+            return
+        is_tombstone = cached.finish_reason == TIMEOUT_FINISH_REASON
+        if cached.latency_s < timeout_s or (not is_tombstone and cached.latency_s == timeout_s):
             return
         self._log_call(request, origin, response=None, error_kind="timeout")
+        spent_s = cached.latency_s if is_tombstone else timeout_s
         raise RequestTimedOut(
-            f"cached tombstone: this request already outlived {tombstone.latency_s:g} s",
-            tombstone.latency_s,
+            f"cached entry took {cached.latency_s:g} s of {timeout_s:g} s", spent_s
         )
 
     def _live_call(

@@ -165,3 +165,24 @@ def test_without_a_timeout_the_call_runs_as_before(tmp_path: Path) -> None:
 
     assert response.text == "ok"
     assert [record["error_kind"] for record in _call_records(tmp_path)] == [None]
+
+
+def test_a_cached_answer_slower_than_the_budget_counts_as_a_timeout(tmp_path: Path) -> None:
+    client = _client(tmp_path, _blocking_transport(0.3))
+    slow = client.complete(_request(), run_id="r", timeout_s=5.0)  # cached with ~0.3 s latency
+
+    with pytest.raises(RequestTimedOut) as raised:
+        client.complete(_request(), run_id="r", timeout_s=0.1)
+
+    assert slow.latency_s > 0.1
+    assert raised.value.latency_s == 0.1
+    assert _call_records(tmp_path)[-1]["error_kind"] == "timeout"
+
+
+def test_a_cached_answer_within_the_budget_is_still_served(tmp_path: Path) -> None:
+    client = _client(tmp_path, _blocking_transport(0.3))
+    client.complete(_request(), run_id="r", timeout_s=5.0)
+
+    response = client.complete(_request(), run_id="r", timeout_s=5.0)
+
+    assert response.from_cache
