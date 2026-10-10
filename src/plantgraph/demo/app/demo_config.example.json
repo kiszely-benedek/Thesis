@@ -1,0 +1,36 @@
+{
+  "policy": "cascade_v2",
+  "question_deadline_s": 120.0,
+  "cache_path": "data/runs/cv1/demo/cache.sqlite",
+  "calls_log_path": "data/runs/cv1/demo/calls.jsonl",
+  "corpora": [
+    {
+      "corpus_id": "D100",
+      "ingest_json": "data/runs/cv1/corpora/D100/ingest.json",
+      "drawings_dir": "data/runs/cv1/drawings/D100",
+      "questions_jsonl": "data/runs/cv1/questions/D100/questions.jsonl",
+      "tier_runs": {
+        "cypher-low": "data/runs/cv1/runs/CYP-D100-low",
+        "agent-low-steps": "data/runs/cv1/runs/CV2-AG-D100"
+      },
+      "recorded_runs": [
+        "data/runs/cv1/runs/CYP-D100-low",
+        "data/runs/cv1/runs/CV2-AG-D100"
+      ]
+    },
+    {
+      "corpus_id": "D1000",
+      "ingest_json": "data/runs/cv1/corpora/D1000/ingest.json",
+      "drawings_dir": "data/runs/cv1/drawings/D1000",
+      "questions_jsonl": "data/runs/cv1/questions/D1000/questions.jsonl",
+      "tier_runs": {
+        "cypher-low": "data/runs/cv1/runs/CYP-D1000-low",
+        "agent-low-steps": "data/runs/cv1/runs/CV2-AG-D1000"
+      },
+      "recorded_runs": [
+        "data/runs/cv1/runs/CYP-D1000-low",
+        "data/runs/cv1/runs/CV2-AG-D1000"
+      ]
+    }
+  ]
+}

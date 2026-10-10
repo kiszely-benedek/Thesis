@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8">
+  <title>Üzemléptékű P&amp;ID demó</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+  <main class="layout">
+    <!-- Left: the drawing set in the browser's own PDF viewer. -->
+    <section class="drawings" aria-label="Rajzok">
+      <div class="drawings-bar">
+        <label for="dwg-input" id="dwg-label"></label>
+        <input id="dwg-input" type="text" size="6" autocomplete="off">
+        <button id="dwg-go" type="button"></button>
+        <span id="dwg-message" class="hint"></span>
+      </div>
+      <div id="pdf-host" class="pdf-host"></div>
+    </section>
+
+    <!-- Right: corpus, question, answer. -->
+    <section class="panel" aria-label="Kérdés és válasz">
+      <h1 id="title"></h1>
+      <div id="status-line" class="hint"></div>
+
+      <div class="field">
+        <label for="corpus-select" id="corpus-label"></label>
+        <select id="corpus-select"></select>
+        <span id="corpus-state" class="hint"></span>
+      </div>
+
+      <div class="field">
+        <label for="benchmark-select" id="benchmark-label"></label>
+        <select id="benchmark-select"></select>
+      </div>
+
+      <div class="field">
+        <label for="question-text" id="question-label"></label>
+        <textarea id="question-text" rows="3"></textarea>
+      </div>
+
+      <div class="field row">
+        <label for="answer-type" id="answer-type-label"></label>
+        <select id="answer-type"></select>
+        <button id="ask-button" type="button" class="primary"></button>
+        <span id="timer" class="timer"></span>
+      </div>
+
+      <div id="message" class="message" hidden></div>
+      <div id="result"></div>
+    </section>
+  </main>
+
+  <dialog id="paid-dialog">
+    <h2 id="paid-title"></h2>
+    <div id="paid-body"></div>
+    <div class="dialog-buttons">
+      <button id="paid-cancel" type="button"></button>
+      <button id="paid-confirm" type="button" class="primary"></button>
+    </div>
+  </dialog>
+
+  <script src="/static/strings.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>
