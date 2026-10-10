@@ -1,4 +1,4 @@
-"""`python -m plantgraph.qa.cascade {join,needed,report}` -- check, subset or report."""
+"""`python -m plantgraph.qa.cascade {join,needed,report,ask}` -- check, subset, report or ask."""
 
 from __future__ import annotations
 
@@ -13,6 +13,12 @@ from plantgraph.qa.cascade.join import (
     TierSource,
     find_gaps,
     join_corpus,
+)
+from plantgraph.qa.cascade.live_ask import (
+    OpenCascade,
+    add_ask_arguments,
+    ask_command,
+    open_for_ask,
 )
 from plantgraph.qa.cascade.models import CascadePolicy
 from plantgraph.qa.cascade.needed import write_needed
@@ -37,6 +43,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
             help="a tier's stored run; the questions root defaults to --questions-root",
         )
     _add_report_arguments(commands.add_parser("report"))
+    add_ask_arguments(commands.add_parser("ask"))
     commands.choices["needed"].add_argument("--tier", required=True)
     commands.choices["needed"].add_argument("--out-root", type=Path, default=DEFAULT_QSUB_ROOT)
     return parser.parse_args(argv)
@@ -107,9 +114,15 @@ def _summary(joined: JoinedCorpus) -> str:
     return "\n".join(lines)
 
 
-def main(argv: list[str] | None = None) -> None:
-    """Run the `join` (print a summary), `needed` (write a subset file) or `report` sub-command."""
+def main(argv: list[str] | None = None, *, open_cascade: OpenCascade = open_for_ask) -> None:
+    """Run a sub-command: `join` (summary), `needed` (subset file), `report` or `ask`.
+
+    `open_cascade` builds the cascade for `ask`; tests pass one over fakes.
+    """
     args = _parse_args(argv)
+    if args.command == "ask":
+        ask_command(args, open_cascade)
+        return
     if args.command == "report":
         _run_report(args)
         return

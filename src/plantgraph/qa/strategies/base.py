@@ -11,7 +11,30 @@ from typing import Protocol
 
 from plantgraph.llm.models import ContextWall, ModelPin, QuestionDeadline, RequestTimedOut
 from plantgraph.qa.final_answer import FinalStepResult, SendChatRequest, run_final_step
-from plantgraph.qa.models import Outcome, Question, RetrievalResult
+from plantgraph.qa.models import AnswerType, Outcome, RetrievalResult
+
+
+class AskedQuestion(Protocol):
+    """What answering needs of a question: an id, the text and the answer shape.
+
+    A benchmark `Question` satisfies it, and so does a free-text question typed into the demo,
+    which has no gold fields at all.
+    """
+
+    @property
+    def question_id(self) -> str:
+        """Names the question in logs and rows."""
+        ...
+
+    @property
+    def text(self) -> str:
+        """The wording; the only thing retrieval sees."""
+        ...
+
+    @property
+    def answer_type(self) -> AnswerType:
+        """Shapes the answer format the final step asks for."""
+        ...
 
 
 class Strategy(Protocol):
@@ -27,7 +50,7 @@ class Strategy(Protocol):
 
 def answer_question(
     strategy: Strategy,
-    question: Question,
+    question: AskedQuestion,
     *,
     pin: ModelPin,
     wall: ContextWall | None,
