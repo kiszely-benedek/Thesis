@@ -374,5 +374,8 @@ def test_oracle_and_latency_rows_reproduce_on_d100() -> None:
     cascade = evaluate_policy(joined).summary
 
     assert (oracle.n_correct, oracle.tier_calls["need-default"]) == (172, 39)
-    assert cascade.latency_median_s == pytest.approx(2.3, abs=0.05)
-    assert cascade.latency_p90_s == pytest.approx(52.0, abs=0.05)
+    # all-call latency (CV2-T1): the median 5.7 s matches the design note; the nearest-rank p90
+    # is 56.6 s where the note's 57.1 s is a linearly interpolated percentile
+    assert cascade.latency_median_s == pytest.approx(5.7, abs=0.05)
+    assert cascade.latency_p90_s == pytest.approx(56.6, abs=0.05)
+    assert cascade.n_correct_at_cutoff == 160

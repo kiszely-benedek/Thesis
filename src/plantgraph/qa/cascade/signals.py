@@ -26,9 +26,13 @@ def query_row_count(row: QuestionResult) -> int | None:
 
 
 def extract_signals(
-    row: QuestionResult, tier: str, pin: ModelPin, need_label: NeedLabel | None
+    row: QuestionResult,
+    tier: str,
+    pin: ModelPin,
+    need_label: NeedLabel | None,
+    local_compute_s: float | None = None,
 ) -> Signals:
-    """The gold-free view of `row`.
+    """The gold-free view of `row`; `local_compute_s` is from `timings.jsonl` (`None`: absent).
 
     Raises:
         ValueError: a cost is missing, so the total would silently be too low.
@@ -47,6 +51,9 @@ def extract_signals(
         not_present=None if row.final_answer is None else row.final_answer.not_present,
         runaway=is_runaway(row, pin),
         cost_usd=cost,
-        latency_s=row.latency_s,
+        # every model call counts, not just the final one; local compute only when recorded
+        latency_s=row.total_llm_latency_s + (local_compute_s or 0.0),
+        final_latency_s=row.latency_s,
+        latency_complete=local_compute_s is not None,
         need_label=need_label,
     )

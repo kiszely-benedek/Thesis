@@ -1,4 +1,4 @@
-"""The pre-registered selection rules S1-S3 (design note section 7), as pure functions.
+"""The pre-registered rules S1-S3 (note section 7) and LB-1/LB-2 (section 4), as pure functions.
 
 S1 picks the tier-3 model on the dev runaways; S2 confirms `cascade_v1` on the second dev
 corpus; S3 decides whether a label variant may replace it. The thresholds are the note's,
@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 
-from plantgraph.qa.cascade.evaluate import Summary
+from plantgraph.qa.cascade.evaluate import LatencyBound, Summary
 from plantgraph.qa.cascade.join import JoinedCorpus
 from plantgraph.qa.cascade.report_models import Tier3Tally, Verdict
 
@@ -138,3 +138,23 @@ def check_label_variant(name: str, variant: Summary | None, primary: Summary | N
             f"({S3_MAX_COST_RATIO}x primary): {'ok' if cost_ok else 'not met'}",
         ],
     )
+
+
+def check_latency_bound(summary: Summary, bound: LatencyBound) -> list[Verdict]:
+    """LB-1 (median) and LB-2 (p90) of one policy on one corpus; point estimates, <= passes."""
+    median_ok = summary.latency_median_s <= bound.median_max_s
+    p90_ok = summary.latency_p90_s <= bound.p90_max_s
+    where = f"{summary.policy} on {summary.corpus_id}"
+    return [
+        Verdict(
+            rule="LB-1",
+            status="PASS" if median_ok else "FAIL",
+            headline=f"{where}: median {summary.latency_median_s:.1f} s "
+            f"(limit {bound.median_max_s:g} s)",
+        ),
+        Verdict(
+            rule="LB-2",
+            status="PASS" if p90_ok else "FAIL",
+            headline=f"{where}: p90 {summary.latency_p90_s:.1f} s (limit {bound.p90_max_s:g} s)",
+        ),
+    ]

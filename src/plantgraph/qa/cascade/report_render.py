@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 from pathlib import Path
 
-from plantgraph.qa.cascade.evaluate import Comparison, Summary
+from plantgraph.qa.cascade.evaluate import Comparison, LatencyBound, Summary
 from plantgraph.qa.cascade.report_models import (
     Cell,
     CorpusReport,
@@ -42,9 +42,10 @@ def _policy_rows(corpus: CorpusReport) -> list[list[str]]:
             [
                 s.policy,
                 f"{s.n_correct}/{s.n_questions}",
+                f"{s.n_correct_at_cutoff}/{s.n_questions}",
                 f"{s.total_cost_usd:.4f}",
                 f"{s.cost_per_question_usd:.5f}",
-                f"{s.latency_median_s:.1f} / {s.latency_mean_s:.1f} / {s.latency_p90_s:.1f}",
+                _latency_cell(s),
                 _shares(s),
                 f"{accept.precision:.3f} ({accept.n_accepted_correct}/{accept.n_accepted})"
                 if accept
@@ -55,6 +56,44 @@ def _policy_rows(corpus: CorpusReport) -> list[list[str]]:
             ]
         )
     return rows
+
+
+def _latency_cell(s: Summary) -> str:
+    values = (
+        s.latency_median_s,
+        s.latency_mean_s,
+        s.latency_p90_s,
+        s.latency_p95_s,
+        s.latency_max_s,
+    )
+    return " / ".join(f"{v:.1f}" for v in values)
+
+
+def _latency_lines(corpus: CorpusReport, bound: LatencyBound) -> list[str]:
+    """LB-1 / LB-2 verdicts per policy, and how many answers the cutoff removed."""
+    rows = []
+    for result in corpus.policies:
+        s = result.summary
+        verdicts = {v.rule: v.status for v in result.latency_verdicts}
+        rows.append(
+            [
+                s.policy,
+                f"{s.n_timed_out}",
+                f"{s.n_correct - s.n_correct_at_cutoff}",
+                f"{s.n_latency_incomplete}",
+                f"LB-1 {verdicts['LB-1']}",
+                f"LB-2 {verdicts['LB-2']}",
+            ]
+        )
+    header = [
+        "policy",
+        f"over C = {bound.cutoff_s:g} s",
+        "correct lost to C",
+        "latency without local compute",
+        f"median <= {bound.median_max_s:g} s",
+        f"p90 <= {bound.p90_max_s:g} s",
+    ]
+    return ["### Latency bound", "", *_table(header, rows)]
 
 
 def _comparison_rows(results: Sequence[PolicyResult], versus: str) -> list[list[str]]:
@@ -69,6 +108,7 @@ def _comparison_rows(results: Sequence[PolicyResult], versus: str) -> list[list[
             [
                 result.summary.policy,
                 _interval(comparison.accuracy, "+.3f"),
+                _interval(comparison.accuracy_at_cutoff, "+.3f"),
                 _interval(comparison.cost_usd, "+.5f"),
                 _interval(comparison.latency_s, "+.1f"),
             ]
@@ -85,9 +125,12 @@ def _reference_rows(results: Sequence[PolicyResult]) -> list[list[str]]:
         rows.append(
             [
                 result.summary.policy,
-                f"{result.summary.n_correct}",
-                f"{result.oracle.n_correct} (${result.oracle.total_cost_usd:.4f})",
-                f"{r.correct_mean:.1f} [{r.correct_low:.0f}, {r.correct_high:.0f}] "
+                f"{result.summary.n_correct} / {result.summary.n_correct_at_cutoff}",
+                f"{result.oracle.n_correct} / {result.oracle.n_correct_at_cutoff} "
+                f"(${result.oracle.total_cost_usd:.4f})",
+                f"{r.correct_mean:.1f} [{r.correct_low:.0f}, {r.correct_high:.0f}] / "
+                f"{r.correct_at_cutoff_mean:.1f} "
+                f"[{r.correct_at_cutoff_low:.0f}, {r.correct_at_cutoff_high:.0f}] "
                 f"(${r.cost_total_mean_usd:.4f}, {r.n_escalated} escalated)",
             ]
         )
@@ -105,30 +148,37 @@ def _cell(cell: Cell | None) -> str:
     return f"{cell.correct}/{cell.total}" if cell else "-"
 
 
-def _corpus_lines(corpus: CorpusReport) -> list[str]:
+def _corpus_lines(corpus: CorpusReport, bound: LatencyBound) -> list[str]:
     lines = [f"## Corpus {corpus.corpus_id} ({corpus.n_questions} questions)", ""]
     lines += ["### Policies", ""]
     header = [
         "policy",
         "correct",
+        f"acc@{bound.cutoff_s:g}",
         "total $",
         "$/question",
-        "latency s median / mean / p90",
+        "latency s median / mean / p90 / p95 / max",
         "answered by",
         "tier-1 accept precision",
         "tier-1 accept recall",
     ]
     lines += _table(header, _policy_rows(corpus))
+    lines += _latency_lines(corpus, bound)
     lines += ["### Paired bootstrap vs always_n (policy minus always_n, mean [95% CI])", ""]
-    header = ["policy", "accuracy", "$/question", "latency s/question"]
+    header = ["policy", "accuracy", f"acc@{bound.cutoff_s:g}", "$/question", "latency s/question"]
     lines += _table(header, _comparison_rows(corpus.policies, "always_n"))
     lines += ["### References (never deployable)", ""]
-    header = ["policy", "correct", "oracle cascade", "random escalation, same share"]
+    header = [
+        "policy",
+        f"correct / acc@{bound.cutoff_s:g}",
+        "oracle cascade",
+        "random escalation, same share",
+    ]
     lines += _table(header, _reference_rows(corpus.policies))
     skipped = [p for p in corpus.policies if p.references_skipped]
     lines += [f"- {p.summary.policy}: no references - {p.references_skipped}" for p in skipped]
     lines += ["", "### Paired bootstrap vs random escalation", ""]
-    header = ["policy", "accuracy", "$/question", "latency s/question"]
+    header = ["policy", "accuracy", f"acc@{bound.cutoff_s:g}", "$/question", "latency s/question"]
     lines += _table(header, _comparison_rows(corpus.policies, "random"))
     if corpus.not_evaluated:
         lines += ["### Not evaluated", ""]
@@ -178,13 +228,26 @@ def _tier3_lines(tallies: Sequence[Tier3Tally]) -> list[str]:
     return ["## Tier-3 candidates on the dev runaways (S1)", "", *_table(header, rows)]
 
 
+def _bound_lines(bound: LatencyBound) -> list[str]:
+    return [
+        f"Latency counts every model call of a question (final answer, retrieval and agent steps) "
+        f"plus local compute where recorded, summed over the tiers tried. "
+        f"LB-1: median <= {bound.median_max_s:g} s; LB-2: p90 <= {bound.p90_max_s:g} s; "
+        f"LB-3: an answer later than C = {bound.cutoff_s:g} s counts as no answer (TIMED_OUT, "
+        f"wrong) for every arm alike, so acc@{bound.cutoff_s:g} is the cutoff-scored accuracy. "
+        "A run made under a live deadline cannot show raw accuracy beyond C.",
+        "",
+    ]
+
+
 def render_markdown(report: Report) -> str:
     """The whole report as one Markdown document."""
     lines = ["# Method-and-effort cascade report", ""]
+    lines += _bound_lines(report.bound)
     lines += _verdict_lines(report.verdicts)
     lines += _tier3_lines(report.tier3)
     for corpus in report.corpora:
-        lines += _corpus_lines(corpus)
+        lines += _corpus_lines(corpus, report.bound)
     return "\n".join(lines).rstrip() + "\n"
 
 

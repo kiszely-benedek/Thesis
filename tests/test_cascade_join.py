@@ -219,7 +219,7 @@ def test_acceptance_rules_on_signals() -> None:
         base: dict[str, object] = {
             "question_id": "q", "tier": "t", "outcome": Outcome.ANSWERED, "n_rows": 1,
             "not_present": False, "runaway": False, "cost_usd": 0.0, "latency_s": 0.0,
-            "need_label": None,
+            "final_latency_s": 0.0, "latency_complete": True, "need_label": None,
         }  # fmt: skip
         return Signals.model_validate(base | fields)
 

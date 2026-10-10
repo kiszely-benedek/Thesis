@@ -1,4 +1,4 @@
-"""The data model of the cascade report: what is computed per corpus, and the S1-S3 verdicts."""
+"""The data model of the cascade report: per-corpus results, the S1-S3 and LB-1/LB-2 verdicts."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from plantgraph.qa.cascade.evaluate import Comparison, Summary
+from plantgraph.qa.cascade.evaluate import Comparison, LatencyBound, Summary
 
 
 class Cell(BaseModel):
@@ -42,8 +42,22 @@ class RandomSummary(BaseModel):
     correct_mean: float
     correct_low: float
     correct_high: float
+    correct_at_cutoff_mean: float
+    correct_at_cutoff_low: float
+    correct_at_cutoff_high: float
     cost_total_mean_usd: float
     latency_mean_s: float
+
+
+class Verdict(BaseModel):
+    """One pre-registered rule's outcome. SELECTED is S1's pass: it picks, it does not pass."""
+
+    model_config = ConfigDict(frozen=True)
+
+    rule: str
+    status: Literal["PASS", "FAIL", "SELECTED", "INCOMPLETE"]
+    headline: str
+    details: list[str] = Field(default_factory=list)
 
 
 class PolicyResult(BaseModel):
@@ -52,6 +66,8 @@ class PolicyResult(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     summary: Summary
+    #: LB-1 and LB-2 for this policy on this corpus (PASS or FAIL, with the numbers).
+    latency_verdicts: list[Verdict] = Field(default_factory=list)
     acceptance: AcceptanceResult | None = None
     #: Policy minus always-N, per question (`None` for always-N itself or if it is missing).
     vs_always_n: Comparison | None = None
@@ -102,22 +118,13 @@ class Tier3Tally(BaseModel):
     mean_latency_s: float
 
 
-class Verdict(BaseModel):
-    """One pre-registered rule's outcome. SELECTED is S1's pass: it picks, it does not pass."""
-
-    model_config = ConfigDict(frozen=True)
-
-    rule: str
-    status: Literal["PASS", "FAIL", "SELECTED", "INCOMPLETE"]
-    headline: str
-    details: list[str] = Field(default_factory=list)
-
-
 class Report(BaseModel):
     """The full report: corpora, tier-3 tallies and the verdicts."""
 
     model_config = ConfigDict(frozen=True)
 
+    #: The latency bound the report was computed under (LB-1, LB-2, cutoff C).
+    bound: LatencyBound
     corpora: list[CorpusReport]
     tier3: list[Tier3Tally]
     verdicts: list[Verdict]

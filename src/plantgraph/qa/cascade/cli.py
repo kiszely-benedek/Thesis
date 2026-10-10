@@ -6,6 +6,7 @@ import argparse
 from collections import Counter
 from pathlib import Path
 
+from plantgraph.qa.cascade.evaluate import DEFAULT_CUTOFF_S, LatencyBound
 from plantgraph.qa.cascade.join import (
     DEFAULT_QSUB_ROOT,
     JoinedCorpus,
@@ -45,6 +46,12 @@ def _add_report_arguments(command: argparse.ArgumentParser) -> None:
     command.add_argument("--policy", action="append", type=Path, help="JSON; default: all shipped")
     command.add_argument("--corpus", action="append", required=True, help="repeat for several")
     command.add_argument("--questions-root", required=True, type=Path)
+    command.add_argument(
+        "--cutoff-s",
+        type=float,
+        default=DEFAULT_CUTOFF_S,
+        help="LB-3: answers later than this many seconds count as wrong, for every arm alike",
+    )
     command.add_argument("--out", required=True, type=Path, help="directory for report.md/.json")
     command.add_argument(
         "--run",
@@ -69,7 +76,9 @@ def _run_report(args: argparse.Namespace) -> None:
         corpus, tier, source = _parse_corpus_run(value)
         sources.setdefault(corpus, {})[tier] = source
     policies = [load_policy(path) for path in args.policy] if args.policy else None
-    report = build_report(args.corpus, sources, args.questions_root, policies)
+    report = build_report(
+        args.corpus, sources, args.questions_root, policies, LatencyBound(cutoff_s=args.cutoff_s)
+    )
     markdown, json_path = write_report(report, args.out)
     print(markdown.read_text(encoding="utf-8"))
     print(f"wrote {markdown} and {json_path}")

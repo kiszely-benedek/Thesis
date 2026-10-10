@@ -13,6 +13,7 @@ from pathlib import Path
 from plantgraph.qa.cascade.checks import load_questions_file
 from plantgraph.qa.cascade.evaluate import (
     Evaluation,
+    LatencyBound,
     Summary,
     compare,
     evaluate_policy,
@@ -41,6 +42,7 @@ from plantgraph.qa.cascade.report_verdicts import (
     RUNAWAY_TIER,
     TIER3_CANDIDATES,
     check_label_variant,
+    check_latency_bound,
     confirm_cascade,
     select_tier3,
     tally_tier3,
@@ -75,13 +77,15 @@ def _acceptance(joined: JoinedCorpus) -> AcceptanceResult | None:
     )
 
 
-def _reference_fields(joined: JoinedCorpus, evaluation: Evaluation) -> dict[str, object]:
+def _reference_fields(
+    joined: JoinedCorpus, evaluation: Evaluation, cutoff_s: float
+) -> dict[str, object]:
     """Oracle and random escalation, or the reason they cannot be computed on these rows."""
     if not _has_references(joined.policy):
         return {}
     try:
-        reference = random_escalation(joined)
-        oracle = evaluate_oracle(joined)
+        reference = random_escalation(joined, cutoff_s=cutoff_s)
+        oracle = evaluate_oracle(joined, cutoff_s)
     except ValueError as error:  # e.g. the second tier has rows only for the runaways
         return {"references_skipped": str(error)}
     return {
@@ -92,6 +96,9 @@ def _reference_fields(joined: JoinedCorpus, evaluation: Evaluation) -> dict[str,
             correct_mean=reference.correct_mean,
             correct_low=reference.correct_low,
             correct_high=reference.correct_high,
+            correct_at_cutoff_mean=reference.correct_at_cutoff_mean,
+            correct_at_cutoff_low=reference.correct_at_cutoff_low,
+            correct_at_cutoff_high=reference.correct_at_cutoff_high,
             cost_total_mean_usd=reference.cost_total_mean_usd,
             latency_mean_s=reference.latency_mean_s,
         ),
@@ -100,13 +107,17 @@ def _reference_fields(joined: JoinedCorpus, evaluation: Evaluation) -> dict[str,
 
 
 def _policy_result(
-    joined: JoinedCorpus, evaluation: Evaluation, always_n: Evaluation | None
+    joined: JoinedCorpus, evaluation: Evaluation, always_n: Evaluation | None, bound: LatencyBound
 ) -> PolicyResult:
     """One policy's row: summary, acceptance, and (where defined) references and comparisons."""
-    fields = _reference_fields(joined, evaluation)
+    fields = _reference_fields(joined, evaluation, bound.cutoff_s)
     if always_n is not None and joined.policy.name != ALWAYS_N:
         fields["vs_always_n"] = compare(evaluation.series(), always_n.series())
-    fields |= {"summary": evaluation.summary, "acceptance": _acceptance(joined)}
+    fields |= {
+        "summary": evaluation.summary,
+        "latency_verdicts": check_latency_bound(evaluation.summary, bound),
+        "acceptance": _acceptance(joined),
+    }
     return PolicyResult.model_validate(fields)
 
 
@@ -115,6 +126,7 @@ def _evaluate_all(
     policies: Sequence[CascadePolicy],
     sources: Mapping[str, TierSource],
     questions_root: Path,
+    cutoff_s: float,
 ) -> tuple[dict[str, JoinedCorpus], dict[str, Evaluation], list[NotEvaluated]]:
     """Join every policy; evaluate those that are complete, list the others with the reason."""
     joins: dict[str, JoinedCorpus] = {}
@@ -125,7 +137,7 @@ def _evaluate_all(
             joined = join_corpus(policy, dict(sources), corpus_id, questions_root)
             joins[policy.name] = joined
             require_complete(joined)
-            evaluations[policy.name] = evaluate_policy(joined)
+            evaluations[policy.name] = evaluate_policy(joined, cutoff_s)
         except IncompleteJoinError as error:
             gaps = {tier: len(ids) for tier, ids in error.gaps.items()}
             problems.append(NotEvaluated(policy=policy.name, reason=str(error), gaps=gaps))
@@ -140,9 +152,10 @@ def _corpus_report(
     joins: Mapping[str, JoinedCorpus],
     evaluations: Mapping[str, Evaluation],
     problems: list[NotEvaluated],
+    bound: LatencyBound,
 ) -> CorpusReport:
     always_n = evaluations.get(ALWAYS_N)
-    results = [_policy_result(joins[name], ev, always_n) for name, ev in evaluations.items()]
+    results = [_policy_result(joins[name], ev, always_n, bound) for name, ev in evaluations.items()]
     # Each join takes need labels from its own runs' traces; the union covers every question.
     labels = {qid: lab for joined in joins.values() for qid, lab in joined.need_labels.items()}
     by_dimension = question_groups(questions, labels)
@@ -211,17 +224,24 @@ def build_report(
     sources: SourcesByCorpus,
     questions_root: Path,
     policies: Sequence[CascadePolicy] | None = None,
+    bound: LatencyBound | None = None,
 ) -> Report:
-    """Evaluate `policies` (default: every policy file, plus the baselines) on each corpus."""
+    """Evaluate `policies` (default: every policy file, plus the baselines) on each corpus.
+
+    `bound` carries LB-1, LB-2 and the cutoff C applied to every arm alike (default 10/60/120 s).
+    """
+    bound = bound or LatencyBound()
     chosen = _with_baselines(policies)
     reports: list[CorpusReport] = []
     all_joins: dict[str, dict[str, JoinedCorpus]] = {}
     for corpus_id in corpus_ids:
         _, questions = load_questions_file(questions_root, corpus_id)
         joins, evaluations, problems = _evaluate_all(
-            corpus_id, chosen, sources.get(corpus_id, {}), questions_root
+            corpus_id, chosen, sources.get(corpus_id, {}), questions_root, bound.cutoff_s
         )
         all_joins[corpus_id] = joins
-        reports.append(_corpus_report(corpus_id, questions, joins, evaluations, problems))
+        reports.append(_corpus_report(corpus_id, questions, joins, evaluations, problems, bound))
     s1, tallies = _tier3_verdict(all_joins)
-    return Report(corpora=reports, tier3=tallies, verdicts=[s1, *_confirmation_verdicts(reports)])
+    return Report(
+        bound=bound, corpora=reports, tier3=tallies, verdicts=[s1, *_confirmation_verdicts(reports)]
+    )

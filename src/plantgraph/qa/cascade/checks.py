@@ -7,7 +7,7 @@ very same plant, under the same shared prompts. Any difference is a refusal, nev
 from __future__ import annotations
 
 import hashlib
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from pydantic import TypeAdapter
@@ -16,6 +16,7 @@ from plantgraph.qa.cascade.models import TierSpec
 from plantgraph.qa.harness.freeze import question_set_sha256
 from plantgraph.qa.harness.question_set import load_questions, questions_path
 from plantgraph.qa.harness.run_dir import RunDir
+from plantgraph.qa.harness.usage_meter import TimingRow
 from plantgraph.qa.models import CorpusRecord, Question, QuestionResult, RunConfig
 
 #: Prompt files every tier shares; strategy-only ones (e.g. the query prompt) may differ.
@@ -38,6 +39,8 @@ class LoadedRun:
     question_digests: dict[str, str]
     #: sha256 of the questions file this run was started from, as the config recorded it.
     questions_file_matches_config: bool
+    #: question id -> local compute seconds from `timings.jsonl`; empty when the run has none.
+    local_compute_s: dict[str, float] = field(default_factory=dict)
 
 
 def question_digest(question: Question) -> str:
@@ -77,7 +80,19 @@ def load_run(tier: TierSpec, run_dir: Path, questions_root: Path, corpus_id: str
         rows=rows,
         question_digests={q.question_id: question_digest(q) for q in questions},
         questions_file_matches_config=question_set_sha256([path]) == config.question_set_sha256,
+        local_compute_s=_local_compute_by_question(run, tier),
     )
+
+
+def _local_compute_by_question(run: RunDir, tier: TierSpec) -> dict[str, float]:
+    """Local compute per question of this tier's strategy; a resumed question's last line wins."""
+    if not run.timings_path.exists():
+        return {}
+    timings = [
+        TimingRow.model_validate_json(line)
+        for line in run.timings_path.read_text(encoding="utf-8").splitlines()
+    ]
+    return {t.question_id: t.local_compute_s for t in timings if t.strategy == tier.strategy}
 
 
 def _corpus_record(run: RunDir, corpus_id: str) -> CorpusRecord:

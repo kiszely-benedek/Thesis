@@ -66,7 +66,12 @@ class Signals(BaseModel):
     runaway: bool
     #: Final call plus retrieval-side calls (query writing, unit router).
     cost_usd: float
+    #: Question latency: final call + retrieval-side model calls + local compute when recorded.
     latency_s: float
+    #: The final call alone (what the cascade report counted before CV2-T1); kept for comparison.
+    final_latency_s: float
+    #: False when the run has no `timings.jsonl` line for the question, so local compute is missing.
+    latency_complete: bool
     #: Rules need label; `None` when no run recorded one and no anchor finder was given.
     need_label: NeedLabel | None
 
@@ -82,4 +87,7 @@ class Decision(BaseModel):
     #: Tier whose answer is final; `None` when the question fails.
     answered_by: str | None
     cost_usd: float
+    #: Sum of the tried tiers' `Signals.latency_s`: a question waits for every tier it tried.
     latency_s: float
+    #: False if any tried tier lacks its local-compute time (see `Signals.latency_complete`).
+    latency_complete: bool

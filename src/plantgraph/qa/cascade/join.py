@@ -84,7 +84,9 @@ def join_corpus(
     labels = _resolve_labels(runs, questions, find_anchors)
     signals = {
         name: {
-            qid: extract_signals(row, name, run.config.answer_pin, labels.get(qid))
+            qid: extract_signals(
+                row, name, run.config.answer_pin, labels.get(qid), run.local_compute_s.get(qid)
+            )
             for qid, row in run.rows.items()
         }
         for name, run in runs.items()

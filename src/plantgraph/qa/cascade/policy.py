@@ -62,6 +62,7 @@ def decide(
         answered_by=answered_by,
         cost_usd=sum(s.cost_usd for s in tried),
         latency_s=sum(s.latency_s for s in tried),
+        latency_complete=all(s.latency_complete for s in tried),
     )
 
 

@@ -101,6 +101,8 @@ class ToyRun:
     primer: bool = True
     prompt_overrides: dict[str, str] | None = None
     repeats: int = 1
+    #: question id -> local compute seconds; written as `timings.jsonl` when given.
+    local_compute_s: dict[str, float] | None = None
 
 
 def row(question_id: str, strategy: str, **fields: Any) -> dict[str, Any]:
@@ -190,4 +192,22 @@ def write_run(runs_root: Path, questions_root: Path, toy: ToyRun) -> Path:
     (run_dir / "corpora.json").write_text("[" + record.model_dump_json() + "]", encoding="utf-8")
     lines = "".join(json.dumps(r) + "\n" for r in toy.rows)
     (run_dir / "answers.jsonl").write_bytes(lines.encode("utf-8"))
+    if toy.local_compute_s is not None:
+        _write_timings(run_dir, toy)
     return run_dir
+
+
+def _write_timings(run_dir: Path, toy: ToyRun) -> None:
+    lines = [
+        {
+            "question_id": question_id,
+            "strategy": toy.strategy,
+            "repeat": 0,
+            "local_compute_s": seconds,
+            "spent_usd": 0.0,
+            "n_cached_retrieval_calls": 0,
+        }
+        for question_id, seconds in (toy.local_compute_s or {}).items()
+    ]
+    text = "".join(json.dumps(line) + "\n" for line in lines)
+    (run_dir / "timings.jsonl").write_bytes(text.encode("utf-8"))
