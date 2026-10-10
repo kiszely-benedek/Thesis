@@ -12,12 +12,22 @@ from collections.abc import Iterable, Mapping, Sequence
 
 from pydantic import BaseModel, ConfigDict
 
-from plantgraph.qa.plant_api.model import GroupBy, ItemEdge, ItemRecord, sheet_of_key
+from plantgraph.qa.plant_api.model import (
+    GroupBy,
+    ItemEdge,
+    ItemRecord,
+    RelationGroup,
+    sheet_of_key,
+)
 
 DEFAULT_MAX_CHARS = 4_000
 DEFAULT_MAX_ITEMS = 50
 _NOT_SHOWN_WORDS = "more not shown"
 _NOT_SHOWN = "({n} " + _NOT_SHOWN_WORDS + "; narrow with filter or aggregate)"
+STOP_MARK = "[stop]"
+END_MARK = "[end]"
+HOP_LIMIT_MARK = "[hop limit]"
+AGAINST_DIRECTION_MARK = "[against direction]"
 
 
 class ItemSet(BaseModel):
@@ -29,6 +39,8 @@ class ItemSet(BaseModel):
     items: tuple[ItemRecord, ...]
     #: Matches in total; larger than `len(items)` when the list was cut.
     total: int
+    #: The tag a lookup asked for when no item carries it; the render then explains why.
+    missing_tag: str | None = None
 
     @property
     def touched_keys(self) -> tuple[str, ...]:
@@ -40,6 +52,8 @@ class ItemSet(BaseModel):
         shown = self.items[:max_items]
         lines = [item_line(item) for item in shown]
         header = f"{self.handle}: {self.total} items"
+        if self.missing_tag is not None:
+            lines.append(no_such_tag_text(self.missing_tag))
         return frame_text(header, lines, self.total - len(shown), max_chars)
 
 
@@ -53,6 +67,10 @@ class SubgraphMember(BaseModel):
     hops: int
     #: True when the stop filter matched; the walk did not go beyond it.
     is_stop: bool = False
+    #: True when no edge leaves the item in the walk direction (the walk cannot go further).
+    is_end: bool = False
+    #: True when `max_hops` kept the walk from expanding the item although it could go further.
+    is_hop_limit: bool = False
 
 
 class Subgraph(BaseModel):
@@ -97,6 +115,12 @@ class PathResult(BaseModel):
     source: str
     target: str
     found: bool
+    #: False when the search ignored edge direction (`directed=false`).
+    directed: bool = True
+    #: The relations the search followed; the no-path sentence names them.
+    relations: RelationGroup = "flow"
+    #: How many edges of the whole path are walked against their direction (undirected only).
+    against_direction: int = 0
     #: Edges on the whole path; `None` when there is no path.
     hops: int | None
     #: The first items along the path in order (cut at the item limit); empty if not found.
@@ -115,19 +139,50 @@ class PathResult(BaseModel):
     def render(self, max_chars: int = DEFAULT_MAX_CHARS, max_items: int = DEFAULT_MAX_ITEMS) -> str:
         """Header with hop count and sheets, then the items in order, then the edges."""
         if self.hops is None:
-            header = f"{self.handle}: no path from {self.source} to {self.target}"
-            return frame_text(header, [], 0, max_chars)
+            return frame_text(self._no_path_header(), [], 0, max_chars)
         shown = self.items[:max_items]
         names = {item.item_id: item for item in shown}
+        position = {item.item_id: index for index, item in enumerate(shown)}
         edges = [edge for edge in self.edges if edge.source in names and edge.target in names]
         lines = [item_line(item) for item in shown]
-        lines += [edge_line(edge, names) for edge in edges]
-        header = (
-            f"{self.handle}: path {self.source} to {self.target}, {self.hops} hops, "
-            f"sheets {','.join(self.sheets)}"
-        )
+        lines += [self._edge_line(edge, names, position) for edge in edges]
         hidden = (self.hops + 1) - len(shown)
-        return frame_text(header, lines, hidden, max_chars)
+        return frame_text(self._found_header(self.hops), lines, hidden, max_chars)
+
+    def _no_path_header(self) -> str:
+        head = f"{self.handle}: no path from {self.source} to {self.target}"
+        if not self.directed:
+            return head
+        if self.relations == "flow":
+            return (
+                f"{head} along the edge direction (send_to: source to target). "
+                f"Flow cannot reach {self.target} from {self.source}."
+            )
+        return (
+            f"{head} along the edge direction (source to target). "
+            f"{self.target} cannot be reached from {self.source} that way."
+        )
+
+    def _found_header(self, hops: int) -> str:
+        head = f"{self.handle}: path {self.source} to {self.target}"
+        sheets = f"sheets {','.join(self.sheets)}"
+        if self.directed:
+            return f"{head}, {hops} hops, {sheets}"
+        return (
+            f"{head} IGNORING EDGE DIRECTION, {hops} hops, {self.against_direction} edges walked "
+            f"against their direction (marked {AGAINST_DIRECTION_MARK}); "
+            f"this is not a flow path, {sheets}"
+        )
+
+    def _edge_line(
+        self, edge: ItemEdge, names: Mapping[str, ItemRecord], position: Mapping[str, int]
+    ) -> str:
+        line = edge_line(edge, names)
+        # the path lists items in walking order, so an edge pointing backwards in that order
+        # was walked from its target to its source
+        if not self.directed and position[edge.source] > position[edge.target]:
+            return f"{line} {AGAINST_DIRECTION_MARK}"
+        return line
 
 
 class TableRow(BaseModel):
@@ -200,9 +255,22 @@ def edge_line(edge: ItemEdge, names: Mapping[str, ItemRecord]) -> str:
     return f"{line} [crosses {sheet_of_key(edge.via[0])}→{sheet_of_key(edge.via[-1])}]"
 
 
+def no_such_tag_text(tag: str) -> str:
+    """What to tell a caller whose tag matched nothing, so it does not retry other spellings."""
+    return (
+        f"No item has tag {tag!r} in this plant. Tags are already matched ignoring case and "
+        "spaces; patterns and wildcards are not supported, so another spelling will not match."
+    )
+
+
 def _member_line(member: SubgraphMember) -> str:
-    stop = " [stop]" if member.is_stop else ""
-    return f"{item_line(member.item)} [hop {member.hops}]{stop}"
+    flags = (
+        (STOP_MARK, member.is_stop),
+        (END_MARK, member.is_end),
+        (HOP_LIMIT_MARK, member.is_hop_limit),
+    )
+    marks = [mark for mark, applies in flags if applies]
+    return " ".join([f"{item_line(member.item)} [hop {member.hops}]", *marks])
 
 
 def _row_line(row: TableRow) -> str:

@@ -189,7 +189,7 @@ def test_path_is_directed_by_default_and_undirected_on_request() -> None:
     undirected = api.path("V2", "T1", directed=False)
 
     assert not backwards.found and backwards.hops is None
-    assert backwards.render() == f"{backwards.handle}: no path from V2 to T1"
+    assert backwards.render().startswith(f"{backwards.handle}: no path from V2 to T1 along")
     assert [item.tag for item in undirected.items] == ["V2", "GV2", "P1", "BV1", "T1"]
 
 

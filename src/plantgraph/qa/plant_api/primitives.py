@@ -27,6 +27,7 @@ from plantgraph.qa.plant_api.results import (
     Table,
     TableRow,
     item_label,
+    no_such_tag_text,
 )
 from plantgraph.qa.plant_api.traversal import Closure, closure, shortest_path
 
@@ -55,7 +56,9 @@ class PlantApi:
         if limit < 1:
             raise PlantApiError(f"expected limit >= 1, found {limit}")
         ids = self._graph.select(where)
-        return self._item_set(ids, limit)
+        # a tag that no item carries gets an explanation; a tag that other filters excluded does not
+        unknown_tag = where.tag is not None and not self._graph.ids_for_tag(where.tag)
+        return self._item_set(ids, limit, missing_tag=where.tag if unknown_tag else None)
 
     def neighbours(
         self,
@@ -68,7 +71,7 @@ class PlantApi:
         starts = self._resolve(of)
         walk_ids = None if where is None else set(self._graph.select(where))
         reached = closure(self._graph, starts, direction, relations, None, walk_ids, max_hops=1)
-        return self._subgraph(starts, reached)
+        return self._subgraph(starts, reached, mark_boundaries=False)
 
     def traverse(
         self,
@@ -90,7 +93,7 @@ class PlantApi:
         stop_ids = None if stop_at is None else set(self._graph.select(stop_at))
         walk_ids = None if walk_only is None else set(self._graph.select(walk_only))
         reached = closure(self._graph, starts, direction, relations, stop_ids, walk_ids, max_hops)
-        return self._subgraph(starts, reached)
+        return self._subgraph(starts, reached, mark_boundaries=True)
 
     def path(
         self,
@@ -109,12 +112,14 @@ class PlantApi:
                 source=source,
                 target=target,
                 found=False,
+                directed=directed,
+                relations=relations,
                 hops=None,
                 items=(),
                 edges=(),
                 sheets=(),
             )
-        return self._path_result(source, target, *found)
+        return self._path_result(source, target, directed, relations, *found)
 
     def filter(self, items: str, where: ItemFilter) -> ItemSet:
         """The members of a handle (or tag) that match `where`."""
@@ -157,7 +162,8 @@ class PlantApi:
         if self._graph.has_item(ref):  # an untagged item is named by its id (`item_label`)
             return (ref,)
         raise PlantApiError(
-            f"expected a tag in the plant, the id of an untagged item or a handle, found {ref!r}"
+            "expected a tag in the plant, the id of an untagged item or a handle, "
+            f"found {ref!r}. {no_such_tag_text(ref)}"
         )
 
     def _stored(self, handle: str) -> tuple[str, ...]:
@@ -172,13 +178,15 @@ class PlantApi:
 
     # --- result builders -------------------------------------------------------
 
-    def _item_set(self, ids: list[str], limit: int) -> ItemSet:
+    def _item_set(self, ids: list[str], limit: int, missing_tag: str | None = None) -> ItemSet:
         shown = ids[: min(limit, self._max_items)]
         handle = self._store(ids)
         records = tuple(self._graph.item(item_id) for item_id in shown)
-        return ItemSet(handle=handle, items=records, total=len(ids))
+        return ItemSet(handle=handle, items=records, total=len(ids), missing_tag=missing_tag)
 
-    def _subgraph(self, starts: tuple[str, ...], reached: Closure) -> Subgraph:
+    def _subgraph(
+        self, starts: tuple[str, ...], reached: Closure, mark_boundaries: bool
+    ) -> Subgraph:
         ordered = sorted(reached.hops, key=lambda i: (reached.hops[i], *self._graph.sort_key(i)))
         shown = ordered[: self._max_items]
         members = tuple(
@@ -186,6 +194,9 @@ class PlantApi:
                 item=self._graph.item(item_id),
                 hops=reached.hops[item_id],
                 is_stop=item_id in reached.stops,
+                # a one-hop neighbour list would call every neighbour a hop limit, so it opts out
+                is_end=mark_boundaries and item_id in reached.ends,
+                is_hop_limit=mark_boundaries and item_id in reached.cut_by_hops,
             )
             for item_id in shown
         )
@@ -206,7 +217,13 @@ class PlantApi:
         )
 
     def _path_result(
-        self, source: str, target: str, item_ids: list[str], edges: list[ItemEdge]
+        self,
+        source: str,
+        target: str,
+        directed: bool,
+        relations: RelationGroup,
+        item_ids: list[str],
+        edges: list[ItemEdge],
     ) -> PathResult:
         handle = self._store(item_ids)
         shown = item_ids[: self._max_items]
@@ -216,6 +233,9 @@ class PlantApi:
             source=source,
             target=target,
             found=True,
+            directed=directed,
+            relations=relations,
+            against_direction=_count_against_direction(item_ids, edges),
             hops=len(edges),
             items=records,
             edges=tuple(edges[: len(shown) - 1]),
@@ -231,6 +251,13 @@ class PlantApi:
                 via = edges[position].via
                 visited.extend((sheet_of_key(via[0]), sheet_of_key(via[-1])))
         return tuple(dict.fromkeys(visited))
+
+
+def _count_against_direction(item_ids: list[str], edges: list[ItemEdge]) -> int:
+    """Edges of a path (in walking order) that were walked from their target to their source."""
+    return sum(
+        1 for walked_from, edge in zip(item_ids, edges, strict=False) if edge.source != walked_from
+    )
 
 
 def _groups_of(item: ItemRecord, group_by: GroupBy) -> tuple[str, ...]:

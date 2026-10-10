@@ -133,13 +133,18 @@ TOOLS: dict[str, ToolSpec] = {
         ToolSpec(
             "traverse",
             "Everything reachable from a tag or handle; stop_at ends a branch after "
-            "including the stop item, walk_only never enters other items.",
+            "including the stop item, walk_only never enters other items. To find the nearest "
+            "item of a kind on every route (the first valve, the first pump), set stop_at to "
+            "that kind; stop items are marked [stop]. [end] marks an item with nothing further "
+            "in that direction, [hop limit] one that max_hops kept from being expanded.",
             TraverseArgs,
             _traverse,
         ),
         ToolSpec(
             "path",
-            "Shortest path between two tags or handles, with the sheets it crosses.",
+            "Shortest path between two tags or handles, with the sheets it crosses. "
+            "directed=false ignores edge direction: it shows whether two items are linked at "
+            "all, never a flow route.",
             PathArgs,
             _path,
         ),

@@ -23,6 +23,11 @@ class Closure:
     hops: dict[str, int]
     #: Reached items that matched the stop filter; nothing beyond them was entered.
     stops: frozenset[str]
+    #: Reached items with no edge leaving them in the walk direction (a source going upstream,
+    #: a sink going downstream); stop items are listed under `stops` instead.
+    ends: frozenset[str]
+    #: Reached items the walk did not expand because of `max_hops` although it could have.
+    cut_by_hops: frozenset[str]
     #: Every edge walked to an item in the result or a start item, sorted.
     edges: list[ItemEdge]
 
@@ -60,7 +65,34 @@ def closure(
         frontier = next_frontier
     start_set = set(starts)
     hops = {item: hop for item, hop in seen.items() if item not in start_set}
-    return Closure(hops=hops, stops=frozenset(stops), edges=sorted(edges.values(), key=_edge_key))
+    return Closure(
+        hops=hops,
+        stops=frozenset(stops),
+        ends=frozenset(
+            i for i in hops if i not in stops and not graph.steps(i, direction, relations)
+        ),
+        cut_by_hops=_cut_by_hops(graph, frontier, seen, direction, relations, walk_ids),
+        edges=sorted(edges.values(), key=_edge_key),
+    )
+
+
+def _cut_by_hops(
+    graph: ItemGraph,
+    frontier: Sequence[str],
+    seen: dict[str, int],
+    direction: Direction,
+    relations: RelationGroup,
+    walk_ids: Collection[str] | None,
+) -> frozenset[str]:
+    """Frontier items left unexpanded that still have an unvisited, enterable neighbour."""
+    return frozenset(
+        item
+        for item in frontier
+        if any(
+            neighbour not in seen and (walk_ids is None or neighbour in walk_ids)
+            for neighbour, _ in graph.steps(item, direction, relations)
+        )
+    )
 
 
 def _expand_or_stop(
