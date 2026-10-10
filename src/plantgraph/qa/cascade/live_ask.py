@@ -77,10 +77,10 @@ def open_for_ask(args: argparse.Namespace) -> OpenedCascade:
     artifacts = load_corpus_artifacts(args.corpus, args.corpora_root / args.corpus / "ingest.json")
     return open_live_cascade(
         corpus_id=args.corpus,
-        policy=_load_policy(args.policy),
+        policy=load_policy_argument(args.policy),
         view=NetworkxGraphView(args.corpus, artifacts.localized_sheets, artifacts.resolution),
         load_plan=artifacts.load_plan,
-        tier_run_dirs=_tier_run_dirs(args.run),
+        tier_run_dirs=parse_tier_run_dirs(args.run),
         cache_path=args.cache_path,
         calls_log_path=args.calls_log,
         allow_paid_calls=not args.replay_only,
@@ -103,14 +103,16 @@ def _asked_question(args: argparse.Namespace) -> AskedQuestion:
     raise SystemExit(f"error: expected {args.question_id!r} in the {args.corpus} questions")
 
 
-def _load_policy(value: str) -> CascadePolicy:
+def load_policy_argument(value: str) -> CascadePolicy:
+    """A shipped policy by name, or a policy JSON by path."""
     path = Path(value) if Path(value).exists() else POLICIES_DIR / f"{value}.json"
     if not path.exists():
         raise SystemExit(f"error: expected a policy file or a shipped policy name, found {value!r}")
     return load_policy(path)
 
 
-def _tier_run_dirs(values: list[str]) -> dict[str, Path]:
+def parse_tier_run_dirs(values: list[str]) -> dict[str, Path]:
+    """`TIER=RUN_DIR` options as a tier-to-directory map."""
     dirs: dict[str, Path] = {}
     for value in values:
         tier, separator, run_dir = value.partition("=")

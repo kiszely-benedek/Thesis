@@ -191,6 +191,16 @@ def read_memory_settings(settings: Neo4jSettings) -> dict[str, str]:
         driver.close()
 
 
+def read_neo4j_version(settings: Neo4jSettings) -> str | None:
+    """The running server's edition and version, e.g. `Neo4j Kernel 2026.09.0 (enterprise)`."""
+    driver = _open_driver(settings)
+    try:
+        with driver.session(database=settings.database) as session:
+            return _read_neo4j_version(session)
+    finally:
+        driver.close()
+
+
 def _read_counts(tx: ManagedTransaction, query: str) -> tuple[int, int]:
     record = tx.run(query).single()
     if record is None:

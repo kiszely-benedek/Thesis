@@ -1,4 +1,4 @@
-"""`python -m plantgraph.qa.cascade {join,needed,report,ask}` -- check, subset, report or ask."""
+"""`python -m plantgraph.qa.cascade {join,needed,report,ask,infra-probe}`."""
 
 from __future__ import annotations
 
@@ -7,6 +7,7 @@ from collections import Counter
 from pathlib import Path
 
 from plantgraph.qa.cascade.evaluate import DEFAULT_CUTOFF_S, LatencyBound
+from plantgraph.qa.cascade.infra_probe_cli import add_probe_arguments, probe_command
 from plantgraph.qa.cascade.join import (
     DEFAULT_QSUB_ROOT,
     JoinedCorpus,
@@ -44,6 +45,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         )
     _add_report_arguments(commands.add_parser("report"))
     add_ask_arguments(commands.add_parser("ask"))
+    add_probe_arguments(commands.add_parser("infra-probe"))
     commands.choices["needed"].add_argument("--tier", required=True)
     commands.choices["needed"].add_argument("--out-root", type=Path, default=DEFAULT_QSUB_ROOT)
     return parser.parse_args(argv)
@@ -125,13 +127,16 @@ def _summary(joined: JoinedCorpus) -> str:
 
 
 def main(argv: list[str] | None = None, *, open_cascade: OpenCascade = open_for_ask) -> None:
-    """Run a sub-command: `join` (summary), `needed` (subset file), `report` or `ask`.
+    """Run a sub-command: `join`, `needed`, `report`, `ask` or `infra-probe`.
 
     `open_cascade` builds the cascade for `ask`; tests pass one over fakes.
     """
     args = _parse_args(argv)
     if args.command == "ask":
         ask_command(args, open_cascade)
+        return
+    if args.command == "infra-probe":
+        probe_command(args)
         return
     if args.command == "report":
         _run_report(args)

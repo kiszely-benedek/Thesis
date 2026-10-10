@@ -48,14 +48,20 @@ def directory_bytes(path: Path) -> int:
     return sum(file.stat().st_size for file in path.rglob("*") if file.is_file())
 
 
-def read_last_metric(csv_path: Path) -> int | None:
+def read_last_value(csv_path: Path) -> float | None:
     """The last value of a Neo4j metrics CSV (header `t,value`), or `None` if there is no file."""
     if not csv_path.is_file():
         return None
     lines = csv_path.read_text(encoding="utf-8").splitlines()
     if len(lines) < 2:
         return None  # header only: the server has not written a sample yet
-    return int(float(lines[-1].split(",")[1]))
+    return float(lines[-1].split(",")[1])
+
+
+def read_last_metric(csv_path: Path) -> int | None:
+    """`read_last_value` rounded down to whole bytes, for the size metrics."""
+    value = read_last_value(csv_path)
+    return None if value is None else int(value)
 
 
 def measure_store(
