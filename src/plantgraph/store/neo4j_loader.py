@@ -13,12 +13,15 @@ claim that the sheets it was given are themselves correct.
 
 from __future__ import annotations
 
+import re
 import time
 from collections.abc import Callable, Sequence
 
 from neo4j import Driver, GraphDatabase, ManagedTransaction, Session
+from neo4j.exceptions import Neo4jError
 from pydantic import BaseModel
 
+from plantgraph.infra.environment import NEO4J_MEMORY_SETTINGS_QUERY, memory_settings_from_rows
 from plantgraph.store.neo4j_plan import CypherStatement, LoadPlan
 from plantgraph.store.neo4j_plan import wipe_statement as build_wipe_statement
 from plantgraph.store.neo4j_probe import DEFAULT_CONNECTION_TIMEOUT_S
@@ -98,6 +101,101 @@ def wipe_corpus(settings: Neo4jSettings, corpus_id: str, batch_size: int = 5000)
             _wipe(session, statement)
     finally:
         driver.close()
+
+
+# --- database-level steps for the infrastructure-cost measurement (ADR-0051) -------------------
+
+#: the server's own administration database, where `CREATE DATABASE` commands must run
+_SYSTEM_DATABASE = "system"
+
+#: a database name is spliced into a command (not a query parameter), so it is checked
+_DATABASE_NAME_PATTERN = re.compile(r"[A-Za-z][A-Za-z0-9.-]*")
+
+#: each returns one row: how many there are (`n`) and how many property values they carry (`p`)
+_COUNT_NODES_QUERY = "MATCH (e) RETURN count(e) AS n, sum(size(keys(e))) AS p"
+_COUNT_RELATIONSHIPS_QUERY = "MATCH ()-[e]->() RETURN count(e) AS n, sum(size(keys(e))) AS p"
+
+
+class DatabaseRecreationRefused(RuntimeError):
+    """The server would not replace the database; the caller must pick the declared fallback."""
+
+
+class StoreCounts(BaseModel):
+    """What one database holds, counted by Cypher: a machine-independent size."""
+
+    n_nodes: int
+    n_relationships: int
+    #: property values on nodes and on relationships together
+    n_properties: int
+
+
+def recreate_database(settings: Neo4jSettings) -> None:
+    """Replace the database with an empty one, so its store holds nothing from earlier loads.
+
+    A wipe only deletes nodes: the store file keeps its reserved space, which would
+    inflate any size measurement (design `infra-cost.md` §4.2).
+
+    Raises:
+        DatabaseRecreationRefused: the server refused (e.g. Community edition, or no admin
+            rights); the message names the fallback.
+    """
+    name = settings.database
+    if not _DATABASE_NAME_PATTERN.fullmatch(name):
+        raise ValueError(
+            f"expected a plain Neo4j database name (letters, digits, . -), got {name!r}"
+        )
+    driver = _open_driver(settings)
+    try:
+        with driver.session(database=_SYSTEM_DATABASE) as session:
+            session.run(f"CREATE OR REPLACE DATABASE `{name}` WAIT").consume()
+    except Neo4jError as error:
+        raise DatabaseRecreationRefused(
+            f"the server refused CREATE OR REPLACE DATABASE `{name}`: {error}. Fallback: run "
+            "wipe_all_neo4j.py instead of --fresh-database and report the reserved space "
+            "(store.size.available_reserved) next to the store size"
+        ) from error
+    finally:
+        driver.close()
+
+
+def checkpoint(settings: Neo4jSettings) -> None:
+    """Flush pending changes to the store files, so their size on disk is final."""
+    driver = _open_driver(settings)
+    try:
+        with driver.session(database=settings.database) as session:
+            session.run("CALL db.checkpoint()").consume()
+    finally:
+        driver.close()
+
+
+def count_store(settings: Neo4jSettings) -> StoreCounts:
+    """Count every node, relationship and property value in the whole database."""
+    driver = _open_driver(settings)
+    try:
+        with driver.session(database=settings.database) as session:
+            nodes = session.execute_read(_read_counts, _COUNT_NODES_QUERY)
+            rels = session.execute_read(_read_counts, _COUNT_RELATIONSHIPS_QUERY)
+    finally:
+        driver.close()
+    return StoreCounts(n_nodes=nodes[0], n_relationships=rels[0], n_properties=nodes[1] + rels[1])
+
+
+def read_memory_settings(settings: Neo4jSettings) -> dict[str, str]:
+    """The server's `server.memory.*` settings as `{name: value}`."""
+    driver = _open_driver(settings)
+    try:
+        with driver.session(database=settings.database) as session:
+            rows = session.run(NEO4J_MEMORY_SETTINGS_QUERY).data()
+            return memory_settings_from_rows(rows)
+    finally:
+        driver.close()
+
+
+def _read_counts(tx: ManagedTransaction, query: str) -> tuple[int, int]:
+    record = tx.run(query).single()
+    if record is None:
+        raise RuntimeError(f"count query returned no row; expected one row of n and p: {query}")
+    return int(record["n"]), int(record["p"] or 0)
 
 
 def _open_driver(settings: Neo4jSettings) -> Driver:

@@ -49,11 +49,11 @@ from plantgraph.benchmark.splitter import split
 from plantgraph.eval.graph_equality import graph_differences, to_original_ids, visible_view
 from plantgraph.eval.resolution_scoring import ResolutionScore, score_resolution
 from plantgraph.graph import schema
+from plantgraph.ingest.load_step import NO_MEASUREMENT, StoreMeasurement, load_if_requested
 from plantgraph.ingest.models import IngestCounts, IngestResult, LayerCounts
 from plantgraph.resolution.localize import OccurrenceMap, localize
 from plantgraph.resolution.models import Resolution
 from plantgraph.resolution.resolver import resolve
-from plantgraph.store.neo4j_loader import LoadReport, load_corpus
 from plantgraph.store.neo4j_plan import CypherStatement, LoadPlan, build_load_plan
 from plantgraph.store.neo4j_settings import Neo4jSettings
 from plantgraph.store.plant_rows import StoreProfile
@@ -158,6 +158,7 @@ def run_synthetic(
     check: bool,
     settings: Neo4jSettings | None,
     store_profile: StoreProfile = "occurrence",
+    measurement: StoreMeasurement = NO_MEASUREMENT,
 ) -> IngestResult:
     """Generate a synthetic plant, split it into sheets, resolve, and (optionally) load it.
 
@@ -185,7 +186,8 @@ def run_synthetic(
             corpus_id, corpus.localized_sheets, corpus.resolution, profile=store_profile
         )
     )
-    load_report = _load_if_requested(settings, plan, stage_seconds)
+    outcome = load_if_requested(settings, plan, stage_seconds, measurement)
+    load_report = outcome.report
 
     return IngestResult(
         corpus_id=corpus_id,
@@ -203,6 +205,8 @@ def run_synthetic(
         gate_differences=gate_differences,
         resolution_score=resolution_score,
         neo4j_version=load_report.neo4j_version if load_report else None,
+        environment=outcome.environment,
+        store_footprint=outcome.footprint,
     )
 
 
@@ -212,6 +216,7 @@ def run_proteus(
     path: Path,
     settings: Neo4jSettings | None,
     store_profile: StoreProfile = "occurrence",
+    measurement: StoreMeasurement = NO_MEASUREMENT,
 ) -> IngestResult:
     """Import one Proteus XML drawing as a single-sheet corpus, resolve, and (optionally) load it.
 
@@ -228,7 +233,8 @@ def run_proteus(
             corpus_id, corpus.localized_sheets, corpus.resolution, profile=store_profile
         )
     )
-    load_report = _load_if_requested(settings, plan, stage_seconds)
+    outcome = load_if_requested(settings, plan, stage_seconds, measurement)
+    load_report = outcome.report
 
     return IngestResult(
         corpus_id=corpus_id,
@@ -241,6 +247,8 @@ def run_proteus(
         import_report=corpus.imported.report,
         load_report=load_report,
         neo4j_version=load_report.neo4j_version if load_report else None,
+        environment=outcome.environment,
+        store_footprint=outcome.footprint,
     )
 
 
@@ -311,27 +319,6 @@ def _unmerged_identity_differences(
         f"map to several resolved nodes"
     )
     return [header, *examples[:limit]]
-
-
-def _load_if_requested(
-    settings: Neo4jSettings | None, plan: LoadPlan, stage_seconds: dict[str, float]
-) -> LoadReport | None:
-    """Load the plan if Neo4j settings were given; fold `LoadReport`'s own stage timings in.
-
-    `load_corpus` already times its five sub-steps individually with
-    `perf_counter` (`neo4j_loader.py`) — reusing those numbers here avoids
-    timing the same wall-clock interval a second time.
-    """
-    if settings is None:
-        return None
-    report = load_corpus(settings, plan)
-    stage_seconds["load_wipe"] = report.wipe_s
-    stage_seconds["load_schema"] = report.schema_s
-    stage_seconds["load_nodes"] = report.nodes_s
-    stage_seconds["load_relationships"] = report.relationships_s
-    stage_seconds["load_verify"] = report.verify_s
-    stage_seconds["load_total"] = report.total_s
-    return report
 
 
 def compute_ingest_counts(

@@ -33,8 +33,10 @@ from plantgraph.ingest.headline import (
     check_realized_sheets,
     smallest_n_units,
 )
+from plantgraph.ingest.load_step import StoreMeasurement
 from plantgraph.ingest.models import IngestResult
 from plantgraph.ingest.pipeline import run_proteus, run_synthetic
+from plantgraph.store.neo4j_loader import DatabaseRecreationRefused
 from plantgraph.store.neo4j_settings import Neo4jSettings, from_env, missing_required_vars
 from plantgraph.store.plant_rows import StoreProfile
 
@@ -56,10 +58,13 @@ def main(argv: list[str] | None = None) -> None:
     settings = None if args.no_neo4j else _settings_from_env_or_raise()
 
     search: SizeSearchResult | None = None
-    if args.command == "synthetic":
-        result, search = _run_synthetic(args, settings)
-    else:
-        result = _run_proteus(args, settings)
+    try:
+        if args.command == "synthetic":
+            result, search = _run_synthetic(args, settings)
+        else:
+            result = _run_proteus(args, settings)
+    except DatabaseRecreationRefused as error:
+        raise SystemExit(f"error: {error}") from error
 
     print(result.model_dump_json())
     if args.out is not None:
@@ -114,6 +119,7 @@ def _run_synthetic(
         check=args.check,
         settings=settings,
         store_profile=args.store_profile,
+        measurement=_measurement_from_flags(args),
     )
     return result, setup.search
 
@@ -186,7 +192,16 @@ def _run_proteus(args: argparse.Namespace, settings: Neo4jSettings | None) -> In
         path=args.path,
         settings=settings,
         store_profile=args.store_profile,
+        measurement=_measurement_from_flags(args),
     )
+
+
+def _measurement_from_flags(args: argparse.Namespace) -> StoreMeasurement:
+    """`--fresh-database` and `--neo4j-home`; both need a Neo4j load to act on."""
+    wanted = args.fresh_database or args.neo4j_home is not None
+    if wanted and args.no_neo4j:
+        raise SystemExit("error: --fresh-database/--neo4j-home need the load (drop --no-neo4j)")
+    return StoreMeasurement(fresh_database=args.fresh_database, neo4j_home=args.neo4j_home)
 
 
 def _settings_from_env_or_raise() -> Neo4jSettings:
@@ -217,6 +232,26 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     _add_synthetic_subparser(subparsers)
     _add_proteus_subparser(subparsers)
     return parser.parse_args(argv)
+
+
+def _add_measurement_arguments(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "--fresh-database",
+        action="store_true",
+        help=(
+            "recreate the Neo4j database before loading (CREATE OR REPLACE DATABASE), so the "
+            "store size has no leftovers; stops with the fallback if the server refuses"
+        ),
+    )
+    parser.add_argument(
+        "--neo4j-home",
+        type=Path,
+        default=None,
+        help=(
+            "the Neo4j server's home directory: after loading, checkpoint and record the store "
+            "size on disk (transaction logs apart) in the result"
+        ),
+    )
 
 
 def _add_store_profile_argument(parser: argparse.ArgumentParser) -> None:
@@ -300,6 +335,7 @@ def _add_synthetic_subparser(
     )
     parser.add_argument("--no-neo4j", action="store_true", help="skip the Neo4j load entirely")
     _add_store_profile_argument(parser)
+    _add_measurement_arguments(parser)
     parser.add_argument(
         "--out",
         type=Path,
@@ -317,6 +353,7 @@ def _add_proteus_subparser(subparsers: argparse._SubParsersAction[argparse.Argum
     parser.add_argument("--corpus-id", default=None, help="defaults to the sanitized file stem")
     parser.add_argument("--no-neo4j", action="store_true", help="skip the Neo4j load entirely")
     _add_store_profile_argument(parser)
+    _add_measurement_arguments(parser)
     parser.add_argument(
         "--out",
         type=Path,

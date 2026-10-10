@@ -12,6 +12,8 @@ from pydantic import BaseModel, Field
 
 from plantgraph.adapters.pydexpi_proteus_import import ImportReport
 from plantgraph.eval.resolution_scoring import ResolutionScore
+from plantgraph.infra.environment import RunEnvironment
+from plantgraph.infra.store_size import StoreFootprint
 from plantgraph.resolution.models import ResolutionReport
 from plantgraph.store.neo4j_loader import LoadReport
 from plantgraph.store.plant_rows import StoreProfile
@@ -67,3 +69,7 @@ class IngestResult(BaseModel):
     gate_differences: list[str] = Field(default_factory=list)
     resolution_score: ResolutionScore | None = None
     neo4j_version: str | None = None
+    #: machine and Neo4j settings; set only when `--fresh-database`/`--neo4j-home` asked for them
+    environment: RunEnvironment | None = None
+    #: store size after a checkpoint; set only with `--neo4j-home`
+    store_footprint: StoreFootprint | None = None
