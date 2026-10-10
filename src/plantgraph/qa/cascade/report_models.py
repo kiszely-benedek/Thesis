@@ -104,6 +104,23 @@ class AgentDiagnostics(BaseModel):
     answered_without_tool_call: Cell
     #: Answered although the agent never touched a plant item (no `touched_keys` in any step).
     answered_touching_no_item: Cell
+    #: Tried questions with a tag named in the text that no step touched (total = such questions,
+    #: correct = the right ones); `None` when the corpus item graph was not given.
+    named_tag_never_touched: Cell | None = None
+    #: Tried questions whose text names at least one plant tag (the base of the line above).
+    n_with_named_tags: int = 0
+
+
+class IsolationScores(BaseModel):
+    """UPSTREAM_ISOLATION correct counts: the key as built, and with control valves removed."""
+
+    model_config = ConfigDict(frozen=True)
+
+    #: Scored against the gold key (primary; unchanged).
+    primary: Cell
+    #: Secondary, labelled "control valves do not isolate": gold minus control valves. Its total
+    #: leaves out questions whose gold holds only control valves.
+    control_valves_excluded: Cell
 
 
 class PolicyDiagnostics(BaseModel):
@@ -116,6 +133,8 @@ class PolicyDiagnostics(BaseModel):
     boolean_no_questions: int
     boolean_no_answered_yes: int
     agent: AgentDiagnostics | None = None
+    #: U4; `None` when the item graph was not given or the corpus has no isolation question.
+    isolation: IsolationScores | None = None
 
 
 class LateChargeCheck(BaseModel):

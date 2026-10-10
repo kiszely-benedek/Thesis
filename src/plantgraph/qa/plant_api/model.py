@@ -36,6 +36,14 @@ class PlantApiError(ValueError):
     """
 
 
+class UnknownTagError(PlantApiError):
+    """A call named a tag (or untagged item id) the plant does not have."""
+
+    def __init__(self, tag: str, message: str) -> None:
+        super().__init__(message)
+        self.tag = tag
+
+
 class ItemRecord(BaseModel):
     """One plant item: every drawing of the same physical thing, merged."""
 

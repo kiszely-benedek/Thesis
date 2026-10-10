@@ -59,6 +59,11 @@ def _add_report_arguments(command: argparse.ArgumentParser) -> None:
         default=DEFAULT_CUTOFF_S,
         help="LB-3: answers later than this many seconds count as wrong, for every arm alike",
     )
+    command.add_argument(
+        "--corpora-root",
+        type=Path,
+        help="holds <corpus>/ingest.json; adds the isolation secondary score and named-tag check",
+    )
     command.add_argument("--out", required=True, type=Path, help="directory for report.md/.json")
     command.add_argument(
         "--run",
@@ -84,7 +89,12 @@ def _run_report(args: argparse.Namespace) -> None:
         sources.setdefault(corpus, {})[tier] = source
     policies = [load_policy(path) for path in args.policy] if args.policy else None
     report = build_report(
-        args.corpus, sources, args.questions_root, policies, LatencyBound(cutoff_s=args.cutoff_s)
+        args.corpus,
+        sources,
+        args.questions_root,
+        policies,
+        LatencyBound(cutoff_s=args.cutoff_s),
+        args.corpora_root,
     )
     markdown, json_path = write_report(report, args.out)
     print(markdown.read_text(encoding="utf-8"))

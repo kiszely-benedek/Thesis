@@ -48,6 +48,41 @@ def _agent_lines(diagnostics: Sequence[PolicyDiagnostics]) -> list[str]:
     return lines + _table(["policy", "no tool call", "no plant item touched"], rows)
 
 
+def _named_tag_lines(diagnostics: Sequence[PolicyDiagnostics]) -> list[str]:
+    rows = [
+        [d.policy, str(d.agent.n_with_named_tags), _cell(d.agent.named_tag_never_touched)]
+        for d in diagnostics
+        if d.agent is not None and d.agent.named_tag_never_touched is not None
+    ]
+    if not rows:
+        return []
+    lines = ["### Agent tier: a tag named in the question was never touched", ""]
+    return lines + _table(["policy", "questions naming a tag", "never touched"], rows)
+
+
+def _isolation_lines(diagnostics: Sequence[PolicyDiagnostics]) -> list[str]:
+    rows = [
+        [
+            d.policy,
+            f"{d.isolation.primary.correct}/{d.isolation.primary.total}",
+            f"{d.isolation.control_valves_excluded.correct}/"
+            f"{d.isolation.control_valves_excluded.total}",
+        ]
+        for d in diagnostics
+        if d.isolation is not None
+    ]
+    if not rows:
+        return []
+    lines = [
+        "### UPSTREAM_ISOLATION: secondary score, control valves do not isolate",
+        "",
+        "Secondary only (offline re-score); the primary score is the gold key as built. "
+        "Secondary reference = gold minus control valves.",
+        "",
+    ]
+    return lines + _table(["policy", "primary correct", "secondary correct"], rows)
+
+
 def _boolean_lines(diagnostics: Sequence[PolicyDiagnostics]) -> list[str]:
     rows = [
         [d.policy, str(d.boolean_no_questions), str(d.boolean_no_answered_yes)] for d in diagnostics
@@ -81,4 +116,10 @@ def diagnostics_lines(
     """All diagnostics sections of one corpus; empty when there is nothing to show."""
     if not diagnostics:
         return []
-    return [*_agent_lines(diagnostics), *_boolean_lines(diagnostics), *_late_lines(late_charges)]
+    return [
+        *_agent_lines(diagnostics),
+        *_named_tag_lines(diagnostics),
+        *_isolation_lines(diagnostics),
+        *_boolean_lines(diagnostics),
+        *_late_lines(late_charges),
+    ]

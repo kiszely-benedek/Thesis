@@ -281,3 +281,12 @@ def test_a_failing_pre_check_stops_the_run_before_any_call(toy: Toy, tmp_path: P
 
     assert fake.requests == []
     assert not (tmp_path / "runs" / "toy").exists()  # not even frozen
+
+
+def test_the_prompt_separates_a_control_loop_from_the_valve_it_actuates() -> None:
+    request = render_cypher_request(pin=pin(), schema_text="STUB", question_text="Q?")
+
+    text = request.messages[0].content
+    assert "a control loop is identified by its controller (loop) tag" in text
+    assert "separate item with its own tag" in text
+    assert text.index("Domain note") < text.index("Question:")

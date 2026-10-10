@@ -27,7 +27,6 @@ _NOT_SHOWN = "({n} " + _NOT_SHOWN_WORDS + "; narrow with filter or aggregate)"
 STOP_MARK = "[stop]"
 END_MARK = "[end]"
 HOP_LIMIT_MARK = "[hop limit]"
-AGAINST_DIRECTION_MARK = "[against direction]"
 
 
 class ItemSet(BaseModel):
@@ -85,11 +84,15 @@ class Subgraph(BaseModel):
     edges: tuple[ItemEdge, ...]
     total_items: int
     total_edges: int
+    #: Walk-boundary items (end, stop, hop limit) that the nearest-first cut left out of `members`.
+    unlisted_boundary: tuple[SubgraphMember, ...] = ()
+    #: How many such items there are before the cap on `unlisted_boundary`.
+    total_unlisted_boundary: int = 0
 
     @property
     def touched_keys(self) -> tuple[str, ...]:
-        """Local keys of the start items, members and every stub an edge crosses, sorted."""
-        drawn = _keys_of([*self.start, *(m.item for m in self.members)])
+        """Local keys of the start, member and boundary items and every stub crossed, sorted."""
+        drawn = _keys_of([*self.start, *(m.item for m in [*self.members, *self.unlisted_boundary])])
         stubs = (key for edge in self.edges for key in edge.via)
         return tuple(sorted({*drawn, *stubs}))
 
@@ -100,9 +103,24 @@ class Subgraph(BaseModel):
         names = {item.item_id: item for item in [*self.start, *(m.item for m in self.members)]}
         lines = [_member_line(member) for member in members]
         lines += [edge_line(edge, names) for edge in edges]
+        boundary = self.unlisted_boundary[:max_items]
+        lines += self._boundary_lines(boundary)
         header = f"{self.handle}: {self.total_items} items, {self.total_edges} edges"
-        hidden = (self.total_items - len(members)) + (self.total_edges - len(edges))
+        # boundary items shown are listed, so they are not "not shown"
+        hidden = (self.total_items - len(members) - len(boundary)) + (self.total_edges - len(edges))
         return frame_text(header, lines, hidden, max_chars)
+
+    def _boundary_lines(self, boundary: Sequence[SubgraphMember]) -> list[str]:
+        """Heading plus one line per unlisted boundary item; empty when there are none."""
+        if not boundary:
+            return []
+        heading = f"Not listed above — where the walk ended ({self.total_unlisted_boundary} items):"
+        lines = [heading, *(_member_line(member) for member in boundary)]
+        if self.total_unlisted_boundary > len(boundary):
+            lines.append(
+                f"({self.total_unlisted_boundary - len(boundary)} more ending items not shown)"
+            )
+        return lines
 
 
 class PathResult(BaseModel):
@@ -132,27 +150,42 @@ class PathResult(BaseModel):
 
     @property
     def touched_keys(self) -> tuple[str, ...]:
-        """Local keys of the listed drawings and the stubs between them, sorted."""
+        """Local keys of the listed drawings and the stubs between them, sorted.
+
+        An undirected path is shown as a summary only, so it shows (and touches) nothing.
+        """
+        if not self.directed:
+            return ()
         stubs = (key for edge in self.edges for key in edge.via)
         return tuple(sorted({*_keys_of(self.items), *stubs}))
 
     def render(self, max_chars: int = DEFAULT_MAX_CHARS, max_items: int = DEFAULT_MAX_ITEMS) -> str:
-        """Header with hop count and sheets, then the items in order, then the edges."""
+        """Directed: header, items in order, edges. Undirected: a one-line summary, no route."""
+        if not self.directed:
+            return frame_text(self._undirected_summary(), [], 0, max_chars)
         if self.hops is None:
             return frame_text(self._no_path_header(), [], 0, max_chars)
         shown = self.items[:max_items]
         names = {item.item_id: item for item in shown}
-        position = {item.item_id: index for index, item in enumerate(shown)}
         edges = [edge for edge in self.edges if edge.source in names and edge.target in names]
         lines = [item_line(item) for item in shown]
-        lines += [self._edge_line(edge, names, position) for edge in edges]
+        lines += [edge_line(edge, names) for edge in edges]
         hidden = (self.hops + 1) - len(shown)
         return frame_text(self._found_header(self.hops), lines, hidden, max_chars)
 
+    def _undirected_summary(self) -> str:
+        """Linked or not, hops, edges against their direction, sheets; never the route itself."""
+        head = f"{self.handle}: path {self.source} to {self.target} IGNORING EDGE DIRECTION"
+        if self.hops is None:
+            return f"{head}: not linked, even ignoring edge direction."
+        return (
+            f"{head}: linked, {self.hops} hops, {self.against_direction} edges walked against "
+            f"their direction, sheets {','.join(self.sheets)}. This is not a flow path and the "
+            "route is not listed; it does not answer a question about flow."
+        )
+
     def _no_path_header(self) -> str:
         head = f"{self.handle}: no path from {self.source} to {self.target}"
-        if not self.directed:
-            return head
         if self.relations == "flow":
             return (
                 f"{head} along the edge direction (send_to: source to target). "
@@ -165,24 +198,7 @@ class PathResult(BaseModel):
 
     def _found_header(self, hops: int) -> str:
         head = f"{self.handle}: path {self.source} to {self.target}"
-        sheets = f"sheets {','.join(self.sheets)}"
-        if self.directed:
-            return f"{head}, {hops} hops, {sheets}"
-        return (
-            f"{head} IGNORING EDGE DIRECTION, {hops} hops, {self.against_direction} edges walked "
-            f"against their direction (marked {AGAINST_DIRECTION_MARK}); "
-            f"this is not a flow path, {sheets}"
-        )
-
-    def _edge_line(
-        self, edge: ItemEdge, names: Mapping[str, ItemRecord], position: Mapping[str, int]
-    ) -> str:
-        line = edge_line(edge, names)
-        # the path lists items in walking order, so an edge pointing backwards in that order
-        # was walked from its target to its source
-        if not self.directed and position[edge.source] > position[edge.target]:
-            return f"{line} {AGAINST_DIRECTION_MARK}"
-        return line
+        return f"{head}, {hops} hops, sheets {','.join(self.sheets)}"
 
 
 class TableRow(BaseModel):
@@ -259,7 +275,16 @@ def no_such_tag_text(tag: str) -> str:
     """What to tell a caller whose tag matched nothing, so it does not retry other spellings."""
     return (
         f"No item has tag {tag!r} in this plant. Tags are already matched ignoring case and "
-        "spaces; patterns and wildcards are not supported, so another spelling will not match."
+        "spaces; patterns and wildcards are not supported, so another spelling will not match. "
+        "Do not try other tags in its place: that the plant has no such item is itself an answer."
+    )
+
+
+def repeated_miss_text(tag: str) -> str:
+    """The firmer notice for a second empty tag lookup in the same question."""
+    return (
+        f"Already searched: no item has tag {tag!r}; another spelling will not match. "
+        "Finish with what you have."
     )
 
 

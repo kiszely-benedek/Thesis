@@ -178,3 +178,50 @@ def test_the_system_prompt_teaches_finish_with_call_and_evidence_of_absence() ->
 
     assert '"done": true}' in prompt and "to make one last call and finish with it" in prompt
     assert "no path, no match or no such tag is itself evidence" in prompt
+
+
+# --- a repeated empty tag lookup (design cascade-v2, accuracy round 2, A6) --------------
+
+
+def _lookup(tag: str) -> str:
+    return call("find", where={"tag": tag})
+
+
+def test_a_second_empty_tag_lookup_gets_the_firmer_notice_and_the_first_does_not() -> None:
+    model = ScriptedModel([_lookup("ZZ-1"), _lookup("ZZ-2"), _lookup("T1")])
+
+    _run(model)
+
+    first, second, found = (model.last_user_text(i) for i in (1, 2, 3))
+    assert "No item has tag 'ZZ-1' in this plant." in first  # the plain empty result, as before
+    assert second == (
+        "Result $r2:\n$r2: 0 items\n"
+        "Already searched: no item has tag 'ZZ-2'; another spelling will not match. "
+        "Finish with what you have."
+    )
+    assert found.startswith("Result $r3:\n$r3: 1 items")  # a hit is shown normally
+
+
+def _traverse(tag: str) -> str:
+    return call("traverse", start=tag, direction="upstream", relations="flow")
+
+
+def test_a_second_refused_unknown_tag_call_gets_the_firmer_notice() -> None:
+    model = ScriptedModel([_traverse("ZZ-1"), _traverse("ZZ-2")])
+
+    run = _run(model)  # two refusals in a row end the loop, so read the recorded steps
+
+    first, second = (step.error for step in run.steps)
+    assert "No item has tag 'ZZ-1' in this plant." in first
+    assert second == (
+        "error: Already searched: no item has tag 'ZZ-2'; another spelling will not match. "
+        "Finish with what you have."
+    )
+
+
+def test_an_empty_find_then_a_refused_unknown_tag_call_gets_the_firmer_notice() -> None:
+    model = ScriptedModel([_lookup("ZZ-1"), _traverse("ZZ-2"), _lookup("T1")])
+
+    _run(model)
+
+    assert "Already searched: no item has tag 'ZZ-2'" in model.last_user_text(2)

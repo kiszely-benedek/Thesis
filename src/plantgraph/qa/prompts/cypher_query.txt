@@ -5,6 +5,8 @@ You are writing a database query about one plant's piping and instrumentation di
 Database schema:
 <<SCHEMA>>
 
+Domain note: a control loop is identified by its controller (loop) tag, for example TIC-49-1. The control valve it actuates is a separate item with its own tag, for example TV-49-1. Answer a question about loops with loop tags and a question about valves with valve tags; do not return both unless the question asks for both.
+
 Question:
 <<QUESTION>>
 

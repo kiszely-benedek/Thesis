@@ -30,9 +30,9 @@ from plantgraph.llm.models import (
 from plantgraph.qa.agent.actions import Done, InvalidAction, ToolCall, parse_action
 from plantgraph.qa.agent.models import AgentParams, AgentRun, AgentStep, GatheredResult, StopReason
 from plantgraph.qa.final_answer import SendChatRequest
-from plantgraph.qa.plant_api.model import PlantApiError
+from plantgraph.qa.plant_api.model import PlantApiError, UnknownTagError
 from plantgraph.qa.plant_api.primitives import PlantApi
-from plantgraph.qa.plant_api.results import render_was_cut
+from plantgraph.qa.plant_api.results import ItemSet, PlantResult, render_was_cut, repeated_miss_text
 from plantgraph.qa.plant_api.tool_registry import call_tool
 
 #: Two replies in a row that fail (malformed or refused) mean the model is not recovering.
@@ -93,6 +93,8 @@ class _Loop:
         ]
         self._prompt_chars_sent = 0
         self._errors_in_a_row = 0
+        # an unknown tag was already looked up: an empty `find` or a refused call
+        self._tag_lookup_missed = False
         self.steps: list[AgentStep] = []
         self.gathered: list[GatheredResult] = []
         self.tool_errors = 0
@@ -159,10 +161,11 @@ class _Loop:
             result = call_tool(self._api, action.tool, action.args)
         except PlantApiError as error:
             self.tool_errors += 1
-            self._record_error(index, response, f"error: {error}", action.tool, action.args)
+            message = f"error: {self._refusal_text(error)}"
+            self._record_error(index, response, message, action.tool, action.args)
             return False
         self._errors_in_a_row = 0
-        text = result.render(self._params.observation_chars, self._params.max_items_listed)
+        text = self._observation(result)
         truncated = render_was_cut(text, self._params.observation_chars)
         call_text = f"{action.tool}({json.dumps(action.args, sort_keys=True)})"
         self.gathered.append(GatheredResult(call_text=call_text, observation=text))
@@ -180,6 +183,23 @@ class _Loop:
         )
         self._show(response, f"Result {result.handle}:\n{text}")
         return True
+
+    def _refusal_text(self, error: PlantApiError) -> str:
+        """The refusal's message; a second unknown-tag miss gets the firmer notice instead."""
+        if not isinstance(error, UnknownTagError):
+            return str(error)
+        repeated = self._tag_lookup_missed
+        self._tag_lookup_missed = True
+        return repeated_miss_text(error.tag) if repeated else str(error)
+
+    def _observation(self, result: PlantResult) -> str:
+        """The result's text; a second unknown-tag miss gets the firmer notice (design A6)."""
+        if isinstance(result, ItemSet) and result.missing_tag is not None:
+            repeated = self._tag_lookup_missed
+            self._tag_lookup_missed = True
+            if repeated:
+                return f"{result.handle}: 0 items\n{repeated_miss_text(result.missing_tag)}"
+        return result.render(self._params.observation_chars, self._params.max_items_listed)
 
     def _record_error(
         self,

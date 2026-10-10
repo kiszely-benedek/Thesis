@@ -16,6 +16,7 @@ from plantgraph.qa.plant_api.model import (
     ItemRecord,
     PlantApiError,
     RelationGroup,
+    UnknownTagError,
     sheet_of_key,
 )
 from plantgraph.qa.plant_api.results import (
@@ -161,9 +162,10 @@ class PlantApi:
             return tuple(ids)
         if self._graph.has_item(ref):  # an untagged item is named by its id (`item_label`)
             return (ref,)
-        raise PlantApiError(
+        raise UnknownTagError(
+            ref,
             "expected a tag in the plant, the id of an untagged item or a handle, "
-            f"found {ref!r}. {no_such_tag_text(ref)}"
+            f"found {ref!r}. {no_such_tag_text(ref)}",
         )
 
     def _stored(self, handle: str) -> tuple[str, ...]:
@@ -189,17 +191,12 @@ class PlantApi:
     ) -> Subgraph:
         ordered = sorted(reached.hops, key=lambda i: (reached.hops[i], *self._graph.sort_key(i)))
         shown = ordered[: self._max_items]
-        members = tuple(
-            SubgraphMember(
-                item=self._graph.item(item_id),
-                hops=reached.hops[item_id],
-                is_stop=item_id in reached.stops,
-                # a one-hop neighbour list would call every neighbour a hop limit, so it opts out
-                is_end=mark_boundaries and item_id in reached.ends,
-                is_hop_limit=mark_boundaries and item_id in reached.cut_by_hops,
-            )
-            for item_id in shown
-        )
+        members = tuple(self._member(item_id, reached, mark_boundaries) for item_id in shown)
+        # Nearest-first listing cuts away the far items, which are where a walk ends; keep those.
+        unlisted = [
+            self._member(item_id, reached, mark_boundaries) for item_id in ordered[len(shown) :]
+        ]
+        unlisted_boundary = [m for m in unlisted if m.is_stop or m.is_end or m.is_hop_limit]
         listed_starts = starts[: self._max_items]
         # an edge is listed only if both ends are listed, or its line could not name them
         visible = {*listed_starts, *shown}
@@ -214,6 +211,18 @@ class PlantApi:
             edges=tuple(edges[: self._max_items]),
             total_items=len(ordered),
             total_edges=len(reached.edges),
+            unlisted_boundary=tuple(unlisted_boundary[: self._max_items]),
+            total_unlisted_boundary=len(unlisted_boundary),
+        )
+
+    def _member(self, item_id: str, reached: Closure, mark_boundaries: bool) -> SubgraphMember:
+        return SubgraphMember(
+            item=self._graph.item(item_id),
+            hops=reached.hops[item_id],
+            is_stop=item_id in reached.stops,
+            # a one-hop neighbour list would call every neighbour a hop limit, so it opts out
+            is_end=mark_boundaries and item_id in reached.ends,
+            is_hop_limit=mark_boundaries and item_id in reached.cut_by_hops,
         )
 
     def _path_result(

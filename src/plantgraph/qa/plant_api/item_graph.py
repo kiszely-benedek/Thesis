@@ -44,9 +44,10 @@ class ItemGraph:
         for edge in self._edges:
             self._outgoing[edge.source].append(edge)
             self._incoming[edge.target].append(edge)
-        self._labels = {label.lower() for item in self._items.values() for label in item.labels}
-        self._classes = {item.node_class.lower() for item in self._items.values()}
-        self._units = {normalize_unit_id(u) for i in self._items.values() if (u := i.unit_id)}
+        # folded -> as written, so a refusal can list the values in the spelling a filter accepts
+        self._labels = {x.lower(): x for item in self._items.values() for x in item.labels}
+        self._classes = {item.node_class.lower(): item.node_class for item in self._items.values()}
+        self._units = {normalize_unit_id(u): u for i in self._items.values() if (u := i.unit_id)}
         self._sheets = sorted({sheet for item in self._items.values() for sheet in item.sheets})
         self._item_of_key = {k: i.item_id for i in self._items.values() for k in i.occurrence_keys}
 
@@ -136,24 +137,49 @@ class ItemGraph:
         return all(checks)
 
     def _check_vocabulary(self, where: ItemFilter) -> None:
-        """Reject a typo'd label, class, unit or sheet instead of silently matching nothing."""
-        sheets = {normalize_scalar(sheet) for sheet in self._sheets}
+        """Refuse an unknown label, class, unit or sheet, listing the valid values."""
         if where.label is not None:
-            _require_known("label", where.label.lower(), self._labels, where.label)
+            self._require_label_or_class("label", where.label, self._labels, self._classes)
         if where.node_class is not None:
-            _require_known("node_class", where.node_class.lower(), self._classes, where.node_class)
+            self._require_label_or_class(
+                "node_class", where.node_class, self._classes, self._labels
+            )
         for unit in (where.unit, where.not_unit):
             if unit is not None:
                 _require_known("unit", normalize_unit_id(unit), self._units, unit)
         if where.sheet is not None:
+            sheets = {normalize_scalar(sheet): sheet for sheet in self._sheets}
             _require_known("sheet", normalize_scalar(where.sheet), sheets, where.sheet)
 
+    @staticmethod
+    def _require_label_or_class(
+        name: str, given: str, known: dict[str, str], other: dict[str, str]
+    ) -> None:
+        """Like `_require_known`, plus a pointer when the value is valid for the other field."""
+        folded = given.lower()
+        if folded in known:
+            return
+        hint = ""
+        if folded in other:  # e.g. "Equipment" given as a node_class: it is a label
+            other_name = "label" if name == "node_class" else "node_class"
+            hint = f" ({given!r} is a valid {other_name}; use that field instead)"
+        _require_known(name, folded, known, given, hint)
 
-def _require_known(name: str, folded: str, known: set[str], given: str) -> None:
-    if folded not in known:
-        raise PlantApiError(
-            f"expected a known {name}, found {given!r}; known: {sorted(known)[:30]}"
-        )
+
+_MAX_VALUES_LISTED = 40
+
+
+def _require_known(
+    name: str, folded: str, known: dict[str, str], given: str, hint: str = ""
+) -> None:
+    if folded in known:
+        return
+    values = sorted(known.values())
+    shown = ", ".join(values[:_MAX_VALUES_LISTED])
+    more = f", ... ({len(values)} in total)" if len(values) > _MAX_VALUES_LISTED else ""
+    raise PlantApiError(
+        f"expected a known {name}, found {given!r}{hint}; valid {name} values: {shown}{more}"
+    )
 
 
 def _same_unit(wanted: str, unit_id: str | None) -> bool:

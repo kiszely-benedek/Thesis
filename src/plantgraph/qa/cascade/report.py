@@ -11,6 +11,7 @@ from collections.abc import Mapping, Sequence
 from pathlib import Path
 
 from plantgraph.qa.cascade.checks import load_questions_file
+from plantgraph.qa.cascade.corpus_checks import load_item_graph
 from plantgraph.qa.cascade.diagnostics import policy_diagnostics
 from plantgraph.qa.cascade.evaluate import (
     Evaluation,
@@ -58,6 +59,7 @@ from plantgraph.qa.cascade.report_verdicts_v2 import (
     select_on_dev,
 )
 from plantgraph.qa.models import Question
+from plantgraph.qa.plant_api.item_graph import ItemGraph
 
 ALWAYS_N = "always_n"
 #: The always-one-tier baselines are part of every report, whatever `--policy` selects.
@@ -182,6 +184,7 @@ def _corpus_report(
     problems: list[NotEvaluated],
     bound: LatencyBound,
     sources: Mapping[str, TierSource],
+    graph: ItemGraph | None,
 ) -> CorpusReport:
     always_n = evaluations.get(ALWAYS_N)
     results = [_policy_result(joins[name], ev, always_n, bound) for name, ev in evaluations.items()]
@@ -199,7 +202,7 @@ def _corpus_report(
             for dimension, group_of in by_dimension.items()
         },
         diagnostics=[
-            policy_diagnostics(joins[name], ev, by_id) for name, ev in evaluations.items()
+            policy_diagnostics(joins[name], ev, by_id, graph) for name, ev in evaluations.items()
         ],
         late_charges=_late_charges(joins, sources),
     )
@@ -267,10 +270,13 @@ def build_report(
     questions_root: Path,
     policies: Sequence[CascadePolicy] | None = None,
     bound: LatencyBound | None = None,
+    corpora_root: Path | None = None,
 ) -> Report:
     """Evaluate `policies` (default: every policy file, plus the baselines) on each corpus.
 
     `bound` carries LB-1, LB-2 and the cutoff C applied to every arm alike (default 10/60/120 s).
+    `corpora_root` (holding `<corpus>/ingest.json`) lets the report read each corpus's item graph
+    for the isolation secondary score and the named-tag diagnostic; without it both are omitted.
     """
     bound = bound or LatencyBound()
     chosen = _with_baselines(policies)
@@ -282,6 +288,7 @@ def build_report(
             corpus_id, chosen, sources.get(corpus_id, {}), questions_root, bound.cutoff_s
         )
         all_joins[corpus_id] = joins
+        graph = None if corpora_root is None else load_item_graph(corpora_root, corpus_id)
         reports.append(
             _corpus_report(
                 corpus_id,
@@ -291,6 +298,7 @@ def build_report(
                 problems,
                 bound,
                 sources.get(corpus_id, {}),
+                graph,
             )
         )
     s1, tallies = _tier3_verdict(all_joins)

@@ -30,10 +30,12 @@ _ANSWER = '{"answer": "Pump", "not_present": false}'
 _PARAMS = {"timeout_s": 5, "row_cap": 3}
 
 #: sha256 of the whole `cypher_rag` prompt (occurrence schema text of the 4-unit corpus, question
-#: "Q?"), taken before the plant arm existed: the plain arm's prompt must not drift.
+#: "Q?"): the plain arm's prompt must not drift. Re-taken 2026-10-10 when the control-loop domain
+#: note (accuracy round 2, A1) was added to `cypher_query.txt`; before that, it was taken before
+#: the plant arm existed.
 _OCCURRENCE_PROMPT_SHA256 = {
-    False: "e0742ea70f3618eea4925b5047345564f35e651413f478f5ad739044139574fc",
-    True: "3d12e704124dd6578cebc33eb11cd19f35ac1423fcd4d753dfa6be01fea0132a",
+    False: "59c0b2bd40d7b38250f1314cb525889bda6457944832af90f2f201795f24f909",
+    True: "d942bde4594ea47115eea4765d78110ec585cce2c6ed518214e134326461d056",
 }
 
 

@@ -309,3 +309,62 @@ def test_same_calls_give_equal_results_and_text() -> None:
         return [r.model_dump_json() + r.render() for r in results]
 
     assert run() == run()
+
+
+# --- boundary items beyond the item limit ----------------------------------------
+
+_PUMP_ITEM = (NodeClass.CENTRIFUGAL_PUMP.value, "1", ("S1",))
+
+
+def _fan_in_api(max_items: int) -> PlantApi:
+    """Sources SRC1..SRC3 feed a chain M1 -> M2 -> M3 -> X; the sources are the far end."""
+    tags = ["SRC1", "SRC2", "SRC3", "M1", "M2", "M3", "X"]
+    flow = [("SRC1", "M1"), ("SRC2", "M1"), ("SRC3", "M1"), ("M1", "M2"), ("M2", "M3"), ("M3", "X")]
+    graph = build_graph({tag: _PUMP_ITEM for tag in tags}, [(a, "send_to", b, ()) for a, b in flow])
+    return PlantApi(graph, max_items=max_items)
+
+
+def test_an_upstream_walk_cut_by_the_item_limit_still_shows_where_it_ended() -> None:
+    result = _fan_in_api(max_items=3).traverse("X", "upstream", "flow")
+
+    text = result.render(max_items=3)
+
+    assert member_tags(result) == ["M3", "M2", "M1"]
+    assert "Not listed above — where the walk ended (3 items):" in text
+    assert "SRC1 (CentrifugalPump, unit 1, sheets S1) [hop 4] [end]" in text
+    assert text.splitlines()[0].startswith("$r1: 6 items")
+    # no item is hidden; the 3 hidden are the edges whose far end is unlisted (6 edges, 3 listed)
+    assert text.splitlines()[0].startswith("$r1: 6 items, 6 edges (3 more not shown")
+
+
+def test_a_walk_that_fits_renders_without_a_boundary_section() -> None:
+    result = _fan_in_api(max_items=50).traverse("X", "upstream", "flow")
+
+    assert result.unlisted_boundary == ()
+    assert "Not listed" not in result.render()
+    assert "SRC1 (CentrifugalPump, unit 1, sheets S1) [hop 4] [end]" in result.render()
+
+
+def test_more_unlisted_ends_than_the_cap_are_counted_truthfully() -> None:
+    result = _fan_in_api(max_items=2).traverse("X", "upstream", "flow")
+
+    text = result.render(max_items=2)
+
+    assert [m.item.tag for m in result.unlisted_boundary] == ["SRC1", "SRC2"]
+    assert result.total_unlisted_boundary == 3
+    assert "where the walk ended (3 items):" in text
+    assert "(1 more ending items not shown)" in text
+    # 6 items: 2 members + 2 boundary listed, 2 hidden; 6 edges: 2 listed, 4 hidden
+    assert text.splitlines()[0].startswith("$r1: 6 items, 6 edges (6 more not shown")
+
+
+def test_listed_boundary_items_count_as_touched() -> None:
+    result = _fan_in_api(max_items=3).traverse("X", "upstream", "flow")
+
+    assert {"S1:src1", "S1:src2", "S1:src3"} <= set(result.touched_keys)
+
+
+def test_a_neighbour_list_never_lists_ends_or_hop_limits_beyond_the_cut() -> None:
+    result = _fan_in_api(max_items=2).neighbours("M1", "upstream", "flow")
+
+    assert result.unlisted_boundary == ()

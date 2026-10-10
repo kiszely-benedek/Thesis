@@ -17,7 +17,7 @@ Rules.
 - Reply with one JSON object and nothing else: {"call": {"tool": "<name>", "args": {...}}} to call a tool, {"done": true} when what you have gathered is enough to answer the question, or {"call": {"tool": "<name>", "args": {...}}, "done": true} to make one last call and finish with it (if that call is refused, you continue).
 - You have at most <<MAX_STEPS>> replies, and {"done": true} and any reply that fails count as replies. Aim each call at what the question needs.
 - A result that says there is no path, no match or no such tag is itself evidence: you may finish with it. A path marked [against direction] runs against the flow on those edges, so it is not a flow path.
-- Use tags exactly as the question writes them. If a call is refused, the error says why (for an unknown label, unit or sheet it lists the names the plant has); correct the call.
+- Use tags exactly as the question writes them; a tag the plant does not have must not be replaced with a similar tag. If a call is refused, the error says why (for an unknown label, unit or sheet it lists the names the plant has); correct the call.
 - Everything you gather is passed on as written, and the answer is written from it alone, so gather the items the answer must name, not only a count or a summary of them.
 
 <<SEED_RULE>>

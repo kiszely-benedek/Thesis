@@ -5,8 +5,9 @@ from __future__ import annotations
 import pytest
 
 from plantgraph.graph import schema
-from plantgraph.qa.plant_api.model import ItemFilter, PlantApiError
+from plantgraph.qa.plant_api.model import ItemFilter, PlantApiError, UnknownTagError
 from plantgraph.qa.plant_api.primitives import PlantApi
+from plantgraph.qa.plant_api.results import no_such_tag_text
 from plantgraph.qa.plant_api.tool_registry import TOOLS
 from qa_plant_api_toy import EdgeSpecs, ItemSpecs, build_graph, toy_api
 
@@ -22,7 +23,8 @@ _ZIGZAG_EDGES: EdgeSpecs = [
 
 _NO_TAG = (
     "No item has tag 'FV-33-4' in this plant. Tags are already matched ignoring case and "
-    "spaces; patterns and wildcards are not supported, so another spelling will not match."
+    "spaces; patterns and wildcards are not supported, so another spelling will not match. "
+    "Do not try other tags in its place: that the plant has no such item is itself an answer."
 )
 
 
@@ -42,24 +44,51 @@ def test_directed_no_path_over_signals_does_not_claim_flow() -> None:
     assert text.endswith("T1 cannot be reached from FV that way.")
 
 
-def test_undirected_path_is_labelled_and_marks_reversed_edges() -> None:
+def test_undirected_path_is_a_summary_without_an_item_listing() -> None:
     api = PlantApi(build_graph(_ZIGZAG_ITEMS, _ZIGZAG_EDGES))
 
-    text = api.path("A", "E", directed=False).render()
+    result = api.path("A", "E", directed=False)
 
-    assert text.splitlines() == [
-        "$r1: path A to E IGNORING EDGE DIRECTION, 4 hops, 2 edges walked against their "
-        "direction (marked [against direction]); this is not a flow path, sheets S1",
-        "A (Tank, unit 1, sheets S1)",
-        "B (Tank, unit 1, sheets S1)",
-        "C (Tank, unit 1, sheets S1)",
-        "D (Tank, unit 1, sheets S1)",
-        "E (Tank, unit 1, sheets S1)",
-        "A -send_to-> B",
-        "C -send_to-> B [against direction]",
-        "C -send_to-> D",
-        "E -send_to-> D [against direction]",
-    ]
+    assert result.render() == (
+        "$r1: path A to E IGNORING EDGE DIRECTION: linked, 4 hops, 2 edges walked against "
+        "their direction, sheets S1. This is not a flow path and the route is not listed; "
+        "it does not answer a question about flow."
+    )
+    assert result.touched_keys == ()  # nothing was shown, so nothing counts as evidence read
+
+
+def test_undirected_path_between_unlinked_items_says_so() -> None:
+    api = PlantApi(build_graph(_ZIGZAG_ITEMS | {"Z": (TANK, "1", ("S1",))}, _ZIGZAG_EDGES))
+
+    text = api.path("A", "Z", directed=False).render()
+
+    assert (
+        text
+        == "$r1: path A to Z IGNORING EDGE DIRECTION: not linked, even ignoring edge direction."
+    )
+
+
+def test_unknown_node_class_is_refused_with_the_valid_values() -> None:
+    api = toy_api()
+
+    with pytest.raises(PlantApiError) as refused:
+        api.traverse("GV2", "upstream", "flow", stop_at=ItemFilter(node_class="Valve"))
+
+    assert str(refused.value) == (
+        "expected a known node_class, found 'Valve'; valid node_class values: "
+        "ActuatingFunction, BallValve, CentrifugalPump, CheckValve, GlobeValve, "
+        "PressureVessel, ProcessInstrumentationFunction, ProcessSignalGeneratingFunction, Tank"
+    )
+
+
+def test_a_label_given_as_node_class_is_refused_with_a_pointer_to_the_other_field() -> None:
+    with pytest.raises(PlantApiError, match=r"'OperatedValve' is a valid label; use that field"):
+        toy_api().find(ItemFilter(node_class="OperatedValve"))
+
+
+def test_unknown_label_is_refused_with_the_valid_values() -> None:
+    with pytest.raises(PlantApiError, match=r"valid label values: .*OperatedValve"):
+        toy_api().find(ItemFilter(label="Valve"))
 
 
 def test_directed_path_text_is_unchanged() -> None:
@@ -126,3 +155,15 @@ def test_unknown_tag_error_carries_the_same_sentence() -> None:
 def test_tool_descriptions_state_the_generic_usage() -> None:
     assert "linked at all, never a flow route" in TOOLS["path"].description
     assert "set stop_at to that kind; stop items are marked [stop]" in TOOLS["traverse"].description
+
+
+def test_no_such_tag_text_says_not_to_try_other_tags() -> None:
+    assert "Do not try other tags in its place" in no_such_tag_text("FV-33-4")
+
+
+def test_resolving_an_unknown_tag_raises_the_subclass_carrying_the_tag() -> None:
+    with pytest.raises(UnknownTagError) as raised:
+        toy_api().traverse("FV-33-4", "upstream", "flow")
+
+    assert raised.value.tag == "FV-33-4"
+    assert isinstance(raised.value, PlantApiError)
