@@ -77,6 +77,13 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         help="items answered at once; rows are still written in order. A paid run above 1 "
         "needs --cost-per-question-usd",
     )
+    parser.add_argument(
+        "--question-deadline-s",
+        type=float,
+        help="wall-clock budget per question for its model calls, in seconds (off by default); "
+        "a question that runs out is recorded as TIMED_OUT and scored wrong. Frozen in the run "
+        "config",
+    )
     return parser.parse_args(argv)
 
 
@@ -130,6 +137,7 @@ def _build_config(args: argparse.Namespace, corpus_ids: list[str]) -> RunConfig:
         repeats=args.repeats,
         allow_paid_calls=args.allow_paid_calls,  # only ever from the flag, never the environment
         max_spend_usd=args.max_spend_usd,
+        question_deadline_s=args.question_deadline_s,
     )
 
 

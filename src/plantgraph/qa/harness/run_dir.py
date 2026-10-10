@@ -93,7 +93,8 @@ class RunDir:
     def drop_provider_error_rows(self) -> int:
         """Remove `PROVIDER_ERROR` rows so a resume asks those questions again.
 
-        Returns how many rows were dropped. The file is replaced in one step.
+        Returns how many rows were dropped. The file is replaced in one step. A `TIMED_OUT`
+        row stays: it is a final, scored result (asking again would only wait again).
         """
         rows = self.read_rows()
         kept = [row for row in rows if row.outcome is not Outcome.PROVIDER_ERROR]

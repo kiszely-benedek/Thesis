@@ -171,6 +171,9 @@ class Outcome(str, Enum):
     #: The provider kept erroring after the transport-level retries; excluded
     #: from accuracy rather than scored wrong (`qa-system.md` §11, harness).
     PROVIDER_ERROR = "PROVIDER_ERROR"
+    #: The question's call-time budget (`--question-deadline-s`) ran out. Unlike
+    #: `PROVIDER_ERROR` it is scored wrong and counted in accuracy: a slow answer is no answer.
+    TIMED_OUT = "TIMED_OUT"
 
 
 class RetrievalResult(BaseModel):
@@ -202,6 +205,9 @@ class CallUsage(BaseModel):
     n_cost_missing: int = 0
     #: Sum of the recorded call latencies.
     llm_latency_s: float = 0.0
+    #: Calls abandoned at their timeout; their cost is unknown, so a cost estimate adds one
+    #: per abandoned call (`cascade-v2.md` §6).
+    n_abandoned: int = 0
     #: The next two differ between a live run and its replay, so they are kept out of
     #: `answers.jsonl` (replay must stay byte-identical); `timings.jsonl` carries them.
     n_cached: int = Field(default=0, exclude=True)
@@ -342,3 +348,7 @@ class RunConfig(BaseModel):
     #: harness stops before a question that could push the run's cost over it. Like
     #: `allow_paid_calls` it is this invocation's setting, so a resume may raise it.
     max_spend_usd: float | None = Field(default=None, gt=0)
+    #: Wall-clock budget in seconds for one question's model calls, counted from the calls'
+    #: *recorded* latencies so a replay decides exactly as the live run did. `None` = no
+    #: deadline. Part of the freeze: it changes which rows are `TIMED_OUT`.
+    question_deadline_s: float | None = Field(default=None, gt=0)

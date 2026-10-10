@@ -21,7 +21,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -111,6 +111,12 @@ class ChatResponse(BaseModel):
     created_at: datetime
 
 
+CallErrorKind = Literal["context_overflow", "provider_error", "timeout", "late_after_timeout"]
+
+#: `finish_reason` of the cache entry written when a call is abandoned (a "tombstone").
+TIMEOUT_FINISH_REASON = "client_timeout"
+
+
 class CallRecord(BaseModel):
     """One line of a run's `calls.jsonl`: every LLM call it made, cached or not."""
 
@@ -123,7 +129,24 @@ class CallRecord(BaseModel):
     prompt_sha256: str
     #: `None` when the call failed before a response existed; see `error_kind`.
     response: ChatResponse | None = None
-    error_kind: Literal["context_overflow", "provider_error"] | None = None
+    #: `timeout`: the call was abandoned at its deadline. `late_after_timeout`: an abandoned
+    #: call answered after all; `response` holds that answer, which is billed but never cached.
+    error_kind: CallErrorKind | None = None
+
+
+def tombstone_response(timeout_s: float) -> ChatResponse:
+    """The cache entry for an abandoned call: empty, free, as long as the budget it ran out of."""
+    return ChatResponse(
+        text="",
+        prompt_tokens=0,
+        completion_tokens=0,
+        cost_usd=None,
+        latency_s=timeout_s,
+        provider_response_id=None,
+        finish_reason=TIMEOUT_FINISH_REASON,
+        from_cache=False,
+        created_at=datetime.now(UTC),
+    )
 
 
 class ContextWall(BaseModel):
@@ -147,3 +170,19 @@ class ProviderError(Exception):
 
 class CacheMiss(Exception):
     """Replay mode found no cached response for a request and made no network call."""
+
+
+class RequestTimedOut(Exception):
+    """A model call outlived its wall-clock budget and was abandoned (or a tombstone says so).
+
+    `latency_s` is the budget the call was given; the question's latency meter counts it
+    as time spent, live and on replay alike.
+    """
+
+    def __init__(self, message: str, latency_s: float) -> None:
+        super().__init__(message)
+        self.latency_s = latency_s
+
+
+class QuestionDeadline(Exception):
+    """The question's recorded call time already reached its deadline, so no call was started."""

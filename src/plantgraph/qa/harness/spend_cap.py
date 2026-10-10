@@ -71,6 +71,17 @@ class SpendGuard:
             self._spent_usd += cost
             self._max_call_usd = max(self._max_call_usd, cost)
 
+    def charge_late(self, response: ChatResponse) -> None:
+        """Count the answer of an abandoned call that came back after its question had moved on.
+
+        Called from the client's abandoned-call thread. The money is spent whether or not
+        anyone waited for it; it counts toward the cap, so later checks see it.
+        """
+        cost = response.cost_usd or 0.0
+        with self._lock:
+            self._spent_usd += cost
+            self._max_call_usd = max(self._max_call_usd, cost)
+
     def reserve(self) -> Reservation:
         """Open a reservation for one item, or raise if it could take the run to the cap.
 

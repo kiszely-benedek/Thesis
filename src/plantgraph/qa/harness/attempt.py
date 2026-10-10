@@ -11,7 +11,13 @@ from contextvars import ContextVar
 from dataclasses import dataclass
 
 from plantgraph.llm.client import ChatClient
-from plantgraph.llm.models import ChatRequest, ChatResponse, ProviderError
+from plantgraph.llm.models import (
+    ChatRequest,
+    ChatResponse,
+    ProviderError,
+    QuestionDeadline,
+    RequestTimedOut,
+)
 from plantgraph.qa.cypher import CypherSource
 from plantgraph.qa.final_answer import SendChatRequest
 from plantgraph.qa.graph_view import NetworkxGraphView
@@ -57,6 +63,15 @@ class Answered:
 _ACTIVE_METER: ContextVar[UsageMeter | None] = ContextVar("active_meter", default=None)
 
 
+def active_remaining_s() -> float | None:
+    """The time budget left for the question this thread is answering (`None` without one).
+
+    The agent loop reads it before each step, so it can stop early enough for the final answer.
+    """
+    meter = _ACTIVE_METER.get()
+    return None if meter is None else meter.remaining_s
+
+
 def sender_factory(client: ChatClient, config: RunConfig) -> Callable[[str], SendChatRequest]:
     """For a strategy name, a sender for its own LLM calls (query writing, router fallback).
 
@@ -74,11 +89,12 @@ def sender_factory(client: ChatClient, config: RunConfig) -> Callable[[str], Sen
                 )
             # the strategy sees only the text; the harness reads the question id from the meter
             return meter.timed_call(
-                lambda: client.complete(
+                lambda timeout_s: client.complete(
                     request,
                     run_id=config.run_id,
                     question_id=meter.question_id,
                     strategy=strategy_name,
+                    timeout_s=timeout_s,
                 ),
                 is_final=False,
             )
@@ -117,8 +133,12 @@ def _attempt(
 
     def send(request: ChatRequest) -> ChatResponse:
         return meter.timed_call(
-            lambda: client.complete(
-                request, run_id=config.run_id, question_id=question_id, strategy=item.strategy.name
+            lambda timeout_s: client.complete(
+                request,
+                run_id=config.run_id,
+                question_id=question_id,
+                strategy=item.strategy.name,
+                timeout_s=timeout_s,
             ),
             is_final=True,
         )
@@ -136,6 +156,8 @@ def _attempt(
         )
     except ProviderError as error:
         return error
+    except (RequestTimedOut, QuestionDeadline) as error:
+        return _timed_out(item, config, meter, error, wall_s=time.monotonic() - started)
     wall_s = time.monotonic() - started
     scored = score_answer(
         item.question,
@@ -166,16 +188,57 @@ def _attempt(
         trace=trace,
         retrieval_usage=usage,
     )
-    timing = TimingRow(
-        question_id=question_id,
+    return Answered(row, _timing_row(item, meter, usage.n_cached, wall_s))
+
+
+def _timing_row(item: WorkItem, meter: UsageMeter, n_cached: int, wall_s: float) -> TimingRow:
+    return TimingRow(
+        question_id=item.question.question_id,
         strategy=item.strategy.name,
         repeat=item.repeat,
         # wall-clock, so it lives in timings.jsonl and never in the byte-identical answers
         local_compute_s=max(0.0, wall_s - meter.seconds_in_calls),
         spent_usd=meter.spent_usd,
-        n_cached_retrieval_calls=usage.n_cached,
+        n_cached_retrieval_calls=n_cached,
     )
-    return Answered(row, timing)
+
+
+def _timed_out(
+    item: WorkItem,
+    config: RunConfig,
+    meter: UsageMeter,
+    error: RequestTimedOut | QuestionDeadline,
+    *,
+    wall_s: float,
+) -> Answered:
+    """The ordinary, committed row of a question that ran out of its call-time budget.
+
+    Everything in it comes from recorded latencies, so a replay writes the same bytes.
+    """
+    usage = meter.end()
+    cause = "request" if isinstance(error, RequestTimedOut) else "deadline"
+    row = QuestionResult(
+        run_id=config.run_id,
+        question_id=item.question.question_id,
+        strategy=item.strategy.name,
+        repeat=item.repeat,
+        outcome=Outcome.TIMED_OUT,
+        final_answer=None,
+        correct=False,
+        f1=None,
+        prompt_tokens=0,
+        completion_tokens=0,
+        cost_usd=None,
+        latency_s=meter.recorded_elapsed_s,
+        context_chars=0,
+        trace={
+            "timed_out": cause,
+            "question_deadline_s": config.question_deadline_s,
+            "recorded_elapsed_s": meter.recorded_elapsed_s,
+        },
+        retrieval_usage=usage,
+    )
+    return Answered(row, _timing_row(item, meter, usage.n_cached, wall_s))
 
 
 def provider_error_row(item: WorkItem, config: RunConfig, error: ProviderError) -> QuestionResult:

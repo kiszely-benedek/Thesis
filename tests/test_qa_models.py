@@ -86,13 +86,14 @@ def test_final_answer_round_trips_through_json() -> None:
     assert FinalAnswer.model_validate_json(answer.model_dump_json()) == answer
 
 
-def test_outcome_has_exactly_the_five_values_the_design_lists() -> None:
+def test_outcome_has_exactly_the_six_values_the_design_lists() -> None:
     assert {member.value for member in Outcome} == {
         "ANSWERED",
         "DID_NOT_FIT",
         "PARSE_FAILURE",
         "RETRIEVAL_ERROR",
         "PROVIDER_ERROR",
+        "TIMED_OUT",  # cascade v2 (CV2-T2)
     }
 
 

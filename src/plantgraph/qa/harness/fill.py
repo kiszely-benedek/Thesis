@@ -69,6 +69,7 @@ def fill_answers(
     rows_on_disk = run_dir.read_rows()
     done = {row_key(row) for row in rows_on_disk}
     guard = _spend_guard(invocation, rows_on_disk)
+    client.on_late_response = guard.charge_late  # money an abandoned call costs still counts
     jobs = _jobs(config, questions, corpora, done, sender_factory(client, config))
     progress(f"run {config.run_id}: {len(jobs)} rows to answer, {len(done)} already on disk")
     if dropped:
@@ -131,7 +132,9 @@ class _Pass:
 
     def _answer(self, job: _Job, reservation: Reservation) -> Outcome:
         """Runs on a worker thread: its own meter, and the reservation is always released."""
-        meter = UsageMeter(self._guard, reservation=reservation)
+        meter = UsageMeter(
+            self._guard, reservation=reservation, deadline_s=self._config.question_deadline_s
+        )
         try:
             corpus = self._corpora[job.corpus_id]
             return attempt(job.item, self._config, corpus, self._client, meter)

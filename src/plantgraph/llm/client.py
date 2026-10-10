@@ -25,41 +25,39 @@ from __future__ import annotations
 import logging
 import threading
 import time
+from collections.abc import Callable
+from concurrent.futures import Future, wait
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Literal
+from typing import Literal
 
 import httpx2
 import openai
 from pydantic import SecretStr
 
+from plantgraph.llm.abandonable_call import start_daemon_call
 from plantgraph.llm.cache import SqliteCache, cache_key
 from plantgraph.llm.local_settings import LocalLLMSettings
 from plantgraph.llm.models import (
+    TIMEOUT_FINISH_REASON,
     CacheMiss,
+    CallErrorKind,
     CallRecord,
     ChatRequest,
     ChatResponse,
     ContextOverflow,
     ProviderError,
+    RequestTimedOut,
     canonical_hash,
+    tombstone_response,
 )
 from plantgraph.llm.openrouter_settings import OpenRouterSettings
+from plantgraph.llm.request_kwargs import build_request_kwargs
 from plantgraph.llm.single_flight import SingleFlight
+from plantgraph.llm.status_errors import classify_status_error, redact
 
 logger = logging.getLogger(__name__)
-
-#: Substrings of an OpenAI-style "context length exceeded" error.
-#: **Unverified for OpenRouter**: the pilot's wall probe (`qa-system.md` §12
-#: step 2) records the exact wording per model before any reported run.
-#: This list matches the closest publicly documented convention (OpenAI's
-#: own error code and message shape), not an observed OpenRouter response.
-_CONTEXT_OVERFLOW_MARKERS = (
-    "maximum context length",
-    "context length exceeded",
-    "context_length_exceeded",
-    "context window",
-)
 
 #: Placeholder credential for the "local" backend, which needs some non-empty
 #: string to satisfy the SDK's constructor but authenticates nothing (no
@@ -67,61 +65,18 @@ _CONTEXT_OVERFLOW_MARKERS = (
 _LOCAL_PLACEHOLDER_API_KEY = "local-backend-no-key-required"
 
 
-def _is_retryable_status(status_code: int) -> bool:
-    """429 (rate limit) and any 5xx are transport-only failures worth a retry.
+@dataclass(frozen=True)
+class CallOrigin:
+    """Who asked: the labels one `calls.jsonl` line carries."""
 
-    Any other 4xx is a content or configuration problem — retrying it would
-    just repeat the same mistake, so `_call_with_retries` raises immediately
-    instead (§6, "nothing is retried on content").
-    """
-    return status_code == 429 or status_code >= 500
-
-
-def _looks_like_context_overflow(error_code: str | None, message: str) -> bool:
-    """Best-effort match for a "the prompt is too long" provider error.
-
-    See the module-level note: the wording is unverified until the pilot
-    runs the wall probe against OpenRouter.
-    """
-    if error_code == "context_length_exceeded":
-        return True
-    lowered = message.lower()
-    return any(marker in lowered for marker in _CONTEXT_OVERFLOW_MARKERS)
-
-
-def _redact(text: str, secret: SecretStr | None) -> str:
-    """Replace `secret`'s value with `***` wherever it appears in `text`.
-
-    Guards against a provider that echoes request headers — including
-    `Authorization` — back inside an error body: that value must never reach
-    an exception message, a log line, or `calls.jsonl` (§6).
-    """
-    if secret is None:
-        return text
-    value = secret.get_secret_value()
-    if not value:
-        return text
-    return text.replace(value, "***")
+    run_id: str
+    question_id: str | None
+    strategy: str | None
 
 
 def _prompt_sha256(request: ChatRequest) -> str:
     """Hash of the prompt's messages, recorded on `CallRecord` for traceability."""
     return canonical_hash([message.model_dump(mode="json") for message in request.messages])
-
-
-_StatusErrorOutcome = Literal["overflow", "retry", "fatal"]
-
-
-def _classify_status_error(
-    exc: openai.APIStatusError, secret: SecretStr | None
-) -> tuple[_StatusErrorOutcome, str]:
-    """What `_call_with_retries` should do about one provider status error."""
-    message = _redact(str(exc), secret)
-    if _looks_like_context_overflow(exc.code, message):
-        return "overflow", message
-    if _is_retryable_status(exc.status_code):
-        return "retry", message
-    return "fatal", message
 
 
 class ChatClient:
@@ -164,6 +119,9 @@ class ChatClient:
         self._calls_log_path.parent.mkdir(parents=True, exist_ok=True)
         self._log_lock = threading.Lock()  # appends to calls.jsonl may come from several threads
         self._single_flight = SingleFlight()
+        #: Told about the answer of a call that was abandoned and then came back: the harness
+        #: points this at the spend guard, so money the abandoned call cost is still counted.
+        self.on_late_response: Callable[[ChatResponse], None] | None = None
 
     def __repr__(self) -> str:
         return f"ChatClient(backend={self._backend!r}, base_url={self._sdk_client.base_url!r})"
@@ -225,31 +183,46 @@ class ChatClient:
         run_id: str,
         question_id: str | None = None,
         strategy: str | None = None,
+        timeout_s: float | None = None,
     ) -> ChatResponse:
         """Answer `request`, through the cache, logging one line to `calls.jsonl`.
+
+        Args:
+            request: what to ask.
+            run_id: with `question_id` and `strategy`, labels the `calls.jsonl` line.
+            question_id: see `run_id`.
+            strategy: see `run_id`.
+            timeout_s: wall-clock budget for a live call; `None` waits as long as it takes.
 
         Raises:
             CacheMiss: the cache is in `"replay"` mode, or this client has
                 `allow_network=False`, and nothing is cached for `request`.
             ContextOverflow: the provider reported the prompt exceeded its context window.
             ProviderError: any other provider error, after transport retries were exhausted.
+            RequestTimedOut: the call outlived `timeout_s`, or the cache holds a tombstone
+                of an earlier call that outlived a budget at least this large.
         """
         # one call per prompt at a time: a second thread asking the same thing finds the cache full
         with self._single_flight.hold(cache_key(request)):
-            return self._complete(request, run_id, question_id, strategy)
+            origin = CallOrigin(run_id, question_id, strategy)
+            return self._complete(request, origin, timeout_s)
 
     def _complete(
-        self, request: ChatRequest, run_id: str, question_id: str | None, strategy: str | None
+        self,
+        request: ChatRequest,
+        origin: CallOrigin,
+        timeout_s: float | None,
     ) -> ChatResponse:
         cached = self._cache.get(request)  # raises CacheMiss itself in "replay" mode
+        if cached is not None and cached.finish_reason == TIMEOUT_FINISH_REASON:
+            self._raise_if_tombstone_applies(cached, timeout_s, request, origin)
+            cached = None  # a tombstone of a smaller budget: this call may try again
         if cached is not None:
             # The stored value's own `from_cache` is whatever it was when
             # first written (False, for an original live call); it is this
             # retrieval, not the write, that makes the flag true.
             response = cached.model_copy(update={"from_cache": True})
-            self._log_call(
-                request, run_id, question_id, strategy, response=response, error_kind=None
-            )
+            self._log_call(request, origin, response=response, error_kind=None)
             return response
         if not self._allow_network:
             raise CacheMiss(
@@ -258,20 +231,84 @@ class ChatClient:
                 "explicit --allow-paid-calls approval (qa-system.md §6)"
             )
         try:
-            response = self._call_with_retries(request)
+            response = self._live_call(request, origin, timeout_s)
         except ContextOverflow:
-            self._log_call(
-                request, run_id, question_id, strategy, response=None, error_kind="context_overflow"
-            )
+            self._log_call(request, origin, response=None, error_kind="context_overflow")
             raise
         except ProviderError:
-            self._log_call(
-                request, run_id, question_id, strategy, response=None, error_kind="provider_error"
-            )
+            self._log_call(request, origin, response=None, error_kind="provider_error")
             raise
         self._cache.put(request, response)
-        self._log_call(request, run_id, question_id, strategy, response=response, error_kind=None)
+        self._log_call(request, origin, response=response, error_kind=None)
         return response
+
+    def _raise_if_tombstone_applies(
+        self,
+        tombstone: ChatResponse,
+        timeout_s: float | None,
+        request: ChatRequest,
+        origin: CallOrigin,
+    ) -> None:
+        """Replay an earlier timeout if it ran for at least as long as this call may."""
+        if timeout_s is None or tombstone.latency_s < timeout_s:
+            return
+        self._log_call(request, origin, response=None, error_kind="timeout")
+        raise RequestTimedOut(
+            f"cached tombstone: this request already outlived {tombstone.latency_s:g} s",
+            tombstone.latency_s,
+        )
+
+    def _live_call(
+        self,
+        request: ChatRequest,
+        origin: CallOrigin,
+        timeout_s: float | None,
+    ) -> ChatResponse:
+        if timeout_s is None:
+            return self._call_with_retries(request)
+        future = start_daemon_call(lambda: self._call_with_retries(request))
+        done, _ = wait([future], timeout=timeout_s)
+        if done:
+            return future.result()  # re-raises the call's own ContextOverflow / ProviderError
+        self._abandon(future, request, origin, timeout_s)
+        raise RequestTimedOut(f"no reply within {timeout_s:g} s; call abandoned", timeout_s)
+
+    def _abandon(
+        self,
+        future: Future[ChatResponse],
+        request: ChatRequest,
+        origin: CallOrigin,
+        timeout_s: float,
+    ) -> None:
+        """Leave the call running; cache a tombstone so a replay times out identically."""
+        self._cache.put(request, tombstone_response(timeout_s))
+        self._log_call(request, origin, response=None, error_kind="timeout")
+
+        def on_finished(finished: Future[ChatResponse]) -> None:
+            self._handle_late_result(finished, request, origin)
+
+        future.add_done_callback(on_finished)
+
+    def _handle_late_result(
+        self,
+        future: Future[ChatResponse],
+        request: ChatRequest,
+        origin: CallOrigin,
+    ) -> None:
+        """An abandoned call finished: log and charge its answer, but do not cache it."""
+        error = future.exception()
+        if error is not None:
+            logger.warning("Abandoned %s call ended in an error: %s", request.purpose, error)
+            return
+        response = future.result()
+        self._log_call(
+            request,
+            origin,
+            response=response,
+            error_kind="late_after_timeout",
+        )
+        if self.on_late_response is not None:
+            self.on_late_response(response)
 
     def _call_with_retries(self, request: ChatRequest) -> ChatResponse:
         """Retry only on a transport-level failure (429 or 5xx); never on a content error."""
@@ -280,14 +317,14 @@ class ChatClient:
             try:
                 return self._call_once(request)
             except openai.APIStatusError as exc:
-                outcome, message = _classify_status_error(exc, self._api_key)
+                outcome, message = classify_status_error(exc, self._api_key)
                 if outcome == "overflow":
                     raise ContextOverflow(message) from exc
                 if outcome == "fatal" or attempt >= self._max_retries:
                     raise ProviderError(message) from exc
             except openai.APIConnectionError as exc:
                 if attempt >= self._max_retries:
-                    raise ProviderError(_redact(str(exc), self._api_key)) from exc
+                    raise ProviderError(redact(str(exc), self._api_key)) from exc
             attempt += 1
             self._wait_before_retry(request.purpose, attempt)
 
@@ -304,7 +341,7 @@ class ChatClient:
             time.sleep(backoff)
 
     def _call_once(self, request: ChatRequest) -> ChatResponse:
-        kwargs = self._build_request_kwargs(request)
+        kwargs = build_request_kwargs(request)
         started = time.monotonic()
         completion = self._sdk_client.chat.completions.create(**kwargs)
         latency_s = time.monotonic() - started
@@ -330,45 +367,18 @@ class ChatClient:
             created_at=datetime.now(UTC),
         )
 
-    def _build_request_kwargs(self, request: ChatRequest) -> dict[str, Any]:
-        pin = request.pin
-        extra_body: dict[str, Any] = dict(pin.extra)
-        if pin.backend == "openrouter":
-            # require_parameters: a host that would silently ignore temperature
-            # or seed is excluded from routing instead of chosen anyway (§6).
-            extra_body["require_parameters"] = True
-            if pin.route_provider is not None:
-                # allow_fallbacks=False: one model id must not be served by a
-                # different host than the one pinned, run to run (§4).
-                extra_body["provider"] = {"order": [pin.route_provider], "allow_fallbacks": False}
-        kwargs: dict[str, Any] = {
-            "model": pin.model_id,
-            "messages": [message.model_dump() for message in request.messages],
-            "max_tokens": pin.max_output_tokens,
-            "extra_body": extra_body,
-        }
-        if pin.temperature is not None:
-            kwargs["temperature"] = pin.temperature
-        if pin.seed is not None:
-            kwargs["seed"] = pin.seed
-        if request.json_mode:
-            kwargs["response_format"] = {"type": "json_object"}
-        return kwargs
-
     def _log_call(
         self,
         request: ChatRequest,
-        run_id: str,
-        question_id: str | None,
-        strategy: str | None,
+        origin: CallOrigin,
         *,
         response: ChatResponse | None,
-        error_kind: Literal["context_overflow", "provider_error"] | None,
+        error_kind: CallErrorKind | None,
     ) -> None:
         record = CallRecord(
-            run_id=run_id,
-            question_id=question_id,
-            strategy=strategy,
+            run_id=origin.run_id,
+            question_id=origin.question_id,
+            strategy=origin.strategy,
             purpose=request.purpose,
             cache_key=cache_key(request),
             pin_hash=request.pin.pin_hash(),
