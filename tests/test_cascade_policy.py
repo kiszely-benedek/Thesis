@@ -311,12 +311,14 @@ def test_policy_files_load_with_the_pins_the_note_names() -> None:
         "need-mimo": _pin_hash("xiaomi/mimo-v2.6-pro", 16384, {}),
         "need-low": _pin_hash(GLM, 16384, LOW),
         "need-default-64k": _pin_hash(GLM, 65536, {}),
+        "agent-low-steps": _pin_hash(GLM, 16384, {}),
     }
 
     assert set(policies) == {
         "always_n", "always_c", "cascade_v1", "cascade_v1_iso", "label_router_dev",
         "cascade_v1_t3_mimo", "cascade_v1_t3_glmlow", "cascade_v1_t3_glm64k",
         "n_first_v1_t3_mimo", "n_first_v1_t3_glmlow", "n_first_v1_t3_glm64k",
+        "always_g", "cascade_v2", "cascade_v2_iso",
     }  # fmt: skip
     for loaded in policies.values():
         for tier in loaded.tiers:

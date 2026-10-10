@@ -7,9 +7,11 @@ the join reuses it; the classifier is run here only for a question no run labell
 
 from __future__ import annotations
 
-from collections.abc import Callable
+from collections.abc import Callable, Iterable
+from pathlib import Path
 
 from plantgraph.qa.anchors import Anchors
+from plantgraph.qa.harness.run_dir import RunDir
 from plantgraph.qa.models import QuestionResult
 from plantgraph.qa.need.classifiers import build_need_input
 from plantgraph.qa.need.labels import NeedLabel
@@ -32,3 +34,18 @@ def label_from_trace(row: QuestionResult) -> NeedLabel | None:
         return None
     value = retrieval.get("need_label")
     return NeedLabel(value) if isinstance(value, str) else None
+
+
+def labels_from_run_dirs(run_dirs: Iterable[Path]) -> dict[str, NeedLabel]:
+    """Every trace label found in these runs' rows, whatever tier they belong to.
+
+    A policy whose own tiers record no label (the agent tier) can still route by the label a
+    need-aware run of the same questions wrote; the first run to label a question wins.
+    """
+    labels: dict[str, NeedLabel] = {}
+    for run_dir in run_dirs:
+        for row in RunDir(run_dir).read_rows():
+            label = label_from_trace(row)
+            if label is not None:
+                labels.setdefault(row.question_id, label)
+    return labels

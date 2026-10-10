@@ -90,6 +90,52 @@ class NotEvaluated(BaseModel):
     gaps: dict[str, int] = Field(default_factory=dict)
 
 
+class AgentDiagnostics(BaseModel):
+    """What the agent tier did on the questions a policy sent to it (report-only, reads gold)."""
+
+    model_config = ConfigDict(frozen=True)
+
+    tier: str
+    n_tried: int
+    #: Why each tried question's loop ended (`done`, `deadline`, ...; `timed_out` = the row
+    #: was cut off and keeps no stop reason).
+    stop_reasons: dict[str, int]
+    #: Answered with no tool call at all (total = such answers, correct = the right ones).
+    answered_without_tool_call: Cell
+    #: Answered although the agent never touched a plant item (no `touched_keys` in any step).
+    answered_touching_no_item: Cell
+
+
+class PolicyDiagnostics(BaseModel):
+    """Free diagnostics of one policy (arXiv 2609.05880), computed from the stored rows."""
+
+    model_config = ConfigDict(frozen=True)
+
+    policy: str
+    #: BOOLEAN questions whose gold is "no": total, and how many the policy answered "yes".
+    boolean_no_questions: int
+    boolean_no_answered_yes: int
+    agent: AgentDiagnostics | None = None
+
+
+class LateChargeCheck(BaseModel):
+    """The abandoned-call cost estimate against the late charges the run logged."""
+
+    model_config = ConfigDict(frozen=True)
+
+    run_id: str
+    strategy: str
+    #: Calls abandoned at their timeout, summed over the strategy's rows.
+    n_abandoned_in_rows: int
+    #: `calls.jsonl` lines with `error_kind="timeout"` / `"late_after_timeout"` for the strategy.
+    n_timeouts_logged: int
+    n_late_logged: int
+    #: Billed cost of the late answers that did arrive; the other abandoned calls are unknown.
+    late_cost_logged_usd: float
+    #: What the cascade charges instead: abandoned calls times the per-call upper bound.
+    estimate_usd: float
+
+
 class CorpusReport(BaseModel):
     """Everything the report says about one corpus."""
 
@@ -101,6 +147,8 @@ class CorpusReport(BaseModel):
     not_evaluated: list[NotEvaluated]
     #: dimension ("need label", "family", "k bin") -> group -> policy -> cell.
     breakdowns: dict[str, dict[str, dict[str, Cell]]]
+    diagnostics: list[PolicyDiagnostics] = Field(default_factory=list)
+    late_charges: list[LateChargeCheck] = Field(default_factory=list)
 
 
 class Tier3Tally(BaseModel):

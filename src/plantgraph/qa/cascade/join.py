@@ -7,6 +7,7 @@ reaches a tier with no row is reported with the harness command that would produ
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -60,10 +61,12 @@ def join_corpus(
     corpus_id: str,
     questions_root: Path,
     find_anchors: AnchorFinder | None = None,
+    known_labels: Mapping[str, NeedLabel] | None = None,
 ) -> JoinedCorpus:
     """Load every tier of `policy`, check it against the first tier, and build the signals.
 
     A tier without an entry in `sources` has no rows yet; its questions show up as gaps.
+    `known_labels` fills in labels the policy's own runs do not carry (see `labels.py`).
 
     Raises:
         JoinRefused: the first tier has no run, or any run differs from it.
@@ -81,7 +84,7 @@ def join_corpus(
     ]
     if problems:
         raise JoinRefused("refusing to join:\n  " + "\n  ".join(problems))
-    labels = _resolve_labels(runs, questions, find_anchors)
+    labels = _resolve_labels(runs, questions, find_anchors, known_labels or {})
     signals = {
         name: {
             qid: extract_signals(
@@ -119,14 +122,17 @@ def _resolve_labels(
     runs: dict[str, LoadedRun],
     questions: list[Question],
     find_anchors: AnchorFinder | None,
+    known_labels: Mapping[str, NeedLabel],
 ) -> dict[str, NeedLabel]:
-    """One label per question: from any run's trace, else the rules classifier, else none."""
+    """One label per question: from a run's trace, else a known label, else the classifier."""
     labels: dict[str, NeedLabel] = {}
     for run in runs.values():
         for qid, row in run.rows.items():
             label = label_from_trace(row)
             if label is not None:
                 labels.setdefault(qid, label)
+    for qid, label in known_labels.items():
+        labels.setdefault(qid, label)
     if find_anchors is None:
         return labels
     for question in questions:

@@ -14,6 +14,7 @@ from plantgraph.qa.cascade.report_models import (
     Tier3Tally,
     Verdict,
 )
+from plantgraph.qa.cascade.report_render_diagnostics import diagnostics_lines
 from plantgraph.qa.cascade.stats import PairedDifference
 
 
@@ -187,6 +188,7 @@ def _corpus_lines(corpus: CorpusReport, bound: LatencyBound) -> list[str]:
             for p in corpus.not_evaluated
         ]
         lines.append("")
+    lines += diagnostics_lines(corpus.diagnostics, corpus.late_charges)
     lines += ["### Breakdowns (correct / questions)", ""]
     for dimension in corpus.breakdowns:
         lines += _breakdown_lines(corpus, dimension)
@@ -198,7 +200,7 @@ def _first_line(text: str) -> str:
 
 
 def _verdict_lines(verdicts: Sequence[Verdict]) -> list[str]:
-    lines = ["## Pre-registered rules S1-S3", ""]
+    lines = ["## Pre-registered rules (S1-S3: cascade v1 record; V2-V3: cascade v2)", ""]
     for verdict in verdicts:
         lines.append(f"- **{verdict.rule}: {verdict.status}** - {verdict.headline}")
         lines += [f"  - {detail}" for detail in verdict.details]

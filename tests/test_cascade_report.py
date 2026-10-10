@@ -207,7 +207,8 @@ def test_toy_report_summarises_each_policy(tmp_path: Path) -> None:
     assert toy.oracle is not None
     assert toy.random is not None
     assert by_name["always_n"].vs_always_n is None
-    assert corpus.not_evaluated == []
+    # the shipped always_g baseline has no agent-tier run in the toy data
+    assert [p.policy for p in corpus.not_evaluated] == ["always_g"]
 
 
 def test_breakdowns_cover_every_question_once(tmp_path: Path) -> None:

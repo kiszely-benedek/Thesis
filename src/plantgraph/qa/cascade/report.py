@@ -1,4 +1,4 @@
-"""Build the cascade report: every policy on every corpus, its references, and S1-S3.
+"""Build the cascade report: every policy on every corpus, its references, S1-S3 and V2-V3.
 
 Per corpus each policy is joined, checked for gaps and scored against gold. A policy whose
 join is refused or incomplete is listed with the reason instead of being evaluated: a table
@@ -11,6 +11,7 @@ from collections.abc import Mapping, Sequence
 from pathlib import Path
 
 from plantgraph.qa.cascade.checks import load_questions_file
+from plantgraph.qa.cascade.diagnostics import policy_diagnostics
 from plantgraph.qa.cascade.evaluate import (
     Evaluation,
     LatencyBound,
@@ -21,6 +22,8 @@ from plantgraph.qa.cascade.evaluate import (
 )
 from plantgraph.qa.cascade.gaps import IncompleteJoinError
 from plantgraph.qa.cascade.join import JoinedCorpus, TierSource, join_corpus, require_complete
+from plantgraph.qa.cascade.labels import labels_from_run_dirs
+from plantgraph.qa.cascade.late_charges import late_charge_check
 from plantgraph.qa.cascade.models import CascadePolicy
 from plantgraph.qa.cascade.policy import POLICIES_DIR, load_policies
 from plantgraph.qa.cascade.references import evaluate_oracle, random_escalation
@@ -28,6 +31,7 @@ from plantgraph.qa.cascade.report_groups import breakdown, question_groups
 from plantgraph.qa.cascade.report_models import (
     AcceptanceResult,
     CorpusReport,
+    LateChargeCheck,
     NotEvaluated,
     PolicyResult,
     RandomSummary,
@@ -47,11 +51,17 @@ from plantgraph.qa.cascade.report_verdicts import (
     select_tier3,
     tally_tier3,
 )
+from plantgraph.qa.cascade.report_verdicts_v2 import (
+    CONFIRM_CORPUS_V3,
+    SELECT_CORPUS,
+    confirm_on_scale,
+    select_on_dev,
+)
 from plantgraph.qa.models import Question
 
 ALWAYS_N = "always_n"
 #: The always-one-tier baselines are part of every report, whatever `--policy` selects.
-BASELINES = (ALWAYS_N, "always_c")
+BASELINES = (ALWAYS_N, "always_c", "always_g")
 
 #: corpus id -> tier name -> where that tier's stored run lives.
 SourcesByCorpus = Mapping[str, Mapping[str, TierSource]]
@@ -132,9 +142,13 @@ def _evaluate_all(
     joins: dict[str, JoinedCorpus] = {}
     evaluations: dict[str, Evaluation] = {}
     problems: list[NotEvaluated] = []
+    # a policy whose tiers record no need label (Cypher, agent) can borrow one from any stored run
+    known_labels = labels_from_run_dirs(s.run_dir for s in sources.values())
     for policy in policies:
         try:
-            joined = join_corpus(policy, dict(sources), corpus_id, questions_root)
+            joined = join_corpus(
+                policy, dict(sources), corpus_id, questions_root, known_labels=known_labels
+            )
             joins[policy.name] = joined
             require_complete(joined)
             evaluations[policy.name] = evaluate_policy(joined, cutoff_s)
@@ -146,6 +160,20 @@ def _evaluate_all(
     return joins, evaluations, problems
 
 
+def _late_charges(
+    joins: Mapping[str, JoinedCorpus], sources: Mapping[str, TierSource]
+) -> list[LateChargeCheck]:
+    """One check per (run, strategy) that some policy of this corpus reads and that timed out."""
+    pairs = {
+        (sources[tier.name].run_dir, tier.strategy)
+        for joined in joins.values()
+        for tier in joined.policy.tiers
+        if tier.name in sources
+    }
+    checks = [late_charge_check(run_dir, strategy) for run_dir, strategy in sorted(pairs)]
+    return [check for check in checks if check is not None]
+
+
 def _corpus_report(
     corpus_id: str,
     questions: list[Question],
@@ -153,12 +181,14 @@ def _corpus_report(
     evaluations: Mapping[str, Evaluation],
     problems: list[NotEvaluated],
     bound: LatencyBound,
+    sources: Mapping[str, TierSource],
 ) -> CorpusReport:
     always_n = evaluations.get(ALWAYS_N)
     results = [_policy_result(joins[name], ev, always_n, bound) for name, ev in evaluations.items()]
     # Each join takes need labels from its own runs' traces; the union covers every question.
     labels = {qid: lab for joined in joins.values() for qid, lab in joined.need_labels.items()}
     by_dimension = question_groups(questions, labels)
+    by_id = {q.question_id: q for q in questions}
     return CorpusReport(
         corpus_id=corpus_id,
         n_questions=len(questions),
@@ -168,6 +198,10 @@ def _corpus_report(
             dimension: breakdown(evaluations, group_of, dimension)
             for dimension, group_of in by_dimension.items()
         },
+        diagnostics=[
+            policy_diagnostics(joins[name], ev, by_id) for name, ev in evaluations.items()
+        ],
+        late_charges=_late_charges(joins, sources),
     )
 
 
@@ -211,6 +245,14 @@ def _confirmation_verdicts(corpora: Sequence[CorpusReport]) -> list[Verdict]:
     return verdicts
 
 
+def _scale_verdicts(corpora: Sequence[CorpusReport], bound: LatencyBound) -> list[Verdict]:
+    """V2 on D100 and V3 on D1000, from the policy summaries (INCOMPLETE if a corpus is absent)."""
+    by_corpus = {c.corpus_id: {r.summary.policy: r.summary for r in c.policies} for c in corpora}
+    selection = select_on_dev(by_corpus.get(SELECT_CORPUS, {}), bound)
+    confirmation = confirm_on_scale(selection.chosen, by_corpus.get(CONFIRM_CORPUS_V3, {}), bound)
+    return [selection.verdict, confirmation.verdict]
+
+
 def _with_baselines(policies: Sequence[CascadePolicy] | None) -> list[CascadePolicy]:
     available = load_policies(POLICIES_DIR)
     chosen = {p.name: p for p in (available.values() if policies is None else policies)}
@@ -240,8 +282,17 @@ def build_report(
             corpus_id, chosen, sources.get(corpus_id, {}), questions_root, bound.cutoff_s
         )
         all_joins[corpus_id] = joins
-        reports.append(_corpus_report(corpus_id, questions, joins, evaluations, problems, bound))
+        reports.append(
+            _corpus_report(
+                corpus_id,
+                questions,
+                joins,
+                evaluations,
+                problems,
+                bound,
+                sources.get(corpus_id, {}),
+            )
+        )
     s1, tallies = _tier3_verdict(all_joins)
-    return Report(
-        bound=bound, corpora=reports, tier3=tallies, verdicts=[s1, *_confirmation_verdicts(reports)]
-    )
+    verdicts = [s1, *_confirmation_verdicts(reports), *_scale_verdicts(reports, bound)]
+    return Report(bound=bound, corpora=reports, tier3=tallies, verdicts=verdicts)
