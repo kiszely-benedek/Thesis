@@ -39,7 +39,7 @@ def build_infra_report(inputs: ReportInputs) -> InfraReport:
         machine_summary=_machine_summary(inputs),
         git_commit=first.git_commit if first else "unknown",
         git_dirty=first.git_dirty if first else False,
-        checks=_with_old_run_notice(checks, compute),
+        checks=_with_db_replay_notice(_with_old_run_notice(checks, compute), compute),
         footprints=footprints,
         compute=compute,
         growth=growth_rows(footprints, compute),
@@ -75,6 +75,26 @@ def _with_old_run_notice(
             "timings are shown instead: "
             + ", ".join(old)
             + " (coarse monotonic clock, concurrency 4, no split)"
+        ),
+    )
+    return [*checks, notice]
+
+
+def _with_db_replay_notice(
+    checks: list[SelfCheck], compute: list[StrategyComputeRow]
+) -> list[SelfCheck]:
+    partial = [f"{row.role} on {row.corpus_id}" for row in compute if row.basis == "db_replay"]
+    if not partial:
+        return checks
+    notice = SelfCheck(
+        name="Database-only rows",
+        status="flag",
+        detail=(
+            "local compute of these rows is database time only (the stored query run again plus "
+            "the row formatting; no query-writing model call, no answer-prompt build, no answer "
+            "parsing): "
+            + ", ".join(partial)
+            + ". The model latency and token cost in the same row come from the source run."
         ),
     )
     return [*checks, notice]

@@ -16,8 +16,9 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Literal, cast, get_args
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
+from plantgraph.infra.cypher_replay import REPLAY_META_FILE, CypherReplayMeta
 from plantgraph.infra.environment import RunEnvironment
 from plantgraph.infra.probe_models import MemoryProbe, StartupProbe
 from plantgraph.infra.report_models import ReferencePrice, RowBasis
@@ -184,6 +185,9 @@ class ReportRequest(BaseModel):
     #: Role -> original run name template, used only if the role's replay is not usable.
     old_run_templates: dict[str, str]
     old_runs_root: Path
+    #: Role -> name template of a database-only replay (`infra-cypher-replay`); it takes the
+    #: place of the role's full replay and old run.
+    db_replay_templates: dict[str, str] = Field(default_factory=dict)
     price_json: Path | None
 
 
@@ -198,6 +202,10 @@ def load_report_inputs(request: ReportRequest) -> ReportInputs:
         for corpus in request.corpora
     ]
     runs = [
+        _load_db_replay(request, role, template, corpus)
+        for corpus in request.compute_corpora
+        for role, template in request.db_replay_templates.items()
+    ] + [
         _load_role_run(request, role, template, corpus)
         for corpus in request.compute_corpora
         for role, template in request.replay_templates.items()
@@ -222,3 +230,49 @@ def _load_role_run(request: ReportRequest, role: str, template: str, corpus: str
 
 def _load_old_run(request: ReportRequest, role: str, template: str, corpus: str) -> RunData:
     return load_run_data(request.old_runs_root, template.format(c=corpus), role, corpus, "old_run")
+
+
+def _load_db_replay(request: ReportRequest, role: str, template: str, corpus: str) -> RunData:
+    return load_db_replay_data(
+        request.runs_root, template.format(c=corpus), request.old_runs_root, role, corpus
+    )
+
+
+def load_db_replay_data(
+    runs_root: Path, run_name: str, source_runs_root: Path, role: str, corpus_id: str
+) -> RunData:
+    """Read a database-only replay: its timings, and cost and model latency from its source run.
+
+    Raises:
+        FileNotFoundError: the replay folder has no `db_replay.json`.
+        ValueError: the replay does not time exactly the source run's questions.
+    """
+    folder = runs_root / run_name
+    meta_path = folder / REPLAY_META_FILE
+    if not meta_path.is_file():
+        raise FileNotFoundError(
+            f"expected {meta_path} (written by infra-cypher-replay), found none"
+        )
+    meta = CypherReplayMeta.model_validate_json(meta_path.read_text(encoding="utf-8"))
+    source_rows = RunDir(source_runs_root / meta.source_run).read_rows()
+    timings = _read_jsonl(folder / "timings.jsonl", TimingRow)
+    if [t.question_id for t in timings] != [r.question_id for r in source_rows]:
+        raise ValueError(
+            f"expected {run_name} to time the {len(source_rows)} questions of {meta.source_run} "
+            f"in order, found {len(timings)} timing rows that differ"
+        )
+    costs = [row.total_cost_usd for row in source_rows]
+    return RunData(
+        role=role,
+        corpus_id=corpus_id,
+        run_id=run_name,
+        basis="db_replay",
+        strategy=meta.strategy,
+        replay_status=None,
+        allow_paid_calls=False,  # no model is called
+        timings=timings,
+        environments=_read_jsonl(folder / "environment.jsonl", RunEnvironment),
+        answers_cost_usd=sum(cost for cost in costs if cost is not None),
+        n_cost_missing=sum(cost is None for cost in costs),
+        llm_latency_s=sum(row.total_llm_latency_s for row in source_rows),
+    )

@@ -37,6 +37,13 @@ def add_report_arguments(command: argparse.ArgumentParser) -> None:
         metavar="ROLE=NAME_TEMPLATE",
         help="the original run, shown instead when the role's replay is missing or differs",
     )
+    command.add_argument(
+        "--db-replay",
+        action="append",
+        default=[],
+        metavar="ROLE=NAME_TEMPLATE",
+        help="a database-only replay (infra-cypher-replay) used for the role instead of --run",
+    )
     command.add_argument("--old-runs-root", type=Path, default=Path("data/runs/cv1/runs"))
     command.add_argument(
         "--price-json", type=Path, help="hand-filled reference price; absent file: no money table"
@@ -65,6 +72,7 @@ def report_command(args: argparse.Namespace) -> None:
         replay_templates=_role_templates(args.run),
         old_run_templates=_role_templates(args.old_run),
         old_runs_root=args.old_runs_root,
+        db_replay_templates=_role_templates(args.db_replay),
         price_json=args.price_json,
     )
     report = build_infra_report(load_report_inputs(request))
