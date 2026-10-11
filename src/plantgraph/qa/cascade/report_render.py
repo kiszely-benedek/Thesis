@@ -15,14 +15,10 @@ from plantgraph.qa.cascade.report_models import (
     Verdict,
 )
 from plantgraph.qa.cascade.report_render_diagnostics import diagnostics_lines
+from plantgraph.qa.cascade.report_sealed_models import SealedClaimsReport
+from plantgraph.qa.cascade.report_sealed_render import sealed_lines
+from plantgraph.qa.cascade.report_table import table
 from plantgraph.qa.cascade.stats import PairedDifference
-
-
-def _table(header: Sequence[str], rows: Sequence[Sequence[str]]) -> list[str]:
-    """A Markdown table as lines."""
-    lines = ["| " + " | ".join(header) + " |", "|" + "|".join("---" for _ in header) + "|"]
-    lines += ["| " + " | ".join(r) + " |" for r in rows]
-    return lines + [""]
 
 
 def _shares(summary: Summary) -> str:
@@ -94,7 +90,7 @@ def _latency_lines(corpus: CorpusReport, bound: LatencyBound) -> list[str]:
         f"median <= {bound.median_max_s:g} s",
         f"p90 <= {bound.p90_max_s:g} s",
     ]
-    return ["### Latency bound", "", *_table(header, rows)]
+    return ["### Latency bound", "", *table(header, rows)]
 
 
 def _comparison_rows(results: Sequence[PolicyResult], versus: str) -> list[list[str]]:
@@ -142,14 +138,14 @@ def _breakdown_lines(corpus: CorpusReport, dimension: str) -> list[str]:
     groups = corpus.breakdowns[dimension]
     policies = [r.summary.policy for r in corpus.policies]
     rows = [[group, *[_cell(cells.get(p)) for p in policies]] for group, cells in groups.items()]
-    return [f"#### By {dimension}", "", *_table(["group", *policies], rows)]
+    return [f"#### By {dimension}", "", *table(["group", *policies], rows)]
 
 
 def _cell(cell: Cell | None) -> str:
     return f"{cell.correct}/{cell.total}" if cell else "-"
 
 
-def _corpus_lines(corpus: CorpusReport, bound: LatencyBound) -> list[str]:
+def _corpus_lines(corpus: CorpusReport, bound: LatencyBound, versus_always_n: bool) -> list[str]:
     lines = [f"## Corpus {corpus.corpus_id} ({corpus.n_questions} questions)", ""]
     lines += ["### Policies", ""]
     header = [
@@ -163,11 +159,18 @@ def _corpus_lines(corpus: CorpusReport, bound: LatencyBound) -> list[str]:
         "tier-1 accept precision",
         "tier-1 accept recall",
     ]
-    lines += _table(header, _policy_rows(corpus))
+    lines += table(header, _policy_rows(corpus))
     lines += _latency_lines(corpus, bound)
-    lines += ["### Paired bootstrap vs always_n (policy minus always_n, mean [95% CI])", ""]
-    header = ["policy", "accuracy", f"acc@{bound.cutoff_s:g}", "$/question", "latency s/question"]
-    lines += _table(header, _comparison_rows(corpus.policies, "always_n"))
+    if versus_always_n:  # always_n is not run in the sealed test, so its table would be empty
+        lines += ["### Paired bootstrap vs always_n (policy minus always_n, mean [95% CI])", ""]
+        header = [
+            "policy",
+            "accuracy",
+            f"acc@{bound.cutoff_s:g}",
+            "$/question",
+            "latency s/question",
+        ]
+        lines += table(header, _comparison_rows(corpus.policies, "always_n"))
     lines += ["### References (never deployable)", ""]
     header = [
         "policy",
@@ -175,12 +178,12 @@ def _corpus_lines(corpus: CorpusReport, bound: LatencyBound) -> list[str]:
         "oracle cascade",
         "random escalation, same share",
     ]
-    lines += _table(header, _reference_rows(corpus.policies))
+    lines += table(header, _reference_rows(corpus.policies))
     skipped = [p for p in corpus.policies if p.references_skipped]
     lines += [f"- {p.summary.policy}: no references - {p.references_skipped}" for p in skipped]
     lines += ["", "### Paired bootstrap vs random escalation", ""]
     header = ["policy", "accuracy", f"acc@{bound.cutoff_s:g}", "$/question", "latency s/question"]
-    lines += _table(header, _comparison_rows(corpus.policies, "random"))
+    lines += table(header, _comparison_rows(corpus.policies, "random"))
     if corpus.not_evaluated:
         lines += ["### Not evaluated", ""]
         lines += [
@@ -227,7 +230,7 @@ def _tier3_lines(tallies: Sequence[Tier3Tally]) -> list[str]:
         "cost $",
         "mean latency s",
     ]
-    return ["## Tier-3 candidates on the dev runaways (S1)", "", *_table(header, rows)]
+    return ["## Tier-3 candidates on the dev runaways (S1)", "", *table(header, rows)]
 
 
 def _bound_lines(bound: LatencyBound) -> list[str]:
@@ -246,10 +249,15 @@ def render_markdown(report: Report) -> str:
     """The whole report as one Markdown document."""
     lines = ["# Method-and-effort cascade report", ""]
     lines += _bound_lines(report.bound)
-    lines += _verdict_lines(report.verdicts)
-    lines += _tier3_lines(report.tier3)
+    if isinstance(report, SealedClaimsReport):
+        lines += sealed_lines(report.sealed, report.bound)
+    else:
+        lines += _verdict_lines(report.verdicts)
+        lines += _tier3_lines(report.tier3)
     for corpus in report.corpora:
-        lines += _corpus_lines(corpus, report.bound)
+        lines += _corpus_lines(
+            corpus, report.bound, versus_always_n=not isinstance(report, SealedClaimsReport)
+        )
     return "\n".join(lines).rstrip() + "\n"
 
 

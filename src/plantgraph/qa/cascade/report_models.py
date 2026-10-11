@@ -50,12 +50,15 @@ class RandomSummary(BaseModel):
 
 
 class Verdict(BaseModel):
-    """One pre-registered rule's outcome. SELECTED is S1's pass: it picks, it does not pass."""
+    """One pre-registered rule's outcome. SELECTED is S1's pass: it picks, it does not pass.
+
+    NOT_RUN marks a claim whose arms were dropped before the test (reported, never judged).
+    """
 
     model_config = ConfigDict(frozen=True)
 
     rule: str
-    status: Literal["PASS", "FAIL", "SELECTED", "INCOMPLETE"]
+    status: Literal["PASS", "FAIL", "SELECTED", "INCOMPLETE", "NOT_RUN"]
     headline: str
     details: list[str] = Field(default_factory=list)
 

@@ -334,7 +334,7 @@ def test_policy_files_load_with_the_pins_the_note_names() -> None:
         "cascade_v1_t3_mimo", "cascade_v1_t3_glmlow", "cascade_v1_t3_glm64k",
         "n_first_v1_t3_mimo", "n_first_v1_t3_glmlow", "n_first_v1_t3_glm64k",
         "always_g", "cascade_v2", "cascade_v2_iso",
-        "cascade_v3", "cascade_v3_iso", "cascade_v3_mixed", "always_g_luna",
+        "cascade_v3", "cascade_v3_iso", "cascade_v3_mixed", "always_g_luna", "always_c_luna",
     }  # fmt: skip
     for loaded in policies.values():
         for tier in loaded.tiers:

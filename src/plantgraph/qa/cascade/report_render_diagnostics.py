@@ -10,15 +10,11 @@ from plantgraph.qa.cascade.report_models import (
     LateChargeCheck,
     PolicyDiagnostics,
 )
+from plantgraph.qa.cascade.report_table import table
 
 #: Display order of the agent loop's stop reasons; any other key follows alphabetically.
 STOP_REASON_ORDER = ("done", "deadline", "runaway", "prompt_budget", "errors", "max_steps")
 STOP_REASON_EXTRAS = ("overflow", "timed_out", "unrecorded")
-
-
-def _table(header: Sequence[str], rows: Sequence[Sequence[str]]) -> list[str]:
-    lines = ["| " + " | ".join(header) + " |", "|" + "|".join("---" for _ in header) + "|"]
-    return lines + ["| " + " | ".join(r) + " |" for r in rows] + [""]
 
 
 def _cell(cell: Cell) -> str:
@@ -39,13 +35,13 @@ def _agent_lines(diagnostics: Sequence[PolicyDiagnostics]) -> list[str]:
         return []
     keys = [*STOP_REASON_ORDER, *STOP_REASON_EXTRAS]
     lines = ["### Agent tier: stop reasons", ""]
-    lines += _table(["policy", "tier", "questions tried", *keys], _stop_reason_rows(agents))
+    lines += table(["policy", "tier", "questions tried", *keys], _stop_reason_rows(agents))
     rows = [
         [policy, _cell(a.answered_without_tool_call), _cell(a.answered_touching_no_item)]
         for policy, a in agents
     ]
     lines += ["### Agent tier: answers without evidence gathered", ""]
-    return lines + _table(["policy", "no tool call", "no plant item touched"], rows)
+    return lines + table(["policy", "no tool call", "no plant item touched"], rows)
 
 
 def _named_tag_lines(diagnostics: Sequence[PolicyDiagnostics]) -> list[str]:
@@ -57,7 +53,7 @@ def _named_tag_lines(diagnostics: Sequence[PolicyDiagnostics]) -> list[str]:
     if not rows:
         return []
     lines = ["### Agent tier: a tag named in the question was never touched", ""]
-    return lines + _table(["policy", "questions naming a tag", "never touched"], rows)
+    return lines + table(["policy", "questions naming a tag", "never touched"], rows)
 
 
 def _isolation_lines(diagnostics: Sequence[PolicyDiagnostics]) -> list[str]:
@@ -80,7 +76,7 @@ def _isolation_lines(diagnostics: Sequence[PolicyDiagnostics]) -> list[str]:
         "Secondary reference = gold minus control valves.",
         "",
     ]
-    return lines + _table(["policy", "primary correct", "secondary correct"], rows)
+    return lines + table(["policy", "primary correct", "secondary correct"], rows)
 
 
 def _boolean_lines(diagnostics: Sequence[PolicyDiagnostics]) -> list[str]:
@@ -88,7 +84,7 @@ def _boolean_lines(diagnostics: Sequence[PolicyDiagnostics]) -> list[str]:
         [d.policy, str(d.boolean_no_questions), str(d.boolean_no_answered_yes)] for d in diagnostics
     ]
     lines = ["### Made-up yes (BOOLEAN questions whose gold is no)", ""]
-    return lines + _table(["policy", "gold-no questions", "answered yes"], rows)
+    return lines + table(["policy", "gold-no questions", "answered yes"], rows)
 
 
 def _late_lines(checks: Sequence[LateChargeCheck]) -> list[str]:
@@ -107,7 +103,7 @@ def _late_lines(checks: Sequence[LateChargeCheck]) -> list[str]:
     ]
     header = ["run", "strategy", "abandoned calls", "timeouts logged", "late answers", "estimate"]
     lines = ["### Abandoned calls: estimate against logged late charges", ""]
-    return lines + _table(header, rows)
+    return lines + table(header, rows)
 
 
 def diagnostics_lines(

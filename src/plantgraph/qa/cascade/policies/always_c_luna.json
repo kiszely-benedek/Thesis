@@ -1,0 +1,16 @@
+{
+  "name": "always_c_luna",
+  "tiers": [
+    {
+      "name": "cypher-luna",
+      "strategy": "cypher_rag_plant",
+      "pin_sha256": "acf24178d47dd4873fc2a36e7f67efbf2dc7ab5de694711f3b934e6ef4f4c21d",
+      "accept": [
+        "answered",
+        "not_abstained",
+        "rows"
+      ]
+    }
+  ],
+  "fallback_to_first_answer": true
+}

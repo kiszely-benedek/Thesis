@@ -11,7 +11,7 @@ from collections.abc import Mapping, Sequence
 from pathlib import Path
 
 from plantgraph.qa.cascade.checks import load_questions_file
-from plantgraph.qa.cascade.corpus_checks import load_item_graph
+from plantgraph.qa.cascade.corpus_checks import load_corpus_view, load_sheet_count
 from plantgraph.qa.cascade.diagnostics import policy_diagnostics
 from plantgraph.qa.cascade.evaluate import (
     Evaluation,
@@ -19,27 +19,28 @@ from plantgraph.qa.cascade.evaluate import (
     Summary,
     compare,
     evaluate_policy,
-    first_tier_acceptance,
 )
 from plantgraph.qa.cascade.gaps import IncompleteJoinError
 from plantgraph.qa.cascade.join import JoinedCorpus, TierSource, join_corpus, require_complete
-from plantgraph.qa.cascade.labels import labels_from_run_dirs
+from plantgraph.qa.cascade.labels import AnchorFinder, anchor_finder, labels_from_run_dirs
 from plantgraph.qa.cascade.late_charges import late_charge_check
 from plantgraph.qa.cascade.models import CascadePolicy
 from plantgraph.qa.cascade.policy import POLICIES_DIR, load_policies
-from plantgraph.qa.cascade.references import evaluate_oracle, random_escalation
 from plantgraph.qa.cascade.report_groups import breakdown, question_groups
 from plantgraph.qa.cascade.report_models import (
-    AcceptanceResult,
     CorpusReport,
     LateChargeCheck,
     NotEvaluated,
     PolicyResult,
-    RandomSummary,
     Report,
     Tier3Tally,
     Verdict,
 )
+from plantgraph.qa.cascade.report_references import acceptance_result, reference_fields
+from plantgraph.qa.cascade.report_scopes import load_splits
+from plantgraph.qa.cascade.report_sealed import build_sealed
+from plantgraph.qa.cascade.report_sealed_models import SealedClaimsReport
+from plantgraph.qa.cascade.report_sealed_views import SealedCorpus
 from plantgraph.qa.cascade.report_verdicts import (
     CONFIRM_CORPUS,
     LABEL_VARIANTS,
@@ -59,7 +60,7 @@ from plantgraph.qa.cascade.report_verdicts_v2 import (
     select_on_dev,
 )
 from plantgraph.qa.models import Question
-from plantgraph.qa.plant_api.item_graph import ItemGraph
+from plantgraph.qa.plant_api.item_graph import ItemGraph, build_item_graph
 
 ALWAYS_N = "always_n"
 #: The always-one-tier baselines are part of every report, whatever `--policy` selects.
@@ -69,66 +70,17 @@ BASELINES = (ALWAYS_N, "always_c", "always_g")
 SourcesByCorpus = Mapping[str, Mapping[str, TierSource]]
 
 
-def _has_references(policy: CascadePolicy) -> bool:
-    """Oracle and random escalation are defined for label-free policies with 2+ tiers."""
-    routed = policy.start_tier_by_label or policy.last_tier_by_label
-    return len(policy.tiers) >= 2 and not routed
-
-
-def _acceptance(joined: JoinedCorpus) -> AcceptanceResult | None:
-    policy = joined.policy
-    if len(policy.tiers) < 2 or policy.start_tier_by_label:
-        return None  # a single tier accepts everything; a router skips tier 1 for some labels
-    raw = first_tier_acceptance(joined, policy)
-    return AcceptanceResult(
-        n_accepted=raw.n_accepted,
-        n_accepted_correct=raw.n_accepted_correct,
-        n_first_tier_correct=raw.n_first_tier_correct,
-        precision=raw.precision,
-        recall=raw.recall,
-    )
-
-
-def _reference_fields(
-    joined: JoinedCorpus, evaluation: Evaluation, cutoff_s: float
-) -> dict[str, object]:
-    """Oracle and random escalation, or the reason they cannot be computed on these rows."""
-    if not _has_references(joined.policy):
-        return {}
-    try:
-        reference = random_escalation(joined, cutoff_s=cutoff_s)
-        oracle = evaluate_oracle(joined, cutoff_s)
-    except ValueError as error:  # e.g. the second tier has rows only for the runaways
-        return {"references_skipped": str(error)}
-    return {
-        "oracle": oracle.summary,
-        "random": RandomSummary(
-            n_draws=reference.n_draws,
-            n_escalated=reference.n_escalated,
-            correct_mean=reference.correct_mean,
-            correct_low=reference.correct_low,
-            correct_high=reference.correct_high,
-            correct_at_cutoff_mean=reference.correct_at_cutoff_mean,
-            correct_at_cutoff_low=reference.correct_at_cutoff_low,
-            correct_at_cutoff_high=reference.correct_at_cutoff_high,
-            cost_total_mean_usd=reference.cost_total_mean_usd,
-            latency_mean_s=reference.latency_mean_s,
-        ),
-        "vs_random": compare(evaluation.series(), reference.series()),
-    }
-
-
 def _policy_result(
     joined: JoinedCorpus, evaluation: Evaluation, always_n: Evaluation | None, bound: LatencyBound
 ) -> PolicyResult:
     """One policy's row: summary, acceptance, and (where defined) references and comparisons."""
-    fields = _reference_fields(joined, evaluation, bound.cutoff_s)
+    fields = reference_fields(joined, evaluation, bound.cutoff_s)
     if always_n is not None and joined.policy.name != ALWAYS_N:
         fields["vs_always_n"] = compare(evaluation.series(), always_n.series())
     fields |= {
         "summary": evaluation.summary,
         "latency_verdicts": check_latency_bound(evaluation.summary, bound),
-        "acceptance": _acceptance(joined),
+        "acceptance": acceptance_result(joined),
     }
     return PolicyResult.model_validate(fields)
 
@@ -139,6 +91,7 @@ def _evaluate_all(
     sources: Mapping[str, TierSource],
     questions_root: Path,
     cutoff_s: float,
+    find_anchors: AnchorFinder | None = None,
 ) -> tuple[dict[str, JoinedCorpus], dict[str, Evaluation], list[NotEvaluated]]:
     """Join every policy; evaluate those that are complete, list the others with the reason."""
     joins: dict[str, JoinedCorpus] = {}
@@ -149,7 +102,12 @@ def _evaluate_all(
     for policy in policies:
         try:
             joined = join_corpus(
-                policy, dict(sources), corpus_id, questions_root, known_labels=known_labels
+                policy,
+                dict(sources),
+                corpus_id,
+                questions_root,
+                find_anchors=find_anchors,
+                known_labels=known_labels,
             )
             joins[policy.name] = joined
             require_complete(joined)
@@ -264,6 +222,25 @@ def _with_baselines(policies: Sequence[CascadePolicy] | None) -> list[CascadePol
     return list(chosen.values())
 
 
+def _sealed_corpus(
+    corpus_id: str,
+    questions: list[Question],
+    questions_root: Path,
+    corpora_root: Path,
+    joins: Mapping[str, JoinedCorpus],
+    evaluations: Mapping[str, Evaluation],
+) -> SealedCorpus:
+    """What the sealed tables need of one corpus: only the policies that could be evaluated."""
+    return SealedCorpus(
+        corpus_id=corpus_id,
+        n_sheets=load_sheet_count(corpora_root, corpus_id),
+        questions=questions,
+        splits=load_splits(questions_root, corpus_id, questions),
+        joins={name: joins[name] for name in evaluations},
+        evaluations=evaluations,
+    )
+
+
 def build_report(
     corpus_ids: Sequence[str],
     sources: SourcesByCorpus,
@@ -271,24 +248,41 @@ def build_report(
     policies: Sequence[CascadePolicy] | None = None,
     bound: LatencyBound | None = None,
     corpora_root: Path | None = None,
+    sealed_claims: bool = False,
 ) -> Report:
     """Evaluate `policies` (default: every policy file, plus the baselines) on each corpus.
 
     `bound` carries LB-1, LB-2 and the cutoff C applied to every arm alike (default 10/60/120 s).
-    `corpora_root` (holding `<corpus>/ingest.json`) lets the report read each corpus's item graph
-    for the isolation secondary score and the named-tag diagnostic; without it both are omitted.
+    `corpora_root` (holding `<corpus>/ingest.json`) lets the report read each corpus's graph: for
+    the isolation score, the named-tag diagnostic, and the rules labels of label-routed policies.
+    `sealed_claims` swaps the dev rules S1-V3 for the sealed test's tables and claims (design
+    `sealed-test-run.md` section 9); it needs explicit `policies` and a `corpora_root`.
+
+    Raises:
+        ValueError: `sealed_claims` without policies or without a corpora root.
     """
     bound = bound or LatencyBound()
-    chosen = _with_baselines(policies)
+    if sealed_claims and (not policies or corpora_root is None):
+        raise ValueError(
+            "expected --policy and --corpora-root with --sealed-claims, found one missing"
+        )
+    chosen = list(policies) if sealed_claims and policies else _with_baselines(policies)
     reports: list[CorpusReport] = []
     all_joins: dict[str, dict[str, JoinedCorpus]] = {}
+    sealed_corpora: list[SealedCorpus] = []
     for corpus_id in corpus_ids:
         _, questions = load_questions_file(questions_root, corpus_id)
+        view = None if corpora_root is None else load_corpus_view(corpora_root, corpus_id)
         joins, evaluations, problems = _evaluate_all(
-            corpus_id, chosen, sources.get(corpus_id, {}), questions_root, bound.cutoff_s
+            corpus_id,
+            chosen,
+            sources.get(corpus_id, {}),
+            questions_root,
+            bound.cutoff_s,
+            None if view is None else anchor_finder(view),
         )
         all_joins[corpus_id] = joins
-        graph = None if corpora_root is None else load_item_graph(corpora_root, corpus_id)
+        graph = None if view is None else build_item_graph(view)
         reports.append(
             _corpus_report(
                 corpus_id,
@@ -300,6 +294,20 @@ def build_report(
                 sources.get(corpus_id, {}),
                 graph,
             )
+        )
+        if sealed_claims and corpora_root is not None:
+            sealed_corpora.append(
+                _sealed_corpus(
+                    corpus_id, questions, questions_root, corpora_root, joins, evaluations
+                )
+            )
+    if sealed_claims:
+        return SealedClaimsReport(
+            bound=bound,
+            corpora=reports,
+            tier3=[],
+            verdicts=[],
+            sealed=build_sealed(sealed_corpora, bound),
         )
     s1, tallies = _tier3_verdict(all_joins)
     verdicts = [s1, *_confirmation_verdicts(reports), *_scale_verdicts(reports, bound)]

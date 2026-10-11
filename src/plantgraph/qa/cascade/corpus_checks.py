@@ -10,6 +10,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from pathlib import Path
 
+from plantgraph.ingest.models import IngestResult
 from plantgraph.qa.cascade.evaluate import Evaluation
 from plantgraph.qa.cascade.join import JoinedCorpus
 from plantgraph.qa.cascade.report_models import Cell, IsolationScores
@@ -20,12 +21,23 @@ from plantgraph.qa.plant_api.item_graph import ItemGraph, build_item_graph
 from plantgraph.qa.scoring import normalize_scalar, score_set
 
 
-def load_item_graph(corpora_root: Path, corpus_id: str) -> ItemGraph:
-    """The corpus's item graph, rebuilt from its stored ingest result (as `agreement.py` does)."""
+def load_corpus_view(corpora_root: Path, corpus_id: str) -> NetworkxGraphView:
+    """The corpus's graph view, rebuilt from its stored ingest result (as `agreement.py` does)."""
     ingest_json = corpora_root / corpus_id / "ingest.json"
     artifacts = load_corpus_artifacts(corpus_id, ingest_json)
-    view = NetworkxGraphView(corpus_id, artifacts.localized_sheets, artifacts.resolution)
-    return build_item_graph(view)
+    return NetworkxGraphView(corpus_id, artifacts.localized_sheets, artifacts.resolution)
+
+
+def load_item_graph(corpora_root: Path, corpus_id: str) -> ItemGraph:
+    """The corpus's item graph: the graph the agent's tools query."""
+    return build_item_graph(load_corpus_view(corpora_root, corpus_id))
+
+
+def load_sheet_count(corpora_root: Path, corpus_id: str) -> int:
+    """Number of sheets the corpus's `ingest.json` records (the size axis of the scale section)."""
+    ingest_json = corpora_root / corpus_id / "ingest.json"
+    result = IngestResult.model_validate_json(ingest_json.read_text(encoding="utf-8"))
+    return result.counts.n_sheets
 
 
 def control_valve_tags(graph: ItemGraph) -> frozenset[str]:

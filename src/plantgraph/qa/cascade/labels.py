@@ -10,7 +10,8 @@ from __future__ import annotations
 from collections.abc import Callable, Iterable
 from pathlib import Path
 
-from plantgraph.qa.anchors import Anchors
+from plantgraph.qa.anchors import Anchors, extract_anchors
+from plantgraph.qa.graph_view import GraphView
 from plantgraph.qa.harness.run_dir import RunDir
 from plantgraph.qa.models import QuestionResult
 from plantgraph.qa.need.classifiers import build_need_input
@@ -19,6 +20,11 @@ from plantgraph.qa.need.rules import RuleNeedClassifier
 
 #: Finds the tags and units a question names; needs the corpus graph, so the caller supplies it.
 AnchorFinder = Callable[[str], Anchors]
+
+
+def anchor_finder(view: GraphView) -> AnchorFinder:
+    """An `AnchorFinder` that looks tags and units up in one corpus's graph view."""
+    return lambda question_text: extract_anchors(question_text, view)
 
 
 def classify_need(question_text: str, find_anchors: AnchorFinder) -> NeedLabel:
