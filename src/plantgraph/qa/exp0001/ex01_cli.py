@@ -1,4 +1,4 @@
-"""`python -m plantgraph.qa.exp0001 ex01 | ex01-review | ex01-tally` (design §11, row E-T1).
+"""`python -m plantgraph.qa.exp0001 ex01 | ex01-review | ex01-tally | report` (design §11).
 
 **Paid calls are off unless `--allow-paid-calls` is typed**, and then `--cap` is required. Without
 the flag the run reads only the response caches and stops at the first cache miss.
@@ -24,6 +24,7 @@ from plantgraph.qa.exp0001.ex01_review import (
 )
 from plantgraph.qa.exp0001.ex01_runner import Ex01Settings, load_ex01_questions, run_ex01
 from plantgraph.qa.exp0001.ex01_store import Ex01RunDir
+from plantgraph.qa.exp0001.report_cli import add_report_arguments, report_command
 
 _DATA = Path("data") / "runs" / "exp0001"
 
@@ -39,6 +40,9 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     tally_command = commands.add_parser("ex01-tally", help="count the verdicts per arm and repeat")
     tally_command.add_argument("--verdicts", type=Path, help=f"default: <out-dir>/{VERDICTS_NAME}")
     _add_out_dir(tally_command)
+    add_report_arguments(
+        commands.add_parser("report", help="the EXP-0001 report over the stored runs")
+    )
     return parser.parse_args(argv)
 
 
@@ -66,6 +70,8 @@ def main(argv: list[str] | None = None) -> None:
         _cmd_run(args)
     elif args.command == "ex01-review":
         _cmd_review(args)
+    elif args.command == "report":
+        report_command(args)
     else:
         _cmd_tally(args)
 
