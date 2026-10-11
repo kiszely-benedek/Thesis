@@ -1,4 +1,4 @@
-"""`python -m plantgraph.qa.cascade {join,needed,report,ask,infra-probe}`."""
+"""`python -m plantgraph.qa.cascade` sub-commands: join, needed, report, ask, infra-*."""
 
 from __future__ import annotations
 
@@ -7,7 +7,9 @@ from collections import Counter
 from pathlib import Path
 
 from plantgraph.qa.cascade.evaluate import DEFAULT_CUTOFF_S, LatencyBound
+from plantgraph.qa.cascade.infra_cypher_replay_cli import add_replay_arguments, replay_command
 from plantgraph.qa.cascade.infra_probe_cli import add_probe_arguments, probe_command
+from plantgraph.qa.cascade.infra_report_cli import add_report_arguments, report_command
 from plantgraph.qa.cascade.join import (
     DEFAULT_QSUB_ROOT,
     JoinedCorpus,
@@ -46,6 +48,8 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     _add_report_arguments(commands.add_parser("report"))
     add_ask_arguments(commands.add_parser("ask"))
     add_probe_arguments(commands.add_parser("infra-probe"))
+    add_report_arguments(commands.add_parser("infra-report"))
+    add_replay_arguments(commands.add_parser("infra-cypher-replay"))
     commands.choices["needed"].add_argument("--tier", required=True)
     commands.choices["needed"].add_argument("--out-root", type=Path, default=DEFAULT_QSUB_ROOT)
     return parser.parse_args(argv)
@@ -127,7 +131,7 @@ def _summary(joined: JoinedCorpus) -> str:
 
 
 def main(argv: list[str] | None = None, *, open_cascade: OpenCascade = open_for_ask) -> None:
-    """Run a sub-command: `join`, `needed`, `report`, `ask` or `infra-probe`.
+    """Run a sub-command (see the module docstring for the list).
 
     `open_cascade` builds the cascade for `ask`; tests pass one over fakes.
     """
@@ -137,6 +141,12 @@ def main(argv: list[str] | None = None, *, open_cascade: OpenCascade = open_for_
         return
     if args.command == "infra-probe":
         probe_command(args)
+        return
+    if args.command == "infra-report":
+        report_command(args)
+        return
+    if args.command == "infra-cypher-replay":
+        replay_command(args)
         return
     if args.command == "report":
         _run_report(args)
