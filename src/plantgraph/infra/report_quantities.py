@@ -64,6 +64,16 @@ def spread_of_optional(name: str, values: Sequence[float | None]) -> Spread | No
     return make_spread(present)
 
 
+def spread_of_present(values: Sequence[float | None]) -> Spread | None:
+    """A spread over the repeats that have the value, or `None` when none has it.
+
+    For secondary server metrics, which can be absent in some repeats; the caller says so in a
+    note (`_presence_notes`) so a part-measured quantity never looks complete.
+    """
+    present = [value for value in values if value is not None]
+    return make_spread(present) if present else None
+
+
 def corpus_footprint(corpus: CorpusData) -> CorpusFootprintRow:
     """Table I1 row: sizes, ingest stages, store, startup and memory of one corpus."""
     quantities: dict[str, Spread] = {}
@@ -75,7 +85,7 @@ def corpus_footprint(corpus: CorpusData) -> CorpusFootprintRow:
         corpus_id=corpus.corpus_id,
         sizes=_sizes(corpus.ingests[0]),
         quantities=quantities,
-        notes=_stale_metric_notes(corpus.ingests),
+        notes=_presence_notes(corpus) + _stale_metric_notes(corpus.ingests),
     )
 
 
@@ -125,7 +135,8 @@ def _store_quantities(ingests: list[IngestResult]) -> dict[str, Spread]:
             [PAGE_CACHE_GROWTH_FACTOR * size for size in data]
         ),
     }
-    metric = spread_of_optional("store.metrics_bytes", [f.metrics_store_bytes for f in measured])
+    # secondary metric: Neo4j's CSV is recreated with the database and may lag or be empty
+    metric = spread_of_present([f.metrics_store_bytes for f in measured])
     if metric is not None:
         result["store.metrics_bytes"] = metric
     return result
@@ -166,7 +177,7 @@ def _process(startups: list[StartupProbe]) -> dict[str, Spread]:
         "neo4j.page_cache_used_bytes": [p.page_cache_used_bytes for p in startups],
     }
     for name, values in optional.items():
-        spread = spread_of_optional(name, values)
+        spread = spread_of_present(values)
         if spread is not None:
             result[name] = spread
     return result
@@ -181,6 +192,28 @@ def _memory_quantities(corpus: CorpusData) -> dict[str, Spread]:
         "memory.item_graph_bytes": make_spread([memory.item_graph_net_bytes]),
         "memory.traced_peak_bytes": make_spread([memory.traced_peak_bytes]),
     }
+
+
+def _optional_series(corpus: CorpusData) -> dict[str, list[float | None]]:
+    """The secondary quantities that may be missing in some repeats, repeat by repeat."""
+    footprints = [ingest.store_footprint for ingest in corpus.ingests]
+    return {
+        "the server's store.size.database metric": [
+            f.metrics_store_bytes if f is not None else None for f in footprints
+        ],
+        "Neo4j's resident memory": [p.neo4j_rss_bytes for p in corpus.startups],
+        "the page cache in use": [p.page_cache_used_bytes for p in corpus.startups],
+    }
+
+
+def _presence_notes(corpus: CorpusData) -> list[str]:
+    """One note per secondary quantity that is present in some repeats but not all."""
+    notes: list[str] = []
+    for label, values in _optional_series(corpus).items():
+        found = sum(value is not None for value in values)
+        if 0 < found < len(values):
+            notes.append(f"{label} is present in {found} of {len(values)} repeats only")
+    return notes
 
 
 def _stale_metric_notes(ingests: list[IngestResult]) -> list[str]:

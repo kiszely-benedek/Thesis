@@ -56,6 +56,42 @@ def test_store_bytes_are_primary_and_the_stale_metric_is_flagged() -> None:
     assert _check(report.checks, "M6").status == "flag"
 
 
+def _repeats_with(metrics: list[int | None], page_cache: list[int | None]) -> CorpusData:
+    """A corpus with one ingest and one startup per list entry (None = quantity missing)."""
+    ingests = [ingest("D100", 1.0, metric=m) for m in metrics]
+    startups = [
+        startup("D100", 1.0).model_copy(update={"page_cache_used_bytes": c}) for c in page_cache
+    ]
+    return CorpusData(corpus_id="D100", ingests=ingests, startups=startups, memory=memory("D100"))
+
+
+def test_a_metric_missing_in_some_repeats_is_reported_from_the_others_and_said_so() -> None:
+    partial = _repeats_with([None, 4_000_000, None], [None, None, None])
+    report = build_infra_report(_inputs(corpora=[partial], runs=[]))
+    row = report.footprints[0]
+    assert row.quantities["store.metrics_bytes"].n_repeats == 1
+    assert any("present in 1 of 3 repeats" in note for note in row.notes)
+    m6 = _check(report.checks, "M6")
+    assert m6.status == "flag"
+    assert "1 of 3" in m6.detail
+    assert "present in 1 of 3 repeats only" in render_report(report)
+
+
+def test_page_cache_in_use_missing_in_some_repeats_does_not_abort() -> None:
+    partial = _repeats_with([None, None, None], [500, None, 700])
+    row = build_infra_report(_inputs(corpora=[partial], runs=[])).footprints[0]
+    cache = row.quantities["neo4j.page_cache_used_bytes"]
+    assert (cache.minimum, cache.maximum, cache.n_repeats) == (500, 700, 2)
+    assert any("page cache in use is present in 2 of 3" in note for note in row.notes)
+
+
+def test_a_quantity_absent_everywhere_is_left_out_without_a_note() -> None:
+    none_at_all = _repeats_with([None, None, None], [None, None, None])
+    row = build_infra_report(_inputs(corpora=[none_at_all], runs=[])).footprints[0]
+    assert "store.metrics_bytes" not in row.quantities
+    assert row.notes == []
+
+
 def test_page_cache_needed_is_the_disk_size_times_the_manual_factor() -> None:
     quantities = build_infra_report(_inputs()).footprints[0].quantities
     assert quantities["store.page_cache_needed_bytes"].median == pytest.approx(4_000_000 * 1.2)
