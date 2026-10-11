@@ -1,4 +1,4 @@
-"""The gold need label of every dev family: what evidence shape its question calls for.
+"""The gold need label of every family: what evidence shape its question calls for.
 
 Gold side: strategies and `qa/need/` must never import this (design `question-aware-retrieval.md`
 §4.2, §13 import ban), or the "oracle" classifier would be an answer key leaking into retrieval.
@@ -35,6 +35,21 @@ _FAMILY_NEED: dict[QuestionFamily, NeedLabel] = {
     QuestionFamily.LOOPS_NEAR_ITEM: NeedLabel.GENERIC,  # a composite no single shape covers
 }
 
+#: The held-out families (EXP-0006, ADR-0035), added at QAR-T10 after the freeze. A set per
+#: family because two labels can fit: a downstream walk is `DOWNSTREAM_TO_FIRST_VALVE`, but
+#: `DOWNSTREAM_ALL` also covers every item it needs. `GENERIC` marks a composite no single shape
+#: covers (two traversals and an intersection; a path with one item removed).
+_HELDOUT_FAMILY_NEED: dict[QuestionFamily, frozenset[NeedLabel]] = {
+    QuestionFamily.FIRST_MEETING_POINT: frozenset({NeedLabel.GENERIC}),
+    QuestionFamily.DOWNSTREAM_ISOLATION: frozenset(
+        {NeedLabel.DOWNSTREAM_TO_FIRST_VALVE, NeedLabel.DOWNSTREAM_ALL}
+    ),
+    QuestionFamily.VALVES_ON_PATH: frozenset({NeedLabel.PATH}),
+    QuestionFamily.FEEDING_UNITS: frozenset({NeedLabel.UNIT_SCOPE}),
+    QuestionFamily.UNITS_REACHED: frozenset({NeedLabel.DOWNSTREAM_ALL}),
+    QuestionFamily.ROUTE_AVOIDING: frozenset({NeedLabel.GENERIC}),
+}
+
 #: `UNANSWERABLE_TAG` wraps these templates (`families_abstain.py`), keyed by `template_id`.
 _UNANSWERABLE_TEMPLATE_NEED: dict[str, NeedLabel] = {
     "LOOKUP_TYPE": NeedLabel.ITEM,
@@ -51,6 +66,8 @@ def gold_need_of_family(family: QuestionFamily) -> frozenset[NeedLabel]:
     """
     if family is QuestionFamily.UNANSWERABLE_TAG:
         return frozenset(_UNANSWERABLE_TEMPLATE_NEED.values())
+    if family in _HELDOUT_FAMILY_NEED:
+        return _HELDOUT_FAMILY_NEED[family]
     if family not in _FAMILY_NEED:
         raise ValueError(f"expected a gold need label for {family.value}, found none")
     return frozenset({_FAMILY_NEED[family]})

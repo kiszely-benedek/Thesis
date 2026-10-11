@@ -11,6 +11,7 @@ from plantgraph.qa.need.classifiers import NeedInput, build_need_input
 from plantgraph.qa.need.labels import NeedLabel
 from plantgraph.qa.need.rules import RuleNeedClassifier
 from plantgraph.qa.questions import templates as t
+from plantgraph.qa.questions.families_heldout import HELDOUT_GENERATORS
 from qa_routing_toy import ToyCorpus
 
 F = QuestionFamily
@@ -57,7 +58,8 @@ def test_every_dev_template_maps_to_its_gold_label(family: QuestionFamily, text:
 def test_the_rules_cover_every_dev_family_but_the_unanswerable_one() -> None:
     covered = {family for family, _ in _DEV_TEXTS}
 
-    assert covered == set(QuestionFamily) - {F.UNANSWERABLE_TAG}
+    # the rules were written from the dev templates; the held-out families are not among them
+    assert covered == set(QuestionFamily) - set(HELDOUT_GENERATORS) - {F.UNANSWERABLE_TAG}
 
 
 def test_a_tag_the_plant_lacks_does_not_change_the_label() -> None:

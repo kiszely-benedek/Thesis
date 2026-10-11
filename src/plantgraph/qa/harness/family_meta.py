@@ -2,7 +2,7 @@
 
 Gold side (design `question-aware-retrieval.md` §8.1): a strategy that could read a family's
 split could tune itself to the dev families, so strategies never import this module.
-The held-out families join this table only at QAR-T10, after the freeze.
+The held-out families joined this table at QAR-T10, after the freeze.
 """
 
 from __future__ import annotations
@@ -15,6 +15,7 @@ from plantgraph.qa.harness.need_gold import gold_need_of_family
 from plantgraph.qa.models import QuestionFamily
 from plantgraph.qa.need.labels import NeedLabel
 from plantgraph.qa.questions.families import DEV_NEW_GENERATORS, DEV_OLD_GENERATORS
+from plantgraph.qa.questions.families_heldout import HELDOUT_GENERATORS
 
 
 class FamilySplit(str, Enum):
@@ -22,6 +23,7 @@ class FamilySplit(str, Enum):
 
     DEV_OLD = "dev-old"
     DEV_NEW = "dev-new"
+    HELD_OUT = "held-out"
 
 
 class FamilyMeta(BaseModel):
@@ -39,6 +41,7 @@ def _build_family_meta() -> dict[QuestionFamily, FamilyMeta]:
     for split, generators in (
         (FamilySplit.DEV_OLD, DEV_OLD_GENERATORS),
         (FamilySplit.DEV_NEW, DEV_NEW_GENERATORS),
+        (FamilySplit.HELD_OUT, HELDOUT_GENERATORS),
     ):
         for family in generators:
             meta[family] = FamilyMeta(split=split, gold_need=gold_need_of_family(family))

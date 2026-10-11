@@ -18,6 +18,7 @@ from plantgraph.qa.questions.families import (
     DEV_OLD_GENERATORS,
     all_candidates,
 )
+from plantgraph.qa.questions.families_heldout import HELDOUT_GENERATORS
 
 _QA_DIR = Path(__file__).resolve().parent.parent / "src" / "plantgraph" / "qa"
 
@@ -33,6 +34,31 @@ def test_twelve_families_are_dev_old_and_six_are_dev_new() -> None:
         "SAME_UNIT",
         "LOOPS_NEAR_ITEM",
     }
+
+
+def test_the_six_heldout_families_are_their_own_split_with_the_designed_labels() -> None:
+    expected = {
+        QuestionFamily.FIRST_MEETING_POINT: {NeedLabel.GENERIC},
+        QuestionFamily.DOWNSTREAM_ISOLATION: {
+            NeedLabel.DOWNSTREAM_TO_FIRST_VALVE,
+            NeedLabel.DOWNSTREAM_ALL,
+        },
+        QuestionFamily.VALVES_ON_PATH: {NeedLabel.PATH},
+        QuestionFamily.FEEDING_UNITS: {NeedLabel.UNIT_SCOPE},
+        QuestionFamily.UNITS_REACHED: {NeedLabel.DOWNSTREAM_ALL},
+        QuestionFamily.ROUTE_AVOIDING: {NeedLabel.GENERIC},
+    }
+
+    assert set(families_of_split(FamilySplit.HELD_OUT)) == set(expected)
+    for family, labels in expected.items():
+        assert FAMILY_META[family].gold_need == labels, family
+
+
+def test_the_heldout_families_stay_out_of_the_default_candidate_set() -> None:
+    plant = qa_toy_plant_dev2.build_plant()
+    args = (plant, qa_toy_plant_dev2.build_manifest(), qa_toy_plant_dev2.build_sheets(plant))
+
+    assert not set(all_candidates(*args, corpus_id="t", seed=0)) & set(HELDOUT_GENERATORS)
 
 
 def test_gold_need_of_the_dev_new_families_follows_the_design_table() -> None:
