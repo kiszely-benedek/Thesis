@@ -165,6 +165,9 @@ class _StubSource:
     def schema_text(self) -> str:
         return "STUB-SCHEMA"
 
+    def label_names(self) -> frozenset[str]:
+        return frozenset({"Pump", "CorpusNode"})
+
     def run_cypher(self, query: str, timeout_s: float, row_cap: int) -> CypherResult:
         return CypherResult(rows=[{"tag": "X"}], truncated=False)
 

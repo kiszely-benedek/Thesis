@@ -52,17 +52,48 @@ def extract_query(reply_text: str) -> str:
     return text.strip().rstrip(";").strip()
 
 
-def format_context(query: str, result: CypherResult, row_cap: int) -> str:
-    """The query and its rows as JSON lines — the context the final step sees."""
+#: `ORDER BY` anywhere in the query text; the gap between the words may be a newline.
+_ORDER_BY = re.compile(r"\bORDER\s+BY\b", re.IGNORECASE)
+
+
+def format_context(
+    query: str, result: CypherResult, row_cap: int, label_names: frozenset[str] = frozenset()
+) -> str:
+    """The query and its rows as JSON lines in a canonical order — the context the final step sees.
+
+    The database returns `labels(n)` and the rows of a query without `ORDER BY` in an order
+    that depends on the store layout, which changes after a reload (ADR-0052). So:
+    a list made only of `label_names` is sorted (a set of labels), and a query without
+    `ORDER BY` has its rows sorted by their JSON line. Other lists (paths, `collect`)
+    keep their order, and a query with `ORDER BY` keeps the database order: there it is the answer.
+    """
     header = f"{len(result.rows)} row(s)"
     if result.truncated:
         header += f"; the result was cut off at the first {row_cap} rows"
-    lines = [json.dumps(row, sort_keys=True, ensure_ascii=False) for row in result.rows]
+    rows = [_sort_label_lists(row, label_names) for row in result.rows]
+    lines = [_json_line(row) for row in rows]
+    if not _ORDER_BY.search(query):
+        lines.sort()
     body = "\n".join(lines) if lines else "(no rows)"
     return (
         f"Cypher query that was run:\n{query}\n\n"
         f"Result ({header}), one JSON object per line:\n{body}"
     )
+
+
+def _json_line(row: dict[str, Any]) -> str:
+    return json.dumps(row, sort_keys=True, ensure_ascii=False)
+
+
+def _sort_label_lists(value: Any, label_names: frozenset[str]) -> Any:
+    """Sort every all-label list in a row's values, also inside nested maps and lists."""
+    if isinstance(value, dict):
+        return {key: _sort_label_lists(item, label_names) for key, item in value.items()}
+    if not isinstance(value, list):
+        return value
+    if value and all(isinstance(item, str) and item in label_names for item in value):
+        return sorted(value)
+    return [_sort_label_lists(item, label_names) for item in value]
 
 
 #: Which graph the arm queries: every drawing as drawn, or one node per physical item (ADR-0036).
@@ -128,7 +159,7 @@ class CypherRag:
             result = self._source.run_cypher(query, self._timeout_s, self._row_cap)
         except (WriteClauseError, CypherExecutionError) as error:
             return _failure({**trace, "cypher_error": str(error)})
-        context = format_context(query, result, self._row_cap)
+        context = format_context(query, result, self._row_cap, self._source.label_names())
         trace.update(
             n_rows=len(result.rows), truncated=result.truncated, empty_result=not result.rows
         )

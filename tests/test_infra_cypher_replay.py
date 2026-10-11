@@ -43,6 +43,9 @@ class _StubSource:
         self._clock = clock
         self._error = error
 
+    def label_names(self) -> frozenset[str]:
+        return frozenset({"Pump", "CorpusNode"})
+
     def run_cypher(self, query: str, timeout_s: float, row_cap: int) -> CypherResult:
         if isinstance(self._error, WriteClauseError):
             raise self._error  # refused before the database is touched: nothing is timed

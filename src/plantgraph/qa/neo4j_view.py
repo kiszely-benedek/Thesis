@@ -91,6 +91,10 @@ class Neo4jGraphView:
         """The schema description for the Cypher-writing LLM (see `schema_text.py`)."""
         return self._schema_text
 
+    def label_names(self) -> frozenset[str]:
+        """Every node label of the load plan, `CorpusNode` included (`labels(n)` lists it)."""
+        return frozenset(self._plan.expected_node_labels)
+
     def close(self) -> None:
         """Close the driver, if a query ever opened one."""
         if self._driver is not None:

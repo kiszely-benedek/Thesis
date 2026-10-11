@@ -133,6 +133,9 @@ class _EmptySource:
     def schema_text(self) -> str:
         return "SCH"
 
+    def label_names(self) -> frozenset[str]:
+        return frozenset({"Pump", "CorpusNode"})
+
     def run_cypher(self, query: str, timeout_s: float, row_cap: int) -> CypherResult:
         return CypherResult(rows=[], truncated=False)
 

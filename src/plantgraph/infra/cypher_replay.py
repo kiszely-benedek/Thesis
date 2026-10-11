@@ -138,7 +138,9 @@ def _execute(
         return "write_clause_rejected", 0
     except CypherExecutionError:
         return "database_error", 0
-    format_context(query, result, row_cap)  # timed too: the strategy does it before answering
+    format_context(
+        query, result, row_cap, source.label_names()
+    )  # timed too: the strategy does it before answering
     return "ok", len(result.rows)
 
 

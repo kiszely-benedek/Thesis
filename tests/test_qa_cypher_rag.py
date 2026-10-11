@@ -48,6 +48,9 @@ class _StubSource:
     def schema_text(self) -> str:
         return "STUB-SCHEMA"
 
+    def label_names(self) -> frozenset[str]:
+        return frozenset({"Pump", "CorpusNode"})
+
     def run_cypher(self, query: str, timeout_s: float, row_cap: int) -> CypherResult:
         self.queries.append(query)
         if isinstance(self._result, Exception):
@@ -290,3 +293,55 @@ def test_the_prompt_separates_a_control_loop_from_the_valve_it_actuates() -> Non
     assert "a control loop is identified by its controller (loop) tag" in text
     assert "separate item with its own tag" in text
     assert text.index("Domain note") < text.index("Question:")
+
+
+# --- canonical row order (ADR-0052) -------------------------------------------------------------
+
+_LABELS = frozenset({"Pump", "Valve", "CorpusNode"})
+
+
+def _context(
+    rows: list[dict[str, object]], query: str = "MATCH (n) RETURN n", **kwargs: bool
+) -> str:
+    result = CypherResult(rows=rows, truncated=kwargs.get("truncated", False))
+    return format_context(query, result, row_cap=10, label_names=_LABELS)
+
+
+def test_label_list_is_sorted_but_a_path_list_is_not() -> None:
+    body = _context([{"labels": ["Valve", "CorpusNode", "Pump"], "path": ["P-2", "P-1"]}])
+    assert '"labels": ["CorpusNode", "Pump", "Valve"]' in body
+    assert '"path": ["P-2", "P-1"]' in body
+
+
+def test_label_list_inside_a_map_is_sorted() -> None:
+    assert '"x": ["Pump", "Valve"]' in _context([{"node": {"x": ["Valve", "Pump"]}}])
+
+
+def test_rows_without_order_by_are_sorted_by_their_json_line() -> None:
+    body = _context([{"tag": "B"}, {"tag": "A"}]).splitlines()
+    assert body[-2:] == ['{"tag": "A"}', '{"tag": "B"}']
+
+
+@pytest.mark.parametrize(
+    "query", ["MATCH (n) RETURN n order by n.tag", "MATCH (n) RETURN n ORDER\n  BY n.tag"]
+)
+def test_rows_of_an_ordered_query_keep_the_database_order(query: str) -> None:
+    body = _context([{"tag": "B"}, {"tag": "A"}], query=query).splitlines()
+    assert body[-2:] == ['{"tag": "B"}', '{"tag": "A"}']
+
+
+def test_header_of_a_truncated_result_is_unchanged() -> None:
+    body = _context([{"tag": "B"}, {"tag": "A"}], truncated=True)
+    assert "Result (2 row(s); the result was cut off at the first 10 rows)" in body
+
+
+def test_two_row_orders_of_one_unordered_result_give_identical_context() -> None:
+    first = [
+        {"labels": ["Pump", "CorpusNode"], "t": 1},
+        {"labels": ["Valve", "CorpusNode"], "t": 2},
+    ]
+    second = [
+        {"labels": ["CorpusNode", "Valve"], "t": 2},
+        {"labels": ["CorpusNode", "Pump"], "t": 1},
+    ]
+    assert _context(first) == _context(second)

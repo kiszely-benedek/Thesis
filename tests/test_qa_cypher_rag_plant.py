@@ -50,6 +50,9 @@ class _Source:
     def schema_text(self) -> str:
         return self._schema
 
+    def label_names(self) -> frozenset[str]:
+        return frozenset({"Pump", "CorpusNode"})
+
     def run_cypher(self, query: str, timeout_s: float, row_cap: int) -> CypherResult:
         return CypherResult(rows=[{"tag": "X"}], truncated=False)
 

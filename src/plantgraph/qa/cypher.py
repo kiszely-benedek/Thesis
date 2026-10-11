@@ -51,6 +51,10 @@ class CypherSource(Protocol):
         """The schema description shown to the Cypher-writing LLM."""
         ...
 
+    def label_names(self) -> frozenset[str]:
+        """Every node label the store holds, bookkeeping label included (`labels(n)` shows it)."""
+        ...
+
     def run_cypher(self, query: str, timeout_s: float, row_cap: int) -> CypherResult:
         """Run one read-only query.
 
