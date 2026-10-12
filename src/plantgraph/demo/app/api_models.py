@@ -7,6 +7,7 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, model_validator
 
 from plantgraph.demo.app.models import CostEstimate, SheetLink, SpendStatus
+from plantgraph.demo.app.store_probe import StoreState
 from plantgraph.qa.cascade.live_models import LiveAnswer, NeedsPaidCall
 from plantgraph.qa.models import AnswerType, AnswerValue, Outcome, QuestionFamily
 
@@ -120,6 +121,12 @@ class CorpusStatus(BaseModel):
     tiers: tuple[str, ...]
     #: False when the policy's database tier is left out ("tier 2 only" runs).
     tier1_store: bool
+    #: Why the database tier can or cannot answer; `None` until the corpus is loaded.
+    store: StoreState | None
+    #: Sheets (pages of the drawing index) in the corpus; `None` until it is loaded.
+    n_sheets: int | None
+    #: Seconds each cascade took to open, by mode (`{}` until loaded).
+    open_s: dict[str, float]
     n_benchmark_questions: int
     message: str | None
 

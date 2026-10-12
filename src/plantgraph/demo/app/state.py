@@ -24,6 +24,7 @@ from plantgraph.demo.app.estimate import estimate_cost
 from plantgraph.demo.app.jobs import Job, run_job
 from plantgraph.demo.app.models import CostEstimate
 from plantgraph.demo.app.spend import SessionSpend
+from plantgraph.demo.app.store_probe import HeldCorporaProbe, held_corpus_ids_from_env
 from plantgraph.qa.cascade.models import CascadePolicy
 from plantgraph.qa.harness.cypher_setup import CypherSourceFactory, open_checked_neo4j_view
 from plantgraph.qa.strategies.base import AskedQuestion
@@ -132,6 +133,9 @@ class AppState:
             pdf_present=corpus.pdf_path.exists(),
             tiers=loaded.source.tiers if loaded else (),
             tier1_store=loaded.source.tier1_store if loaded else False,
+            store=loaded.source.store if loaded else None,
+            n_sheets=len(loaded.pages) if loaded else None,
+            open_s=dict(loaded.source.open_s) if loaded else {},
             n_benchmark_questions=len(loaded.questions) if loaded else 0,
             message=slot.message,
         )
@@ -213,6 +217,7 @@ def build_app_state(
     session_cap_usd: float | None = None,
     cypher_source_factory: CypherSourceFactory = open_checked_neo4j_view,
     http_client: httpx2.Client | None = None,
+    held_corpora_probe: HeldCorporaProbe = held_corpus_ids_from_env,
 ) -> AppState:
     """Wire a real app: policy, cost estimates, spend guard and the corpus loader.
 
@@ -234,6 +239,7 @@ def build_app_state(
         allow_paid_calls=allow_paid_calls,
         cypher_source_factory=cypher_source_factory,
         http_client=http_client,
+        held_corpora_probe=held_corpora_probe,
     )
     return AppState(config, policy, session, loader, allow_paid_calls=allow_paid_calls)
 

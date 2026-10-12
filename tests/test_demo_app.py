@@ -1,8 +1,7 @@
 """The demo server (DA-T4) over a toy plant: real strategies, fake model transport, no Neo4j.
 
-The toy corpus is the harness toy; the policy has a database tier the toy store cannot serve, so
-every cascade here runs "tier 2 only" and the answering tier is `context_rag`. Nothing is paid:
-the transport is scripted and spending is counted against a scratch cache.
+The toy corpus is the harness toy; its database tier cannot be served by the toy store, so
+every cascade runs "tier 2 only" (`context_rag` answers). Nothing is paid: transport is scripted.
 """
 
 from __future__ import annotations
@@ -125,6 +124,7 @@ def make_client(env: Env) -> Iterator[Client]:
             allow_paid_calls=not replay_only,
             session_cap_usd=cap,
             http_client=transport.as_httpx_client() if transport else None,
+            held_corpora_probe=lambda: ("D1000",),  # no real Neo4j in tests
         )
         states.append(state)
         if load:

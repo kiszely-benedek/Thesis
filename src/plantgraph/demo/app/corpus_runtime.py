@@ -18,6 +18,7 @@ from plantgraph.demo.app.api_models import RecordedAnswer
 from plantgraph.demo.app.cascade_pool import CascadePool, CascadeSource, PoolSettings
 from plantgraph.demo.app.config import DemoConfig, DemoCorpus
 from plantgraph.demo.app.models import CostEstimate
+from plantgraph.demo.app.store_probe import HeldCorporaProbe, held_corpus_ids_from_env
 from plantgraph.demo.drawing.models import DrawingIndex
 from plantgraph.qa.cascade.models import CascadePolicy
 from plantgraph.qa.corpus import load_corpus_artifacts
@@ -63,6 +64,7 @@ class CorpusLoader:
         allow_paid_calls: bool,
         cypher_source_factory: CypherSourceFactory = open_checked_neo4j_view,
         http_client: httpx2.Client | None = None,
+        held_corpora_probe: HeldCorporaProbe = held_corpus_ids_from_env,
     ) -> None:
         self._config = config
         self._policy = policy
@@ -71,6 +73,7 @@ class CorpusLoader:
         self._allow_paid_calls = allow_paid_calls
         self._factory = cypher_source_factory
         self._http_client = http_client
+        self._held_corpora_probe = held_corpora_probe
 
     def __call__(self, corpus: DemoCorpus) -> LoadedCorpus:
         """Rebuild the corpus and open its replay cascade.
@@ -101,6 +104,7 @@ class CorpusLoader:
                 allow_paid_calls=self._allow_paid_calls,
                 cypher_source_factory=self._factory,
                 http_client=self._http_client,
+                held_corpora_probe=self._held_corpora_probe,
             )
         )
         return LoadedCorpus(
