@@ -1,14 +1,19 @@
-"""Start the demo server: `python -m plantgraph.demo.app --config <demo_config.json>`."""
+"""Start the demo server: `python -m plantgraph.demo.app --config <demo_config.json>`.
+
+Sub-command: `python -m plantgraph.demo.app seed-cache --from A --from B --out C` merges caches.
+"""
 
 from __future__ import annotations
 
 import argparse
+import sys
 from collections.abc import Sequence
 from pathlib import Path
 
 import uvicorn
 
 from plantgraph.demo.app.config import load_demo_config
+from plantgraph.demo.app.seed_cache import run_seed_cache
 from plantgraph.demo.app.server import HOST, create_app
 from plantgraph.demo.app.state import build_app_state
 
@@ -33,7 +38,11 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: Sequence[str] | None = None) -> None:
     """Build the app state, load the corpora in the background and serve on loopback."""
-    args = build_parser().parse_args(argv)
+    arguments = list(sys.argv[1:] if argv is None else argv)
+    if arguments[:1] == ["seed-cache"]:  # the one sub-command; plain `--config ...` still serves
+        run_seed_cache(arguments[1:])
+        return
+    args = build_parser().parse_args(arguments)
     state = build_app_state(
         load_demo_config(args.config),
         allow_paid_calls=not args.replay_only,

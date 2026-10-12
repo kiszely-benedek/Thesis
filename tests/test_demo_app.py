@@ -396,5 +396,5 @@ def test_the_example_config_is_valid_and_names_one_run_per_tier() -> None:
 
     assert [c.corpus_id for c in config.corpora] == ["D100", "D1000"]
     for corpus in config.corpora:
-        assert set(corpus.tier_runs) == {"cypher-low", "agent-low-steps"}
-    assert json.loads(EXAMPLE_CONFIG.read_text(encoding="utf-8"))["policy"] == "cascade_v2"
+        assert set(corpus.tier_runs) == {"cypher-luna", "agent-luna"}
+    assert json.loads(EXAMPLE_CONFIG.read_text(encoding="utf-8"))["policy"] == "cascade_v3"
