@@ -147,7 +147,12 @@ def _wait_for_end(client: TestClient, job_id: str, seconds: float = 20.0) -> dic
 
 
 def _ask(client: TestClient, env: Env, question: Question, **fields: Any) -> Any:
-    body = {"corpus_id": CORPUS_ID, "benchmark_question_id": question.question_id, **fields}
+    body = {
+        "corpus_id": CORPUS_ID,
+        "example_id": question.question_id,
+        "text": question.text,
+        **fields,
+    }
     return client.post("/api/ask", json=body)
 
 
@@ -208,7 +213,7 @@ def test_the_question_list_carries_no_gold(make_client: Client, env: Env) -> Non
 
     assert len(listed) == len(env.toy.questions)
     for entry in listed:
-        assert set(entry) == {"question_id", "family", "text", "answer_type"}
+        assert set(entry) == {"question_id", "family", "topic", "text"}
 
 
 def test_the_question_detail_carries_reference_gold_pages_k_and_recorded_rows(
@@ -253,12 +258,7 @@ def test_a_cached_benchmark_question_is_done_and_scored_correct(
 
 def test_a_typed_question_is_done_without_benchmark_facts(make_client: Client, env: Env) -> None:
     client = make_client()
-    question = env.cached
-    request = {
-        "corpus_id": CORPUS_ID,
-        "text": question.text,
-        "answer_type": question.answer_type.value,
-    }
+    request = {"corpus_id": CORPUS_ID, "text": env.cached.text}  # no example_id: free text
 
     job_id = client.post("/api/ask", json=request).json()["job_id"]
     body = _wait_for_end(client, job_id)
@@ -348,7 +348,7 @@ def test_bad_requests_are_rejected(make_client: Client, env: Env) -> None:
 
     assert client.post("/api/ask", json={"corpus_id": CORPUS_ID, "text": "  "}).status_code == 422
     assert client.post("/api/ask", json={"corpus_id": "NOPE", "text": "x"}).status_code == 404
-    unknown = {"corpus_id": CORPUS_ID, "benchmark_question_id": "nope"}
+    unknown = {"corpus_id": CORPUS_ID, "example_id": "nope"}
     assert client.post("/api/ask", json=unknown).status_code == 404
     assert client.get("/api/jobs/nope").status_code == 404
 

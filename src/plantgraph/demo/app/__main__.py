@@ -1,6 +1,7 @@
 """Start the demo server: `python -m plantgraph.demo.app --config <demo_config.json>`.
 
-Sub-commands: `seed-cache --from A --from B --out C` merges caches; `coverage --config X` replays
+Sub-commands: `seed-cache --from A --from B --out C` merges caches; `examples --from Q --out E`
+writes a corpus's example questions; `coverage --config X` replays
 every benchmark question from the cache and reports hits (never a paid call).
 """
 
@@ -15,6 +16,7 @@ import uvicorn
 
 from plantgraph.demo.app.config import load_demo_config
 from plantgraph.demo.app.coverage import run_coverage
+from plantgraph.demo.app.examples import run_examples
 from plantgraph.demo.app.seed_cache import run_seed_cache
 from plantgraph.demo.app.server import HOST, create_app
 from plantgraph.demo.app.state import build_app_state
@@ -43,6 +45,9 @@ def main(argv: Sequence[str] | None = None) -> None:
     arguments = list(sys.argv[1:] if argv is None else argv)
     if arguments[:1] == ["seed-cache"]:  # sub-commands; plain `--config ...` still serves
         run_seed_cache(arguments[1:])
+        return
+    if arguments[:1] == ["examples"]:
+        run_examples(arguments[1:])
         return
     if arguments[:1] == ["coverage"]:
         run_coverage(arguments[1:])

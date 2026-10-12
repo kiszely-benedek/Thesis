@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, model_validator
+from pydantic import AliasChoices, BaseModel, ConfigDict, Field, model_validator
 
 from plantgraph.demo.app.models import CostEstimate, SheetLink, SpendStatus
 from plantgraph.demo.app.store_probe import StoreState
@@ -13,34 +13,42 @@ from plantgraph.qa.models import AnswerType, AnswerValue, Outcome, QuestionFamil
 
 
 class AskRequest(BaseModel):
-    """One question to answer: typed text, or the id of a benchmark question."""
+    """One question to ask: the text in the box, and the example it was filled from, if any.
 
-    model_config = ConfigDict(frozen=True)
+    The visitor never picks an answer form: the server decides it (`answering.asked_question`).
+    """
+
+    model_config = ConfigDict(frozen=True, populate_by_name=True)
 
     corpus_id: str
     text: str = ""
-    answer_type: AnswerType = AnswerType.FREE_TEXT
-    #: When set, the benchmark question's own text and answer type are used.
-    benchmark_question_id: str | None = None
+    #: The example the text came from. Asked with its text unchanged, the example runs as itself
+    #: (stored answer type, reference answer, free replay); otherwise the text is free text.
+    #: `benchmark_question_id` is the old name, still sent by the pre-DP-T6 page.
+    example_id: str | None = Field(
+        default=None, validation_alias=AliasChoices("example_id", "benchmark_question_id")
+    )
     #: Skip tier 1 even if the store holds the corpus.
     tier2_only: bool = False
 
     @model_validator(mode="after")
     def _needs_a_question(self) -> AskRequest:
-        if not self.text.strip() and self.benchmark_question_id is None:
-            raise ValueError("expected a question text or a benchmark_question_id, found neither")
+        # A blank text with an example id is the old page's "ask this example" shape.
+        if not self.text.strip() and self.example_id is None:
+            raise ValueError("expected a question text or an example_id, found neither")
         return self
 
 
 class QuestionSummary(BaseModel):
-    """One line of the benchmark picker: no reference answer, no gold evidence."""
+    """One example question in the picker: no reference answer, no gold, no answer form."""
 
     model_config = ConfigDict(frozen=True)
 
     question_id: str
     family: QuestionFamily
+    #: The family in plain Hungarian, for grouping the list; the family code itself is not shown.
+    topic: str
     text: str
-    answer_type: AnswerType
 
 
 class RecordedAnswer(BaseModel):

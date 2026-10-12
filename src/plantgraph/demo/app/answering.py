@@ -10,7 +10,7 @@ from plantgraph.demo.app.api_models import AskRequest, BenchmarkView, DemoAnswer
 from plantgraph.demo.app.corpus_runtime import LoadedCorpus
 from plantgraph.demo.app.evidence import answer_sheet_links, read_sheet_links
 from plantgraph.qa.cascade.live_models import FreeTextQuestion, LiveAnswer
-from plantgraph.qa.models import Outcome, Question
+from plantgraph.qa.models import AnswerType, Outcome, Question
 from plantgraph.qa.scoring import score_answer
 from plantgraph.qa.strategies.base import AskedQuestion
 
@@ -20,14 +20,23 @@ class UnknownBenchmarkQuestion(LookupError):
 
 
 def asked_question(corpus: LoadedCorpus, request: AskRequest) -> AskedQuestion:
-    """The question to run: the benchmark question itself, or the typed text.
+    """The question to run: the example itself if its text is unchanged, else the typed text.
+
+    Typed text is always FREE_TEXT (the visitor never picks an answer form). An unchanged
+    example keeps its stored answer type, so it replays from the cache and can be checked.
 
     Raises:
-        UnknownBenchmarkQuestion: the benchmark id is not in the corpus.
+        UnknownBenchmarkQuestion: a blank text names an example the corpus does not have.
     """
-    if request.benchmark_question_id is None:
-        return FreeTextQuestion.from_text(request.text.strip(), request.answer_type)
-    return benchmark_question(corpus, request.benchmark_question_id)
+    text = request.text.strip()
+    example = corpus.questions.get(request.example_id) if request.example_id else None
+    if example is not None and text in ("", example.text.strip()):
+        return example
+    if not text:  # no text to fall back on: report the bad id instead of asking nothing
+        raise UnknownBenchmarkQuestion(
+            f"expected an example of {corpus.config.corpus_id}, found {request.example_id!r}"
+        )
+    return FreeTextQuestion.from_text(text, AnswerType.FREE_TEXT)
 
 
 def benchmark_question(corpus: LoadedCorpus, question_id: str) -> Question:

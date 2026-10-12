@@ -25,6 +25,7 @@ from plantgraph.demo.app.jobs import Job, run_job
 from plantgraph.demo.app.models import CostEstimate
 from plantgraph.demo.app.spend import SessionSpend
 from plantgraph.demo.app.store_probe import HeldCorporaProbe, held_corpus_ids_from_env
+from plantgraph.demo.app.topics import topic_of
 from plantgraph.qa.cascade.models import CascadePolicy
 from plantgraph.qa.harness.cypher_setup import CypherSourceFactory, open_checked_neo4j_view
 from plantgraph.qa.strategies.base import AskedQuestion
@@ -162,10 +163,10 @@ class AppState:
         return corpus
 
     def question_list(self, corpus_id: str) -> Sequence[QuestionSummary]:
-        """The benchmark picker's entries: id, family, text, answer type; no gold."""
+        """The example picker's entries: id, family, topic, text; no gold, no answer form."""
         return [
             QuestionSummary(
-                question_id=q.question_id, family=q.family, text=q.text, answer_type=q.answer_type
+                question_id=q.question_id, family=q.family, topic=topic_of(q.family), text=q.text
             )
             for q in self.ready_corpus(corpus_id).questions.values()
         ]
