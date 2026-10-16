@@ -3,6 +3,7 @@
   "question_deadline_s": 120.0,
   "session_cap_usd": 2.0,
   "calls_log_path": "data/runs/cv1/demo/calls.jsonl",
+  "presentation": [],
   "results": {
     "ladder_report": "data/runs/exp0001/report/report.json",
     "sealed_report": "data/runs/sealed/report/report.json"

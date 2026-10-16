@@ -79,6 +79,18 @@ function chooseExample(question) {
   $("question-text").focus();
 }
 
+/** Put the example with this id in the box, as if clicked; false if the plant has no such example. */
+export function fillExample(id) {
+  const question = exampleOfId(id);
+  if (question) chooseExample(question);
+  return question !== null;
+}
+
+/** Ask the question in the box if a question can be asked right now (used by presentation mode). */
+export async function askNow() {
+  if (canAskNow()) await ask();
+}
+
 function exampleButton(question) {
   const button = el("button", { type: "button", className: "example", textContent: question.text });
   button.dataset.id = question.question_id;

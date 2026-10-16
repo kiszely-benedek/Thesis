@@ -41,6 +41,7 @@ const enc = encodeURIComponent;
 
 export const getStatus = () => api("/api/status");
 export const getResults = () => api("/api/results");
+export const getPresentation = () => api("/api/presentation");
 export const getPlant = () => api("/api/plant");
 export const switchPlant = (corpusId) => postJson("/api/plant", { corpus_id: corpusId });
 export const getIndex = (corpusId) => api(`/api/corpora/${enc(corpusId)}/index`);

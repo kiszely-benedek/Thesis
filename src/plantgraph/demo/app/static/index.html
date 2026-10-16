@@ -38,11 +38,28 @@
       <button id="menu-toggle" type="button" class="icon-button menu-toggle" aria-expanded="false"
               aria-controls="tools">&#8943;</button>
       <div id="tools" class="tools">
+        <button id="present-open" type="button" class="text-button"></button>
         <button id="intro-open" type="button" class="text-button" aria-pressed="true"></button>
         <button id="theme-toggle" type="button" class="icon-button"></button>
       </div>
     </div>
   </header>
+
+  <!-- Presentation mode: the step bar under the header (hidden until "Present"). -->
+  <nav id="present-bar" class="present-bar" hidden>
+    <div class="present-row">
+      <span id="present-counter" class="present-counter mono"></span>
+      <span id="present-title" class="present-title"></span>
+      <div id="present-sequences" class="present-sequences"></div>
+      <div class="present-nav">
+        <button id="present-back" type="button" class="text-button"></button>
+        <button id="present-next" type="button" class="primary"></button>
+        <button id="present-exit" type="button" class="text-button"></button>
+      </div>
+    </div>
+    <p id="present-question" class="present-question"></p>
+    <p id="present-note" class="hint" role="status"></p>
+  </nav>
 
   <main id="ask-view" class="layout" role="tabpanel" aria-labelledby="tab-ask">
     <!-- Left: the drawing set in the browser's own PDF viewer (the paper stays white). -->

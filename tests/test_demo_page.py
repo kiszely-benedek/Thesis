@@ -277,3 +277,29 @@ def test_both_themes_define_the_chart_series_colours() -> None:
     for n in range(1, 6):
         assert f"--series-{n}:" in css.split(':root[data-theme="dark"]')[0]
         assert f"--series-{n}:" in dark
+
+
+def test_presentation_mode_is_wired_asks_live_and_takes_the_clicker_keys() -> None:
+    page = _text(STATIC_DIR / "index.html")
+    present = _text(STATIC_DIR / "present.js")
+    css = _text(STATIC_DIR / "app.css")
+
+    for element in ("present-open", "present-bar", "present-back", "present-next", "present-exit"):
+        assert f'id="{element}"' in page
+    # the clicker keys, Space and Escape; the address can open the mode too
+    for key in ("ArrowRight", "ArrowLeft", "PageDown", "PageUp", '" "', "Escape", "mode"):
+        assert key in present, f"expected present.js to handle {key}"
+    # a sequence is bound to its plant: it starts only on that plant, never switching it
+    assert "sequence.corpus_id !== page.corpusId" in present and "switchPlant" not in present
+    # Next asks live through the normal ask; going back must not spend a call
+    assert "askNow()" in present and "goTo(target, asks)" in present
+    assert "html.present" in css and "font-size: 125%" in css
+    assert "--fs-2xl" in css.split("html.present .answer-text")[1].split("}")[0]
+
+
+def test_presentation_mode_hides_the_intro_the_examples_and_the_typing_box() -> None:
+    css = _text(STATIC_DIR / "app.css")
+    hidden = css.partition("html.present #intro")[2].split("display: none; }")[0]
+
+    for part in ("#examples", "#question-text", ".tb-tabs", "#intro-open"):
+        assert part in hidden, f"expected presentation mode to hide {part}"

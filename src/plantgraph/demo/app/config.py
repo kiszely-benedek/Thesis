@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, model_validator
 
@@ -53,6 +54,39 @@ class ResultsSources(BaseModel):
     sealed_result_row: str = "EXP-0002-H100, EXP-0002-H1000"
 
 
+class PresentationStep(BaseModel):
+    """One step of a presentation: an example question asked live, or the Results tab."""
+
+    model_config = ConfigDict(frozen=True)
+
+    kind: Literal["example", "results"] = "example"
+    #: The example's id in the plant's examples file; an `example` step needs it.
+    question_id: str | None = None
+
+    @model_validator(mode="after")
+    def _example_needs_an_id(self) -> PresentationStep:
+        if self.kind == "example" and not self.question_id:
+            raise ValueError("expected an `example` step to name a question_id, found none")
+        return self
+
+
+class PresentationSequence(BaseModel):
+    """A short talk on one plant: its steps run in order, every example asked live."""
+
+    model_config = ConfigDict(frozen=True)
+
+    #: The one plant of the sequence; it is never switched mid-sequence.
+    corpus_id: str
+    title: str
+    steps: tuple[PresentationStep, ...]
+
+    @model_validator(mode="after")
+    def _has_steps(self) -> PresentationSequence:
+        if not self.steps:
+            raise ValueError(f"expected sequence {self.title!r} to have steps, found none")
+        return self
+
+
 class DemoConfig(BaseModel):
     """The whole demo: corpora, the cascade policy and where its own call log lives."""
 
@@ -70,12 +104,26 @@ class DemoConfig(BaseModel):
     calls_log_path: Path
     #: Report files behind the Results tab; without it `/api/results` answers 404.
     results: ResultsSources | None = None
+    #: Talks for presentation mode; the question ids name this machine's example files, so the
+    #: list lives in the local config and is empty in the shipped example.
+    presentation: tuple[PresentationSequence, ...] = ()
 
     @model_validator(mode="after")
     def _corpora_are_unique(self) -> DemoConfig:
         ids = [corpus.corpus_id for corpus in self.corpora]
         if not ids or len(set(ids)) != len(ids):
             raise ValueError(f"expected one or more distinct corpus ids, found {ids}")
+        return self
+
+    @model_validator(mode="after")
+    def _sequences_name_configured_plants(self) -> DemoConfig:
+        known = {corpus.corpus_id for corpus in self.corpora}
+        unknown = [s.title for s in self.presentation if s.corpus_id not in known]
+        if unknown:
+            raise ValueError(
+                f"expected every presentation sequence to name a configured plant "
+                f"{sorted(known)}, found sequences {unknown} naming others"
+            )
         return self
 
     def corpus(self, corpus_id: str) -> DemoCorpus | None:

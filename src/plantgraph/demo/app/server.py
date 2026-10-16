@@ -21,11 +21,13 @@ from plantgraph.demo.app.api_models import (
     JobStatus,
     PlantRequest,
     PlantStatus,
+    PresentationView,
     QuestionSummary,
     TagLookup,
 )
 from plantgraph.demo.app.corpus_runtime import read_drawing_index
 from plantgraph.demo.app.live_cascades import NO_API_KEY
+from plantgraph.demo.app.presentation import example_texts_of, presentation_view
 from plantgraph.demo.app.results import ResultsView, results_view
 from plantgraph.demo.app.state import (
     AppState,
@@ -152,6 +154,10 @@ def create_app(state: AppState) -> FastAPI:
             return results_view(sources)
         except FileNotFoundError as error:
             raise _http_error(404, MISSING_FILE, str(error)) from error
+
+    @app.get("/api/presentation")
+    def presentation() -> PresentationView:
+        return presentation_view(state.config, example_texts_of(state))
 
     @app.get("/api/plant")
     def plant() -> PlantStatus:

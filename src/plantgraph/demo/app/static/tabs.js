@@ -8,8 +8,8 @@ import { STRINGS } from "./strings.js";
 const TABS = ["ask", "results"];
 const RESULTS_HASH = "#results"; // lets a reload or a shared link open the Results tab
 
-/** Show one tab's view and mark its button selected; the other tab's view is hidden. */
-function select(name, focus = false) {
+/** Show one tab's view (`ask` or `results`) and mark its button selected; the other tab's view is hidden. */
+export function showTab(name, focus = false) {
   for (const tab of TABS) {
     const button = $(`tab-${tab}`);
     button.setAttribute("aria-selected", String(tab === name));
@@ -27,7 +27,7 @@ function onKey(event) {
   const target = { ArrowRight: current + 1, ArrowLeft: current - 1, Home: 0, End: TABS.length - 1 }[event.key];
   if (current < 0 || target === undefined) return;
   event.preventDefault();
-  select(TABS[(target + TABS.length) % TABS.length], true);
+  showTab(TABS[(target + TABS.length) % TABS.length], true);
 }
 
 /** Label the tabs, wire them, and open the tab the address asks for (Ask by default). */
@@ -35,7 +35,7 @@ export function initTabs() {
   $("tablist").setAttribute("aria-label", STRINGS.tabsLabel);
   $("tab-ask").textContent = STRINGS.tabAsk;
   $("tab-results").textContent = STRINGS.tabResults;
-  for (const tab of TABS) $(`tab-${tab}`).addEventListener("click", () => select(tab));
+  for (const tab of TABS) $(`tab-${tab}`).addEventListener("click", () => showTab(tab));
   $("tablist").addEventListener("keydown", onKey);
-  select(location.hash === RESULTS_HASH ? "results" : "ask");
+  showTab(location.hash === RESULTS_HASH ? "results" : "ask");
 }

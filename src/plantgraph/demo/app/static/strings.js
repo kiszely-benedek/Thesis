@@ -20,6 +20,24 @@ export const STRINGS = {
   themeLabel: { auto: "Theme: automatic", light: "Theme: light", dark: "Theme: dark" },
   themeIcon: { auto: "◐", light: "☀", dark: "☾" },
 
+  // presentation mode
+  presentOpen: "Present",
+  presentBarLabel: "Presentation",
+  presentChoose: "Choose a talk",
+  presentNone: "No talks are configured in this demo.",
+  presentSequence: (title, steps) => `${title} · ${steps} steps`,
+  presentCounter: (n, total) => `${n} / ${total}`,
+  presentBack: "◀ Back",
+  presentNext: "Next ▶",
+  presentExit: "Exit",
+  presentResultsStep: "Recorded results: how the methods compare as the plant grows",
+  presentKeys: "→ or Space: next question, asked live · ←: back · Esc: exit",
+  presentSwitchFirst: (id) => `select plant ${id} above first`,
+  presentPlantNotHeld: (id) => `wait until ${id} is in the graph database`,
+  presentMissing: (id, why) => (why === "corpus_not_ready"
+    ? "the plant is still loading" : `the plant has no example ${id}`),
+  presentLoadFailed: "The talks could not be read from the server.",
+
   // "What is this?" box
   introHeading: "What is this?",
   introText:

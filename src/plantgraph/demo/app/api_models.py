@@ -228,3 +228,35 @@ class AppStatus(BaseModel):
     cutoff_s: float
     spend: SpendStatus
     plant: PlantStatus
+
+
+class PresentationItem(BaseModel):
+    """One step of a presentation sequence, resolved against the loaded plant."""
+
+    model_config = ConfigDict(frozen=True)
+
+    index: int
+    kind: Literal["example", "results"]
+    question_id: str | None
+    #: The example's text, exactly as in the examples file; `None` for a results step.
+    text: str | None
+    #: Why the step cannot run: its plant is not loaded, or the plant has no such example.
+    missing: Literal["unknown_question", "corpus_not_ready"] | None
+
+
+class PresentationSequenceView(BaseModel):
+    """A sequence for the page: its plant, its title and its resolved steps."""
+
+    model_config = ConfigDict(frozen=True)
+
+    corpus_id: str
+    title: str
+    items: tuple[PresentationItem, ...]
+
+
+class PresentationView(BaseModel):
+    """`GET /api/presentation`: the configured sequences (empty when none are configured)."""
+
+    model_config = ConfigDict(frozen=True)
+
+    sequences: tuple[PresentationSequenceView, ...]

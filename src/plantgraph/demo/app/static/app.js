@@ -13,6 +13,7 @@ import {
   corpusStateText, followLoad, initPlantSwitch, loadPlant, renderPhase, renderPlantSwitch,
   renderStoreNotice,
 } from "./plant.js";
+import { initPresent, refreshPresent, renderPresent } from "./present.js";
 import { initResults } from "./results.js";
 import { currentCorpus, page } from "./state.js";
 import { initTabs } from "./tabs.js";
@@ -36,6 +37,7 @@ function render() {
   $("corpus-state").textContent = text;
   $("corpus-state").hidden = text === "";
   updateAskEnabled();
+  renderPresent();
 }
 
 function sheetCounts() {
@@ -60,6 +62,7 @@ async function refreshStatus() {
   renderIntro(sheetCounts());
   render();
   await ensureQuestions();
+  await refreshPresent();
 }
 
 async function selectCorpus(corpusId) {
@@ -105,6 +108,7 @@ async function start() {
     if (held === null) clearPdf();
     if (held !== null) await selectCorpus(held);
     render();
+    initPresent();
     if (page.status.plant.loading) followLoad(render, refreshStatus); // a load was already running
     setInterval(() => refreshStatus().catch(() => {}), STATUS_MS);
   } catch (error) {
