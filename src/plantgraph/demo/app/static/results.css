@@ -1,0 +1,74 @@
+/* The Results tab: figures, charts, tooltips and tables. Colours and type come from tokens.css. */
+
+.results { width: 100%; max-width: 76rem; margin: 0 auto; padding: var(--sp-5) var(--sp-5) var(--sp-7); }
+.results-title { font-size: var(--fs-xl); }
+.results-intro { max-width: 52rem; margin: var(--sp-2) 0 var(--sp-3); color: var(--ink-muted); }
+.results-error { color: var(--bad); margin-right: var(--sp-2); }
+.results-section { margin-top: var(--sp-6); padding-top: var(--sp-3); border-top: var(--rule-w-strong) solid var(--ink); }
+.results-section > h2 { font-size: var(--fs-lg); margin-bottom: var(--sp-2); }
+
+/* A figure is a card like the answer card: surface, hairline border, ink rule on top. */
+.figure {
+  margin: var(--sp-4) 0 0; padding: var(--sp-4); min-width: 0;
+  background: var(--surface); border: var(--rule-w) solid var(--rule); border-top: var(--rule-w-strong) solid var(--ink);
+  border-radius: 0 0 var(--r-2) var(--r-2);
+}
+.figure h3 { font-size: var(--fs-md); }
+.caption { max-width: 60rem; margin: var(--sp-1) 0 var(--sp-3); font-size: var(--fs-sm); color: var(--ink-muted); }
+.figure-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-4); }
+.provenance { margin: var(--sp-3) 0 0; font-size: var(--fs-xs); color: var(--ink-muted); overflow-wrap: anywhere; }
+
+.legend { list-style: none; margin: 0 0 var(--sp-2); padding: 0; display: flex; flex-wrap: wrap; gap: var(--sp-1) var(--sp-4); font-size: var(--fs-sm); }
+.legend li { display: flex; align-items: center; gap: var(--sp-1); }
+
+.arm-notes { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--sp-1) var(--sp-4); margin: var(--sp-3) 0 0; font-size: var(--fs-sm); }
+.arm-notes dt { font-weight: 600; }
+.arm-notes dd { margin: 0; color: var(--ink-muted); }
+
+/* ---------- charts ---------- */
+
+.chart { position: relative; width: 100%; }
+.chart svg { display: block; overflow: visible; }
+.chart text { fill: var(--ink-muted); font: var(--fs-xs) var(--font-ui); }
+.chart .axis-title { font-weight: 600; }
+.chart .axis { stroke: var(--ink-muted); stroke-width: 1; }
+.chart .grid { stroke: var(--rule); stroke-width: 1; }
+.chart .wall { stroke: var(--ink); stroke-width: 1.5; stroke-dasharray: 6 4; }
+.chart .wall-label { fill: var(--ink); font-weight: 600; }
+.chart .line { fill: none; stroke-width: 2; stroke-linejoin: round; }
+.chart .whisker { fill: none; stroke-width: 1.5; stroke-opacity: 0.7; }
+.chart .shape { stroke: var(--surface); stroke-width: 1.5; }
+.chart .bar-rect { stroke: var(--surface); stroke-width: 1; }
+.chart .bar-value { fill: var(--ink); font-family: var(--font-mono); }
+.chart .mark { outline: none; cursor: default; }
+.chart .hit { fill: transparent; stroke: none; }
+.chart .mark:hover .hit { fill: var(--accent-soft); }
+.chart .mark:focus-visible .hit { stroke: var(--focus); stroke-width: 2; fill: var(--accent-soft); }
+
+.chart-tip {
+  position: absolute; z-index: 5; left: 0; top: 0; width: max-content; max-width: min(20rem, 100%);
+  padding: var(--sp-2) var(--sp-3); white-space: pre-line;
+  background: var(--surface); color: var(--ink); border: var(--rule-w) solid var(--ink); border-radius: var(--r-2);
+  box-shadow: var(--shadow-menu); font-size: var(--fs-sm); line-height: var(--lh-body); pointer-events: none;
+  opacity: 0; visibility: hidden;
+  transition: opacity var(--dur-fast) var(--ease), visibility 0s linear var(--dur-fast);
+}
+.chart-tip.shown { opacity: 1; visibility: visible; transition-delay: 0s; }
+
+/* ---------- tables ---------- */
+
+.full-table { margin-top: var(--sp-4); background: var(--surface); border: var(--rule-w) solid var(--rule); border-radius: var(--r-2); }
+.full-table > summary { cursor: pointer; padding: var(--sp-2) var(--sp-3); font: 600 var(--fs-sm) var(--font-label); }
+.full-table > summary:hover { background: var(--surface-2); }
+.full-table .table-wrap, .full-table > div { padding: 0 var(--sp-3) var(--sp-3); }
+
+@media (max-width: 899px) {
+  .figure-pair { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 599px) {
+  .results { padding: var(--sp-4) var(--sp-3) var(--sp-6); }
+  .figure { padding: var(--sp-3); }
+  .arm-notes { grid-template-columns: minmax(0, 1fr); }
+  .arm-notes dd { margin-bottom: var(--sp-2); }
+}

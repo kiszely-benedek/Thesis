@@ -37,6 +37,87 @@ export const STRINGS = {
   ],
   introHide: "Got it, hide this",
 
+  // tabs and the Results tab
+  tabsLabel: "View",
+  tabAsk: "Ask",
+  tabResults: "Results",
+  resultsHeading: "Recorded results",
+  resultsIntro:
+    "These figures come from two recorded experiments, not from this demo's live answers. They compare " +
+    "ways of answering questions about {{pid|P&IDs}} as the plant grows. Every value is read from the " +
+    "experiment's report file, named under each figure.",
+  resultsLoading: "Loading the recorded results…",
+  resultsEmpty: "No recorded results are available in this demo.",
+  sourceLabel: "Source",
+  resultRowLabel: "result row",
+  modifiedLabel: "modified",
+  allValues: "All values as a table",
+  noRun: "no run",
+  absentHeading: "Cells the experiment has no run for (shown as gaps in the lines):",
+  ladderCols: ["Method", "Plant", "Questions", "Accuracy", "95 % interval", "Mean cost", "Median time"],
+  sealedCols: ["Plant", "Method", "Accuracy", "95 % interval", "Correct", "Cost per question", "Median time", "90th percentile time"],
+
+  // figure 1-3: the scale ladder
+  ladderHeading: "Scale ladder: accuracy, cost and time as the plant grows",
+  ladderMeta: (families, cutoff) =>
+    `Common question families (${families}). A question counts as correct only if it is answered correctly within ${cutoff} s.`,
+  accuracyTitle: "Accuracy by plant size",
+  accuracyCaption: (hasGaps) =>
+    "Each line is one way of answering the same questions on plants of growing size (the horizontal axis counts " +
+    "drawing sheets and is logarithmic). Higher is better. Each marker has a bar showing its {{wilson|Wilson interval}}; " +
+    "where the bars of two lines overlap, the difference between them is not reliable. The dashed vertical line is the " +
+    "{{context_wall|context wall}}: to its right the whole drawing set no longer fits into one prompt, so putting it " +
+    "there is not possible at all." +
+    (hasGaps ? " A gap in a line means the experiment has no run for that plant size; it is not a zero." : "") +
+    " The single-step rows are the comparison for the cascade.",
+  costTitle: "Mean cost per question",
+  costCaption:
+    "The average price of answering one question, in US dollars. The vertical axis is logarithmic: each gridline " +
+    "is ten times the one below. The lines are the same methods as above.",
+  latencyTitle: "Median answer time",
+  latencyCaption: "Half of the questions were answered faster than this. The lines are the same methods as above.",
+  armNames: {
+    "ctx-high": "ContextRAG (high effort)", "ctx-low": "ContextRAG (low effort)", cyp: "Always Cypher",
+    ag: "Always graph agent", cascade_v3: "Cascade (v3)",
+  },
+  armNotes: {
+    cascade_v3:
+      "The demo's own method, a {{cascade|cascade}}: the database-query step first, then the graph agent when " +
+      "the query's answer is not accepted.",
+    ag: "Every question goes to the {{agent|graph agent}} alone. A comparison row.",
+    cyp: "Every question goes to the database-query step ({{cypher|Cypher}}) alone. A comparison row.",
+    "ctx-high":
+      "{{context_rag|ContextRAG}}: the whole graph is written into the model's prompt as text; the model reasons with high effort.",
+    "ctx-low": "The same, with low reasoning effort; run on the one- and ten-sheet plants only.",
+  },
+  accuracyChartLabel: "Accuracy of each method by plant size",
+  costChartLabel: "Mean cost per question of each method by plant size",
+  latencyChartLabel: "Median answer time of each method by plant size",
+  axisSheets: "Drawing sheets in the plant (log scale)",
+  axisAccuracy: "Accuracy",
+  axisCost: "Cost per question (log scale)",
+  axisLatency: "Median time",
+  wallLabel: (sheets) => ["Context wall", `≈ ${sheets} sheets`],
+
+  // figure 4: the sealed test
+  sealedHeading: "Sealed test: the final comparison on two plants of different size",
+  sealedTitle: "Accuracy on the sealed test",
+  sealedCaption:
+    "A separate experiment: its questions were held out of development and the method was frozen before they were " +
+    "run. Bars show accuracy per plant and method; the whisker is the {{wilson|Wilson interval}}. This question set " +
+    "differs from the ladder's, so the two experiments are not drawn on one chart. The {{cascade|cascade}} is the " +
+    "demo's method; Always graph agent and Always Cypher answer every question with one step only and are the " +
+    "comparison rows. The table gives the exact counts, cost and times.",
+  sealedChartLabel: "Accuracy of each method on the two sealed-test plants",
+  policyNames: { cascade_v3: "Cascade (v3)", always_g_luna: "Always graph agent", always_c_luna: "Always Cypher" },
+
+  // chart tooltips (one line each; the chart adds the method and plant lines)
+  tipAccuracy: (share, low, high) => `Accuracy ${share} (95 % interval ${low} to ${high})`,
+  tipCost: (cost) => `Mean cost per question ${cost}`,
+  tipLatency: (time) => `Median answer time ${time}`,
+  tipQuestions: (n) => count(n, "question"),
+  tipCorrect: (correct, n) => `${correct} of ${count(n, "question")} correct`,
+
   // drawings
   dwgLabel: "Go to sheet: DWG",
   dwgGo: "Go",

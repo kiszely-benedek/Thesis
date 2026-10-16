@@ -17,6 +17,16 @@ export function seconds(value) {
   return `${Number(value).toFixed(1)} s`;
 }
 
+/** A share between 0 and 1 as a percentage, e.g. 0.9369 -> "93.7 %" (`digits` decimals). */
+export function pct(share, digits = 1) {
+  return `${(Number(share) * 100).toFixed(digits)} %`;
+}
+
+/** An ISO date-time ("2026-10-11T20:25:16Z") as its date part, "2026-10-11". */
+export function isoDate(stamp) {
+  return String(stamp).slice(0, 10);
+}
+
 /** An answer value (text, number, list or null) as one display string. */
 export function valueText(value) {
   if (value === null || value === undefined) return "";

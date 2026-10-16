@@ -28,6 +28,8 @@
   --series-1: #0072b2;
   --series-2: #d55e00;
   --series-3: #009e73;
+  --series-4: #a8458a;
+  --series-5: #8a6d00;
   --grid: rgb(23 32 42 / 0.05);
   --shadow-menu: 0 6px 18px rgb(23 32 42 / 0.18);
 
@@ -86,6 +88,8 @@
   --series-1: #56b4e9;
   --series-2: #e69f00;
   --series-3: #2ec4a0;
+  --series-4: #cc79a7;
+  --series-5: #f0e442;
   --grid: rgb(229 234 239 / 0.05);
   --shadow-menu: 0 6px 18px rgb(0 0 0 / 0.5);
 }

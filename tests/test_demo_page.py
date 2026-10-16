@@ -55,7 +55,13 @@ def test_the_root_serves_the_page_that_links_its_assets() -> None:
     response = CLIENT.get("/")
 
     assert response.status_code == 200 and "text/html" in response.headers["content-type"]
-    for asset in ("/static/tokens.css", "/static/app.css", "/static/card.css", "/static/app.js"):
+    for asset in (
+        "/static/tokens.css",
+        "/static/app.css",
+        "/static/card.css",
+        "/static/results.css",
+        "/static/app.js",
+    ):
         assert asset in response.text, f"expected the page to link {asset}"
 
 
@@ -218,3 +224,56 @@ def test_the_live_timeline_is_polled_ticked_and_folded_into_the_details() -> Non
     assert "trace.failed_attempts > 0" in answer, "lost time shows only when attempts failed"
     assert "prefers-reduced-motion" in css and "timeline-mark" in css
     assert '"lost_time"' in _text(STATIC_DIR / "labels.en.json")
+
+
+def test_the_results_tab_reads_the_results_api_and_draws_with_inline_svg() -> None:
+    api = _text(STATIC_DIR / "api.js")
+    charts = _text(STATIC_DIR / "charts.js")
+    served = {_shape(r.path) for r in APP.routes if isinstance(r, APIRoute)}
+
+    assert '"/api/results"' in api and "/api/results" in served
+    assert "createElementNS" in charts and SVG_NAMESPACE in charts
+    for name in (
+        "results",
+        "results_data",
+        "results_tables",
+        "charts",
+        "chart_scale",
+        "chart_tip",
+        "tabs",
+    ):
+        assert (STATIC_DIR / f"{name}.js").exists(), f"expected static/{name}.js"
+    assert (STATIC_DIR / "results.css").exists()
+
+
+def test_the_tabs_follow_the_aria_tabs_pattern() -> None:
+    page = _text(STATIC_DIR / "index.html")
+    tabs = _text(STATIC_DIR / "tabs.js")
+
+    assert page.count('role="tablist"') == 1 and page.count('role="tab"') == 2
+    assert page.count('role="tabpanel"') == 2
+    for tab, view in (("tab-ask", "ask-view"), ("tab-results", "results-view")):
+        assert f'id="{tab}"' in page and f'aria-controls="{view}"' in page
+        assert f'id="{view}"' in page and f'aria-labelledby="{tab}"' in page
+    # arrow keys move between tabs; the Ask tab is the one selected in the markup
+    assert "ArrowRight" in tabs and "ArrowLeft" in tabs
+    assert 'id="tab-ask" type="button" role="tab" class="tab" aria-selected="true"' in page
+
+
+def test_no_chart_number_is_typed_into_the_page_text() -> None:
+    # captions describe, figures show values: no digit sits in a results caption string
+    strings = _text(STATIC_DIR / "strings.js")
+    section = strings.split("// figure 1-3: the scale ladder")[1].split("// drawings")[0]
+    captions = re.findall(r"Caption:\s*(?:\([^)]*\)\s*=>)?\s*((?:\s*\"[^\"]*\"\s*\+?)+)", section)
+
+    assert captions, "expected the caption strings to be found"
+    assert all(not re.search(r"\d", text) for text in captions), captions
+
+
+def test_both_themes_define_the_chart_series_colours() -> None:
+    css = _text(STATIC_DIR / "tokens.css")
+    dark = css.split(':root[data-theme="dark"]')[1].split("}")[0]
+
+    for n in range(1, 6):
+        assert f"--series-{n}:" in css.split(':root[data-theme="dark"]')[0]
+        assert f"--series-{n}:" in dark

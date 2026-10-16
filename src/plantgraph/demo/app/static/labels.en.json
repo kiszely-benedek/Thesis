@@ -82,7 +82,8 @@
     "plant_not_loaded": "This plant is not in the graph database. Select it above to load it first.",
     "plant_load_failed": "Loading this plant into the graph database failed.",
     "missing_file": "A file is missing on the server.",
-    "no_api_key": "The demo has no model API key, so it cannot answer."
+    "no_api_key": "The demo has no model API key, so it cannot answer.",
+    "results_not_configured": "This demo has no recorded results configured."
   },
   "answer_values": {
     "yes": "Yes",
@@ -130,6 +131,9 @@
     "u": "u: how many links in the correct answer's evidence cross from one process unit to another.",
     "model_time": "Model time: the time of the language-model calls plus local computing, counted the way the evaluation counts it.",
     "lost_time": "Lost time: the model provider returned errors and the system retried the call. This time is not the model's thinking time.",
-    "wall_time": "Answer time: how long this answer took on this machine, from pressing Ask to the result (without emptying the model cache or loading a plant)."
+    "wall_time": "Answer time: how long this answer took on this machine, from pressing Ask to the result (without emptying the model cache or loading a plant).",
+    "wilson": "Wilson interval: the 95 % confidence band around a measured accuracy; it is wider when there are few questions.",
+    "context_wall": "Context wall: the number of sheets above which the text of the whole drawing set no longer fits into the language model's input.",
+    "context_rag": "ContextRAG: the published method measured on single sheets; it puts the whole graph as text into the model's input."
   }
 }

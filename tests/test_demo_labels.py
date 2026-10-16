@@ -89,6 +89,12 @@ def test_the_glossary_explains_in_whole_sentences() -> None:
         assert text.strip().endswith("."), f"glossary text of {key!r} is not a sentence: {text!r}"
 
 
+def test_the_results_tab_terms_and_its_error_code_have_text() -> None:
+    _assert_has_text(LABELS.glossary, {"wilson", "context_wall", "context_rag"})
+    assert "results_not_configured" in ERROR_CODES
+    _assert_has_text(LABELS.error_codes, {"results_not_configured"})
+
+
 def test_the_json_has_only_the_sections_the_model_knows() -> None:
     sections = json.loads(LABELS_PATH.read_text(encoding="utf-8"))
     assert set(sections) == set(type(LABELS).model_fields)

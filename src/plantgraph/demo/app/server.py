@@ -61,6 +61,7 @@ RESULTS_NOT_CONFIGURED = "results_not_configured"
 #: as the plant status's `error`); the label table must have a text for each.
 ERROR_CODES: frozenset[str] = frozenset(code for _, code in _ERROR_OF.values()) | {
     MISSING_FILE,
+    RESULTS_NOT_CONFIGURED,
     NO_API_KEY,
     PLANT_LOAD_FAILED,
 }

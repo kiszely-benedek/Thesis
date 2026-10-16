@@ -13,7 +13,9 @@ import {
   corpusStateText, followLoad, initPlantSwitch, loadPlant, renderPhase, renderPlantSwitch,
   renderStoreNotice,
 } from "./plant.js";
+import { initResults } from "./results.js";
 import { currentCorpus, page } from "./state.js";
+import { initTabs } from "./tabs.js";
 import { initTheme } from "./theme.js";
 import { clearPdf, initViewer, showPdf } from "./viewer.js";
 
@@ -92,6 +94,8 @@ async function start() {
   initAsk(render);
   try {
     await loadLabels();
+    initResults();
+    initTabs();
     page.status = await getStatus();
     renderIntro(sheetCounts());
     initPlantSwitch(onPlantChosen);
