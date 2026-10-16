@@ -35,22 +35,33 @@ from plantgraph.demo.drawing.models import DrawingIndex
 HOST = "127.0.0.1"
 STATIC_DIR = Path(__file__).parent / "static"
 
-# which HTTP status each domain error means
-_STATUS_OF: dict[type[Exception], int] = {
-    UnknownCorpus: 404,
-    UnknownJob: 404,
-    UnknownBenchmarkQuestion: 404,
-    CorpusNotReady: 409,
-    Busy: 409,
+# Each domain error -> (HTTP status, error code). The page shows the Hungarian text of the code
+# (`labels.hu.json`, `error_codes`); the English `message` is for the folded technical details.
+_ERROR_OF: dict[type[Exception], tuple[int, str]] = {
+    UnknownCorpus: (404, "unknown_corpus"),
+    UnknownJob: (404, "unknown_job"),
+    UnknownBenchmarkQuestion: (404, "unknown_question"),
+    CorpusNotReady: (409, "corpus_not_ready"),
+    Busy: (409, "busy"),
 }
+#: The code of a missing page, PDF or drawing-index file (not an `_ERROR_OF` exception).
+MISSING_FILE = "missing_file"
+#: Every code the API can send; the label table must have a text for each.
+ERROR_CODES: frozenset[str] = frozenset(code for _, code in _ERROR_OF.values()) | {MISSING_FILE}
+
+
+def _http_error(status: int, code: str, message: str) -> HTTPException:
+    """An HTTP error whose body is `{"detail": {"code": ..., "message": ...}}`."""
+    return HTTPException(status, detail={"code": code, "message": message})
 
 
 def _call[T](action: Callable[[], T]) -> T:
     """Run `action`, turning the app's domain errors into HTTP errors."""
     try:
         return action()
-    except tuple(_STATUS_OF) as error:
-        raise HTTPException(_STATUS_OF[type(error)], detail=str(error)) from error
+    except tuple(_ERROR_OF) as error:
+        status, code = _ERROR_OF[type(error)]
+        raise _http_error(status, code, str(error)) from error
 
 
 def create_app(state: AppState) -> FastAPI:
@@ -61,7 +72,9 @@ def create_app(state: AppState) -> FastAPI:
     def page() -> FileResponse:
         index = STATIC_DIR / "index.html"
         if not index.exists():
-            raise HTTPException(404, detail=f"expected the page at {index}, found no such file")
+            raise _http_error(
+                404, MISSING_FILE, f"expected the page at {index}, found no such file"
+            )
         return FileResponse(index)
 
     @app.get("/api/status")
@@ -72,7 +85,7 @@ def create_app(state: AppState) -> FastAPI:
     def drawings_pdf(corpus_id: str) -> FileResponse:
         path = _call(lambda: state.configured_corpus(corpus_id)).pdf_path
         if not path.exists():
-            raise HTTPException(404, detail=f"expected the drawing PDF at {path}, found none")
+            raise _http_error(404, MISSING_FILE, f"expected the drawing PDF at {path}, found none")
         # "inline" asks the browser to show the PDF in its viewer instead of downloading it
         return FileResponse(
             path,
@@ -87,7 +100,7 @@ def create_app(state: AppState) -> FastAPI:
         try:
             return read_drawing_index(corpus)
         except FileNotFoundError as error:
-            raise HTTPException(404, detail=str(error)) from error
+            raise _http_error(404, MISSING_FILE, str(error)) from error
 
     @app.get("/api/corpora/{corpus_id}/questions")
     def questions(corpus_id: str) -> list[QuestionSummary]:

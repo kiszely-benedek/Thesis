@@ -46,7 +46,8 @@ class QuestionSummary(BaseModel):
 
     question_id: str
     family: QuestionFamily
-    #: The family in plain Hungarian, for grouping the list; the family code itself is not shown.
+    #: The topic code for grouping the list (`labels.hu.json` `topics` gives its heading);
+    #: the family code itself is not shown.
     topic: str
     text: str
 
