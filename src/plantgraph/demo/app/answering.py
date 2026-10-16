@@ -6,14 +6,19 @@ sheets, k) is read here, after the answer exists, and is only displayed and scor
 
 from __future__ import annotations
 
+import logging
+
 from plantgraph.demo.app.api_models import AskRequest, BenchmarkView, DemoAnswer
 from plantgraph.demo.app.corpus_runtime import LoadedCorpus
 from plantgraph.demo.app.evidence import answer_sheet_links, read_sheet_links
+from plantgraph.demo.app.route import RouteView, route_view
 from plantgraph.demo.app.trace_models import AskTrace
 from plantgraph.qa.cascade.live_models import FreeTextQuestion, LiveAnswer
 from plantgraph.qa.models import AnswerType, Outcome, Question
 from plantgraph.qa.scoring import score_answer
 from plantgraph.qa.strategies.base import AskedQuestion
+
+_LOG = logging.getLogger(__name__)
 
 
 class UnknownBenchmarkQuestion(LookupError):
@@ -87,8 +92,18 @@ def demo_answer(
         read_sheets=read_sheet_links(live.trace_sheets, corpus.pages),
         benchmark=_benchmark_for(corpus, live, asked),
         trace=trace,
+        route=_route_of(corpus, live, trace),
         cache_hit_detected=came_from_cache(live) or any(call.from_cache for call in trace.calls),
     )
+
+
+def _route_of(corpus: LoadedCorpus, live: LiveAnswer, trace: AskTrace) -> RouteView | None:
+    """The route picture; a failure is logged and leaves `None`, so the paid answer is kept."""
+    try:
+        return route_view(live.question_text, live, trace, corpus.item_graph, corpus.pages)
+    except Exception:  # the answer is already paid for; show it without the picture
+        _LOG.exception("building the route view failed")
+        return None
 
 
 def came_from_cache(live: LiveAnswer) -> bool:
