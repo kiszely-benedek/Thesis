@@ -7,22 +7,38 @@ fixtures of `test_demo_app` are reused.
 # ruff: noqa: F811  (imported pytest fixtures are re-declared as test arguments)
 from __future__ import annotations
 
+import sqlite3
 import time
+from collections.abc import Iterator
+from contextlib import closing
 from pathlib import Path
+from typing import Any
 
 import pytest
 
 from plantgraph.demo.app import live_cascades
 from plantgraph.demo.app.answering import came_from_cache
 from plantgraph.demo.app.api_models import AskRequest, DemoAnswer, JobStatus
-from plantgraph.demo.app.live_cascades import LIVE_CACHE, CascadeSource, OpenedForAsk
+from plantgraph.demo.app.live_cascades import Asker, CascadeSource, LiveCascadeFactory
 from plantgraph.demo.app.state import AppState, build_app_state
 from plantgraph.llm.fake_transport import FakeTransport
+from plantgraph.qa.cascade.live_build import OpenedCascade
 from plantgraph.qa.cascade.live_models import LiveAnswer, NeedsPaidCall
 from plantgraph.qa.models import Question
 from plantgraph.qa.strategies.base import AskedQuestion
 from qa_harness_toy import CORPUS_ID
 from test_demo_app import Env, env, scripted_transport, toy  # noqa: F401
+
+
+@pytest.fixture(autouse=True)
+def _close_states() -> Iterator[None]:
+    yield
+    for state in _OPENED_STATES:  # delete each open cascade's temporary cache file
+        state.close()
+    _OPENED_STATES.clear()
+
+
+_OPENED_STATES: list[AppState] = []
 
 
 def _state(env: Env, transport: FakeTransport | None, cap: float | None = None) -> AppState:
@@ -33,6 +49,7 @@ def _state(env: Env, transport: FakeTransport | None, cap: float | None = None) 
         held_corpora_probe=lambda: ("D1000",),  # no real Neo4j in tests
     )
     state.load_all()
+    _OPENED_STATES.append(state)
     return state
 
 
@@ -53,45 +70,37 @@ def _answer(status: JobStatus) -> DemoAnswer:
     return status.result
 
 
-class _SpyOpened:
-    """An opened cascade that remembers whether it was closed, and may rewrite its answers."""
+class _CachedLooking:
+    """An asker that rewrites its answers to look like stored ones."""
 
-    def __init__(self, real: OpenedForAsk, *, force_cached: bool) -> None:
+    def __init__(self, real: Asker) -> None:
         self._real = real
-        self._force_cached = force_cached
-        self.closed = False
-
-    @property
-    def cascade(self) -> _SpyOpened:
-        return self
 
     def ask(self, asked: AskedQuestion) -> LiveAnswer | NeedsPaidCall:
-        result = self._real.cascade.ask(asked)
-        if self._force_cached and isinstance(result, LiveAnswer):
+        result = self._real.ask(asked)
+        if isinstance(result, LiveAnswer):
             return result.model_copy(update={"from_cache": True})
         return result
 
-    def close(self) -> None:
-        self.closed = True
-        self._real.close()
-
 
 class _SpySource:
-    """Wraps a corpus's cascade source and keeps every cascade it opened."""
+    """Wraps a corpus's cascade source; counts the asks and may make answers look cached."""
 
     def __init__(self, real: CascadeSource, *, force_cached: bool = False) -> None:
         self._real = real
         self._force_cached = force_cached
-        self.opened: list[_SpyOpened] = []
+        self.begun = 0
         self.tiers = real.tiers
         self.tier1_store = real.tier1_store
         self.store = real.store
 
-    def open_for_ask(self) -> tuple[OpenedForAsk, float]:
-        real, open_s = self._real.open_for_ask()
-        spy = _SpyOpened(real, force_cached=self._force_cached)
-        self.opened.append(spy)
-        return spy, open_s
+    def begin_ask(self) -> tuple[Asker, float]:
+        self.begun += 1
+        asker, clear_s = self._real.begin_ask()
+        return (_CachedLooking(asker) if self._force_cached else asker), clear_s
+
+    def close(self) -> None:
+        self._real.close()
 
 
 def _spy_on(state: AppState, *, force_cached: bool = False) -> _SpySource:
@@ -101,12 +110,23 @@ def _spy_on(state: AppState, *, force_cached: bool = False) -> _SpySource:
     return spy
 
 
-def test_the_live_cache_is_an_empty_database_in_memory_not_a_file() -> None:
-    assert str(LIVE_CACHE) == ":memory:"
-    assert not Path(":memory:").exists()
+def _factory(state: AppState) -> LiveCascadeFactory:
+    source = state.ready_corpus(CORPUS_ID).source
+    assert isinstance(source, LiveCascadeFactory)
+    return source
 
 
-def test_two_identical_asks_make_two_network_requests(env: Env) -> None:
+def test_the_live_cache_is_a_temporary_file_that_close_deletes(env: Env) -> None:
+    state = _state(env, scripted_transport())
+    cache_file = _factory(state).cache_file
+
+    assert cache_file.exists() and cache_file.parent != Path("data")
+    state.close()
+
+    assert not cache_file.exists() and not cache_file.parent.exists()
+
+
+def test_two_identical_asks_on_the_same_open_cascade_make_two_network_requests(env: Env) -> None:
     transport = scripted_transport()
     state = _state(env, transport)
 
@@ -120,17 +140,50 @@ def test_two_identical_asks_make_two_network_requests(env: Env) -> None:
         answer = _answer(status)
         assert answer.live.from_cache is False and not any(t.n_cached for t in answer.live.tiers)
         assert answer.cache_hit_detected is False
+        assert status.clear_s is not None
 
 
-def test_the_cascade_is_closed_after_every_ask(env: Env) -> None:
+def test_the_stored_response_is_really_there_until_the_demo_empties_it(env: Env) -> None:
+    # proves the test above is meaningful: without the delete, the second ask would hit the cache
+    state = _state(env, scripted_transport())
+    _ask_and_wait(state, env.answerable)
+    cache_file = _factory(state).cache_file
+
+    with closing(sqlite3.connect(cache_file)) as connection:
+        stored = connection.execute("SELECT COUNT(*) FROM responses").fetchone()[0]
+    assert stored >= 1
+    _factory(state).begin_ask()
+    with closing(sqlite3.connect(cache_file)) as connection:
+        assert connection.execute("SELECT COUNT(*) FROM responses").fetchone()[0] == 0
+
+
+def test_the_cascade_is_opened_once_for_several_asks(
+    env: Env, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    opens: list[int] = []
+    real_open = live_cascades.open_live_cascade
+
+    def counting_open(**kwargs: Any) -> OpenedCascade:
+        opens.append(1)
+        return real_open(**kwargs)
+
+    monkeypatch.setattr(live_cascades, "open_live_cascade", counting_open)
     state = _state(env, scripted_transport())
     spy = _spy_on(state)
 
-    _ask_and_wait(state, env.answerable)
-    _ask_and_wait(state, env.unanswerable)
+    for question in (env.answerable, env.unanswerable, env.answerable):
+        _ask_and_wait(state, question)
 
-    assert len(spy.opened) == 2 and all(o.closed for o in spy.opened)
-    assert spy.opened[0] is not spy.opened[1]  # a fresh cascade per ask
+    assert spy.begun == 3 and len(opens) == 1
+
+
+def test_emptying_works_even_before_the_table_exists(tmp_path: Path) -> None:
+    empty_file = tmp_path / "fresh.sqlite"
+
+    live_cascades._empty_cache(empty_file)
+
+    with closing(sqlite3.connect(empty_file)) as connection:
+        assert connection.execute("SELECT COUNT(*) FROM responses").fetchone()[0] == 0
 
 
 def test_a_cached_call_sets_the_guard_flag(env: Env) -> None:

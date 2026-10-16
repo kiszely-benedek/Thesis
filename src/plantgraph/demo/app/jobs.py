@@ -30,28 +30,28 @@ class Job:
     """
 
     job_id: str = field(default_factory=lambda: uuid.uuid4().hex)
-    started: float = field(default_factory=time.monotonic)
+    started: float = field(default_factory=time.perf_counter)
     finished: float | None = None
     result: DemoAnswer | None = None
-    #: Seconds spent opening this ask's cascade (not part of the answer time).
-    open_s: float | None = None
+    #: Seconds spent emptying the model cache before the ask (not part of the answer time).
+    clear_s: float | None = None
     message: str | None = None
     state: JobState = "running"
 
     def end(self, state: JobState) -> None:
         """Close the job in `state` (set last, after the result fields)."""
-        self.finished = time.monotonic()
+        self.finished = time.perf_counter()
         self.state = state
 
     def status(self, spend: SpendStatus) -> JobStatus:
         """The job as the API shows it, with the current spend."""
-        elapsed = (self.finished or time.monotonic()) - self.started
+        elapsed = (self.finished or time.perf_counter()) - self.started
         return JobStatus(
             job_id=self.job_id,
             state=self.state,
             running_tier=None,
             elapsed_s=elapsed,
-            open_s=self.open_s,
+            clear_s=self.clear_s,
             result=self.result,
             spend=spend,
             message=self.message,
@@ -62,7 +62,8 @@ def run_job(job: Job, corpus: LoadedCorpus, asked: AskedQuestion, session: Sessi
     """Answer the question live and record the outcome on `job`; never raises.
 
     Money is set aside first, so the session cap holds even when questions race. The cascade is
-    opened fresh for this ask and closed before the reservation is released with the real spend.
+    kept open between asks; its model cache is emptied first. The reservation is released with the
+    real spend.
     """
     reservation: Reservation | None = None
     spent_before = session.guard.spent_usd
@@ -88,12 +89,9 @@ def run_job(job: Job, corpus: LoadedCorpus, asked: AskedQuestion, session: Sessi
 
 
 def _ask_live(job: Job, corpus: LoadedCorpus, asked: AskedQuestion) -> LiveAnswer:
-    """Open a fresh cascade, ask once, close it; the open time is noted on the job."""
-    opened, job.open_s = corpus.source.open_for_ask()
-    try:
-        result = opened.cascade.ask(asked)
-    finally:
-        opened.close()
+    """Empty the model cache, then ask the corpus's open cascade once."""
+    cascade, job.clear_s = corpus.source.begin_ask()
+    result = cascade.ask(asked)
     if isinstance(result, NeedsPaidCall):  # a live client never raises CacheMiss
         raise RuntimeError(f"expected a live answer, found a missing cache entry: {result.reason}")
     return result

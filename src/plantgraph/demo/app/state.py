@@ -99,7 +99,7 @@ class AppState:
         slot = self._slots[corpus.corpus_id]
         slot.state = "loading"
         try:
-            slot.loaded = self._loader(corpus)
+            loaded = self._loader(corpus)
         except NoApiKey as error:  # no corpus can answer without a key; say so by code
             _LOG.error("loading %s failed: %s", corpus.corpus_id, error)
             slot.message, slot.error_code = str(error), NO_API_KEY
@@ -110,7 +110,16 @@ class AppState:
             slot.message = f"{type(error).__name__}: {error}"
             slot.state = "error"
             return
+        if slot.loaded is not None:  # a reload: free the old cascade and its cache file
+            slot.loaded.source.close()
+        slot.loaded = loaded
         slot.state = "ready"
+
+    def close(self) -> None:
+        """Close every corpus's open cascade (on shutdown)."""
+        for slot in self._slots.values():
+            if slot.loaded is not None:
+                slot.loaded.source.close()
 
     # --- reading -------------------------------------------------------------------------
 

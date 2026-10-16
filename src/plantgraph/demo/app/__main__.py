@@ -44,7 +44,10 @@ def main(argv: Sequence[str] | None = None) -> None:
         session_cap_usd=args.session_cap_usd,
     )
     state.start_loading()  # corpora load in the background; the PDFs are served meanwhile
-    uvicorn.run(create_app(state), host=HOST, port=args.port)
+    try:
+        uvicorn.run(create_app(state), host=HOST, port=args.port)
+    finally:
+        state.close()  # closes each corpus's cascade and deletes its temporary cache file
 
 
 if __name__ == "__main__":

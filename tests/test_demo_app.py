@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import json
 import time
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -113,8 +113,9 @@ def scripted_transport() -> FakeTransport:
 
 
 @pytest.fixture
-def make_client(env: Env) -> Client:
+def make_client(env: Env) -> Iterator[Client]:
     """`make_client(cap=, transport=, load=)` -> a client over a fresh app state."""
+    states: list[AppState] = []
 
     def build(
         cap: float | None = None,
@@ -127,11 +128,14 @@ def make_client(env: Env) -> Client:
             http_client=(transport or scripted_transport()).as_httpx_client(),
             held_corpora_probe=lambda: ("D1000",),  # no real Neo4j in tests
         )
+        states.append(state)
         if load:
             state.load_all()
         return TestClient(create_app(state))
 
-    return build
+    yield build
+    for state in states:  # delete each open cascade's temporary cache file
+        state.close()
 
 
 def _wait_for_end(client: TestClient, job_id: str, seconds: float = 20.0) -> dict[str, Any]:
@@ -253,7 +257,7 @@ def test_a_benchmark_question_is_answered_live_and_scored_correct(
     assert live["evaluated_policy"] is False  # tier 1 was left out
     assert body["result"]["benchmark"]["correct"] is True
     assert body["result"]["cache_hit_detected"] is False
-    assert body["open_s"] is not None and len(transport.requests) == 1
+    assert body["clear_s"] is not None and len(transport.requests) == 1
 
 
 def test_a_typed_question_is_done_without_benchmark_facts(make_client: Client, env: Env) -> None:
@@ -301,7 +305,9 @@ def test_a_second_ask_while_one_runs_is_409_then_accepted_after(
 
     assert first.status_code == 200 and second.status_code == 409
     assert _wait_for_end(client, first.json()["job_id"])["state"] == "done"
-    assert _ask(client, env, env.unanswerable).status_code == 200
+    third = _ask(client, env, env.unanswerable)
+    assert third.status_code == 200
+    _wait_for_end(client, third.json()["job_id"])  # do not tear the state down mid-ask
 
 
 def test_bad_requests_are_rejected(make_client: Client, env: Env) -> None:

@@ -110,8 +110,8 @@ class JobStatus(BaseModel):
     #: Always `None` for now: the cascade offers no progress hook (the page shows a timer).
     running_tier: str | None
     elapsed_s: float
-    #: Seconds spent opening this ask's cascade; `None` until it is open.
-    open_s: float | None
+    #: Seconds spent emptying the model cache before this ask; `None` until done.
+    clear_s: float | None
     result: DemoAnswer | None
     spend: SpendStatus
     #: Why the job was refused or failed.

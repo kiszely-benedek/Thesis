@@ -1,14 +1,18 @@
-"""A fresh live cascade for every ask: the demo never reads a stored answer.
+"""One live cascade per corpus, opened once; its model cache is emptied before every ask.
 
 The frozen paid model client always looks a request up in its SQLite cache before it sends it.
-The demo cannot switch that off, but it chooses where the cache lives: `LIVE_CACHE` is an empty
-database in memory, private to each model client. Opening a new cascade per ask (and closing it
-when the ask ends) means every ask starts with empty caches, so every model call is a real one.
+The demo cannot switch that off, but it owns the cache file: a temporary SQLite file per corpus.
+Before each ask the demo empties that file through its own connection, so every model call of
+the ask is a real one while the cascade (and its database connection) stays open, as in the
+evaluated system.
 """
 
 from __future__ import annotations
 
 import logging
+import shutil
+import sqlite3
+import tempfile
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -36,9 +40,10 @@ from plantgraph.store.neo4j_plan import LoadPlan
 
 _LOG = logging.getLogger(__name__)
 
-#: Each model client gets its own empty SQLite database in memory: nothing is read from disk,
-#: and the database disappears when the ask's cascade is closed.
-LIVE_CACHE = Path(":memory:")
+#: The frozen cache's table, created here too in case the demo empties the file before it exists.
+_CREATE_RESPONSES = (
+    "CREATE TABLE IF NOT EXISTS responses (key TEXT PRIMARY KEY, response_json TEXT NOT NULL)"
+)
 
 #: Error code of a demo that cannot reach any model (the label table has its text).
 NO_API_KEY = "no_api_key"
@@ -56,21 +61,8 @@ class Asker(Protocol):
         ...
 
 
-class OpenedForAsk(Protocol):
-    """A cascade opened for one ask; `close` frees its caches and database connection."""
-
-    @property
-    def cascade(self) -> Asker:
-        """The cascade to ask."""
-        ...
-
-    def close(self) -> None:
-        """Free the caches and the connection."""
-        ...
-
-
 class CascadeSource(Protocol):
-    """What the app needs from a corpus's cascades; tests may pass a fake."""
+    """What the app needs from a corpus's cascade; tests may pass a fake."""
 
     #: Tiers that can answer (tier 1 is missing when the store does not hold the corpus).
     tiers: tuple[str, ...]
@@ -79,8 +71,12 @@ class CascadeSource(Protocol):
     #: Why the database tier can or cannot answer (the page explains it).
     store: StoreState
 
-    def open_for_ask(self) -> tuple[OpenedForAsk, float]:
-        """A fresh cascade and the seconds it took to open."""
+    def begin_ask(self) -> tuple[Asker, float]:
+        """The open cascade with its model cache emptied, and the seconds the emptying took."""
+        ...
+
+    def close(self) -> None:
+        """Close the cascade and delete its cache file."""
         ...
 
 
@@ -117,19 +113,24 @@ class _StoreProbe:
 
 
 class LiveCascadeFactory:
-    """Opens a fresh live cascade per ask; opens one at start only to learn the tiers."""
+    """Opens a corpus's live cascade once and keeps it for the session."""
 
     def __init__(self, settings: LiveSettings) -> None:
-        """Learn the tiers by opening one cascade.
+        """Open the cascade; its tiers are what the corpus can answer with.
 
         Raises:
             NoApiKey: no model key and no injected transport.
         """
         _require_api_key(settings.http_client)
-        self._settings = settings
         probe = _StoreProbe(settings.cypher_source_factory)
-        opened, open_s = self._open(probe)
-        opened.close()
+        self._cache_dir = Path(tempfile.mkdtemp(prefix="plantgraph-demo-"))
+        self.cache_file = self._cache_dir / f"{settings.corpus_id}.sqlite"
+        started = time.perf_counter()
+        try:
+            self._opened = _open(settings, probe, self.cache_file)
+        except Exception:
+            shutil.rmtree(self._cache_dir)
+            raise
         has_database_tier = any(t.strategy in PROFILE_OF_NAME for t in settings.policy.tiers)
         self.tier1_store = probe.opened or not has_database_tier
         self.tiers = tuple(
@@ -144,30 +145,55 @@ class LiveCascadeFactory:
             probe.opened,
             settings.held_corpora_probe,
         )
-        _LOG.info("first open of the %s cascade took %.2f s", settings.corpus_id, open_s)
-
-    def open_for_ask(self) -> tuple[OpenedCascade, float]:
-        """A fresh cascade with empty caches, and the seconds opening it took."""
-        return self._open(self._settings.cypher_source_factory)
-
-    def _open(self, factory: CypherSourceFactory) -> tuple[OpenedCascade, float]:
-        s = self._settings
-        started = time.monotonic()
-        opened = open_live_cascade(
-            corpus_id=s.corpus_id,
-            policy=s.policy,
-            view=s.view,
-            load_plan=s.load_plan,
-            tier_run_dirs=s.tier_run_dirs,
-            cache_path=LIVE_CACHE,
-            calls_log_path=s.calls_log_path,
-            allow_paid_calls=True,
-            cutoff_s=s.cutoff_s,
-            guard=s.guard,
-            cypher_source_factory=factory,
-            http_client=s.http_client,
+        _LOG.info(
+            "opened the %s cascade once, in %.2f s",
+            settings.corpus_id,
+            time.perf_counter() - started,
         )
-        return opened, round(time.monotonic() - started, 3)
+
+    def begin_ask(self) -> tuple[Asker, float]:
+        """Empty the model cache, so no call of the coming ask can be a stored one."""
+        started = time.perf_counter()
+        _empty_cache(self.cache_file)
+        return self._opened.cascade, round(time.perf_counter() - started, 4)
+
+    def close(self) -> None:
+        """Close the cascade's caches and database connection, then delete the cache file.
+
+        Closing twice is harmless.
+        """
+        if not self._cache_dir.exists():
+            return
+        self._opened.close()
+        shutil.rmtree(self._cache_dir)
+
+
+def _open(settings: LiveSettings, factory: CypherSourceFactory, cache_file: Path) -> OpenedCascade:
+    return open_live_cascade(
+        corpus_id=settings.corpus_id,
+        policy=settings.policy,
+        view=settings.view,
+        load_plan=settings.load_plan,
+        tier_run_dirs=settings.tier_run_dirs,
+        cache_path=cache_file,
+        calls_log_path=settings.calls_log_path,
+        allow_paid_calls=True,
+        cutoff_s=settings.cutoff_s,
+        guard=settings.guard,
+        cypher_source_factory=factory,
+        http_client=settings.http_client,
+    )
+
+
+def _empty_cache(cache_file: Path) -> None:
+    """Delete every stored response through the demo's own connection (plain public SQLite)."""
+    connection = sqlite3.connect(cache_file)
+    try:
+        connection.execute(_CREATE_RESPONSES)
+        connection.execute("DELETE FROM responses")
+        connection.commit()
+    finally:
+        connection.close()
 
 
 def _require_api_key(http_client: httpx2.Client | None) -> None:
