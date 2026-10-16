@@ -20,6 +20,23 @@ function unreadableFlag() {
   return el("span", { className: "pill warn" }, STRINGS.unparsed);
 }
 
+/** The step's number bubble. With a route view (`sync`) it is a button that makes this the current
+    step there, and it shows when it is; `index` is the step's 0-based place in the whole route. */
+function stepBubble(index, sync) {
+  const text = String(index + 1);
+  if (sync === null) return el("span", { className: "bubble", textContent: text });
+  const bubble = el("button", { type: "button", className: "bubble step-pick", textContent: text });
+  bubble.setAttribute("aria-label", STRINGS.pickStep(index + 1));
+  bubble.addEventListener("click", () => sync.select(index));
+  const mark = (current) => {
+    bubble.classList.toggle("current", current === index);
+    bubble.setAttribute("aria-pressed", String(current === index));
+  };
+  sync.onChange(mark);
+  mark(sync.current);
+  return bubble;
+}
+
 /** Text exactly as recorded, in a scrollable monospace block. */
 function rawBlock(text) {
   return el("pre", { className: "code" }, text);
@@ -45,8 +62,9 @@ function rowsBlock(step) {
   );
 }
 
-function cypherStepView(step, live) {
-  const parts = [tierHeading(live, step.tier)];
+function cypherStepView(step, live, index, sync) {
+  const heading = el("div", { className: "tier-head" }, stepBubble(index, sync), tierHeading(live, step.tier));
+  const parts = [heading];
   const head = el("div", { className: "block-head" }, el("h4", { className: "field-label" }, STRINGS.queryHeading));
   head.append(copyButton(step.query));
   parts.push(head, rawBlock(step.query));
@@ -80,17 +98,17 @@ function observationBlock(step) {
   return el("details", { className: "observation" }, summary, rawBlock(step.observation));
 }
 
-function toolStepView(step) {
+function toolStepView(step, index, sync) {
   const body = step.parsed
     ? [el("code", { className: "tool-call", textContent: callText(step) })]
     : [unreadableFlag(), el("p", { className: "hint" }, STRINGS.unparsedNote), rawBlock(step.reply)];
-  const bubble = el("span", { className: "bubble", textContent: String(step.index) });
+  const bubble = stepBubble(index, sync);
   const content = [...body, itemChips(step.items), observationBlock(step)].filter(Boolean);
   return el("li", { className: "tool-step" }, bubble, el("div", { className: "tool-body" }, ...content));
 }
 
-function agentTierView(steps, live) {
-  const list = el("ol", { className: "tool-steps" }, ...steps.map(toolStepView));
+function agentTierView(steps, live, firstIndex, sync) {
+  const list = el("ol", { className: "tool-steps" }, ...steps.map((step) => toolStepView(step, firstIndex + step.position, sync)));
   return el("div", { className: "route-tier" }, tierHeading(live, steps[0].tier), list);
 }
 
@@ -103,11 +121,14 @@ function groupByTier(steps) {
 
 // ---------- the whole route ----------
 
-/** The route as a list of tiers, each with its query or tool calls. */
-export function routeView(trace, live) {
+/** The route as a list of tiers, each with its query or tool calls. `sync` (step_sync.js) is null
+    when the card has no route view to keep in step with. */
+export function routeView(trace, live, sync) {
+  // a step's place in the route view: database queries first, then the agent's tool calls
+  const agent = trace.agent.map((step, position) => ({ ...step, position }));
   const views = [
-    ...trace.cypher.map((step) => cypherStepView(step, live)),
-    ...groupByTier(trace.agent).map((steps) => agentTierView(steps, live)),
+    ...trace.cypher.map((step, i) => cypherStepView(step, live, i, sync)),
+    ...groupByTier(agent).map((steps) => agentTierView(steps, live, trace.cypher.length, sync)),
   ];
   const notes = [];
   if (trace.error) notes.push(el("p", { className: "notice" }, STRINGS.traceFailed(trace.error)));

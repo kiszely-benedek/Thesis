@@ -40,7 +40,8 @@ function callRow(call) {
 }
 
 /** The folded details, closed by default. */
-export function renderDetails(result) {
+/** `sync` keeps the step list in step with the route view; null when the card has no route view. */
+export function renderDetails(result, sync) {
   const { live, trace } = result;
   return el(
     "details", { className: "details" },
@@ -48,7 +49,7 @@ export function renderDetails(result) {
     el(
       "div", { className: "details-body" },
       cardSection(STRINGS.tierTable, table(STRINGS.tierCols, live.tiers.map(tierRow), TIER_NUMERIC)),
-      cardSection(STRINGS.routeHeading, routeView(trace, live)),
+      cardSection(STRINGS.routeHeading, routeView(trace, live, sync)),
       cardSection(STRINGS.callsHeading, table(STRINGS.callCols, trace.calls.map(callRow), CALL_NUMERIC)),
     ),
   );

@@ -7,7 +7,9 @@ import { renderDetails } from "./details.js";
 import { richText, strategyTerm, term } from "./glossary.js";
 import { label, labelSection } from "./labels.js";
 import { cardSection, facts } from "./parts.js";
+import { routeSection } from "./route.js";
 import { page } from "./state.js";
+import { createStepSync } from "./step_sync.js";
 import { STRINGS } from "./strings.js";
 import { jumpToPage } from "./viewer.js";
 
@@ -115,16 +117,28 @@ function howItWorks() {
   return el("details", { className: "details" }, summary, el("div", { className: "details-body" }, text));
 }
 
+const TAG_ANSWERS = ["TAG", "TAG_SET", "TAG_PATH"];
+
+/** The tags of the reference answer when a tag answer was judged wrong, else null (no cross is drawn). */
+function wrongReference(benchmark) {
+  if (!benchmark || benchmark.correct !== false || !TAG_ANSWERS.includes(benchmark.answer_type)) return null;
+  return new Set([benchmark.reference].flat().map(String));
+}
+
 /** Show the answer of a finished ask (`job`: the server's JobStatus with a result). */
 export function renderAnswer(job) {
   const result = job.result;
+  // the route view and the step list in Details share one "current step"
+  const route = result.route;
+  const sync = createStepSync(route ? Math.max(0, route.steps.length - 1) : 0);
   const card = el(
     "article", { className: "card" },
     ...statusLines(result, result.live),
     answerBlock(job),
     sourcesBlock(result),
   );
+  if (route) card.append(routeSection(route, sync, wrongReference(result.benchmark)));
   if (result.benchmark) card.append(benchmarkBlock(result.benchmark));
-  card.append(renderDetails(result), howItWorks());
+  card.append(renderDetails(result, route ? sync : null), howItWorks());
   $("result").replaceChildren(card);
 }

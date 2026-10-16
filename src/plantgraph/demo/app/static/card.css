@@ -123,3 +123,84 @@ td.num, .rows-table td { font-family: var(--font-mono); }
   .answer-text { font-size: var(--fs-lg); }
   .facts { grid-template-columns: 1fr; }
 }
+
+/* ---------- step buttons in the step list ---------- */
+
+.tier-head { display: flex; align-items: center; gap: var(--sp-3); }
+button.bubble.step-pick { padding: 0; background: var(--surface); color: inherit; cursor: pointer; transition: background var(--dur-fast) var(--ease); }
+button.bubble.step-pick:hover { background: var(--surface-2); }
+.bubble.step-pick.current { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.tool-step:has(> .bubble.current), .route-tier:has(> .tier-head > .bubble.current) { border-left-color: var(--accent); }
+.tool-step:has(> .bubble.current) { background: var(--accent-soft); }
+
+/* ---------- the route view (route.js): a sheet of drafting paper with the items drawn on it ---------- */
+
+.route-view { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--sp-2); }
+.route-controls { display: grid; gap: var(--sp-2); }
+.route-bar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2); }
+.route-step-label { margin: 0; font-size: var(--fs-sm); font-weight: 600; flex: 1 1 12rem; min-width: 0; overflow-wrap: anywhere; }
+.route-bar .route-step-label { order: 9; }
+.route-slider { flex: 1 1 8rem; min-width: 6rem; max-width: 16rem; accent-color: var(--accent); }
+.route-stage { position: relative; }
+.route-canvas {
+  max-height: 26rem; overflow: auto; background-color: var(--surface);
+  border: var(--rule-w) solid var(--rule-strong); border-radius: var(--r-1);
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+.route-svg { display: block; max-width: none; font-family: var(--font-mono); }
+.route-note { margin: 0; min-height: 1.5em; }
+
+/* items: glyph outline in ink; the current action in accent, answer items in good; fills stay neutral */
+.rnode { cursor: pointer; outline: none; }
+.rnode .glyph { fill: var(--surface); stroke: var(--ink); stroke-width: 1.5; }
+.rnode .hit { fill: transparent; stroke: transparent; stroke-width: 2; }
+.rnode:hover .hit { fill: var(--accent-soft); fill-opacity: 0.5; }
+.rnode:focus-visible .hit { stroke: var(--focus); }
+.rnode.now .glyph { stroke: var(--accent); stroke-width: 3; }
+.route-svg.final .rnode.answer .glyph { stroke: var(--good); stroke-width: 3; }
+.rnode .xmark { display: none; }
+.route-svg.final .rnode.answer .xmark { display: inline; }
+.xmark circle { fill: var(--bad); stroke: var(--surface); stroke-width: 1.5; }
+.xmark text { fill: var(--surface); font: 700 9px var(--font-ui); text-anchor: middle; }
+.rnode .qmark { fill: var(--accent); stroke: var(--surface); stroke-width: 1.5; }
+/* every text on the picture has a paper-coloured halo, so a line passing under it never cuts a letter */
+.rtag, .rhead, .elabel { paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round; }
+.rtag { fill: var(--ink); font-size: 11px; text-anchor: middle; }
+.rhead { fill: var(--ink-muted); font: 600 11px var(--font-label); letter-spacing: 0.08em; text-transform: uppercase; text-anchor: middle; }
+.rrule { stroke: var(--rule-strong); stroke-width: 1; }
+
+/* edges: flow solid ink, signal dashed signal-blue, a gap dashed warning; the answer path thickens at the end */
+.redge line { stroke-width: 1.5; fill: none; }
+.redge.flow line { stroke: var(--ink); marker-end: url(#route-arrow-flow); }
+.redge.signal line { stroke: var(--signal); stroke-dasharray: 6 4; marker-end: url(#route-arrow-signal); }
+.redge.gap line { stroke: var(--warn-rule); stroke-dasharray: 2 4; stroke-width: 2; }
+.route-svg.final .redge.onpath.flow line, .route-svg.final .redge.onpath.signal line { stroke: var(--good); stroke-width: 3; marker-end: url(#route-arrow-path); }
+.arrow-flow path { fill: var(--ink); }
+.arrow-signal path { fill: var(--signal); }
+.arrow-path path { fill: var(--good); }
+.rflag polygon { fill: var(--accent-soft); stroke: var(--accent-ink); stroke-width: 1; }
+.elabel { font-size: 10px; fill: var(--accent-ink); }
+.elabel.gap-text { fill: var(--warn-ink); }
+
+/* tooltip: same look as the glossary tooltip, placed by route.js */
+.route-tip {
+  position: absolute; z-index: 5; width: max-content; max-width: min(18rem, 90%); transform: translateX(-50%);
+  display: grid; gap: 1px; padding: var(--sp-2) var(--sp-3); font-size: var(--fs-sm); line-height: var(--lh-tight);
+  background: var(--surface); color: var(--ink); border: var(--rule-w) solid var(--ink); border-radius: var(--r-2);
+  box-shadow: var(--shadow-menu); opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity var(--dur-fast) var(--ease);
+}
+.route-tip.shown { opacity: 1; visibility: visible; }
+
+/* legend */
+.route-legend { display: flex; flex-wrap: wrap; gap: var(--sp-1) var(--sp-4); font-size: var(--fs-xs); color: var(--ink-muted); }
+.legend-item { display: inline-flex; align-items: center; gap: var(--sp-1); }
+.legend-glyph { width: 26px; height: 18px; }
+.legend-glyph .glyph { fill: var(--surface); stroke: var(--ink); stroke-width: 2; }
+.legend-line { width: 36px; height: 10px; }
+.legend-swatch { width: 12px; height: 12px; border: 3px solid var(--ink); border-radius: 3px; background: var(--surface); }
+.legend-swatch.now { border-color: var(--accent); }
+.legend-swatch.answer { border-color: var(--good); background: var(--good-soft); }
+.legend-swatch.wrong { border: 0; border-radius: 50%; background: var(--bad); color: var(--surface); width: 14px; height: 14px; font-size: 9px; line-height: 14px; text-align: center; font-weight: 700; }
+.legend-swatch.asked { border: 0; border-radius: 50%; background: var(--accent); width: 8px; height: 8px; }

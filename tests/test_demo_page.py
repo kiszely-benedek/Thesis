@@ -194,3 +194,14 @@ def test_the_page_holds_the_one_shared_tooltip_the_glossary_fills() -> None:
     page = _text(STATIC_DIR / "index.html")
 
     assert page.count('id="glossary-tip"') == 1 and 'role="tooltip"' in page
+
+
+def test_the_route_view_is_wired_into_the_answer_card_and_the_step_list() -> None:
+    answer = _text(STATIC_DIR / "answer.js")
+    steps = _text(STATIC_DIR / "steps.js")
+
+    # the card builds the route view and hands the same current-step object to the step list
+    assert "routeSection(" in answer and "createStepSync(" in answer
+    assert "sync.select(" in steps, "the step list should select the route view's current step"
+    for name in ("route", "route_controls", "route_draw", "route_layout", "step_sync"):
+        assert (STATIC_DIR / f"{name}.js").exists(), f"expected static/{name}.js"
