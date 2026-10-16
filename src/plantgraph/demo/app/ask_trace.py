@@ -10,6 +10,7 @@ from __future__ import annotations
 from collections import defaultdict, deque
 from collections.abc import Sequence
 
+from plantgraph.demo.app.progress import lost_time
 from plantgraph.demo.app.trace_models import AgentStep, AskTrace, CypherStep, TraceCall
 from plantgraph.demo.app.trace_parse import JoinedCall, agent_step, cypher_step
 from plantgraph.demo.app.trace_recorder import Exchange
@@ -22,16 +23,21 @@ def build_trace(
 ) -> AskTrace:
     """The trace of one ask.
 
-    A reply that arrived after its call was abandoned (`late_after_timeout`) is left out of the
-    steps, though its line stays in `calls` because it was billed.
+    Attempts still running are left out. A reply that arrived after its call was abandoned
+    (`late_after_timeout`) is left out of the steps, though its line stays in `calls` because
+    it was billed.
     """
-    joined, unlogged = _join(exchanges, log_lines)
+    finished = [exchange for exchange in exchanges if not exchange.running]
+    joined, unlogged = _join(finished, log_lines)
     cypher, agent = _steps(joined, item_graph)
+    lost = lost_time(exchanges)
     return AskTrace(
         cypher=cypher,
         agent=agent,
         calls=tuple(_trace_call(line) for line in log_lines),
         unlogged_attempts=unlogged,
+        failed_attempts=lost.failed_attempts,
+        lost_s=lost.lost_s,
     )
 
 

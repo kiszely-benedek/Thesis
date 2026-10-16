@@ -37,7 +37,9 @@ def _reply_json(reply_id: str, text: str) -> dict[str, Any]:
 
 def _exchange(reply_id: str | None, text: str, messages: list[dict[str, str]]) -> Exchange:
     body = None if reply_id is None else _reply_json(reply_id, text)
-    return Exchange({"messages": messages}, body, None if body is None else 200, 0.1)
+    status = None if body is None else 200
+    error = "ReadTimeout" if body is None else None  # no reply: a failed attempt, not a running one
+    return Exchange({"messages": messages}, body, status, 0.1, error=error)
 
 
 def _line(
@@ -234,6 +236,18 @@ def test_an_exchange_without_a_log_line_is_counted_and_stays_out_of_the_steps() 
     assert trace.unlogged_attempts == 1 and len(trace.agent) == 2
 
 
+def test_a_running_attempt_is_not_part_of_the_trace_and_failures_give_lost_time() -> None:
+    exchanges, lines = _agent_run()
+    prompt = _agent_conversation()
+    failed = Exchange({"messages": prompt}, None, 502, 1.0, 0.0, "HTTP 502")
+    retry = Exchange({"messages": prompt}, None, None, 0.0, 3.0)  # sent 2 s after the failure ended
+
+    trace = _trace([failed, retry, *exchanges], lines)
+
+    assert trace.failed_attempts == 1 and trace.lost_s == 3.0  # 1 s failed + 2 s waiting
+    assert trace.unlogged_attempts == 1 and len(trace.agent) == 2  # the running retry is left out
+
+
 def test_a_late_reply_of_an_abandoned_call_is_ignored() -> None:
     exchanges, lines = _agent_run()
     late = _exchange("late", FIND_REPLY, _agent_conversation())
@@ -326,6 +340,7 @@ def test_a_failing_attempt_is_recorded_and_the_error_still_reaches_the_caller() 
 
     (exchange,) = recorder.exchanges()
     assert exchange.response_json is None and exchange.status is None
+    assert exchange.error == "ReadTimeout" and not exchange.running
 
 
 # ---- R7: the recording client keeps the SDK's timeouts and limits ---------------------------

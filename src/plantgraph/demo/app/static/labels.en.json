@@ -129,6 +129,7 @@
     "k": "k: how many links in the correct answer's evidence cross from one drawing sheet to another, through an off-page connector or because the same item is drawn on both sheets. The larger k, the more the question spans sheets.",
     "u": "u: how many links in the correct answer's evidence cross from one process unit to another.",
     "model_time": "Model time: the time of the language-model calls plus local computing, counted the way the evaluation counts it.",
+    "lost_time": "Lost time: the model provider returned errors and the system retried the call. This time is not the model's thinking time.",
     "wall_time": "Answer time: how long this answer took on this machine, from pressing Ask to the result (without emptying the model cache or loading a plant)."
   }
 }

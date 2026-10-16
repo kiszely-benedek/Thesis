@@ -6,6 +6,7 @@ import { renderAnswer, clearAnswer } from "./answer.js";
 import { $, el, sleep } from "./dom.js";
 import { usd } from "./format.js";
 import { describeError, label, topicOrder } from "./labels.js";
+import { clearProgress, showProgress, tickProgress } from "./progress.js";
 import { clearMessage, showMessage } from "./message.js";
 import { canAsk, page } from "./state.js";
 import { STRINGS } from "./strings.js";
@@ -131,6 +132,7 @@ function askBody() {
 async function ask() {
   clearMessage();
   clearAnswer();
+  clearProgress();
   $("examples").open = false; // the list is open until the first ask
   page.asking = true;
   redraw();
@@ -145,6 +147,7 @@ async function ask() {
     showMessage(text, true, technical);
   } finally {
     clearInterval(ticker);
+    clearProgress(); // on success the lines live on in the card's Details
     page.asking = false;
     setRunning(false);
     redraw();
@@ -153,6 +156,7 @@ async function ask() {
 
 function showElapsed(startedAt) {
   $("ask-status").textContent = STRINGS.asking((performance.now() - startedAt) / 1000);
+  tickProgress();
 }
 
 function setRunning(running) {
@@ -165,6 +169,7 @@ async function waitForJob(jobId) {
   for (;;) {
     const job = await getJob(jobId);
     if (job.state !== "running") return job;
+    showProgress(job.progress);
     await sleep(POLL_MS);
   }
 }

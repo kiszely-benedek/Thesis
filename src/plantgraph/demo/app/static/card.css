@@ -204,3 +204,23 @@ button.bubble.step-pick:hover { background: var(--surface-2); }
 .legend-swatch.answer { border-color: var(--good); background: var(--good-soft); }
 .legend-swatch.wrong { border: 0; border-radius: 50%; background: var(--bad); color: var(--surface); width: 14px; height: 14px; font-size: 9px; line-height: 14px; text-align: center; font-weight: 700; }
 .legend-swatch.asked { border: 0; border-radius: 50%; background: var(--accent); width: 8px; height: 8px; }
+
+/* ---------- timeline of an ask: one line per attempt to the model provider ---------- */
+
+#ask-progress:empty { display: none; }
+.timeline { list-style: none; margin: var(--sp-2) 0 0; padding: 0; display: grid; gap: var(--sp-1); font-size: var(--fs-sm); }
+.timeline-item { display: grid; grid-template-columns: 0.75rem minmax(0, 1fr) max-content; gap: var(--sp-2); align-items: baseline; }
+.timeline-mark { width: 0.5rem; height: 0.5rem; border: var(--rule-w-strong) solid var(--ink-muted); border-radius: 50%; align-self: start; margin-top: 0.4em; }
+.timeline-item.done .timeline-mark { background: var(--ink-muted); }
+.timeline-item.running .timeline-mark { border-color: var(--accent); background: var(--accent); animation: pulse 1.2s var(--ease) infinite; }
+.timeline-item.failed .timeline-mark { border-color: var(--warn-rule); background: var(--warn-rule); }
+.timeline-item.failed .timeline-text { color: var(--warn-ink); }
+.timeline-text { min-width: 0; overflow-wrap: anywhere; }
+/* a query or tool call stays on one line (hover shows it whole); a failure message wraps so it is read in full */
+.timeline-item.done .timeline-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.timeline-code { font-size: 0.95em; }
+.timeline-detail { color: var(--ink-muted); }
+.timeline-time { font-family: var(--font-mono); color: var(--ink-muted); text-align: right; }
+@keyframes pulse { 50% { opacity: 0.35; } }
+/* Reduced motion: the mark stays still; the ticking seconds already show that the ask is alive. */
+@media (prefers-reduced-motion: reduce) { .timeline-item.running .timeline-mark { animation: none; } }

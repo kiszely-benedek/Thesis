@@ -7,6 +7,7 @@ from typing import Literal
 from pydantic import AliasChoices, BaseModel, ConfigDict, Field, model_validator
 
 from plantgraph.demo.app.models import SheetLink, SpendStatus
+from plantgraph.demo.app.progress_models import LiveProgress
 from plantgraph.demo.app.route import RouteView
 from plantgraph.demo.app.store_probe import StoreState
 from plantgraph.demo.app.trace_models import AskTrace
@@ -123,6 +124,9 @@ class JobStatus(BaseModel):
     spend: SpendStatus
     #: Why the job was refused or failed.
     message: str | None
+    #: The model attempts so far (live while running, kept at the end); `None` before the first
+    #: model request could be recorded, and for a job that never reached the model.
+    progress: LiveProgress | None = None
 
 
 class CorpusStatus(BaseModel):

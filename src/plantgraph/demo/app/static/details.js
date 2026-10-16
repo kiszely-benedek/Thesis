@@ -4,6 +4,7 @@ import { el } from "./dom.js";
 import { seconds, usd } from "./format.js";
 import { label } from "./labels.js";
 import { cardSection, table } from "./parts.js";
+import { timelineList } from "./progress.js";
 import { routeView } from "./steps.js";
 import { STRINGS } from "./strings.js";
 
@@ -39,9 +40,16 @@ function callRow(call) {
   ];
 }
 
-/** The folded details, closed by default. */
-/** `sync` keeps the step list in step with the route view; null when the card has no route view. */
-export function renderDetails(result, sync) {
+/** The attempt-by-attempt timeline of the ask, as it was shown live; nothing if none was recorded. */
+function timelineSection(progress) {
+  if (progress === null || progress.events.length === 0) return [];
+  return [cardSection(STRINGS.timelineHeading, el("p", { className: "hint" }, STRINGS.timelineHint), timelineList(progress))];
+}
+
+/** The folded details, closed by default.
+    `sync` keeps the step list in step with the route view (null when the card has no route view);
+    `progress` is the ask's live timeline, kept at the end of the job. */
+export function renderDetails(result, sync, progress) {
   const { live, trace } = result;
   return el(
     "details", { className: "details" },
@@ -50,6 +58,7 @@ export function renderDetails(result, sync) {
       "div", { className: "details-body" },
       cardSection(STRINGS.tierTable, table(STRINGS.tierCols, live.tiers.map(tierRow), TIER_NUMERIC)),
       cardSection(STRINGS.routeHeading, routeView(trace, live, sync)),
+      ...timelineSection(progress),
       cardSection(STRINGS.callsHeading, table(STRINGS.callCols, trace.calls.map(callRow), CALL_NUMERIC)),
     ),
   );

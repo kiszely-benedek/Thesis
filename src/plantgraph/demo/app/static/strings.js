@@ -73,6 +73,23 @@ export const STRINGS = {
   technicalDetails: "Technical details",
   unexpectedError: "Something unexpected went wrong.",
 
+  // live timeline of an ask (one line per attempt to the model provider)
+  writingQuery: "Step 1 · writing the database query…",
+  queryWritten: "Query written",
+  queryEmpty: "The model replied with an empty query.",
+  writingAnswer: "Writing the answer…",
+  answerWritten: "Answer written",
+  waitingForModel: "Waiting for the model…",
+  modelReplied: "The model replied",
+  agentWaiting: (n) => `Action ${n} · waiting for the model…`,
+  agentAction: (n) => `Action ${n}`,
+  agentNoCall: (n) => `Action ${n} · the reply holds no tool call`,
+  providerFailed: (reason, next) => `The model provider did not answer (${reason}) — ${next}`,
+  retrying: (next, max) => `retrying (attempt ${next} of ${max})`,
+  gaveUp: (max) => `no attempts left (${max} made)`,
+  timelineHeading: "What happened, attempt by attempt",
+  timelineHint: "Every request to the model provider, in the order it was sent, with the seconds each took.",
+
   // answer card
   answer: "Answer",
   noAnswer: "(no answer)",
@@ -86,6 +103,8 @@ export const STRINGS = {
   // (the tier's name follows, as its own glossary word)
   factsLine: (wall, model, cost) =>
     `{{wall_time|Answered in}} ${wall} · {{model_time|model time}} ${model} · cost ${cost} · by `,
+  // amber addition to the facts line when the provider's errors cost time
+  lostTime: (n, s) => ` · {{lost_time|${count(n, "failed provider attempt")}}}, ${s.toFixed(1)} s lost`,
   preparing: (s) => `Preparing took ${s.toFixed(1)} s (emptying the model cache) - not part of the answer time.`,
   knowHeading: "How does it know?",
   answerSheets: "Drawings of the items in the answer",

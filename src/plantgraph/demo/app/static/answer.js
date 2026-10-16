@@ -61,7 +61,15 @@ function factsLine(job) {
   const live = job.result.live;
   const answerS = Math.max(0, job.elapsed_s - (job.clear_s ?? 0));
   const text = STRINGS.factsLine(seconds(answerS), seconds(live.latency_s), usd(live.spent_usd));
-  return el("p", { className: "facts-line" }, ...richText(text), answeredByNode(live));
+  const line = el("p", { className: "facts-line" }, ...richText(text), answeredByNode(live));
+  const trace = job.result.trace;
+  if (trace.failed_attempts > 0) line.append(lostTimeNote(trace));
+  return line;
+}
+
+/** " · 3 failed provider attempts, 29.3 s lost": amber, because it is time the model did not think. */
+function lostTimeNote(trace) {
+  return el("span", { className: "warn-text" }, ...richText(STRINGS.lostTime(trace.failed_attempts, trace.lost_s)));
 }
 
 function verdictNode(correct) {
@@ -139,6 +147,6 @@ export function renderAnswer(job) {
   );
   if (route) card.append(routeSection(route, sync, wrongReference(result.benchmark)));
   if (result.benchmark) card.append(benchmarkBlock(result.benchmark));
-  card.append(renderDetails(result, route ? sync : null), howItWorks());
+  card.append(renderDetails(result, route ? sync : null, job.progress), howItWorks());
   $("result").replaceChildren(card);
 }

@@ -75,5 +75,10 @@ class AskTrace(BaseModel):
     calls: tuple[TraceCall, ...] = ()
     #: HTTP attempts with no call-log line (retried after a transport error, or still in flight).
     unlogged_attempts: int = 0
+    #: Attempts the provider or the network refused (the client retried them), counted exactly.
+    failed_attempts: int = 0
+    #: Seconds lost to those attempts: their own durations plus the waits before each retry.
+    #: Measured from the recorder, never estimated; not the model's thinking time.
+    lost_s: float = 0.0
     #: Why no trace could be built (the answer is still valid); `None` when all is well.
     error: str | None = None

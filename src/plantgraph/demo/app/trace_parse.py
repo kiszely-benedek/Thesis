@@ -112,7 +112,7 @@ def agent_step(
     try:
         action = parse_action(call.reply)
     except InvalidAction:
-        observation = _observation(call, repeats, later, None)
+        observation = find_observation(call, repeats, later, None)
         return AgentStep(
             index=index,
             tier=call.tier,
@@ -125,7 +125,7 @@ def agent_step(
         )
     if isinstance(action, Done):
         return None
-    observation = _observation(call, repeats, later, action)
+    observation = find_observation(call, repeats, later, action)
     text = f"{json.dumps(action.args, sort_keys=True)}\n{observation or ''}"
     return AgentStep(
         index=index,
@@ -139,10 +139,13 @@ def agent_step(
     )
 
 
-def _observation(
+def find_observation(
     call: JoinedCall, repeats: int, later: JoinedCall | None, action: ToolCall | None
 ) -> str | None:
-    """What the tool returned, or `None` if it cannot be found in the next request."""
+    """What the tool returned, or `None` if it cannot be found in the next request.
+
+    Also used by the live progress (`progress.py`), which has the same two calls in hand.
+    """
     if later is None:
         return None
     from_conversation = _from_conversation(later.messages, call.reply, repeats)

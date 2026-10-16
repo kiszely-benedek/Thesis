@@ -205,3 +205,16 @@ def test_the_route_view_is_wired_into_the_answer_card_and_the_step_list() -> Non
     assert "sync.select(" in steps, "the step list should select the route view's current step"
     for name in ("route", "route_controls", "route_draw", "route_layout", "step_sync"):
         assert (STATIC_DIR / f"{name}.js").exists(), f"expected static/{name}.js"
+
+
+def test_the_live_timeline_is_polled_ticked_and_folded_into_the_details() -> None:
+    ask = _text(STATIC_DIR / "ask.js")
+    details = _text(STATIC_DIR / "details.js")
+    answer = _text(STATIC_DIR / "answer.js")
+    css = _text(STATIC_DIR / "card.css")
+
+    assert "showProgress(job.progress)" in ask and "tickProgress()" in ask
+    assert "timelineList(progress)" in details and "job.progress" in answer
+    assert "trace.failed_attempts > 0" in answer, "lost time shows only when attempts failed"
+    assert "prefers-reduced-motion" in css and "timeline-mark" in css
+    assert '"lost_time"' in _text(STATIC_DIR / "labels.en.json")

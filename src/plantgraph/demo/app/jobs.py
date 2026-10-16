@@ -13,6 +13,8 @@ from plantgraph.demo.app.api_models import DemoAnswer, JobStatus
 from plantgraph.demo.app.ask_trace import build_trace
 from plantgraph.demo.app.corpus_runtime import LoadedCorpus
 from plantgraph.demo.app.models import SpendStatus
+from plantgraph.demo.app.progress import live_progress
+from plantgraph.demo.app.progress_models import LiveProgress
 from plantgraph.demo.app.spend import SessionSpend
 from plantgraph.demo.app.trace_models import AskTrace
 from plantgraph.demo.app.trace_recorder import TraceWindow
@@ -40,11 +42,26 @@ class Job:
     clear_s: float | None = None
     message: str | None = None
     state: JobState = "running"
+    #: Where this ask's recorded model traffic begins; set as soon as the ask is opened.
+    window: TraceWindow | None = None
+    #: The model attempts, frozen when the job ends (the recorder goes on to serve later asks).
+    final_progress: LiveProgress | None = None
 
     def end(self, state: JobState) -> None:
         """Close the job in `state` (set last, after the result fields)."""
         self.finished = time.perf_counter()
+        self.final_progress = self._progress()
         self.state = state
+
+    def _progress(self) -> LiveProgress | None:
+        """The attempts so far; a failure to read them must never hide the answer."""
+        if self.window is None:
+            return None
+        try:
+            return live_progress(self.window)
+        except Exception:  # progress is a courtesy; the job itself goes on
+            _LOG.exception("reading the ask's progress failed")
+            return None
 
     def status(self, spend: SpendStatus) -> JobStatus:
         """The job as the API shows it, with the current spend."""
@@ -58,6 +75,7 @@ class Job:
             result=self.result,
             spend=spend,
             message=self.message,
+            progress=self.final_progress if self.finished else self._progress(),
         )
 
 
@@ -97,6 +115,7 @@ def _ask_live(
     """Empty the model cache, then ask the corpus's open cascade once."""
     handle = corpus.source.begin_ask()
     job.clear_s = handle.clear_s
+    job.window = handle.window  # from here on the page can poll the attempts
     result = handle.cascade.ask(asked)
     if isinstance(result, NeedsPaidCall):  # a live client never raises CacheMiss
         raise RuntimeError(f"expected a live answer, found a missing cache entry: {result.reason}")
