@@ -1,0 +1,89 @@
+{
+  "outcomes": {
+    "ANSWERED": "answered",
+    "DID_NOT_FIT": "did not fit in the model's input",
+    "PARSE_FAILURE": "the model's reply could not be read",
+    "RETRIEVAL_ERROR": "the data lookup failed",
+    "PROVIDER_ERROR": "the model provider returned an error",
+    "TIMED_OUT": "not finished within the time limit"
+  },
+  "stop_reasons": {
+    "done": "finished",
+    "max_steps": "reached the step limit",
+    "prompt_budget": "ran out of input budget",
+    "errors": "too many tool errors",
+    "overflow": "the model's input filled up",
+    "runaway": "the model kept thinking and gave no answer",
+    "deadline": "ran out of time"
+  },
+  "tiers": {
+    "cypher-low": "Step 1: database query (Cypher)",
+    "cypher-luna": "Step 1: database query (Cypher)",
+    "agent-low-steps": "Step 2: graph agent",
+    "agent-luna": "Step 2: graph agent"
+  },
+  "strategies": {
+    "cypher_rag_plant": "database query (Cypher)",
+    "graph_agent_low_steps": "graph agent"
+  },
+  "topics": {
+    "routes": "Routes through the plant",
+    "neighbours": "Before and after: neighbours, sources, isolation",
+    "instruments": "Instruments and control loops",
+    "items": "Items, units and sheets"
+  },
+  "family_topics": {
+    "CONNECTED": "routes",
+    "FLOW_PATH": "routes",
+    "NO_PATH": "routes",
+    "CROSS_UNIT": "routes",
+    "FIRST_MEETING_POINT": "routes",
+    "VALVES_ON_PATH": "routes",
+    "ROUTE_AVOIDING": "routes",
+    "NEIGHBOURS_DOWNSTREAM": "neighbours",
+    "UPSTREAM_SOURCES": "neighbours",
+    "UPSTREAM_ISOLATION": "neighbours",
+    "DOWNSTREAM_ISOLATION": "neighbours",
+    "DOWNSTREAM_IN_UNIT": "neighbours",
+    "LOOP_ACTUATED_VALVE": "instruments",
+    "LOOP_MEASURED_EQUIPMENT": "instruments",
+    "INSTRUMENTS_OF_ITEM": "instruments",
+    "LOOPS_NEAR_ITEM": "instruments",
+    "LOOKUP_TYPE": "items",
+    "LOOKUP_UNIT": "items",
+    "COUNT_IN_UNIT": "items",
+    "SAME_UNIT": "items",
+    "SHEETS_OF_TAG": "items",
+    "UNANSWERABLE_TAG": "items",
+    "FEEDING_UNITS": "items",
+    "UNITS_REACHED": "items"
+  },
+  "store_states": {
+    "ready": "Both steps are available.",
+    "holds_other": "The graph database currently holds plant {held}; it can hold only one plant at a time. So on this plant only the graph agent answers - this is not exactly the evaluated cascade.",
+    "empty": "The graph database is empty, so on this plant only the graph agent answers - this is not exactly the evaluated cascade.",
+    "wrong_profile": "The configured ingest file was not built with the database step's profile, so on this plant only the graph agent answers.",
+    "mismatch": "The plant in the graph database does not match the configured one (different counts), so on this plant only the graph agent answers.",
+    "unreachable": "The graph database is not reachable, so on this plant only the graph agent answers - this is not exactly the evaluated cascade.",
+    "not_needed": ""
+  },
+  "job_states": {
+    "running": "The question is being processed.",
+    "done": "Done.",
+    "needs_paid": "This question has no stored answer, and the demo currently runs with stored answers only.",
+    "refused": "You have reached the session cost limit.",
+    "error": "An error occurred while answering."
+  },
+  "error_codes": {
+    "unknown_corpus": "Unknown plant.",
+    "unknown_job": "Unknown job; the server may have restarted in the meantime.",
+    "unknown_question": "Unknown example question for this plant.",
+    "corpus_not_ready": "The plant is still loading, or loading it failed.",
+    "busy": "A question is already running; wait for it to finish.",
+    "missing_file": "A file is missing on the server."
+  },
+  "answer_values": {
+    "yes": "Yes",
+    "no": "No"
+  }
+}

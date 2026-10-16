@@ -8,7 +8,7 @@ Three ways to choose, exactly one per run:
   --variant NAME        keep the rows whose id ends in `#NAME` (a reworded copy of a question)
   --per-family N        keep N questions of each family, ranked by a seeded hash of the id
   --wordings FILE       keep the questions named in a `{question_id: new text}` JSON file and
-                        swap in the new text (gold untouched); how Hungarian D1000 examples arrive
+                        swap in the new text (gold untouched); how reworded examples arrive
 """
 
 from __future__ import annotations

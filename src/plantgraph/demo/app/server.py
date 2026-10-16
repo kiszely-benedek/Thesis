@@ -35,8 +35,8 @@ from plantgraph.demo.drawing.models import DrawingIndex
 HOST = "127.0.0.1"
 STATIC_DIR = Path(__file__).parent / "static"
 
-# Each domain error -> (HTTP status, error code). The page shows the Hungarian text of the code
-# (`labels.hu.json`, `error_codes`); the English `message` is for the folded technical details.
+# Each domain error -> (HTTP status, error code). The page shows the English text of the code
+# (`labels.en.json`, `error_codes`); the English `message` is for the folded technical details.
 _ERROR_OF: dict[type[Exception], tuple[int, str]] = {
     UnknownCorpus: (404, "unknown_corpus"),
     UnknownJob: (404, "unknown_job"),

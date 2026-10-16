@@ -1,4 +1,4 @@
-"""The Hungarian label table covers every code the demo can send, and API errors carry codes."""
+"""The English label table covers every code the demo can send, and API errors carry codes."""
 
 from __future__ import annotations
 
@@ -64,8 +64,8 @@ def test_every_error_code_the_api_sends_has_text() -> None:
     assert set(LABELS.error_codes) == ERROR_CODES, "a label for a code the API never sends"
 
 
-def test_the_answer_values_are_hungarian_yes_and_no() -> None:
-    assert LABELS.answer_values == {"yes": "Igen", "no": "Nem"}
+def test_the_answer_values_are_english_yes_and_no() -> None:
+    assert LABELS.answer_values == {"yes": "Yes", "no": "No"}
 
 
 def test_the_json_has_only_the_sections_the_model_knows() -> None:

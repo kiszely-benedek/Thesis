@@ -1,7 +1,7 @@
-"""The Hungarian text table of the demo page, loaded from `static/labels.hu.json`.
+"""The English text table of the demo page, loaded from `static/labels.en.json`.
 
 The JSON is the one place where an outcome, stop reason, tier, strategy, topic, store state,
-job state or error code gets its visitor-facing Hungarian text. The server sends codes; the
+job state or error code gets its visitor-facing English text. The server sends codes; the
 page looks the text up. The server itself reads only the topic sections (to tag examples).
 """
 
@@ -13,11 +13,11 @@ from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict
 
-LABELS_PATH = Path(__file__).parent / "static" / "labels.hu.json"
+LABELS_PATH = Path(__file__).parent / "static" / "labels.en.json"
 
 
 class Labels(BaseModel):
-    """Every section of the label table; each maps a code to its Hungarian text."""
+    """Every section of the label table; each maps a code to its English text."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 

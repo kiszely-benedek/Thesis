@@ -2,7 +2,7 @@
 
 A family is one kind of question the generator asks ("is A connected to B", "which valves
 isolate X"). The visitor sees only the topic heading the family belongs to. The table lives
-in `static/labels.hu.json` (`family_topics`, `topics`); this module is its typed reader.
+in `static/labels.en.json` (`family_topics`, `topics`); this module is its typed reader.
 """
 
 from __future__ import annotations
@@ -22,5 +22,5 @@ def topic_of(family: QuestionFamily) -> str:
     """
     topic = load_labels().family_topics.get(family.value)
     if topic is None:
-        raise KeyError(f"expected a topic for family {family.value}, found none in labels.hu.json")
+        raise KeyError(f"expected a topic for family {family.value}, found none in labels.en.json")
     return topic
