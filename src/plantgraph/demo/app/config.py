@@ -42,6 +42,17 @@ class DemoCorpus(BaseModel):
         return self.drawings_dir / INDEX_NAME
 
 
+class ResultsSources(BaseModel):
+    """The two experiment reports the Results tab reads, and the results rows that cite them."""
+
+    model_config = ConfigDict(frozen=True)
+
+    ladder_report: Path
+    ladder_result_row: str = "EXP-0001-LADDER"
+    sealed_report: Path
+    sealed_result_row: str = "EXP-0002-H100, EXP-0002-H1000"
+
+
 class DemoConfig(BaseModel):
     """The whole demo: corpora, the cascade policy and where its own call log lives."""
 
@@ -57,6 +68,8 @@ class DemoConfig(BaseModel):
     #: The demo's own call log: demo calls never mix into experiment logs. (No answer cache:
     #: the demo answers live only.)
     calls_log_path: Path
+    #: Report files behind the Results tab; without it `/api/results` answers 404.
+    results: ResultsSources | None = None
 
     @model_validator(mode="after")
     def _corpora_are_unique(self) -> DemoConfig:

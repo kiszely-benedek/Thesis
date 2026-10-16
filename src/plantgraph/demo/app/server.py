@@ -25,6 +25,7 @@ from plantgraph.demo.app.api_models import (
 )
 from plantgraph.demo.app.corpus_runtime import read_drawing_index
 from plantgraph.demo.app.live_cascades import NO_API_KEY
+from plantgraph.demo.app.results import ResultsView, results_view
 from plantgraph.demo.app.state import (
     AppState,
     Busy,
@@ -52,6 +53,8 @@ _ERROR_OF: dict[type[Exception], tuple[int, str]] = {
 }
 #: The code of a missing page, PDF or drawing-index file (not an `_ERROR_OF` exception).
 MISSING_FILE = "missing_file"
+#: The code of `/api/results` when the config names no report files.
+RESULTS_NOT_CONFIGURED = "results_not_configured"
 #: Every code the API can send (`no_api_key` arrives as a corpus's `error_code`, `plant_load_failed`
 #: as the plant status's `error`); the label table must have a text for each.
 ERROR_CODES: frozenset[str] = frozenset(code for _, code in _ERROR_OF.values()) | {
@@ -124,6 +127,18 @@ def create_app(state: AppState) -> FastAPI:
             return benchmark_view(corpus, benchmark_question(corpus, question_id))
 
         return _call(build)
+
+    @app.get("/api/results")
+    def results() -> ResultsView:
+        sources = state.config.results
+        if sources is None:
+            raise _http_error(
+                404, RESULTS_NOT_CONFIGURED, "expected a `results` entry in the demo config"
+            )
+        try:
+            return results_view(sources)
+        except FileNotFoundError as error:
+            raise _http_error(404, MISSING_FILE, str(error)) from error
 
     @app.get("/api/plant")
     def plant() -> PlantStatus:
