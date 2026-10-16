@@ -6,8 +6,8 @@ import { STRINGS } from "./strings.js";
 const RESET_MS = 2000;
 
 /** A button that writes `text` to the clipboard and says so for two seconds. */
-export function copyButton(text) {
-  const button = el("button", { type: "button", className: "text-button copy-button", textContent: STRINGS.copy });
+export function copyButton(text, caption = STRINGS.copy) {
+  const button = el("button", { type: "button", className: "text-button copy-button", textContent: caption });
   button.addEventListener("click", async () => {
     try {
       await navigator.clipboard.writeText(text); // 127.0.0.1 counts as a secure context
@@ -15,7 +15,7 @@ export function copyButton(text) {
     } catch {
       button.textContent = STRINGS.copyFailed;
     }
-    setTimeout(() => { button.textContent = STRINGS.copy; }, RESET_MS);
+    setTimeout(() => { button.textContent = caption; }, RESET_MS);
   });
   return button;
 }

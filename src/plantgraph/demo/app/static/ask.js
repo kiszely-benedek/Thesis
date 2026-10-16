@@ -16,10 +16,15 @@ const TICK_MS = 200;
 
 let chosenId = null; // the example the box text was filled from, if unedited
 let redraw = () => {};
+let refreshStatus = async () => {};
+/** Refusals that mean the database is not what the page last showed (the server checks it before each ask). */
+const STORE_ERRORS = ["store_changed", "store_unreachable"];
 
-/** Wire the panel; `render` redraws the status parts of the page (spend, switch, button). */
-export function initAsk(render) {
+/** Wire the panel; `render` redraws the status parts of the page (spend, switch, button) and
+    `refresh` fetches /api/status again, so the plant switch shows the plant the database holds now. */
+export function initAsk(render, refresh) {
   redraw = render;
+  refreshStatus = refresh;
   $("question-label").textContent = STRINGS.questionLabel;
   $("ask-button").textContent = STRINGS.ask;
   $("ask-keys").textContent = STRINGS.askKeys;
@@ -145,6 +150,7 @@ async function ask() {
   } catch (error) {
     const { text, technical } = describeError(error);
     showMessage(text, true, technical);
+    if (STORE_ERRORS.includes(error.code)) await refreshStatus().catch(() => {});
   } finally {
     clearInterval(ticker);
     clearProgress(); // on success the lines live on in the card's Details

@@ -35,7 +35,7 @@ from plantgraph.demo.app.state import (
     UnknownCorpus,
     UnknownJob,
 )
-from plantgraph.demo.app.store_loader import PLANT_LOAD_FAILED
+from plantgraph.demo.app.store_loader import PLANT_LOAD_FAILED, StoreChanged, StoreUnreachable
 from plantgraph.demo.drawing.models import DrawingIndex
 
 #: The server listens on this address only: the demo is never reachable from another machine.
@@ -53,6 +53,8 @@ _ERROR_OF: dict[type[Exception], tuple[int, str]] = {
     CorpusNotReady: (409, "corpus_not_ready"),
     Busy: (409, "busy"),
     PlantNotLoaded: (409, "plant_not_loaded"),
+    StoreChanged: (409, "store_changed"),
+    StoreUnreachable: (409, "store_unreachable"),
 }
 #: The code of a missing page, PDF or drawing-index file (not an `_ERROR_OF` exception).
 MISSING_FILE = "missing_file"

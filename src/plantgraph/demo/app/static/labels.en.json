@@ -80,6 +80,8 @@
     "corpus_not_ready": "The plant is still loading, or loading it failed.",
     "busy": "A question or a plant switch is already running; wait for it to finish.",
     "plant_not_loaded": "This plant is not in the graph database. Select it above to load it first.",
+    "store_changed": "The graph database was changed outside the demo. Select the plant again to load it before asking.",
+    "store_unreachable": "The graph database could not be reached, so the question was not sent to the model. Check that Neo4j is running.",
     "plant_load_failed": "Loading this plant into the graph database failed.",
     "missing_file": "A file is missing on the server.",
     "no_api_key": "The demo has no model API key, so it cannot answer.",

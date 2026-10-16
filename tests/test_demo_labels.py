@@ -123,3 +123,10 @@ def test_a_domain_error_is_a_status_and_a_code_with_the_english_message(
     status, code = _ERROR_OF[error_type]
     assert response.status_code == status
     assert response.json() == {"detail": {"code": code, "message": "expected X, found Y"}}
+
+
+def test_the_store_guard_errors_say_what_to_do() -> None:
+    # the codes the pre-ask database check sends; the page shows these words
+    assert {"store_changed", "store_unreachable"} <= ERROR_CODES
+    assert "outside the demo" in LABELS.error_codes["store_changed"]
+    assert "Select the plant" in LABELS.error_codes["store_changed"]

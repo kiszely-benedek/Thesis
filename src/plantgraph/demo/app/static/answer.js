@@ -2,15 +2,17 @@
    the check against the reference (examples only), and two folded parts (details, how it works). */
 
 import { $, el } from "./dom.js";
+import { copyButton } from "./copy.js";
 import { seconds, usd, valueWithClasses } from "./format.js";
 import { renderDetails } from "./details.js";
 import { richText, strategyTerm, term } from "./glossary.js";
 import { label, labelSection } from "./labels.js";
 import { cardSection, facts } from "./parts.js";
 import { routeSection } from "./route.js";
-import { page } from "./state.js";
+import { currentCorpus, page } from "./state.js";
 import { createStepSync } from "./step_sync.js";
 import { STRINGS } from "./strings.js";
+import { createTagLinker, sheetIdChips } from "./tag_links.js";
 import { jumpToPage } from "./viewer.js";
 
 // emptying the model cache is normally instant; only a slower one is worth a line on the card
@@ -28,6 +30,34 @@ function answerText(live) {
   if (final.answer === true) return label("answer_values", "yes");
   if (final.answer === false) return label("answer_values", "no");
   return valueWithClasses(final.answer, labelSection("class_names")) || STRINGS.noAnswer;
+}
+
+/** The sheet ids of a SHEET_SET value (a list, or one id), as strings. */
+function sheetIdsOf(value) {
+  return [value].flat().filter((id) => id !== null && id !== undefined).map(String);
+}
+
+/** The answer as nodes: sheet ids as chips, item tags as buttons, anything else as plain text. */
+function answerNodes(live, link) {
+  const final = live.final_answer;
+  const ids = final && !final.not_present ? sheetIdsOf(final.answer) : [];
+  if (live.answer_type === "SHEET_SET" && ids.length > 0) return [sheetIdChips(ids)];
+  return link(answerText(live));
+}
+
+/** What the card's Copy button writes: the question, the plant, the answer and what it cost. */
+function copyPayload(job) {
+  const live = job.result.live;
+  return STRINGS.copyText({
+    question: live.question_text,
+    plant: page.corpusId,
+    nSheets: currentCorpus()?.n_sheets ?? 0,
+    answer: answerText(live),
+    sheets: job.result.answer_sheets.map((sheet) => sheet.sheet_id),
+    answeredBy: live.answered_by ? label("tiers", live.answered_by) : STRINGS.nobody,
+    time: seconds(Math.max(0, job.elapsed_s - (job.clear_s ?? 0))),
+    cost: usd(live.spent_usd),
+  });
 }
 
 /** One clickable chip per sheet; a click jumps the PDF to the sheet's page. */
@@ -78,12 +108,14 @@ function verdictNode(correct) {
   return el("span", { className }, correct ? STRINGS.correct : STRINGS.incorrect);
 }
 
-function benchmarkBlock(benchmark) {
+function benchmarkBlock(benchmark, link) {
   const names = labelSection("class_names");
+  const reference = valueWithClasses(benchmark.reference, names) || STRINGS.none;
   return cardSection(
     STRINGS.checkHeading,
     facts([
-      [STRINGS.reference, valueWithClasses(benchmark.reference, names) || STRINGS.none],
+      [STRINGS.reference, benchmark.answer_type === "SHEET_SET" && benchmark.reference.length > 0
+        ? sheetIdChips(sheetIdsOf(benchmark.reference)) : link(reference)],
       [STRINGS.verdict, verdictNode(benchmark.correct)],
       [term("k", "k"), richText(STRINGS.kValue(benchmark))],
       [term("u", "u"), richText(STRINGS.uValue(benchmark))],
@@ -99,12 +131,17 @@ function statusLines(result, live) {
   return lines;
 }
 
-function answerBlock(job) {
+function answerBlock(job, link) {
   const live = job.result.live;
+  const head = el(
+    "div", { className: "answer-head" },
+    el("h2", { className: "field-label" }, STRINGS.answer),
+    copyButton(copyPayload(job), STRINGS.copyAnswer),
+  );
   const block = el(
     "section", { className: "card-section" },
-    el("h2", { className: "field-label" }, STRINGS.answer),
-    el("div", { className: "answer-text" }, answerText(live)),
+    head,
+    el("div", { className: "answer-text" }, ...answerNodes(live, link)),
   );
   if (live.fell_back) block.append(el("p", { className: "notice" }, STRINGS.fallbackLine));
   block.append(factsLine(job));
@@ -139,14 +176,15 @@ export function renderAnswer(job) {
   // the route view and the step list in Details share one "current step"
   const route = result.route;
   const sync = createStepSync(route ? Math.max(0, route.steps.length - 1) : 0);
+  const link = createTagLinker(result.answer_sheets);
   const card = el(
     "article", { className: "card" },
     ...statusLines(result, result.live),
-    answerBlock(job),
+    answerBlock(job, link),
     sourcesBlock(result),
   );
   if (route) card.append(routeSection(route, sync, wrongReference(result.benchmark)));
-  if (result.benchmark) card.append(benchmarkBlock(result.benchmark));
+  if (result.benchmark) card.append(benchmarkBlock(result.benchmark, link));
   card.append(renderDetails(result, route ? sync : null, job.progress), howItWorks());
   $("result").replaceChildren(card);
 }

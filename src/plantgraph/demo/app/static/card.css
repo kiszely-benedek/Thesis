@@ -15,6 +15,15 @@
 .card-section h2, .card-section h3 { margin-bottom: var(--sp-1); }
 .facts + .captioned, .captioned + .captioned { margin-top: var(--sp-3); }
 .answer-text { font-size: var(--fs-xl); font-weight: 600; line-height: var(--lh-tight); white-space: pre-wrap; overflow-wrap: anywhere; }
+/* the Answer heading with its Copy button at the far end */
+.answer-head { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); margin-bottom: var(--sp-1); }
+.answer-head h2 { margin: 0; }
+/* A tag inside the answer: reads as part of the sentence, marked as a button by its dotted rule. */
+.tag-link {
+  padding: 0 var(--sp-1); background: none; color: var(--accent-ink); font: inherit; font-family: var(--font-mono);
+  border: 0; border-bottom: 2px dotted var(--accent); border-radius: var(--r-1); cursor: pointer;
+}
+.tag-link:hover { background: var(--accent); color: var(--on-accent); border-bottom-style: solid; }
 .facts-line { margin: var(--sp-2) 0 0; font-size: var(--fs-sm); color: var(--ink-muted); }
 .card .notice { margin: var(--sp-2) 0 0; }
 .facts { display: grid; grid-template-columns: max-content 1fr; gap: var(--sp-1) var(--sp-4); margin: 0; font-size: var(--fs-sm); }

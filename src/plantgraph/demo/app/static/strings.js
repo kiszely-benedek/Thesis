@@ -216,6 +216,22 @@ export const STRINGS = {
   copy: "Copy",
   copied: "Copied",
   copyFailed: "Copying failed.",
+  copyAnswer: "Copy answer",
+  // the plain text a card's Copy puts on the clipboard, ready to paste into notes or a ticket
+  copyText: (c) =>
+    [
+      `Question: ${c.question}`,
+      `Plant: ${c.plant} (${count(c.nSheets, "sheet")})`,
+      `Answer: ${c.answer}`,
+      `Sheets: ${c.sheets.length === 0 ? "none" : c.sheets.map((id) => `DWG ${id}`).join(", ")}`,
+      `Answered by: ${c.answeredBy}`,
+      `Time: ${c.time}`,
+      `Cost: ${c.cost}`,
+    ].join("\n"),
+  // a tag in the answer after a click: which of its sheets the drawing shows now
+  tagShowing: (sheets, turn) =>
+    `Showing DWG ${sheets[turn]} (${turn + 1} of ${sheets.length})` + (sheets.length > 1 ? " - click again for the next" : ""),
+  sheetNotInIndex: (id) => `DWG ${id} is not in this plant's drawing index`,
   howHeading: "How it works",
   howText: (cutoff) =>
     "The question first goes to a {{cypher|database-query step}}: the language model writes a query for the " +

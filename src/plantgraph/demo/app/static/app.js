@@ -93,7 +93,7 @@ async function start() {
   initIntro();
   initGlossary();
   initLookup();
-  initAsk(render);
+  initAsk(render, refreshStatus);
   try {
     await loadLabels();
     initResults();

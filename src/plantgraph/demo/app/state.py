@@ -31,6 +31,7 @@ from plantgraph.demo.app.spend import SessionSpend
 from plantgraph.demo.app.store_loader import (
     PlantSwitcher,
     PlantTracker,
+    StoreChanged,
     recorded_load_seconds,
     switch_plant_from_env,
 )
@@ -242,17 +243,18 @@ class AppState:
         Raises:
             UnknownCorpus, CorpusNotReady, UnknownBenchmarkQuestion: bad target.
             Busy: another question is running.
+            PlantNotLoaded, StoreChanged, StoreUnreachable: the database, read just now, does not
+                hold the asked plant.
         """
         corpus = self.ready_corpus(request.corpus_id)
         asked = asked_question(corpus, request)
         if not self._busy.acquire(blocking=False):
             raise Busy("a question or a plant switch is running; wait for it to finish")
-        if not self._store_allows(corpus):
+        try:
+            self._check_store(corpus)
+        except Exception:  # StoreChanged, StoreUnreachable, PlantNotLoaded: no job, no model call
             self._busy.release()
-            raise PlantNotLoaded(
-                f"expected {corpus.config.corpus_id} in the graph database, "
-                f"found {list(self._plants.status().held)}; select the plant to load it"
-            )
+            raise
         job = Job()
         self._jobs[job.job_id] = job
         threading.Thread(
@@ -265,6 +267,21 @@ class AppState:
             run_job(job, corpus, asked, self.session)
         finally:
             self._busy.release()
+
+    def _check_store(self, corpus: LoadedCorpus) -> None:
+        """Refuse the ask unless the database, read right now, still holds the asked plant."""
+        if corpus.source.store.kind == "not_needed":  # no database step: nothing to protect
+            return
+        try:
+            self._plants.verify_unchanged()
+        except StoreChanged:
+            self.reopen_cascades()  # the cascades were opened on the old contents
+            raise
+        if not self._store_allows(corpus):
+            raise PlantNotLoaded(
+                f"expected {corpus.config.corpus_id} in the graph database, "
+                f"found {list(self._plants.status().held)}; select the plant to load it"
+            )
 
     def _store_allows(self, corpus: LoadedCorpus) -> bool:
         """A corpus whose policy has a database step needs its plant in the database."""

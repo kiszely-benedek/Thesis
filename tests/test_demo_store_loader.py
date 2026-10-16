@@ -211,3 +211,75 @@ def test_an_unknown_plant_is_a_404(build: Build) -> None:
     response = client.post("/api/plant", json={"corpus_id": "nope"})
 
     assert response.status_code == 404 and response.json()["detail"]["code"] == "unknown_corpus"
+
+
+# --- the guard before each ask: the database is read again, so an outside change is noticed ---
+
+
+def _guarded_client(env: Env, probe: HeldCorporaProbe) -> tuple[AppState, TestClient, Any]:
+    transport = scripted_transport()
+    state = build_app_state(
+        env.config,
+        transport=httpx2.MockTransport(transport.handler),
+        held_corpora_probe=probe,
+    )
+    state.load_all()
+    return state, TestClient(create_app(state)), transport
+
+
+def test_an_ask_proceeds_when_the_probe_matches_the_tracker(env: Env) -> None:
+    reads: list[int] = []
+
+    def probe() -> tuple[str, ...]:
+        reads.append(1)
+        return (CORPUS_ID,)
+
+    state, client, _ = _guarded_client(env, probe)
+
+    response = _ask(client, env, env.answerable)
+
+    assert response.status_code == 200 and len(reads) == 2  # at start-up, and before the ask
+    _wait_for_end(client, response.json()["job_id"])
+    state.close()
+
+
+def test_a_database_changed_outside_is_refused_once_the_tracker_follows_and_no_model_call(
+    env: Env,
+) -> None:
+    database = FakeDatabase((CORPUS_ID,))
+    state, client, transport = _guarded_client(env, database.probe)
+    database.held = ("OTHER",)  # someone wiped and loaded another plant behind the demo's back
+
+    refused = _ask(client, env, env.answerable)
+
+    assert refused.status_code == 409 and refused.json()["detail"]["code"] == "store_changed"
+    assert transport.requests == []
+    assert client.get("/api/plant").json()["held"] == ["OTHER"]  # the page now sees the truth
+    again = _ask(client, env, env.answerable)  # the believed state is right now: plant_not_loaded
+    assert again.json()["detail"]["code"] == "plant_not_loaded"
+    state.close()
+
+
+def test_a_probe_that_fails_refuses_the_ask_without_a_model_call_and_frees_the_lock(
+    env: Env,
+) -> None:
+    database = FakeDatabase((CORPUS_ID,))
+    broken = {"on": False}
+
+    def probe() -> tuple[str, ...]:
+        if broken["on"]:
+            raise OSError("neo4j is down")
+        return database.probe()
+
+    state, client, transport = _guarded_client(env, probe)
+    broken["on"] = True
+
+    refused = _ask(client, env, env.answerable)
+    broken["on"] = False
+    recovered = _ask(client, env, env.answerable)
+
+    assert refused.status_code == 409 and refused.json()["detail"]["code"] == "store_unreachable"
+    assert recovered.status_code == 200  # the failed probe did not leave the ask lock taken
+    _wait_for_end(client, recovered.json()["job_id"])
+    assert len(transport.requests) > 0
+    state.close()

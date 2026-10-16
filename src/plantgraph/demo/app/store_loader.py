@@ -28,6 +28,15 @@ _LOG = logging.getLogger(__name__)
 #: Error code of a switch that failed (the label table has its text).
 PLANT_LOAD_FAILED = "plant_load_failed"
 
+
+class StoreChanged(RuntimeError):
+    """The graph database holds other plants than the demo last knew: something changed it."""
+
+
+class StoreUnreachable(RuntimeError):
+    """The graph database could not be read just before an ask."""
+
+
 #: Does the whole switch for a plant: wipe the held plants, load the chosen one.
 PlantSwitcher = Callable[[str, LoadPlan, HeldCorporaProbe], PlantLoad]
 
@@ -96,6 +105,29 @@ class PlantTracker:
             held = ()
         with self._lock:
             self._held = held
+
+    def verify_unchanged(self) -> None:
+        """Read the database now and compare it with what the demo believes it holds.
+
+        Called right before an ask, because anything outside the demo can change the database.
+        On a difference the belief is replaced by what was read, so the page shows the truth.
+
+        Raises:
+            StoreChanged: the database holds other plants than the tracker did.
+            StoreUnreachable: the database could not be read.
+        """
+        try:
+            actual = tuple(sorted(self._probe()))
+        except Exception as error:  # any failure to read counts: no model call on a blind store
+            raise StoreUnreachable(
+                f"expected to read the plants the graph database holds, found: {error}"
+            ) from error
+        with self._lock:
+            believed, self._held = self._held, actual
+        if actual != believed:
+            raise StoreChanged(
+                f"expected the graph database to hold {list(believed)}, found {list(actual)}"
+            )
 
     def holds(self, corpus_id: str) -> bool:
         """Whether the database holds this plant now."""
