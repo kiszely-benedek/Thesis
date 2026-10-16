@@ -14,6 +14,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+import httpx2
 import pytest
 from fastapi.testclient import TestClient
 
@@ -125,7 +126,7 @@ def make_client(env: Env) -> Iterator[Client]:
         state = build_app_state(
             env.config,
             session_cap_usd=cap,
-            http_client=(transport or scripted_transport()).as_httpx_client(),
+            transport=httpx2.MockTransport((transport or scripted_transport()).handler),
             held_corpora_probe=lambda: (CORPUS_ID,),  # no real Neo4j in tests
         )
         states.append(state)

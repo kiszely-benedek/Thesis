@@ -62,14 +62,14 @@ class CorpusLoader:
         guard: SpendGuard,
         *,
         cypher_source_factory: CypherSourceFactory = open_checked_neo4j_view,
-        http_client: httpx2.Client | None = None,
+        transport: httpx2.BaseTransport | None = None,
         held_corpora_probe: HeldCorporaProbe = held_corpus_ids_from_env,
     ) -> None:
         self._config = config
         self._policy = policy
         self._guard = guard
         self._factory = cypher_source_factory
-        self._http_client = http_client
+        self._transport = transport
         self._held_corpora_probe = held_corpora_probe
 
     def __call__(self, corpus: DemoCorpus) -> LoadedCorpus:
@@ -99,7 +99,7 @@ class CorpusLoader:
                 cutoff_s=self._config.question_deadline_s,
                 guard=self._guard,
                 cypher_source_factory=self._factory,
-                http_client=self._http_client,
+                transport=self._transport,
                 held_corpora_probe=self._held_corpora_probe,
             )
         )

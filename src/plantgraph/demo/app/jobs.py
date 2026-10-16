@@ -10,9 +10,12 @@ from typing import Literal
 
 from plantgraph.demo.app.answering import demo_answer
 from plantgraph.demo.app.api_models import DemoAnswer, JobStatus
+from plantgraph.demo.app.ask_trace import build_trace
 from plantgraph.demo.app.corpus_runtime import LoadedCorpus
 from plantgraph.demo.app.models import SpendStatus
 from plantgraph.demo.app.spend import SessionSpend
+from plantgraph.demo.app.trace_models import AskTrace
+from plantgraph.demo.app.trace_recorder import TraceWindow
 from plantgraph.qa.cascade.live_models import LiveAnswer, NeedsPaidCall
 from plantgraph.qa.harness.spend_cap import Reservation, SpendCapReached
 from plantgraph.qa.strategies.base import AskedQuestion
@@ -69,8 +72,8 @@ def run_job(job: Job, corpus: LoadedCorpus, asked: AskedQuestion, session: Sessi
     spent_before = session.guard.spent_usd
     try:
         reservation = session.reserve()
-        live = _ask_live(job, corpus, asked)
-        job.result = demo_answer(corpus, live, asked)
+        live, window = _ask_live(job, corpus, asked)
+        job.result = demo_answer(corpus, live, asked, _trace_of(window, corpus))
         if job.result.cache_hit_detected:
             _LOG.error(
                 "a stored answer was used for %r: the live-only guard failed", live.question_text
@@ -88,10 +91,25 @@ def run_job(job: Job, corpus: LoadedCorpus, asked: AskedQuestion, session: Sessi
             session.release(reservation, session.guard.spent_usd - spent_before)
 
 
-def _ask_live(job: Job, corpus: LoadedCorpus, asked: AskedQuestion) -> LiveAnswer:
+def _ask_live(
+    job: Job, corpus: LoadedCorpus, asked: AskedQuestion
+) -> tuple[LiveAnswer, TraceWindow]:
     """Empty the model cache, then ask the corpus's open cascade once."""
-    cascade, job.clear_s = corpus.source.begin_ask()
-    result = cascade.ask(asked)
+    handle = corpus.source.begin_ask()
+    job.clear_s = handle.clear_s
+    result = handle.cascade.ask(asked)
     if isinstance(result, NeedsPaidCall):  # a live client never raises CacheMiss
         raise RuntimeError(f"expected a live answer, found a missing cache entry: {result.reason}")
-    return result
+    return result, handle.window
+
+
+def _trace_of(window: TraceWindow, corpus: LoadedCorpus) -> AskTrace:
+    """The ask's route, read now (before any late reply of an abandoned call can change it).
+
+    A trace that cannot be built must not discard the answer, so the failure is carried in it.
+    """
+    try:
+        return build_trace(window.exchanges(), window.log_lines(), corpus.item_graph)
+    except Exception as error:  # the answer is already paid for; show it without a route
+        _LOG.exception("building the ask trace failed")
+        return AskTrace(error=f"{type(error).__name__}: {error}")

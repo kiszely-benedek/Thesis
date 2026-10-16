@@ -9,6 +9,7 @@ from __future__ import annotations
 from plantgraph.demo.app.api_models import AskRequest, BenchmarkView, DemoAnswer
 from plantgraph.demo.app.corpus_runtime import LoadedCorpus
 from plantgraph.demo.app.evidence import answer_sheet_links, read_sheet_links
+from plantgraph.demo.app.trace_models import AskTrace
 from plantgraph.qa.cascade.live_models import FreeTextQuestion, LiveAnswer
 from plantgraph.qa.models import AnswerType, Outcome, Question
 from plantgraph.qa.scoring import score_answer
@@ -74,8 +75,10 @@ def benchmark_view(
     )
 
 
-def demo_answer(corpus: LoadedCorpus, live: LiveAnswer, asked: AskedQuestion) -> DemoAnswer:
-    """The live answer with its sheets and, for a benchmark question, the verdict."""
+def demo_answer(
+    corpus: LoadedCorpus, live: LiveAnswer, asked: AskedQuestion, trace: AskTrace
+) -> DemoAnswer:
+    """The live answer with its sheets, its recorded route and (benchmark question) the verdict."""
     return DemoAnswer(
         live=live,
         answer_sheets=answer_sheet_links(
@@ -83,7 +86,8 @@ def demo_answer(corpus: LoadedCorpus, live: LiveAnswer, asked: AskedQuestion) ->
         ),
         read_sheets=read_sheet_links(live.trace_sheets, corpus.pages),
         benchmark=_benchmark_for(corpus, live, asked),
-        cache_hit_detected=came_from_cache(live),
+        trace=trace,
+        cache_hit_detected=came_from_cache(live) or any(call.from_cache for call in trace.calls),
     )
 
 

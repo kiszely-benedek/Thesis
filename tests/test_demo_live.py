@@ -7,6 +7,7 @@ fixtures of `test_demo_app` are reused.
 # ruff: noqa: F811  (imported pytest fixtures are re-declared as test arguments)
 from __future__ import annotations
 
+import dataclasses
 import sqlite3
 import time
 from collections.abc import Iterator
@@ -14,12 +15,18 @@ from contextlib import closing
 from pathlib import Path
 from typing import Any
 
+import httpx2
 import pytest
 
 from plantgraph.demo.app import live_cascades
 from plantgraph.demo.app.answering import came_from_cache
 from plantgraph.demo.app.api_models import AskRequest, DemoAnswer, JobStatus
-from plantgraph.demo.app.live_cascades import Asker, CascadeSource, LiveCascadeFactory
+from plantgraph.demo.app.live_cascades import (
+    Asker,
+    AskHandle,
+    CascadeSource,
+    LiveCascadeFactory,
+)
 from plantgraph.demo.app.state import AppState, build_app_state
 from plantgraph.llm.fake_transport import FakeTransport
 from plantgraph.qa.cascade.live_build import OpenedCascade
@@ -45,7 +52,7 @@ def _state(env: Env, transport: FakeTransport | None, cap: float | None = None) 
     state = build_app_state(
         env.config,
         session_cap_usd=cap,
-        http_client=transport.as_httpx_client() if transport else None,
+        transport=httpx2.MockTransport(transport.handler) if transport else None,
         held_corpora_probe=lambda: (CORPUS_ID,),  # no real Neo4j in tests
     )
     state.load_all()
@@ -94,10 +101,12 @@ class _SpySource:
         self.tier1_store = real.tier1_store
         self.store = real.store
 
-    def begin_ask(self) -> tuple[Asker, float]:
+    def begin_ask(self) -> AskHandle:
         self.begun += 1
-        asker, clear_s = self._real.begin_ask()
-        return (_CachedLooking(asker) if self._force_cached else asker), clear_s
+        handle = self._real.begin_ask()
+        if not self._force_cached:
+            return handle
+        return dataclasses.replace(handle, cascade=_CachedLooking(handle.cascade))
 
     def close(self) -> None:
         self._real.close()
@@ -143,6 +152,35 @@ def test_two_identical_asks_on_the_same_open_cascade_make_two_network_requests(e
         assert status.clear_s is not None
 
 
+def test_each_ask_has_its_own_recorded_trace_of_the_real_calls(env: Env) -> None:
+    transport = scripted_transport()
+    state = _state(env, transport)
+
+    first = _answer(_ask_and_wait(state, env.answerable))
+    second = _answer(_ask_and_wait(state, env.answerable))
+
+    assert len(transport.requests) == 2
+    for answer in (first, second):  # the second ask's trace holds only its own call
+        assert [call.purpose for call in answer.trace.calls] == ["answer"]
+        assert answer.trace.calls[0].cost_usd == pytest.approx(0.0003)
+        assert answer.trace.error is None and answer.trace.unlogged_attempts == 0
+
+
+def test_a_trace_call_from_a_cache_sets_the_guard_flag_too(env: Env) -> None:
+    state = _state(env, scripted_transport())
+    answer = _answer(_ask_and_wait(state, env.answerable))
+    cached = answer.trace.calls[0].model_copy(update={"from_cache": True})
+
+    from plantgraph.demo.app.answering import demo_answer
+
+    corpus = state.ready_corpus(CORPUS_ID)
+    flagged = demo_answer(
+        corpus, answer.live, env.answerable, answer.trace.model_copy(update={"calls": (cached,)})
+    )
+
+    assert answer.cache_hit_detected is False and flagged.cache_hit_detected is True
+
+
 def test_the_stored_response_is_really_there_until_the_demo_empties_it(env: Env) -> None:
     # proves the test above is meaningful: without the delete, the second ask would hit the cache
     state = _state(env, scripted_transport())
@@ -152,7 +190,7 @@ def test_the_stored_response_is_really_there_until_the_demo_empties_it(env: Env)
     with closing(sqlite3.connect(cache_file)) as connection:
         stored = connection.execute("SELECT COUNT(*) FROM responses").fetchone()[0]
     assert stored >= 1
-    _factory(state).begin_ask()
+    _factory(state).begin_ask()  # also marks a trace window; harmless here
     with closing(sqlite3.connect(cache_file)) as connection:
         assert connection.execute("SELECT COUNT(*) FROM responses").fetchone()[0] == 0
 

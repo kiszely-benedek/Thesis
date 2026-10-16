@@ -31,6 +31,17 @@ def tags_in_text(text: str, item_graph: ItemGraph) -> list[str]:
     return [word for word in words if item_graph.ids_for_tag(word)]
 
 
+def items_in_text(text: str, item_graph: ItemGraph) -> tuple[str, ...]:
+    """Words of `text` that name a plant item: a tag, or an item id (how an untagged item is shown).
+
+    Each word once, in first-seen order.
+    """
+    named = tags_in_text(text, item_graph) + [
+        word for word in _WORD.findall(text) if item_graph.has_item(word)
+    ]
+    return tuple(dict.fromkeys(named))
+
+
 def answer_tags(
     question_text: str, answer_type: AnswerType, answer: FinalAnswer | None, item_graph: ItemGraph
 ) -> list[str]:

@@ -11,6 +11,7 @@ import time
 from collections.abc import Callable, Iterator
 from typing import Any, cast
 
+import httpx2
 import pytest
 from fastapi.testclient import TestClient
 
@@ -62,7 +63,7 @@ def build(env: Env) -> Iterator[Build]:
     def make(database: FakeDatabase) -> tuple[AppState, TestClient]:
         state = build_app_state(
             env.config,
-            http_client=scripted_transport().as_httpx_client(),
+            transport=httpx2.MockTransport(scripted_transport().handler),
             held_corpora_probe=database.probe,
             plant_switcher=database.switch,
         )
@@ -154,7 +155,7 @@ def test_an_ask_on_a_plant_the_database_does_not_hold_is_refused_without_a_model
     transport = scripted_transport()
     state = build_app_state(
         env.config,
-        http_client=transport.as_httpx_client(),
+        transport=httpx2.MockTransport(transport.handler),
         held_corpora_probe=lambda: ("OTHER",),
     )
     state.load_all()

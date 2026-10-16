@@ -306,7 +306,7 @@ def build_app_state(
     *,
     session_cap_usd: float | None = None,
     cypher_source_factory: CypherSourceFactory = open_checked_neo4j_view,
-    http_client: httpx2.Client | None = None,
+    transport: httpx2.BaseTransport | None = None,
     held_corpora_probe: HeldCorporaProbe = held_corpus_ids_from_env,
     plant_switcher: PlantSwitcher = switch_plant_from_env,
 ) -> AppState:
@@ -327,7 +327,7 @@ def build_app_state(
         policy,
         session.guard,
         cypher_source_factory=cypher_source_factory,
-        http_client=http_client,
+        transport=transport,
         held_corpora_probe=held_corpora_probe,
     )
     return AppState(

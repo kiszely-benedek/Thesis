@@ -19,6 +19,7 @@ from pathlib import Path
 from typing import Protocol
 
 import httpx2
+import openai
 
 from plantgraph.demo.app.store_probe import (
     HeldCorporaProbe,
@@ -26,6 +27,7 @@ from plantgraph.demo.app.store_probe import (
     held_corpus_ids_from_env,
     store_state,
 )
+from plantgraph.demo.app.trace_recorder import RecordingTransport, TraceWindow
 from plantgraph.llm import openrouter_settings
 from plantgraph.qa.cascade.live_build import OpenedCascade, open_live_cascade
 from plantgraph.qa.cascade.live_models import LiveAnswer, NeedsPaidCall
@@ -61,6 +63,17 @@ class Asker(Protocol):
         ...
 
 
+@dataclass(frozen=True)
+class AskHandle:
+    """What one ask needs: the open cascade, the cache-clearing seconds, and the trace window."""
+
+    cascade: Asker
+    #: Seconds spent emptying the model cache before the ask (not part of the answer time).
+    clear_s: float
+    #: Marks where this ask's recorded traffic and call-log lines begin.
+    window: TraceWindow
+
+
 class CascadeSource(Protocol):
     """What the app needs from a corpus's cascade; tests may pass a fake."""
 
@@ -71,8 +84,8 @@ class CascadeSource(Protocol):
     #: Why the database tier can or cannot answer (the page explains it).
     store: StoreState
 
-    def begin_ask(self) -> tuple[Asker, float]:
-        """The open cascade with its model cache emptied, and the seconds the emptying took."""
+    def begin_ask(self) -> AskHandle:
+        """The open cascade with its model cache emptied, and the marks that bound the ask."""
         ...
 
     def close(self) -> None:
@@ -102,7 +115,8 @@ class LiveSettings:
     #: The session's spend guard, so every live call is counted against the cap.
     guard: SpendGuard
     cypher_source_factory: CypherSourceFactory
-    http_client: httpx2.Client | None = None
+    #: Carries the model requests; tests pass a fake one, production leaves it `None`.
+    transport: httpx2.BaseTransport | None = None
     #: Reads which corpora the database holds; tests pass a fake instead of reaching Neo4j.
     held_corpora_probe: HeldCorporaProbe = held_corpus_ids_from_env
 
@@ -129,15 +143,19 @@ class LiveCascadeFactory:
         Raises:
             NoApiKey: no model key and no injected transport.
         """
-        _require_api_key(settings.http_client)
+        _require_api_key(settings.transport)
         self._settings = settings
+        # one recorder per opened cascade; a reopen builds a new one with the new cascade
+        self._recorder = RecordingTransport(settings.transport or httpx2.HTTPTransport())
+        self._sdk_client = _sdk_client(self._recorder)
         probe = _StoreProbe(settings.cypher_source_factory)
         self._cache_dir = Path(tempfile.mkdtemp(prefix="plantgraph-demo-"))
         self.cache_file = self._cache_dir / f"{settings.corpus_id}.sqlite"
         started = time.perf_counter()
         try:
-            self._opened = _open(settings, probe, self.cache_file)
+            self._opened = _open(settings, probe, self.cache_file, self._sdk_client)
         except Exception:
+            self._sdk_client.close()
             shutil.rmtree(self._cache_dir)
             raise
         has_database_tier = any(t.strategy in PROFILE_OF_NAME for t in settings.policy.tiers)
@@ -160,11 +178,13 @@ class LiveCascadeFactory:
             time.perf_counter() - started,
         )
 
-    def begin_ask(self) -> tuple[Asker, float]:
-        """Empty the model cache, so no call of the coming ask can be a stored one."""
+    def begin_ask(self) -> AskHandle:
+        """Empty the model cache (so no call can be a stored one) and mark where the ask starts."""
         started = time.perf_counter()
         _empty_cache(self.cache_file)
-        return self._opened.cascade, round(time.perf_counter() - started, 4)
+        clear_s = round(time.perf_counter() - started, 4)
+        window = TraceWindow.open(self._recorder, self._settings.calls_log_path)
+        return AskHandle(self._opened.cascade, clear_s, window)
 
     def close(self) -> None:
         """Close the cascade's caches and database connection, then delete the cache file.
@@ -174,6 +194,7 @@ class LiveCascadeFactory:
         if not self._cache_dir.exists():
             return
         self._opened.close()
+        self._sdk_client.close()
         shutil.rmtree(self._cache_dir)
 
     def reopen(self) -> LiveCascadeFactory:
@@ -182,7 +203,14 @@ class LiveCascadeFactory:
         return LiveCascadeFactory(self._settings)
 
 
-def _open(settings: LiveSettings, factory: CypherSourceFactory, cache_file: Path) -> OpenedCascade:
+def _sdk_client(recorder: RecordingTransport) -> httpx2.Client:
+    """The SDK's own default client (so its timeouts and limits) sending through `recorder`."""
+    return openai.DefaultHttpxClient(transport=recorder)
+
+
+def _open(
+    settings: LiveSettings, factory: CypherSourceFactory, cache_file: Path, client: httpx2.Client
+) -> OpenedCascade:
     return open_live_cascade(
         corpus_id=settings.corpus_id,
         policy=settings.policy,
@@ -195,7 +223,7 @@ def _open(settings: LiveSettings, factory: CypherSourceFactory, cache_file: Path
         cutoff_s=settings.cutoff_s,
         guard=settings.guard,
         cypher_source_factory=factory,
-        http_client=settings.http_client,
+        http_client=client,
     )
 
 
@@ -210,7 +238,7 @@ def _empty_cache(cache_file: Path) -> None:
         connection.close()
 
 
-def _require_api_key(http_client: httpx2.Client | None) -> None:
+def _require_api_key(transport: httpx2.BaseTransport | None) -> None:
     # an injected transport (tests) never authenticates, so it needs no key
-    if http_client is None and openrouter_settings.from_env() is None:
+    if transport is None and openrouter_settings.from_env() is None:
         raise NoApiKey("expected OPENROUTER_API_KEY to answer live, found it unset")

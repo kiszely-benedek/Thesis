@@ -8,6 +8,7 @@ from pydantic import AliasChoices, BaseModel, ConfigDict, Field, model_validator
 
 from plantgraph.demo.app.models import SheetLink, SpendStatus
 from plantgraph.demo.app.store_probe import StoreState
+from plantgraph.demo.app.trace_models import AskTrace
 from plantgraph.qa.cascade.live_models import LiveAnswer
 from plantgraph.qa.models import AnswerType, AnswerValue, Outcome, QuestionFamily
 
@@ -96,6 +97,8 @@ class DemoAnswer(BaseModel):
     answer_sheets: tuple[SheetLink, ...]
     read_sheets: tuple[SheetLink, ...]
     benchmark: BenchmarkView | None = None
+    #: The route the ask took, recorded from the real model traffic.
+    trace: AskTrace = AskTrace()
     #: True if any model call of this ask came from a cache. Live-only means it must stay False.
     cache_hit_detected: bool = False
 
