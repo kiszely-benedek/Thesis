@@ -39,6 +39,8 @@ from plantgraph.demo.drawing.models import DrawingIndex
 
 #: The server listens on this address only: the demo is never reachable from another machine.
 HOST = "127.0.0.1"
+#: How long a browser may reuse the drawing PDF without asking again (one day).
+PDF_CACHE_CONTROL = "private, max-age=86400"
 STATIC_DIR = Path(__file__).parent / "static"
 
 # Each domain error -> (HTTP status, error code). The page shows the English text of the code
@@ -100,12 +102,15 @@ def create_app(state: AppState) -> FastAPI:
         path = _call(lambda: state.configured_corpus(corpus_id)).pdf_path
         if not path.exists():
             raise _http_error(404, MISSING_FILE, f"expected the drawing PDF at {path}, found none")
-        # "inline" asks the browser to show the PDF in its viewer instead of downloading it
+        # "inline" asks the browser to show the PDF in its viewer instead of downloading it;
+        # "private, max-age" lets a fresh iframe per jump reuse the cached file (the page's `?v=`
+        # stamp makes a new page load fetch it again)
         return FileResponse(
             path,
             media_type="application/pdf",
             filename=f"{corpus_id}-drawings.pdf",
             content_disposition_type="inline",
+            headers={"Cache-Control": PDF_CACHE_CONTROL},
         )
 
     @app.get("/api/corpora/{corpus_id}/index")
