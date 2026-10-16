@@ -51,7 +51,6 @@ function goToDrawing() {
 /* ---------- status, corpus, questions ---------- */
 
 function spendText(status) {
-  if (!status.paid_allowed) return STRINGS.paidOff;
   const spend = status.spend;
   return STRINGS.spend(usd(spend.session_spent_usd), usd(spend.session_cap_usd ?? 0));
 }
@@ -148,7 +147,7 @@ function showMessage(text, isError) {
   box.className = isError ? "message error" : "message";
 }
 
-/** Ask once; the server answers from the cache or, within the session cap, with a paid call. */
+/** Ask once; the server answers live with real model calls, within the session cap. */
 async function ask() {
   showMessage(null);
   $("result").replaceChildren();
@@ -193,7 +192,6 @@ async function onJobEnded(job) {
   page.status.spend = job.spend;
   renderStatus();
   if (job.state === "done") { renderResult(job.result); return; }
-  if (job.state === "needs_paid") { showMessage(STRINGS.needsPaidOff, true); return; } // replay-only
   if (job.state === "refused") { showMessage(STRINGS.capReached(usd(job.spend.session_cap_usd ?? 0), usd(job.spend.session_spent_usd)), true); return; }
   showMessage(job.message ?? job.state, true); // error
 }
@@ -232,7 +230,7 @@ function facts(rows) {
 }
 
 function costText(live) {
-  return live.from_cache ? STRINGS.fromCache(live.cost_usd) : STRINGS.paid(live.cost_usd, live.spent_usd);
+  return STRINGS.paid(live.cost_usd, live.spent_usd);
 }
 
 function answeredByText(live) {
@@ -247,7 +245,7 @@ function tierTable(tiers) {
   const rows = tiers.map((t) => {
     const cells = [
       t.tier, t.outcome, t.accepted ? STRINGS.yes : STRINGS.no, `${t.latency_s.toFixed(1)} s`,
-      usd(t.cost_usd), t.n_calls, t.n_cached, t.n_steps ?? "–", t.stop_reason ?? "–", t.n_rows ?? "–",
+      usd(t.cost_usd), t.n_calls, t.n_steps ?? "–", t.stop_reason ?? "–", t.n_rows ?? "–",
     ];
     return el("tr", {}, ...cells.map((c) => el("td", {}, String(c))));
   });
@@ -276,6 +274,9 @@ function benchmarkBlock(benchmark) {
 function renderResult(result) {
   const live = result.live;
   const box = el("div", {});
+  if (result.cache_hit_detected) {
+    box.append(el("div", { className: "message error" }, STRINGS.cacheHit)); // must never show
+  }
   if (!live.evaluated_policy) {
     box.append(el("div", { className: "notice" }, STRINGS.notice(live.policy, live.notice)));
   }

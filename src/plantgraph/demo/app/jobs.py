@@ -9,9 +9,9 @@ from dataclasses import dataclass, field
 from typing import Literal
 
 from plantgraph.demo.app.answering import demo_answer
-from plantgraph.demo.app.api_models import AskRequest, DemoAnswer, JobStatus
+from plantgraph.demo.app.api_models import DemoAnswer, JobStatus
 from plantgraph.demo.app.corpus_runtime import LoadedCorpus
-from plantgraph.demo.app.models import CostEstimate, SpendStatus
+from plantgraph.demo.app.models import SpendStatus
 from plantgraph.demo.app.spend import SessionSpend
 from plantgraph.qa.cascade.live_models import LiveAnswer, NeedsPaidCall
 from plantgraph.qa.harness.spend_cap import Reservation, SpendCapReached
@@ -19,7 +19,7 @@ from plantgraph.qa.strategies.base import AskedQuestion
 
 _LOG = logging.getLogger(__name__)
 
-JobState = Literal["running", "done", "needs_paid", "refused", "error"]
+JobState = Literal["running", "done", "refused", "error"]
 
 
 @dataclass
@@ -33,8 +33,8 @@ class Job:
     started: float = field(default_factory=time.monotonic)
     finished: float | None = None
     result: DemoAnswer | None = None
-    needs_paid: NeedsPaidCall | None = None
-    estimate: CostEstimate | None = None
+    #: Seconds spent opening this ask's cascade (not part of the answer time).
+    open_s: float | None = None
     message: str | None = None
     state: JobState = "running"
 
@@ -51,37 +51,30 @@ class Job:
             state=self.state,
             running_tier=None,
             elapsed_s=elapsed,
+            open_s=self.open_s,
             result=self.result,
-            needs_paid=self.needs_paid,
-            estimate=self.estimate,
             spend=spend,
             message=self.message,
         )
 
 
-def run_job(
-    job: Job,
-    corpus: LoadedCorpus,
-    request: AskRequest,
-    asked: AskedQuestion,
-    session: SessionSpend,
-    *,
-    allow_paid: bool,
-) -> None:
-    """Answer the question and record the outcome on `job`; never raises.
+def run_job(job: Job, corpus: LoadedCorpus, asked: AskedQuestion, session: SessionSpend) -> None:
+    """Answer the question live and record the outcome on `job`; never raises.
 
-    The answer cache is tried first (free, never refused). Only a miss goes on to a paid call,
-    and only when `allow_paid` is set; otherwise the job ends as `needs_paid`.
+    Money is set aside first, so the session cap holds even when questions race. The cascade is
+    opened fresh for this ask and closed before the reservation is released with the real spend.
     """
     reservation: Reservation | None = None
     spent_before = session.guard.spent_usd
     try:
-        result = corpus.source.asker(paid=False, tier2_only=request.tier2_only).ask(asked)
-        if isinstance(result, NeedsPaidCall) and allow_paid:
-            # money is set aside first, so the cap holds even when questions race
-            reservation = session.reserve()
-            result = corpus.source.asker(paid=True, tier2_only=request.tier2_only).ask(asked)
-        _record(job, corpus, asked, result)
+        reservation = session.reserve()
+        live = _ask_live(job, corpus, asked)
+        job.result = demo_answer(corpus, live, asked)
+        if job.result.cache_hit_detected:
+            _LOG.error(
+                "a stored answer was used for %r: the live-only guard failed", live.question_text
+            )
+        job.end("done")
     except SpendCapReached as error:
         job.message = str(error)
         job.end("refused")
@@ -94,13 +87,13 @@ def run_job(
             session.release(reservation, session.guard.spent_usd - spent_before)
 
 
-def _record(
-    job: Job, corpus: LoadedCorpus, asked: AskedQuestion, result: LiveAnswer | NeedsPaidCall
-) -> None:
-    if isinstance(result, NeedsPaidCall):
-        job.needs_paid = result
-        job.estimate = corpus.estimate
-        job.end("needs_paid")
-        return
-    job.result = demo_answer(corpus, result, asked)
-    job.end("done")
+def _ask_live(job: Job, corpus: LoadedCorpus, asked: AskedQuestion) -> LiveAnswer:
+    """Open a fresh cascade, ask once, close it; the open time is noted on the job."""
+    opened, job.open_s = corpus.source.open_for_ask()
+    try:
+        result = opened.cascade.ask(asked)
+    finally:
+        opened.close()
+    if isinstance(result, NeedsPaidCall):  # a live client never raises CacheMiss
+        raise RuntimeError(f"expected a live answer, found a missing cache entry: {result.reason}")
+    return result

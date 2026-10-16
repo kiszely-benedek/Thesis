@@ -22,6 +22,7 @@ from plantgraph.demo.app.config import DemoConfig, DemoCorpus, resolve_policy
 from plantgraph.demo.app.corpus_runtime import CorpusLoader, CorpusLoadFn, LoadedCorpus
 from plantgraph.demo.app.estimate import estimate_cost
 from plantgraph.demo.app.jobs import Job, run_job
+from plantgraph.demo.app.live_cascades import NO_API_KEY, NoApiKey
 from plantgraph.demo.app.models import CostEstimate
 from plantgraph.demo.app.spend import SessionSpend
 from plantgraph.demo.app.store_probe import HeldCorporaProbe, held_corpus_ids_from_env
@@ -58,6 +59,8 @@ class _Slot:
 
     state: LoadState = "waiting"
     message: str | None = None
+    #: Code of the failure when it has a label of its own (for example `no_api_key`).
+    error_code: str | None = None
     loaded: LoadedCorpus | None = None
 
 
@@ -70,13 +73,10 @@ class AppState:
         policy: CascadePolicy,
         session: SessionSpend,
         loader: CorpusLoadFn,
-        *,
-        allow_paid_calls: bool,
     ) -> None:
         self.config = config
         self.policy = policy
         self.session = session
-        self.allow_paid_calls = allow_paid_calls
         self._loader = loader
         self._slots = {c.corpus_id: _Slot() for c in config.corpora}
         self._jobs: dict[str, Job] = {}
@@ -100,18 +100,17 @@ class AppState:
         slot.state = "loading"
         try:
             slot.loaded = self._loader(corpus)
+        except NoApiKey as error:  # no corpus can answer without a key; say so by code
+            _LOG.error("loading %s failed: %s", corpus.corpus_id, error)
+            slot.message, slot.error_code = str(error), NO_API_KEY
+            slot.state = "error"
+            return
         except Exception as error:  # shown in the status; the other corpora still load
             _LOG.exception("loading %s failed", corpus.corpus_id)
             slot.message = f"{type(error).__name__}: {error}"
             slot.state = "error"
             return
         slot.state = "ready"
-
-    def close(self) -> None:
-        """Close the cascades of every loaded corpus."""
-        for slot in self._slots.values():
-            if slot.loaded is not None:
-                slot.loaded.source.close()
 
     # --- reading -------------------------------------------------------------------------
 
@@ -122,7 +121,6 @@ class AppState:
             policy=self.policy.name,
             policy_tiers=tuple(t.name for t in self.policy.tiers),
             cutoff_s=self.config.question_deadline_s,
-            paid_allowed=self.allow_paid_calls,
             spend=self.session.status(),
         )
 
@@ -136,9 +134,9 @@ class AppState:
             tier1_store=loaded.source.tier1_store if loaded else False,
             store=loaded.source.store if loaded else None,
             n_sheets=len(loaded.pages) if loaded else None,
-            open_s=dict(loaded.source.open_s) if loaded else {},
             n_benchmark_questions=len(loaded.questions) if loaded else 0,
             message=slot.message,
+            error_code=slot.error_code,
         )
 
     def ready_corpus(self, corpus_id: str) -> LoadedCorpus:
@@ -187,15 +185,13 @@ class AppState:
         job = Job()
         self._jobs[job.job_id] = job
         threading.Thread(
-            target=self._work, args=(job, corpus, request, asked), name="ask-job", daemon=True
+            target=self._work, args=(job, corpus, asked), name="ask-job", daemon=True
         ).start()
         return job.job_id
 
-    def _work(
-        self, job: Job, corpus: LoadedCorpus, request: AskRequest, asked: AskedQuestion
-    ) -> None:
+    def _work(self, job: Job, corpus: LoadedCorpus, asked: AskedQuestion) -> None:
         try:
-            run_job(job, corpus, request, asked, self.session, allow_paid=self.allow_paid_calls)
+            run_job(job, corpus, asked, self.session)
         finally:
             self._busy.release()
 
@@ -214,35 +210,32 @@ class AppState:
 def build_app_state(
     config: DemoConfig,
     *,
-    allow_paid_calls: bool = True,
     session_cap_usd: float | None = None,
     cypher_source_factory: CypherSourceFactory = open_checked_neo4j_view,
     http_client: httpx2.Client | None = None,
     held_corpora_probe: HeldCorporaProbe = held_corpus_ids_from_env,
 ) -> AppState:
-    """Wire a real app: policy, cost estimates, spend guard and the corpus loader.
+    """Wire a real app: policy, spend guard and the corpus loader. Every ask is live.
 
     Raises:
         NoCostEvidence: a tier has no recorded run to estimate its cost from.
     """
-    # paid calls are on by default; the cap is the safety net (the config's, unless overridden)
+    # every ask is a paid call; the cap is the safety net (the config's, unless overridden)
     cap_usd = config.session_cap_usd if session_cap_usd is None else session_cap_usd
     policy = resolve_policy(config.policy)
     estimates = {c.corpus_id: _estimate(policy, c) for c in config.corpora}
     # one guard serves every corpus, so its reservation is the dearest corpus's
     dearest = max(estimates.values(), key=lambda e: e.reservation_usd)
-    session = SessionSpend(cap_usd if allow_paid_calls else None, dearest, config.calls_log_path)
+    session = SessionSpend(cap_usd, dearest, config.calls_log_path)
     loader = CorpusLoader(
         config,
         policy,
-        estimates,
         session.guard,
-        allow_paid_calls=allow_paid_calls,
         cypher_source_factory=cypher_source_factory,
         http_client=http_client,
         held_corpora_probe=held_corpora_probe,
     )
-    return AppState(config, policy, session, loader, allow_paid_calls=allow_paid_calls)
+    return AppState(config, policy, session, loader)
 
 
 def _estimate(policy: CascadePolicy, corpus: DemoCorpus) -> CostEstimate:

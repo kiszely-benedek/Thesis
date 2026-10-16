@@ -22,6 +22,7 @@ from plantgraph.demo.app.api_models import (
     QuestionSummary,
 )
 from plantgraph.demo.app.corpus_runtime import read_drawing_index
+from plantgraph.demo.app.live_cascades import NO_API_KEY
 from plantgraph.demo.app.state import (
     AppState,
     Busy,
@@ -46,8 +47,12 @@ _ERROR_OF: dict[type[Exception], tuple[int, str]] = {
 }
 #: The code of a missing page, PDF or drawing-index file (not an `_ERROR_OF` exception).
 MISSING_FILE = "missing_file"
-#: Every code the API can send; the label table must have a text for each.
-ERROR_CODES: frozenset[str] = frozenset(code for _, code in _ERROR_OF.values()) | {MISSING_FILE}
+#: Every code the API can send (`no_api_key` arrives as a corpus's `error_code`); the label
+#: table must have a text for each.
+ERROR_CODES: frozenset[str] = frozenset(code for _, code in _ERROR_OF.values()) | {
+    MISSING_FILE,
+    NO_API_KEY,
+}
 
 
 def _http_error(status: int, code: str, message: str) -> HTTPException:

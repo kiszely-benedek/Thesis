@@ -70,7 +70,6 @@
   "job_states": {
     "running": "The question is being processed.",
     "done": "Done.",
-    "needs_paid": "This question has no stored answer, and the demo currently runs with stored answers only.",
     "refused": "You have reached the session cost limit.",
     "error": "An error occurred while answering."
   },
@@ -80,7 +79,8 @@
     "unknown_question": "Unknown example question for this plant.",
     "corpus_not_ready": "The plant is still loading, or loading it failed.",
     "busy": "A question is already running; wait for it to finish.",
-    "missing_file": "A file is missing on the server."
+    "missing_file": "A file is missing on the server.",
+    "no_api_key": "The demo has no model API key, so it cannot answer."
   },
   "answer_values": {
     "yes": "Yes",

@@ -6,9 +6,9 @@ from typing import Literal
 
 from pydantic import AliasChoices, BaseModel, ConfigDict, Field, model_validator
 
-from plantgraph.demo.app.models import CostEstimate, SheetLink, SpendStatus
+from plantgraph.demo.app.models import SheetLink, SpendStatus
 from plantgraph.demo.app.store_probe import StoreState
-from plantgraph.qa.cascade.live_models import LiveAnswer, NeedsPaidCall
+from plantgraph.qa.cascade.live_models import LiveAnswer
 from plantgraph.qa.models import AnswerType, AnswerValue, Outcome, QuestionFamily
 
 
@@ -23,13 +23,11 @@ class AskRequest(BaseModel):
     corpus_id: str
     text: str = ""
     #: The example the text came from. Asked with its text unchanged, the example runs as itself
-    #: (stored answer type, reference answer, free replay); otherwise the text is free text.
+    #: (stored answer type, reference answer, verdict); otherwise the text is free text.
     #: `benchmark_question_id` is the old name, still sent by the pre-DP-T6 page.
     example_id: str | None = Field(
         default=None, validation_alias=AliasChoices("example_id", "benchmark_question_id")
     )
-    #: Skip tier 1 even if the store holds the corpus.
-    tier2_only: bool = False
 
     @model_validator(mode="after")
     def _needs_a_question(self) -> AskRequest:
@@ -98,6 +96,8 @@ class DemoAnswer(BaseModel):
     answer_sheets: tuple[SheetLink, ...]
     read_sheets: tuple[SheetLink, ...]
     benchmark: BenchmarkView | None = None
+    #: True if any model call of this ask came from a cache. Live-only means it must stay False.
+    cache_hit_detected: bool = False
 
 
 class JobStatus(BaseModel):
@@ -106,13 +106,13 @@ class JobStatus(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     job_id: str
-    state: Literal["running", "done", "needs_paid", "refused", "error"]
+    state: Literal["running", "done", "refused", "error"]
     #: Always `None` for now: the cascade offers no progress hook (the page shows a timer).
     running_tier: str | None
     elapsed_s: float
+    #: Seconds spent opening this ask's cascade; `None` until it is open.
+    open_s: float | None
     result: DemoAnswer | None
-    needs_paid: NeedsPaidCall | None
-    estimate: CostEstimate | None
     spend: SpendStatus
     #: Why the job was refused or failed.
     message: str | None
@@ -134,10 +134,10 @@ class CorpusStatus(BaseModel):
     store: StoreState | None
     #: Sheets (pages of the drawing index) in the corpus; `None` until it is loaded.
     n_sheets: int | None
-    #: Seconds each cascade took to open, by mode (`{}` until loaded).
-    open_s: dict[str, float]
     n_benchmark_questions: int
     message: str | None
+    #: Code of the error (the label table has its text), when there is one.
+    error_code: str | None = None
 
 
 class AppStatus(BaseModel):
@@ -150,5 +150,4 @@ class AppStatus(BaseModel):
     #: The policy's tiers in order, as evaluated.
     policy_tiers: tuple[str, ...]
     cutoff_s: float
-    paid_allowed: bool
     spend: SpendStatus

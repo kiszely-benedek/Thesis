@@ -2,7 +2,6 @@
   "policy": "cascade_v3",
   "question_deadline_s": 120.0,
   "session_cap_usd": 2.0,
-  "cache_path": "data/runs/cv1/demo/cache_luna_demo.sqlite",
   "calls_log_path": "data/runs/cv1/demo/calls.jsonl",
   "corpora": [
     {

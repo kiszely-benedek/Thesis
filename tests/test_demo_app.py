@@ -1,14 +1,15 @@
 """The demo server (DA-T4) over a toy plant: real strategies, fake model transport, no Neo4j.
 
 The toy corpus is the harness toy; its database tier cannot be served by the toy store, so
-every cascade runs "tier 2 only" (`context_rag` answers). Nothing is paid: transport is scripted.
+every cascade runs without it (`context_rag` answers). Every ask is live, through a scripted
+transport: nothing is paid and no cache is read.
 """
 
 from __future__ import annotations
 
 import json
 import time
-from collections.abc import Callable, Iterator
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -26,7 +27,7 @@ from plantgraph.llm.fake_transport import FakeTransport, ScriptedReply
 from plantgraph.qa.cascade.models import AcceptRule, CascadePolicy, TierSpec
 from plantgraph.qa.corpus import load_corpus_artifacts
 from plantgraph.qa.models import Question
-from qa_harness_toy import ABSTAIN_REPLY, CORPUS_ID, Toy, build_toy, pin, seed_cache
+from qa_harness_toy import ABSTAIN_REPLY, CORPUS_ID, Toy, build_toy, pin
 
 PDF_BYTES = b"%PDF-1.4\n% toy drawing set\n%%EOF\n"
 EXAMPLE_CONFIG = Path("src/plantgraph/demo/app/demo_config.example.json")
@@ -36,10 +37,10 @@ EXAMPLE_CONFIG = Path("src/plantgraph/demo/app/demo_config.example.json")
 class Env:
     config: DemoConfig
     toy: Toy
-    #: An unanswerable question whose answer is in the cache (the abstain reply is right for it).
-    cached: Question
-    #: An answerable question the cache has never seen.
-    uncached: Question
+    #: An unanswerable question (the scripted abstain reply is the right answer to it).
+    unanswerable: Question
+    #: An answerable question (the abstain reply is wrong for it).
+    answerable: Question
 
 
 @pytest.fixture(scope="module")
@@ -79,9 +80,8 @@ def _write_drawings(toy: Toy, directory: Path) -> None:
 
 @pytest.fixture
 def env(toy: Toy, tmp_path: Path) -> Env:
-    cached = next(q for q in toy.questions if not q.answerable)
-    uncached = next(q for q in toy.questions if q.answerable)
-    seed_cache(toy, tmp_path / "cache.sqlite", [cached])
+    unanswerable = next(q for q in toy.questions if not q.answerable)
+    answerable = next(q for q in toy.questions if q.answerable)
     rows = [row(q.question_id, "cypher_rag_plant", 0.0002) for q in toy.questions]
     rows += [row(q.question_id, "context_rag", 0.001, answer="T-1") for q in toy.questions]
     run = write_run(tmp_path, "tier-run", CORPUS_ID, rows, pin=pin())
@@ -99,41 +99,39 @@ def env(toy: Toy, tmp_path: Path) -> Env:
     config = DemoConfig(
         corpora=(corpus,),
         policy=str(policy_file),
-        cache_path=tmp_path / "cache.sqlite",
         calls_log_path=tmp_path / "calls.jsonl",
     )
-    return Env(config, toy, cached, uncached)
+    return Env(config, toy, unanswerable, answerable)
 
 
 Client = Callable[..., TestClient]
 
 
+def scripted_transport() -> FakeTransport:
+    """A fake model that abstains, at a cost of $0.0003 per call."""
+    return FakeTransport(default_reply=ScriptedReply(text=ABSTAIN_REPLY, cost_usd=0.0003))
+
+
 @pytest.fixture
-def make_client(env: Env) -> Iterator[Client]:
-    """`make_client(replay_only=, cap=, transport=, load=)` -> a client over a fresh app state."""
-    states: list[AppState] = []
+def make_client(env: Env) -> Client:
+    """`make_client(cap=, transport=, load=)` -> a client over a fresh app state."""
 
     def build(
-        replay_only: bool = False,
         cap: float | None = None,
         transport: FakeTransport | None = None,
         load: bool = True,
     ) -> TestClient:
         state = build_app_state(
             env.config,
-            allow_paid_calls=not replay_only,
             session_cap_usd=cap,
-            http_client=transport.as_httpx_client() if transport else None,
+            http_client=(transport or scripted_transport()).as_httpx_client(),
             held_corpora_probe=lambda: ("D1000",),  # no real Neo4j in tests
         )
-        states.append(state)
         if load:
             state.load_all()
         return TestClient(create_app(state))
 
-    yield build
-    for state in states:
-        state.close()
+    return build
 
 
 def _wait_for_end(client: TestClient, job_id: str, seconds: float = 20.0) -> dict[str, Any]:
@@ -167,8 +165,9 @@ def test_status_lists_the_corpus_and_the_tiers_that_can_answer(make_client: Clie
     assert corpus["pdf_present"] is True and corpus["n_benchmark_questions"] > 0
     # the toy store cannot serve the database tier: the cascade runs tier 2 only
     assert corpus["tier1_store"] is False and corpus["tiers"] == ["answer"]
+    assert corpus["error_code"] is None
     assert status["policy_tiers"] == ["cypher-low", "answer"]
-    assert status["paid_allowed"] is True and status["spend"]["session_cap_usd"] == 2.0
+    assert status["spend"]["session_cap_usd"] == 2.0
 
 
 def test_a_corpus_that_is_not_loaded_yet_is_waiting_and_cannot_be_asked(
@@ -177,7 +176,7 @@ def test_a_corpus_that_is_not_loaded_yet_is_waiting_and_cannot_be_asked(
     client = make_client(load=False)
 
     assert client.get("/api/status").json()["corpora"][0]["state"] == "waiting"
-    assert _ask(client, env, env.cached).status_code == 409
+    assert _ask(client, env, env.unanswerable).status_code == 409
     assert (
         client.get("/corpora/" + CORPUS_ID + "/drawings.pdf").status_code == 200
     )  # served at once
@@ -239,26 +238,27 @@ def test_an_unknown_benchmark_question_is_404(make_client: Client) -> None:
 # --- asking ----------------------------------------------------------------------------------
 
 
-def test_a_cached_benchmark_question_is_done_and_scored_correct(
+def test_a_benchmark_question_is_answered_live_and_scored_correct(
     make_client: Client, env: Env
 ) -> None:
-    transport = FakeTransport()
+    transport = scripted_transport()
     client = make_client(transport=transport)
 
-    job_id = _ask(client, env, env.cached).json()["job_id"]
+    job_id = _ask(client, env, env.unanswerable).json()["job_id"]
     body = _wait_for_end(client, job_id)
 
     assert body["state"] == "done"
     live = body["result"]["live"]
-    assert live["answered_by"] == "answer" and live["from_cache"] is True
+    assert live["answered_by"] == "answer" and live["from_cache"] is False
     assert live["evaluated_policy"] is False  # tier 1 was left out
     assert body["result"]["benchmark"]["correct"] is True
-    assert transport.requests == []
+    assert body["result"]["cache_hit_detected"] is False
+    assert body["open_s"] is not None and len(transport.requests) == 1
 
 
 def test_a_typed_question_is_done_without_benchmark_facts(make_client: Client, env: Env) -> None:
     client = make_client()
-    request = {"corpus_id": CORPUS_ID, "text": env.cached.text}  # no example_id: free text
+    request = {"corpus_id": CORPUS_ID, "text": env.unanswerable.text}  # no example_id: free text
 
     job_id = client.post("/api/ask", json=request).json()["job_id"]
     body = _wait_for_end(client, job_id)
@@ -266,64 +266,23 @@ def test_a_typed_question_is_done_without_benchmark_facts(make_client: Client, e
     assert body["state"] == "done" and body["result"]["benchmark"] is None
 
 
-def test_in_replay_only_mode_a_cache_miss_needs_paid_with_the_estimate_and_sends_nothing(
-    make_client: Client, env: Env
-) -> None:
-    transport = FakeTransport()
-    client = make_client(replay_only=True, transport=transport)
+def test_a_question_is_counted_against_the_session_cap(make_client: Client, env: Env) -> None:
+    client = make_client(cap=10.0)
 
-    body = _wait_for_end(client, _ask(client, env, env.uncached).json()["job_id"])
+    body = _wait_for_end(client, _ask(client, env, env.answerable).json()["job_id"])
 
-    assert body["state"] == "needs_paid" and body["needs_paid"]["missing_tier"] == "answer"
-    assert set(body["estimate"]["per_tier"]) == {"cypher-low", "answer"}
-    assert body["estimate"]["reservation_usd"] == pytest.approx(1.5 * (0.0002 + 0.001))
-    assert transport.requests == []
-
-
-def test_a_cache_miss_goes_straight_to_a_paid_call_by_default(
-    make_client: Client, env: Env
-) -> None:
-    transport = FakeTransport(default_reply=ScriptedReply(text=ABSTAIN_REPLY, cost_usd=0.0003))
-    client = make_client(transport=transport)  # no flag, no confirmation: the config's cap applies
-
-    body = _wait_for_end(client, _ask(client, env, env.uncached).json()["job_id"])
-
-    assert body["state"] == "done" and body["result"]["live"]["from_cache"] is False
-    assert body["spend"]["session_cap_usd"] == 2.0 and len(transport.requests) == 1
-
-
-def test_a_cached_question_costs_nothing_even_with_paid_calls_on(
-    make_client: Client, env: Env
-) -> None:
-    transport = FakeTransport()
-    client = make_client(cap=0.001, transport=transport)  # cap below one reservation
-
-    body = _wait_for_end(client, _ask(client, env, env.cached).json()["job_id"])
-
-    assert body["state"] == "done" and body["result"]["live"]["from_cache"] is True
-    assert transport.requests == []
-
-
-def test_a_paid_question_is_answered_and_its_spend_counted(make_client: Client, env: Env) -> None:
-    transport = FakeTransport(default_reply=ScriptedReply(text=ABSTAIN_REPLY, cost_usd=0.0003))
-    client = make_client(cap=10.0, transport=transport)
-
-    job_id = _ask(client, env, env.uncached).json()["job_id"]
-    body = _wait_for_end(client, job_id)
-
-    assert body["state"] == "done" and body["result"]["live"]["from_cache"] is False
+    assert body["state"] == "done"
     assert body["spend"]["session_spent_usd"] == pytest.approx(0.0003)
     assert body["spend"]["session_cap_usd"] == 10.0
-    assert len(transport.requests) == 1
 
 
-def test_a_paid_question_over_the_session_cap_is_refused_before_any_call(
+def test_a_question_over_the_session_cap_is_refused_before_any_call(
     make_client: Client, env: Env
 ) -> None:
     transport = FakeTransport()
     client = make_client(cap=0.001, transport=transport)  # reservation is 0.0018
 
-    body = _wait_for_end(client, _ask(client, env, env.uncached).json()["job_id"])
+    body = _wait_for_end(client, _ask(client, env, env.answerable).json()["job_id"])
 
     assert body["state"] == "refused" and "cap" in body["message"]
     assert transport.requests == []
@@ -332,15 +291,17 @@ def test_a_paid_question_over_the_session_cap_is_refused_before_any_call(
 def test_a_second_ask_while_one_runs_is_409_then_accepted_after(
     make_client: Client, env: Env
 ) -> None:
-    slow = FakeTransport(latency_for_prompt=lambda _prompt: 0.6)
+    slow = FakeTransport(
+        default_reply=ScriptedReply(text=ABSTAIN_REPLY), latency_for_prompt=lambda _prompt: 0.6
+    )
     client = make_client(cap=10.0, transport=slow)
 
-    first = _ask(client, env, env.uncached)
-    second = _ask(client, env, env.cached)
+    first = _ask(client, env, env.answerable)
+    second = _ask(client, env, env.unanswerable)
 
     assert first.status_code == 200 and second.status_code == 409
     assert _wait_for_end(client, first.json()["job_id"])["state"] == "done"
-    assert _ask(client, env, env.cached).status_code == 200
+    assert _ask(client, env, env.unanswerable).status_code == 200
 
 
 def test_bad_requests_are_rejected(make_client: Client, env: Env) -> None:
@@ -370,25 +331,27 @@ def test_the_server_binds_to_loopback_only(
     assert started == {"host": "127.0.0.1", "port": 8123}
 
 
-def test_replay_only_on_the_command_line_turns_paid_calls_off(
+def test_the_session_cap_option_reaches_the_app_state_and_there_is_no_replay_only(
     env: Env, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
     monkeypatch.setattr(app_main.uvicorn, "run", lambda app, **kwargs: None)
-    seen: list[tuple[bool, float | None]] = []
+    seen: list[float | None] = []
     real_build = app_main.build_app_state
 
     def spy(config: Any, **kwargs: Any) -> AppState:
-        seen.append((kwargs["allow_paid_calls"], kwargs["session_cap_usd"]))
+        seen.append(kwargs["session_cap_usd"])
         return real_build(config, **kwargs)
 
     monkeypatch.setattr(app_main, "build_app_state", spy)
     config_file = tmp_path / "demo_config.json"
     config_file.write_text(env.config.model_dump_json(), encoding="utf-8")
 
-    app_main.main(["--config", str(config_file), "--replay-only"])
+    app_main.main(["--config", str(config_file)])
     app_main.main(["--config", str(config_file), "--session-cap-usd", "0.5"])
+    with pytest.raises(SystemExit):  # the switch is gone: argparse rejects it
+        app_main.main(["--config", str(config_file), "--replay-only"])
 
-    assert seen == [(False, None), (True, 0.5)]
+    assert seen == [None, 0.5]
 
 
 def test_the_example_config_is_valid_and_names_one_run_per_tier() -> None:

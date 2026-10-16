@@ -23,7 +23,7 @@ def asked_question(corpus: LoadedCorpus, request: AskRequest) -> AskedQuestion:
     """The question to run: the example itself if its text is unchanged, else the typed text.
 
     Typed text is always FREE_TEXT (the visitor never picks an answer form). An unchanged
-    example keeps its stored answer type, so it replays from the cache and can be checked.
+    example keeps its stored answer type, so its answer can be checked against the reference.
 
     Raises:
         UnknownBenchmarkQuestion: a blank text names an example the corpus does not have.
@@ -83,7 +83,13 @@ def demo_answer(corpus: LoadedCorpus, live: LiveAnswer, asked: AskedQuestion) ->
         ),
         read_sheets=read_sheet_links(live.trace_sheets, corpus.pages),
         benchmark=_benchmark_for(corpus, live, asked),
+        cache_hit_detected=came_from_cache(live),
     )
+
+
+def came_from_cache(live: LiveAnswer) -> bool:
+    """Whether any model call of the ask was answered from a cache (it never should be)."""
+    return live.from_cache or any(tier.n_cached > 0 for tier in live.tiers)
 
 
 def _benchmark_for(

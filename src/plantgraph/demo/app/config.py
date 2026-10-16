@@ -43,7 +43,7 @@ class DemoCorpus(BaseModel):
 
 
 class DemoConfig(BaseModel):
-    """The whole demo: corpora, the cascade policy and where its own cache and log live."""
+    """The whole demo: corpora, the cascade policy and where its own call log lives."""
 
     model_config = ConfigDict(frozen=True)
 
@@ -54,8 +54,8 @@ class DemoConfig(BaseModel):
     question_deadline_s: float = 120.0
     #: Hard cap on one server session's paid calls (USD); `--session-cap-usd` overrides it.
     session_cap_usd: float = 2.0
-    #: The demo's own answer cache and call log: demo answers never mix into experiment caches.
-    cache_path: Path
+    #: The demo's own call log: demo calls never mix into experiment logs. (No answer cache:
+    #: the demo answers live only.)
     calls_log_path: Path
 
     @model_validator(mode="after")

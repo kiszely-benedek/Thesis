@@ -1,4 +1,4 @@
-"""The demo status fields of DP-T3: why the database tier is out, sheet count, cascade open times.
+"""The demo status fields: why the database tier is out and the sheet count.
 
 Reuses the toy server fixtures of `test_demo_app`; no Neo4j is reached (the probe is faked there).
 """
@@ -23,17 +23,7 @@ def test_status_says_why_the_database_tier_is_out_and_how_many_sheets_there_are(
     assert corpus["n_sheets"] == len(client.get(f"/api/corpora/{CORPUS_ID}/index").json()["pages"])
 
 
-def test_the_paid_cascade_is_opened_at_load_only_when_paid_calls_are_allowed(
-    make_client: Client,
-) -> None:
-    paid_open_s = make_client().get("/api/status").json()["corpora"][0]["open_s"]
-    replay_open_s = make_client(replay_only=True).get("/api/status").json()["corpora"][0]["open_s"]
-
-    assert set(paid_open_s) == {"replay", "paid"}
-    assert set(replay_open_s) == {"replay"}
-
-
 def test_a_corpus_that_is_not_loaded_yet_has_no_store_state(make_client: Client) -> None:
     (corpus,) = make_client(load=False).get("/api/status").json()["corpora"]
 
-    assert corpus["store"] is None and corpus["n_sheets"] is None and corpus["open_s"] == {}
+    assert corpus["store"] is None and corpus["n_sheets"] is None

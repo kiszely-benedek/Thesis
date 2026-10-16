@@ -15,9 +15,8 @@ from pathlib import Path
 import httpx2
 
 from plantgraph.demo.app.api_models import RecordedAnswer
-from plantgraph.demo.app.cascade_pool import CascadePool, CascadeSource, PoolSettings
 from plantgraph.demo.app.config import DemoConfig, DemoCorpus
-from plantgraph.demo.app.models import CostEstimate
+from plantgraph.demo.app.live_cascades import CascadeSource, LiveCascadeFactory, LiveSettings
 from plantgraph.demo.app.store_probe import HeldCorporaProbe, held_corpus_ids_from_env
 from plantgraph.demo.drawing.models import DrawingIndex
 from plantgraph.qa.cascade.models import CascadePolicy
@@ -43,7 +42,6 @@ class LoadedCorpus:
     questions: dict[str, Question]
     recorded: dict[str, tuple[RecordedAnswer, ...]]
     gold: GoldScoring
-    estimate: CostEstimate
     source: CascadeSource
 
 
@@ -58,29 +56,26 @@ class CorpusLoader:
         self,
         config: DemoConfig,
         policy: CascadePolicy,
-        estimates: dict[str, CostEstimate],
         guard: SpendGuard,
         *,
-        allow_paid_calls: bool,
         cypher_source_factory: CypherSourceFactory = open_checked_neo4j_view,
         http_client: httpx2.Client | None = None,
         held_corpora_probe: HeldCorporaProbe = held_corpus_ids_from_env,
     ) -> None:
         self._config = config
         self._policy = policy
-        self._estimates = estimates
         self._guard = guard
-        self._allow_paid_calls = allow_paid_calls
         self._factory = cypher_source_factory
         self._http_client = http_client
         self._held_corpora_probe = held_corpora_probe
 
     def __call__(self, corpus: DemoCorpus) -> LoadedCorpus:
-        """Rebuild the corpus and open its replay cascade.
+        """Rebuild the corpus and open one cascade to learn its tiers.
 
         Raises:
             FileNotFoundError: the ingest file, the PDF index or the question file is missing.
             ValueError: benchmark questions are configured for a corpus with no answer key.
+            NoApiKey: the server has no model key, so it cannot answer live.
         """
         artifacts = load_corpus_artifacts(corpus.corpus_id, corpus.ingest_json)
         view = NetworkxGraphView(corpus.corpus_id, artifacts.localized_sheets, artifacts.resolution)
@@ -90,18 +85,16 @@ class CorpusLoader:
             raise ValueError(
                 f"expected an answer key (plant graph) for {corpus.corpus_id}, found none"
             )
-        source = CascadePool(
-            PoolSettings(
+        source = LiveCascadeFactory(
+            LiveSettings(
                 corpus_id=corpus.corpus_id,
                 policy=self._policy,
                 view=view,
                 load_plan=artifacts.load_plan,
                 tier_run_dirs=corpus.tier_runs,
-                cache_path=self._config.cache_path,
                 calls_log_path=self._config.calls_log_path,
                 cutoff_s=self._config.question_deadline_s,
                 guard=self._guard,
-                allow_paid_calls=self._allow_paid_calls,
                 cypher_source_factory=self._factory,
                 http_client=self._http_client,
                 held_corpora_probe=self._held_corpora_probe,
@@ -116,7 +109,6 @@ class CorpusLoader:
             gold=build_gold_scoring(plant, view)
             if plant is not None
             else GoldScoring(frozenset(), frozenset()),
-            estimate=self._estimates[corpus.corpus_id],
             source=source,
         )
 

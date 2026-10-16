@@ -2,7 +2,8 @@
 
 The demo lists a few dozen example questions per plant. They are ordinary benchmark `Question`
 lines (same schema as `questions.jsonl`, reference answer and evidence included), so the demo
-loader reads the result unchanged and an example asked as written replays from the cache.
+loader reads the result unchanged; an example asked as written runs live like any question
+and is scored against its reference.
 
 Three ways to choose, exactly one per run:
   --variant NAME        keep the rows whose id ends in `#NAME` (a reworded copy of a question)

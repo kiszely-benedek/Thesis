@@ -29,16 +29,12 @@ const STRINGS = {
   stateLabels: { waiting: "waiting to load", loading: "loading...", ready: "ready", error: "error" },
   noPdf: "no drawing PDF",
   noTier1: "the database step is not available, only step 2 answers",
-  paidOff: "Cache only (--replay-only, paid calls disabled)",
   spend: (spent, cap) => `Session spend: ${spent} / limit ${cap}`,
   running: "Running...",
   elapsed: (s) => `${s.toFixed(1)} s`,
-  needsPaidOff:
-    "This question has no cached answer, and the server runs in replay-only mode. " +
-    "For paid calls, restart the server without the --replay-only switch.",
   capReached: (cap, spent) =>
     `The question was not answered: it would exceed the session spending limit (${cap}); ${spent} spent so far. ` +
-    "Restart the server with a larger --session-cap-usd value, or ask a cached question.",
+    "Restart the server with a larger --session-cap-usd value.",
   answer: "Answer",
   noAnswer: "(no answer)",
   notPresent: "According to the system, this information is not on the drawings.",
@@ -50,10 +46,10 @@ const STRINGS = {
   latency: "Latency (cascade definition)",
   wall: "Wall-clock time",
   cost: "Cost",
-  fromCache: (cost) => `${usd(cost)} (from the cache, nothing spent now)`,
   paid: (cost, spent) => `${usd(cost)}, of which paid now ${usd(spent)}`,
+  cacheHit: "Warning: a model call of this answer was served from a cache. The demo should answer live only.",
   tierTable: "Per step",
-  tierCols: ["Step", "Outcome", "Accepted", "Latency", "Cost", "Calls", "Cache", "Steps", "Stop", "Rows"],
+  tierCols: ["Step", "Outcome", "Accepted", "Latency", "Cost", "Calls", "Steps", "Stop", "Rows"],
   yes: "yes",
   no: "no",
   answerSheets: "Drawings of the answer",
