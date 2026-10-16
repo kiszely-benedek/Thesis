@@ -17,7 +17,8 @@ import { initResults } from "./results.js";
 import { currentCorpus, page } from "./state.js";
 import { initTabs } from "./tabs.js";
 import { initTheme } from "./theme.js";
-import { clearPdf, initViewer, showPdf } from "./viewer.js";
+import { initLookup, resetLookup } from "./lookup.js";
+import { clearPdf, showPdf } from "./viewer.js";
 
 const STATUS_MS = 3000;
 
@@ -65,6 +66,7 @@ async function selectCorpus(corpusId) {
   page.corpusId = corpusId;
   page.index = null;
   resetAsk();
+  resetLookup();
   showPdf(corpusId, 1);
   render();
   getIndex(corpusId).then((index) => { page.index = index; }).catch(() => {});
@@ -90,7 +92,7 @@ async function start() {
   initHeader();
   initIntro();
   initGlossary();
-  initViewer();
+  initLookup();
   initAsk(render);
   try {
     await loadLabels();

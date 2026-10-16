@@ -49,10 +49,16 @@
     <section class="drawings" aria-label="Drawings">
       <div class="drawings-bar">
         <label for="dwg-input" id="dwg-label"></label>
-        <input id="dwg-input" type="text" size="6" autocomplete="off">
+        <!-- One box: a sheet number jumps, a tag shows its card, a prefix lists matching tags. -->
+        <div class="find">
+          <input id="dwg-input" type="text" size="18" maxlength="64" autocomplete="off" spellcheck="false"
+                 role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="find-list">
+          <ul id="find-list" class="find-list" role="listbox" hidden></ul>
+        </div>
         <button id="dwg-go" type="button" class="text-button"></button>
         <span id="dwg-message" class="hint" role="status"></span>
       </div>
+      <div id="find-card" class="find-card" hidden></div>
       <div id="pdf-host" class="pdf-host"></div>
     </section>
 

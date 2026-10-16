@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import threading
+import time
 from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Literal
@@ -18,6 +19,7 @@ from plantgraph.demo.app.api_models import (
     JobStatus,
     PlantStatus,
     QuestionSummary,
+    TagLookup,
 )
 from plantgraph.demo.app.config import DemoConfig, DemoCorpus, resolve_policy
 from plantgraph.demo.app.corpus_runtime import CorpusLoader, CorpusLoadFn, LoadedCorpus
@@ -33,6 +35,7 @@ from plantgraph.demo.app.store_loader import (
     switch_plant_from_env,
 )
 from plantgraph.demo.app.store_probe import HeldCorporaProbe, held_corpus_ids_from_env
+from plantgraph.demo.app.tag_lookup import TagIndex, lookup
 from plantgraph.demo.app.topics import topic_of
 from plantgraph.qa.cascade.models import CascadePolicy
 from plantgraph.qa.harness.cypher_setup import CypherSourceFactory, open_checked_neo4j_view
@@ -94,6 +97,9 @@ class AppState:
         self._loader = loader
         self._slots = {c.corpus_id: _Slot() for c in config.corpora}
         self._jobs: dict[str, Job] = {}
+        # a corpus's tag index, built on the first lookup; tied to the loaded corpus it came from
+        self._tag_indexes: dict[str, tuple[LoadedCorpus, TagIndex]] = {}
+        self._tag_index_lock = threading.Lock()
         # one lock for asks and plant switches: neither can start while the other runs
         self._busy = threading.Lock()
         self._plant_switcher = plant_switcher
@@ -203,6 +209,30 @@ class AppState:
             )
             for q in self.ready_corpus(corpus_id).questions.values()
         ]
+
+    def tag_lookup(self, corpus_id: str, query: str) -> TagLookup:
+        """Where the tag `query` is drawn, from the corpus's in-memory item graph (no database).
+
+        Raises:
+            UnknownCorpus, CorpusNotReady: as `ready_corpus`.
+        """
+        corpus = self.ready_corpus(corpus_id)
+        return lookup(query, corpus.item_graph, self._tag_index(corpus), corpus.pages)
+
+    def _tag_index(self, corpus: LoadedCorpus) -> TagIndex:
+        corpus_id = corpus.config.corpus_id
+        with self._tag_index_lock:
+            cached = self._tag_indexes.get(corpus_id)
+            if cached is not None and cached[0] is corpus:
+                return cached[1]
+            started = time.perf_counter()
+            index = TagIndex.build(corpus.item_graph)
+            _LOG.info(
+                "built the %s tag index (%d tags) in %.3f s",
+                corpus_id, len(index.pairs), time.perf_counter() - started,
+            )  # fmt: skip
+            self._tag_indexes[corpus_id] = (corpus, index)
+            return index
 
     # --- asking --------------------------------------------------------------------------
 

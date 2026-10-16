@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, Response
+from fastapi import FastAPI, HTTPException, Query, Response
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -22,6 +22,7 @@ from plantgraph.demo.app.api_models import (
     PlantRequest,
     PlantStatus,
     QuestionSummary,
+    TagLookup,
 )
 from plantgraph.demo.app.corpus_runtime import read_drawing_index
 from plantgraph.demo.app.live_cascades import NO_API_KEY
@@ -133,6 +134,10 @@ def create_app(state: AppState) -> FastAPI:
             return benchmark_view(corpus, benchmark_question(corpus, question_id))
 
         return _call(build)
+
+    @app.get("/api/corpora/{corpus_id}/tags")
+    def tags(corpus_id: str, q: str = Query(min_length=1, max_length=64)) -> TagLookup:
+        return _call(lambda: state.tag_lookup(corpus_id, q))
 
     @app.get("/api/results")
     def results() -> ResultsView:

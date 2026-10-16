@@ -130,6 +130,32 @@ input[type="text"], textarea {
   font: 600 var(--fs-xs) / 1 var(--font-label);
   letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-muted);
 }
+/* The search box over the drawings: its suggestion list floats under it, its result card sits under the bar. */
+.find { position: relative; }
+.find input { width: 15rem; max-width: 100%; font-family: var(--font-mono); }
+.find-list {
+  position: absolute; z-index: 20; top: calc(100% + 2px); left: 0; min-width: 100%;
+  max-height: 18rem; overflow-y: auto; margin: 0; padding: var(--sp-1) 0; list-style: none;
+  background: var(--surface); border: var(--rule-w) solid var(--rule-strong); border-radius: var(--r-2);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.18);
+}
+.find-option { padding: var(--sp-1) var(--sp-3); font: var(--fs-sm) var(--font-mono); cursor: pointer; white-space: nowrap; }
+.find-option:hover { background: var(--surface-2); }
+.find-option[aria-selected="true"] { background: var(--accent); color: var(--on-accent); }
+.find-card {
+  display: flex; flex-direction: column; gap: var(--sp-2); padding: var(--sp-2) var(--sp-4);
+  background: var(--accent-soft); border-bottom: var(--rule-w) solid var(--rule);
+}
+.find-card[hidden] { display: none; }
+.find-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2) var(--sp-4); font-size: var(--fs-sm); }
+.find-tag {
+  padding: var(--sp-1) var(--sp-3); background: var(--surface); color: var(--accent-ink);
+  border: var(--rule-w) solid var(--accent); border-radius: var(--r-2); font: 600 var(--fs-md) var(--font-mono);
+}
+.find-tag:hover:not(:disabled) { background: var(--accent); color: var(--on-accent); }
+.find-facts, .find-where, .find-suggest { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-1) var(--sp-3); }
+.find-class { font-weight: 600; }
+.find-suggest { flex-basis: 100%; }
 .pdf-host { flex: 1 1 auto; min-height: 0; background: #ffffff; /* the paper stays white in both themes */ }
 .pdf-host iframe { width: 100%; height: 100%; border: 0; display: block; }
 

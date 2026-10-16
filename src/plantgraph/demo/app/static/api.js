@@ -44,6 +44,7 @@ export const getResults = () => api("/api/results");
 export const getPlant = () => api("/api/plant");
 export const switchPlant = (corpusId) => postJson("/api/plant", { corpus_id: corpusId });
 export const getIndex = (corpusId) => api(`/api/corpora/${enc(corpusId)}/index`);
+export const getTags = (corpusId, q) => api(`/api/corpora/${enc(corpusId)}/tags?q=${enc(q)}`);
 export const getQuestions = (corpusId) => api(`/api/corpora/${enc(corpusId)}/questions`);
 export const startAsk = (body) => postJson("/api/ask", body);
 export const getJob = (jobId) => api(`/api/jobs/${enc(jobId)}`);

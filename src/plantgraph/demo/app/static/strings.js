@@ -119,10 +119,20 @@ export const STRINGS = {
   tipCorrect: (correct, n) => `${correct} of ${count(n, "question")} correct`,
 
   // drawings
-  dwgLabel: "Go to sheet: DWG",
-  dwgGo: "Go",
-  dwgUnknown: (id) => `No such drawing in this plant: ${id}`,
-  dwgNoIndex: "The drawing index is not available yet.",
+  dwgLabel: "Find on the drawings: sheet or tag",
+  dwgGo: "Find",
+  dwgPlaceholder: "sheet number or tag",
+  dwgNoPlant: "Select a plant first.",
+
+  // the tag lookup under the drawing bar
+  findNone: (query) => `No sheet or item tag "${query}" in this plant.`,
+  findDidYouMean: "Did you mean:",
+  findOnSheets: (n) => `on ${count(n, "sheet")}:`,
+  findUnit: "unit",
+  findNoSheets: "not drawn on any sheet",
+  findSuggestionsLabel: "Matching tags",
+  findNextSheet: (sheets) =>
+    sheets.length < 2 ? `On DWG ${sheets[0]}` : `On ${sheets.length} sheets: DWG ${sheets.join(", ")} - click again for the next`,
   pdfTitle: "Drawings",
   noPdf: "no drawing PDF",
 

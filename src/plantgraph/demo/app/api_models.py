@@ -151,6 +151,31 @@ class CorpusStatus(BaseModel):
     error_code: str | None = None
 
 
+class TagHit(BaseModel):
+    """One plant item that carries the searched tag, with the sheets it is drawn on."""
+
+    model_config = ConfigDict(frozen=True)
+
+    item_id: str
+    tag: str | None
+    #: The schema's class name (`CentrifugalPump`); the page adds the plain-English name.
+    node_class: str
+    unit_id: str | None
+    #: The sheets the item is drawn on, in page order.
+    sheets: tuple[SheetLink, ...]
+
+
+class TagLookup(BaseModel):
+    """The answer to `GET /api/corpora/{id}/tags`: exact hits and tags that start with the query."""
+
+    model_config = ConfigDict(frozen=True)
+
+    query: str
+    hits: tuple[TagHit, ...]
+    #: Up to 10 tags that start with the query, folded for case and spacing.
+    suggestions: tuple[str, ...]
+
+
 class PlantRequest(BaseModel):
     """The plant to load into the graph database."""
 

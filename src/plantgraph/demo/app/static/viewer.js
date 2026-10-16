@@ -34,21 +34,3 @@ export function clearPdf() {
 export function jumpToPage(pageNumber) {
   if (page.corpusId !== null) showPdf(page.corpusId, pageNumber);
 }
-
-function goToDrawing() {
-  const id = $("dwg-input").value.trim().replace(/^DWG\s*/i, "");
-  const message = $("dwg-message");
-  message.textContent = "";
-  if (!page.index) { message.textContent = STRINGS.dwgNoIndex; return; }
-  const target = page.index.pages[id];
-  if (target === undefined) { message.textContent = STRINGS.dwgUnknown(id); return; }
-  jumpToPage(target);
-}
-
-/** Wire the "Go to sheet" box. */
-export function initViewer() {
-  $("dwg-label").textContent = STRINGS.dwgLabel;
-  $("dwg-go").textContent = STRINGS.dwgGo;
-  $("dwg-go").addEventListener("click", goToDrawing);
-  $("dwg-input").addEventListener("keydown", (e) => { if (e.key === "Enter") goToDrawing(); });
-}
