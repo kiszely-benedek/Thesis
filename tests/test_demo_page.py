@@ -33,6 +33,8 @@ STRINGS_DEF = re.compile(r"^  (\w+):", re.MULTILINE)
 LABEL_USE = re.compile(r"""\blabel\(\s*"(\w+)"\s*,\s*"([\w-]+)"\s*\)""")
 ID_USE = re.compile(r"""\$\("([\w-]+)"\)""")
 IMPORT = re.compile(r"""import\s+(?:\{([^}]*)\}\s+from\s+)?"\./(\w+)\.js";""")
+# a glossary word: term("key", ...), a double-brace "key | word" mark in a string, or data-term
+TERM_USE = re.compile(r"""(?<!\w)term\(\s*"(\w+)"|\{\{(\w+)\||data-term="(\w+)\"""")
 HUNGARIAN = re.compile("[áéíóöőúüűÁÉÍÓÖŐÚÜŰ]")
 
 
@@ -53,7 +55,7 @@ def test_the_root_serves_the_page_that_links_its_assets() -> None:
     response = CLIENT.get("/")
 
     assert response.status_code == 200 and "text/html" in response.headers["content-type"]
-    for asset in ("/static/tokens.css", "/static/app.css", "/static/app.js"):
+    for asset in ("/static/tokens.css", "/static/app.css", "/static/card.css", "/static/app.js"):
         assert asset in response.text, f"expected the page to link {asset}"
 
 
@@ -168,3 +170,27 @@ def test_both_themes_define_every_token_the_light_theme_does() -> None:
     colour_tokens = set(re.findall(r"(--[\w-]+):\s*(?:#|rgb)", light))
 
     assert colour_tokens <= set(re.findall(r"(--[\w-]+):", dark))
+
+
+def _glossary_keys_used() -> set[str]:
+    sources = _all_js() + _text(STATIC_DIR / "index.html")
+    return {key for match in TERM_USE.findall(sources) for key in match if key}
+
+
+def test_every_glossary_word_has_text_and_every_text_is_used() -> None:
+    glossary = json.loads(_text(STATIC_DIR / "labels.en.json"))["glossary"]
+    used = _glossary_keys_used()
+
+    assert used, "expected the modules to use glossary words, found none"
+    assert used - set(glossary) == set(), (
+        f"glossary words without text: {sorted(used - set(glossary))}"
+    )
+    assert set(glossary) - used == set(), (
+        f"glossary texts nobody uses: {sorted(set(glossary) - used)}"
+    )
+
+
+def test_the_page_holds_the_one_shared_tooltip_the_glossary_fills() -> None:
+    page = _text(STATIC_DIR / "index.html")
+
+    assert page.count('id="glossary-tip"') == 1 and 'role="tooltip"' in page

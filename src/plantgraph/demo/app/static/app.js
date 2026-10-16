@@ -3,6 +3,7 @@
 
 import { getIndex, getStatus } from "./api.js";
 import { $ } from "./dom.js";
+import { initGlossary } from "./glossary.js";
 import { initHeader, renderHeld, renderSpend } from "./header.js";
 import { initIntro, renderIntro } from "./intro.js";
 import { describeError, loadLabels } from "./labels.js";
@@ -86,6 +87,7 @@ async function start() {
   initTheme($("theme-toggle"));
   initHeader();
   initIntro();
+  initGlossary();
   initViewer();
   initAsk(render);
   try {

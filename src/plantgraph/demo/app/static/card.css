@@ -1,0 +1,125 @@
+/* The result card and its parts: answer, facts line, chips, tables, folded details, the route, and the
+   glossary tooltip. Colours, type and space come from tokens.css. */
+
+/* ---------- card ---------- */
+
+.card {
+  background: var(--surface); border: var(--rule-w) solid var(--rule);
+  border-top: var(--rule-w-strong) solid var(--ink); border-radius: 0 0 var(--r-2) var(--r-2);
+  padding: var(--sp-4); display: grid; gap: var(--sp-4);
+}
+/* Every grid below has one column that may shrink (minmax(0, 1fr)): without it a wide table or query
+   would stretch the whole panel instead of scrolling inside its own box. */
+.card, .details-body, .route, .route-tier, .tool-steps, .tool-body { grid-template-columns: minmax(0, 1fr); }
+.card h4, .route h4 { margin: 0; }
+.card-section h2, .card-section h3 { margin-bottom: var(--sp-1); }
+.facts + .captioned, .captioned + .captioned { margin-top: var(--sp-3); }
+.answer-text { font-size: var(--fs-xl); font-weight: 600; line-height: var(--lh-tight); white-space: pre-wrap; overflow-wrap: anywhere; }
+.facts-line { margin: var(--sp-2) 0 0; font-size: var(--fs-sm); color: var(--ink-muted); }
+.card .notice { margin: var(--sp-2) 0 0; }
+.facts { display: grid; grid-template-columns: max-content 1fr; gap: var(--sp-1) var(--sp-4); margin: 0; font-size: var(--fs-sm); }
+.facts dt { color: var(--ink-muted); }
+.facts dd { margin: 0; }
+
+/* verdict and flag pills: the word carries the meaning, the colour repeats it */
+.pill { display: inline-block; padding: 0 var(--sp-2); border-radius: var(--r-2); font-size: var(--fs-sm); font-weight: 600; }
+.pill.good { background: var(--good-soft); color: var(--good); }
+.pill.bad { background: var(--bad-soft); color: var(--bad); }
+.pill.warn { background: var(--warn-soft); color: var(--warn-ink); }
+.route .pill { justify-self: start; }
+.card-section > h2 + .captioned { margin-top: var(--sp-2); }
+.warn-text { color: var(--warn-ink); }
+
+/* Sheet chip: a flag shape like the off-page connector on the drawings. The focus ring sits on the
+   rectangular button, so the clip-path cannot cut it. */
+.chips { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+.chip {
+  position: relative; isolation: isolate; min-height: 1.75rem;
+  padding: var(--sp-1) 1.4rem var(--sp-1) var(--sp-3);
+  background: none; border: 0; color: var(--accent-ink);
+  font: 600 var(--fs-sm) var(--font-mono);
+  transition: color var(--dur-fast) var(--ease);
+}
+.chip::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; background: var(--accent-soft);
+  clip-path: polygon(0 0, 85% 0, 100% 50%, 85% 100%, 0 100%);
+  transition: background var(--dur-fast) var(--ease);
+}
+.chip:hover { color: var(--on-accent); }
+.chip:hover::before { background: var(--accent); }
+
+/* ---------- tables: horizontal rules only, like an engineering drawing's tables ---------- */
+
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: var(--fs-sm); }
+th, td { padding: var(--sp-1) var(--sp-2); text-align: left; border-bottom: var(--rule-w) solid var(--rule); white-space: nowrap; }
+th { background: var(--surface-2); font: 600 var(--fs-xs) var(--font-label); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-muted); }
+th.num, td.num { text-align: right; }
+td.num, .rows-table td { font-family: var(--font-mono); }
+/* the rows of a query can be many: the table scrolls and keeps its header in view */
+.rows-table { max-height: 16rem; overflow: auto; border: var(--rule-w) solid var(--rule); }
+.rows-table th { position: sticky; top: 0; z-index: 1; }
+
+/* ---------- folded parts ---------- */
+
+.details { border: var(--rule-w) solid var(--rule); border-radius: var(--r-2); background: var(--surface); }
+.details > summary, .observation > summary { cursor: pointer; list-style: none; }
+.details > summary { padding: var(--sp-2) var(--sp-3); font: 600 var(--fs-sm) var(--font-label); letter-spacing: 0.04em; }
+.details > summary:hover { background: var(--surface-2); }
+.details > summary::-webkit-details-marker, .observation > summary::-webkit-details-marker { display: none; }
+.details > summary::before, .observation > summary::before {
+  content: "\25B8"; display: inline-block; margin-right: var(--sp-2);
+  transition: transform var(--dur-fast) var(--ease);
+}
+.details[open] > summary::before, .observation[open] > summary::before { transform: rotate(90deg); }
+.details-body { display: grid; gap: var(--sp-4); padding: var(--sp-3) var(--sp-4) var(--sp-4); border-top: var(--rule-w) solid var(--rule); }
+.observation > summary { font-size: var(--fs-sm); color: var(--ink-muted); }
+
+/* ---------- the route ---------- */
+
+.route { display: grid; gap: var(--sp-3); }
+.route p { margin: 0; }
+.route-tier { display: grid; gap: var(--sp-2); padding-left: var(--sp-3); border-left: var(--rule-w-strong) solid var(--rule-strong); min-width: 0; }
+.route-heading { font-size: var(--fs-md); }
+.block-head { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-2); }
+.code {
+  margin: 0; padding: var(--sp-3); max-height: 18rem; overflow: auto;
+  background: var(--surface-2); border: var(--rule-w) solid var(--rule); border-radius: var(--r-1);
+  font: var(--fs-sm) / var(--lh-body) var(--font-mono); white-space: pre-wrap; overflow-wrap: anywhere;
+}
+.tool-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-3); }
+.tool-step { display: flex; align-items: flex-start; gap: var(--sp-3); }
+.tool-step .bubble { margin-top: 2px; }
+.tool-body { display: grid; gap: var(--sp-1); min-width: 0; flex: 1 1 auto; }
+.tool-call { font-weight: 600; overflow-wrap: anywhere; }
+.items { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--sp-1) var(--sp-2); font-size: var(--fs-sm); }
+/* a tag shown as data: mono, link colour, dotted underline (the same look a clickable tag will have) */
+.tag { font-family: var(--font-mono); color: var(--accent-ink); border-bottom: var(--rule-w) dotted var(--accent-ink); }
+.observation .code { margin-top: var(--sp-1); max-height: 14rem; }
+
+/* ---------- glossary ---------- */
+
+.term { border-bottom: var(--rule-w) dotted var(--ink-muted); cursor: help; }
+.glossary-tip {
+  position: fixed; left: 0; top: 0; z-index: 30;
+  width: max-content; max-width: min(22rem, calc(100vw - 1rem));
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--surface); color: var(--ink); border: var(--rule-w) solid var(--ink); border-radius: var(--r-2);
+  box-shadow: var(--shadow-menu); font-size: var(--fs-sm); line-height: var(--lh-body); font-weight: 400;
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity var(--dur-fast) var(--ease), visibility 0s linear var(--dur-fast);
+}
+.glossary-tip.shown { opacity: 1; visibility: visible; transition-delay: 0s; }
+/* the 6 px arrow: a rotated square whose two outer edges are drawn; --arrow-x is set by glossary.js */
+.glossary-tip::before {
+  content: ""; position: absolute; left: calc(var(--arrow-x, 12px) - 5px); top: -6px;
+  width: 10px; height: 10px; background: var(--surface);
+  border-left: var(--rule-w) solid var(--ink); border-top: var(--rule-w) solid var(--ink);
+  transform: rotate(45deg);
+}
+.glossary-tip.above::before { top: auto; bottom: -6px; transform: rotate(225deg); }
+
+@media (max-width: 599px) {
+  .answer-text { font-size: var(--fs-lg); }
+  .facts { grid-template-columns: 1fr; }
+}

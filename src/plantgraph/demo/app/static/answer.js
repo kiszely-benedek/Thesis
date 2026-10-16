@@ -1,11 +1,18 @@
-/* Rendering of a finished ask: the answer, how it was reached, and the sheets it points at.
-   (DP-T7 reshapes the card; the trace of the ask is rendered there too.) */
+/* Rendering of a finished ask as a result card: the answer, one facts line, the sheets it points at,
+   the check against the reference (examples only), and two folded parts (details, how it works). */
 
 import { $, el } from "./dom.js";
-import { seconds, usd, valueText } from "./format.js";
-import { label } from "./labels.js";
+import { seconds, usd, valueWithClasses } from "./format.js";
+import { renderDetails } from "./details.js";
+import { richText, strategyTerm, term } from "./glossary.js";
+import { label, labelSection } from "./labels.js";
+import { cardSection, facts } from "./parts.js";
+import { page } from "./state.js";
 import { STRINGS } from "./strings.js";
 import { jumpToPage } from "./viewer.js";
+
+// emptying the model cache is normally instant; only a slower one is worth a line on the card
+const SLOW_CLEAR_S = 0.5;
 
 /** Empty the answer area. */
 export function clearAnswer() {
@@ -18,13 +25,13 @@ function answerText(live) {
   if (final.not_present) return STRINGS.notPresent;
   if (final.answer === true) return label("answer_values", "yes");
   if (final.answer === false) return label("answer_values", "no");
-  return valueText(final.answer) || STRINGS.noAnswer;
+  return valueWithClasses(final.answer, labelSection("class_names")) || STRINGS.noAnswer;
 }
 
 /** One clickable chip per sheet; a click jumps the PDF to the sheet's page. */
 function sheetChips(sheets) {
   const box = el("div", { className: "chips" });
-  if (sheets.length === 0) box.append(el("span", { className: "hint" }, STRINGS.none));
+  if (sheets.length === 0) box.append(el("span", { className: "hint" }, STRINGS.noSheets));
   for (const sheet of sheets) {
     const chip = el("button", { type: "button", className: "chip", textContent: `DWG ${sheet.sheet_id}` });
     chip.title = sheet.tags.join(", ");
@@ -34,36 +41,25 @@ function sheetChips(sheets) {
   return box;
 }
 
-function facts(rows) {
-  const list = el("dl", { className: "facts" });
-  for (const [caption, value] of rows) list.append(el("dt", {}, caption), el("dd", {}, value));
-  return list;
+function captioned(caption, content) {
+  return el("div", { className: "captioned" }, el("h3", { className: "field-label" }, caption), content);
 }
 
-function section(heading, ...content) {
-  return el("section", { className: "card-section" }, el("h2", { className: "field-label" }, heading), ...content);
-}
-
-function answeredByText(live) {
+/** The tier that gave the answer, as a glossary word: "Step 1: database query (Cypher)". */
+function answeredByNode(live) {
   if (!live.answered_by) return STRINGS.nobody;
   const tier = live.tiers.find((t) => t.tier === live.answered_by);
-  const detail = tier ? ` (${tier.model_id})` : "";
-  return label("tiers", live.answered_by) + detail + (live.fell_back ? ` — ${STRINGS.fellBack}` : "");
+  const text = label("tiers", live.answered_by);
+  return tier ? strategyTerm(tier.strategy, text) : text;
 }
 
-function tierRow(t) {
-  const cells = [
-    label("tiers", t.tier), label("outcomes", t.outcome), t.accepted ? STRINGS.yes : STRINGS.no,
-    seconds(t.latency_s), usd(t.cost_usd), t.n_calls, t.n_steps ?? "–",
-    t.stop_reason ? label("stop_reasons", t.stop_reason) : "–", t.n_rows ?? "–",
-  ];
-  return el("tr", {}, ...cells.map((c) => el("td", {}, String(c))));
-}
-
-function tierTable(tiers) {
-  const head = el("tr", {}, ...STRINGS.tierCols.map((name) => el("th", {}, name)));
-  const table = el("table", {}, el("thead", {}, head), el("tbody", {}, ...tiers.map(tierRow)));
-  return el("div", { className: "table-wrap" }, table);
+/** "Answered in 4.2 s · model time 3.9 s · cost $0.0021 · by Step 1: ...". The answer time leaves out
+    the seconds spent emptying the model cache first (`clearS`), which the job's clock includes. */
+function factsLine(job) {
+  const live = job.result.live;
+  const answerS = Math.max(0, job.elapsed_s - (job.clear_s ?? 0));
+  const text = STRINGS.factsLine(seconds(answerS), seconds(live.latency_s), usd(live.spent_usd));
+  return el("p", { className: "facts-line" }, ...richText(text), answeredByNode(live));
 }
 
 function verdictNode(correct) {
@@ -73,15 +69,16 @@ function verdictNode(correct) {
 }
 
 function benchmarkBlock(benchmark) {
-  return section(
-    STRINGS.reference,
+  const names = labelSection("class_names");
+  return cardSection(
+    STRINGS.checkHeading,
     facts([
-      [STRINGS.reference, valueText(benchmark.reference)],
+      [STRINGS.reference, valueWithClasses(benchmark.reference, names) || STRINGS.none],
       [STRINGS.verdict, verdictNode(benchmark.correct)],
-      ["k / u", STRINGS.crossSheet(benchmark)],
+      [term("k", "k"), richText(STRINGS.kValue(benchmark))],
+      [term("u", "u"), richText(STRINGS.uValue(benchmark))],
     ]),
-    el("h3", { className: "field-label" }, STRINGS.goldSheets),
-    sheetChips(benchmark.gold_sheets),
+    captioned(STRINGS.goldSheets, sheetChips(benchmark.gold_sheets)),
   );
 }
 
@@ -92,25 +89,42 @@ function statusLines(result, live) {
   return lines;
 }
 
-/** Show the answer of a finished ask; `clearS` is the seconds spent emptying the model cache first. */
-export function renderAnswer(result, clearS) {
-  const live = result.live;
+function answerBlock(job) {
+  const live = job.result.live;
+  const block = el(
+    "section", { className: "card-section" },
+    el("h2", { className: "field-label" }, STRINGS.answer),
+    el("div", { className: "answer-text" }, answerText(live)),
+  );
+  if (live.fell_back) block.append(el("p", { className: "notice" }, STRINGS.fallbackLine));
+  block.append(factsLine(job));
+  if ((job.clear_s ?? 0) >= SLOW_CLEAR_S) block.append(el("p", { className: "hint" }, STRINGS.preparing(job.clear_s)));
+  return block;
+}
+
+function sourcesBlock(result) {
+  const parts = [captioned(STRINGS.answerSheets, sheetChips(result.answer_sheets))];
+  // sheets the agent read exist only when the graph agent ran
+  if (result.read_sheets.length > 0) parts.push(captioned(STRINGS.readSheets, sheetChips(result.read_sheets)));
+  return cardSection(STRINGS.knowHeading, ...parts);
+}
+
+function howItWorks() {
+  const summary = el("summary", {}, STRINGS.howHeading);
+  const text = el("p", {}, ...richText(STRINGS.howText(page.status.cutoff_s)));
+  return el("details", { className: "details" }, summary, el("div", { className: "details-body" }, text));
+}
+
+/** Show the answer of a finished ask (`job`: the server's JobStatus with a result). */
+export function renderAnswer(job) {
+  const result = job.result;
   const card = el(
     "article", { className: "card" },
-    ...statusLines(result, live),
-    section(STRINGS.answer, el("div", { className: "answer-text" }, answerText(live))),
-    facts([
-      [STRINGS.outcome, label("outcomes", live.outcome)],
-      [STRINGS.answeredBy, answeredByText(live)],
-      [STRINGS.latency, seconds(live.latency_s)],
-      [STRINGS.wall, seconds(live.wall_s)],
-      [STRINGS.cost, STRINGS.paid(live.cost_usd, live.spent_usd)],
-    ]),
-    section(STRINGS.tierTable, tierTable(live.tiers)),
-    section(STRINGS.answerSheets, sheetChips(result.answer_sheets)),
-    section(STRINGS.readSheets, sheetChips(result.read_sheets)),
+    ...statusLines(result, result.live),
+    answerBlock(job),
+    sourcesBlock(result),
   );
   if (result.benchmark) card.append(benchmarkBlock(result.benchmark));
-  if (clearS !== null && clearS !== undefined) card.append(el("p", { className: "hint" }, STRINGS.prepared(clearS)));
+  card.append(renderDetails(result), howItWorks());
   $("result").replaceChildren(card);
 }

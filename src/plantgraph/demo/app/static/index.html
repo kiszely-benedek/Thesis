@@ -7,6 +7,7 @@
   <meta name="color-scheme" content="light dark">
   <link rel="stylesheet" href="/static/tokens.css">
   <link rel="stylesheet" href="/static/app.css">
+  <link rel="stylesheet" href="/static/card.css">
 </head>
 <body>
   <a id="skip-link" class="skip" href="#question-text"></a>
@@ -78,6 +79,9 @@
       <div id="result" aria-live="polite"></div>
     </section>
   </main>
+
+  <!-- The one shared tooltip of the glossary words (glossary.js moves and fills it). -->
+  <div id="glossary-tip" class="glossary-tip" role="tooltip"></div>
 
   <script type="module" src="/static/app.js"></script>
 </body>

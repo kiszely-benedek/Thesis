@@ -171,7 +171,7 @@ async function waitForJob(jobId) {
 
 async function onJobEnded(job) {
   page.status.spend = job.spend;
-  if (job.state === "done") { renderAnswer(job.result, job.clear_s); return; }
+  if (job.state === "done") { renderAnswer(job); return; }
   if (job.state === "refused") {
     const cap = usd(job.spend.session_cap_usd ?? 0);
     showMessage(STRINGS.capReached(cap, usd(job.spend.session_spent_usd)), true);

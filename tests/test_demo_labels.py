@@ -14,6 +14,7 @@ from plantgraph.demo.app.server import _ERROR_OF, ERROR_CODES, create_app
 from plantgraph.demo.app.state import AppState
 from plantgraph.demo.app.store_probe import StoreKind
 from plantgraph.demo.app.topics import TOPIC_ORDER, topic_of
+from plantgraph.graph.schema import GENERATOR_CLASSES
 from plantgraph.qa.agent.models import StopReason
 from plantgraph.qa.cascade.policy import load_policies
 from plantgraph.qa.models import Outcome, QuestionFamily
@@ -66,6 +67,26 @@ def test_every_error_code_the_api_sends_has_text() -> None:
 
 def test_the_answer_values_are_english_yes_and_no() -> None:
     assert LABELS.answer_values == {"yes": "Yes", "no": "No"}
+
+
+def test_every_plant_class_the_generator_makes_has_a_plain_name() -> None:
+    # `UnresolvedOffPageConnector` and `GenericItem` can appear in answers too (design 20.3)
+    classes = GENERATOR_CLASSES | {"UnresolvedOffPageConnector", "GenericItem"}
+
+    _assert_has_text(LABELS.class_names, classes)
+
+
+def test_every_model_call_purpose_and_error_kind_has_text() -> None:
+    # the purposes the QA code logs (`purpose=` in qa/) and the error kinds `llm/client.py` logs
+    _assert_has_text(LABELS.call_purposes, {"cypher", "answer", "agent_step", "route"})
+    errors = {"context_overflow", "provider_error", "timeout", "late_after_timeout"}
+    _assert_has_text(LABELS.call_errors, errors)
+
+
+def test_the_glossary_explains_in_whole_sentences() -> None:
+    assert LABELS.glossary, "expected glossary terms, found none"
+    for key, text in LABELS.glossary.items():
+        assert text.strip().endswith("."), f"glossary text of {key!r} is not a sentence: {text!r}"
 
 
 def test_the_json_has_only_the_sections_the_model_knows() -> None:

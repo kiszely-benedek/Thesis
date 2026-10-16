@@ -1,6 +1,7 @@
 /* The "What is this?" box: three sentences and three steps, hideable, remembered per viewer. */
 
 import { $, el } from "./dom.js";
+import { richText } from "./glossary.js";
 import { STRINGS } from "./strings.js";
 
 const KEY = "pgdemo.introHidden";
@@ -17,7 +18,7 @@ function stepList(sheetCounts) {
   const shown = sheetCounts.map((n) => n ?? "?"); // a plant that has not loaded yet has no count
   const steps = STRINGS.introSteps(shown[0] ?? "?", shown[1] ?? null);
   const items = steps.map((text, i) => el(
-    "li", {}, el("span", { className: "bubble", textContent: String(i + 1) }), el("span", {}, text),
+    "li", {}, el("span", { className: "bubble", textContent: String(i + 1) }), el("span", {}, ...richText(text)),
   ));
   return el("ol", { className: "steps" }, ...items);
 }
@@ -29,7 +30,7 @@ export function renderIntro(sheetCounts) {
   hide.addEventListener("click", () => setIntroHidden(true));
   box.replaceChildren(
     el("h2", {}, STRINGS.introHeading),
-    el("p", {}, STRINGS.introText),
+    el("p", {}, ...richText(STRINGS.introText)),
     stepList(sheetCounts),
     el("div", { className: "intro-actions" }, hide),
   );

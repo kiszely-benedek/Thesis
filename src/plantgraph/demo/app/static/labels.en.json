@@ -87,5 +87,48 @@
   "answer_values": {
     "yes": "Yes",
     "no": "No"
+  },
+  "call_purposes": {
+    "cypher": "wrote the database query",
+    "answer": "wrote the answer",
+    "agent_step": "chose the next tool",
+    "route": "chose the process units to look at"
+  },
+  "call_errors": {
+    "context_overflow": "input too long for the model",
+    "provider_error": "the model provider returned an error",
+    "timeout": "no reply in time",
+    "late_after_timeout": "reply arrived after the time limit"
+  },
+  "class_names": {
+    "CentrifugalPump": "centrifugal pump",
+    "Compressor": "compressor",
+    "Tank": "tank",
+    "PressureVessel": "pressure vessel",
+    "ProcessColumn": "process column",
+    "HeatExchanger": "heat exchanger",
+    "GlobeValve": "globe valve",
+    "BallValve": "ball valve",
+    "CheckValve": "check valve",
+    "ProcessSignalGeneratingFunction": "sensor / transmitter",
+    "ProcessInstrumentationFunction": "instrument / control-loop function",
+    "ActuatingFunction": "actuator",
+    "UnresolvedOffPageConnector": "unpaired off-page connector",
+    "GenericItem": "other item"
+  },
+  "glossary": {
+    "pid": "P&ID (piping and instrumentation diagram): the engineering drawing of a plant, showing equipment, valves and instruments and the pipes and signal lines that connect them. A large plant's P&ID is split over many sheets.",
+    "sheet": "Drawing sheet: one page of the P&ID, identified by its DWG number. Each page of the PDF on the left is one sheet.",
+    "off_page_connector": "Off-page connector: the flag-shaped symbol at a sheet's edge (\"TO DWG 12\") saying that a pipe or signal line continues on another sheet. The system uses these flags to join all sheets into one graph.",
+    "tag": "Tag: the identifier of an item on the drawing, such as P-151-1. The same item can appear on several sheets; the system treats them as one item.",
+    "unit": "Process unit: a section of the plant that belongs together, with its own number.",
+    "graph_db": "Graph database (Neo4j): stores the whole plant as a graph so it can be queried. It holds one plant at a time, so switching plants reloads it.",
+    "cypher": "Cypher: the query language of the Neo4j graph database. In step 1 the language model writes such a query, and the database answers it from the graph of the whole plant.",
+    "agent": "Graph agent: step 2. The language model explores the plant graph step by step with tools (search, neighbours, path), sheet by sheet.",
+    "cascade": "Cascade: the two steps in order. The database query tries first; if the system does not accept its answer, the question goes to the graph agent.",
+    "k": "k: how many links in the correct answer's evidence cross from one drawing sheet to another, through an off-page connector or because the same item is drawn on both sheets. The larger k, the more the question spans sheets.",
+    "u": "u: how many links in the correct answer's evidence cross from one process unit to another.",
+    "model_time": "Model time: the time of the language-model calls plus local computing, counted the way the evaluation counts it.",
+    "wall_time": "Answer time: how long this answer took on this machine, from pressing Ask to the result (without emptying the model cache or loading a plant)."
   }
 }

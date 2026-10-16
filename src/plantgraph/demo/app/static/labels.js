@@ -29,3 +29,8 @@ export function describeError(error) {
   }
   return { text: STRINGS.unexpectedError, technical: String(error?.message ?? error) };
 }
+
+/** A whole section of the table (code -> text); empty before the table is loaded. */
+export function labelSection(section) {
+  return table?.[section] ?? {};
+}

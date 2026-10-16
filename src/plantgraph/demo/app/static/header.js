@@ -1,6 +1,7 @@
 /* The title block (page header): spend, the plant the database holds, and the narrow-screen menu. */
 
 import { $ } from "./dom.js";
+import { term } from "./glossary.js";
 import { page } from "./state.js";
 import { STRINGS } from "./strings.js";
 
@@ -12,7 +13,7 @@ export function initHeader() {
   $("skip-link").textContent = STRINGS.skipToQuestion;
   document.title = STRINGS.pageTitle;
   $("plant-caption").textContent = STRINGS.plantCell;
-  $("held-caption").textContent = STRINGS.graphDbCell;
+  $("held-caption").replaceChildren(term("graph_db", STRINGS.graphDbCell));
   $("spend-caption").textContent = STRINGS.spendCell;
   $("intro-open").textContent = STRINGS.introOpen;
   $("menu-toggle").title = STRINGS.menuOpen;
