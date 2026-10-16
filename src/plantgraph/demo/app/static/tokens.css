@@ -1,0 +1,130 @@
+/* Design tokens of the demo page: colours, type, space, shape, motion, and the base typography.
+   Light values live on :root; the dark theme redefines them on [data-theme="dark"]. theme.js always
+   sets data-theme to "light" or "dark" (resolving "auto" itself), so each value is written once. */
+
+:root {
+  color-scheme: light dark;
+
+  --paper: #f5f4ee;
+  --surface: #ffffff;
+  --surface-2: #eceff2;
+  --ink: #17202a;
+  --ink-muted: #4d5a67;
+  --rule: #c8cfd6;
+  --rule-strong: #77828e;
+  --accent: #1d5aa6;
+  --on-accent: #ffffff;
+  --accent-ink: #174c8c;
+  --accent-soft: #e2ecf8;
+  --good: #1c7036;
+  --good-soft: #e4f2e8;
+  --bad: #b3261e;
+  --bad-soft: #fbe8e6;
+  --warn-ink: #7a4f00;
+  --warn-soft: #fdf1d2;
+  --warn-rule: #a87400;
+  --focus: #c45a00;
+  --signal: #2a66c4;
+  --series-1: #0072b2;
+  --series-2: #d55e00;
+  --series-3: #009e73;
+  --grid: rgb(23 32 42 / 0.05);
+  --shadow-menu: 0 6px 18px rgb(23 32 42 / 0.18);
+
+  /* Type: system stacks only, no web font and no CDN. */
+  --font-ui: system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-label: Bahnschrift, "DIN Alternate", "Segoe UI", system-ui, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Mono", Consolas, "Liberation Mono", Menlo, monospace;
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-md: 1rem;
+  --fs-lg: 1.25rem;
+  --fs-xl: 1.625rem;
+  --fs-2xl: 2rem;
+  --lh-tight: 1.25;
+  --lh-body: 1.5;
+
+  /* Space, shape, motion. */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.5rem;
+  --sp-6: 2rem;
+  --sp-7: 3rem;
+  --r-1: 2px;
+  --r-2: 4px;
+  --rule-w: 1px;
+  --rule-w-strong: 2px;
+  --dur-fast: 120ms;
+  --dur: 180ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --header-h: 3.5rem;
+}
+
+:root[data-theme="dark"] {
+  --paper: #11161c;
+  --surface: #182029;
+  --surface-2: #212a34;
+  --ink: #e5eaef;
+  --ink-muted: #a3afbb;
+  --rule: #313d49;
+  --rule-strong: #6f7d8b;
+  --accent: #6aa6f5;
+  --on-accent: #0b1420;
+  --accent-ink: #8dbcff;
+  --accent-soft: #1d3350;
+  --good: #5fc285;
+  --good-soft: #16301f;
+  --bad: #ff8b7e;
+  --bad-soft: #3a1916;
+  --warn-ink: #f2c35b;
+  --warn-soft: #33290f;
+  --warn-rule: #b8860b;
+  --focus: #ffb14a;
+  --signal: #76a9f0;
+  --series-1: #56b4e9;
+  --series-2: #e69f00;
+  --series-3: #2ec4a0;
+  --grid: rgb(229 234 239 / 0.05);
+  --shadow-menu: 0 6px 18px rgb(0 0 0 / 0.5);
+}
+
+/* Reduced motion: every transition and the running bar's animation switch off. */
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur-fast: 0ms; --dur: 0ms; }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { font-size: 100%; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: var(--fs-md) / var(--lh-body) var(--font-ui);
+  font-variant-numeric: tabular-nums;
+}
+
+h1, h2, h3 { font-family: var(--font-label); line-height: var(--lh-tight); margin: 0; }
+h1 { font-size: var(--fs-lg); }
+h2 { font-size: var(--fs-md); letter-spacing: 0.02em; }
+code, kbd, .mono { font-family: var(--font-mono); font-size: 0.95em; }
+
+a { color: var(--accent-ink); }
+
+/* Focus is never removed: one orange ring on every interactive element. */
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+/* The small upper-case caption above a value, as a drawing's title block labels its fields. */
+.field-label {
+  display: block;
+  font: 600 var(--fs-xs) / var(--lh-tight) var(--font-label);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.hint { color: var(--ink-muted); font-size: var(--fs-sm); }
+[hidden] { display: none !important; }

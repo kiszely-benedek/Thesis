@@ -1,397 +1,107 @@
-"use strict";
-/* The demo page. Plain JS, no build step. It talks to the FastAPI server in server.py:
-   status -> corpus -> questions -> ask -> poll the job -> render the answer. */
+/* Entry module of the demo page. Plain ES modules, no build step.
+   It wires the parts together and keeps them in step with the server's /api/status. */
 
-const POLL_MS = 1000;
+import { getIndex, getStatus } from "./api.js";
+import { $ } from "./dom.js";
+import { initHeader, renderHeld, renderSpend } from "./header.js";
+import { initIntro, renderIntro } from "./intro.js";
+import { describeError, loadLabels } from "./labels.js";
+import { showMessage } from "./message.js";
+import { initAsk, loadQuestions, resetAsk, updateAskEnabled } from "./ask.js";
+import {
+  corpusStateText, followLoad, initPlantSwitch, loadPlant, renderPhase, renderPlantSwitch,
+  renderStoreNotice,
+} from "./plant.js";
+import { currentCorpus, page } from "./state.js";
+import { initTheme } from "./theme.js";
+import { clearPdf, initViewer, showPdf } from "./viewer.js";
+
 const STATUS_MS = 3000;
 
-// The page's whole mutable state: what the server last said and what the user is doing.
-const page = { status: null, corpusId: null, index: null, questions: [], asking: false, startedAt: 0 };
+let loadingQuestions = false;
 
-function $(id) { return document.getElementById(id); }
-
-/** Build a DOM element; children are strings (shown as text, never as HTML) or nodes. */
-function el(tag, props = {}, ...children) {
-  const node = Object.assign(document.createElement(tag), props);
-  node.append(...children);
-  return node;
-}
-
-async function api(path, options) {
-  const response = await fetch(path, options);
-  if (!response.ok) {
-    const body = await response.json().catch(() => ({}));
-    throw new Error(body.detail ? JSON.stringify(body.detail) : `${path}: HTTP ${response.status}`);
-  }
-  return response.json();
-}
-
-/* ---------- PDF: jump to a page ---------- */
-
-/** Show page `pageNumber` of the corpus's PDF. A fresh iframe each time: a hash-only change on an
-    open PDF viewer does not reliably move the page in every browser. */
-function showPdf(corpusId, pageNumber) {
-  const frame = el("iframe", { title: "Rajzok" });
-  frame.src = `/corpora/${encodeURIComponent(corpusId)}/drawings.pdf#page=${pageNumber}`;
-  $("pdf-host").replaceChildren(frame);
-}
-
-function jumpToPage(pageNumber) { showPdf(page.corpusId, pageNumber); }
-
-function goToDrawing() {
-  const id = $("dwg-input").value.trim().replace(/^DWG\s*/i, "");
-  const message = $("dwg-message");
-  message.textContent = "";
-  if (!page.index) { message.textContent = STRINGS.dwgNoIndex; return; }
-  const target = page.index.pages[id];
-  if (target === undefined) { message.textContent = STRINGS.dwgUnknown(id); return; }
-  jumpToPage(target);
-}
-
-/* ---------- status, corpus, questions ---------- */
-
-function spendText(status) {
-  const spend = status.spend;
-  return STRINGS.spend(usd(spend.session_spent_usd), usd(spend.session_cap_usd ?? 0));
-}
-
-function corpusStateText(corpus) {
-  const parts = [STRINGS.stateLabels[corpus.state] ?? corpus.state];
-  if (!corpus.pdf_present) parts.push(STRINGS.noPdf);
-  if (corpus.state === "ready" && !corpus.tier1_store) parts.push(STRINGS.noTier1);
-  if (corpus.message) parts.push(corpus.message);
-  return parts.join("; ");
-}
-
-function currentCorpus() {
-  return page.status?.corpora.find((c) => c.corpus_id === page.corpusId) ?? null;
-}
-
-function renderStatus() {
-  const select = $("corpus-select");
-  if (select.options.length === 0) {
-    for (const c of page.status.corpora) select.append(el("option", { value: c.corpus_id, textContent: c.corpus_id }));
-  }
-  $("status-line").textContent = spendText(page.status);
+/** Redraw every part of the page that depends on the server's status. */
+function render() {
+  renderSpend();
+  renderHeld();
+  renderPlantSwitch();
+  renderPhase();
+  renderStoreNotice();
   const corpus = currentCorpus();
-  if (corpus) $("corpus-state").textContent = corpusStateText(corpus);
-  $("plant-line").textContent = plantText(page.status.plant);
+  const text = corpus ? corpusStateText(corpus) : "";
+  $("corpus-state").textContent = text;
+  $("corpus-state").hidden = text === "";
   updateAskEnabled();
 }
 
-/* ---------- the plant in the graph database ---------- */
-
-function plantText(plant) {
-  if (plant.loading) {
-    return STRINGS.plantLoading(plant.loading, plant.elapsed_s ?? 0, plant.last_load_s[plant.loading]);
-  }
-  if (plant.error) return STRINGS.plantFailed(page.corpusId);
-  if (plant.last && plant.held.includes(plant.last.corpus_id)) return STRINGS.plantLoaded(plant.last);
-  return plant.held.length ? STRINGS.plantHeld(plant.held.join(", ")) : STRINGS.plantNone;
+function sheetCounts() {
+  return page.status.corpora.map((c) => c.n_sheets);
 }
 
-/** Whether the graph database holds the selected plant (needed only when a database step exists). */
-function plantAvailable(corpus) {
-  const plant = page.status.plant;
-  if (plant.loading) return false;
-  return corpus.store?.kind === "not_needed" || plant.held.includes(corpus.corpus_id);
-}
-
-/** Selecting a plant is the load: ask the server to put it into the database, then follow it. */
-async function switchPlant(corpusId) {
-  try {
-    page.status.plant = await api("/api/plant", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ corpus_id: corpusId }),
-    });
-  } catch (error) {
-    showMessage(error.message, true);
-  }
-  renderStatus();
-  await followPlantLoad();
-}
-
-/** Poll the plant status once a second while a load runs; then refresh the corpora (their
-    tiers changed with the database) and the question list. */
-async function followPlantLoad() {
-  while (page.status.plant.loading) {
-    await new Promise((resolve) => setTimeout(resolve, POLL_MS));
-    page.status.plant = await api("/api/plant");
-    renderStatus();
-  }
-  await refreshStatus();
-}
-
-function updateAskEnabled() {
+/** Fetch the examples once the selected plant is loaded (the server serves them only then). */
+async function ensureQuestions() {
   const corpus = currentCorpus();
-  const usable = corpus && corpus.state === "ready" && plantAvailable(corpus);
-  $("ask-button").disabled = page.asking || !usable;
+  if (!corpus || corpus.state !== "ready" || page.questions.length > 0 || loadingQuestions) return;
+  loadingQuestions = true;
+  try {
+    await loadQuestions();
+  } finally {
+    loadingQuestions = false;
+  }
+  updateAskEnabled();
 }
 
 async function refreshStatus() {
-  const wasReady = currentCorpus()?.state === "ready";
-  page.status = await api("/api/status");
-  renderStatus();
-  // questions are only served once the corpus has loaded
-  if (!wasReady && currentCorpus()?.state === "ready") await loadQuestions();
+  page.status = await getStatus();
+  renderIntro(sheetCounts());
+  render();
+  await ensureQuestions();
 }
 
 async function selectCorpus(corpusId) {
   page.corpusId = corpusId;
   page.index = null;
-  page.questions = [];
-  fillBenchmarkSelect();
-  $("result").replaceChildren();
+  resetAsk();
   showPdf(corpusId, 1);
-  renderStatus();
-  api(`/api/corpora/${encodeURIComponent(corpusId)}/index`).then((index) => { page.index = index; }).catch(() => {});
-  if (currentCorpus()?.state === "ready") await loadQuestions();
+  render();
+  getIndex(corpusId).then((index) => { page.index = index; }).catch(() => {});
+  await ensureQuestions();
 }
 
-/** The visitor chose a plant in the list: show it, and load it if the database holds another. */
+/** The visitor chose a plant: show it, and load it into the database if the database holds another. */
 async function onPlantChosen(corpusId) {
   await selectCorpus(corpusId);
   const plant = page.status.plant;
-  if (!plant.loading && !plant.held.includes(corpusId)) await switchPlant(corpusId);
+  if (plant.loading || plant.held.includes(corpusId)) return;
+  await loadPlant(corpusId, render, refreshStatus);
 }
 
-async function loadQuestions() {
-  page.questions = await api(`/api/corpora/${encodeURIComponent(page.corpusId)}/questions`);
-  fillBenchmarkSelect();
-}
-
-function fillBenchmarkSelect() {
-  const select = $("benchmark-select");
-  select.replaceChildren(el("option", { value: "", textContent: STRINGS.ownQuestion }));
-  for (const q of page.questions) {
-    const label = `${q.question_id} [${q.family}] ${q.text}`;
-    select.append(el("option", { value: q.question_id, textContent: label.slice(0, 160) }));
-  }
-  onBenchmarkChosen();
-}
-
-/** A benchmark question fixes the text and the answer form; a typed question frees them. */
-function onBenchmarkChosen() {
-  const chosen = page.questions.find((q) => q.question_id === $("benchmark-select").value);
-  $("question-text").readOnly = Boolean(chosen);
-  $("answer-type").disabled = Boolean(chosen);
-  if (!chosen) return;
-  $("question-text").value = chosen.text;
-  $("answer-type").value = chosen.answer_type;
-}
-
-/* ---------- asking ---------- */
-
-function askBody() {
-  const benchmarkId = $("benchmark-select").value;
-  if (benchmarkId) return { corpus_id: page.corpusId, benchmark_question_id: benchmarkId };
-  return {
-    corpus_id: page.corpusId,
-    text: $("question-text").value,
-    answer_type: $("answer-type").value,
-  };
-}
-
-function showMessage(text, isError) {
-  const box = $("message");
-  box.hidden = !text;
-  box.textContent = text ?? "";
-  box.className = isError ? "message error" : "message";
-}
-
-/** Ask once; the server answers live with real model calls, within the session cap. */
-async function ask() {
-  showMessage(null);
-  $("result").replaceChildren();
-  page.asking = true;
-  page.startedAt = performance.now();
-  updateAskEnabled();
-  try {
-    const { job_id } = await api("/api/ask", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(askBody()),
-    });
-    const job = await waitForJob(job_id);
-    await onJobEnded(job);
-  } catch (error) {
-    showMessage(error.message, true);
-  } finally {
-    page.asking = false;
-    $("timer").textContent = "";
-    updateAskEnabled();
-  }
-}
-
-/** Poll the job once a second, with a ticking timer, until it is no longer running. */
-async function waitForJob(jobId) {
-  const ticker = setInterval(() => {
-    const seconds = (performance.now() - page.startedAt) / 1000;
-    $("timer").textContent = `${STRINGS.running} ${STRINGS.elapsed(seconds)}`;
-  }, 200);
-  try {
-    for (;;) {
-      const job = await api(`/api/jobs/${encodeURIComponent(jobId)}`);
-      if (job.state !== "running") return job;
-      await new Promise((resolve) => setTimeout(resolve, POLL_MS));
-    }
-  } finally {
-    clearInterval(ticker);
-  }
-}
-
-async function onJobEnded(job) {
-  page.status.spend = job.spend;
-  renderStatus();
-  if (job.state === "done") { renderResult(job.result); return; }
-  if (job.state === "refused") { showMessage(STRINGS.capReached(usd(job.spend.session_cap_usd ?? 0), usd(job.spend.session_spent_usd)), true); return; }
-  showMessage(job.message ?? job.state, true); // error
-}
-
-/* ---------- the answer ---------- */
-
-function valueText(value) {
-  if (value === null || value === undefined) return "";
-  return Array.isArray(value) ? value.join(", ") : String(value);
-}
-
-function answerText(live) {
-  const final = live.final_answer;
-  if (!final) return STRINGS.noAnswer;
-  if (final.not_present) return STRINGS.notPresent;
-  return valueText(final.answer) || STRINGS.noAnswer;
-}
-
-/** One clickable chip per sheet; a click jumps the PDF to the sheet's page. */
-function chips(sheets) {
-  const box = el("div", { className: "chips" });
-  if (sheets.length === 0) box.append(el("span", { className: "hint" }, STRINGS.none));
-  for (const sheet of sheets) {
-    const chip = el("button", { type: "button", className: "chip", textContent: `DWG ${sheet.sheet_id}` });
-    chip.title = sheet.tags.join(", ");
-    chip.addEventListener("click", () => jumpToPage(sheet.page));
-    box.append(chip);
-  }
-  return box;
-}
-
-function facts(rows) {
-  const list = el("dl", { className: "facts" });
-  for (const [label, value] of rows) list.append(el("dt", {}, label), el("dd", {}, value));
-  return list;
-}
-
-function costText(live) {
-  return STRINGS.paid(live.cost_usd, live.spent_usd);
-}
-
-function answeredByText(live) {
-  if (!live.answered_by) return STRINGS.nobody;
-  const tier = live.tiers.find((t) => t.tier === live.answered_by);
-  const detail = tier ? ` (${tier.strategy}, ${tier.model_id})` : "";
-  return live.answered_by + detail + (live.fell_back ? ` — ${STRINGS.fellBack}` : "");
-}
-
-function tierTable(tiers) {
-  const head = el("tr", {}, ...STRINGS.tierCols.map((name) => el("th", {}, name)));
-  const rows = tiers.map((t) => {
-    const cells = [
-      t.tier, t.outcome, t.accepted ? STRINGS.yes : STRINGS.no, `${t.latency_s.toFixed(1)} s`,
-      usd(t.cost_usd), t.n_calls, t.n_steps ?? "–", t.stop_reason ?? "–", t.n_rows ?? "–",
-    ];
-    return el("tr", {}, ...cells.map((c) => el("td", {}, String(c))));
-  });
-  return el("table", {}, el("thead", {}, head), el("tbody", {}, ...rows));
-}
-
-function verdictNode(correct) {
-  if (correct === null) return STRINGS.none;
-  const className = correct ? "verdict-correct" : "verdict-wrong";
-  return el("span", { className }, correct ? STRINGS.correct : STRINGS.incorrect);
-}
-
-function benchmarkBlock(benchmark) {
-  return el(
-    "div", {},
-    facts([
-      [STRINGS.reference, valueText(benchmark.reference)],
-      [STRINGS.verdict, verdictNode(benchmark.correct)],
-      ["k / u", STRINGS.crossSheet(benchmark)],
-    ]),
-    el("h2", {}, STRINGS.goldSheets),
-    chips(benchmark.gold_sheets),
-  );
-}
-
-function renderResult(result) {
-  const live = result.live;
-  const box = el("div", {});
-  if (result.cache_hit_detected) {
-    box.append(el("div", { className: "message error" }, STRINGS.cacheHit)); // must never show
-  }
-  if (!live.evaluated_policy) {
-    box.append(el("div", { className: "notice" }, STRINGS.notice(live.policy, live.notice)));
-  }
-  box.append(
-    el("h2", {}, STRINGS.answer),
-    el("div", { className: "answer-box" }, el("div", { className: "answer-text" }, answerText(live))),
-    facts([
-      [STRINGS.outcome, live.outcome],
-      [STRINGS.answeredBy, answeredByText(live)],
-      [STRINGS.latency, `${live.latency_s.toFixed(1)} s`],
-      [STRINGS.wall, `${live.wall_s.toFixed(1)} s`],
-      [STRINGS.cost, costText(live)],
-    ]),
-    el("h2", {}, STRINGS.tierTable),
-    tierTable(live.tiers),
-    el("h2", {}, STRINGS.answerSheets),
-    chips(result.answer_sheets),
-    el("h2", {}, STRINGS.readSheets),
-    chips(result.read_sheets),
-  );
-  if (result.benchmark) box.append(benchmarkBlock(result.benchmark));
-  $("result").replaceChildren(box);
-}
-
-/* ---------- start-up ---------- */
-
-function setLabels() {
-  document.title = STRINGS.title;
-  $("title").textContent = STRINGS.title;
-  $("dwg-label").textContent = STRINGS.dwgLabel;
-  $("dwg-go").textContent = STRINGS.dwgGo;
-  $("corpus-label").textContent = STRINGS.corpus;
-  $("benchmark-label").textContent = STRINGS.benchmark;
-  $("question-label").textContent = STRINGS.question;
-  $("answer-type-label").textContent = STRINGS.answerType;
-  $("ask-button").textContent = STRINGS.ask;
-  for (const [value, label] of Object.entries(STRINGS.answerTypes)) {
-    $("answer-type").append(el("option", { value, textContent: label }));
-  }
-}
-
-function wireEvents() {
-  $("dwg-go").addEventListener("click", goToDrawing);
-  $("dwg-input").addEventListener("keydown", (e) => { if (e.key === "Enter") goToDrawing(); });
-  $("corpus-select").addEventListener("change", (e) => onPlantChosen(e.target.value));
-  $("benchmark-select").addEventListener("change", onBenchmarkChosen);
-  $("ask-button").addEventListener("click", () => ask());
+/** The plant to start on: whichever one the database holds, or none. */
+function heldCorpusId() {
+  const known = page.status.corpora.map((c) => c.corpus_id);
+  return page.status.plant.held.find((id) => known.includes(id)) ?? null;
 }
 
 async function start() {
-  setLabels();
-  wireEvents();
+  initTheme($("theme-toggle"));
+  initHeader();
+  initIntro();
+  initViewer();
+  initAsk(render);
   try {
-    page.status = await api("/api/status");
-    renderStatus();
-    // start on the plant the database holds (the server read it at start-up)
-    const held = page.status.plant.held.find((id) => page.status.corpora.some((c) => c.corpus_id === id));
-    $("corpus-select").value = held ?? page.status.corpora[0].corpus_id;
-    await selectCorpus($("corpus-select").value);
+    await loadLabels();
+    page.status = await getStatus();
+    renderIntro(sheetCounts());
+    initPlantSwitch(onPlantChosen);
+    const held = heldCorpusId();
+    if (held === null) clearPdf();
+    if (held !== null) await selectCorpus(held);
+    render();
+    if (page.status.plant.loading) followLoad(render, refreshStatus); // a load was already running
     setInterval(() => refreshStatus().catch(() => {}), STATUS_MS);
   } catch (error) {
-    showMessage(error.message, true);
+    const { text, technical } = describeError(error);
+    showMessage(text, true, technical);
   }
 }
 

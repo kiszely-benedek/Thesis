@@ -1,60 +1,84 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="utf-8">
   <title>Plant-scale P&amp;ID demo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <link rel="stylesheet" href="/static/tokens.css">
   <link rel="stylesheet" href="/static/app.css">
 </head>
 <body>
+  <a id="skip-link" class="skip" href="#question-text"></a>
+  <!-- The title block: what a drawing's corner box is to a P&ID, this strip is to the page. -->
+  <header class="titleblock">
+    <div class="tb-cell tb-title"><h1 id="title"></h1></div>
+    <div class="tb-cell tb-plant">
+      <span class="field-label" id="plant-caption"></span>
+      <div id="plant-switch" class="segmented" role="radiogroup" aria-labelledby="plant-caption"></div>
+    </div>
+    <div class="tb-cell">
+      <span class="field-label" id="held-caption"></span>
+      <span class="tb-value mono" id="held-value"></span>
+    </div>
+    <div class="tb-cell" id="spend-cell">
+      <span class="field-label" id="spend-caption"></span>
+      <span class="tb-value mono" id="spend-value"></span>
+    </div>
+    <div class="tb-menu">
+      <button id="menu-toggle" type="button" class="icon-button menu-toggle" aria-expanded="false"
+              aria-controls="tools">&#8943;</button>
+      <div id="tools" class="tools">
+        <button id="intro-open" type="button" class="text-button" aria-pressed="true"></button>
+        <button id="theme-toggle" type="button" class="icon-button"></button>
+      </div>
+    </div>
+  </header>
+
   <main class="layout">
-    <!-- Left: the drawing set in the browser's own PDF viewer. -->
+    <!-- Left: the drawing set in the browser's own PDF viewer (the paper stays white). -->
     <section class="drawings" aria-label="Drawings">
       <div class="drawings-bar">
         <label for="dwg-input" id="dwg-label"></label>
         <input id="dwg-input" type="text" size="6" autocomplete="off">
-        <button id="dwg-go" type="button"></button>
-        <span id="dwg-message" class="hint"></span>
+        <button id="dwg-go" type="button" class="text-button"></button>
+        <span id="dwg-message" class="hint" role="status"></span>
       </div>
       <div id="pdf-host" class="pdf-host"></div>
     </section>
 
-    <!-- Right: corpus, question, answer. -->
+    <!-- Right: what this is, the plant load, the question, the answer. -->
     <section class="panel" aria-label="Question and answer">
-      <h1 id="title"></h1>
-      <div id="status-line" class="hint"></div>
+      <aside id="intro" class="intro"></aside>
 
-      <div class="field">
-        <label for="corpus-select" id="corpus-label"></label>
-        <select id="corpus-select"></select>
-        <span id="corpus-state" class="hint"></span>
+      <div id="plant-phase" class="phase" role="status">
+        <span id="plant-phase-text"></span>
+        <div id="plant-phase-bar" class="bar" hidden></div>
       </div>
+      <div id="store-notice" class="notice" role="status" hidden></div>
+      <div id="corpus-state" class="hint" hidden></div>
 
-      <div id="plant-line" class="hint"></div>
-
-      <div class="field">
-        <label for="benchmark-select" id="benchmark-label"></label>
-        <select id="benchmark-select"></select>
-      </div>
-
-      <div class="field">
-        <label for="question-text" id="question-label"></label>
+      <div class="ask">
+        <label for="question-text" id="question-label" class="field-label"></label>
         <textarea id="question-text" rows="3"></textarea>
+        <div id="ask-bar" class="bar" hidden></div>
+        <div class="ask-row">
+          <button id="ask-button" type="button" class="primary"></button>
+          <span id="ask-status" class="hint" role="status"></span>
+          <span id="ask-keys" class="hint ask-keys"></span>
+        </div>
+        <div id="message" class="message" role="alert" hidden></div>
       </div>
 
-      <div class="field row">
-        <label for="answer-type" id="answer-type-label"></label>
-        <select id="answer-type"></select>
-        <button id="ask-button" type="button" class="primary"></button>
-        <span id="timer" class="timer"></span>
-      </div>
+      <details id="examples" class="examples" open>
+        <summary id="examples-summary"></summary>
+        <div id="examples-list"></div>
+      </details>
 
-      <div id="message" class="message" hidden></div>
-      <div id="result"></div>
+      <div id="result" aria-live="polite"></div>
     </section>
   </main>
 
-  <script src="/static/strings.js"></script>
-  <script src="/static/app.js"></script>
+  <script type="module" src="/static/app.js"></script>
 </body>
 </html>
