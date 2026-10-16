@@ -16,6 +16,7 @@ from plantgraph.demo.app.api_models import (
     AskRequest,
     CorpusStatus,
     JobStatus,
+    PlantStatus,
     QuestionSummary,
 )
 from plantgraph.demo.app.config import DemoConfig, DemoCorpus, resolve_policy
@@ -25,6 +26,12 @@ from plantgraph.demo.app.jobs import Job, run_job
 from plantgraph.demo.app.live_cascades import NO_API_KEY, NoApiKey
 from plantgraph.demo.app.models import CostEstimate
 from plantgraph.demo.app.spend import SessionSpend
+from plantgraph.demo.app.store_loader import (
+    PlantSwitcher,
+    PlantTracker,
+    recorded_load_seconds,
+    switch_plant_from_env,
+)
 from plantgraph.demo.app.store_probe import HeldCorporaProbe, held_corpus_ids_from_env
 from plantgraph.demo.app.topics import topic_of
 from plantgraph.qa.cascade.models import CascadePolicy
@@ -44,6 +51,10 @@ class CorpusNotReady(RuntimeError):
 
 class Busy(RuntimeError):
     """A question is already running; the demo answers one at a time."""
+
+
+class PlantNotLoaded(RuntimeError):
+    """The graph database does not hold the asked plant; the visitor must select it first."""
 
 
 class UnknownJob(LookupError):
@@ -73,6 +84,9 @@ class AppState:
         policy: CascadePolicy,
         session: SessionSpend,
         loader: CorpusLoadFn,
+        *,
+        held_corpora_probe: HeldCorporaProbe = held_corpus_ids_from_env,
+        plant_switcher: PlantSwitcher = switch_plant_from_env,
     ) -> None:
         self.config = config
         self.policy = policy
@@ -80,7 +94,10 @@ class AppState:
         self._loader = loader
         self._slots = {c.corpus_id: _Slot() for c in config.corpora}
         self._jobs: dict[str, Job] = {}
+        # one lock for asks and plant switches: neither can start while the other runs
         self._busy = threading.Lock()
+        self._plant_switcher = plant_switcher
+        self._plants = PlantTracker(held_corpora_probe, _recorded_load_seconds(config))
 
     # --- loading -------------------------------------------------------------------------
 
@@ -91,7 +108,11 @@ class AppState:
         return thread
 
     def load_all(self) -> None:
-        """Load every configured corpus; a failure is recorded on its slot, not raised."""
+        """Read which plant the database holds, then load every configured corpus.
+
+        A failure is recorded on the corpus's slot, not raised.
+        """
+        self._plants.refresh_held()
         for corpus in self.config.corpora:
             self._load_one(corpus)
 
@@ -131,7 +152,12 @@ class AppState:
             policy_tiers=tuple(t.name for t in self.policy.tiers),
             cutoff_s=self.config.question_deadline_s,
             spend=self.session.status(),
+            plant=self._plants.status(),
         )
+
+    def plant_status(self) -> PlantStatus:
+        """The plant switch: what the database holds, a running load, the last timing."""
+        return self._plants.status()
 
     def _corpus_status(self, corpus: DemoCorpus) -> CorpusStatus:
         slot, loaded = self._slots[corpus.corpus_id], self._slots[corpus.corpus_id].loaded
@@ -190,7 +216,13 @@ class AppState:
         corpus = self.ready_corpus(request.corpus_id)
         asked = asked_question(corpus, request)
         if not self._busy.acquire(blocking=False):
-            raise Busy("a question is already running; wait for it to finish")
+            raise Busy("a question or a plant switch is running; wait for it to finish")
+        if not self._store_allows(corpus):
+            self._busy.release()
+            raise PlantNotLoaded(
+                f"expected {corpus.config.corpus_id} in the graph database, "
+                f"found {list(self._plants.status().held)}; select the plant to load it"
+            )
         job = Job()
         self._jobs[job.job_id] = job
         threading.Thread(
@@ -203,6 +235,59 @@ class AppState:
             run_job(job, corpus, asked, self.session)
         finally:
             self._busy.release()
+
+    def _store_allows(self, corpus: LoadedCorpus) -> bool:
+        """A corpus whose policy has a database step needs its plant in the database."""
+        if corpus.source.store.kind == "not_needed":
+            return True
+        return self._plants.holds(corpus.config.corpus_id)
+
+    # --- the plant switch ----------------------------------------------------------------
+
+    def start_plant_switch(self, corpus_id: str) -> PlantStatus:
+        """Load `corpus_id` into the graph database on a worker thread (a no-op if it is there).
+
+        Raises:
+            UnknownCorpus, CorpusNotReady: the plan comes from a loaded corpus.
+            Busy: a question or another switch is running.
+        """
+        corpus = self.ready_corpus(corpus_id)
+        if self._plants.only_holds(corpus_id):
+            return self._plants.status()
+        if not self._busy.acquire(blocking=False):
+            raise Busy("a question or a plant switch is running; wait for it to finish")
+        self._plants.begin(corpus_id)
+        threading.Thread(
+            target=self._switch_work, args=(corpus,), name="plant-switch", daemon=True
+        ).start()
+        return self._plants.status()
+
+    def _switch_work(self, corpus: LoadedCorpus) -> None:
+        try:
+            self._plants.run(corpus.config.corpus_id, corpus.load_plan, self._plant_switcher)
+            self.reopen_cascades()
+        finally:
+            self._plants.end()
+            self._busy.release()
+
+    def reopen_cascades(self) -> None:
+        """Reopen every loaded corpus's cascade, so each sees the database as it is now.
+
+        The chosen plant gets its database step back; the wiped plant's old Cypher source (which
+        would read an emptied database) is replaced by one opened against the new contents, which
+        leaves that plant on the agent step only.
+        """
+        for slot in self._slots.values():
+            if slot.loaded is not None:
+                self._reopen_one(slot, slot.loaded)
+
+    def _reopen_one(self, slot: _Slot, loaded: LoadedCorpus) -> None:
+        try:
+            loaded.source = loaded.source.reopen()
+        except Exception as error:  # the old cascade is closed; the plant cannot answer now
+            _LOG.exception("reopening the %s cascade failed", loaded.config.corpus_id)
+            slot.message = f"{type(error).__name__}: {error}"
+            slot.loaded, slot.state = None, "error"
 
     def job_status(self, job_id: str) -> JobStatus:
         """The job's status.
@@ -223,6 +308,7 @@ def build_app_state(
     cypher_source_factory: CypherSourceFactory = open_checked_neo4j_view,
     http_client: httpx2.Client | None = None,
     held_corpora_probe: HeldCorporaProbe = held_corpus_ids_from_env,
+    plant_switcher: PlantSwitcher = switch_plant_from_env,
 ) -> AppState:
     """Wire a real app: policy, spend guard and the corpus loader. Every ask is live.
 
@@ -244,7 +330,20 @@ def build_app_state(
         http_client=http_client,
         held_corpora_probe=held_corpora_probe,
     )
-    return AppState(config, policy, session, loader)
+    return AppState(
+        config,
+        policy,
+        session,
+        loader,
+        held_corpora_probe=held_corpora_probe,
+        plant_switcher=plant_switcher,
+    )
+
+
+def _recorded_load_seconds(config: DemoConfig) -> dict[str, float]:
+    """Each plant's load seconds from its ingest record: the page's first "last time"."""
+    recorded = {c.corpus_id: recorded_load_seconds(c.ingest_json) for c in config.corpora}
+    return {corpus_id: seconds for corpus_id, seconds in recorded.items() if seconds is not None}
 
 
 def _estimate(policy: CascadePolicy, corpus: DemoCorpus) -> CostEstimate:

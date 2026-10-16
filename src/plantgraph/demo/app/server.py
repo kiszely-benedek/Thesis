@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Response
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -19,6 +19,8 @@ from plantgraph.demo.app.api_models import (
     AskRequest,
     BenchmarkView,
     JobStatus,
+    PlantRequest,
+    PlantStatus,
     QuestionSummary,
 )
 from plantgraph.demo.app.corpus_runtime import read_drawing_index
@@ -27,9 +29,11 @@ from plantgraph.demo.app.state import (
     AppState,
     Busy,
     CorpusNotReady,
+    PlantNotLoaded,
     UnknownCorpus,
     UnknownJob,
 )
+from plantgraph.demo.app.store_loader import PLANT_LOAD_FAILED
 from plantgraph.demo.drawing.models import DrawingIndex
 
 #: The server listens on this address only: the demo is never reachable from another machine.
@@ -44,14 +48,16 @@ _ERROR_OF: dict[type[Exception], tuple[int, str]] = {
     UnknownBenchmarkQuestion: (404, "unknown_question"),
     CorpusNotReady: (409, "corpus_not_ready"),
     Busy: (409, "busy"),
+    PlantNotLoaded: (409, "plant_not_loaded"),
 }
 #: The code of a missing page, PDF or drawing-index file (not an `_ERROR_OF` exception).
 MISSING_FILE = "missing_file"
-#: Every code the API can send (`no_api_key` arrives as a corpus's `error_code`); the label
-#: table must have a text for each.
+#: Every code the API can send (`no_api_key` arrives as a corpus's `error_code`, `plant_load_failed`
+#: as the plant status's `error`); the label table must have a text for each.
 ERROR_CODES: frozenset[str] = frozenset(code for _, code in _ERROR_OF.values()) | {
     MISSING_FILE,
     NO_API_KEY,
+    PLANT_LOAD_FAILED,
 }
 
 
@@ -118,6 +124,17 @@ def create_app(state: AppState) -> FastAPI:
             return benchmark_view(corpus, benchmark_question(corpus, question_id))
 
         return _call(build)
+
+    @app.get("/api/plant")
+    def plant() -> PlantStatus:
+        return state.plant_status()
+
+    @app.post("/api/plant", status_code=202)
+    def switch_plant(request: PlantRequest, response: Response) -> PlantStatus:
+        status = _call(lambda: state.start_plant_switch(request.corpus_id))
+        if status.loading is None:  # the plant was already in the database: nothing was started
+            response.status_code = 200
+        return status
 
     @app.post("/api/ask")
     def ask(request: AskRequest) -> dict[str, str]:

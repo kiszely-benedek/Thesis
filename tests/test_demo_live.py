@@ -46,7 +46,7 @@ def _state(env: Env, transport: FakeTransport | None, cap: float | None = None) 
         env.config,
         session_cap_usd=cap,
         http_client=transport.as_httpx_client() if transport else None,
-        held_corpora_probe=lambda: ("D1000",),  # no real Neo4j in tests
+        held_corpora_probe=lambda: (CORPUS_ID,),  # no real Neo4j in tests
     )
     state.load_all()
     _OPENED_STATES.append(state)

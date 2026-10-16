@@ -75,12 +75,58 @@ function renderStatus() {
   $("status-line").textContent = spendText(page.status);
   const corpus = currentCorpus();
   if (corpus) $("corpus-state").textContent = corpusStateText(corpus);
+  $("plant-line").textContent = plantText(page.status.plant);
   updateAskEnabled();
+}
+
+/* ---------- the plant in the graph database ---------- */
+
+function plantText(plant) {
+  if (plant.loading) {
+    return STRINGS.plantLoading(plant.loading, plant.elapsed_s ?? 0, plant.last_load_s[plant.loading]);
+  }
+  if (plant.error) return STRINGS.plantFailed(page.corpusId);
+  if (plant.last && plant.held.includes(plant.last.corpus_id)) return STRINGS.plantLoaded(plant.last);
+  return plant.held.length ? STRINGS.plantHeld(plant.held.join(", ")) : STRINGS.plantNone;
+}
+
+/** Whether the graph database holds the selected plant (needed only when a database step exists). */
+function plantAvailable(corpus) {
+  const plant = page.status.plant;
+  if (plant.loading) return false;
+  return corpus.store?.kind === "not_needed" || plant.held.includes(corpus.corpus_id);
+}
+
+/** Selecting a plant is the load: ask the server to put it into the database, then follow it. */
+async function switchPlant(corpusId) {
+  try {
+    page.status.plant = await api("/api/plant", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ corpus_id: corpusId }),
+    });
+  } catch (error) {
+    showMessage(error.message, true);
+  }
+  renderStatus();
+  await followPlantLoad();
+}
+
+/** Poll the plant status once a second while a load runs; then refresh the corpora (their
+    tiers changed with the database) and the question list. */
+async function followPlantLoad() {
+  while (page.status.plant.loading) {
+    await new Promise((resolve) => setTimeout(resolve, POLL_MS));
+    page.status.plant = await api("/api/plant");
+    renderStatus();
+  }
+  await refreshStatus();
 }
 
 function updateAskEnabled() {
   const corpus = currentCorpus();
-  $("ask-button").disabled = page.asking || !corpus || corpus.state !== "ready";
+  const usable = corpus && corpus.state === "ready" && plantAvailable(corpus);
+  $("ask-button").disabled = page.asking || !usable;
 }
 
 async function refreshStatus() {
@@ -101,6 +147,13 @@ async function selectCorpus(corpusId) {
   renderStatus();
   api(`/api/corpora/${encodeURIComponent(corpusId)}/index`).then((index) => { page.index = index; }).catch(() => {});
   if (currentCorpus()?.state === "ready") await loadQuestions();
+}
+
+/** The visitor chose a plant in the list: show it, and load it if the database holds another. */
+async function onPlantChosen(corpusId) {
+  await selectCorpus(corpusId);
+  const plant = page.status.plant;
+  if (!plant.loading && !plant.held.includes(corpusId)) await switchPlant(corpusId);
 }
 
 async function loadQuestions() {
@@ -321,7 +374,7 @@ function setLabels() {
 function wireEvents() {
   $("dwg-go").addEventListener("click", goToDrawing);
   $("dwg-input").addEventListener("keydown", (e) => { if (e.key === "Enter") goToDrawing(); });
-  $("corpus-select").addEventListener("change", (e) => selectCorpus(e.target.value));
+  $("corpus-select").addEventListener("change", (e) => onPlantChosen(e.target.value));
   $("benchmark-select").addEventListener("change", onBenchmarkChosen);
   $("ask-button").addEventListener("click", () => ask());
 }
@@ -332,7 +385,10 @@ async function start() {
   try {
     page.status = await api("/api/status");
     renderStatus();
-    await selectCorpus(page.status.corpora[0].corpus_id);
+    // start on the plant the database holds (the server read it at start-up)
+    const held = page.status.plant.held.find((id) => page.status.corpora.some((c) => c.corpus_id === id));
+    $("corpus-select").value = held ?? page.status.corpora[0].corpus_id;
+    await selectCorpus($("corpus-select").value);
     setInterval(() => refreshStatus().catch(() => {}), STATUS_MS);
   } catch (error) {
     showMessage(error.message, true);

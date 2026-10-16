@@ -60,7 +60,7 @@
   },
   "store_states": {
     "ready": "Both steps are available.",
-    "holds_other": "The graph database currently holds plant {held}; it can hold only one plant at a time. So on this plant only the graph agent answers - this is not exactly the evaluated cascade.",
+    "holds_other": "The graph database holds plant {held}. Select a plant above to load it.",
     "empty": "The graph database is empty, so on this plant only the graph agent answers - this is not exactly the evaluated cascade.",
     "wrong_profile": "The configured ingest file was not built with the database step's profile, so on this plant only the graph agent answers.",
     "mismatch": "The plant in the graph database does not match the configured one (different counts), so on this plant only the graph agent answers.",
@@ -78,7 +78,9 @@
     "unknown_job": "Unknown job; the server may have restarted in the meantime.",
     "unknown_question": "Unknown example question for this plant.",
     "corpus_not_ready": "The plant is still loading, or loading it failed.",
-    "busy": "A question is already running; wait for it to finish.",
+    "busy": "A question or a plant switch is already running; wait for it to finish.",
+    "plant_not_loaded": "This plant is not in the graph database. Select it above to load it first.",
+    "plant_load_failed": "Loading this plant into the graph database failed.",
     "missing_file": "A file is missing on the server.",
     "no_api_key": "The demo has no model API key, so it cannot answer."
   },

@@ -27,6 +27,15 @@ const STRINGS = {
   answerType: "Answer type",
   ask: "Ask",
   stateLabels: { waiting: "waiting to load", loading: "loading...", ready: "ready", error: "error" },
+  plantHeld: (id) => `The graph database holds plant ${id}.`,
+  plantNone: "The graph database holds no plant. Select a plant to load it.",
+  plantLoading: (id, s, last) =>
+    `Loading ${id} into the graph database... ${s.toFixed(1)} s` +
+    (last === undefined ? "" : ` (last time ${last.toFixed(1)} s)`),
+  plantLoaded: (load) =>
+    `${load.corpus_id} loaded in ${load.load_s.toFixed(1)} s` +
+    (load.wiped.length ? ` (${load.wiped.join(", ")} wiped in ${load.wipe_s.toFixed(1)} s)` : ""),
+  plantFailed: (id) => `Loading ${id} into the graph database failed.`,
   noPdf: "no drawing PDF",
   noTier1: "the database step is not available, only step 2 answers",
   spend: (spent, cap) => `Session spend: ${spent} / limit ${cap}`,

@@ -126,7 +126,7 @@ def make_client(env: Env) -> Iterator[Client]:
             env.config,
             session_cap_usd=cap,
             http_client=(transport or scripted_transport()).as_httpx_client(),
-            held_corpora_probe=lambda: ("D1000",),  # no real Neo4j in tests
+            held_corpora_probe=lambda: (CORPUS_ID,),  # no real Neo4j in tests
         )
         states.append(state)
         if load:

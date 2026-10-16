@@ -29,6 +29,7 @@ from plantgraph.qa.harness.run_dir import RunDir
 from plantgraph.qa.harness.spend_cap import SpendGuard
 from plantgraph.qa.models import Question
 from plantgraph.qa.plant_api.item_graph import ItemGraph, build_item_graph
+from plantgraph.store.neo4j_plan import LoadPlan
 
 
 @dataclass
@@ -43,6 +44,8 @@ class LoadedCorpus:
     recorded: dict[str, tuple[RecordedAnswer, ...]]
     gold: GoldScoring
     source: CascadeSource
+    #: The plant-profile plan that loads this corpus into the graph database.
+    load_plan: LoadPlan
 
 
 #: Turns a corpus entry of the config into a loaded corpus; tests pass their own.
@@ -110,6 +113,7 @@ class CorpusLoader:
             if plant is not None
             else GoldScoring(frozenset(), frozenset()),
             source=source,
+            load_plan=artifacts.load_plan,
         )
 
 

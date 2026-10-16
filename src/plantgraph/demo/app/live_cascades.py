@@ -79,6 +79,14 @@ class CascadeSource(Protocol):
         """Close the cascade and delete its cache file."""
         ...
 
+    def reopen(self) -> CascadeSource:
+        """Close this cascade and open a fresh one from the same settings.
+
+        Needed after the database's plant changed: a Cypher tier opened earlier still points at
+        the old contents, and the tier list depends on what the database holds.
+        """
+        ...
+
 
 @dataclass(frozen=True)
 class LiveSettings:
@@ -122,6 +130,7 @@ class LiveCascadeFactory:
             NoApiKey: no model key and no injected transport.
         """
         _require_api_key(settings.http_client)
+        self._settings = settings
         probe = _StoreProbe(settings.cypher_source_factory)
         self._cache_dir = Path(tempfile.mkdtemp(prefix="plantgraph-demo-"))
         self.cache_file = self._cache_dir / f"{settings.corpus_id}.sqlite"
@@ -166,6 +175,11 @@ class LiveCascadeFactory:
             return
         self._opened.close()
         shutil.rmtree(self._cache_dir)
+
+    def reopen(self) -> LiveCascadeFactory:
+        """Close this cascade, then open a new one (the old one holds the database connection)."""
+        self.close()
+        return LiveCascadeFactory(self._settings)
 
 
 def _open(settings: LiveSettings, factory: CypherSourceFactory, cache_file: Path) -> OpenedCascade:

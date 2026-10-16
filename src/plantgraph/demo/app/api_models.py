@@ -140,6 +140,46 @@ class CorpusStatus(BaseModel):
     error_code: str | None = None
 
 
+class PlantRequest(BaseModel):
+    """The plant to load into the graph database."""
+
+    model_config = ConfigDict(frozen=True)
+
+    corpus_id: str
+
+
+class PlantLoad(BaseModel):
+    """One finished plant switch with its measured seconds."""
+
+    model_config = ConfigDict(frozen=True)
+
+    corpus_id: str
+    #: The plants that were wiped out of the database to make room.
+    wiped: tuple[str, ...]
+    wipe_s: float
+    #: The loader's own total (it includes wiping the plant's earlier copy).
+    load_s: float
+
+
+class PlantStatus(BaseModel):
+    """Which plant the graph database holds and whether a switch is running."""
+
+    model_config = ConfigDict(frozen=True)
+
+    #: What the database holds now (read at start and after every switch).
+    held: tuple[str, ...]
+    #: The plant being loaded, if a switch is running.
+    loading: str | None
+    #: Seconds the running load has taken so far.
+    elapsed_s: float | None
+    #: The last finished switch.
+    last: PlantLoad | None
+    #: Error code of a failed switch (`plant_load_failed`).
+    error: str | None
+    #: Each plant's last measured load seconds; before any switch, the ingest record's.
+    last_load_s: dict[str, float]
+
+
 class AppStatus(BaseModel):
     """What `GET /api/status` returns."""
 
@@ -151,3 +191,4 @@ class AppStatus(BaseModel):
     policy_tiers: tuple[str, ...]
     cutoff_s: float
     spend: SpendStatus
+    plant: PlantStatus
