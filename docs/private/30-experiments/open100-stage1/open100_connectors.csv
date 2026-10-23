@@ -1,0 +1,97 @@
+key,side,target,grid_cell,service,line_number,fate,partner,note
+0:inlet/outlet79,right,PID-180-1,,ES,SIZE-ES-140083-SPEC-HC-X,paired (line_number),4:inlet/outlet43,"eltérő előtag (ES/ESS), azonos szám; a 140083 a 0. lapon még egyszer előfordul FWS-140083 alakban (0/84, más cső) — itt a lap-kölcsönösség (0→180-1, 4→140-1) dönt, a szám csak megerősít"
+0:inlet/outlet80,right,PID-240-1,,TBS,SIZE-MSS-140076-SPEC-HC-X,dangling,,target sheet not present in corpus (Turbine System)
+0:inlet/outlet81,right,PID-240-1,,TBS,SIZE-MSS-140077-SPEC-HC-X,dangling,,target sheet not present in corpus (Turbine System)
+0:inlet/outlet82,right,PID-190-1,,HPD,SIZE-HPSD-140082-SPEC-HC-X,dangling,,target sheet not present in corpus (High Pressure Steam Drains)
+0:inlet/outlet83,right,PID-150-1,,ACC,SIZE-MSS-140081-SPEC-HC-X,paired (grid_mutual),1:inlet/outlet3,"1/3 nem mutat line-t; csak a kölcsönös lap-hivatkozás (0→ACC-150-1, 1→MSS-140-1) igazolja. 1/3 E-1-et mond, 0/83 a D sorban ül (jobb szél) — egy sorral eltér"
+0:inlet/outlet84,right,PID-170-1,,FWS,SIZE-FWS-140083-SPEC-HC-X,paired (grid_mutual),3:inlet/outlet82,"eltérő line-szám, csak a lapok kölcsönös hivatkozása alapján"
+0:inlet/outlet85,right,PID-190-1,,HPD,SIZE-HPSD-140080-SPEC-HC-X,dangling,,target sheet not present in corpus (High Pressure Steam Drains)
+0:inlet/outlet86,right,PID-190-1,,HPD,SIZE-HPSD-140079-SPEC-HC-X,dangling,,target sheet not present in corpus (High Pressure Steam Drains)
+0:inlet/outlet87,right,PID-190-1,,HPD,SIZE-HPSD-140078-SPEC-HC-X,dangling,,target sheet not present in corpus (High Pressure Steam Drains)
+1:inlet/outlet3,left,PID-140-1,E-1,MSS,,paired (grid_mutual),0:inlet/outlet83,"1/3 nem mutat line-t; csak a kölcsönös lap-hivatkozás (0→ACC-150-1, 1→MSS-140-1) igazolja. 1/3 E-1-et mond, 0/83 a D sorban ül (jobb szél) — egy sorral eltér"
+1:inlet/outlet5,left,PID-160-1,,CND,SIZE-ACC-150098-SPEC-HC-X,unresolved,,"a DETAIL A SECTION VIEW-ban áll: ugyanaz az LCV 1501 + LIT 25094A/B csomópont, mint 1/73 a fő nézetben — tehát ugyanannak a csatlakozásnak a megismételt rajza, nem második cső; a részletnézet 150098-at, a fő nézet 150104-et ír (forrásrajzi eltérés). Megoldatlan marad, mert 2/16 már 1/73 párja"
+1:inlet/outlet22,left,PID-190-1,,HPD,,dangling,,target sheet not present in corpus (High Pressure Steam Drains)
+1:inlet/outlet24,left,PID-160-1,F-1,CND,SIZE-ACC-160090-SPEC-HC-X,paired (line_number),2:inlet/outlet13,"line egyezik (160090); 1/24 F-1-et mond, de 2/13 a 2. lap BAL szélén, a G sorban ül — a rácshivatkozás itt sem sorban, sem oszlopban nem stimmel"
+1:inlet/outlet47,left,PID-250-1,,TURB,,dangling,,target sheet not present in corpus (Turbine Exhaust)
+1:inlet/outlet73,left,PID-160-1,,CND,SIZE-COND-150104-SPEC-HC-X,paired (line_number),2:inlet/outlet16,"eltérő előtag (CND/COND), azonos szám — a felhasználó találta a hiányzó line-t; 2/16 C-12-t mond, 1/73 az 1. lap bal szélén a D/E sorhatáron ül — oszlop jó, sor egy-kettővel eltér"
+2:inlet/outlet13,left,PID-150-1,,ACC,SIZE-ACC-160090-SPEC-HC-X,paired (line_number),1:inlet/outlet24,"line egyezik (160090); 1/24 F-1-et mond, de 2/13 a 2. lap BAL szélén, a G sorban ül — a rácshivatkozás itt sem sorban, sem oszlopban nem stimmel"
+2:inlet/outlet14,left,PID-170-2,E-1,FWS,SIZE-FWS-175271-SPEC-HC-X,dangling,,target sheet not present in corpus
+2:inlet/outlet15,left,PID-200-4,,WTS,SIZE-WTS-275235-SPEC-HC-X,dangling,,target sheet not present in corpus
+2:inlet/outlet16,left,PID-150-1,C-12,CND,SIZE-CND-150104-SPEC-HC-X,paired (line_number),1:inlet/outlet73,"eltérő előtag (CND/COND), azonos szám — a felhasználó találta a hiányzó line-t; 2/16 C-12-t mond, 1/73 az 1. lap bal szélén a D/E sorhatáron ül — oszlop jó, sor egy-kettővel eltér"
+2:inlet/outlet17,right,PID-240-1,E-12,ESS,SIZE-ESS-165117-SPEC-HC-X,dangling,,target sheet not present in corpus (Turbine System)
+2:inlet/outlet88,left,PID-290-1,,WWS,,dangling,,target sheet not present in corpus (Water Sample System)
+2:inlet/outlet93,right,PID-270-1,,WPS,,dangling,,target sheet not present in corpus (Waste Process System)
+2:inlet/outlet95,right,PID-240-1,,MSS,SIZE-COND-161114-SPEC-HC-X,dangling,,target sheet not present in corpus (Turbine System)
+2:inlet/outlet96,right,PID-180-1,,ESS,SIZE-ESS-165117-SPEC-HC-X,paired (line_number),4:inlet/outlet41,"a 165117 szám a dangling 2/17-en is szerepel (eltérő cél) — a szám önmagában nem egyedi itt, a cél-kölcsönösség is szükséges hozzá"
+2:inlet/outlet97,right,PID-290-1,,WSS,SIZE-WSS-167118-SPEC-HC-X,dangling,,target sheet not present in corpus (Water Sample System)
+3:inlet/outlet16,right,PID-170-2,,FWS,SIZE-FWS-161131-SPEC-HC-X,dangling,,target sheet not present in corpus
+3:inlet/outlet82,right,PID-140-1,,MSS,SIZE-MSS-170133-SPEC-HC-X,paired (grid_mutual),0:inlet/outlet84,"eltérő line-szám, csak a lapok kölcsönös hivatkozása alapján"
+3:inlet/outlet89,right,PID-290-1,,WSS,SIZE-WSS-170134-SPEC-HC-X,dangling,,target sheet not present in corpus (Water Sample System)
+4:inlet/outlet16,left,PID-260-1,,PDS,SIZE-PDS-165139-SPEC-HC-X,dangling,,target sheet not present in corpus
+4:inlet/outlet39,right,PID-190-1,,HPSD,SIZE-HPSD-166140-SPEC-HC-X,dangling,,target sheet not present in corpus (High Pressure Steam Drains)
+4:inlet/outlet41,left,PID-160-1,E-1,CND,SIZE-CND-165117-SPEC-HC-X,paired (line_number),2:inlet/outlet96,"a 165117 szám a dangling 2/17-en is szerepel (eltérő cél) — a szám önmagában nem egyedi itt, a cél-kölcsönösség is szükséges hozzá"
+4:inlet/outlet42,left,PID-200-4,,WTS,,dangling,,target sheet not present in corpus
+4:inlet/outlet43,right,PID-140-1,,MSS,SIZE-ESS-140083-SPEC-HC-X,paired (line_number),0:inlet/outlet79,"eltérő előtag (ES/ESS), azonos szám; a 140083 a 0. lapon még egyszer előfordul FWS-140083 alakban (0/84, más cső) — itt a lap-kölcsönösség (0→180-1, 4→140-1) dönt, a szám csak megerősít"
+4:inlet/outlet48,right,PID-240-1,D-1,TBS,SIZE-ESS-250137-SPEC-HC-X,dangling,,target sheet not present in corpus (Turbine System)
+4:inlet/outlet104,right,PID-240-1,E-1,TBS,SIZE-ESS-250136-SPEC-HC-X,dangling,,target sheet not present in corpus (Turbine System)
+4:inlet/outlet117,left,PID-160-1,E-1,CND,SIZE-CND-165117-SPEC-HC-X,unresolved,,"NEM duplikált észlelés: külön zászló a lap tetején (TCV 16013 felé), míg 4/41 a CND-HTR-166 N9-be megy; a forrásrajz ugyanazt a vezetékszámot nyomtatta két külön csőre — 2026-09-05-i harmadik olvasás igazolta"
+5:inlet/outlet12,right,PID-290-1,,WSS,SIZE-WS-101024-SPEC-HC-X,dangling,,target sheet not present in corpus (Water Sample System)
+5:inlet/outlet38,right,PID-120-1,,RHRS,SIZE-RHRS-100021-SPEC-HC-X,paired (line_number),11:inlet/outlet23,
+5:inlet/outlet43,right,PID-100-2,,RC,SIZE-RCS-101006-SPEC-HC-X,paired (line_number),6:inlet/outlet31,
+5:inlet/outlet45,right,PID-110-1,,CVCS,SIZE-CVCS-101022-SPEC-HC-X,paired (line_number),10:inlet/outlet196,
+5:inlet/outlet46,right,PID-100-2,,RCS,SIZE-RCS-100008-SPEC-HC-X,paired (line_number),6:inlet/outlet27,
+5:inlet/outlet47,left,PID-110-1,H-12,CVCS,SIZE-CVCS-110053-SPEC-HC-X,paired (line_number),10:inlet/outlet45,
+5:inlet/outlet49,left,PID-120-1,C-1,RHRS,SIZE-RHRS-121073-SPEC-HC-X,paired (line_number),11:inlet/outlet127,
+5:inlet/outlet54,left,PID-120-1,E-1,RHRS,SIZE-RHRS-121A072-SPEC-HC-X,paired (line_number),11:inlet/outlet18,"line egyezik; 5/54 E-1-et mond, de 11/18 az F sorban ül — a rácshivatkozás egy sorral eltér"
+5:inlet/outlet78,right,PID-100-2,,RCS,SIZE-RCS-100007-SPEC-HC-X,paired (line_number),6:inlet/outlet16,
+5:inlet/outlet86,right,PID-290-1,,WSS,SIZE-WSS-100023-SPEC-HC-X,dangling,,target sheet not present in corpus (Water Sample System)
+5:inlet/outlet114,left,PID-110-1,G-12,CVCS,SIZE-CVCS-115C049-SPEC-HC-X,paired (line_number),10:inlet/outlet14,"line egyezik és 5/114 G-12 rácsmezője pontosan 10/14 helye; DE 10/14 saját felirata PID 120-1 (RHR), nem 100-1 — forrásrajzi ellentmondás, két független jel a felirat egy jele ellen"
+5:inlet/outlet124,left,PID-120-1,D-1,RHRS,SPEC-RHRS-121A065-SPEC-HC-X,paired (line_number),11:inlet/outlet109,"valós elgépelés: 'SPEC-' a 'SIZE-' helyett, mindkét oldalon; 11/109 az E/D sorhatáron ül, 5/124 D-1-et mond — rendben"
+6:inlet/outlet16,left,PID-100-1,G-1,RCS,SIZE-RCS-100007-SPEC-HC-X,paired (line_number),5:inlet/outlet78,
+6:inlet/outlet27,left,PID-100-1,C-1,RCS,SIZE-RCS-100008-SPEC-HC-X,paired (line_number),5:inlet/outlet46,
+6:inlet/outlet28,right,PID-210-2,C-1,ACW,SIZE-ACW-211158-SPEC-HC-X,paired (line_number),8:inlet/outlet13,211158 mindkét oldalon közvetlenül olvasva (2026-09-05)
+6:inlet/outlet30,right,PID-210-2,C-1,ACW,SIZE-ACW-211157-SPEC-HC-X,paired (line_number),8:inlet/outlet12,
+6:inlet/outlet31,left,PID-100-1,D-1,RCS,SIZE-RCS-101006-SPEC-HC-X,paired (line_number),5:inlet/outlet43,
+6:inlet/outlet40,right,PID-210-2,,ACW,SIZE-ACW-102160-SPEC-HC-X,paired (line_number),8:inlet/outlet31,mindkét oldalon SIZE-ACW-102160-SPEC-HC-X — a 6/40 oldali line-t egy független Opus-újraolvasás találta meg egy szélesebb kivágáson; korábban service_direction volt
+6:inlet/outlet41,right,PID-210-2,,ACW,,paired (service_direction),8:inlet/outlet32,"kizárásos párosítás, line nem olvasható egyik oldalon sem — egy független Opus-újraolvasás is megerősítette, hogy 6/41-en nincs line"
+6:inlet/outlet68,right,PID-320-1,,RWS,SIZE-RWS-104025-SPEC-HC-X,dangling,,target sheet not present in corpus (Rad Waste / Chemical Addition System)
+6:inlet/outlet69,right,PID-130-1,,SWS,SIZE-SWS-132172-SPEC-HC-X,dangling,,target sheet not present in corpus (Service Water System)
+6:inlet/outlet71,right,PID-320-1,,RWS,,dangling,,target sheet not present in corpus (Rad Waste / Chemical Addition System)
+7:inlet/outlet30,right,PID-170-2,,FWS,SIZE-ACW-175271-SPEC-HC-X,dangling,,target sheet not present in corpus
+7:inlet/outlet31,right,PID-170-2,,FWS,SIZE-ACW-211270-SPEC-HC-X,dangling,,target sheet not present in corpus
+7:inlet/outlet32,right,PID-240-1,,TBS,SIZE-ACW-250261-SPEC-HC-X,dangling,,target sheet not present in corpus (Turbine System)
+7:inlet/outlet33,right,PID-210-2,F-1,ACW,SIZE-FWS-175271-SPEC-HC-X,paired (service_direction),8:inlet/outlet54,"kizárásos párosítás 2026-09-05: 7/33 az egyetlen szabad, 210-2-ről bejövő zászló a 7. lapon, 8/54 az egyetlen 210-1-re kimenő a 8. lapon; a line-ok nem egyeznek (FWS-175271 vs. a fejvezeték 111156-ja), és 7/33 (F-1) rácsmezője a fejvezeték MÁSIK végére (8/5) mutat — a forrásrajz önmagának mond ellent, ezért a leggyengébb fokozat"
+7:inlet/outlet34,left,PID-160-1,,WTS,,unresolved,,"a zászló WTS PID 160-1 / MAKE-UP WATER; a 160-as lapon (2. lap) nincs 210-re mutató zászló, és minden más MAKE-UP WATER zászló a WTS PID 200-x rajzra hivatkozik — valószínűleg elírt rajzszám (200 helyett 160). A 'FCV XXX' helykitöltő is jelzi, hogy a rajz itt befejezetlen. Nem feloldható, megoldatlan marad"
+7:inlet/outlet35,left,,,,,unresolved,,"olvashatatlan kivágás; a doboz szokatlanul keskeny (~17px) — talán tévesen észlelt csomópont; egy független Opus-újraolvasás is megerősítette: nem csatlakozó, hanem egy fúvóka/karima jel szöveg nélkül"
+7:inlet/outlet75,right,PID-210-2,,ACW,SIZE-ACW-211152-SPEC-HC-X,paired (line_number),8:inlet/outlet7,mindkét oldalon SIZE-ACW-211152-SPEC-HC-X — egy független Opus-újraolvasás találta; a korábbi (gyenge) 8/54-7/75 párosítást lecseréli
+7:inlet/outlet76,right,PID-250-1,,TBS,SIZE-ACW-211153-SPEC-HC-X,dangling,,target sheet not present in corpus (Turbine Exhaust)
+8:inlet/outlet5,right,PID-130-1,,SWS,SIZE-ACW-111162-SPEC-HC-X,dangling,,target sheet not present in corpus (Service Water System)
+8:inlet/outlet6,right,PID-130-1,,SWS,SIZE-SWS-130182-SPEC-HC-X,dangling,,target sheet not present in corpus (Service Water System)
+8:inlet/outlet7,left,PID-210-1,A-1,ACW,SIZE-ACW-211152-SPEC-HC-X,paired (line_number),7:inlet/outlet75,mindkét oldalon SIZE-ACW-211152-SPEC-HC-X — egy független Opus-újraolvasás találta; a korábbi (gyenge) 8/54-7/75 párosítást lecseréli
+8:inlet/outlet12,right,PID-100-2,,RCS,SIZE-ACW-211157-SPEC-HC-X,paired (line_number),6:inlet/outlet30,
+8:inlet/outlet13,right,PID-100-2,,RCS,SIZE-ACW-211158-SPEC-HC-X,paired (line_number),6:inlet/outlet28,211158 mindkét oldalon közvetlenül olvasva (2026-09-05)
+8:inlet/outlet15,right,PID-130-1,,SWS,SIZE-ACS-102163-SPEC-HC-X,dangling,,target sheet not present in corpus (Service Water System)
+8:inlet/outlet16,right,PID-270-1,,WPS,SIZE-ACW-111164-SPEC-HC-X,dangling,,target sheet not present in corpus (Waste Process System)
+8:inlet/outlet17,right,PID-130-1,,SWS,SIZE-SWS-132181-SPEC-HC-X,dangling,,target sheet not present in corpus (Service Water System)
+8:inlet/outlet31,right,PID-100-2,C-1,RCS,SIZE-ACW-102160-SPEC-HC-X,paired (line_number),6:inlet/outlet40,mindkét oldalon SIZE-ACW-102160-SPEC-HC-X — a 6/40 oldali line-t egy független Opus-újraolvasás találta meg egy szélesebb kivágáson; korábban service_direction volt
+8:inlet/outlet32,right,PID-100-2,A-4,RCS,SIZE-ACW-102161-SPEC-HC-X,paired (service_direction),6:inlet/outlet41,"kizárásos párosítás, line nem olvasható egyik oldalon sem — egy független Opus-újraolvasás is megerősítette, hogy 6/41-en nincs line"
+8:inlet/outlet54,left,PID-210-1,,ACW,,paired (service_direction),7:inlet/outlet33,"kizárásos párosítás 2026-09-05: 7/33 az egyetlen szabad, 210-2-ről bejövő zászló a 7. lapon, 8/54 az egyetlen 210-1-re kimenő a 8. lapon; a line-ok nem egyeznek (FWS-175271 vs. a fejvezeték 111156-ja), és 7/33 (F-1) rácsmezője a fejvezeték MÁSIK végére (8/5) mutat — a forrásrajz önmagának mond ellent, ezért a leggyengébb fokozat"
+9:inlet/outlet2,left,PID-120-1,,RHR,,unresolved,,"egyirányú hivatkozás: a 9. lap (RHR 120-2) erre és 9/59-re hivatkozik a 120-1-es lapra, de a 11. lap (120-1) egyetlen zászlója sem hivatkozik vissza a 120-2-re — a 9. lap gyűjtő/osztó fejvezetékei (minden műszer XXX) a másik oldalon nincsenek megrajzolva. Nincs mit párosítani"
+9:inlet/outlet59,left,PID-120-1,,RHR,,unresolved,,"ugyanaz, mint 9/2 — egyirányú hivatkozás, a 11. lapon nincs visszamutató zászló"
+10:inlet/outlet14,left,PID-120-1,,RHR,SIZE-CVCS-115C049-SPEC-HC-X,paired (line_number),5:inlet/outlet114,"line egyezik és 5/114 G-12 rácsmezője pontosan 10/14 helye; DE 10/14 saját felirata PID 120-1 (RHR), nem 100-1 — forrásrajzi ellentmondás, két független jel a felirat egy jele ellen"
+10:inlet/outlet15,left,PID-270-1,,WPS,SIZE-WPS-116050-SPEC-HC-X,dangling,,target sheet not present in corpus (Waste Process System)
+10:inlet/outlet16,left,PID-320-1,,RWS,SIZE-RWS-116055-SPEC-HC-X,dangling,,target sheet not present in corpus (Rad Waste / Chemical Addition System)
+10:inlet/outlet24,left,PID-120-1,C-1,RHRS,SIZE-RHRS-121071-SPEC-HC-X,paired (line_number),11:inlet/outlet118,"line egyezik; 10/24 C-1-et mond, de 11/118 a D sorban ül — a rácshivatkozás egy sorral eltér"
+10:inlet/outlet45,left,PID-100-1,,RCS,SIZE-CVCS-110053-SPEC-HC-X,paired (line_number),5:inlet/outlet47,
+10:inlet/outlet94,left,PID-320-1,,CAS,,dangling,,target sheet not present in corpus (Rad Waste / Chemical Addition System)
+10:inlet/outlet149,right,PID-270-1,,WPS,SIZE-WPS-111058-SPEC-HC-X,dangling,,target sheet not present in corpus (Waste Process System)
+10:inlet/outlet193,left,PID-300-1,,,,dangling,,target sheet not present in corpus (Make-Up Water)
+10:inlet/outlet195,left,PID-320-1,,RWS,SIZE-RWS-116052-SPEC-HC-X,dangling,,target sheet not present in corpus (Rad Waste / Chemical Addition System)
+10:inlet/outlet196,left,PID-100-1,C-1,RCS,SIZE-CVCS-101022-SPEC-HC-X,paired (line_number),5:inlet/outlet45,
+11:inlet/outlet18,right,PID-100-1,,RCS,SIZE-RHRS-121A072-SPEC-HC-X,paired (line_number),5:inlet/outlet54,"line egyezik; 5/54 E-1-et mond, de 11/18 az F sorban ül — a rácshivatkozás egy sorral eltér"
+11:inlet/outlet22,left,,,,,unresolved,,"'REACTOR WATER SERVICE TANK' — berendezésnév, nincs P&ID-hivatkozás a feliraton. 2026-09-05: mind a 12 lap berendezés-jegyzékét (alsó sáv) átnéztük, ilyen nevű tartály egyiken sincs — a tartály a korpuszon kívül van, de rajzszám nélkül nem tudjuk, melyik lapon"
+11:inlet/outlet23,left,PID-100-1,H-1,RCS,SIZE-RHRS-100021-SPEC-HC-X,paired (line_number),5:inlet/outlet38,
+11:inlet/outlet109,right,PID-100-1,,RCS,SPEC-RHRS-121A065-SPEC-HC-X,paired (line_number),5:inlet/outlet124,"valós elgépelés: 'SPEC-' a 'SIZE-' helyett, mindkét oldalon; 11/109 az E/D sorhatáron ül, 5/124 D-1-et mond — rendben"
+11:inlet/outlet118,right,PID-110-1,,CVCS,SIZE-RHRS-121071-SPEC-HC-X,paired (line_number),10:inlet/outlet24,"line egyezik; 10/24 C-1-et mond, de 11/118 a D sorban ül — a rácshivatkozás egy sorral eltér"
+11:inlet/outlet127,right,PID-100-1,,RCS,SIZE-RHRS-121073-SPEC-HC-X,paired (line_number),5:inlet/outlet49,
+11:inlet/outlet128,left,PID-110-1,,CVCS,,unresolved,,sheet10 egyetlen szabad kimenő csatlakozója sem illik ide

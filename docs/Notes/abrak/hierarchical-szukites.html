@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hierarchical szűkítés</title>
+<style>
+  :root {
+    --bg: #fafaf7; --ink: #1d1d1b; --muted: #6b6b66; --sheet: #ffffff; --sheet-line: #b9b9b2;
+    --anchor: #c2410c; --route: #2563eb; --ring: #9ca3af; --item: #d6d3cc; --cut: #dc2626; --keep: #16a34a;
+  }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 system-ui, sans-serif; }
+  main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  h2 { font-size: 17px; margin: 28px 0 4px; }
+  p { margin: 4px 0 10px; max-width: 80ch; }
+  .note { color: var(--muted); font-size: 13px; }
+  .panel { background: #fff; border: 1px solid #e3e2dc; border-radius: 10px; padding: 12px; margin-top: 8px; }
+  svg { width: 100%; height: auto; display: block; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; margin-right: 16px; font-size: 13px; }
+  .sw { width: 14px; height: 14px; border-radius: 3px; display: inline-block; }
+  .bar { height: 18px; border-radius: 4px; display: inline-block; vertical-align: middle; }
+  table { border-collapse: collapse; font-size: 14px; margin-top: 6px; }
+  td, th { padding: 4px 10px; border-bottom: 1px solid #eee; text-align: left; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Hierarchical: mi kerül a promptba, ha túl sok lenne?</h1>
+  <p>Példa-kérdés: <b>„Kövesd az útvonalat a P-1-1 szivattyútól a T-5-2 tartályig.”</b>
+     A P-1-1 az A lapon, a T-5-2 az E lapon van; köztük a cső a B, C, D lapokon fut át.
+     Az ábra sematikus (nem valódi lapok), hogy a két módszer különbsége látszódjon.</p>
+  <div class="legend">
+    <span><i class="sw" style="background:var(--anchor)"></i>horgony-lap (a kérdésben szereplő elem lapja)</span>
+    <span><i class="sw" style="background:var(--route)"></i>útvonal-lap (amin a cső átfut)</span>
+    <span><i class="sw" style="background:var(--ring)"></i>szomszéd lap („gyűrű”)</span>
+    <span><i class="sw" style="background:var(--item)"></i>egyéb elem a lapon</span>
+  </div>
+
+  <h2>0. Kiindulás: amit az irányítás kiválaszt</h2>
+  <p>Horgony-lapok + útvonal-lapok + (opcionálisan) a szomszédos lapok gyűrűje. Ha ez belefér a keretbe, így megy a modellhez.</p>
+  <div class="panel"><svg id="s0" viewBox="0 0 1060 330"></svg></div>
+
+  <h2>1. „Szélek levágása” (drop_rings)</h2>
+  <p>Ha túl nagy: <b>a szomszéd lapokat dobja el</b>, kívülről befelé. A horgony- és útvonal-lapok
+     <b>teljes egészükben</b> megmaradnak, minden elemükkel. Ha még így is túl nagy, akkor is elküldi
+     (és megjelöli: „túllógott”) — útvonal-lapot sosem dob el, mert akkor a válasz hiányos lenne.</p>
+  <div class="panel"><svg id="s1" viewBox="0 0 1060 330"></svg></div>
+
+  <h2>2. „Csak átmenő vonal” (through_line)</h2>
+  <p>A szomszéd lapokon túl <b>a köztes útvonal-lapokat is összenyomja</b>: a B, C, D lapról csak az
+     marad, amin a cső ténylegesen átmegy (bejövő csonk → szelepek, berendezések az úton → kimenő csonk).
+     A lap többi eleme kimarad. A horgony-lapok (A és E) teljesek maradnak. A legtávolabbi köztes lapokkal kezdi.</p>
+  <div class="panel"><svg id="s2" viewBox="0 0 1060 330"></svg></div>
+
+  <h2>Mit jelent ez a valódi mérésben? (HIER-CTX-01, H1000, 20 hosszú útvonal-kérdés)</h2>
+  <table>
+    <tr><th>Keret</th><th>Szélek levágása</th><th>Csak átmenő vonal</th></tr>
+    <tr><td>nincs keret</td><td colspan="2">azonos: medián 174 500 (lapgráf) / 209 368 (folyásirány) karakter</td></tr>
+    <tr><td>200 000 karakter</td><td>4 / 11 kérdés túllóg</td><td>mind belefér</td></tr>
+    <tr><td>100 000 karakter</td><td>18 / 19 kérdés túllóg</td><td>mind belefér (medián ~90 000)</td></tr>
+  </table>
+  <p class="note">Összehasonlításul a ContextRAG (az egész üzem) ugyanitt 16 746 349 karakter (PROMPT-04).
+     A „szélek levágása” azért lóg túl, mert hosszú útvonalon már maguk az útvonal-lapok is nagyok —
+     és azokat sosem vágja le. Az „átmenő vonal” ezeket is összenyomja, ezért marad a kereten belül.
+     A kérdés, amit a mérés eldönt: <b>elveszít-e a modell fontos információt</b>, ha a köztes lapokból csak a vonal marad?</p>
+</main>
+<script>
+const NS = "http://www.w3.org/2000/svg";
+const C = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function el(svg, tag, attrs, text) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (text !== undefined) e.textContent = text;
+  svg.appendChild(e); return e;
+}
+// sheets: id, x, y, kind
+const W = 150, H = 120;
+const sheets = [
+  {id:"A", x:20,  y:150, kind:"anchor", label:"A lap (P-1-1)"},
+  {id:"B", x:225, y:150, kind:"route",  label:"B lap"},
+  {id:"C", x:430, y:150, kind:"route",  label:"C lap"},
+  {id:"D", x:635, y:150, kind:"route",  label:"D lap"},
+  {id:"E", x:840, y:150, kind:"anchor", label:"E lap (T-5-2)"},
+  {id:"R1", x:225, y:10, kind:"ring", label:"szomszéd"},
+  {id:"R2", x:635, y:10, kind:"ring", label:"szomszéd"},
+  {id:"R3", x:430, y:10, kind:"ring", label:"szomszéd"},
+];
+// background items per sheet (relative coords)
+const filler = [[20,30],[50,95],[110,30],[125,95],[80,20],[30,70],[115,62],[70,100],[95,45]];
+// path items per sheet (relative), from left edge to right edge
+const pathPts = [[0,62],[40,60],[75,64],[110,58],[150,62]];
+
+function draw(svgId, mode) {
+  const svg = document.getElementById(svgId);
+  for (const s of sheets) {
+    const isRing = s.kind === "ring";
+    const cutRing = isRing && mode >= 1;
+    const compress = mode === 2 && s.kind === "route";
+    const stroke = s.kind === "anchor" ? C("--anchor") : s.kind === "route" ? C("--route") : C("--ring");
+    el(svg, "rect", {x:s.x, y:s.y, width:W, height:H, rx:8, fill: cutRing ? "#f3f3f1" : C("--sheet"),
+      stroke: stroke, "stroke-width": cutRing ? 1.5 : 3, "stroke-dasharray": cutRing ? "6 5" : "none",
+      opacity: cutRing ? 0.55 : 1});
+    el(svg, "text", {x:s.x+8, y:s.y+18, "font-size":13, fill: cutRing ? C("--muted") : C("--ink"),
+      "font-weight":600}, s.label);
+    // filler items
+    if (!compress) {
+      for (const [fx, fy] of filler) {
+        el(svg, "circle", {cx:s.x+fx+10, cy:s.y+fy+10, r:7, fill:C("--item"), opacity: cutRing ? 0.4 : 1});
+      }
+    }
+    if (cutRing) {
+      el(svg, "line", {x1:s.x+10, y1:s.y+10, x2:s.x+W-10, y2:s.y+H-10, stroke:C("--cut"), "stroke-width":3});
+      el(svg, "line", {x1:s.x+W-10, y1:s.y+10, x2:s.x+10, y2:s.y+H-10, stroke:C("--cut"), "stroke-width":3});
+      el(svg, "text", {x:s.x+W/2, y:s.y+H+16, "text-anchor":"middle", "font-size":12, fill:C("--cut")}, "eldobva");
+    }
+    if (compress) {
+      el(svg, "text", {x:s.x+W/2, y:s.y+H-10, "text-anchor":"middle", "font-size":12, fill:C("--route")}, "csak a vonal marad");
+    }
+    // ring link to route sheet
+    if (isRing && !cutRing) {
+      el(svg, "line", {x1:s.x+W/2, y1:s.y+H, x2:s.x+W/2, y2:150, stroke:C("--ring"), "stroke-width":2, "stroke-dasharray":"3 4"});
+    }
+  }
+  // the pipe path across route sheets
+  const route = sheets.filter(s => s.kind !== "ring");
+  let pts = [];
+  route.forEach((s, i) => {
+    pathPts.forEach(([px, py], j) => {
+      if (i === 0 && j === 0) return;                 // path starts at the anchor item
+      if (i === route.length - 1 && j === pathPts.length - 1) return;
+      pts.push([s.x + px, s.y + py]);
+    });
+  });
+  el(svg, "polyline", {points: pts.map(p => p.join(",")).join(" "), fill:"none", stroke:C("--route"), "stroke-width":3});
+  route.forEach((s, i) => {
+    pathPts.forEach(([px, py], j) => {
+      const x = s.x + px, y = s.y + py;
+      const edge = j === 0 || j === pathPts.length - 1;
+      if (edge) {
+        if ((i === 0 && j === 0) || (i === route.length-1 && j === pathPts.length-1)) return;
+        el(svg, "polygon", {points:`${x-6},${y-7} ${x+6},${y} ${x-6},${y+7}`, fill:"#555"});   // off-page stub
+      } else {
+        const isAnchorItem = (i === 0 && j === 1) || (i === route.length-1 && j === pathPts.length-2);
+        el(svg, "rect", {x:x-8, y:y-8, width:16, height:16, rx:3,
+          fill: isAnchorItem ? C("--anchor") : C("--route")});
+      }
+    });
+  });
+  // anchor labels
+  el(svg, "text", {x:route[0].x+40, y:route[0].y+92, "text-anchor":"middle", "font-size":12, fill:C("--anchor"), "font-weight":600}, "P-1-1");
+  const last = route[route.length-1];
+  el(svg, "text", {x:last.x+110, y:last.y+92, "text-anchor":"middle", "font-size":12, fill:C("--anchor"), "font-weight":600}, "T-5-2");
+  // size bar
+  const sizes = [1.0, 0.72, 0.38];
+  const labels = ["teljes kiválasztás", "gyűrűk nélkül — az útvonal-lapok még mind teljesek", "gyűrűk nélkül + köztes lapokból csak a vonal"];
+  el(svg, "text", {x:20, y:302, "font-size":13, fill:C("--muted")}, "prompt mérete (sematikus):");
+  el(svg, "rect", {x:200, y:290, width: 600*sizes[mode], height:16, rx:4, fill: mode === 0 ? C("--ring") : mode === 1 ? C("--route") : C("--keep")});
+  el(svg, "text", {x:210 + 600*sizes[mode], y:303, "font-size":12, fill:C("--ink")}, labels[mode]);
+}
+draw("s0", 0); draw("s1", 1); draw("s2", 2);
+</script>
+</body>
+</html>

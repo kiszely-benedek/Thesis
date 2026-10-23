@@ -1,0 +1,6 @@
+08.09
+- Pydexpi utánanézés
+- Claude Deep-Research felének elolvasása
+- Pydantic data class
+- Lehetőség: GraphRAG vs Sima RAG; Digitalizálása a P&ID diagramoknak és betöltése a DEXPI pipeline-ba; kisebb modellek a strukturált gráf alapú inputon miért hasalnak el
+- BLEU, ROUGE metrikák félrevezetőek, mert pontos egyezést keresnek ahelyett, hogy hasonlóság alapon keresnének
