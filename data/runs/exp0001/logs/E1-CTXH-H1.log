@@ -1,0 +1,65 @@
+stopped by the spend cap; rerun with the same --run-id to resume
+run E1-CTXH-H1: 70 rows to answer, 0 already on disk
+concurrency 4: up to that many questions in flight
+paid mode: up to 70 model calls; hard spend cap 0.03 USD
+estimated cost: 1.4000 USD
+STOPPED by the spend cap: the next question (expected up to 0.020000 USD, with 0.020000 USD reserved by items in flight) could reach or pass the run's cap of 0.030000 USD; 0.000825 USD spent so far. Rerun with the same --run-id to resume.
+{
+  "run_id": "E1-CTXH-H1",
+  "n_rows": 2,
+  "n_new_rows": 2,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "context_rag": {
+      "0": {
+        "ANSWERED": 2
+      }
+    }
+  },
+  "routing_recall": {},
+  "relaxed_routing_recall": {},
+  "evidence_node_recall": {},
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {},
+    "relaxed_routing_recall": {},
+    "evidence_node_recall": {}
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "context_rag": 0.00108605
+  },
+  "stopped_by_spend_cap": true
+}
+run E1-CTXH-H1: 68 rows to answer, 2 already on disk
+concurrency 4: up to that many questions in flight
+paid mode: up to 68 model calls; hard spend cap 0.6 USD
+estimated cost: 1.3600 USD
+{
+  "run_id": "E1-CTXH-H1",
+  "n_rows": 70,
+  "n_new_rows": 68,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "context_rag": {
+      "0": {
+        "ANSWERED": 62
+      },
+      "unanswerable": {
+        "ANSWERED": 8
+      }
+    }
+  },
+  "routing_recall": {},
+  "relaxed_routing_recall": {},
+  "evidence_node_recall": {},
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {},
+    "relaxed_routing_recall": {},
+    "evidence_node_recall": {}
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "context_rag": 0.0008957910714285713
+  },
+  "stopped_by_spend_cap": false
+}

@@ -1,0 +1,43 @@
+{
+  "run_id": "DEV10-D1000",
+  "experiment": "DEV10-plant-primer",
+  "reported": false,
+  "corpora": [
+    "D1000"
+  ],
+  "strategies": {
+    "hierarchical_need_rules_plant": {
+      "route_mode": "flow_path",
+      "budget_mode": "through_line",
+      "sheet_hops": 1,
+      "max_context_chars": 100000
+    }
+  },
+  "answer_pin": {
+    "backend": "openrouter",
+    "model_id": "z-ai/glm-5.3-flash",
+    "route_provider": null,
+    "temperature": 0.0,
+    "seed": 0,
+    "max_output_tokens": 16384,
+    "extra": {}
+  },
+  "judge_pins": [],
+  "prompt_hashes": {
+    "cypher_query.txt": "c57dc50014fb79f3b8c8c65c782334fffa4ebbb4b659581e86b92b8d69af767d",
+    "final_answer.txt": "f9e22b901e45f7a38dfd85f307bf742dc6f3e4f9303ef48db77841ddf4912baf",
+    "legend_occurrence.txt": "48e48407317c96e5edc53eca64fc408fae65f62b67a652442a65e57b27ec2da6",
+    "legend_plant.txt": "3d6bf111495d7bfaa2b8371ed3e0a205e624ce7636aa8a0755d0db68ac6c2ae4",
+    "primer_pid_v1.txt": "198e62bdf4e6e6921013eae921db728ba7f6992d79d6c562fda84ae65c69a9d0",
+    "unit_router.txt": "05735b707145a84921902e06ce11711b4de1055ac6e6dec5b9582d2074df4e5a"
+  },
+  "question_set_sha256": "5fd6e584ae438daed0b44bce91ef406a6b8e243f9d62e9af4e30b0770ebeecc1",
+  "primer": true,
+  "context_wall": null,
+  "git_commit": "767329edf99d793e020b084abb4454bbea0de138",
+  "git_dirty": true,
+  "created_at": "2026-10-04T10:48:44.069689Z",
+  "repeats": 1,
+  "allow_paid_calls": true,
+  "max_spend_usd": 0.8
+}

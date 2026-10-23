@@ -1,0 +1,583 @@
+[
+ {
+  "blind_id": "B001",
+  "qid": "CP14",
+  "verdict": "wrong",
+  "reason": "CP14: path valves HV4750.01 and PV4712.02 not named",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B002",
+  "qid": "CP13",
+  "verdict": "wrong",
+  "reason": "CP13: valve tags 66KL21, 75SA21, 73KH12 missing (only C1-C4 labels)",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B003",
+  "qid": "CP15",
+  "verdict": "wrong",
+  "reason": "CP15: valve HV4750.01 not named (only 'globe valve C1')",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B005",
+  "qid": "CP13",
+  "verdict": "correct",
+  "reason": "CP13: all five tags in order (T4750, 66KL21, 75SA21, 73KH12, P4712)",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B006",
+  "qid": "CP11",
+  "verdict": "wrong",
+  "reason": "CP11: claims a bypass of H1007 (via H1008/P4712 or SV 104.01); misses the required statement that the P4711/inlet feed cannot bypass H1007",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B008",
+  "qid": "CP12",
+  "verdict": "wrong",
+  "reason": "CP12: names the valves only as C1/C4/SV 104.01; required HV4750.01 and PV4712.02 are missing",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B009",
+  "qid": "CP11",
+  "verdict": "wrong",
+  "reason": "CP11: claims a bypass of H1007 (via H1008/P4712 or SV 104.01); misses the required statement that the P4711/inlet feed cannot bypass H1007",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B010",
+  "qid": "CP13",
+  "verdict": "wrong",
+  "reason": "CP13: valve tags 66KL21, 75SA21, 73KH12 missing (only C1-C4 labels)",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B011",
+  "qid": "CP15",
+  "verdict": "wrong",
+  "reason": "CP15: valve HV4750.01 not named (only 'globe valve C1')",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B012",
+  "qid": "CP11",
+  "verdict": "wrong",
+  "reason": "CP11: claims a bypass of H1007 (via H1008/P4712 or SV 104.01); misses the required statement that the P4711/inlet feed cannot bypass H1007",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B013",
+  "qid": "CP13",
+  "verdict": "wrong",
+  "reason": "CP13: valve tags 66KL21, 75SA21, 73KH12 missing (only C1-C4 labels)",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B014",
+  "qid": "CP14",
+  "verdict": "wrong",
+  "reason": "CP14: path valves HV4750.01 and PV4712.02 not named",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B015",
+  "qid": "CP13",
+  "verdict": "wrong",
+  "reason": "CP13: valve tags 66KL21, 75SA21, 73KH12 missing (only C1-C4 labels)",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B016",
+  "qid": "CP12",
+  "verdict": "wrong",
+  "reason": "CP12: names the valves only as C1/C4/SV 104.01; required HV4750.01 and PV4712.02 are missing",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B017",
+  "qid": "CP13",
+  "verdict": "wrong",
+  "reason": "CP13: valve tags 66KL21, 75SA21, 73KH12 missing (only C1-C4 labels)",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B018",
+  "qid": "CP15",
+  "verdict": "wrong",
+  "reason": "CP15: valve HV4750.01 not named (only 'globe valve C1')",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B019",
+  "qid": "CP14",
+  "verdict": "wrong",
+  "reason": "CP14: path valves HV4750.01 and PV4712.02 not named",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B020",
+  "qid": "CP14",
+  "verdict": "wrong",
+  "reason": "CP14: path valves HV4750.01 and PV4712.02 not named",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B021",
+  "qid": "CP12",
+  "verdict": "wrong",
+  "reason": "CP12: names the valves only as C1/C4/SV 104.01; required HV4750.01 and PV4712.02 are missing",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B022",
+  "qid": "CP14",
+  "verdict": "wrong",
+  "reason": "CP14: path valves HV4750.01 and PV4712.02 not named",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B024",
+  "qid": "CP14",
+  "verdict": "wrong",
+  "reason": "CP14: path valves HV4750.01 and PV4712.02 not named",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B025",
+  "qid": "CP11",
+  "verdict": "wrong",
+  "reason": "CP11: claims a bypass of H1007 (via H1008/P4712 or SV 104.01); misses the required statement that the P4711/inlet feed cannot bypass H1007",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B026",
+  "qid": "CP14",
+  "verdict": "wrong",
+  "reason": "CP14: path valves HV4750.01 and PV4712.02 not named",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B027",
+  "qid": "CP15",
+  "verdict": "wrong",
+  "reason": "CP15: valve HV4750.01 not named (only 'globe valve C1')",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B028",
+  "qid": "CP13",
+  "verdict": "correct",
+  "reason": "CP13: all five tags in order",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B029",
+  "qid": "CP12",
+  "verdict": "wrong",
+  "reason": "CP12: names the valves only as C1/C4/SV 104.01; required HV4750.01 and PV4712.02 are missing",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B030",
+  "qid": "CP15",
+  "verdict": "wrong",
+  "reason": "CP15: valve HV4750.01 not named (only 'globe valve C1')",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B031",
+  "qid": "CP15",
+  "verdict": "wrong",
+  "reason": "CP15: valve HV4750.01 not named (only 'globe valve C1')",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B032",
+  "qid": "CP14",
+  "verdict": "wrong",
+  "reason": "CP14: path valves HV4750.01 and PV4712.02 not named",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B034",
+  "qid": "CP13",
+  "verdict": "wrong",
+  "reason": "CP13: valve tags 66KL21, 75SA21, 73KH12 missing (only C1-C4 labels)",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B036",
+  "qid": "CP11",
+  "verdict": "wrong",
+  "reason": "CP11: claims a bypass of H1007 (via H1008/P4712 or SV 104.01); misses the required statement that the P4711/inlet feed cannot bypass H1007",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B037",
+  "qid": "CP11",
+  "verdict": "wrong",
+  "reason": "CP11: claims a bypass of H1007 (via H1008/P4712 or SV 104.01); misses the required statement that the P4711/inlet feed cannot bypass H1007",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B038",
+  "qid": "CP13",
+  "verdict": "wrong",
+  "reason": "CP13: valve tags 66KL21, 75SA21, 73KH12 missing (only C1-C4 labels)",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B039",
+  "qid": "CP14",
+  "verdict": "wrong",
+  "reason": "CP14: path valves HV4750.01 and PV4712.02 not named",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B040",
+  "qid": "CP13",
+  "verdict": "wrong",
+  "reason": "CP13: valve tags 66KL21, 75SA21, 73KH12 missing (only C1-C4 labels)",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B042",
+  "qid": "CP13",
+  "verdict": "correct",
+  "reason": "CP13: all five tags in order",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B043",
+  "qid": "CP14",
+  "verdict": "wrong",
+  "reason": "CP14: path valves HV4750.01 and PV4712.02 not named",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B044",
+  "qid": "CP12",
+  "verdict": "wrong",
+  "reason": "CP12: names the valves only as C1/C4/SV 104.01; required HV4750.01 and PV4712.02 are missing",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B045",
+  "qid": "CP15",
+  "verdict": "wrong",
+  "reason": "CP15: valve HV4750.01 not named (only 'globe valve C1')",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B046",
+  "qid": "CP15",
+  "verdict": "wrong",
+  "reason": "CP15: valve HV4750.01 not named (only 'globe valve C1')",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B047",
+  "qid": "CP15",
+  "verdict": "wrong",
+  "reason": "CP15: valve HV4750.01 not named (only 'globe valve C1')",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B048",
+  "qid": "CP11",
+  "verdict": "wrong",
+  "reason": "CP11: claims a bypass of H1007 (via H1008/P4712 or SV 104.01); misses the required statement that the P4711/inlet feed cannot bypass H1007",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B049",
+  "qid": "CP14",
+  "verdict": "wrong",
+  "reason": "CP14: path valves HV4750.01 and PV4712.02 not named",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B050",
+  "qid": "CP14",
+  "verdict": "wrong",
+  "reason": "CP14: path valves HV4750.01 and PV4712.02 not named",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B051",
+  "qid": "CP11",
+  "verdict": "wrong",
+  "reason": "CP11: claims a bypass of H1007 (via H1008/P4712 or SV 104.01); misses the required statement that the P4711/inlet feed cannot bypass H1007",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B052",
+  "qid": "CP12",
+  "verdict": "wrong",
+  "reason": "CP12: names the valves only as C1/C4/SV 104.01; required HV4750.01 and PV4712.02 are missing",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B053",
+  "qid": "CP14",
+  "verdict": "wrong",
+  "reason": "CP14: path valves HV4750.01 and PV4712.02 not named",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B054",
+  "qid": "CP11",
+  "verdict": "wrong",
+  "reason": "CP11: claims a bypass of H1007 (via H1008/P4712 or SV 104.01); misses the required statement that the P4711/inlet feed cannot bypass H1007",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B055",
+  "qid": "CP13",
+  "verdict": "wrong",
+  "reason": "CP13: valve tags 66KL21, 75SA21, 73KH12 missing (only C1-C4 labels)",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B056",
+  "qid": "CP12",
+  "verdict": "wrong",
+  "reason": "CP12: names the valves only as C1/C4/SV 104.01; required HV4750.01 and PV4712.02 are missing",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B057",
+  "qid": "CP12",
+  "verdict": "wrong",
+  "reason": "CP12: names the valves only as C1/C4/SV 104.01; required HV4750.01 and PV4712.02 are missing",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B058",
+  "qid": "CP15",
+  "verdict": "wrong",
+  "reason": "CP15: valve HV4750.01 not named (only 'globe valve C1')",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B059",
+  "qid": "CP11",
+  "verdict": "correct",
+  "reason": "CP11: states no path to T4750 avoids H1007 (the required statement, without naming P4711)",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B060",
+  "qid": "CP14",
+  "verdict": "wrong",
+  "reason": "CP14: path valves HV4750.01 and PV4712.02 not named",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B061",
+  "qid": "CP15",
+  "verdict": "wrong",
+  "reason": "CP15: valve HV4750.01 not named (only 'globe valve C1')",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B062",
+  "qid": "CP13",
+  "verdict": "wrong",
+  "reason": "CP13: valve tags 66KL21, 75SA21, 73KH12 missing (only C1-C4 labels)",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B063",
+  "qid": "CP14",
+  "verdict": "wrong",
+  "reason": "CP14: path valves HV4750.01 and PV4712.02 not named",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B064",
+  "qid": "CP13",
+  "verdict": "wrong",
+  "reason": "CP13: valve tags 66KL21, 75SA21, 73KH12 missing (only C1-C4 labels)",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B065",
+  "qid": "CP13",
+  "verdict": "wrong",
+  "reason": "CP13: valve tags 66KL21, 75SA21, 73KH12 missing (only C1-C4 labels)",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B066",
+  "qid": "CP15",
+  "verdict": "wrong",
+  "reason": "CP15: valve HV4750.01 not named (only 'globe valve C1')",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B067",
+  "qid": "CP12",
+  "verdict": "wrong",
+  "reason": "CP12: names the valves only as C1/C4/SV 104.01; required HV4750.01 and PV4712.02 are missing",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B068",
+  "qid": "CP15",
+  "verdict": "wrong",
+  "reason": "CP15: valve HV4750.01 not named (only 'globe valve C1')",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B069",
+  "qid": "CP12",
+  "verdict": "wrong",
+  "reason": "CP12: names the valves only as C1/C4/SV 104.01; required HV4750.01 and PV4712.02 are missing",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B070",
+  "qid": "CP11",
+  "verdict": "correct",
+  "reason": "CP11: states no path to T4750 avoids H1007 (the required statement, without naming P4711)",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B071",
+  "qid": "CP12",
+  "verdict": "wrong",
+  "reason": "CP12: names the valves only as C1/C4/SV 104.01; required HV4750.01 and PV4712.02 are missing",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B072",
+  "qid": "CP11",
+  "verdict": "wrong",
+  "reason": "CP11: claims a bypass of H1007 (via H1008/P4712 or SV 104.01); misses the required statement that the P4711/inlet feed cannot bypass H1007",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B073",
+  "qid": "CP11",
+  "verdict": "wrong",
+  "reason": "CP11: claims a bypass of H1007 (via H1008/P4712 or SV 104.01); misses the required statement that the P4711/inlet feed cannot bypass H1007",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B074",
+  "qid": "CP11",
+  "verdict": "wrong",
+  "reason": "CP11: claims a bypass of H1007 (via H1008/P4712 or SV 104.01); misses the required statement that the P4711/inlet feed cannot bypass H1007",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B076",
+  "qid": "CP11",
+  "verdict": "wrong",
+  "reason": "CP11: claims a bypass of H1007 (via H1008/P4712 or SV 104.01); misses the required statement that the P4711/inlet feed cannot bypass H1007",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B077",
+  "qid": "CP14",
+  "verdict": "wrong",
+  "reason": "CP14: path valves HV4750.01 and PV4712.02 not named",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B078",
+  "qid": "CP15",
+  "verdict": "wrong",
+  "reason": "CP15: valve HV4750.01 not named (only 'globe valve C1')",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B079",
+  "qid": "CP12",
+  "verdict": "wrong",
+  "reason": "CP12: names the valves only as C1/C4/SV 104.01; required HV4750.01 and PV4712.02 are missing",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B080",
+  "qid": "CP11",
+  "verdict": "wrong",
+  "reason": "CP11: claims a bypass of H1007 (via H1008/P4712 or SV 104.01); misses the required statement that the P4711/inlet feed cannot bypass H1007",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B081",
+  "qid": "CP15",
+  "verdict": "wrong",
+  "reason": "CP15: valve HV4750.01 not named (only 'globe valve C1')",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B082",
+  "qid": "CP12",
+  "verdict": "wrong",
+  "reason": "CP12: names the valves only as C1/C4/SV 104.01; required HV4750.01 and PV4712.02 are missing",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B083",
+  "qid": "CP15",
+  "verdict": "wrong",
+  "reason": "CP15: valve HV4750.01 not named (only 'globe valve C1')",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B084",
+  "qid": "CP13",
+  "verdict": "wrong",
+  "reason": "CP13: valve tags 66KL21, 75SA21, 73KH12 missing (only C1-C4 labels)",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B085",
+  "qid": "CP13",
+  "verdict": "wrong",
+  "reason": "CP13: valve tags 66KL21, 75SA21, 73KH12 missing (only C1-C4 labels)",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B086",
+  "qid": "CP12",
+  "verdict": "wrong",
+  "reason": "CP12: names the valves only as C1/C4/SV 104.01; required HV4750.01 and PV4712.02 are missing",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B087",
+  "qid": "CP13",
+  "verdict": "wrong",
+  "reason": "CP13: valve tags 66KL21, 75SA21, 73KH12 missing (only C1-C4 labels)",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B088",
+  "qid": "CP12",
+  "verdict": "wrong",
+  "reason": "CP12: names the valves only as C1/C4/SV 104.01; required HV4750.01 and PV4712.02 are missing",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B089",
+  "qid": "CP15",
+  "verdict": "wrong",
+  "reason": "CP15: valve HV4750.01 not named (only 'globe valve C1')",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ },
+ {
+  "blind_id": "B090",
+  "qid": "CP14",
+  "verdict": "wrong",
+  "reason": "CP14: path valves HV4750.01 and PV4712.02 not named",
+  "reviewer": "main session, strict checklist reading, blind (key not opened)"
+ }
+]

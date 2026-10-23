@@ -1,0 +1,80 @@
+stopped by the spend cap; rerun with the same --run-id to resume
+run E1-CYP-H1: 70 rows to answer, 0 already on disk
+concurrency 4: up to that many questions in flight
+paid mode: up to 70 model calls; hard spend cap 0.01 USD
+estimated cost: 0.0700 USD
+STOPPED by the spend cap: the next question (expected up to 0.001000 USD, with 0.003000 USD reserved by items in flight) could reach or pass the run's cap of 0.010000 USD; 0.006503 USD spent so far. Rerun with the same --run-id to resume.
+{
+  "run_id": "E1-CYP-H1",
+  "n_rows": 19,
+  "n_new_rows": 19,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "cypher_rag_plant": {
+      "0": {
+        "ANSWERED": 16,
+        "RETRIEVAL_ERROR": 3
+      }
+    }
+  },
+  "routing_recall": {},
+  "relaxed_routing_recall": {},
+  "evidence_node_recall": {},
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {},
+    "relaxed_routing_recall": {},
+    "evidence_node_recall": {}
+  },
+  "trace_rates": {
+    "cypher_rag_plant": {
+      "truncated_rate": 0.0
+    }
+  },
+  "mean_total_cost_usd": {
+    "cypher_rag_plant": 0.0003900842105263158
+  },
+  "stopped_by_spend_cap": true
+}
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `category` does not exist in database `neo4j`. Verify that the spelling is correct.', position=<SummaryInputPosition line=2, column=57, offset=95>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 95, 'line': 2, 'column': 57}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: "MATCH (item:PlantItem {tag: 'TK-1-1'})\nRETURN item.tag AS tag, labels(item) AS item_type, item.category AS category, item.dexpi_class AS dexpi_class, item.node_class AS node_class"
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `dexpi_class` does not exist in database `neo4j`. Verify that the spelling is correct.', position=<SummaryInputPosition line=2, column=84, offset=122>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 122, 'line': 2, 'column': 84}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: "MATCH (item:PlantItem {tag: 'TK-1-1'})\nRETURN item.tag AS tag, labels(item) AS item_type, item.category AS category, item.dexpi_class AS dexpi_class, item.node_class AS node_class"
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `dexpi_class` does not exist in database `neo4j`. Verify that the spelling is correct.', position=<SummaryInputPosition line=2, column=57, offset=95>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 95, 'line': 2, 'column': 57}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: 'MATCH (item:PlantItem {tag: "GV-1-5"})\nRETURN item.tag AS tag, labels(item) AS item_type, item.dexpi_class AS dexpi_class, item.category AS category, item.piping_component_name AS piping_component_name'
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `category` does not exist in database `neo4j`. Verify that the spelling is correct.', position=<SummaryInputPosition line=2, column=90, offset=128>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 128, 'line': 2, 'column': 90}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: 'MATCH (item:PlantItem {tag: "GV-1-5"})\nRETURN item.tag AS tag, labels(item) AS item_type, item.dexpi_class AS dexpi_class, item.category AS category, item.piping_component_name AS piping_component_name'
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `piping_component_name` does not exist in database `neo4j`. Verify that the spelling is correct.', position=<SummaryInputPosition line=2, column=117, offset=155>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 155, 'line': 2, 'column': 117}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: 'MATCH (item:PlantItem {tag: "GV-1-5"})\nRETURN item.tag AS tag, labels(item) AS item_type, item.dexpi_class AS dexpi_class, item.category AS category, item.piping_component_name AS piping_component_name'
+run E1-CYP-H1: 51 rows to answer, 19 already on disk
+concurrency 4: up to that many questions in flight
+paid mode: up to 51 model calls; hard spend cap 0.15 USD
+estimated cost: 0.0510 USD
+{
+  "run_id": "E1-CYP-H1",
+  "n_rows": 70,
+  "n_new_rows": 51,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "cypher_rag_plant": {
+      "0": {
+        "ANSWERED": 54,
+        "RETRIEVAL_ERROR": 8
+      },
+      "unanswerable": {
+        "ANSWERED": 8
+      }
+    }
+  },
+  "routing_recall": {},
+  "relaxed_routing_recall": {},
+  "evidence_node_recall": {},
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {},
+    "relaxed_routing_recall": {},
+    "evidence_node_recall": {}
+  },
+  "trace_rates": {
+    "cypher_rag_plant": {
+      "truncated_rate": 0.0
+    }
+  },
+  "mean_total_cost_usd": {
+    "cypher_rag_plant": 0.0004017371428571429
+  },
+  "stopped_by_spend_cap": false
+}

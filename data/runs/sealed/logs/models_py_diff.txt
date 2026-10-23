@@ -1,0 +1,18 @@
+diff --git a/src/plantgraph/qa/models.py b/src/plantgraph/qa/models.py
+index 82871c1..c3166d8 100644
+--- a/src/plantgraph/qa/models.py
++++ b/src/plantgraph/qa/models.py
+@@ -71,6 +71,13 @@ class QuestionFamily(str, Enum):
+     UPSTREAM_SOURCES = "UPSTREAM_SOURCES"
+     SAME_UNIT = "SAME_UNIT"
+     LOOPS_NEAR_ITEM = "LOOPS_NEAR_ITEM"
++    # The six held-out families (ADR-0035): generated on test corpora only, for the sealed run.
++    FIRST_MEETING_POINT = "FIRST_MEETING_POINT"
++    DOWNSTREAM_ISOLATION = "DOWNSTREAM_ISOLATION"
++    VALVES_ON_PATH = "VALVES_ON_PATH"
++    FEEDING_UNITS = "FEEDING_UNITS"
++    UNITS_REACHED = "UNITS_REACHED"
++    ROUTE_AVOIDING = "ROUTE_AVOIDING"
+ 
+ 
+ class AnswerType(str, Enum):

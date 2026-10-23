@@ -1,0 +1,85 @@
+size search: target 100 sheets -> 52 units (100 predicted) in 0.08 s
+wrote 580 questions to data\runs\sealed\questions\H100\questions.jsonl
+size search: target 1000 sheets -> 509 units (1001 predicted) in 0.88 s
+wrote 580 questions to data\runs\sealed\questions\H1000\questions.jsonl
+wrote 48 of 480 questions to data\runs\sealed\questions_c1\H1000\questions.jsonl
+{
+  "corpus_id": "H100",
+  "seed": 31,
+  "sample_seed": 20261031,
+  "n_per_family": 20,
+  "n_per_wording": 10,
+  "pool": {
+    "corpus_id": "H100",
+    "seed": 31,
+    "candidates": {
+      "LOOKUP_TYPE": {
+        "0": 3320,
+        "1": 0,
+        "2": 0,
+        "3-4": 0,
+        "5-8": 0,
+        "9-16": 0,
+        "17-32": 0,
+        "33+": 0,
+        "unanswerable": 0
+      },
+      "LOOKUP_UNIT": {
+        "0": 3320,
+        "1": 0,
+        "2": 0,
+        "3-4": 0,
+        "5-8": 0,
+        "9-16": 0,
+        "17-32": 0,
+        "33+": 0,
+        "unanswerable": 0
+      },
+      "NEIGHBOURS_DOWNSTREAM": {
+        "0": 1916,
+        "1": 244,
+        "2": 9,
+        "3-4": 2,
+        "5-8": 0,
+        "9-16": 0,
+        "17-32": 0,
+        "33+": 0,
+        "unanswerable": 0
+      },
+      "LOOP_ACTUATED_VALVE": {
+        "0": 250,
+        "1": 10,
+        "2": 0,
+        "3-4": 0,
+        "5-8": 0,
+        "9-16": 0,
+        "17-32": 0,
+        "33+": 0,
+        "unanswerable": 0
+      },
+      "LOOP_MEASURED_EQUIPMENT": {
+        "0": 260,
+        "1": 0,
+        "2": 0,
+        "3-4": 0,
+        "5-8": 0,
+        "9-16": 0,
+        "17-32": 0,
+        "33+": 0,
+        "unanswerable": 0
+      },
+      "FLOW_PATH": {
+        "0": 1987,
+        "1": 702,
+        "2": 375,
+        "3-4": 224,
+        "5-8": 84,
+        "9-16": 26,
+        "17-32": 0,
+        "33+": 0,
+        "unanswerable": 0
+      },
+      "UPSTREAM_ISOLATION": {
+        "0": 891,
+        "1": 355,
+        "2": 103,

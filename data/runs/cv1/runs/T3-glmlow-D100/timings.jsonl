@@ -1,0 +1,15 @@
+{"question_id":"D100:FLOW_PATH:GV-1-3|V-41-5","strategy":"hierarchical_need_rules_plant","repeat":0,"local_compute_s":0.09399999999732245,"spent_usd":0.00281236,"n_cached_retrieval_calls":0}
+{"question_id":"D100:FLOW_PATH:BV-1-9|GV-13-2","strategy":"hierarchical_need_rules_plant","repeat":0,"local_compute_s":0.125,"spent_usd":0.0024886,"n_cached_retrieval_calls":0}
+{"question_id":"D100:NO_PATH:FLOW_PATH:E-14-2|T-3-4","strategy":"hierarchical_need_rules_plant","repeat":0,"local_compute_s":0.10899999999674037,"spent_usd":0.000856605,"n_cached_retrieval_calls":0}
+{"question_id":"D100:NO_PATH:FLOW_PATH:E-26-1|E-13-7","strategy":"hierarchical_need_rules_plant","repeat":0,"local_compute_s":0.046999999991385266,"spent_usd":0.00077889746,"n_cached_retrieval_calls":0}
+{"question_id":"D100:NO_PATH:FLOW_PATH:TK-30-3|V-50-2","strategy":"hierarchical_need_rules_plant","repeat":0,"local_compute_s":0.031000000002677552,"spent_usd":0.000929595,"n_cached_retrieval_calls":0}
+{"question_id":"D100:NO_PATH:FLOW_PATH:V-34-2|TK-50-6","strategy":"hierarchical_need_rules_plant","repeat":0,"local_compute_s":0.01600000000325963,"spent_usd":0.002354496,"n_cached_retrieval_calls":0}
+{"question_id":"D100:NO_PATH:FLOW_PATH:C-8-2|C-21-2","strategy":"hierarchical_need_rules_plant","repeat":0,"local_compute_s":0.015999999988707714,"spent_usd":0.00207135,"n_cached_retrieval_calls":0}
+{"question_id":"D100:UPSTREAM_ISOLATION:V-52-6","strategy":"hierarchical_need_rules_plant","repeat":0,"local_compute_s":0.03199999999196734,"spent_usd":0.0006845,"n_cached_retrieval_calls":0}
+{"question_id":"D100:UPSTREAM_ISOLATION:P-25-2","strategy":"hierarchical_need_rules_plant","repeat":0,"local_compute_s":0.03200000000651926,"spent_usd":0.00034717584,"n_cached_retrieval_calls":0}
+{"question_id":"D100:UPSTREAM_ISOLATION:T-13-5","strategy":"hierarchical_need_rules_plant","repeat":0,"local_compute_s":0.014999999999417923,"spent_usd":0.00220284,"n_cached_retrieval_calls":0}
+{"question_id":"D100:UPSTREAM_ISOLATION:T-26-1","strategy":"hierarchical_need_rules_plant","repeat":0,"local_compute_s":0.030999999988125637,"spent_usd":0.000712095,"n_cached_retrieval_calls":0}
+{"question_id":"D100:UPSTREAM_ISOLATION:TK-49-3","strategy":"hierarchical_need_rules_plant","repeat":0,"local_compute_s":0.031000000002677552,"spent_usd":0.00084969,"n_cached_retrieval_calls":0}
+{"question_id":"D100:UPSTREAM_SOURCES:TK-23-4","strategy":"hierarchical_need_rules_plant","repeat":0,"local_compute_s":0.04700000000593718,"spent_usd":0.002063992,"n_cached_retrieval_calls":0}
+{"question_id":"D100:UPSTREAM_SOURCES:C-45-5","strategy":"hierarchical_need_rules_plant","repeat":0,"local_compute_s":0.062000000005355105,"spent_usd":0.002871348,"n_cached_retrieval_calls":0}
+{"question_id":"D100:UPSTREAM_SOURCES:V-39-1","strategy":"hierarchical_need_rules_plant","repeat":0,"local_compute_s":0.031000000002677552,"spent_usd":0.00270459,"n_cached_retrieval_calls":0}

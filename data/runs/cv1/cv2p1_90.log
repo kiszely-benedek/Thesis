@@ -1,0 +1,147 @@
+run CV2-P1-D100-90: 180 rows to answer, 0 already on disk
+concurrency 4: up to that many questions in flight
+paid mode: up to 180 model calls; hard spend cap 0.6 USD
+estimated cost: 0.5400 USD
+{
+  "run_id": "CV2-P1-D100-90",
+  "n_rows": 180,
+  "n_new_rows": 180,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "graph_agent": {
+      "17-32": {
+        "ANSWERED": 1
+      },
+      "2": {
+        "ANSWERED": 7
+      },
+      "3-4": {
+        "ANSWERED": 6,
+        "TIMED_OUT": 3
+      },
+      "1": {
+        "ANSWERED": 16,
+        "TIMED_OUT": 1
+      },
+      "5-8": {
+        "ANSWERED": 9
+      },
+      "0": {
+        "ANSWERED": 34
+      },
+      "unanswerable": {
+        "ANSWERED": 10
+      },
+      "9-16": {
+        "TIMED_OUT": 2,
+        "PARSE_FAILURE": 1
+      }
+    },
+    "graph_agent_low_steps": {
+      "17-32": {
+        "ANSWERED": 1
+      },
+      "2": {
+        "ANSWERED": 7
+      },
+      "3-4": {
+        "ANSWERED": 9
+      },
+      "1": {
+        "ANSWERED": 17
+      },
+      "5-8": {
+        "ANSWERED": 9
+      },
+      "0": {
+        "ANSWERED": 34
+      },
+      "unanswerable": {
+        "ANSWERED": 10
+      },
+      "9-16": {
+        "ANSWERED": 3
+      }
+    }
+  },
+  "routing_recall": {
+    "graph_agent": 0.9594594594594594,
+    "graph_agent_low_steps": 0.9625
+  },
+  "relaxed_routing_recall": {
+    "graph_agent": 0.9594594594594594,
+    "graph_agent_low_steps": 0.9625
+  },
+  "evidence_node_recall": {
+    "graph_agent": 0.9219155520726482,
+    "graph_agent_low_steps": 0.9303571543918293
+  },
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {
+      "graph_agent": {
+        "17-32": 0.0,
+        "2": 1.0,
+        "3-4": 1.0,
+        "1": 1.0,
+        "5-8": 0.7777777777777778,
+        "0": 1.0,
+        "9-16": 1.0
+      },
+      "graph_agent_low_steps": {
+        "17-32": 0.0,
+        "2": 1.0,
+        "3-4": 1.0,
+        "1": 1.0,
+        "5-8": 0.7777777777777778,
+        "0": 1.0,
+        "9-16": 1.0
+      }
+    },
+    "relaxed_routing_recall": {
+      "graph_agent": {
+        "17-32": 0.0,
+        "2": 1.0,
+        "3-4": 1.0,
+        "1": 1.0,
+        "5-8": 0.7777777777777778,
+        "0": 1.0,
+        "9-16": 1.0
+      },
+      "graph_agent_low_steps": {
+        "17-32": 0.0,
+        "2": 1.0,
+        "3-4": 1.0,
+        "1": 1.0,
+        "5-8": 0.7777777777777778,
+        "0": 1.0,
+        "9-16": 1.0
+      }
+    },
+    "evidence_node_recall": {
+      "graph_agent": {
+        "17-32": 0.006578947368421052,
+        "2": 0.9642857142857143,
+        "3-4": 0.8643410852713179,
+        "1": 1.0,
+        "5-8": 0.6016354016354016,
+        "0": 1.0,
+        "9-16": 0.864406779661017
+      },
+      "graph_agent_low_steps": {
+        "17-32": 0.3355263157894737,
+        "2": 0.9642857142857143,
+        "3-4": 0.888458225667528,
+        "1": 1.0,
+        "5-8": 0.6016354016354016,
+        "0": 1.0,
+        "9-16": 0.9774011299435029
+      }
+    }
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "graph_agent": 0.0018350030566666666,
+    "graph_agent_low_steps": 0.0010411603322222221
+  },
+  "stopped_by_spend_cap": false
+}

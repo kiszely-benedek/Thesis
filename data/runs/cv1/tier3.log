@@ -1,0 +1,24 @@
+=== T3-mimo-D100
+  "n_provider_errors": 0,
+  "mean_total_cost_usd": {
+  "stopped_by_spend_cap": false
+=== T3-glmlow-D100
+  "n_provider_errors": 0,
+  "mean_total_cost_usd": {
+  "stopped_by_spend_cap": false
+=== T3-glm64k-D100
+  "n_provider_errors": 0,
+  "mean_total_cost_usd": {
+  "stopped_by_spend_cap": false
+=== T3-mimo-D1000
+  "n_provider_errors": 0,
+  "mean_total_cost_usd": {
+  "stopped_by_spend_cap": false
+=== T3-glmlow-D1000
+  "n_provider_errors": 0,
+  "mean_total_cost_usd": {
+  "stopped_by_spend_cap": false
+=== T3-glm64k-D1000
+  "n_provider_errors": 0,
+  "mean_total_cost_usd": {
+  "stopped_by_spend_cap": false

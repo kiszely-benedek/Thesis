@@ -1,0 +1,10 @@
+wrote data\runs\exp0001\report\report.md
+wrote data\runs\exp0001\report\report.json
+wrote data\runs\exp0001\report\figure.csv
+wrote data\runs\exp0001\report\figure_marks.csv
+X1 PASS: slope -0.110 per log10(sheets), 95% CI [-0.197, -0.022] over H1, H3, H10, H30 (common families)
+X2 FAIL: H1 common: delta -0.118 [-0.206, -0.029], n=68; all families: delta -0.118 [-0.206, -0.029], n=68; margin -0.05
+X3 REPORTED: s_acc = H1, the smallest measured size
+X4 REPORTED: s_cost = H1; s_lat = H30; $/q ratio ctx-high/cascade_v3: H1 1.76, H3 6.02, H10 16.59, H30 41.54; median-latency ratio: H1 0.45, H3 0.57, H10 0.87, H30 1.13
+X5 REPORTED: r = 2.54 chars/token over 348 calls; c = 16,435 chars/sheet; W = 143 sheets (window 922,000 prompt tokens); H100 (1,649,451 chars = 649,255 tokens): fits; H1000 (16,747,117 chars = 6,591,984 tokens): does not fit
+X6 REPORTED: H1: delta acc -0.029 [-0.118, +0.044], delta $/q -0.00005 [-0.00008, -0.00003] (low minus high, n=68); H10: delta acc -0.154 [-0.242, -0.066], delta $/q -0.00045 [-0.00060, -0.00031] (low minus high, n=91)

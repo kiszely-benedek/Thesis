@@ -1,0 +1,9 @@
+=== fresh database, load D100 (plant profile)
+=== CYPL2-D100
+  "stopped_by_spend_cap": false
+=== CYPL2-PARA-D100
+  "stopped_by_spend_cap": false
+=== fresh database, load D1000 (plant profile)
+=== CYPL2-D1000
+  "stopped_by_spend_cap": false
+done

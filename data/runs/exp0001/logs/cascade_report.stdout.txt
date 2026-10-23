@@ -1,0 +1,574 @@
+# Method-and-effort cascade report
+
+Latency counts every model call of a question (final answer, retrieval and agent steps) plus local compute where recorded, summed over the tiers tried. LB-1: median <= 10 s; LB-2: p90 <= 60 s; LB-3: an answer later than C = 120 s counts as no answer (TIMED_OUT, wrong) for every arm alike, so acc@120 is the cutoff-scored accuracy. A run made under a live deadline cannot show raw accuracy beyond C.
+
+## Pre-registered rules (S1-S3: cascade v1 record; V2-V3: cascade v2)
+
+- **S1: INCOMPLETE** - no need-default run joined for H1, H3, H10, H30
+- **S2: INCOMPLETE** - cascade_v1 or always_n is not evaluated on D1000
+- **S3 cascade_v1_iso: INCOMPLETE** - cascade_v1_iso or cascade_v1 is not evaluated on D1000
+- **S3 label_router_dev: INCOMPLETE** - label_router_dev or cascade_v1 is not evaluated on D1000
+- **V2: INCOMPLETE** - not evaluated on D100: cascade_v1, cascade_v1_iso, cascade_v2, cascade_v2_iso
+- **V3: INCOMPLETE** - not evaluated on D1000: cascade_v1, cascade_v1_iso, cascade_v2, cascade_v2_iso
+
+## Corpus H1 (70 questions)
+
+### Policies
+
+| policy | correct | acc@120 | total $ | $/question | latency s median / mean / p90 / p95 / max | answered by | tier-1 accept precision | tier-1 accept recall |
+|---|---|---|---|---|---|---|---|---|
+| cascade_v3 | 66/70 | 66/70 | 0.0357 | 0.00051 | 8.1 / 9.6 / 15.3 / 23.4 / 37.5 | cypher-luna 71%, agent-luna 29% | 0.940 (47/50) | 0.855 (47/55) |
+| always_g_luna | 62/70 | 62/70 | 0.0234 | 0.00033 | 7.4 / 8.7 / 16.2 / 21.2 / 29.4 | agent-luna 100% | - | - |
+| always_c_luna | 55/70 | 55/70 | 0.0281 | 0.00040 | 6.6 / 6.8 / 9.4 / 10.4 / 14.4 | cypher-luna 89%, none 11% | - | - |
+| always_ctx_high | 58/70 | 58/70 | 0.0627 | 0.00090 | 3.6 / 4.1 / 7.7 / 9.6 / 12.4 | context-luna-high 100% | - | - |
+| always_ctx_low | 56/70 | 56/70 | 0.0590 | 0.00084 | 2.6 / 2.7 / 4.3 / 4.9 / 7.5 | context-luna-low 100% | - | - |
+
+### Latency bound
+
+| policy | over C = 120 s | correct lost to C | latency without local compute | median <= 10 s | p90 <= 60 s |
+|---|---|---|---|---|---|
+| cascade_v3 | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| always_g_luna | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| always_c_luna | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| always_ctx_high | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| always_ctx_low | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+
+### Paired bootstrap vs always_n (policy minus always_n, mean [95% CI])
+
+| policy | accuracy | acc@120 | $/question | latency s/question |
+|---|---|---|---|---|
+
+### References (never deployable)
+
+| policy | correct / acc@120 | oracle cascade | random escalation, same share |
+|---|---|---|---|
+| cascade_v3 | 66 / 66 | 67 / 67 ($0.0345) | 57.0 [54, 60] / 57.0 [54, 60] ($0.0348, 20 escalated) |
+
+
+### Paired bootstrap vs random escalation
+
+| policy | accuracy | acc@120 | $/question | latency s/question |
+|---|---|---|---|---|
+| cascade_v3 | +0.128 [+0.069, +0.196] | +0.128 [+0.069, +0.196] | +0.00001 [-0.00003, +0.00006] | +0.3 [-0.8, +1.6] |
+
+### Not evaluated
+
+- **always_n**: expected a run for the first tier 'need-default', found none given; gaps {}
+- **always_c**: expected a run for the first tier 'cypher-low', found none given; gaps {}
+- **always_g**: expected a run for the first tier 'agent-low-steps', found none given; gaps {}
+
+### Agent tier: stop reasons
+
+| policy | tier | questions tried | done | deadline | runaway | prompt_budget | errors | max_steps | overflow | timed_out | unrecorded |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| cascade_v3 | agent-luna | 20 | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| always_g_luna | agent-luna | 70 | 70 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+### Agent tier: answers without evidence gathered
+
+| policy | no tool call | no plant item touched |
+|---|---|---|
+| cascade_v3 | 0 (0 correct) | 7 (7 correct) |
+| always_g_luna | 0 (0 correct) | 8 (8 correct) |
+
+### Agent tier: a tag named in the question was never touched
+
+| policy | questions naming a tag | never touched |
+|---|---|---|
+| cascade_v3 | 15 | 3 (3 correct) |
+| always_g_luna | 62 | 4 (4 correct) |
+
+### UPSTREAM_ISOLATION: secondary score, control valves do not isolate
+
+Secondary only (offline re-score); the primary score is the gold key as built. Secondary reference = gold minus control valves.
+
+| policy | primary correct | secondary correct |
+|---|---|---|
+| cascade_v3 | 1/4 | 1/4 |
+| always_g_luna | 0/4 | 0/4 |
+| always_c_luna | 1/4 | 1/4 |
+| always_ctx_high | 1/4 | 1/4 |
+| always_ctx_low | 0/4 | 0/4 |
+
+### Made-up yes (BOOLEAN questions whose gold is no)
+
+| policy | gold-no questions | answered yes |
+|---|---|---|
+| cascade_v3 | 5 | 0 |
+| always_g_luna | 5 | 0 |
+| always_c_luna | 5 | 0 |
+| always_ctx_high | 5 | 0 |
+| always_ctx_low | 5 | 0 |
+
+### Breakdowns (correct / questions)
+
+#### By need label
+
+| group | cascade_v3 | always_g_luna | always_c_luna | always_ctx_high | always_ctx_low |
+|---|---|---|---|---|---|
+| DOWNSTREAM_ALL | 5/5 | 5/5 | 4/5 | 2/5 | 3/5 |
+| GENERIC | 14/15 | 11/15 | 11/15 | 10/15 | 11/15 |
+| ITEM | 15/15 | 15/15 | 13/15 | 15/15 | 15/15 |
+| NEIGHBOURS_DOWNSTREAM | 5/5 | 5/5 | 4/5 | 5/5 | 5/5 |
+| PATH | 12/12 | 12/12 | 11/12 | 11/12 | 10/12 |
+| SIGNAL_CHAIN | 6/6 | 6/6 | 4/6 | 6/6 | 6/6 |
+| UNIT_SCOPE | 4/4 | 4/4 | 3/4 | 4/4 | 4/4 |
+| UPSTREAM_ALL | 4/4 | 4/4 | 4/4 | 4/4 | 2/4 |
+| UPSTREAM_TO_FIRST_VALVE | 1/4 | 0/4 | 1/4 | 1/4 | 0/4 |
+
+#### By family
+
+| group | cascade_v3 | always_g_luna | always_c_luna | always_ctx_high | always_ctx_low |
+|---|---|---|---|---|---|
+| CONNECTED | 4/4 | 4/4 | 3/4 | 3/4 | 2/4 |
+| COUNT_IN_UNIT | 4/4 | 4/4 | 3/4 | 4/4 | 4/4 |
+| DOWNSTREAM_IN_UNIT | 4/4 | 4/4 | 4/4 | 2/4 | 2/4 |
+| DOWNSTREAM_ISOLATION | 1/1 | 1/1 | 0/1 | 0/1 | 1/1 |
+| FLOW_PATH | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
+| INSTRUMENTS_OF_ITEM | 2/2 | 2/2 | 2/2 | 2/2 | 2/2 |
+| LOOKUP_TYPE | 4/4 | 4/4 | 3/4 | 4/4 | 4/4 |
+| LOOKUP_UNIT | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
+| LOOPS_NEAR_ITEM | 3/3 | 3/3 | 2/3 | 3/3 | 3/3 |
+| LOOP_ACTUATED_VALVE | 2/2 | 2/2 | 1/2 | 2/2 | 2/2 |
+| LOOP_MEASURED_EQUIPMENT | 2/2 | 2/2 | 1/2 | 2/2 | 2/2 |
+| NEIGHBOURS_DOWNSTREAM | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
+| NO_PATH | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
+| ROUTE_AVOIDING | 4/4 | 4/4 | 2/4 | 4/4 | 4/4 |
+| SAME_UNIT | 4/4 | 4/4 | 3/4 | 4/4 | 4/4 |
+| UNANSWERABLE_TAG | 4/4 | 4/4 | 3/4 | 4/4 | 4/4 |
+| UNITS_REACHED | 4/4 | 2/4 | 4/4 | 0/4 | 0/4 |
+| UPSTREAM_ISOLATION | 1/4 | 0/4 | 1/4 | 1/4 | 0/4 |
+| UPSTREAM_SOURCES | 4/4 | 4/4 | 4/4 | 4/4 | 2/4 |
+| VALVES_ON_PATH | 3/4 | 2/4 | 3/4 | 3/4 | 4/4 |
+
+#### By k bin
+
+| group | cascade_v3 | always_g_luna | always_c_luna | always_ctx_high | always_ctx_low |
+|---|---|---|---|---|---|
+| k=0 | 58/62 | 54/62 | 48/62 | 50/62 | 48/62 |
+| unanswerable | 8/8 | 8/8 | 7/8 | 8/8 | 8/8 |
+
+## Corpus H3 (87 questions)
+
+### Policies
+
+| policy | correct | acc@120 | total $ | $/question | latency s median / mean / p90 / p95 / max | answered by | tier-1 accept precision | tier-1 accept recall |
+|---|---|---|---|---|---|---|---|---|
+| cascade_v3 | 85/87 | 85/87 | 0.0487 | 0.00056 | 8.6 / 10.3 / 19.2 / 24.4 / 43.5 | cypher-luna 64%, agent-luna 36% | 0.964 (54/56) | 0.871 (54/62) |
+| always_g_luna | 86/87 | 86/87 | 0.0396 | 0.00045 | 7.6 / 9.7 / 18.1 / 23.5 / 29.2 | agent-luna 100% | - | - |
+| always_c_luna | 62/87 | 62/87 | 0.0360 | 0.00041 | 6.3 / 6.7 / 11.4 / 11.9 / 17.4 | cypher-luna 78%, none 22% | - | - |
+| always_ctx_high | 69/87 | 69/87 | 0.2955 | 0.00340 | 4.6 / 7.1 / 15.5 / 16.9 / 35.9 | context-luna-high 100% | - | - |
+
+### Latency bound
+
+| policy | over C = 120 s | correct lost to C | latency without local compute | median <= 10 s | p90 <= 60 s |
+|---|---|---|---|---|---|
+| cascade_v3 | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| always_g_luna | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| always_c_luna | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| always_ctx_high | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+
+### Paired bootstrap vs always_n (policy minus always_n, mean [95% CI])
+
+| policy | accuracy | acc@120 | $/question | latency s/question |
+|---|---|---|---|---|
+
+### References (never deployable)
+
+| policy | correct / acc@120 | oracle cascade | random escalation, same share |
+|---|---|---|---|
+| cascade_v3 | 85 / 85 | 86 / 86 ($0.0472) | 70.7 [67, 75] / 70.7 [67, 75] ($0.0501, 31 escalated) |
+
+
+### Paired bootstrap vs random escalation
+
+| policy | accuracy | acc@120 | $/question | latency s/question |
+|---|---|---|---|---|
+| cascade_v3 | +0.165 [+0.107, +0.228] | +0.165 [+0.107, +0.228] | -0.00002 [-0.00008, +0.00005] | +0.1 [-1.1, +1.3] |
+
+### Not evaluated
+
+- **always_ctx_low**: expected a run for the first tier 'context-luna-low', found none given; gaps {}
+- **always_n**: expected a run for the first tier 'need-default', found none given; gaps {}
+- **always_c**: expected a run for the first tier 'cypher-low', found none given; gaps {}
+- **always_g**: expected a run for the first tier 'agent-low-steps', found none given; gaps {}
+
+### Agent tier: stop reasons
+
+| policy | tier | questions tried | done | deadline | runaway | prompt_budget | errors | max_steps | overflow | timed_out | unrecorded |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| cascade_v3 | agent-luna | 31 | 31 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| always_g_luna | agent-luna | 87 | 87 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+### Agent tier: answers without evidence gathered
+
+| policy | no tool call | no plant item touched |
+|---|---|---|
+| cascade_v3 | 0 (0 correct) | 6 (6 correct) |
+| always_g_luna | 0 (0 correct) | 8 (8 correct) |
+
+### Agent tier: a tag named in the question was never touched
+
+| policy | questions naming a tag | never touched |
+|---|---|---|
+| cascade_v3 | 27 | 3 (3 correct) |
+| always_g_luna | 77 | 5 (5 correct) |
+
+### UPSTREAM_ISOLATION: secondary score, control valves do not isolate
+
+Secondary only (offline re-score); the primary score is the gold key as built. Secondary reference = gold minus control valves.
+
+| policy | primary correct | secondary correct |
+|---|---|---|
+| cascade_v3 | 2/4 | 1/3 |
+| always_g_luna | 3/4 | 2/3 |
+| always_c_luna | 1/4 | 1/3 |
+| always_ctx_high | 2/4 | 2/3 |
+
+### Made-up yes (BOOLEAN questions whose gold is no)
+
+| policy | gold-no questions | answered yes |
+|---|---|---|
+| cascade_v3 | 7 | 0 |
+| always_g_luna | 7 | 0 |
+| always_c_luna | 7 | 0 |
+| always_ctx_high | 7 | 0 |
+
+### Breakdowns (correct / questions)
+
+#### By need label
+
+| group | cascade_v3 | always_g_luna | always_c_luna | always_ctx_high |
+|---|---|---|---|---|
+| DOWNSTREAM_ALL | 8/8 | 8/8 | 6/8 | 4/8 |
+| GENERIC | 17/17 | 17/17 | 14/17 | 12/17 |
+| ITEM | 19/19 | 19/19 | 17/19 | 19/19 |
+| NEIGHBOURS_DOWNSTREAM | 5/5 | 5/5 | 3/5 | 5/5 |
+| PATH | 12/12 | 12/12 | 12/12 | 11/12 |
+| SIGNAL_CHAIN | 12/12 | 12/12 | 2/12 | 12/12 |
+| UNIT_SCOPE | 6/6 | 6/6 | 6/6 | 3/6 |
+| UPSTREAM_ALL | 4/4 | 4/4 | 1/4 | 1/4 |
+| UPSTREAM_TO_FIRST_VALVE | 2/4 | 3/4 | 1/4 | 2/4 |
+
+#### By family
+
+| group | cascade_v3 | always_g_luna | always_c_luna | always_ctx_high |
+|---|---|---|---|---|
+| CONNECTED | 4/4 | 4/4 | 4/4 | 3/4 |
+| COUNT_IN_UNIT | 4/4 | 4/4 | 4/4 | 3/4 |
+| CROSS_UNIT | 1/1 | 1/1 | 1/1 | 0/1 |
+| DOWNSTREAM_IN_UNIT | 4/4 | 4/4 | 4/4 | 1/4 |
+| DOWNSTREAM_ISOLATION | 4/4 | 4/4 | 2/4 | 3/4 |
+| FEEDING_UNITS | 1/1 | 1/1 | 1/1 | 0/1 |
+| FIRST_MEETING_POINT | 1/1 | 1/1 | 1/1 | 1/1 |
+| FLOW_PATH | 4/4 | 4/4 | 4/4 | 4/4 |
+| INSTRUMENTS_OF_ITEM | 4/4 | 4/4 | 0/4 | 4/4 |
+| LOOKUP_TYPE | 4/4 | 4/4 | 4/4 | 4/4 |
+| LOOKUP_UNIT | 4/4 | 4/4 | 3/4 | 4/4 |
+| LOOPS_NEAR_ITEM | 4/4 | 4/4 | 2/4 | 3/4 |
+| LOOP_ACTUATED_VALVE | 4/4 | 4/4 | 2/4 | 4/4 |
+| LOOP_MEASURED_EQUIPMENT | 4/4 | 4/4 | 0/4 | 4/4 |
+| NEIGHBOURS_DOWNSTREAM | 4/4 | 4/4 | 3/4 | 4/4 |
+| NO_PATH | 4/4 | 4/4 | 4/4 | 4/4 |
+| ROUTE_AVOIDING | 4/4 | 4/4 | 3/4 | 4/4 |
+| SAME_UNIT | 4/4 | 4/4 | 3/4 | 4/4 |
+| SHEETS_OF_TAG | 4/4 | 4/4 | 4/4 | 4/4 |
+| UNANSWERABLE_TAG | 4/4 | 4/4 | 3/4 | 4/4 |
+| UNITS_REACHED | 4/4 | 4/4 | 4/4 | 1/4 |
+| UPSTREAM_ISOLATION | 2/4 | 3/4 | 1/4 | 2/4 |
+| UPSTREAM_SOURCES | 4/4 | 4/4 | 1/4 | 1/4 |
+| VALVES_ON_PATH | 4/4 | 4/4 | 4/4 | 3/4 |
+
+#### By k bin
+
+| group | cascade_v3 | always_g_luna | always_c_luna | always_ctx_high |
+|---|---|---|---|---|
+| k=0 | 46/46 | 46/46 | 30/46 | 42/46 |
+| k=1-2 | 20/22 | 21/22 | 14/22 | 13/22 |
+| k>=3 | 11/11 | 11/11 | 11/11 | 6/11 |
+| unanswerable | 8/8 | 8/8 | 7/8 | 8/8 |
+
+## Corpus H10 (95 questions)
+
+### Policies
+
+| policy | correct | acc@120 | total $ | $/question | latency s median / mean / p90 / p95 / max | answered by | tier-1 accept precision | tier-1 accept recall |
+|---|---|---|---|---|---|---|---|---|
+| cascade_v3 | 91/95 | 91/95 | 0.0542 | 0.00057 | 7.8 / 10.6 / 17.6 / 33.6 / 56.1 | cypher-luna 73%, agent-luna 27% | 0.971 (67/69) | 0.918 (67/73) |
+| always_g_luna | 90/95 | 90/95 | 0.0536 | 0.00056 | 8.4 / 11.5 / 21.8 / 29.9 / 51.8 | agent-luna 100% | - | - |
+| always_c_luna | 73/95 | 73/95 | 0.0403 | 0.00042 | 6.9 / 7.3 / 10.6 / 13.3 / 42.5 | cypher-luna 84%, none 16% | - | - |
+| always_ctx_high | 69/95 | 69/95 | 0.9117 | 0.00960 | 6.1 / 12.0 / 29.4 / 36.4 / 67.1 | context-luna-high 99%, none 1% | - | - |
+| always_ctx_low | 55/95 | 55/95 | 0.8707 | 0.00917 | 4.5 / 5.1 / 9.5 / 10.2 / 13.1 | context-luna-low 100% | - | - |
+
+### Latency bound
+
+| policy | over C = 120 s | correct lost to C | latency without local compute | median <= 10 s | p90 <= 60 s |
+|---|---|---|---|---|---|
+| cascade_v3 | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| always_g_luna | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| always_c_luna | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| always_ctx_high | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| always_ctx_low | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+
+### Paired bootstrap vs always_n (policy minus always_n, mean [95% CI])
+
+| policy | accuracy | acc@120 | $/question | latency s/question |
+|---|---|---|---|---|
+
+### References (never deployable)
+
+| policy | correct / acc@120 | oracle cascade | random escalation, same share |
+|---|---|---|---|
+| cascade_v3 | 91 / 91 | 93 / 93 ($0.0563) | 77.7 [74, 82] / 77.7 [74, 82] ($0.0549, 26 escalated) |
+
+
+### Paired bootstrap vs random escalation
+
+| policy | accuracy | acc@120 | $/question | latency s/question |
+|---|---|---|---|---|
+| cascade_v3 | +0.140 [+0.079, +0.200] | +0.140 [+0.079, +0.200] | -0.00001 [-0.00008, +0.00007] | +0.1 [-1.1, +1.5] |
+
+### Not evaluated
+
+- **always_n**: expected a run for the first tier 'need-default', found none given; gaps {}
+- **always_c**: expected a run for the first tier 'cypher-low', found none given; gaps {}
+- **always_g**: expected a run for the first tier 'agent-low-steps', found none given; gaps {}
+
+### Agent tier: stop reasons
+
+| policy | tier | questions tried | done | deadline | runaway | prompt_budget | errors | max_steps | overflow | timed_out | unrecorded |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| cascade_v3 | agent-luna | 26 | 26 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| always_g_luna | agent-luna | 95 | 95 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+### Agent tier: answers without evidence gathered
+
+| policy | no tool call | no plant item touched |
+|---|---|---|
+| cascade_v3 | 0 (0 correct) | 8 (8 correct) |
+| always_g_luna | 0 (0 correct) | 10 (10 correct) |
+
+### Agent tier: a tag named in the question was never touched
+
+| policy | questions naming a tag | never touched |
+|---|---|---|
+| cascade_v3 | 23 | 5 (5 correct) |
+| always_g_luna | 81 | 7 (7 correct) |
+
+### UPSTREAM_ISOLATION: secondary score, control valves do not isolate
+
+Secondary only (offline re-score); the primary score is the gold key as built. Secondary reference = gold minus control valves.
+
+| policy | primary correct | secondary correct |
+|---|---|---|
+| cascade_v3 | 2/4 | 2/4 |
+| always_g_luna | 3/4 | 3/4 |
+| always_c_luna | 0/4 | 0/4 |
+| always_ctx_high | 0/4 | 0/4 |
+| always_ctx_low | 0/4 | 0/4 |
+
+### Made-up yes (BOOLEAN questions whose gold is no)
+
+| policy | gold-no questions | answered yes |
+|---|---|---|
+| cascade_v3 | 9 | 0 |
+| always_g_luna | 9 | 0 |
+| always_c_luna | 9 | 0 |
+| always_ctx_high | 9 | 0 |
+| always_ctx_low | 9 | 2 |
+
+### Breakdowns (correct / questions)
+
+#### By need label
+
+| group | cascade_v3 | always_g_luna | always_c_luna | always_ctx_high | always_ctx_low |
+|---|---|---|---|---|---|
+| DOWNSTREAM_ALL | 7/8 | 6/8 | 5/8 | 4/8 | 2/8 |
+| GENERIC | 19/20 | 18/20 | 18/20 | 9/20 | 8/20 |
+| ITEM | 17/17 | 17/17 | 17/17 | 16/17 | 12/17 |
+| NEIGHBOURS_DOWNSTREAM | 6/6 | 6/6 | 3/6 | 6/6 | 5/6 |
+| PATH | 13/13 | 13/13 | 9/13 | 12/13 | 11/13 |
+| SIGNAL_CHAIN | 12/12 | 12/12 | 8/12 | 12/12 | 10/12 |
+| UNIT_SCOPE | 11/11 | 11/11 | 11/11 | 8/11 | 7/11 |
+| UPSTREAM_ALL | 4/4 | 4/4 | 2/4 | 2/4 | 0/4 |
+| UPSTREAM_TO_FIRST_VALVE | 2/4 | 3/4 | 0/4 | 0/4 | 0/4 |
+
+#### By family
+
+| group | cascade_v3 | always_g_luna | always_c_luna | always_ctx_high | always_ctx_low |
+|---|---|---|---|---|---|
+| CONNECTED | 4/4 | 4/4 | 3/4 | 3/4 | 3/4 |
+| COUNT_IN_UNIT | 4/4 | 4/4 | 4/4 | 4/4 | 3/4 |
+| CROSS_UNIT | 3/3 | 3/3 | 3/3 | 2/3 | 1/3 |
+| DOWNSTREAM_IN_UNIT | 4/4 | 3/4 | 4/4 | 1/4 | 1/4 |
+| DOWNSTREAM_ISOLATION | 3/4 | 3/4 | 1/4 | 3/4 | 1/4 |
+| FEEDING_UNITS | 4/4 | 4/4 | 4/4 | 2/4 | 3/4 |
+| FIRST_MEETING_POINT | 4/4 | 4/4 | 4/4 | 1/4 | 0/4 |
+| FLOW_PATH | 4/4 | 4/4 | 2/4 | 4/4 | 3/4 |
+| INSTRUMENTS_OF_ITEM | 4/4 | 4/4 | 3/4 | 4/4 | 2/4 |
+| LOOKUP_TYPE | 4/4 | 4/4 | 4/4 | 4/4 | 3/4 |
+| LOOKUP_UNIT | 4/4 | 4/4 | 4/4 | 4/4 | 3/4 |
+| LOOPS_NEAR_ITEM | 4/4 | 4/4 | 2/4 | 2/4 | 3/4 |
+| LOOP_ACTUATED_VALVE | 4/4 | 4/4 | 3/4 | 4/4 | 4/4 |
+| LOOP_MEASURED_EQUIPMENT | 4/4 | 4/4 | 2/4 | 4/4 | 4/4 |
+| NEIGHBOURS_DOWNSTREAM | 4/4 | 4/4 | 3/4 | 4/4 | 3/4 |
+| NO_PATH | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
+| ROUTE_AVOIDING | 4/4 | 4/4 | 4/4 | 4/4 | 3/4 |
+| SAME_UNIT | 4/4 | 4/4 | 4/4 | 4/4 | 3/4 |
+| SHEETS_OF_TAG | 4/4 | 4/4 | 4/4 | 3/4 | 2/4 |
+| UNANSWERABLE_TAG | 4/4 | 4/4 | 1/4 | 4/4 | 4/4 |
+| UNITS_REACHED | 4/4 | 3/4 | 4/4 | 1/4 | 1/4 |
+| UPSTREAM_ISOLATION | 2/4 | 3/4 | 0/4 | 0/4 | 0/4 |
+| UPSTREAM_SOURCES | 4/4 | 4/4 | 2/4 | 2/4 | 0/4 |
+| VALVES_ON_PATH | 3/4 | 3/4 | 4/4 | 1/4 | 1/4 |
+
+#### By k bin
+
+| group | cascade_v3 | always_g_luna | always_c_luna | always_ctx_high | always_ctx_low |
+|---|---|---|---|---|---|
+| k=0 | 39/40 | 39/40 | 31/40 | 37/40 | 29/40 |
+| k=1-2 | 31/33 | 30/33 | 24/33 | 16/33 | 13/33 |
+| k>=3 | 13/14 | 13/14 | 13/14 | 8/14 | 5/14 |
+| unanswerable | 8/8 | 8/8 | 5/8 | 8/8 | 8/8 |
+
+## Corpus H30 (96 questions)
+
+### Policies
+
+| policy | correct | acc@120 | total $ | $/question | latency s median / mean / p90 / p95 / max | answered by | tier-1 accept precision | tier-1 accept recall |
+|---|---|---|---|---|---|---|---|---|
+| cascade_v3 | 90/96 | 90/96 | 0.0567 | 0.00059 | 8.4 / 11.3 / 20.7 / 30.8 / 60.5 | cypher-luna 65%, agent-luna 35% | 0.935 (58/62) | 0.879 (58/66) |
+| always_g_luna | 91/96 | 91/96 | 0.0472 | 0.00049 | 8.8 / 11.1 / 21.6 / 24.0 / 49.3 | agent-luna 100% | - | - |
+| always_c_luna | 66/96 | 66/96 | 0.0399 | 0.00042 | 6.9 / 6.9 / 11.2 / 11.9 / 16.1 | cypher-luna 79%, none 21% | - | - |
+| always_ctx_high | 64/96 | 64/96 | 2.3943 | 0.02494 | 9.2 / 13.4 / 34.4 / 43.5 / 71.7 | context-luna-high 99%, none 1% | - | - |
+
+### Latency bound
+
+| policy | over C = 120 s | correct lost to C | latency without local compute | median <= 10 s | p90 <= 60 s |
+|---|---|---|---|---|---|
+| cascade_v3 | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| always_g_luna | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| always_c_luna | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| always_ctx_high | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+
+### Paired bootstrap vs always_n (policy minus always_n, mean [95% CI])
+
+| policy | accuracy | acc@120 | $/question | latency s/question |
+|---|---|---|---|---|
+
+### References (never deployable)
+
+| policy | correct / acc@120 | oracle cascade | random escalation, same share |
+|---|---|---|---|
+| cascade_v3 | 90 / 90 | 92 / 92 ($0.0590) | 74.8 [71, 79] / 74.8 [71, 79] ($0.0567, 34 escalated) |
+
+
+### Paired bootstrap vs random escalation
+
+| policy | accuracy | acc@120 | $/question | latency s/question |
+|---|---|---|---|---|
+| cascade_v3 | +0.159 [+0.103, +0.219] | +0.159 [+0.103, +0.219] | +0.00000 [-0.00006, +0.00007] | +0.4 [-0.8, +1.9] |
+
+### Not evaluated
+
+- **always_ctx_low**: expected a run for the first tier 'context-luna-low', found none given; gaps {}
+- **always_n**: expected a run for the first tier 'need-default', found none given; gaps {}
+- **always_c**: expected a run for the first tier 'cypher-low', found none given; gaps {}
+- **always_g**: expected a run for the first tier 'agent-low-steps', found none given; gaps {}
+
+### Agent tier: stop reasons
+
+| policy | tier | questions tried | done | deadline | runaway | prompt_budget | errors | max_steps | overflow | timed_out | unrecorded |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| cascade_v3 | agent-luna | 34 | 34 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| always_g_luna | agent-luna | 96 | 96 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+### Agent tier: answers without evidence gathered
+
+| policy | no tool call | no plant item touched |
+|---|---|---|
+| cascade_v3 | 0 (0 correct) | 8 (8 correct) |
+| always_g_luna | 0 (0 correct) | 9 (9 correct) |
+
+### Agent tier: a tag named in the question was never touched
+
+| policy | questions naming a tag | never touched |
+|---|---|---|
+| cascade_v3 | 30 | 4 (4 correct) |
+| always_g_luna | 80 | 5 (5 correct) |
+
+### UPSTREAM_ISOLATION: secondary score, control valves do not isolate
+
+Secondary only (offline re-score); the primary score is the gold key as built. Secondary reference = gold minus control valves.
+
+| policy | primary correct | secondary correct |
+|---|---|---|
+| cascade_v3 | 2/4 | 2/4 |
+| always_g_luna | 2/4 | 2/4 |
+| always_c_luna | 0/4 | 0/4 |
+| always_ctx_high | 1/4 | 1/4 |
+
+### Made-up yes (BOOLEAN questions whose gold is no)
+
+| policy | gold-no questions | answered yes |
+|---|---|---|
+| cascade_v3 | 6 | 0 |
+| always_g_luna | 6 | 0 |
+| always_c_luna | 6 | 0 |
+| always_ctx_high | 6 | 0 |
+
+### Breakdowns (correct / questions)
+
+#### By need label
+
+| group | cascade_v3 | always_g_luna | always_c_luna | always_ctx_high |
+|---|---|---|---|---|
+| DOWNSTREAM_ALL | 6/8 | 6/8 | 5/8 | 2/8 |
+| GENERIC | 20/20 | 19/20 | 14/20 | 11/20 |
+| ITEM | 19/19 | 19/19 | 16/19 | 18/19 |
+| NEIGHBOURS_DOWNSTREAM | 5/5 | 5/5 | 2/5 | 2/5 |
+| PATH | 12/12 | 12/12 | 11/12 | 12/12 |
+| SIGNAL_CHAIN | 12/12 | 12/12 | 6/12 | 12/12 |
+| UNIT_SCOPE | 10/12 | 12/12 | 10/12 | 6/12 |
+| UPSTREAM_ALL | 4/4 | 4/4 | 2/4 | 0/4 |
+| UPSTREAM_TO_FIRST_VALVE | 2/4 | 2/4 | 0/4 | 1/4 |
+
+#### By family
+
+| group | cascade_v3 | always_g_luna | always_c_luna | always_ctx_high |
+|---|---|---|---|---|
+| CONNECTED | 4/4 | 4/4 | 4/4 | 4/4 |
+| COUNT_IN_UNIT | 4/4 | 4/4 | 4/4 | 2/4 |
+| CROSS_UNIT | 4/4 | 4/4 | 4/4 | 2/4 |
+| DOWNSTREAM_IN_UNIT | 4/4 | 4/4 | 4/4 | 1/4 |
+| DOWNSTREAM_ISOLATION | 2/4 | 2/4 | 1/4 | 1/4 |
+| FEEDING_UNITS | 2/4 | 4/4 | 2/4 | 2/4 |
+| FIRST_MEETING_POINT | 4/4 | 4/4 | 3/4 | 3/4 |
+| FLOW_PATH | 4/4 | 4/4 | 3/4 | 4/4 |
+| INSTRUMENTS_OF_ITEM | 4/4 | 4/4 | 2/4 | 4/4 |
+| LOOKUP_TYPE | 4/4 | 4/4 | 3/4 | 4/4 |
+| LOOKUP_UNIT | 4/4 | 4/4 | 2/4 | 4/4 |
+| LOOPS_NEAR_ITEM | 4/4 | 4/4 | 1/4 | 2/4 |
+| LOOP_ACTUATED_VALVE | 4/4 | 4/4 | 3/4 | 4/4 |
+| LOOP_MEASURED_EQUIPMENT | 4/4 | 4/4 | 1/4 | 4/4 |
+| NEIGHBOURS_DOWNSTREAM | 4/4 | 4/4 | 2/4 | 1/4 |
+| NO_PATH | 4/4 | 4/4 | 4/4 | 4/4 |
+| ROUTE_AVOIDING | 4/4 | 4/4 | 3/4 | 4/4 |
+| SAME_UNIT | 4/4 | 4/4 | 4/4 | 4/4 |
+| SHEETS_OF_TAG | 4/4 | 4/4 | 4/4 | 3/4 |
+| UNANSWERABLE_TAG | 4/4 | 4/4 | 3/4 | 4/4 |
+| UNITS_REACHED | 4/4 | 4/4 | 4/4 | 1/4 |
+| UPSTREAM_ISOLATION | 2/4 | 2/4 | 0/4 | 1/4 |
+| UPSTREAM_SOURCES | 4/4 | 4/4 | 2/4 | 0/4 |
+| VALVES_ON_PATH | 4/4 | 3/4 | 3/4 | 1/4 |
+
+#### By k bin
+
+| group | cascade_v3 | always_g_luna | always_c_luna | always_ctx_high |
+|---|---|---|---|---|
+| k=0 | 37/38 | 37/38 | 26/38 | 33/38 |
+| k=1-2 | 31/35 | 32/35 | 23/35 | 17/35 |
+| k>=3 | 14/15 | 14/15 | 10/15 | 6/15 |
+| unanswerable | 8/8 | 8/8 | 7/8 | 8/8 |
+
+wrote data\runs\exp0001\cascade_report\report.md and data\runs\exp0001\cascade_report\report.json

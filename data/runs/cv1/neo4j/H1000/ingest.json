@@ -1,0 +1,128 @@
+{
+  "corpus_id": "H1000",
+  "config": {
+    "generator": {
+      "plant_id": "plant0",
+      "seed": 0,
+      "n_units": 509,
+      "equipment_per_unit_min": 18,
+      "equipment_per_unit_max": 36,
+      "p_recycle": 0.2,
+      "p_cross_link": 0.2,
+      "valves_per_stream_max": 2,
+      "p_control_loop": 0.5,
+      "equipment_weights": {
+        "CentrifugalPump": 1.0,
+        "Compressor": 1.0,
+        "HeatExchanger": 1.0,
+        "PressureVessel": 1.0,
+        "ProcessColumn": 1.0,
+        "Tank": 1.0
+      },
+      "fluid_codes": [
+        "PL",
+        "PG"
+      ]
+    },
+    "split": {
+      "strategy": "by_unit",
+      "sheet_equipment_budget": 18,
+      "seed": 0,
+      "duplication_rate": 0.25,
+      "equipment_classes": [
+        "HeatExchanger",
+        "CentrifugalPump",
+        "Tank",
+        "PressureVessel",
+        "ProcessColumn",
+        "Compressor"
+      ],
+      "numbering_scheme": "sequential",
+      "use_grid_reference": false,
+      "exact_match_tags": true,
+      "connector_label_detail": "drawing_only"
+    }
+  },
+  "counts": {
+    "n_sheets": 1001,
+    "n_nodes": 77576,
+    "n_relationships": 267160,
+    "n_connector_pairs_predicted": 2159,
+    "n_unresolved": 0
+  },
+  "store_profile": "both",
+  "layer_counts": {
+    "n_occurrences": 40532,
+    "n_plant_items": 35532,
+    "n_structure_nodes": 1512,
+    "n_drawn_as": 36214,
+    "n_invariants": 7
+  },
+  "stage_seconds": {
+    "generate": 20.967400699999416,
+    "split": 2.035844800000632,
+    "localize": 0.5514981999986048,
+    "resolve": 0.7063314000006358,
+    "check": 0.8560398000008718,
+    "plan": 3.1768688000011025,
+    "load_wipe": 0.09395890000087093,
+    "load_schema": 0.2249255999995512,
+    "load_nodes": 8.427332600000227,
+    "load_relationships": 18.86123569999836,
+    "load_verify": 4.345156200000929,
+    "load_total": 31.952625900001294
+  },
+  "resolution": {
+    "n_sheets": 1001,
+    "n_occurrences": 40532,
+    "n_connectors": 4318,
+    "pairs_by_rule": {
+      "line_number": 2055,
+      "service_direction": 104
+    },
+    "unresolved_by_reason": {},
+    "n_identity_groups": 614,
+    "ambiguous_tag_keys": 0,
+    "edge_attribute_conflicts": 0
+  },
+  "import_report": null,
+  "load_report": {
+    "corpus_id": "H1000",
+    "nodes_written": 77576,
+    "relationships_written": 267160,
+    "batch_size": 5000,
+    "wipe_s": 0.09395890000087093,
+    "schema_s": 0.2249255999995512,
+    "nodes_s": 8.427332600000227,
+    "relationships_s": 18.86123569999836,
+    "verify_s": 4.345156200000929,
+    "total_s": 31.952625900001294,
+    "neo4j_version": "Neo4j Kernel 2026.09.0 (enterprise)",
+    "invariants_checked": 7
+  },
+  "gate_equal": true,
+  "gate_differences": [],
+  "resolution_score": {
+    "connector_pairs": {
+      "true_positives": 2159,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "identity": {
+      "true_positives": 750,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "pair_precision_by_rule": {
+      "line_number": 1.0,
+      "service_direction": 1.0
+    }
+  },
+  "neo4j_version": "Neo4j Kernel 2026.09.0 (enterprise)"
+}

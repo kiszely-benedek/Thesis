@@ -1,0 +1,50 @@
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `dexpi_class` does not exist in database `neo4j`. Verify that the spelling is correct.', position=<SummaryInputPosition line=2, column=57, offset=96>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 96, 'line': 2, 'column': 57}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: 'MATCH (item:PlantItem {tag: "TIC-2-1"})\nRETURN item.tag AS tag, labels(item) AS item_type, item.dexpi_class AS dexpi_class, item.category AS category, item.node_class AS node_class'
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `category` does not exist in database `neo4j`. Verify that the spelling is correct.', position=<SummaryInputPosition line=2, column=90, offset=129>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 129, 'line': 2, 'column': 90}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: 'MATCH (item:PlantItem {tag: "TIC-2-1"})\nRETURN item.tag AS tag, labels(item) AS item_type, item.dexpi_class AS dexpi_class, item.category AS category, item.node_class AS node_class'
+run INF-E1-CYP-H10: 95 rows to answer, 0 already on disk
+replay mode: cache only, no network; stops at the first cache miss
+{
+  "run_id": "INF-E1-CYP-H10",
+  "n_rows": 95,
+  "n_new_rows": 95,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "cypher_rag_plant": {
+      "0": {
+        "ANSWERED": 32,
+        "RETRIEVAL_ERROR": 8
+      },
+      "1": {
+        "ANSWERED": 15,
+        "RETRIEVAL_ERROR": 3
+      },
+      "2": {
+        "ANSWERED": 13,
+        "RETRIEVAL_ERROR": 2
+      },
+      "3-4": {
+        "ANSWERED": 14
+      },
+      "unanswerable": {
+        "ANSWERED": 6,
+        "RETRIEVAL_ERROR": 2
+      }
+    }
+  },
+  "routing_recall": {},
+  "relaxed_routing_recall": {},
+  "evidence_node_recall": {},
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {},
+    "relaxed_routing_recall": {},
+    "evidence_node_recall": {}
+  },
+  "trace_rates": {
+    "cypher_rag_plant": {
+      "truncated_rate": 0.0
+    }
+  },
+  "mean_total_cost_usd": {
+    "cypher_rag_plant": 0.00042373631578947364
+  },
+  "stopped_by_spend_cap": false
+}

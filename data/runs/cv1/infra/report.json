@@ -1,0 +1,1369 @@
+{
+  "machine_summary": "AMD Ryzen 9 5900HX with Radeon Graphics (8 cores / 16 threads), 15.4 GiB RAM, Windows-11-10.0.26200-SP0, Python 3.12.10, plugged in",
+  "git_commit": "a526e084da82738c191a0032669dfa441f7857f7",
+  "git_dirty": false,
+  "checks": [
+    {
+      "name": "M1 replay answers byte-identical to the source run",
+      "status": "pass",
+      "detail": "4 of 4 replays identical"
+    },
+    {
+      "name": "M2 clock resolution",
+      "status": "pass",
+      "detail": "every record has a clock step of at most 1e-06 s and every replay row was timed with perf_counter"
+    },
+    {
+      "name": "M3 parts add up (db + graph API <= local; server <= client)",
+      "status": "pass",
+      "detail": "0 violations in 1080 rows (tolerance 1 ms)"
+    },
+    {
+      "name": "M4 repeat spread (max/min within x1.5)",
+      "status": "flag",
+      "detail": "repeats disagree by more than x1.5: D100 ingest.load_nodes (x1.81), D100 startup.neo4j_open_check (x2.28), D1000 startup.neo4j_open_check (x1.69), D4000 startup.neo4j_open_check (x1.65)"
+    },
+    {
+      "name": "M5 right corpus, right size",
+      "status": "pass",
+      "detail": "database counts equal the load plan and the load report in every repeat"
+    },
+    {
+      "name": "M6 two size sources",
+      "status": "flag",
+      "detail": "D100: the server's store.size.database metric is present in 1 of 3 repeats only | D100: the server's store.size.database metric differs from the bytes on disk by more than 10% in 1 of 1 repeats: it lags, so the bytes on disk are the figure and the metric is secondary | D4000: the server's store.size.database metric differs from the bytes on disk by more than 10% in 3 of 3 repeats: it lags, so the bytes on disk are the figure and the metric is secondary"
+    },
+    {
+      "name": "M7 zero spend",
+      "status": "pass",
+      "detail": "no replay allowed paid calls, total spend $0"
+    },
+    {
+      "name": "Old-run rows",
+      "status": "flag",
+      "detail": "the replay missed the cache or differed from its source, so the original run's timings are shown instead: need on D100, need on D1000 (coarse monotonic clock, concurrency 4, no split)"
+    },
+    {
+      "name": "Database-only rows",
+      "status": "flag",
+      "detail": "local compute of these rows is database time only (the stored query run again plus the row formatting; no query-writing model call, no answer-prompt build, no answer parsing): cypher_db_only on D100, cypher_db_only on D1000. The model latency and token cost in the same row come from the source run."
+    }
+  ],
+  "footprints": [
+    {
+      "corpus_id": "D100",
+      "sizes": {
+        "sheets": 101,
+        "nodes": 3867,
+        "relationships": 11653,
+        "properties": 34369
+      },
+      "quantities": {
+        "ingest.generate": {
+          "median": 1.6565953000026639,
+          "minimum": 1.6563765999999305,
+          "maximum": 1.6867962000033003,
+          "n_repeats": 3
+        },
+        "ingest.split": {
+          "median": 0.056634000000485685,
+          "minimum": 0.05426160000206437,
+          "maximum": 0.06417789999977686,
+          "n_repeats": 3
+        },
+        "ingest.localize": {
+          "median": 0.025064800000109244,
+          "minimum": 0.024377900001127273,
+          "maximum": 0.025357500002428424,
+          "n_repeats": 3
+        },
+        "ingest.resolve": {
+          "median": 0.033049000001483364,
+          "minimum": 0.031000399998447392,
+          "maximum": 0.03757519999999204,
+          "n_repeats": 3
+        },
+        "ingest.plan": {
+          "median": 0.151048499999888,
+          "minimum": 0.14865980000104173,
+          "maximum": 0.160240099998191,
+          "n_repeats": 3
+        },
+        "ingest.load_schema": {
+          "median": 0.08627870000054827,
+          "minimum": 0.08131539999885717,
+          "maximum": 0.09854840000116383,
+          "n_repeats": 3
+        },
+        "ingest.load_nodes": {
+          "median": 0.3941311999988102,
+          "minimum": 0.374340200000006,
+          "maximum": 0.6784320000006119,
+          "n_repeats": 3
+        },
+        "ingest.load_relationships": {
+          "median": 0.5680715000016789,
+          "minimum": 0.5450167000017245,
+          "maximum": 0.6581289000023389,
+          "n_repeats": 3
+        },
+        "ingest.load_verify": {
+          "median": 0.14266160000261152,
+          "minimum": 0.1292265000010957,
+          "maximum": 0.15306340000097407,
+          "n_repeats": 3
+        },
+        "ingest.build_total": {
+          "median": 3.105662800011487,
+          "minimum": 3.094917500002339,
+          "maximum": 3.5198490000075253,
+          "n_repeats": 3
+        },
+        "store.data_bytes": {
+          "median": 3139061.0,
+          "minimum": 3139061.0,
+          "maximum": 3139061.0,
+          "n_repeats": 3
+        },
+        "store.tx_log_bytes": {
+          "median": 1142764.0,
+          "minimum": 1142764.0,
+          "maximum": 1142764.0,
+          "n_repeats": 3
+        },
+        "store.page_cache_needed_bytes": {
+          "median": 3766873.1999999997,
+          "minimum": 3766873.1999999997,
+          "maximum": 3766873.1999999997,
+          "n_repeats": 3
+        },
+        "store.metrics_bytes": {
+          "median": 41960.0,
+          "minimum": 41960.0,
+          "maximum": 41960.0,
+          "n_repeats": 1
+        },
+        "startup.rebuild": {
+          "median": 1.893731399999524,
+          "minimum": 1.8920265000015206,
+          "maximum": 1.9102702000018326,
+          "n_repeats": 3
+        },
+        "startup.graph_view": {
+          "median": 0.01871960000062245,
+          "minimum": 0.018285999998624902,
+          "maximum": 0.018798099998093676,
+          "n_repeats": 3
+        },
+        "startup.tier_runs": {
+          "median": 0.0008027000003494322,
+          "minimum": 0.0007813000011083204,
+          "maximum": 0.0008155000032274984,
+          "n_repeats": 3
+        },
+        "startup.schema_text": {
+          "median": 0.000057100001868093386,
+          "minimum": 0.00005569999848376028,
+          "maximum": 0.00006679999933112413,
+          "n_repeats": 3
+        },
+        "startup.neo4j_open_check": {
+          "median": 0.01635349999924074,
+          "minimum": 0.015819500000361586,
+          "maximum": 0.03607049999845913,
+          "n_repeats": 3
+        },
+        "startup.item_graph": {
+          "median": 0.20601910000186763,
+          "minimum": 0.20597790000101668,
+          "maximum": 0.20876979999957257,
+          "n_repeats": 3
+        },
+        "startup.total": {
+          "median": 2.15231350000613,
+          "minimum": 2.135085400001117,
+          "maximum": 2.1560222999978578,
+          "n_repeats": 3
+        },
+        "startup.without_rebuild": {
+          "median": 0.24204330000429763,
+          "minimum": 0.2413540000015928,
+          "maximum": 0.26399579999633715,
+          "n_repeats": 3
+        },
+        "startup.context_rag_build": {
+          "median": 0.3352439000009326,
+          "minimum": 0.33414620000257855,
+          "maximum": 0.3353196999996726,
+          "n_repeats": 3
+        },
+        "process.baseline_bytes": {
+          "median": 178933760.0,
+          "minimum": 178515968.0,
+          "maximum": 178958336.0,
+          "n_repeats": 3
+        },
+        "process.peak_bytes": {
+          "median": 257310720.0,
+          "minimum": 255848448.0,
+          "maximum": 257798144.0,
+          "n_repeats": 3
+        },
+        "neo4j.rss_bytes": {
+          "median": 1238896640.0,
+          "minimum": 1230888960.0,
+          "maximum": 1250504704.0,
+          "n_repeats": 3
+        },
+        "neo4j.page_cache_used_bytes": {
+          "median": 5122529.0,
+          "minimum": 5122529.0,
+          "maximum": 5122529.0,
+          "n_repeats": 3
+        },
+        "memory.view_bytes": {
+          "median": 4235248.0,
+          "minimum": 4235248.0,
+          "maximum": 4235248.0,
+          "n_repeats": 1
+        },
+        "memory.item_graph_bytes": {
+          "median": 11291193.0,
+          "minimum": 11291193.0,
+          "maximum": 11291193.0,
+          "n_repeats": 1
+        },
+        "memory.traced_peak_bytes": {
+          "median": 19341473.0,
+          "minimum": 19341473.0,
+          "maximum": 19341473.0,
+          "n_repeats": 1
+        }
+      },
+      "notes": [
+        "the server's store.size.database metric is present in 1 of 3 repeats only",
+        "the server's store.size.database metric differs from the bytes on disk by more than 10% in 1 of 1 repeats: it lags, so the bytes on disk are the figure and the metric is secondary"
+      ]
+    },
+    {
+      "corpus_id": "D1000",
+      "sizes": {
+        "sheets": 1000,
+        "nodes": 37124,
+        "relationships": 111668,
+        "properties": 329830
+      },
+      "quantities": {
+        "ingest.generate": {
+          "median": 16.099478599997383,
+          "minimum": 15.985342199997831,
+          "maximum": 16.125671699999657,
+          "n_repeats": 3
+        },
+        "ingest.split": {
+          "median": 1.5779889999976149,
+          "minimum": 1.5759372000029543,
+          "maximum": 1.5804800000005343,
+          "n_repeats": 3
+        },
+        "ingest.localize": {
+          "median": 0.4266929000004893,
+          "minimum": 0.4212918000011996,
+          "maximum": 0.43018990000200574,
+          "n_repeats": 3
+        },
+        "ingest.resolve": {
+          "median": 0.601740999998583,
+          "minimum": 0.597918600000412,
+          "maximum": 0.6111711999983527,
+          "n_repeats": 3
+        },
+        "ingest.plan": {
+          "median": 1.398584700000356,
+          "minimum": 1.3858838000014657,
+          "maximum": 1.4124745999979496,
+          "n_repeats": 3
+        },
+        "ingest.load_schema": {
+          "median": 0.07115740000153892,
+          "minimum": 0.07041059999755817,
+          "maximum": 0.0726676000012958,
+          "n_repeats": 3
+        },
+        "ingest.load_nodes": {
+          "median": 1.8764961000015319,
+          "minimum": 1.849859899997682,
+          "maximum": 1.882818899997801,
+          "n_repeats": 3
+        },
+        "ingest.load_relationships": {
+          "median": 3.691023800001858,
+          "minimum": 3.6884620999990148,
+          "maximum": 3.6988185999980487,
+          "n_repeats": 3
+        },
+        "ingest.load_verify": {
+          "median": 0.32553870000265306,
+          "minimum": 0.3059804999975313,
+          "maximum": 0.34605929999816,
+          "n_repeats": 3
+        },
+        "ingest.build_total": {
+          "median": 26.060622099998,
+          "minimum": 25.966485400003876,
+          "maximum": 26.083033199989586,
+          "n_repeats": 3
+        },
+        "store.data_bytes": {
+          "median": 20384533.0,
+          "minimum": 20384533.0,
+          "maximum": 20384570.0,
+          "n_repeats": 3
+        },
+        "store.tx_log_bytes": {
+          "median": 11247150.0,
+          "minimum": 11247150.0,
+          "maximum": 11247150.0,
+          "n_repeats": 3
+        },
+        "store.page_cache_needed_bytes": {
+          "median": 24461439.599999998,
+          "minimum": 24461439.599999998,
+          "maximum": 24461484.0,
+          "n_repeats": 3
+        },
+        "startup.rebuild": {
+          "median": 19.547111300002143,
+          "minimum": 19.41904699999941,
+          "maximum": 19.9149574999974,
+          "n_repeats": 3
+        },
+        "startup.graph_view": {
+          "median": 0.5021181999982218,
+          "minimum": 0.5013198999986344,
+          "maximum": 0.5062868000022718,
+          "n_repeats": 3
+        },
+        "startup.tier_runs": {
+          "median": 0.000860099997225916,
+          "minimum": 0.0008411000017076731,
+          "maximum": 0.0009697999994386919,
+          "n_repeats": 3
+        },
+        "startup.schema_text": {
+          "median": 0.000057699999160831794,
+          "minimum": 0.00005579999924520962,
+          "maximum": 0.00005830000009154901,
+          "n_repeats": 3
+        },
+        "startup.neo4j_open_check": {
+          "median": 0.06042190000152914,
+          "minimum": 0.03937729999961448,
+          "maximum": 0.0663697999989381,
+          "n_repeats": 3
+        },
+        "startup.item_graph": {
+          "median": 1.750160200001119,
+          "minimum": 1.7219951000006404,
+          "maximum": 1.995973299999605,
+          "n_repeats": 3
+        },
+        "startup.total": {
+          "median": 22.11167310000019,
+          "minimum": 21.683565699997416,
+          "maximum": 22.23274229999879,
+          "n_repeats": 3
+        },
+        "startup.without_rebuild": {
+          "median": 2.317784800001391,
+          "minimum": 2.264518699998007,
+          "maximum": 2.564561799998046,
+          "n_repeats": 3
+        },
+        "startup.context_rag_build": {
+          "median": 3.4951192999978957,
+          "minimum": 3.4703971999988426,
+          "maximum": 3.650529700000334,
+          "n_repeats": 3
+        },
+        "process.baseline_bytes": {
+          "median": 178532352.0,
+          "minimum": 178515968.0,
+          "maximum": 178835456.0,
+          "n_repeats": 3
+        },
+        "process.peak_bytes": {
+          "median": 888721408.0,
+          "minimum": 888229888.0,
+          "maximum": 889294848.0,
+          "n_repeats": 3
+        },
+        "neo4j.rss_bytes": {
+          "median": 1303781376.0,
+          "minimum": 1301630976.0,
+          "maximum": 1303896064.0,
+          "n_repeats": 3
+        },
+        "neo4j.page_cache_used_bytes": {
+          "median": 22570626.0,
+          "minimum": 22570626.0,
+          "maximum": 22570626.0,
+          "n_repeats": 3
+        },
+        "memory.view_bytes": {
+          "median": 40680264.0,
+          "minimum": 40680264.0,
+          "maximum": 40680264.0,
+          "n_repeats": 1
+        },
+        "memory.item_graph_bytes": {
+          "median": 108012237.0,
+          "minimum": 108012237.0,
+          "maximum": 108012237.0,
+          "n_repeats": 1
+        },
+        "memory.traced_peak_bytes": {
+          "median": 181903581.0,
+          "minimum": 181903581.0,
+          "maximum": 181903581.0,
+          "n_repeats": 1
+        }
+      },
+      "notes": []
+    },
+    {
+      "corpus_id": "D4000",
+      "sizes": {
+        "sheets": 4000,
+        "nodes": 148296,
+        "relationships": 446441,
+        "properties": 1318348
+      },
+      "quantities": {
+        "ingest.generate": {
+          "median": 68.7366383999979,
+          "minimum": 67.01531650000106,
+          "maximum": 75.90274910000153,
+          "n_repeats": 3
+        },
+        "ingest.split": {
+          "median": 16.95263800000248,
+          "minimum": 12.985492399999202,
+          "maximum": 17.885387099999207,
+          "n_repeats": 3
+        },
+        "ingest.localize": {
+          "median": 2.15204150000136,
+          "minimum": 2.0832768000000215,
+          "maximum": 2.152271599999949,
+          "n_repeats": 3
+        },
+        "ingest.resolve": {
+          "median": 3.284284600002138,
+          "minimum": 3.203715199997532,
+          "maximum": 3.33481120000215,
+          "n_repeats": 3
+        },
+        "ingest.plan": {
+          "median": 5.526974100001098,
+          "minimum": 5.392196000000695,
+          "maximum": 5.602516700000706,
+          "n_repeats": 3
+        },
+        "ingest.load_schema": {
+          "median": 0.1209510999979102,
+          "minimum": 0.11856229999830248,
+          "maximum": 0.12259550000089803,
+          "n_repeats": 3
+        },
+        "ingest.load_nodes": {
+          "median": 7.714161500000046,
+          "minimum": 7.7056322999997064,
+          "maximum": 8.365879199998744,
+          "n_repeats": 3
+        },
+        "ingest.load_relationships": {
+          "median": 20.402958599999693,
+          "minimum": 20.15680810000049,
+          "maximum": 25.409821599998395,
+          "n_repeats": 3
+        },
+        "ingest.load_verify": {
+          "median": 1.4748636999975133,
+          "minimum": 1.4311823999996705,
+          "maximum": 1.7637252000022272,
+          "n_repeats": 3
+        },
+        "ingest.build_total": {
+          "median": 127.34025799999654,
+          "minimum": 124.42774170000484,
+          "maximum": 135.22945099999924,
+          "n_repeats": 3
+        },
+        "store.data_bytes": {
+          "median": 80068964.0,
+          "minimum": 80068890.0,
+          "maximum": 80069075.0,
+          "n_repeats": 3
+        },
+        "store.tx_log_bytes": {
+          "median": 48393621.0,
+          "minimum": 48393613.0,
+          "maximum": 48393623.0,
+          "n_repeats": 3
+        },
+        "store.page_cache_needed_bytes": {
+          "median": 96082756.8,
+          "minimum": 96082668.0,
+          "maximum": 96082890.0,
+          "n_repeats": 3
+        },
+        "store.metrics_bytes": {
+          "median": 41960.0,
+          "minimum": 41960.0,
+          "maximum": 41960.0,
+          "n_repeats": 3
+        },
+        "startup.rebuild": {
+          "median": 93.90157630000249,
+          "minimum": 92.4635402999993,
+          "maximum": 95.56686759999866,
+          "n_repeats": 3
+        },
+        "startup.graph_view": {
+          "median": 1.9428753000029246,
+          "minimum": 1.9387906000010844,
+          "maximum": 1.9476859000023978,
+          "n_repeats": 3
+        },
+        "startup.tier_runs": {
+          "median": 0.0008361000000149943,
+          "minimum": 0.0008094000004348345,
+          "maximum": 0.0008968000001914334,
+          "n_repeats": 3
+        },
+        "startup.schema_text": {
+          "median": 0.00006159999975352548,
+          "minimum": 0.000060200000007171184,
+          "maximum": 0.0000717999973858241,
+          "n_repeats": 3
+        },
+        "startup.neo4j_open_check": {
+          "median": 0.17204249999849708,
+          "minimum": 0.12081540000144741,
+          "maximum": 0.19917830000122194,
+          "n_repeats": 3
+        },
+        "startup.item_graph": {
+          "median": 8.042957599998772,
+          "minimum": 8.02530950000073,
+          "maximum": 8.069855999998254,
+          "n_repeats": 3
+        },
+        "startup.total": {
+          "median": 104.08730710000236,
+          "minimum": 102.57589690000168,
+          "maximum": 105.73102719999952,
+          "n_repeats": 3
+        },
+        "startup.without_rebuild": {
+          "median": 10.164159600000858,
+          "minimum": 10.112356600002386,
+          "maximum": 10.185730799999874,
+          "n_repeats": 3
+        },
+        "startup.context_rag_build": {
+          "median": 14.416663100000733,
+          "minimum": 14.226399799998035,
+          "maximum": 14.500845999999001,
+          "n_repeats": 3
+        },
+        "process.baseline_bytes": {
+          "median": 178921472.0,
+          "minimum": 178888704.0,
+          "maximum": 178937856.0,
+          "n_repeats": 3
+        },
+        "process.peak_bytes": {
+          "median": 3001376768.0,
+          "minimum": 3000971264.0,
+          "maximum": 3002183680.0,
+          "n_repeats": 3
+        },
+        "neo4j.rss_bytes": {
+          "median": 1287864320.0,
+          "minimum": 1287585792.0,
+          "maximum": 1336127488.0,
+          "n_repeats": 3
+        },
+        "neo4j.page_cache_used_bytes": {
+          "median": 82963423.0,
+          "minimum": 82963423.0,
+          "maximum": 82963423.0,
+          "n_repeats": 3
+        },
+        "memory.view_bytes": {
+          "median": 163491633.0,
+          "minimum": 163491633.0,
+          "maximum": 163491633.0,
+          "n_repeats": 1
+        },
+        "memory.item_graph_bytes": {
+          "median": 431837886.0,
+          "minimum": 431837886.0,
+          "maximum": 431837886.0,
+          "n_repeats": 1
+        },
+        "memory.traced_peak_bytes": {
+          "median": 728171983.0,
+          "minimum": 728171983.0,
+          "maximum": 728171983.0,
+          "n_repeats": 1
+        }
+      },
+      "notes": [
+        "the server's store.size.database metric differs from the bytes on disk by more than 10% in 3 of 3 repeats: it lags, so the bytes on disk are the figure and the metric is secondary"
+      ]
+    }
+  ],
+  "compute": [
+    {
+      "role": "cypher_db_only",
+      "strategy": "cypher_rag_plant",
+      "corpus_id": "D100",
+      "basis": "db_replay",
+      "needs_database": true,
+      "needs_memory_graph": false,
+      "n_questions": 180,
+      "local_median_s": 0.019956249998358544,
+      "local_p90_s": 0.03218292999990808,
+      "local_max_s": 0.1415921999978309,
+      "local_sum_s": 3.3827108000004955,
+      "db_client_sum_s": 3.3632624999954714,
+      "db_server_sum_s": 3.008,
+      "graph_api_sum_s": 0.0,
+      "other_sum_s": 0.019448300005024066,
+      "local_share_of_latency": 0.0029584001549464913,
+      "token_usd_per_question": 0.0003888641666666667,
+      "n_cost_missing": 0
+    },
+    {
+      "role": "cypher_db_only",
+      "strategy": "cypher_rag_plant",
+      "corpus_id": "D1000",
+      "basis": "db_replay",
+      "needs_database": true,
+      "needs_memory_graph": false,
+      "n_questions": 180,
+      "local_median_s": 0.030499750000672066,
+      "local_p90_s": 0.054831070000363975,
+      "local_max_s": 0.26230500000019674,
+      "local_sum_s": 5.926082399990264,
+      "db_client_sum_s": 5.905103600020084,
+      "db_server_sum_s": 4.694,
+      "graph_api_sum_s": 0.0,
+      "other_sum_s": 0.020978799970180262,
+      "local_share_of_latency": 0.005051948403415187,
+      "token_usd_per_question": 0.00039859027777777777,
+      "n_cost_missing": 0
+    },
+    {
+      "role": "cypher",
+      "strategy": "cypher_rag_plant",
+      "corpus_id": "D100",
+      "basis": "replay",
+      "needs_database": true,
+      "needs_memory_graph": false,
+      "n_questions": 180,
+      "local_median_s": 0.004297249999581254,
+      "local_p90_s": 0.006143340000562603,
+      "local_max_s": 0.06521670000438462,
+      "local_sum_s": 0.8565659000378218,
+      "db_client_sum_s": 0.7533044000156224,
+      "db_server_sum_s": 0.434,
+      "graph_api_sum_s": 0.0,
+      "other_sum_s": 0.10326150002219947,
+      "local_share_of_latency": 0.0007507811604451768,
+      "token_usd_per_question": 0.0003888641666666667,
+      "n_cost_missing": 0
+    },
+    {
+      "role": "agent",
+      "strategy": "graph_agent_low_steps",
+      "corpus_id": "D100",
+      "basis": "replay",
+      "needs_database": false,
+      "needs_memory_graph": true,
+      "n_questions": 180,
+      "local_median_s": 0.0005673499999829801,
+      "local_p90_s": 0.008857640001224354,
+      "local_max_s": 0.030986700010544155,
+      "local_sum_s": 0.4969010000095295,
+      "db_client_sum_s": 0.0,
+      "db_server_sum_s": 0.0,
+      "graph_api_sum_s": 0.3994795000035083,
+      "other_sum_s": 0.09742150000602123,
+      "local_share_of_latency": 0.00027335582618133914,
+      "token_usd_per_question": 0.0005113215277777778,
+      "n_cost_missing": 0
+    },
+    {
+      "role": "need",
+      "strategy": "hierarchical_need_rules_plant",
+      "corpus_id": "D100",
+      "basis": "old_run",
+      "needs_database": false,
+      "needs_memory_graph": true,
+      "n_questions": 180,
+      "local_median_s": 0.030999999999039574,
+      "local_p90_s": 0.06199999999807915,
+      "local_max_s": 0.4219999999986612,
+      "local_sum_s": 6.500999999969281,
+      "db_client_sum_s": null,
+      "db_server_sum_s": null,
+      "graph_api_sum_s": null,
+      "other_sum_s": null,
+      "local_share_of_latency": 0.001017812740612168,
+      "token_usd_per_question": 0.002606927001277778,
+      "n_cost_missing": 0
+    },
+    {
+      "role": "cypher",
+      "strategy": "cypher_rag_plant",
+      "corpus_id": "D1000",
+      "basis": "replay",
+      "needs_database": true,
+      "needs_memory_graph": false,
+      "n_questions": 180,
+      "local_median_s": 0.01569059999928868,
+      "local_p90_s": 0.02930284999492869,
+      "local_max_s": 0.1995929000004253,
+      "local_sum_s": 3.141350699967006,
+      "db_client_sum_s": 3.0230780999845592,
+      "db_server_sum_s": 1.982,
+      "graph_api_sum_s": 0.0,
+      "other_sum_s": 0.11827259998244699,
+      "local_share_of_latency": 0.0026843545094560974,
+      "token_usd_per_question": 0.00039859027777777777,
+      "n_cost_missing": 0
+    },
+    {
+      "role": "agent",
+      "strategy": "graph_agent_low_steps",
+      "corpus_id": "D1000",
+      "basis": "replay",
+      "needs_database": false,
+      "needs_memory_graph": true,
+      "n_questions": 180,
+      "local_median_s": 0.0006921499989402946,
+      "local_p90_s": 0.08889156000113871,
+      "local_max_s": 0.3024025000013353,
+      "local_sum_s": 4.494027099939558,
+      "db_client_sum_s": 0.0,
+      "db_server_sum_s": 0.0,
+      "graph_api_sum_s": 4.375772400013375,
+      "other_sum_s": 0.1182546999261831,
+      "local_share_of_latency": 0.0021681680880685683,
+      "token_usd_per_question": 0.0006270094444444444,
+      "n_cost_missing": 0
+    },
+    {
+      "role": "need",
+      "strategy": "hierarchical_need_rules_plant",
+      "corpus_id": "D1000",
+      "basis": "old_run",
+      "needs_database": false,
+      "needs_memory_graph": true,
+      "n_questions": 180,
+      "local_median_s": 0.0319999999992433,
+      "local_p90_s": 0.3129999999982829,
+      "local_max_s": 1.264999999999418,
+      "local_sum_s": 22.259999999969295,
+      "db_client_sum_s": null,
+      "db_server_sum_s": null,
+      "graph_api_sum_s": null,
+      "other_sum_s": null,
+      "local_share_of_latency": 0.0023880409996353915,
+      "token_usd_per_question": 0.0032230927999999997,
+      "n_cost_missing": 0
+    }
+  ],
+  "growth": [
+    {
+      "name": "size.sheets",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 101.0,
+      "to_value": 1000.0
+    },
+    {
+      "name": "size.nodes",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 3867.0,
+      "to_value": 37124.0
+    },
+    {
+      "name": "size.relationships",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 11653.0,
+      "to_value": 111668.0
+    },
+    {
+      "name": "size.properties",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 34369.0,
+      "to_value": 329830.0
+    },
+    {
+      "name": "ingest.generate",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 1.6565953000026639,
+      "to_value": 16.099478599997383
+    },
+    {
+      "name": "ingest.split",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 0.056634000000485685,
+      "to_value": 1.5779889999976149
+    },
+    {
+      "name": "ingest.localize",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 0.025064800000109244,
+      "to_value": 0.4266929000004893
+    },
+    {
+      "name": "ingest.resolve",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 0.033049000001483364,
+      "to_value": 0.601740999998583
+    },
+    {
+      "name": "ingest.plan",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 0.151048499999888,
+      "to_value": 1.398584700000356
+    },
+    {
+      "name": "ingest.load_schema",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 0.08627870000054827,
+      "to_value": 0.07115740000153892
+    },
+    {
+      "name": "ingest.load_nodes",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 0.3941311999988102,
+      "to_value": 1.8764961000015319
+    },
+    {
+      "name": "ingest.load_relationships",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 0.5680715000016789,
+      "to_value": 3.691023800001858
+    },
+    {
+      "name": "ingest.load_verify",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 0.14266160000261152,
+      "to_value": 0.32553870000265306
+    },
+    {
+      "name": "ingest.build_total",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 3.105662800011487,
+      "to_value": 26.060622099998
+    },
+    {
+      "name": "store.data_bytes",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 3139061.0,
+      "to_value": 20384533.0
+    },
+    {
+      "name": "store.tx_log_bytes",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 1142764.0,
+      "to_value": 11247150.0
+    },
+    {
+      "name": "store.page_cache_needed_bytes",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 3766873.1999999997,
+      "to_value": 24461439.599999998
+    },
+    {
+      "name": "startup.rebuild",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 1.893731399999524,
+      "to_value": 19.547111300002143
+    },
+    {
+      "name": "startup.graph_view",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 0.01871960000062245,
+      "to_value": 0.5021181999982218
+    },
+    {
+      "name": "startup.tier_runs",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 0.0008027000003494322,
+      "to_value": 0.000860099997225916
+    },
+    {
+      "name": "startup.schema_text",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 0.000057100001868093386,
+      "to_value": 0.000057699999160831794
+    },
+    {
+      "name": "startup.neo4j_open_check",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 0.01635349999924074,
+      "to_value": 0.06042190000152914
+    },
+    {
+      "name": "startup.item_graph",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 0.20601910000186763,
+      "to_value": 1.750160200001119
+    },
+    {
+      "name": "startup.total",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 2.15231350000613,
+      "to_value": 22.11167310000019
+    },
+    {
+      "name": "startup.without_rebuild",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 0.24204330000429763,
+      "to_value": 2.317784800001391
+    },
+    {
+      "name": "startup.context_rag_build",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 0.3352439000009326,
+      "to_value": 3.4951192999978957
+    },
+    {
+      "name": "process.baseline_bytes",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 178933760.0,
+      "to_value": 178532352.0
+    },
+    {
+      "name": "process.peak_bytes",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 257310720.0,
+      "to_value": 888721408.0
+    },
+    {
+      "name": "neo4j.rss_bytes",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 1238896640.0,
+      "to_value": 1303781376.0
+    },
+    {
+      "name": "neo4j.page_cache_used_bytes",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 5122529.0,
+      "to_value": 22570626.0
+    },
+    {
+      "name": "memory.view_bytes",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 4235248.0,
+      "to_value": 40680264.0
+    },
+    {
+      "name": "memory.item_graph_bytes",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 11291193.0,
+      "to_value": 108012237.0
+    },
+    {
+      "name": "memory.traced_peak_bytes",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 19341473.0,
+      "to_value": 181903581.0
+    },
+    {
+      "name": "size.sheets",
+      "from_corpus": "D1000",
+      "to_corpus": "D4000",
+      "from_value": 1000.0,
+      "to_value": 4000.0
+    },
+    {
+      "name": "size.nodes",
+      "from_corpus": "D1000",
+      "to_corpus": "D4000",
+      "from_value": 37124.0,
+      "to_value": 148296.0
+    },
+    {
+      "name": "size.relationships",
+      "from_corpus": "D1000",
+      "to_corpus": "D4000",
+      "from_value": 111668.0,
+      "to_value": 446441.0
+    },
+    {
+      "name": "size.properties",
+      "from_corpus": "D1000",
+      "to_corpus": "D4000",
+      "from_value": 329830.0,
+      "to_value": 1318348.0
+    },
+    {
+      "name": "ingest.generate",
+      "from_corpus": "D1000",
+      "to_corpus": "D4000",
+      "from_value": 16.099478599997383,
+      "to_value": 68.7366383999979
+    },
+    {
+      "name": "ingest.split",
+      "from_corpus": "D1000",
+      "to_corpus": "D4000",
+      "from_value": 1.5779889999976149,
+      "to_value": 16.95263800000248
+    },
+    {
+      "name": "ingest.localize",
+      "from_corpus": "D1000",
+      "to_corpus": "D4000",
+      "from_value": 0.4266929000004893,
+      "to_value": 2.15204150000136
+    },
+    {
+      "name": "ingest.resolve",
+      "from_corpus": "D1000",
+      "to_corpus": "D4000",
+      "from_value": 0.601740999998583,
+      "to_value": 3.284284600002138
+    },
+    {
+      "name": "ingest.plan",
+      "from_corpus": "D1000",
+      "to_corpus": "D4000",
+      "from_value": 1.398584700000356,
+      "to_value": 5.526974100001098
+    },
+    {
+      "name": "ingest.load_schema",
+      "from_corpus": "D1000",
+      "to_corpus": "D4000",
+      "from_value": 0.07115740000153892,
+      "to_value": 0.1209510999979102
+    },
+    {
+      "name": "ingest.load_nodes",
+      "from_corpus": "D1000",
+      "to_corpus": "D4000",
+      "from_value": 1.8764961000015319,
+      "to_value": 7.714161500000046
+    },
+    {
+      "name": "ingest.load_relationships",
+      "from_corpus": "D1000",
+      "to_corpus": "D4000",
+      "from_value": 3.691023800001858,
+      "to_value": 20.402958599999693
+    },
+    {
+      "name": "ingest.load_verify",
+      "from_corpus": "D1000",
+      "to_corpus": "D4000",
+      "from_value": 0.32553870000265306,
+      "to_value": 1.4748636999975133
+    },
+    {
+      "name": "ingest.build_total",
+      "from_corpus": "D1000",
+      "to_corpus": "D4000",
+      "from_value": 26.060622099998,
+      "to_value": 127.34025799999654
+    },
+    {
+      "name": "store.data_bytes",
+      "from_corpus": "D1000",
+      "to_corpus": "D4000",
+      "from_value": 20384533.0,
+      "to_value": 80068964.0
+    },
+    {
+      "name": "store.tx_log_bytes",
+      "from_corpus": "D1000",
+      "to_corpus": "D4000",
+      "from_value": 11247150.0,
+      "to_value": 48393621.0
+    },
+    {
+      "name": "store.page_cache_needed_bytes",
+      "from_corpus": "D1000",
+      "to_corpus": "D4000",
+      "from_value": 24461439.599999998,
+      "to_value": 96082756.8
+    },
+    {
+      "name": "startup.rebuild",
+      "from_corpus": "D1000",
+      "to_corpus": "D4000",
+      "from_value": 19.547111300002143,
+      "to_value": 93.90157630000249
+    },
+    {
+      "name": "startup.graph_view",
+      "from_corpus": "D1000",
+      "to_corpus": "D4000",
+      "from_value": 0.5021181999982218,
+      "to_value": 1.9428753000029246
+    },
+    {
+      "name": "startup.tier_runs",
+      "from_corpus": "D1000",
+      "to_corpus": "D4000",
+      "from_value": 0.000860099997225916,
+      "to_value": 0.0008361000000149943
+    },
+    {
+      "name": "startup.schema_text",
+      "from_corpus": "D1000",
+      "to_corpus": "D4000",
+      "from_value": 0.000057699999160831794,
+      "to_value": 0.00006159999975352548
+    },
+    {
+      "name": "startup.neo4j_open_check",
+      "from_corpus": "D1000",
+      "to_corpus": "D4000",
+      "from_value": 0.06042190000152914,
+      "to_value": 0.17204249999849708
+    },
+    {
+      "name": "startup.item_graph",
+      "from_corpus": "D1000",
+      "to_corpus": "D4000",
+      "from_value": 1.750160200001119,
+      "to_value": 8.042957599998772
+    },
+    {
+      "name": "startup.total",
+      "from_corpus": "D1000",
+      "to_corpus": "D4000",
+      "from_value": 22.11167310000019,
+      "to_value": 104.08730710000236
+    },
+    {
+      "name": "startup.without_rebuild",
+      "from_corpus": "D1000",
+      "to_corpus": "D4000",
+      "from_value": 2.317784800001391,
+      "to_value": 10.164159600000858
+    },
+    {
+      "name": "startup.context_rag_build",
+      "from_corpus": "D1000",
+      "to_corpus": "D4000",
+      "from_value": 3.4951192999978957,
+      "to_value": 14.416663100000733
+    },
+    {
+      "name": "process.baseline_bytes",
+      "from_corpus": "D1000",
+      "to_corpus": "D4000",
+      "from_value": 178532352.0,
+      "to_value": 178921472.0
+    },
+    {
+      "name": "process.peak_bytes",
+      "from_corpus": "D1000",
+      "to_corpus": "D4000",
+      "from_value": 888721408.0,
+      "to_value": 3001376768.0
+    },
+    {
+      "name": "neo4j.rss_bytes",
+      "from_corpus": "D1000",
+      "to_corpus": "D4000",
+      "from_value": 1303781376.0,
+      "to_value": 1287864320.0
+    },
+    {
+      "name": "neo4j.page_cache_used_bytes",
+      "from_corpus": "D1000",
+      "to_corpus": "D4000",
+      "from_value": 22570626.0,
+      "to_value": 82963423.0
+    },
+    {
+      "name": "memory.view_bytes",
+      "from_corpus": "D1000",
+      "to_corpus": "D4000",
+      "from_value": 40680264.0,
+      "to_value": 163491633.0
+    },
+    {
+      "name": "memory.item_graph_bytes",
+      "from_corpus": "D1000",
+      "to_corpus": "D4000",
+      "from_value": 108012237.0,
+      "to_value": 431837886.0
+    },
+    {
+      "name": "memory.traced_peak_bytes",
+      "from_corpus": "D1000",
+      "to_corpus": "D4000",
+      "from_value": 181903581.0,
+      "to_value": 728171983.0
+    },
+    {
+      "name": "agent.local_median_s",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 0.0005673499999829801,
+      "to_value": 0.0006921499989402946
+    },
+    {
+      "name": "agent.local_p90_s",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 0.008857640001224354,
+      "to_value": 0.08889156000113871
+    },
+    {
+      "name": "agent.local_sum_s",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 0.4969010000095295,
+      "to_value": 4.494027099939558
+    },
+    {
+      "name": "agent.token_usd_per_question",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 0.0005113215277777778,
+      "to_value": 0.0006270094444444444
+    },
+    {
+      "name": "cypher.local_median_s",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 0.004297249999581254,
+      "to_value": 0.01569059999928868
+    },
+    {
+      "name": "cypher.local_p90_s",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 0.006143340000562603,
+      "to_value": 0.02930284999492869
+    },
+    {
+      "name": "cypher.local_sum_s",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 0.8565659000378218,
+      "to_value": 3.141350699967006
+    },
+    {
+      "name": "cypher.token_usd_per_question",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 0.0003888641666666667,
+      "to_value": 0.00039859027777777777
+    },
+    {
+      "name": "cypher_db_only.local_median_s",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 0.019956249998358544,
+      "to_value": 0.030499750000672066
+    },
+    {
+      "name": "cypher_db_only.local_p90_s",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 0.03218292999990808,
+      "to_value": 0.054831070000363975
+    },
+    {
+      "name": "cypher_db_only.local_sum_s",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 3.3827108000004955,
+      "to_value": 5.926082399990264
+    },
+    {
+      "name": "cypher_db_only.token_usd_per_question",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 0.0003888641666666667,
+      "to_value": 0.00039859027777777777
+    },
+    {
+      "name": "need.local_median_s",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 0.030999999999039574,
+      "to_value": 0.0319999999992433
+    },
+    {
+      "name": "need.local_p90_s",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 0.06199999999807915,
+      "to_value": 0.3129999999982829
+    },
+    {
+      "name": "need.local_sum_s",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 6.500999999969281,
+      "to_value": 22.259999999969295
+    },
+    {
+      "name": "need.token_usd_per_question",
+      "from_corpus": "D100",
+      "to_corpus": "D1000",
+      "from_value": 0.002606927001277778,
+      "to_value": 0.0032230927999999997
+    }
+  ],
+  "reference_price": null,
+  "money": []
+}

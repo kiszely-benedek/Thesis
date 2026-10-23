@@ -1,0 +1,20 @@
+{
+  "out": "data\\runs\\cv1\\demo\\cache_luna_demo.sqlite",
+  "date": "2026-10-12",
+  "sources": [
+    {
+      "path": "data\\runs\\cv1\\cache_luna.sqlite",
+      "sha256": "46169abe7879afdde1f1fe485da8f422a0aa8762280d50ae73b07115bec7b913",
+      "rows": 4451,
+      "rows_written": 4451
+    },
+    {
+      "path": "data\\runs\\cv1\\demo\\cache.sqlite",
+      "sha256": "c21a259443e49d309c3b00646a31e0e3166bd7b4a12063c39042597a338b3ba3",
+      "rows": 3236,
+      "rows_written": 3233
+    }
+  ],
+  "rows_written": 7684,
+  "rows_skipped_duplicate": 3
+}

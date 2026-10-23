@@ -1,0 +1,60 @@
+=== 15:07:56 ingest D100 repeat 1/3
+=== 15:08:03 ingest D100 repeat 2/3
+=== 15:08:10 ingest D100 repeat 3/3
+=== 15:08:17 cypher query-timing replay INF-CYPL2DB-D100 (database time only, no model)
+=== 15:08:25 replay INF-CYPL2-D100 (cache-only: no --allow-paid-calls)
+    INF-CYPL2-D100: identical
+=== 15:08:32 replay INF-AGL3-D100 (cache-only: no --allow-paid-calls)
+    INF-AGL3-D100: identical
+=== 15:08:39 replay INF-DEV10-D100 (cache-only: no --allow-paid-calls)
+    INF-DEV10-D100: different
+=== 15:08:47 infra-probe D100 repeat 1/3
+=== 15:08:53 infra-probe D100 repeat 2/3
+=== 15:08:59 infra-probe D100 repeat 3/3
+=== 15:09:06 infra-probe D100 memory
+=== 15:09:12 ingest D1000 repeat 1/3
+=== 15:09:43 ingest D1000 repeat 2/3
+=== 15:10:13 ingest D1000 repeat 3/3
+=== 15:10:44 cypher query-timing replay INF-CYPL2DB-D1000 (database time only, no model)
+=== 15:11:14 replay INF-CYPL2-D1000 (cache-only: no --allow-paid-calls)
+    INF-CYPL2-D1000: identical
+=== 15:11:43 replay INF-AGL3-D1000 (cache-only: no --allow-paid-calls)
+    INF-AGL3-D1000: identical
+=== 15:12:15 replay INF-DEV10-D1000 (cache-only: no --allow-paid-calls)
+    INF-DEV10-D1000: different
+=== 15:12:50 infra-probe D1000 repeat 1/3
+=== 15:13:26 infra-probe D1000 repeat 2/3
+=== 15:14:02 infra-probe D1000 repeat 3/3
+=== 15:14:39 infra-probe D1000 memory
+=== 15:15:08 ingest D4000 repeat 1/3
+=== 15:17:32 ingest D4000 repeat 2/3
+=== 15:19:48 ingest D4000 repeat 3/3
+=== 15:22:00 infra-probe D4000 repeat 1/3
+=== 15:24:37 infra-probe D4000 repeat 2/3
+=== 15:27:13 infra-probe D4000 repeat 3/3
+=== 15:29:46 infra-probe D4000 memory
+=== 15:31:59 restore: D1000 (plant profile) alone in Neo4j
+=== 15:32:30 infra-report
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\qa\cascade\__main__.py", line 3, in <module>
+    main()
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\qa\cascade\cli.py", line 146, in main
+    report_command(args)
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\qa\cascade\infra_report_cli.py", line 78, in report_command
+    report = build_infra_report(load_report_inputs(request))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\infra\report.py", line 34, in build_infra_report
+    footprints = [corpus_footprint(corpus) for corpus in inputs.corpora]
+                  ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\infra\report_quantities.py", line 71, in corpus_footprint
+    quantities.update(_store_quantities(corpus.ingests))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\infra\report_quantities.py", line 128, in _store_quantities
+    metric = spread_of_optional("store.metrics_bytes", [f.metrics_store_bytes for f in measured])
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\infra\report_quantities.py", line 63, in spread_of_optional
+    raise ValueError(f"expected {name} in all {len(values)} repeats, found {len(present)}")
+ValueError: expected store.metrics_bytes in all 3 repeats, found 1
+ERROR: infra-report failed

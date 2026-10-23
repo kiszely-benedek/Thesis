@@ -1,0 +1,78 @@
+size search: target 1 sheets -> 1 units (1 predicted) in 0.00 s
+wrote 229 questions to data\runs\exp0001\qfull\H1\questions.jsonl
+dropped CROSS_UNIT: no candidate question in the pool
+dropped SHEETS_OF_TAG: no candidate question in the pool
+dropped FIRST_MEETING_POINT: no candidate question in the pool
+dropped FEEDING_UNITS: no candidate question in the pool
+wrote 70 of 221 questions to data\runs\exp0001\questions\H1\questions.jsonl
+size search: target 3 sheets -> 2 units (4 predicted) in 0.00 s
+wrote 373 questions to data\runs\exp0001\qfull\H3\questions.jsonl
+wrote 87 of 363 questions to data\runs\exp0001\questions\H3\questions.jsonl
+size search: target 10 sheets -> 5 units (10 predicted) in 0.01 s
+wrote 430 questions to data\runs\exp0001\qfull\H10\questions.jsonl
+wrote 95 of 420 questions to data\runs\exp0001\questions\H10\questions.jsonl
+size search: target 30 sheets -> 15 units (30 predicted) in 0.02 s
+wrote 472 questions to data\runs\exp0001\qfull\H30\questions.jsonl
+wrote 96 of 462 questions to data\runs\exp0001\questions\H30\questions.jsonl
+wrote 24 of 480 questions to data\runs\exp0001\questions_c\H100\questions.jsonl
+E = 7da8a4838ddeffd9a8b9a687b8efb07ac35d56ad; H1 seed 104
+{
+  "corpus_id": "H1",
+  "seed": 41,
+  "sample_seed": 20261101,
+  "n_per_family": 20,
+  "n_per_wording": 1,
+  "pool": {
+    "corpus_id": "H1",
+    "seed": 41,
+    "candidates": {
+      "LOOKUP_TYPE": {
+        "0": 33,
+        "1": 0,
+        "2": 0,
+        "3-4": 0,
+        "5-8": 0,
+        "9-16": 0,
+        "17-32": 0,
+        "33+": 0,
+        "unanswerable": 0
+      },
+      "LOOKUP_UNIT": {
+        "0": 33,
+        "1": 0,
+        "2": 0,
+        "3-4": 0,
+        "5-8": 0,
+        "9-16": 0,
+        "17-32": 0,
+        "33+": 0,
+        "unanswerable": 0
+      },
+      "NEIGHBOURS_DOWNSTREAM": {
+        "0": 17,
+        "1": 0,
+        "2": 0,
+        "3-4": 0,
+        "5-8": 0,
+        "9-16": 0,
+        "17-32": 0,
+        "33+": 0,
+        "unanswerable": 0
+      },
+      "LOOP_ACTUATED_VALVE": {
+        "0": 2,
+        "1": 0,
+        "2": 0,
+        "3-4": 0,
+        "5-8": 0,
+        "9-16": 0,
+        "17-32": 0,
+        "33+": 0,
+        "unanswerable": 0
+      },
+      "LOOP_MEASURED_EQUIPMENT": {
+        "0": 2,
+        "1": 0,
+        "2": 0,
+        "3-4": 0,
+        "5-8": 0,

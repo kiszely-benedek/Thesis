@@ -1,0 +1,66 @@
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `dexpi_class` does not exist in database `neo4j`. Verify that the spelling is correct.', position=<SummaryInputPosition line=2, column=57, offset=96>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 96, 'line': 2, 'column': 57}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: 'MATCH (item:PlantItem {tag: "TK-52-5"})\nRETURN item.tag AS tag, labels(item) AS item_type, item.dexpi_class AS dexpi_class, item.node_class AS node_class, item.category AS category'
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `category` does not exist in database `neo4j`. Verify that the spelling is correct.', position=<SummaryInputPosition line=2, column=121, offset=160>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 160, 'line': 2, 'column': 121}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: 'MATCH (item:PlantItem {tag: "TK-52-5"})\nRETURN item.tag AS tag, labels(item) AS item_type, item.dexpi_class AS dexpi_class, item.node_class AS node_class, item.category AS category'
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `dexpi_class` does not exist in database `neo4j`. Verify that the spelling is correct.', position=<SummaryInputPosition line=2, column=52, offset=91>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 91, 'line': 2, 'column': 52}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: 'MATCH (item:PlantItem {tag: "LIC-9-1"})\nRETURN item.tag AS tag, labels(item) AS type, item.dexpi_class AS dexpi_class'
+Received notification from DBMS server: <GqlStatusObject gql_status='01N50', status_description='warn: label does not exist. The label `GateValve` does not exist in database `neo4j`. Verify that the spelling is correct.', position=<SummaryInputPosition line=5, column=10, offset=123>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 123, 'line': 5, 'column': 10}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: "MATCH (target:PlantItem {tag: 'P-13-5'})\nMATCH p=()-[:send_to*1..]->(target)\nUNWIND nodes(p) AS v\nWITH DISTINCT v\nWHERE (v:GateValve OR v:BallValve OR v:GlobeValve)\n  AND NOT (v:OperatedValve)\n  AND NOT (v:ActuatingFunction)\nRETURN v.tag AS tag\nORDER BY tag"
+run CYPL2-D100: 180 rows to answer, 0 already on disk
+paid mode: up to 180 model calls; hard spend cap 0.3 USD
+estimated cost: 0.1800 USD
+{
+  "run_id": "CYPL2-D100",
+  "n_rows": 180,
+  "n_new_rows": 180,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "cypher_rag_plant": {
+      "17-32": {
+        "ANSWERED": 3,
+        "RETRIEVAL_ERROR": 1
+      },
+      "2": {
+        "RETRIEVAL_ERROR": 3,
+        "ANSWERED": 17
+      },
+      "1": {
+        "ANSWERED": 26,
+        "RETRIEVAL_ERROR": 7
+      },
+      "3-4": {
+        "ANSWERED": 11,
+        "RETRIEVAL_ERROR": 2
+      },
+      "5-8": {
+        "ANSWERED": 13,
+        "RETRIEVAL_ERROR": 3
+      },
+      "9-16": {
+        "ANSWERED": 5,
+        "RETRIEVAL_ERROR": 1
+      },
+      "0": {
+        "ANSWERED": 60,
+        "RETRIEVAL_ERROR": 8
+      },
+      "unanswerable": {
+        "ANSWERED": 14,
+        "RETRIEVAL_ERROR": 6
+      }
+    }
+  },
+  "routing_recall": {},
+  "relaxed_routing_recall": {},
+  "evidence_node_recall": {},
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {},
+    "relaxed_routing_recall": {},
+    "evidence_node_recall": {}
+  },
+  "trace_rates": {
+    "cypher_rag_plant": {
+      "truncated_rate": 0.0
+    }
+  },
+  "mean_total_cost_usd": {
+    "cypher_rag_plant": 0.0003888641666666667
+  },
+  "stopped_by_spend_cap": false
+}

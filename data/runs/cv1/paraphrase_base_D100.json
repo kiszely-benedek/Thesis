@@ -1,0 +1,182 @@
+[
+ {
+  "id": "D100:CONNECTED:TK-3-3|T-47-4",
+  "family": "CONNECTED",
+  "text": "Can process flow reach T-47-4 from TK-3-3?"
+ },
+ {
+  "id": "D100:CONNECTED:P-32-1|E-35-1",
+  "family": "CONNECTED",
+  "text": "Can process flow reach E-35-1 from P-32-1?"
+ },
+ {
+  "id": "D100:COUNT_IN_UNIT:47|HeatExchanger",
+  "family": "COUNT_IN_UNIT",
+  "text": "How many heat exchangers are in unit 47?"
+ },
+ {
+  "id": "D100:COUNT_IN_UNIT:36|PressureVessel",
+  "family": "COUNT_IN_UNIT",
+  "text": "How many pressure vessels are in unit 36?"
+ },
+ {
+  "id": "D100:CROSS_UNIT:19",
+  "family": "CROSS_UNIT",
+  "text": "Which other units receive process flow directly from unit 19?"
+ },
+ {
+  "id": "D100:CROSS_UNIT:14",
+  "family": "CROSS_UNIT",
+  "text": "Which other units receive process flow directly from unit 14?"
+ },
+ {
+  "id": "D100:DOWNSTREAM_IN_UNIT:C-49-5|49",
+  "family": "DOWNSTREAM_IN_UNIT",
+  "text": "Which equipment items and valves in unit 49 receive flow from C-49-5, directly or indirectly?"
+ },
+ {
+  "id": "D100:DOWNSTREAM_IN_UNIT:T-2-2|2",
+  "family": "DOWNSTREAM_IN_UNIT",
+  "text": "Which equipment items and valves in unit 2 receive flow from T-2-2, directly or indirectly?"
+ },
+ {
+  "id": "D100:FLOW_PATH:GV-6-13|GV-16-2",
+  "family": "FLOW_PATH",
+  "text": "Trace the process flow path from GV-6-13 to GV-16-2. List every equipment item and valve in order."
+ },
+ {
+  "id": "D100:FLOW_PATH:BV-1-9|GV-13-2",
+  "family": "FLOW_PATH",
+  "text": "Trace the process flow path from BV-1-9 to GV-13-2. List every equipment item and valve in order."
+ },
+ {
+  "id": "D100:INSTRUMENTS_OF_ITEM:E-30-3",
+  "family": "INSTRUMENTS_OF_ITEM",
+  "text": "Which instruments measure E-30-3?"
+ },
+ {
+  "id": "D100:INSTRUMENTS_OF_ITEM:T-16-3",
+  "family": "INSTRUMENTS_OF_ITEM",
+  "text": "Which instruments measure T-16-3?"
+ },
+ {
+  "id": "D100:LOOKUP_TYPE:LT-19-3",
+  "family": "LOOKUP_TYPE",
+  "text": "What type of item is LT-19-3?"
+ },
+ {
+  "id": "D100:LOOKUP_TYPE:V-27-2",
+  "family": "LOOKUP_TYPE",
+  "text": "What type of item is V-27-2?"
+ },
+ {
+  "id": "D100:LOOKUP_UNIT:CHV-21-4",
+  "family": "LOOKUP_UNIT",
+  "text": "Which unit is CHV-21-4 located in?"
+ },
+ {
+  "id": "D100:LOOKUP_UNIT:PIC-13-4",
+  "family": "LOOKUP_UNIT",
+  "text": "Which unit is PIC-13-4 located in?"
+ },
+ {
+  "id": "D100:LOOPS_NEAR_ITEM:C-20-1",
+  "family": "LOOPS_NEAR_ITEM",
+  "text": "Which control loops act on valves directly connected to C-20-1?"
+ },
+ {
+  "id": "D100:LOOPS_NEAR_ITEM:V-18-5",
+  "family": "LOOPS_NEAR_ITEM",
+  "text": "Which control loops act on valves directly connected to V-18-5?"
+ },
+ {
+  "id": "D100:LOOP_ACTUATED_VALVE:LIC-18-3",
+  "family": "LOOP_ACTUATED_VALVE",
+  "text": "Which valve is actuated by control loop LIC-18-3?"
+ },
+ {
+  "id": "D100:LOOP_ACTUATED_VALVE:TIC-41-3",
+  "family": "LOOP_ACTUATED_VALVE",
+  "text": "Which valve is actuated by control loop TIC-41-3?"
+ },
+ {
+  "id": "D100:LOOP_MEASURED_EQUIPMENT:LIC-31-5",
+  "family": "LOOP_MEASURED_EQUIPMENT",
+  "text": "Which equipment item does control loop LIC-31-5 measure?"
+ },
+ {
+  "id": "D100:LOOP_MEASURED_EQUIPMENT:LIC-33-5",
+  "family": "LOOP_MEASURED_EQUIPMENT",
+  "text": "Which equipment item does control loop LIC-33-5 measure?"
+ },
+ {
+  "id": "D100:NEIGHBOURS_DOWNSTREAM:GV-28-8",
+  "family": "NEIGHBOURS_DOWNSTREAM",
+  "text": "Which equipment items and valves receive flow directly from GV-28-8?"
+ },
+ {
+  "id": "D100:NEIGHBOURS_DOWNSTREAM:P-23-1",
+  "family": "NEIGHBOURS_DOWNSTREAM",
+  "text": "Which equipment items and valves receive flow directly from P-23-1?"
+ },
+ {
+  "id": "D100:NO_PATH:FLOW_PATH:V-34-2|TK-50-6",
+  "family": "NO_PATH",
+  "text": "Trace the process flow path from V-34-2 to TK-50-6. List every equipment item and valve in order."
+ },
+ {
+  "id": "D100:NO_PATH:FLOW_PATH:P-11-5|P-20-1",
+  "family": "NO_PATH",
+  "text": "Trace the process flow path from P-11-5 to P-20-1. List every equipment item and valve in order."
+ },
+ {
+  "id": "D100:SAME_UNIT:E-12-1|E-12-4",
+  "family": "SAME_UNIT",
+  "text": "Are E-12-1 and E-12-4 in the same unit?"
+ },
+ {
+  "id": "D100:SAME_UNIT:E-19-5|TK-17-4",
+  "family": "SAME_UNIT",
+  "text": "Are E-19-5 and TK-17-4 in the same unit?"
+ },
+ {
+  "id": "D100:SHEETS_OF_TAG:P-23-1",
+  "family": "SHEETS_OF_TAG",
+  "text": "On which sheets is P-23-1 drawn?"
+ },
+ {
+  "id": "D100:SHEETS_OF_TAG:T-32-2",
+  "family": "SHEETS_OF_TAG",
+  "text": "On which sheets is T-32-2 drawn?"
+ },
+ {
+  "id": "D100:UNANSWERABLE_TAG:LOOKUP_TYPE:FV-48-5",
+  "family": "UNANSWERABLE_TAG",
+  "text": "What type of item is FV-48-5?"
+ },
+ {
+  "id": "D100:UNANSWERABLE_TAG:FLOW_PATH:V-13-7|GV-12-10",
+  "family": "UNANSWERABLE_TAG",
+  "text": "Trace the process flow path from V-13-7 to GV-12-10. List every equipment item and valve in order."
+ },
+ {
+  "id": "D100:UPSTREAM_ISOLATION:T-26-1",
+  "family": "UPSTREAM_ISOLATION",
+  "text": "To isolate T-26-1 from all upstream equipment, which valves must be closed?"
+ },
+ {
+  "id": "D100:UPSTREAM_ISOLATION:T-13-5",
+  "family": "UPSTREAM_ISOLATION",
+  "text": "To isolate T-13-5 from all upstream equipment, which valves must be closed?"
+ },
+ {
+  "id": "D100:UPSTREAM_SOURCES:TK-23-4",
+  "family": "UPSTREAM_SOURCES",
+  "text": "Which source items, with nothing flowing into them, ultimately feed TK-23-4?"
+ },
+ {
+  "id": "D100:UPSTREAM_SOURCES:V-39-1",
+  "family": "UPSTREAM_SOURCES",
+  "text": "Which source items, with nothing flowing into them, ultimately feed V-39-1?"
+ }
+]

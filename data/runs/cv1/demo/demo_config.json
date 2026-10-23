@@ -1,0 +1,86 @@
+{
+  "policy": "cascade_v3",
+  "question_deadline_s": 120.0,
+  "session_cap_usd": 5.0,
+  "calls_log_path": "data/runs/cv1/demo/calls.jsonl",
+  "corpora": [
+    {
+      "corpus_id": "D100",
+      "ingest_json": "data/runs/cv1/neo4jplant/D100/ingest.json",
+      "drawings_dir": "data/runs/cv1/drawings/D100",
+      "questions_jsonl": "data/runs/cv1/demo/examples/D100.en.jsonl",
+      "tier_runs": {
+        "cypher-luna": "data/runs/cv1/runs/CYPL2-D100",
+        "agent-luna": "data/runs/cv1/runs/AGL3-D100"
+      },
+      "recorded_runs": [
+        "data/runs/cv1/runs/CYPL2-D100",
+        "data/runs/cv1/runs/AGL3-D100",
+        "data/runs/cv1/runs/CYPL2-PARA-D100",
+        "data/runs/cv1/runs/AGL3-PARA-D100"
+      ]
+    },
+    {
+      "corpus_id": "D1000",
+      "ingest_json": "data/runs/cv1/neo4jplant/D1000/ingest.json",
+      "drawings_dir": "data/runs/cv1/drawings/D1000",
+      "questions_jsonl": "data/runs/cv1/demo/examples/D1000.jsonl",
+      "tier_runs": {
+        "cypher-luna": "data/runs/cv1/runs/CYPL2-D1000",
+        "agent-luna": "data/runs/cv1/runs/AGL3-D1000"
+      },
+      "recorded_runs": [
+        "data/runs/cv1/runs/CYPL2-D1000",
+        "data/runs/cv1/runs/AGL3-D1000"
+      ]
+    }
+  ],
+  "results": {
+    "ladder_report": "data/runs/exp0001/report/report.json",
+    "sealed_report": "data/runs/sealed/report/report.json"
+  },
+  "presentation": [
+    {
+      "corpus_id": "D1000",
+      "title": "D1000: lookup, reachability, flow path, no path",
+      "steps": [
+        {
+          "kind": "example",
+          "question_id": "D1000:LOOKUP_TYPE:V-361-5"
+        },
+        {
+          "kind": "example",
+          "question_id": "D1000:CONNECTED:E-19-2|C-395-7"
+        },
+        {
+          "kind": "example",
+          "question_id": "D1000:FLOW_PATH:CHV-5-18|P-419-1"
+        },
+        {
+          "kind": "example",
+          "question_id": "D1000:NO_PATH:FLOW_PATH:C-259-2|T-504-3"
+        },
+        {
+          "kind": "results"
+        }
+      ]
+    },
+    {
+      "corpus_id": "D100",
+      "title": "D100: lookup, flow path",
+      "steps": [
+        {
+          "kind": "example",
+          "question_id": "D100:LOOKUP_TYPE:LT-19-3"
+        },
+        {
+          "kind": "example",
+          "question_id": "D100:FLOW_PATH:BV-1-9|GV-13-2"
+        },
+        {
+          "kind": "results"
+        }
+      ]
+    }
+  ]
+}

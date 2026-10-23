@@ -1,0 +1,55 @@
+{
+  "corpus_id": "D1000",
+  "policy": "cascade_v3",
+  "environment": {
+    "git_commit": "a526e084da82738c191a0032669dfa441f7857f7",
+    "git_dirty": false,
+    "machine": {
+      "cpu_name": "AMD Ryzen 9 5900HX with Radeon Graphics",
+      "physical_cores": 8,
+      "logical_cores": 16,
+      "ram_bytes": 16542019584,
+      "os": "Windows-11-10.0.26200-SP0",
+      "python_version": "3.12.10",
+      "power_plugged": true
+    },
+    "clock": "perf_counter",
+    "clock_resolution_s": 1e-7,
+    "concurrency": null,
+    "neo4j_version": "Neo4j Kernel 2026.09.0 (enterprise)",
+    "neo4j_memory_settings": {
+      "server.memory.heap.initial_size": "512.00MiB",
+      "server.memory.heap.max_size": "1.00GiB",
+      "server.memory.pagecache.async": "false",
+      "server.memory.pagecache.directio": "false",
+      "server.memory.pagecache.flush.buffer.enabled": "false",
+      "server.memory.pagecache.flush.buffer.size_in_pages": "128",
+      "server.memory.pagecache.scan.prefetchers": "4",
+      "server.memory.pagecache.size": "512.00MiB",
+      "server.memory.query_cache.per_db_cache_num_entries": "1000",
+      "server.memory.query_cache.shared_cache_num_entries": "1000",
+      "server.memory.query_cache.sharing_enabled": "false"
+    },
+    "recorded_at": "2026-10-11T13:13:25.874850Z"
+  },
+  "stage_seconds": {
+    "rebuild": 19.547111300002143,
+    "graph_view": 0.5013198999986344,
+    "tier_runs": 0.0008411000017076731,
+    "schema_text": 0.000057699999160831794,
+    "neo4j_open_check": 0.0663697999989381,
+    "item_graph": 1.995973299999605
+  },
+  "rebuild_stage_seconds": {
+    "generate": 15.763214899998275,
+    "split": 1.650507499998639,
+    "localize": 0.4228575999986788,
+    "resolve": 0.5830745999992359
+  },
+  "context_rag_build_s": 3.4951192999978957,
+  "context_rag_chars": 16653972,
+  "process_baseline_bytes": 178835456,
+  "process_peak_bytes": 888721408,
+  "neo4j_rss_bytes": 1301630976,
+  "page_cache_used_bytes": 22570626
+}

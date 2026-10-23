@@ -1,0 +1,4534 @@
+{
+  "bound": {
+    "median_max_s": 10.0,
+    "p90_max_s": 60.0,
+    "cutoff_s": 120.0
+  },
+  "corpora": [
+    {
+      "corpus_id": "H1",
+      "n_questions": 70,
+      "policies": [
+        {
+          "summary": {
+            "policy": "cascade_v3",
+            "corpus_id": "H1",
+            "n_questions": 70,
+            "n_correct": 66,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 66,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.03567692,
+            "cost_per_question_usd": 0.0005096702857142857,
+            "latency_median_s": 8.10983639999904,
+            "latency_mean_s": 9.620186265714333,
+            "latency_p90_s": 15.297094599998672,
+            "latency_p95_s": 23.35466589997668,
+            "latency_max_s": 37.49170850000519,
+            "tier_shares": {
+              "cypher-luna": 0.7142857142857143,
+              "agent-luna": 0.2857142857142857
+            },
+            "tier_calls": {
+              "cypher-luna": 70,
+              "agent-luna": 20
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "cascade_v3 on H1: median 8.1 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "cascade_v3 on H1: p90 15.3 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": {
+            "n_accepted": 50,
+            "n_accepted_correct": 47,
+            "n_first_tier_correct": 55,
+            "precision": 0.94,
+            "recall": 0.8545454545454545
+          },
+          "vs_always_n": null,
+          "oracle": {
+            "policy": "oracle(cascade_v3)",
+            "corpus_id": "H1",
+            "n_questions": 70,
+            "n_correct": 67,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 67,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.034475705,
+            "cost_per_question_usd": 0.0004925100714285714,
+            "latency_median_s": 7.36898349999683,
+            "latency_mean_s": 9.202425254285481,
+            "latency_p90_s": 14.780258800026786,
+            "latency_p95_s": 24.562495300007868,
+            "latency_max_s": 37.49170850000519,
+            "tier_shares": {
+              "cypher-luna": 0.7857142857142857,
+              "agent-luna": 0.21428571428571427
+            },
+            "tier_calls": {
+              "cypher-luna": 70,
+              "agent-luna": 15
+            }
+          },
+          "random": {
+            "n_draws": 1000,
+            "n_escalated": 20,
+            "correct_mean": 57.021,
+            "correct_low": 54.0,
+            "correct_high": 60.0,
+            "correct_at_cutoff_mean": 57.021,
+            "correct_at_cutoff_low": 54.0,
+            "correct_at_cutoff_high": 60.0,
+            "cost_total_mean_usd": 0.03478461604499996,
+            "latency_mean_s": 9.29290310861836
+          },
+          "vs_random": {
+            "accuracy": {
+              "mean": 0.1282714285714286,
+              "ci_low": 0.06855714285714286,
+              "ci_high": 0.19551428571428572
+            },
+            "accuracy_at_cutoff": {
+              "mean": 0.1282714285714286,
+              "ci_low": 0.06855714285714286,
+              "ci_high": 0.19551428571428572
+            },
+            "cost_usd": {
+              "mean": 0.00001274719935714347,
+              "ci_low": -0.000032931903642857,
+              "ci_high": 0.00006372748571428571
+            },
+            "latency_s": {
+              "mean": 0.3272831570959731,
+              "ci_low": -0.819473984565289,
+              "ci_high": 1.5887710131755814
+            }
+          },
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "always_g_luna",
+            "corpus_id": "H1",
+            "n_questions": 70,
+            "n_correct": 62,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 62,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.023374455,
+            "cost_per_question_usd": 0.0003339207857142857,
+            "latency_median_s": 7.399978999994346,
+            "latency_mean_s": 8.667128957143515,
+            "latency_p90_s": 16.189874699979555,
+            "latency_p95_s": 21.207701500003168,
+            "latency_max_s": 29.424649799999315,
+            "tier_shares": {
+              "agent-luna": 1.0
+            },
+            "tier_calls": {
+              "agent-luna": 70
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "always_g_luna on H1: median 7.4 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "always_g_luna on H1: p90 16.2 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": null,
+          "vs_always_n": null,
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "always_c_luna",
+            "corpus_id": "H1",
+            "n_questions": 70,
+            "n_correct": 55,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 55,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.0281216,
+            "cost_per_question_usd": 0.0004017371428571429,
+            "latency_median_s": 6.57151845000044,
+            "latency_mean_s": 6.820102514285307,
+            "latency_p90_s": 9.441064799990272,
+            "latency_p95_s": 10.392434699999285,
+            "latency_max_s": 14.405834799996228,
+            "tier_shares": {
+              "cypher-luna": 0.8857142857142857,
+              "none": 0.11428571428571428
+            },
+            "tier_calls": {
+              "cypher-luna": 70
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "always_c_luna on H1: median 6.6 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "always_c_luna on H1: p90 9.4 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": null,
+          "vs_always_n": null,
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "always_ctx_high",
+            "corpus_id": "H1",
+            "n_questions": 70,
+            "n_correct": 58,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 58,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.062705375,
+            "cost_per_question_usd": 0.0008957910714285713,
+            "latency_median_s": 3.5711608000019623,
+            "latency_mean_s": 4.138173548570713,
+            "latency_p90_s": 7.719723800000793,
+            "latency_p95_s": 9.610671399997955,
+            "latency_max_s": 12.36078930000076,
+            "tier_shares": {
+              "context-luna-high": 1.0
+            },
+            "tier_calls": {
+              "context-luna-high": 70
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "always_ctx_high on H1: median 3.6 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "always_ctx_high on H1: p90 7.7 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": null,
+          "vs_always_n": null,
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "always_ctx_low",
+            "corpus_id": "H1",
+            "n_questions": 70,
+            "n_correct": 56,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 56,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.058989375,
+            "cost_per_question_usd": 0.0008427053571428571,
+            "latency_median_s": 2.6337191499987966,
+            "latency_mean_s": 2.6684729028563847,
+            "latency_p90_s": 4.250661300000502,
+            "latency_p95_s": 4.9377746999962255,
+            "latency_max_s": 7.454678000001877,
+            "tier_shares": {
+              "context-luna-low": 1.0
+            },
+            "tier_calls": {
+              "context-luna-low": 70
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "always_ctx_low on H1: median 2.6 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "always_ctx_low on H1: p90 4.3 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": null,
+          "vs_always_n": null,
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        }
+      ],
+      "not_evaluated": [
+        {
+          "policy": "always_n",
+          "reason": "expected a run for the first tier 'need-default', found none given",
+          "gaps": {}
+        },
+        {
+          "policy": "always_c",
+          "reason": "expected a run for the first tier 'cypher-low', found none given",
+          "gaps": {}
+        },
+        {
+          "policy": "always_g",
+          "reason": "expected a run for the first tier 'agent-low-steps', found none given",
+          "gaps": {}
+        }
+      ],
+      "breakdowns": {
+        "need label": {
+          "DOWNSTREAM_ALL": {
+            "cascade_v3": {
+              "correct": 5,
+              "total": 5
+            },
+            "always_g_luna": {
+              "correct": 5,
+              "total": 5
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 5
+            },
+            "always_ctx_high": {
+              "correct": 2,
+              "total": 5
+            },
+            "always_ctx_low": {
+              "correct": 3,
+              "total": 5
+            }
+          },
+          "GENERIC": {
+            "cascade_v3": {
+              "correct": 14,
+              "total": 15
+            },
+            "always_g_luna": {
+              "correct": 11,
+              "total": 15
+            },
+            "always_c_luna": {
+              "correct": 11,
+              "total": 15
+            },
+            "always_ctx_high": {
+              "correct": 10,
+              "total": 15
+            },
+            "always_ctx_low": {
+              "correct": 11,
+              "total": 15
+            }
+          },
+          "ITEM": {
+            "cascade_v3": {
+              "correct": 15,
+              "total": 15
+            },
+            "always_g_luna": {
+              "correct": 15,
+              "total": 15
+            },
+            "always_c_luna": {
+              "correct": 13,
+              "total": 15
+            },
+            "always_ctx_high": {
+              "correct": 15,
+              "total": 15
+            },
+            "always_ctx_low": {
+              "correct": 15,
+              "total": 15
+            }
+          },
+          "NEIGHBOURS_DOWNSTREAM": {
+            "cascade_v3": {
+              "correct": 5,
+              "total": 5
+            },
+            "always_g_luna": {
+              "correct": 5,
+              "total": 5
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 5
+            },
+            "always_ctx_high": {
+              "correct": 5,
+              "total": 5
+            },
+            "always_ctx_low": {
+              "correct": 5,
+              "total": 5
+            }
+          },
+          "PATH": {
+            "cascade_v3": {
+              "correct": 12,
+              "total": 12
+            },
+            "always_g_luna": {
+              "correct": 12,
+              "total": 12
+            },
+            "always_c_luna": {
+              "correct": 11,
+              "total": 12
+            },
+            "always_ctx_high": {
+              "correct": 11,
+              "total": 12
+            },
+            "always_ctx_low": {
+              "correct": 10,
+              "total": 12
+            }
+          },
+          "SIGNAL_CHAIN": {
+            "cascade_v3": {
+              "correct": 6,
+              "total": 6
+            },
+            "always_g_luna": {
+              "correct": 6,
+              "total": 6
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 6
+            },
+            "always_ctx_high": {
+              "correct": 6,
+              "total": 6
+            },
+            "always_ctx_low": {
+              "correct": 6,
+              "total": 6
+            }
+          },
+          "UNIT_SCOPE": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "UPSTREAM_ALL": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 2,
+              "total": 4
+            }
+          },
+          "UPSTREAM_TO_FIRST_VALVE": {
+            "cascade_v3": {
+              "correct": 1,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 0,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 1,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 1,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 0,
+              "total": 4
+            }
+          }
+        },
+        "family": {
+          "CONNECTED": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 2,
+              "total": 4
+            }
+          },
+          "COUNT_IN_UNIT": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "DOWNSTREAM_IN_UNIT": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 2,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 2,
+              "total": 4
+            }
+          },
+          "DOWNSTREAM_ISOLATION": {
+            "cascade_v3": {
+              "correct": 1,
+              "total": 1
+            },
+            "always_g_luna": {
+              "correct": 1,
+              "total": 1
+            },
+            "always_c_luna": {
+              "correct": 0,
+              "total": 1
+            },
+            "always_ctx_high": {
+              "correct": 0,
+              "total": 1
+            },
+            "always_ctx_low": {
+              "correct": 1,
+              "total": 1
+            }
+          },
+          "FLOW_PATH": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "INSTRUMENTS_OF_ITEM": {
+            "cascade_v3": {
+              "correct": 2,
+              "total": 2
+            },
+            "always_g_luna": {
+              "correct": 2,
+              "total": 2
+            },
+            "always_c_luna": {
+              "correct": 2,
+              "total": 2
+            },
+            "always_ctx_high": {
+              "correct": 2,
+              "total": 2
+            },
+            "always_ctx_low": {
+              "correct": 2,
+              "total": 2
+            }
+          },
+          "LOOKUP_TYPE": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "LOOKUP_UNIT": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "LOOPS_NEAR_ITEM": {
+            "cascade_v3": {
+              "correct": 3,
+              "total": 3
+            },
+            "always_g_luna": {
+              "correct": 3,
+              "total": 3
+            },
+            "always_c_luna": {
+              "correct": 2,
+              "total": 3
+            },
+            "always_ctx_high": {
+              "correct": 3,
+              "total": 3
+            },
+            "always_ctx_low": {
+              "correct": 3,
+              "total": 3
+            }
+          },
+          "LOOP_ACTUATED_VALVE": {
+            "cascade_v3": {
+              "correct": 2,
+              "total": 2
+            },
+            "always_g_luna": {
+              "correct": 2,
+              "total": 2
+            },
+            "always_c_luna": {
+              "correct": 1,
+              "total": 2
+            },
+            "always_ctx_high": {
+              "correct": 2,
+              "total": 2
+            },
+            "always_ctx_low": {
+              "correct": 2,
+              "total": 2
+            }
+          },
+          "LOOP_MEASURED_EQUIPMENT": {
+            "cascade_v3": {
+              "correct": 2,
+              "total": 2
+            },
+            "always_g_luna": {
+              "correct": 2,
+              "total": 2
+            },
+            "always_c_luna": {
+              "correct": 1,
+              "total": 2
+            },
+            "always_ctx_high": {
+              "correct": 2,
+              "total": 2
+            },
+            "always_ctx_low": {
+              "correct": 2,
+              "total": 2
+            }
+          },
+          "NEIGHBOURS_DOWNSTREAM": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "NO_PATH": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "ROUTE_AVOIDING": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 2,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "SAME_UNIT": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "UNANSWERABLE_TAG": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "UNITS_REACHED": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 2,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 0,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 0,
+              "total": 4
+            }
+          },
+          "UPSTREAM_ISOLATION": {
+            "cascade_v3": {
+              "correct": 1,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 0,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 1,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 1,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 0,
+              "total": 4
+            }
+          },
+          "UPSTREAM_SOURCES": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 2,
+              "total": 4
+            }
+          },
+          "VALVES_ON_PATH": {
+            "cascade_v3": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 2,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 4,
+              "total": 4
+            }
+          }
+        },
+        "k bin": {
+          "k=0": {
+            "cascade_v3": {
+              "correct": 58,
+              "total": 62
+            },
+            "always_g_luna": {
+              "correct": 54,
+              "total": 62
+            },
+            "always_c_luna": {
+              "correct": 48,
+              "total": 62
+            },
+            "always_ctx_high": {
+              "correct": 50,
+              "total": 62
+            },
+            "always_ctx_low": {
+              "correct": 48,
+              "total": 62
+            }
+          },
+          "unanswerable": {
+            "cascade_v3": {
+              "correct": 8,
+              "total": 8
+            },
+            "always_g_luna": {
+              "correct": 8,
+              "total": 8
+            },
+            "always_c_luna": {
+              "correct": 7,
+              "total": 8
+            },
+            "always_ctx_high": {
+              "correct": 8,
+              "total": 8
+            },
+            "always_ctx_low": {
+              "correct": 8,
+              "total": 8
+            }
+          }
+        }
+      },
+      "diagnostics": [
+        {
+          "policy": "cascade_v3",
+          "boolean_no_questions": 5,
+          "boolean_no_answered_yes": 0,
+          "agent": {
+            "tier": "agent-luna",
+            "n_tried": 20,
+            "stop_reasons": {
+              "done": 20
+            },
+            "answered_without_tool_call": {
+              "correct": 0,
+              "total": 0
+            },
+            "answered_touching_no_item": {
+              "correct": 7,
+              "total": 7
+            },
+            "named_tag_never_touched": {
+              "correct": 3,
+              "total": 3
+            },
+            "n_with_named_tags": 15
+          },
+          "isolation": {
+            "primary": {
+              "correct": 1,
+              "total": 4
+            },
+            "control_valves_excluded": {
+              "correct": 1,
+              "total": 4
+            }
+          }
+        },
+        {
+          "policy": "always_g_luna",
+          "boolean_no_questions": 5,
+          "boolean_no_answered_yes": 0,
+          "agent": {
+            "tier": "agent-luna",
+            "n_tried": 70,
+            "stop_reasons": {
+              "done": 70
+            },
+            "answered_without_tool_call": {
+              "correct": 0,
+              "total": 0
+            },
+            "answered_touching_no_item": {
+              "correct": 8,
+              "total": 8
+            },
+            "named_tag_never_touched": {
+              "correct": 4,
+              "total": 4
+            },
+            "n_with_named_tags": 62
+          },
+          "isolation": {
+            "primary": {
+              "correct": 0,
+              "total": 4
+            },
+            "control_valves_excluded": {
+              "correct": 0,
+              "total": 4
+            }
+          }
+        },
+        {
+          "policy": "always_c_luna",
+          "boolean_no_questions": 5,
+          "boolean_no_answered_yes": 0,
+          "agent": null,
+          "isolation": {
+            "primary": {
+              "correct": 1,
+              "total": 4
+            },
+            "control_valves_excluded": {
+              "correct": 1,
+              "total": 4
+            }
+          }
+        },
+        {
+          "policy": "always_ctx_high",
+          "boolean_no_questions": 5,
+          "boolean_no_answered_yes": 0,
+          "agent": null,
+          "isolation": {
+            "primary": {
+              "correct": 1,
+              "total": 4
+            },
+            "control_valves_excluded": {
+              "correct": 1,
+              "total": 4
+            }
+          }
+        },
+        {
+          "policy": "always_ctx_low",
+          "boolean_no_questions": 5,
+          "boolean_no_answered_yes": 0,
+          "agent": null,
+          "isolation": {
+            "primary": {
+              "correct": 0,
+              "total": 4
+            },
+            "control_valves_excluded": {
+              "correct": 0,
+              "total": 4
+            }
+          }
+        }
+      ],
+      "late_charges": []
+    },
+    {
+      "corpus_id": "H3",
+      "n_questions": 87,
+      "policies": [
+        {
+          "summary": {
+            "policy": "cascade_v3",
+            "corpus_id": "H3",
+            "n_questions": 87,
+            "n_correct": 85,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 85,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.048651705,
+            "cost_per_question_usd": 0.0005592150000000001,
+            "latency_median_s": 8.644794100000581,
+            "latency_mean_s": 10.267276718390683,
+            "latency_p90_s": 19.239076699996076,
+            "latency_p95_s": 24.405688300008478,
+            "latency_max_s": 43.52562650000618,
+            "tier_shares": {
+              "cypher-luna": 0.6436781609195402,
+              "agent-luna": 0.3563218390804598
+            },
+            "tier_calls": {
+              "cypher-luna": 87,
+              "agent-luna": 31
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "cascade_v3 on H3: median 8.6 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "cascade_v3 on H3: p90 19.2 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": {
+            "n_accepted": 56,
+            "n_accepted_correct": 54,
+            "n_first_tier_correct": 62,
+            "precision": 0.9642857142857143,
+            "recall": 0.8709677419354839
+          },
+          "vs_always_n": null,
+          "oracle": {
+            "policy": "oracle(cascade_v3)",
+            "corpus_id": "H3",
+            "n_questions": 87,
+            "n_correct": 86,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 86,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.047150505,
+            "cost_per_question_usd": 0.0005419598275862069,
+            "latency_median_s": 8.152913899997657,
+            "latency_mean_s": 9.931244085057209,
+            "latency_p90_s": 17.92871199999354,
+            "latency_p95_s": 26.79764360000263,
+            "latency_max_s": 43.52562650000618,
+            "tier_shares": {
+              "cypher-luna": 0.7126436781609196,
+              "agent-luna": 0.28735632183908044
+            },
+            "tier_calls": {
+              "cypher-luna": 87,
+              "agent-luna": 25
+            }
+          },
+          "random": {
+            "n_draws": 1000,
+            "n_escalated": 31,
+            "correct_mean": 70.674,
+            "correct_low": 67.0,
+            "correct_high": 75.0,
+            "correct_at_cutoff_mean": 70.674,
+            "correct_at_cutoff_low": 67.0,
+            "correct_at_cutoff_high": 75.0,
+            "cost_total_mean_usd": 0.050092494235,
+            "latency_mean_s": 10.20613256906539
+          },
+          "vs_random": {
+            "accuracy": {
+              "mean": 0.16466666666666668,
+              "ci_low": 0.1066896551724138,
+              "ci_high": 0.22818390804597702
+            },
+            "accuracy_at_cutoff": {
+              "mean": 0.16466666666666668,
+              "ci_low": 0.1066896551724138,
+              "ci_high": 0.22818390804597702
+            },
+            "cost_usd": {
+              "mean": -0.000016560795804597663,
+              "ci_low": -0.00007751023114942533,
+              "ci_high": 0.000046782709999999874
+            },
+            "latency_s": {
+              "mean": 0.061144149325292475,
+              "ci_low": -1.055349841678699,
+              "ci_high": 1.2643863295992825
+            }
+          },
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "always_g_luna",
+            "corpus_id": "H3",
+            "n_questions": 87,
+            "n_correct": 86,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 86,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.039556415,
+            "cost_per_question_usd": 0.00045467143678160917,
+            "latency_median_s": 7.59586809999746,
+            "latency_mean_s": 9.723231625285829,
+            "latency_p90_s": 18.06868409999879,
+            "latency_p95_s": 23.52164600000833,
+            "latency_max_s": 29.20934680000937,
+            "tier_shares": {
+              "agent-luna": 1.0
+            },
+            "tier_calls": {
+              "agent-luna": 87
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "always_g_luna on H3: median 7.6 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "always_g_luna on H3: p90 18.1 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": null,
+          "vs_always_n": null,
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "always_c_luna",
+            "corpus_id": "H3",
+            "n_questions": 87,
+            "n_correct": 62,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 62,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.035975625,
+            "cost_per_question_usd": 0.00041351293103448274,
+            "latency_median_s": 6.295038199998089,
+            "latency_mean_s": 6.731613895402727,
+            "latency_p90_s": 11.375151699998241,
+            "latency_p95_s": 11.917033600009745,
+            "latency_max_s": 17.373216899999534,
+            "tier_shares": {
+              "cypher-luna": 0.7816091954022989,
+              "none": 0.21839080459770116
+            },
+            "tier_calls": {
+              "cypher-luna": 87
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "always_c_luna on H3: median 6.3 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "always_c_luna on H3: p90 11.4 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": null,
+          "vs_always_n": null,
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "always_ctx_high",
+            "corpus_id": "H3",
+            "n_questions": 87,
+            "n_correct": 69,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 69,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.295486975,
+            "cost_per_question_usd": 0.003396402011494253,
+            "latency_median_s": 4.563741000005393,
+            "latency_mean_s": 7.086099149425358,
+            "latency_p90_s": 15.54780120000214,
+            "latency_p95_s": 16.906808799998544,
+            "latency_max_s": 35.85976629999641,
+            "tier_shares": {
+              "context-luna-high": 1.0
+            },
+            "tier_calls": {
+              "context-luna-high": 87
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "always_ctx_high on H3: median 4.6 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "always_ctx_high on H3: p90 15.5 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": null,
+          "vs_always_n": null,
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        }
+      ],
+      "not_evaluated": [
+        {
+          "policy": "always_ctx_low",
+          "reason": "expected a run for the first tier 'context-luna-low', found none given",
+          "gaps": {}
+        },
+        {
+          "policy": "always_n",
+          "reason": "expected a run for the first tier 'need-default', found none given",
+          "gaps": {}
+        },
+        {
+          "policy": "always_c",
+          "reason": "expected a run for the first tier 'cypher-low', found none given",
+          "gaps": {}
+        },
+        {
+          "policy": "always_g",
+          "reason": "expected a run for the first tier 'agent-low-steps', found none given",
+          "gaps": {}
+        }
+      ],
+      "breakdowns": {
+        "need label": {
+          "DOWNSTREAM_ALL": {
+            "cascade_v3": {
+              "correct": 8,
+              "total": 8
+            },
+            "always_g_luna": {
+              "correct": 8,
+              "total": 8
+            },
+            "always_c_luna": {
+              "correct": 6,
+              "total": 8
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 8
+            }
+          },
+          "GENERIC": {
+            "cascade_v3": {
+              "correct": 17,
+              "total": 17
+            },
+            "always_g_luna": {
+              "correct": 17,
+              "total": 17
+            },
+            "always_c_luna": {
+              "correct": 14,
+              "total": 17
+            },
+            "always_ctx_high": {
+              "correct": 12,
+              "total": 17
+            }
+          },
+          "ITEM": {
+            "cascade_v3": {
+              "correct": 19,
+              "total": 19
+            },
+            "always_g_luna": {
+              "correct": 19,
+              "total": 19
+            },
+            "always_c_luna": {
+              "correct": 17,
+              "total": 19
+            },
+            "always_ctx_high": {
+              "correct": 19,
+              "total": 19
+            }
+          },
+          "NEIGHBOURS_DOWNSTREAM": {
+            "cascade_v3": {
+              "correct": 5,
+              "total": 5
+            },
+            "always_g_luna": {
+              "correct": 5,
+              "total": 5
+            },
+            "always_c_luna": {
+              "correct": 3,
+              "total": 5
+            },
+            "always_ctx_high": {
+              "correct": 5,
+              "total": 5
+            }
+          },
+          "PATH": {
+            "cascade_v3": {
+              "correct": 12,
+              "total": 12
+            },
+            "always_g_luna": {
+              "correct": 12,
+              "total": 12
+            },
+            "always_c_luna": {
+              "correct": 12,
+              "total": 12
+            },
+            "always_ctx_high": {
+              "correct": 11,
+              "total": 12
+            }
+          },
+          "SIGNAL_CHAIN": {
+            "cascade_v3": {
+              "correct": 12,
+              "total": 12
+            },
+            "always_g_luna": {
+              "correct": 12,
+              "total": 12
+            },
+            "always_c_luna": {
+              "correct": 2,
+              "total": 12
+            },
+            "always_ctx_high": {
+              "correct": 12,
+              "total": 12
+            }
+          },
+          "UNIT_SCOPE": {
+            "cascade_v3": {
+              "correct": 6,
+              "total": 6
+            },
+            "always_g_luna": {
+              "correct": 6,
+              "total": 6
+            },
+            "always_c_luna": {
+              "correct": 6,
+              "total": 6
+            },
+            "always_ctx_high": {
+              "correct": 3,
+              "total": 6
+            }
+          },
+          "UPSTREAM_ALL": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 1,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 1,
+              "total": 4
+            }
+          },
+          "UPSTREAM_TO_FIRST_VALVE": {
+            "cascade_v3": {
+              "correct": 2,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 1,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 2,
+              "total": 4
+            }
+          }
+        },
+        "family": {
+          "CONNECTED": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 3,
+              "total": 4
+            }
+          },
+          "COUNT_IN_UNIT": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 3,
+              "total": 4
+            }
+          },
+          "CROSS_UNIT": {
+            "cascade_v3": {
+              "correct": 1,
+              "total": 1
+            },
+            "always_g_luna": {
+              "correct": 1,
+              "total": 1
+            },
+            "always_c_luna": {
+              "correct": 1,
+              "total": 1
+            },
+            "always_ctx_high": {
+              "correct": 0,
+              "total": 1
+            }
+          },
+          "DOWNSTREAM_IN_UNIT": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 1,
+              "total": 4
+            }
+          },
+          "DOWNSTREAM_ISOLATION": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 2,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 3,
+              "total": 4
+            }
+          },
+          "FEEDING_UNITS": {
+            "cascade_v3": {
+              "correct": 1,
+              "total": 1
+            },
+            "always_g_luna": {
+              "correct": 1,
+              "total": 1
+            },
+            "always_c_luna": {
+              "correct": 1,
+              "total": 1
+            },
+            "always_ctx_high": {
+              "correct": 0,
+              "total": 1
+            }
+          },
+          "FIRST_MEETING_POINT": {
+            "cascade_v3": {
+              "correct": 1,
+              "total": 1
+            },
+            "always_g_luna": {
+              "correct": 1,
+              "total": 1
+            },
+            "always_c_luna": {
+              "correct": 1,
+              "total": 1
+            },
+            "always_ctx_high": {
+              "correct": 1,
+              "total": 1
+            }
+          },
+          "FLOW_PATH": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "INSTRUMENTS_OF_ITEM": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 0,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "LOOKUP_TYPE": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "LOOKUP_UNIT": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "LOOPS_NEAR_ITEM": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 2,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 3,
+              "total": 4
+            }
+          },
+          "LOOP_ACTUATED_VALVE": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 2,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "LOOP_MEASURED_EQUIPMENT": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 0,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "NEIGHBOURS_DOWNSTREAM": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "NO_PATH": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "ROUTE_AVOIDING": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "SAME_UNIT": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "SHEETS_OF_TAG": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "UNANSWERABLE_TAG": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "UNITS_REACHED": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 1,
+              "total": 4
+            }
+          },
+          "UPSTREAM_ISOLATION": {
+            "cascade_v3": {
+              "correct": 2,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 1,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 2,
+              "total": 4
+            }
+          },
+          "UPSTREAM_SOURCES": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 1,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 1,
+              "total": 4
+            }
+          },
+          "VALVES_ON_PATH": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 3,
+              "total": 4
+            }
+          }
+        },
+        "k bin": {
+          "k=0": {
+            "cascade_v3": {
+              "correct": 46,
+              "total": 46
+            },
+            "always_g_luna": {
+              "correct": 46,
+              "total": 46
+            },
+            "always_c_luna": {
+              "correct": 30,
+              "total": 46
+            },
+            "always_ctx_high": {
+              "correct": 42,
+              "total": 46
+            }
+          },
+          "k=1-2": {
+            "cascade_v3": {
+              "correct": 20,
+              "total": 22
+            },
+            "always_g_luna": {
+              "correct": 21,
+              "total": 22
+            },
+            "always_c_luna": {
+              "correct": 14,
+              "total": 22
+            },
+            "always_ctx_high": {
+              "correct": 13,
+              "total": 22
+            }
+          },
+          "k>=3": {
+            "cascade_v3": {
+              "correct": 11,
+              "total": 11
+            },
+            "always_g_luna": {
+              "correct": 11,
+              "total": 11
+            },
+            "always_c_luna": {
+              "correct": 11,
+              "total": 11
+            },
+            "always_ctx_high": {
+              "correct": 6,
+              "total": 11
+            }
+          },
+          "unanswerable": {
+            "cascade_v3": {
+              "correct": 8,
+              "total": 8
+            },
+            "always_g_luna": {
+              "correct": 8,
+              "total": 8
+            },
+            "always_c_luna": {
+              "correct": 7,
+              "total": 8
+            },
+            "always_ctx_high": {
+              "correct": 8,
+              "total": 8
+            }
+          }
+        }
+      },
+      "diagnostics": [
+        {
+          "policy": "cascade_v3",
+          "boolean_no_questions": 7,
+          "boolean_no_answered_yes": 0,
+          "agent": {
+            "tier": "agent-luna",
+            "n_tried": 31,
+            "stop_reasons": {
+              "done": 31
+            },
+            "answered_without_tool_call": {
+              "correct": 0,
+              "total": 0
+            },
+            "answered_touching_no_item": {
+              "correct": 6,
+              "total": 6
+            },
+            "named_tag_never_touched": {
+              "correct": 3,
+              "total": 3
+            },
+            "n_with_named_tags": 27
+          },
+          "isolation": {
+            "primary": {
+              "correct": 2,
+              "total": 4
+            },
+            "control_valves_excluded": {
+              "correct": 1,
+              "total": 3
+            }
+          }
+        },
+        {
+          "policy": "always_g_luna",
+          "boolean_no_questions": 7,
+          "boolean_no_answered_yes": 0,
+          "agent": {
+            "tier": "agent-luna",
+            "n_tried": 87,
+            "stop_reasons": {
+              "done": 87
+            },
+            "answered_without_tool_call": {
+              "correct": 0,
+              "total": 0
+            },
+            "answered_touching_no_item": {
+              "correct": 8,
+              "total": 8
+            },
+            "named_tag_never_touched": {
+              "correct": 5,
+              "total": 5
+            },
+            "n_with_named_tags": 77
+          },
+          "isolation": {
+            "primary": {
+              "correct": 3,
+              "total": 4
+            },
+            "control_valves_excluded": {
+              "correct": 2,
+              "total": 3
+            }
+          }
+        },
+        {
+          "policy": "always_c_luna",
+          "boolean_no_questions": 7,
+          "boolean_no_answered_yes": 0,
+          "agent": null,
+          "isolation": {
+            "primary": {
+              "correct": 1,
+              "total": 4
+            },
+            "control_valves_excluded": {
+              "correct": 1,
+              "total": 3
+            }
+          }
+        },
+        {
+          "policy": "always_ctx_high",
+          "boolean_no_questions": 7,
+          "boolean_no_answered_yes": 0,
+          "agent": null,
+          "isolation": {
+            "primary": {
+              "correct": 2,
+              "total": 4
+            },
+            "control_valves_excluded": {
+              "correct": 2,
+              "total": 3
+            }
+          }
+        }
+      ],
+      "late_charges": []
+    },
+    {
+      "corpus_id": "H10",
+      "n_questions": 95,
+      "policies": [
+        {
+          "summary": {
+            "policy": "cascade_v3",
+            "corpus_id": "H10",
+            "n_questions": 95,
+            "n_correct": 91,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 91,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.05422989,
+            "cost_per_question_usd": 0.0005708409473684211,
+            "latency_median_s": 7.784824300004402,
+            "latency_mean_s": 10.62266055157785,
+            "latency_p90_s": 17.58196040000621,
+            "latency_p95_s": 33.64187489999313,
+            "latency_max_s": 56.14134429999103,
+            "tier_shares": {
+              "cypher-luna": 0.7263157894736842,
+              "agent-luna": 0.2736842105263158
+            },
+            "tier_calls": {
+              "cypher-luna": 95,
+              "agent-luna": 26
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "cascade_v3 on H10: median 7.8 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "cascade_v3 on H10: p90 17.6 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": {
+            "n_accepted": 69,
+            "n_accepted_correct": 67,
+            "n_first_tier_correct": 73,
+            "precision": 0.9710144927536232,
+            "recall": 0.9178082191780822
+          },
+          "vs_always_n": null,
+          "oracle": {
+            "policy": "oracle(cascade_v3)",
+            "corpus_id": "H10",
+            "n_questions": 95,
+            "n_correct": 93,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 93,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.056324175,
+            "cost_per_question_usd": 0.0005928860526315789,
+            "latency_median_s": 7.539238099998329,
+            "latency_mean_s": 10.801701430525359,
+            "latency_p90_s": 20.064722600000096,
+            "latency_p95_s": 40.040596800005005,
+            "latency_max_s": 64.20350649999455,
+            "tier_shares": {
+              "cypher-luna": 0.7684210526315789,
+              "agent-luna": 0.23157894736842105
+            },
+            "tier_calls": {
+              "cypher-luna": 95,
+              "agent-luna": 22
+            }
+          },
+          "random": {
+            "n_draws": 1000,
+            "n_escalated": 26,
+            "correct_mean": 77.725,
+            "correct_low": 74.0,
+            "correct_high": 82.0,
+            "correct_at_cutoff_mean": 77.725,
+            "correct_at_cutoff_low": 74.0,
+            "correct_at_cutoff_high": 82.0,
+            "cost_total_mean_usd": 0.054945227195000085,
+            "latency_mean_s": 10.475555817400389
+          },
+          "vs_random": {
+            "accuracy": {
+              "mean": 0.13973684210526316,
+              "ci_low": 0.0788,
+              "ci_high": 0.1997578947368421
+            },
+            "accuracy_at_cutoff": {
+              "mean": 0.13973684210526316,
+              "ci_low": 0.0788,
+              "ci_high": 0.1997578947368421
+            },
+            "cost_usd": {
+              "mean": -7.529865210527197e-6,
+              "ci_low": -0.00007705244642105394,
+              "ci_high": 0.00006785552921052438
+            },
+            "latency_s": {
+              "mean": 0.1471047341774595,
+              "ci_low": -1.116972692051069,
+              "ci_high": 1.5293313118035408
+            }
+          },
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "always_g_luna",
+            "corpus_id": "H10",
+            "n_questions": 95,
+            "n_correct": 90,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 90,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.053591065,
+            "cost_per_question_usd": 0.0005641164736842105,
+            "latency_median_s": 8.407837799975823,
+            "latency_mean_s": 11.522680403156617,
+            "latency_p90_s": 21.788863000001584,
+            "latency_p95_s": 29.88174030000664,
+            "latency_max_s": 51.8313754999981,
+            "tier_shares": {
+              "agent-luna": 1.0
+            },
+            "tier_calls": {
+              "agent-luna": 95
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "always_g_luna on H10: median 8.4 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "always_g_luna on H10: p90 21.8 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": null,
+          "vs_always_n": null,
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "always_c_luna",
+            "corpus_id": "H10",
+            "n_questions": 95,
+            "n_correct": 73,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 73,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.04025495,
+            "cost_per_question_usd": 0.00042373631578947364,
+            "latency_median_s": 6.917569099990942,
+            "latency_mean_s": 7.3168372799996995,
+            "latency_p90_s": 10.618465300001844,
+            "latency_p95_s": 13.272818000004918,
+            "latency_max_s": 42.524226200002886,
+            "tier_shares": {
+              "cypher-luna": 0.8421052631578947,
+              "none": 0.15789473684210525
+            },
+            "tier_calls": {
+              "cypher-luna": 95
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "always_c_luna on H10: median 6.9 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "always_c_luna on H10: p90 10.6 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": null,
+          "vs_always_n": null,
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "always_ctx_high",
+            "corpus_id": "H10",
+            "n_questions": 95,
+            "n_correct": 69,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 69,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.911684,
+            "cost_per_question_usd": 0.009596673684210527,
+            "latency_median_s": 6.141288500002702,
+            "latency_mean_s": 11.964599968420915,
+            "latency_p90_s": 29.360143000005337,
+            "latency_p95_s": 36.42319220000354,
+            "latency_max_s": 67.11011570000119,
+            "tier_shares": {
+              "context-luna-high": 0.9894736842105263,
+              "none": 0.010526315789473684
+            },
+            "tier_calls": {
+              "context-luna-high": 95
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "always_ctx_high on H10: median 6.1 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "always_ctx_high on H10: p90 29.4 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": null,
+          "vs_always_n": null,
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "always_ctx_low",
+            "corpus_id": "H10",
+            "n_questions": 95,
+            "n_correct": 55,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 55,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.8707335,
+            "cost_per_question_usd": 0.009165615789473685,
+            "latency_median_s": 4.501264600003196,
+            "latency_mean_s": 5.105826236841983,
+            "latency_p90_s": 9.486835199997586,
+            "latency_p95_s": 10.220413599992753,
+            "latency_max_s": 13.111463900007948,
+            "tier_shares": {
+              "context-luna-low": 1.0
+            },
+            "tier_calls": {
+              "context-luna-low": 95
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "always_ctx_low on H10: median 4.5 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "always_ctx_low on H10: p90 9.5 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": null,
+          "vs_always_n": null,
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        }
+      ],
+      "not_evaluated": [
+        {
+          "policy": "always_n",
+          "reason": "expected a run for the first tier 'need-default', found none given",
+          "gaps": {}
+        },
+        {
+          "policy": "always_c",
+          "reason": "expected a run for the first tier 'cypher-low', found none given",
+          "gaps": {}
+        },
+        {
+          "policy": "always_g",
+          "reason": "expected a run for the first tier 'agent-low-steps', found none given",
+          "gaps": {}
+        }
+      ],
+      "breakdowns": {
+        "need label": {
+          "DOWNSTREAM_ALL": {
+            "cascade_v3": {
+              "correct": 7,
+              "total": 8
+            },
+            "always_g_luna": {
+              "correct": 6,
+              "total": 8
+            },
+            "always_c_luna": {
+              "correct": 5,
+              "total": 8
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 8
+            },
+            "always_ctx_low": {
+              "correct": 2,
+              "total": 8
+            }
+          },
+          "GENERIC": {
+            "cascade_v3": {
+              "correct": 19,
+              "total": 20
+            },
+            "always_g_luna": {
+              "correct": 18,
+              "total": 20
+            },
+            "always_c_luna": {
+              "correct": 18,
+              "total": 20
+            },
+            "always_ctx_high": {
+              "correct": 9,
+              "total": 20
+            },
+            "always_ctx_low": {
+              "correct": 8,
+              "total": 20
+            }
+          },
+          "ITEM": {
+            "cascade_v3": {
+              "correct": 17,
+              "total": 17
+            },
+            "always_g_luna": {
+              "correct": 17,
+              "total": 17
+            },
+            "always_c_luna": {
+              "correct": 17,
+              "total": 17
+            },
+            "always_ctx_high": {
+              "correct": 16,
+              "total": 17
+            },
+            "always_ctx_low": {
+              "correct": 12,
+              "total": 17
+            }
+          },
+          "NEIGHBOURS_DOWNSTREAM": {
+            "cascade_v3": {
+              "correct": 6,
+              "total": 6
+            },
+            "always_g_luna": {
+              "correct": 6,
+              "total": 6
+            },
+            "always_c_luna": {
+              "correct": 3,
+              "total": 6
+            },
+            "always_ctx_high": {
+              "correct": 6,
+              "total": 6
+            },
+            "always_ctx_low": {
+              "correct": 5,
+              "total": 6
+            }
+          },
+          "PATH": {
+            "cascade_v3": {
+              "correct": 13,
+              "total": 13
+            },
+            "always_g_luna": {
+              "correct": 13,
+              "total": 13
+            },
+            "always_c_luna": {
+              "correct": 9,
+              "total": 13
+            },
+            "always_ctx_high": {
+              "correct": 12,
+              "total": 13
+            },
+            "always_ctx_low": {
+              "correct": 11,
+              "total": 13
+            }
+          },
+          "SIGNAL_CHAIN": {
+            "cascade_v3": {
+              "correct": 12,
+              "total": 12
+            },
+            "always_g_luna": {
+              "correct": 12,
+              "total": 12
+            },
+            "always_c_luna": {
+              "correct": 8,
+              "total": 12
+            },
+            "always_ctx_high": {
+              "correct": 12,
+              "total": 12
+            },
+            "always_ctx_low": {
+              "correct": 10,
+              "total": 12
+            }
+          },
+          "UNIT_SCOPE": {
+            "cascade_v3": {
+              "correct": 11,
+              "total": 11
+            },
+            "always_g_luna": {
+              "correct": 11,
+              "total": 11
+            },
+            "always_c_luna": {
+              "correct": 11,
+              "total": 11
+            },
+            "always_ctx_high": {
+              "correct": 8,
+              "total": 11
+            },
+            "always_ctx_low": {
+              "correct": 7,
+              "total": 11
+            }
+          },
+          "UPSTREAM_ALL": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 2,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 2,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 0,
+              "total": 4
+            }
+          },
+          "UPSTREAM_TO_FIRST_VALVE": {
+            "cascade_v3": {
+              "correct": 2,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 0,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 0,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 0,
+              "total": 4
+            }
+          }
+        },
+        "family": {
+          "CONNECTED": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 3,
+              "total": 4
+            }
+          },
+          "COUNT_IN_UNIT": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 3,
+              "total": 4
+            }
+          },
+          "CROSS_UNIT": {
+            "cascade_v3": {
+              "correct": 3,
+              "total": 3
+            },
+            "always_g_luna": {
+              "correct": 3,
+              "total": 3
+            },
+            "always_c_luna": {
+              "correct": 3,
+              "total": 3
+            },
+            "always_ctx_high": {
+              "correct": 2,
+              "total": 3
+            },
+            "always_ctx_low": {
+              "correct": 1,
+              "total": 3
+            }
+          },
+          "DOWNSTREAM_IN_UNIT": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 1,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 1,
+              "total": 4
+            }
+          },
+          "DOWNSTREAM_ISOLATION": {
+            "cascade_v3": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 1,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 1,
+              "total": 4
+            }
+          },
+          "FEEDING_UNITS": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 2,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 3,
+              "total": 4
+            }
+          },
+          "FIRST_MEETING_POINT": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 1,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 0,
+              "total": 4
+            }
+          },
+          "FLOW_PATH": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 2,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 3,
+              "total": 4
+            }
+          },
+          "INSTRUMENTS_OF_ITEM": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 2,
+              "total": 4
+            }
+          },
+          "LOOKUP_TYPE": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 3,
+              "total": 4
+            }
+          },
+          "LOOKUP_UNIT": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 3,
+              "total": 4
+            }
+          },
+          "LOOPS_NEAR_ITEM": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 2,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 2,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 3,
+              "total": 4
+            }
+          },
+          "LOOP_ACTUATED_VALVE": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "LOOP_MEASURED_EQUIPMENT": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 2,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "NEIGHBOURS_DOWNSTREAM": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 3,
+              "total": 4
+            }
+          },
+          "NO_PATH": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "ROUTE_AVOIDING": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 3,
+              "total": 4
+            }
+          },
+          "SAME_UNIT": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 3,
+              "total": 4
+            }
+          },
+          "SHEETS_OF_TAG": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 2,
+              "total": 4
+            }
+          },
+          "UNANSWERABLE_TAG": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 1,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "UNITS_REACHED": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 1,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 1,
+              "total": 4
+            }
+          },
+          "UPSTREAM_ISOLATION": {
+            "cascade_v3": {
+              "correct": 2,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 0,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 0,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 0,
+              "total": 4
+            }
+          },
+          "UPSTREAM_SOURCES": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 2,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 2,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 0,
+              "total": 4
+            }
+          },
+          "VALVES_ON_PATH": {
+            "cascade_v3": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 1,
+              "total": 4
+            },
+            "always_ctx_low": {
+              "correct": 1,
+              "total": 4
+            }
+          }
+        },
+        "k bin": {
+          "k=0": {
+            "cascade_v3": {
+              "correct": 39,
+              "total": 40
+            },
+            "always_g_luna": {
+              "correct": 39,
+              "total": 40
+            },
+            "always_c_luna": {
+              "correct": 31,
+              "total": 40
+            },
+            "always_ctx_high": {
+              "correct": 37,
+              "total": 40
+            },
+            "always_ctx_low": {
+              "correct": 29,
+              "total": 40
+            }
+          },
+          "k=1-2": {
+            "cascade_v3": {
+              "correct": 31,
+              "total": 33
+            },
+            "always_g_luna": {
+              "correct": 30,
+              "total": 33
+            },
+            "always_c_luna": {
+              "correct": 24,
+              "total": 33
+            },
+            "always_ctx_high": {
+              "correct": 16,
+              "total": 33
+            },
+            "always_ctx_low": {
+              "correct": 13,
+              "total": 33
+            }
+          },
+          "k>=3": {
+            "cascade_v3": {
+              "correct": 13,
+              "total": 14
+            },
+            "always_g_luna": {
+              "correct": 13,
+              "total": 14
+            },
+            "always_c_luna": {
+              "correct": 13,
+              "total": 14
+            },
+            "always_ctx_high": {
+              "correct": 8,
+              "total": 14
+            },
+            "always_ctx_low": {
+              "correct": 5,
+              "total": 14
+            }
+          },
+          "unanswerable": {
+            "cascade_v3": {
+              "correct": 8,
+              "total": 8
+            },
+            "always_g_luna": {
+              "correct": 8,
+              "total": 8
+            },
+            "always_c_luna": {
+              "correct": 5,
+              "total": 8
+            },
+            "always_ctx_high": {
+              "correct": 8,
+              "total": 8
+            },
+            "always_ctx_low": {
+              "correct": 8,
+              "total": 8
+            }
+          }
+        }
+      },
+      "diagnostics": [
+        {
+          "policy": "cascade_v3",
+          "boolean_no_questions": 9,
+          "boolean_no_answered_yes": 0,
+          "agent": {
+            "tier": "agent-luna",
+            "n_tried": 26,
+            "stop_reasons": {
+              "done": 26
+            },
+            "answered_without_tool_call": {
+              "correct": 0,
+              "total": 0
+            },
+            "answered_touching_no_item": {
+              "correct": 8,
+              "total": 8
+            },
+            "named_tag_never_touched": {
+              "correct": 5,
+              "total": 5
+            },
+            "n_with_named_tags": 23
+          },
+          "isolation": {
+            "primary": {
+              "correct": 2,
+              "total": 4
+            },
+            "control_valves_excluded": {
+              "correct": 2,
+              "total": 4
+            }
+          }
+        },
+        {
+          "policy": "always_g_luna",
+          "boolean_no_questions": 9,
+          "boolean_no_answered_yes": 0,
+          "agent": {
+            "tier": "agent-luna",
+            "n_tried": 95,
+            "stop_reasons": {
+              "done": 95
+            },
+            "answered_without_tool_call": {
+              "correct": 0,
+              "total": 0
+            },
+            "answered_touching_no_item": {
+              "correct": 10,
+              "total": 10
+            },
+            "named_tag_never_touched": {
+              "correct": 7,
+              "total": 7
+            },
+            "n_with_named_tags": 81
+          },
+          "isolation": {
+            "primary": {
+              "correct": 3,
+              "total": 4
+            },
+            "control_valves_excluded": {
+              "correct": 3,
+              "total": 4
+            }
+          }
+        },
+        {
+          "policy": "always_c_luna",
+          "boolean_no_questions": 9,
+          "boolean_no_answered_yes": 0,
+          "agent": null,
+          "isolation": {
+            "primary": {
+              "correct": 0,
+              "total": 4
+            },
+            "control_valves_excluded": {
+              "correct": 0,
+              "total": 4
+            }
+          }
+        },
+        {
+          "policy": "always_ctx_high",
+          "boolean_no_questions": 9,
+          "boolean_no_answered_yes": 0,
+          "agent": null,
+          "isolation": {
+            "primary": {
+              "correct": 0,
+              "total": 4
+            },
+            "control_valves_excluded": {
+              "correct": 0,
+              "total": 4
+            }
+          }
+        },
+        {
+          "policy": "always_ctx_low",
+          "boolean_no_questions": 9,
+          "boolean_no_answered_yes": 2,
+          "agent": null,
+          "isolation": {
+            "primary": {
+              "correct": 0,
+              "total": 4
+            },
+            "control_valves_excluded": {
+              "correct": 0,
+              "total": 4
+            }
+          }
+        }
+      ],
+      "late_charges": []
+    },
+    {
+      "corpus_id": "H30",
+      "n_questions": 96,
+      "policies": [
+        {
+          "summary": {
+            "policy": "cascade_v3",
+            "corpus_id": "H30",
+            "n_questions": 96,
+            "n_correct": 90,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 90,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.05673986,
+            "cost_per_question_usd": 0.0005910402083333334,
+            "latency_median_s": 8.44154840000192,
+            "latency_mean_s": 11.261741771874389,
+            "latency_p90_s": 20.65435129999969,
+            "latency_p95_s": 30.82920750001358,
+            "latency_max_s": 60.54871159996401,
+            "tier_shares": {
+              "cypher-luna": 0.6458333333333334,
+              "agent-luna": 0.3541666666666667
+            },
+            "tier_calls": {
+              "cypher-luna": 96,
+              "agent-luna": 34
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "cascade_v3 on H30: median 8.4 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "cascade_v3 on H30: p90 20.7 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": {
+            "n_accepted": 62,
+            "n_accepted_correct": 58,
+            "n_first_tier_correct": 66,
+            "precision": 0.9354838709677419,
+            "recall": 0.8787878787878788
+          },
+          "vs_always_n": null,
+          "oracle": {
+            "policy": "oracle(cascade_v3)",
+            "corpus_id": "H30",
+            "n_questions": 96,
+            "n_correct": 92,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 92,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.059033235,
+            "cost_per_question_usd": 0.00061492953125,
+            "latency_median_s": 7.962390450000385,
+            "latency_mean_s": 11.494234505207563,
+            "latency_p90_s": 23.50957479999488,
+            "latency_p95_s": 37.85747390001052,
+            "latency_max_s": 60.54871159996401,
+            "tier_shares": {
+              "cypher-luna": 0.6875,
+              "agent-luna": 0.3125
+            },
+            "tier_calls": {
+              "cypher-luna": 96,
+              "agent-luna": 30
+            }
+          },
+          "random": {
+            "n_draws": 1000,
+            "n_escalated": 34,
+            "correct_mean": 74.752,
+            "correct_low": 71.0,
+            "correct_high": 79.0,
+            "correct_at_cutoff_mean": 74.752,
+            "correct_at_cutoff_low": 71.0,
+            "correct_at_cutoff_high": 79.0,
+            "cost_total_mean_usd": 0.05665675215000005,
+            "latency_mean_s": 10.827449301928498
+          },
+          "vs_random": {
+            "accuracy": {
+              "mean": 0.15883333333333333,
+              "ci_low": 0.103,
+              "ci_high": 0.21945833333333334
+            },
+            "accuracy_at_cutoff": {
+              "mean": 0.15883333333333333,
+              "ci_low": 0.103,
+              "ci_high": 0.21945833333333334
+            },
+            "cost_usd": {
+              "mean": 8.657067708328249e-7,
+              "ci_low": -0.00005956800546874977,
+              "ci_high": 0.00006805293031249993
+            },
+            "latency_s": {
+              "mean": 0.43429246994588944,
+              "ci_low": -0.8426835471300932,
+              "ci_high": 1.8741753235598229
+            }
+          },
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "always_g_luna",
+            "corpus_id": "H30",
+            "n_questions": 96,
+            "n_correct": 91,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 91,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.0472275,
+            "cost_per_question_usd": 0.000491953125,
+            "latency_median_s": 8.830972449995897,
+            "latency_mean_s": 11.141187339582606,
+            "latency_p90_s": 21.596986099997594,
+            "latency_p95_s": 24.03703859999223,
+            "latency_max_s": 49.25219859996287,
+            "tier_shares": {
+              "agent-luna": 1.0
+            },
+            "tier_calls": {
+              "agent-luna": 96
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "always_g_luna on H30: median 8.8 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "always_g_luna on H30: p90 21.6 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": null,
+          "vs_always_n": null,
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "always_c_luna",
+            "corpus_id": "H30",
+            "n_questions": 96,
+            "n_correct": 66,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 66,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.039927175,
+            "cost_per_question_usd": 0.00041590807291666667,
+            "latency_median_s": 6.881437199994252,
+            "latency_mean_s": 6.882973760416235,
+            "latency_p90_s": 11.246970800006238,
+            "latency_p95_s": 11.92377749998559,
+            "latency_max_s": 16.135675599987735,
+            "tier_shares": {
+              "cypher-luna": 0.7916666666666666,
+              "none": 0.20833333333333334
+            },
+            "tier_calls": {
+              "cypher-luna": 96
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "always_c_luna on H30: median 6.9 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "always_c_luna on H30: p90 11.2 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": null,
+          "vs_always_n": null,
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "always_ctx_high",
+            "corpus_id": "H30",
+            "n_questions": 96,
+            "n_correct": 64,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 64,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 2.3943188,
+            "cost_per_question_usd": 0.024940820833333335,
+            "latency_median_s": 9.166284799997811,
+            "latency_mean_s": 13.371446452082864,
+            "latency_p90_s": 34.42419930000324,
+            "latency_p95_s": 43.51817970000411,
+            "latency_max_s": 71.70495610000944,
+            "tier_shares": {
+              "context-luna-high": 0.9895833333333334,
+              "none": 0.010416666666666666
+            },
+            "tier_calls": {
+              "context-luna-high": 96
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "always_ctx_high on H30: median 9.2 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "always_ctx_high on H30: p90 34.4 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": null,
+          "vs_always_n": null,
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        }
+      ],
+      "not_evaluated": [
+        {
+          "policy": "always_ctx_low",
+          "reason": "expected a run for the first tier 'context-luna-low', found none given",
+          "gaps": {}
+        },
+        {
+          "policy": "always_n",
+          "reason": "expected a run for the first tier 'need-default', found none given",
+          "gaps": {}
+        },
+        {
+          "policy": "always_c",
+          "reason": "expected a run for the first tier 'cypher-low', found none given",
+          "gaps": {}
+        },
+        {
+          "policy": "always_g",
+          "reason": "expected a run for the first tier 'agent-low-steps', found none given",
+          "gaps": {}
+        }
+      ],
+      "breakdowns": {
+        "need label": {
+          "DOWNSTREAM_ALL": {
+            "cascade_v3": {
+              "correct": 6,
+              "total": 8
+            },
+            "always_g_luna": {
+              "correct": 6,
+              "total": 8
+            },
+            "always_c_luna": {
+              "correct": 5,
+              "total": 8
+            },
+            "always_ctx_high": {
+              "correct": 2,
+              "total": 8
+            }
+          },
+          "GENERIC": {
+            "cascade_v3": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_luna": {
+              "correct": 19,
+              "total": 20
+            },
+            "always_c_luna": {
+              "correct": 14,
+              "total": 20
+            },
+            "always_ctx_high": {
+              "correct": 11,
+              "total": 20
+            }
+          },
+          "ITEM": {
+            "cascade_v3": {
+              "correct": 19,
+              "total": 19
+            },
+            "always_g_luna": {
+              "correct": 19,
+              "total": 19
+            },
+            "always_c_luna": {
+              "correct": 16,
+              "total": 19
+            },
+            "always_ctx_high": {
+              "correct": 18,
+              "total": 19
+            }
+          },
+          "NEIGHBOURS_DOWNSTREAM": {
+            "cascade_v3": {
+              "correct": 5,
+              "total": 5
+            },
+            "always_g_luna": {
+              "correct": 5,
+              "total": 5
+            },
+            "always_c_luna": {
+              "correct": 2,
+              "total": 5
+            },
+            "always_ctx_high": {
+              "correct": 2,
+              "total": 5
+            }
+          },
+          "PATH": {
+            "cascade_v3": {
+              "correct": 12,
+              "total": 12
+            },
+            "always_g_luna": {
+              "correct": 12,
+              "total": 12
+            },
+            "always_c_luna": {
+              "correct": 11,
+              "total": 12
+            },
+            "always_ctx_high": {
+              "correct": 12,
+              "total": 12
+            }
+          },
+          "SIGNAL_CHAIN": {
+            "cascade_v3": {
+              "correct": 12,
+              "total": 12
+            },
+            "always_g_luna": {
+              "correct": 12,
+              "total": 12
+            },
+            "always_c_luna": {
+              "correct": 6,
+              "total": 12
+            },
+            "always_ctx_high": {
+              "correct": 12,
+              "total": 12
+            }
+          },
+          "UNIT_SCOPE": {
+            "cascade_v3": {
+              "correct": 10,
+              "total": 12
+            },
+            "always_g_luna": {
+              "correct": 12,
+              "total": 12
+            },
+            "always_c_luna": {
+              "correct": 10,
+              "total": 12
+            },
+            "always_ctx_high": {
+              "correct": 6,
+              "total": 12
+            }
+          },
+          "UPSTREAM_ALL": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 2,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 0,
+              "total": 4
+            }
+          },
+          "UPSTREAM_TO_FIRST_VALVE": {
+            "cascade_v3": {
+              "correct": 2,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 2,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 0,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 1,
+              "total": 4
+            }
+          }
+        },
+        "family": {
+          "CONNECTED": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "COUNT_IN_UNIT": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 2,
+              "total": 4
+            }
+          },
+          "CROSS_UNIT": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 2,
+              "total": 4
+            }
+          },
+          "DOWNSTREAM_IN_UNIT": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 1,
+              "total": 4
+            }
+          },
+          "DOWNSTREAM_ISOLATION": {
+            "cascade_v3": {
+              "correct": 2,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 2,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 1,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 1,
+              "total": 4
+            }
+          },
+          "FEEDING_UNITS": {
+            "cascade_v3": {
+              "correct": 2,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 2,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 2,
+              "total": 4
+            }
+          },
+          "FIRST_MEETING_POINT": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 3,
+              "total": 4
+            }
+          },
+          "FLOW_PATH": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "INSTRUMENTS_OF_ITEM": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 2,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "LOOKUP_TYPE": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "LOOKUP_UNIT": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 2,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "LOOPS_NEAR_ITEM": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 1,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 2,
+              "total": 4
+            }
+          },
+          "LOOP_ACTUATED_VALVE": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "LOOP_MEASURED_EQUIPMENT": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 1,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "NEIGHBOURS_DOWNSTREAM": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 2,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 1,
+              "total": 4
+            }
+          },
+          "NO_PATH": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "ROUTE_AVOIDING": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "SAME_UNIT": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "SHEETS_OF_TAG": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 3,
+              "total": 4
+            }
+          },
+          "UNANSWERABLE_TAG": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 4,
+              "total": 4
+            }
+          },
+          "UNITS_REACHED": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 1,
+              "total": 4
+            }
+          },
+          "UPSTREAM_ISOLATION": {
+            "cascade_v3": {
+              "correct": 2,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 2,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 0,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 1,
+              "total": 4
+            }
+          },
+          "UPSTREAM_SOURCES": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 2,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 0,
+              "total": 4
+            }
+          },
+          "VALVES_ON_PATH": {
+            "cascade_v3": {
+              "correct": 4,
+              "total": 4
+            },
+            "always_g_luna": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_c_luna": {
+              "correct": 3,
+              "total": 4
+            },
+            "always_ctx_high": {
+              "correct": 1,
+              "total": 4
+            }
+          }
+        },
+        "k bin": {
+          "k=0": {
+            "cascade_v3": {
+              "correct": 37,
+              "total": 38
+            },
+            "always_g_luna": {
+              "correct": 37,
+              "total": 38
+            },
+            "always_c_luna": {
+              "correct": 26,
+              "total": 38
+            },
+            "always_ctx_high": {
+              "correct": 33,
+              "total": 38
+            }
+          },
+          "k=1-2": {
+            "cascade_v3": {
+              "correct": 31,
+              "total": 35
+            },
+            "always_g_luna": {
+              "correct": 32,
+              "total": 35
+            },
+            "always_c_luna": {
+              "correct": 23,
+              "total": 35
+            },
+            "always_ctx_high": {
+              "correct": 17,
+              "total": 35
+            }
+          },
+          "k>=3": {
+            "cascade_v3": {
+              "correct": 14,
+              "total": 15
+            },
+            "always_g_luna": {
+              "correct": 14,
+              "total": 15
+            },
+            "always_c_luna": {
+              "correct": 10,
+              "total": 15
+            },
+            "always_ctx_high": {
+              "correct": 6,
+              "total": 15
+            }
+          },
+          "unanswerable": {
+            "cascade_v3": {
+              "correct": 8,
+              "total": 8
+            },
+            "always_g_luna": {
+              "correct": 8,
+              "total": 8
+            },
+            "always_c_luna": {
+              "correct": 7,
+              "total": 8
+            },
+            "always_ctx_high": {
+              "correct": 8,
+              "total": 8
+            }
+          }
+        }
+      },
+      "diagnostics": [
+        {
+          "policy": "cascade_v3",
+          "boolean_no_questions": 6,
+          "boolean_no_answered_yes": 0,
+          "agent": {
+            "tier": "agent-luna",
+            "n_tried": 34,
+            "stop_reasons": {
+              "done": 34
+            },
+            "answered_without_tool_call": {
+              "correct": 0,
+              "total": 0
+            },
+            "answered_touching_no_item": {
+              "correct": 8,
+              "total": 8
+            },
+            "named_tag_never_touched": {
+              "correct": 4,
+              "total": 4
+            },
+            "n_with_named_tags": 30
+          },
+          "isolation": {
+            "primary": {
+              "correct": 2,
+              "total": 4
+            },
+            "control_valves_excluded": {
+              "correct": 2,
+              "total": 4
+            }
+          }
+        },
+        {
+          "policy": "always_g_luna",
+          "boolean_no_questions": 6,
+          "boolean_no_answered_yes": 0,
+          "agent": {
+            "tier": "agent-luna",
+            "n_tried": 96,
+            "stop_reasons": {
+              "done": 96
+            },
+            "answered_without_tool_call": {
+              "correct": 0,
+              "total": 0
+            },
+            "answered_touching_no_item": {
+              "correct": 9,
+              "total": 9
+            },
+            "named_tag_never_touched": {
+              "correct": 5,
+              "total": 5
+            },
+            "n_with_named_tags": 80
+          },
+          "isolation": {
+            "primary": {
+              "correct": 2,
+              "total": 4
+            },
+            "control_valves_excluded": {
+              "correct": 2,
+              "total": 4
+            }
+          }
+        },
+        {
+          "policy": "always_c_luna",
+          "boolean_no_questions": 6,
+          "boolean_no_answered_yes": 0,
+          "agent": null,
+          "isolation": {
+            "primary": {
+              "correct": 0,
+              "total": 4
+            },
+            "control_valves_excluded": {
+              "correct": 0,
+              "total": 4
+            }
+          }
+        },
+        {
+          "policy": "always_ctx_high",
+          "boolean_no_questions": 6,
+          "boolean_no_answered_yes": 0,
+          "agent": null,
+          "isolation": {
+            "primary": {
+              "correct": 1,
+              "total": 4
+            },
+            "control_valves_excluded": {
+              "correct": 1,
+              "total": 4
+            }
+          }
+        }
+      ],
+      "late_charges": []
+    }
+  ],
+  "tier3": [],
+  "verdicts": [
+    {
+      "rule": "S1",
+      "status": "INCOMPLETE",
+      "headline": "no need-default run joined for H1, H3, H10, H30",
+      "details": []
+    },
+    {
+      "rule": "S2",
+      "status": "INCOMPLETE",
+      "headline": "cascade_v1 or always_n is not evaluated on D1000",
+      "details": []
+    },
+    {
+      "rule": "S3 cascade_v1_iso",
+      "status": "INCOMPLETE",
+      "headline": "cascade_v1_iso or cascade_v1 is not evaluated on D1000",
+      "details": []
+    },
+    {
+      "rule": "S3 label_router_dev",
+      "status": "INCOMPLETE",
+      "headline": "label_router_dev or cascade_v1 is not evaluated on D1000",
+      "details": []
+    },
+    {
+      "rule": "V2",
+      "status": "INCOMPLETE",
+      "headline": "not evaluated on D100: cascade_v1, cascade_v1_iso, cascade_v2, cascade_v2_iso",
+      "details": []
+    },
+    {
+      "rule": "V3",
+      "status": "INCOMPLETE",
+      "headline": "not evaluated on D1000: cascade_v1, cascade_v1_iso, cascade_v2, cascade_v2_iso",
+      "details": []
+    }
+  ]
+}

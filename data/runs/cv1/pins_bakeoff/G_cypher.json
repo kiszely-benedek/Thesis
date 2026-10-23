@@ -1,0 +1,13 @@
+{
+ "backend": "openrouter",
+ "model_id": "openai/gpt-oss-120b",
+ "route_provider": "cerebras/fp16",
+ "temperature": 0.0,
+ "seed": 0,
+ "max_output_tokens": 16384,
+ "extra": {
+  "reasoning": {
+   "effort": "low"
+  }
+ }
+}

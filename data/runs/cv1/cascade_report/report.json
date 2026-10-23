@@ -1,0 +1,4321 @@
+{
+  "corpora": [
+    {
+      "corpus_id": "D100",
+      "n_questions": 180,
+      "policies": [
+        {
+          "summary": {
+            "policy": "always_c",
+            "corpus_id": "D100",
+            "n_questions": 180,
+            "n_correct": 141,
+            "total_cost_usd": 0.04198519483,
+            "cost_per_question_usd": 0.00023325108238888892,
+            "latency_median_s": 1.4840000000003783,
+            "latency_mean_s": 3.2588666666665933,
+            "latency_p90_s": 6.047000000002299,
+            "tier_shares": {
+              "cypher-low": 0.9666666666666667,
+              "none": 0.03333333333333333
+            },
+            "tier_calls": {
+              "cypher-low": 180
+            }
+          },
+          "acceptance": null,
+          "vs_always_n": {
+            "accuracy": {
+              "mean": -0.08888888888888889,
+              "ci_low": -0.16111111111111112,
+              "ci_high": -0.016666666666666666
+            },
+            "cost_usd": {
+              "mean": -0.002373675918888889,
+              "ci_low": -0.002817476251611111,
+              "ci_high": -0.0019457319428333333
+            },
+            "latency_s": {
+              "mean": -31.606183333333462,
+              "ci_low": -39.04372222222219,
+              "ci_high": -24.556644444444647
+            }
+          },
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "always_n",
+            "corpus_id": "D100",
+            "n_questions": 180,
+            "n_correct": 157,
+            "total_cost_usd": 0.46924686023,
+            "cost_per_question_usd": 0.002606927001277778,
+            "latency_median_s": 7.813000000001921,
+            "latency_mean_s": 34.86505000000005,
+            "latency_p90_s": 121.51499999999942,
+            "tier_shares": {
+              "need-default": 0.9166666666666666,
+              "none": 0.08333333333333333
+            },
+            "tier_calls": {
+              "need-default": 180
+            }
+          },
+          "acceptance": null,
+          "vs_always_n": null,
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "cascade_v1",
+            "corpus_id": "D100",
+            "n_questions": 180,
+            "n_correct": 167,
+            "total_cost_usd": 0.24250254496,
+            "cost_per_question_usd": 0.001347236360888889,
+            "latency_median_s": 2.2889999999988504,
+            "latency_mean_s": 19.2162722222222,
+            "latency_p90_s": 51.98500000000058,
+            "tier_shares": {
+              "need-default": 0.25,
+              "cypher-low": 0.7333333333333333,
+              "none": 0.016666666666666666
+            },
+            "tier_calls": {
+              "cypher-low": 180,
+              "need-default": 55
+            }
+          },
+          "acceptance": {
+            "n_accepted": 125,
+            "n_accepted_correct": 118,
+            "n_first_tier_correct": 141,
+            "precision": 0.944,
+            "recall": 0.8368794326241135
+          },
+          "vs_always_n": {
+            "accuracy": {
+              "mean": 0.05555555555555555,
+              "ci_low": 0.011111111111111112,
+              "ci_high": 0.10555555555555556
+            },
+            "cost_usd": {
+              "mean": -0.0012596906403888888,
+              "ci_low": -0.0016199647179444446,
+              "ci_high": -0.0009240587126666667
+            },
+            "latency_s": {
+              "mean": -15.648777777777852,
+              "ci_low": -20.874427777778084,
+              "ci_high": -10.730999999999828
+            }
+          },
+          "oracle": {
+            "policy": "oracle(cascade_v1)",
+            "corpus_id": "D100",
+            "n_questions": 180,
+            "n_correct": 172,
+            "total_cost_usd": 0.18245114183,
+            "cost_per_question_usd": 0.001013617454611111,
+            "latency_median_s": 1.7734999999993306,
+            "latency_mean_s": 15.690477777777737,
+            "latency_p90_s": 16.15599999999904,
+            "tier_shares": {
+              "cypher-low": 0.8055555555555556,
+              "need-default": 0.17777777777777778,
+              "none": 0.016666666666666666
+            },
+            "tier_calls": {
+              "cypher-low": 180,
+              "need-default": 39
+            }
+          },
+          "random": {
+            "n_draws": 1000,
+            "n_escalated": 55,
+            "correct_mean": 148.356,
+            "correct_low": 143.0,
+            "correct_high": 154.0,
+            "cost_total_mean_usd": 0.18488090657373965,
+            "latency_mean_s": 13.862789661111027
+          },
+          "vs_random": {
+            "accuracy": {
+              "mean": 0.10357777777777778,
+              "ci_low": 0.06722777777777779,
+              "ci_high": 0.14261111111111113
+            },
+            "cost_usd": {
+              "mean": 0.000320120213257002,
+              "ci_low": 0.000015947938811779427,
+              "ci_high": 0.0006688853736698361
+            },
+            "latency_s": {
+              "mean": 5.353482561111175,
+              "ci_low": 0.5900193722222513,
+              "ci_high": 10.803527200000149
+            }
+          },
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "cascade_v1_iso",
+            "corpus_id": "D100",
+            "n_questions": 180,
+            "n_correct": 170,
+            "total_cost_usd": 0.26629457191,
+            "cost_per_question_usd": 0.0014794142883888888,
+            "latency_median_s": 2.367500000000291,
+            "latency_mean_s": 20.949861111111083,
+            "latency_p90_s": 71.875,
+            "tier_shares": {
+              "need-default": 0.2722222222222222,
+              "cypher-low": 0.6888888888888889,
+              "none": 0.03888888888888889
+            },
+            "tier_calls": {
+              "cypher-low": 170,
+              "need-default": 60
+            }
+          },
+          "acceptance": null,
+          "vs_always_n": {
+            "accuracy": {
+              "mean": 0.07222222222222222,
+              "ci_low": 0.03333333333333333,
+              "ci_high": 0.11666666666666667
+            },
+            "cost_usd": {
+              "mean": -0.001127512712888889,
+              "ci_low": -0.0014652113617777778,
+              "ci_high": -0.0008107332989444444
+            },
+            "latency_s": {
+              "mean": -13.915188888888972,
+              "ci_low": -18.62732222222231,
+              "ci_high": -9.436038888888692
+            }
+          },
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "cascade_v1_t3_glm64k",
+            "corpus_id": "D100",
+            "n_questions": 180,
+            "n_correct": 172,
+            "total_cost_usd": 0.36194856496,
+            "cost_per_question_usd": 0.002010825360888889,
+            "latency_median_s": 2.2889999999988504,
+            "latency_mean_s": 28.57000555555549,
+            "latency_p90_s": 51.98500000000058,
+            "tier_shares": {
+              "need-default": 0.25,
+              "cypher-low": 0.6944444444444444,
+              "need-default-64k": 0.05,
+              "none": 0.005555555555555556
+            },
+            "tier_calls": {
+              "cypher-low": 180,
+              "need-default": 55,
+              "need-default-64k": 10
+            }
+          },
+          "acceptance": {
+            "n_accepted": 125,
+            "n_accepted_correct": 118,
+            "n_first_tier_correct": 141,
+            "precision": 0.944,
+            "recall": 0.8368794326241135
+          },
+          "vs_always_n": {
+            "accuracy": {
+              "mean": 0.08333333333333333,
+              "ci_low": 0.03333333333333333,
+              "ci_high": 0.13333333333333333
+            },
+            "cost_usd": {
+              "mean": -0.0005961016403888889,
+              "ci_low": -0.0012139294475555556,
+              "ci_high": 0.00013285691500000005
+            },
+            "latency_s": {
+              "mean": -6.295044444444566,
+              "ci_low": -15.468338888888825,
+              "ci_high": 4.6038944444444905
+            }
+          },
+          "oracle": {
+            "policy": "oracle(cascade_v1_t3_glm64k)",
+            "corpus_id": "D100",
+            "n_questions": 180,
+            "n_correct": 177,
+            "total_cost_usd": 0.28109958183,
+            "cost_per_question_usd": 0.0015616643435,
+            "latency_median_s": 1.7734999999993306,
+            "latency_mean_s": 23.742816666666556,
+            "latency_p90_s": 16.15599999999904,
+            "tier_shares": {
+              "cypher-low": 0.7833333333333333,
+              "need-default": 0.17777777777777778,
+              "need-default-64k": 0.03333333333333333,
+              "none": 0.005555555555555556
+            },
+            "tier_calls": {
+              "cypher-low": 180,
+              "need-default": 39,
+              "need-default-64k": 7
+            }
+          },
+          "random": {
+            "n_draws": 1000,
+            "n_escalated": 55,
+            "correct_mean": 149.869,
+            "correct_low": 144.0,
+            "correct_high": 155.0,
+            "cost_total_mean_usd": 0.2345622437937399,
+            "latency_mean_s": 17.423260633333225
+          },
+          "vs_random": {
+            "accuracy": {
+              "mean": 0.12295,
+              "ci_low": 0.08352222222222222,
+              "ci_high": 0.16472222222222221
+            },
+            "cost_usd": {
+              "mean": 0.0007077017842570005,
+              "ci_low": 0.00012626056436416613,
+              "ci_high": 0.001393365281228504
+            },
+            "latency_s": {
+              "mean": 11.146744922222265,
+              "ci_low": 2.2040088555558013,
+              "ci_high": 21.91791328333312
+            }
+          },
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "cascade_v1_t3_glmlow",
+            "corpus_id": "D100",
+            "n_questions": 180,
+            "n_correct": 169,
+            "total_cost_usd": 0.25643121342,
+            "cost_per_question_usd": 0.0014246178523333335,
+            "latency_median_s": 2.2889999999988504,
+            "latency_mean_s": 20.153505555555643,
+            "latency_p90_s": 51.98500000000058,
+            "tier_shares": {
+              "need-default": 0.25,
+              "cypher-low": 0.6944444444444444,
+              "need-low": 0.05555555555555555
+            },
+            "tier_calls": {
+              "cypher-low": 180,
+              "need-default": 55,
+              "need-low": 10
+            }
+          },
+          "acceptance": {
+            "n_accepted": 125,
+            "n_accepted_correct": 118,
+            "n_first_tier_correct": 141,
+            "precision": 0.944,
+            "recall": 0.8368794326241135
+          },
+          "vs_always_n": {
+            "accuracy": {
+              "mean": 0.06666666666666667,
+              "ci_low": 0.016666666666666666,
+              "ci_high": 0.11666666666666667
+            },
+            "cost_usd": {
+              "mean": -0.0011823091489444445,
+              "ci_low": -0.0015484281087777777,
+              "ci_high": -0.0008309789783333333
+            },
+            "latency_s": {
+              "mean": -14.711544444444412,
+              "ci_low": -20.08491111111113,
+              "ci_high": -9.617788888888835
+            }
+          },
+          "oracle": {
+            "policy": "oracle(cascade_v1_t3_glmlow)",
+            "corpus_id": "D100",
+            "n_questions": 180,
+            "n_correct": 175,
+            "total_cost_usd": 0.19059264767,
+            "cost_per_question_usd": 0.001058848042611111,
+            "latency_median_s": 1.7734999999993306,
+            "latency_mean_s": 16.33006111111107,
+            "latency_p90_s": 16.15599999999904,
+            "tier_shares": {
+              "cypher-low": 0.7833333333333333,
+              "need-default": 0.17777777777777778,
+              "need-low": 0.03888888888888889
+            },
+            "tier_calls": {
+              "cypher-low": 180,
+              "need-default": 39,
+              "need-low": 7
+            }
+          },
+          "random": {
+            "n_draws": 1000,
+            "n_escalated": 55,
+            "correct_mean": 148.377,
+            "correct_low": 142.0,
+            "correct_high": 154.0,
+            "cost_total_mean_usd": 0.19235410338039977,
+            "latency_mean_s": 14.34288672777773
+          },
+          "vs_random": {
+            "accuracy": {
+              "mean": 0.11457222222222223,
+              "ci_low": 0.07511666666666666,
+              "ci_high": 0.15494999999999998
+            },
+            "cost_usd": {
+              "mean": 0.0003559839446644457,
+              "ci_low": 0.000022059199752057485,
+              "ci_high": 0.0007384453378786142
+            },
+            "latency_s": {
+              "mean": 5.8106188277779145,
+              "ci_low": 0.7158354666667691,
+              "ci_high": 11.654737111111206
+            }
+          },
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "cascade_v1_t3_mimo",
+            "corpus_id": "D100",
+            "n_questions": 180,
+            "n_correct": 170,
+            "total_cost_usd": 0.32988006096,
+            "cost_per_question_usd": 0.0018326670053333332,
+            "latency_median_s": 2.2889999999988504,
+            "latency_mean_s": 21.185638888888874,
+            "latency_p90_s": 51.98500000000058,
+            "tier_shares": {
+              "need-default": 0.25,
+              "cypher-low": 0.6944444444444444,
+              "need-mimo": 0.05555555555555555
+            },
+            "tier_calls": {
+              "cypher-low": 180,
+              "need-default": 55,
+              "need-mimo": 10
+            }
+          },
+          "acceptance": {
+            "n_accepted": 125,
+            "n_accepted_correct": 118,
+            "n_first_tier_correct": 141,
+            "precision": 0.944,
+            "recall": 0.8368794326241135
+          },
+          "vs_always_n": {
+            "accuracy": {
+              "mean": 0.07222222222222222,
+              "ci_low": 0.022222222222222223,
+              "ci_high": 0.12777777777777777
+            },
+            "cost_usd": {
+              "mean": -0.0007742599959444444,
+              "ci_low": -0.0012727300134444445,
+              "ci_high": -0.00022515712994444442
+            },
+            "latency_s": {
+              "mean": -13.67941111111118,
+              "ci_low": -19.39122777777767,
+              "ci_high": -8.175094444444564
+            }
+          },
+          "oracle": {
+            "policy": "oracle(cascade_v1_t3_mimo)",
+            "corpus_id": "D100",
+            "n_questions": 180,
+            "n_correct": 175,
+            "total_cost_usd": 0.24715931983,
+            "cost_per_question_usd": 0.001373107332388889,
+            "latency_median_s": 1.7734999999993306,
+            "latency_mean_s": 17.567822222222194,
+            "latency_p90_s": 16.15599999999904,
+            "tier_shares": {
+              "cypher-low": 0.7833333333333333,
+              "need-default": 0.17777777777777778,
+              "need-mimo": 0.03888888888888889
+            },
+            "tier_calls": {
+              "cypher-low": 180,
+              "need-default": 39,
+              "need-mimo": 7
+            }
+          },
+          "random": {
+            "n_draws": 1000,
+            "n_escalated": 55,
+            "correct_mean": 148.93,
+            "correct_low": 143.0,
+            "correct_high": 154.0,
+            "cost_total_mean_usd": 0.23274464120273972,
+            "latency_mean_s": 15.039752494444327
+          },
+          "vs_random": {
+            "accuracy": {
+              "mean": 0.11705555555555555,
+              "ci_low": 0.07891111111111111,
+              "ci_high": 0.15763333333333332
+            },
+            "cost_usd": {
+              "mean": 0.0005396412208736681,
+              "ci_low": 0.000032442975125665394,
+              "ci_high": 0.001127745820164169
+            },
+            "latency_s": {
+              "mean": 6.145886394444546,
+              "ci_low": 0.5213158055557467,
+              "ci_high": 12.65495130555569
+            }
+          },
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "label_router_dev",
+            "corpus_id": "D100",
+            "n_questions": 180,
+            "n_correct": 167,
+            "total_cost_usd": 0.14584341035,
+            "cost_per_question_usd": 0.0008102411686111111,
+            "latency_median_s": 1.9920000000001892,
+            "latency_mean_s": 11.3013388888889,
+            "latency_p90_s": 12.46900000000096,
+            "tier_shares": {
+              "cypher-low": 0.6944444444444444,
+              "none": 0.05555555555555555,
+              "need-default": 0.25
+            },
+            "tier_calls": {
+              "cypher-low": 130,
+              "need-default": 50
+            }
+          },
+          "acceptance": null,
+          "vs_always_n": {
+            "accuracy": {
+              "mean": 0.05555555555555555,
+              "ci_low": 0.005555555555555556,
+              "ci_high": 0.10555555555555556
+            },
+            "cost_usd": {
+              "mean": -0.0017966858326666669,
+              "ci_low": -0.0022303245230555556,
+              "ci_high": -0.0014011098366666665
+            },
+            "latency_s": {
+              "mean": -23.563711111111157,
+              "ci_low": -30.223572222222476,
+              "ci_high": -17.475094444444444
+            }
+          },
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "n_first_v1_t3_glm64k",
+            "corpus_id": "D100",
+            "n_questions": 180,
+            "n_correct": 170,
+            "total_cost_usd": 0.63564416023,
+            "cost_per_question_usd": 0.0035313564457222224,
+            "latency_median_s": 7.813000000001921,
+            "latency_mean_s": 46.83248888888884,
+            "latency_p90_s": 121.51499999999942,
+            "tier_shares": {
+              "need-default": 0.9166666666666666,
+              "need-default-64k": 0.07777777777777778,
+              "none": 0.005555555555555556
+            },
+            "tier_calls": {
+              "need-default": 180,
+              "need-default-64k": 15
+            }
+          },
+          "acceptance": {
+            "n_accepted": 165,
+            "n_accepted_correct": 157,
+            "n_first_tier_correct": 157,
+            "precision": 0.9515151515151515,
+            "recall": 1.0
+          },
+          "vs_always_n": {
+            "accuracy": {
+              "mean": 0.07222222222222222,
+              "ci_low": 0.03888888888888889,
+              "ci_high": 0.1111111111111111
+            },
+            "cost_usd": {
+              "mean": 0.0009244294444444444,
+              "ci_low": 0.00039837655555555553,
+              "ci_high": 0.0015640467777777779
+            },
+            "latency_s": {
+              "mean": 11.967438888888783,
+              "ci_low": 4.606505555555486,
+              "ci_high": 21.402666666666402
+            }
+          },
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": "expected a row for question 'D100:CONNECTED:E-10-1|E-28-2' in tier 'need-default-64k' (policy 'n_first_v1_t3_glm64k' reaches it), found none"
+        },
+        {
+          "summary": {
+            "policy": "n_first_v1_t3_glmlow",
+            "corpus_id": "D100",
+            "n_questions": 180,
+            "n_correct": 165,
+            "total_cost_usd": 0.49397499453,
+            "cost_per_question_usd": 0.0027443055251666665,
+            "latency_median_s": 7.813000000001921,
+            "latency_mean_s": 36.4296222222224,
+            "latency_p90_s": 121.51499999999942,
+            "tier_shares": {
+              "need-default": 0.9166666666666666,
+              "need-low": 0.08333333333333333
+            },
+            "tier_calls": {
+              "need-default": 180,
+              "need-low": 15
+            }
+          },
+          "acceptance": {
+            "n_accepted": 165,
+            "n_accepted_correct": 157,
+            "n_first_tier_correct": 157,
+            "precision": 0.9515151515151515,
+            "recall": 1.0
+          },
+          "vs_always_n": {
+            "accuracy": {
+              "mean": 0.044444444444444446,
+              "ci_low": 0.016666666666666666,
+              "ci_high": 0.07777777777777778
+            },
+            "cost_usd": {
+              "mean": 0.00013737852388888888,
+              "ci_low": 0.00006378885166666667,
+              "ci_high": 0.00021761868922222222
+            },
+            "latency_s": {
+              "mean": 1.5645722222223413,
+              "ci_low": 0.6954777777777862,
+              "ci_high": 2.5700500000003053
+            }
+          },
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": "expected a row for question 'D100:CONNECTED:E-10-1|E-28-2' in tier 'need-low' (policy 'n_first_v1_t3_glmlow' reaches it), found none"
+        },
+        {
+          "summary": {
+            "policy": "n_first_v1_t3_mimo",
+            "corpus_id": "D100",
+            "n_questions": 180,
+            "n_correct": 167,
+            "total_cost_usd": 0.6279183002300001,
+            "cost_per_question_usd": 0.003488435001277778,
+            "latency_median_s": 7.813000000001921,
+            "latency_mean_s": 38.80733333333331,
+            "latency_p90_s": 121.51499999999942,
+            "tier_shares": {
+              "need-default": 0.9166666666666666,
+              "need-mimo": 0.08333333333333333
+            },
+            "tier_calls": {
+              "need-default": 180,
+              "need-mimo": 15
+            }
+          },
+          "acceptance": {
+            "n_accepted": 165,
+            "n_accepted_correct": 157,
+            "n_first_tier_correct": 157,
+            "precision": 0.9515151515151515,
+            "recall": 1.0
+          },
+          "vs_always_n": {
+            "accuracy": {
+              "mean": 0.05555555555555555,
+              "ci_low": 0.022222222222222223,
+              "ci_high": 0.08888888888888889
+            },
+            "cost_usd": {
+              "mean": 0.000881508,
+              "ci_low": 0.00041337216111111106,
+              "ci_high": 0.0013984094055555557
+            },
+            "latency_s": {
+              "mean": 3.9422833333332568,
+              "ci_low": 1.5816000000001118,
+              "ci_high": 6.7291555555555735
+            }
+          },
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": "expected a row for question 'D100:CONNECTED:E-10-1|E-28-2' in tier 'need-mimo' (policy 'n_first_v1_t3_mimo' reaches it), found none"
+        }
+      ],
+      "not_evaluated": [],
+      "breakdowns": {
+        "need label": {
+          "DOWNSTREAM_ALL": {
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 8,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 8,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 8,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 8,
+              "total": 10
+            }
+          },
+          "GENERIC": {
+            "always_c": {
+              "correct": 6,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 8,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 8,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 8,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 8,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 8,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "ITEM": {
+            "always_c": {
+              "correct": 43,
+              "total": 43
+            },
+            "always_n": {
+              "correct": 43,
+              "total": 43
+            },
+            "cascade_v1": {
+              "correct": 43,
+              "total": 43
+            },
+            "cascade_v1_iso": {
+              "correct": 43,
+              "total": 43
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 43,
+              "total": 43
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 43,
+              "total": 43
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 43,
+              "total": 43
+            },
+            "label_router_dev": {
+              "correct": 43,
+              "total": 43
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 43,
+              "total": 43
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 43,
+              "total": 43
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 43,
+              "total": 43
+            }
+          },
+          "NEIGHBOURS_DOWNSTREAM": {
+            "always_c": {
+              "correct": 13,
+              "total": 13
+            },
+            "always_n": {
+              "correct": 13,
+              "total": 13
+            },
+            "cascade_v1": {
+              "correct": 13,
+              "total": 13
+            },
+            "cascade_v1_iso": {
+              "correct": 13,
+              "total": 13
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 13,
+              "total": 13
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 13,
+              "total": 13
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 13,
+              "total": 13
+            },
+            "label_router_dev": {
+              "correct": 13,
+              "total": 13
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 13,
+              "total": 13
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 13,
+              "total": 13
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 13,
+              "total": 13
+            }
+          },
+          "PATH": {
+            "always_c": {
+              "correct": 28,
+              "total": 34
+            },
+            "always_n": {
+              "correct": 25,
+              "total": 34
+            },
+            "cascade_v1": {
+              "correct": 32,
+              "total": 34
+            },
+            "cascade_v1_iso": {
+              "correct": 32,
+              "total": 34
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 34,
+              "total": 34
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 32,
+              "total": 34
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 34,
+              "total": 34
+            },
+            "label_router_dev": {
+              "correct": 28,
+              "total": 34
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 32,
+              "total": 34
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 29,
+              "total": 34
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 32,
+              "total": 34
+            }
+          },
+          "SIGNAL_CHAIN": {
+            "always_c": {
+              "correct": 12,
+              "total": 30
+            },
+            "always_n": {
+              "correct": 30,
+              "total": 30
+            },
+            "cascade_v1": {
+              "correct": 30,
+              "total": 30
+            },
+            "cascade_v1_iso": {
+              "correct": 30,
+              "total": 30
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 30,
+              "total": 30
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 30,
+              "total": 30
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 30,
+              "total": 30
+            },
+            "label_router_dev": {
+              "correct": 30,
+              "total": 30
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 30,
+              "total": 30
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 30,
+              "total": 30
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "UNIT_SCOPE": {
+            "always_c": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_n": {
+              "correct": 19,
+              "total": 20
+            },
+            "cascade_v1": {
+              "correct": 20,
+              "total": 20
+            },
+            "cascade_v1_iso": {
+              "correct": 20,
+              "total": 20
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 20,
+              "total": 20
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 20,
+              "total": 20
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 20,
+              "total": 20
+            },
+            "label_router_dev": {
+              "correct": 20,
+              "total": 20
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 19,
+              "total": 20
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 19,
+              "total": 20
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 19,
+              "total": 20
+            }
+          },
+          "UPSTREAM_ALL": {
+            "always_c": {
+              "correct": 9,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 5,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 9,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 8,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 7,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 7,
+              "total": 10
+            }
+          },
+          "UPSTREAM_TO_FIRST_VALVE": {
+            "always_c": {
+              "correct": 0,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 4,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 1,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 4,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 4,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 3,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 2,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 4,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 7,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 6,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 5,
+              "total": 10
+            }
+          }
+        },
+        "family": {
+          "CONNECTED": {
+            "always_c": {
+              "correct": 9,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 9,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "COUNT_IN_UNIT": {
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "CROSS_UNIT": {
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 9,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 9,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 9,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 9,
+              "total": 10
+            }
+          },
+          "DOWNSTREAM_IN_UNIT": {
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 8,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 8,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 8,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 8,
+              "total": 10
+            }
+          },
+          "FLOW_PATH": {
+            "always_c": {
+              "correct": 7,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 6,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 9,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 9,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 9,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 7,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 8,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 6,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 8,
+              "total": 10
+            }
+          },
+          "INSTRUMENTS_OF_ITEM": {
+            "always_c": {
+              "correct": 1,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "LOOKUP_TYPE": {
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "LOOKUP_UNIT": {
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "LOOPS_NEAR_ITEM": {
+            "always_c": {
+              "correct": 6,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 8,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 8,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 8,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 8,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 8,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "LOOP_ACTUATED_VALVE": {
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "LOOP_MEASURED_EQUIPMENT": {
+            "always_c": {
+              "correct": 1,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "NEIGHBOURS_DOWNSTREAM": {
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "NO_PATH": {
+            "always_c": {
+              "correct": 8,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 5,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 9,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 9,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 9,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 8,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 9,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "SAME_UNIT": {
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "SHEETS_OF_TAG": {
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "UNANSWERABLE_TAG": {
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "UPSTREAM_ISOLATION": {
+            "always_c": {
+              "correct": 0,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 4,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 1,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 4,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 4,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 3,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 2,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 4,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 7,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 6,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 5,
+              "total": 10
+            }
+          },
+          "UPSTREAM_SOURCES": {
+            "always_c": {
+              "correct": 9,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 5,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 9,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 8,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 7,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 7,
+              "total": 10
+            }
+          }
+        },
+        "k bin": {
+          "k=0": {
+            "always_c": {
+              "correct": 44,
+              "total": 68
+            },
+            "always_n": {
+              "correct": 66,
+              "total": 68
+            },
+            "cascade_v1": {
+              "correct": 65,
+              "total": 68
+            },
+            "cascade_v1_iso": {
+              "correct": 65,
+              "total": 68
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 66,
+              "total": 68
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 67,
+              "total": 68
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 66,
+              "total": 68
+            },
+            "label_router_dev": {
+              "correct": 65,
+              "total": 68
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 67,
+              "total": 68
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 68,
+              "total": 68
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 67,
+              "total": 68
+            }
+          },
+          "k=1-2": {
+            "always_c": {
+              "correct": 45,
+              "total": 53
+            },
+            "always_n": {
+              "correct": 48,
+              "total": 53
+            },
+            "cascade_v1": {
+              "correct": 46,
+              "total": 53
+            },
+            "cascade_v1_iso": {
+              "correct": 49,
+              "total": 53
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 47,
+              "total": 53
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 46,
+              "total": 53
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 46,
+              "total": 53
+            },
+            "label_router_dev": {
+              "correct": 49,
+              "total": 53
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 49,
+              "total": 53
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 48,
+              "total": 53
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 48,
+              "total": 53
+            }
+          },
+          "k>=3": {
+            "always_c": {
+              "correct": 34,
+              "total": 39
+            },
+            "always_n": {
+              "correct": 28,
+              "total": 39
+            },
+            "cascade_v1": {
+              "correct": 37,
+              "total": 39
+            },
+            "cascade_v1_iso": {
+              "correct": 37,
+              "total": 39
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 39,
+              "total": 39
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 37,
+              "total": 39
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 38,
+              "total": 39
+            },
+            "label_router_dev": {
+              "correct": 35,
+              "total": 39
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 34,
+              "total": 39
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 30,
+              "total": 39
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 32,
+              "total": 39
+            }
+          },
+          "unanswerable": {
+            "always_c": {
+              "correct": 18,
+              "total": 20
+            },
+            "always_n": {
+              "correct": 15,
+              "total": 20
+            },
+            "cascade_v1": {
+              "correct": 19,
+              "total": 20
+            },
+            "cascade_v1_iso": {
+              "correct": 19,
+              "total": 20
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 20,
+              "total": 20
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 19,
+              "total": 20
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 20,
+              "total": 20
+            },
+            "label_router_dev": {
+              "correct": 18,
+              "total": 20
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 20,
+              "total": 20
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 19,
+              "total": 20
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 20,
+              "total": 20
+            }
+          }
+        }
+      }
+    },
+    {
+      "corpus_id": "D1000",
+      "n_questions": 180,
+      "policies": [
+        {
+          "summary": {
+            "policy": "always_c",
+            "corpus_id": "D1000",
+            "n_questions": 180,
+            "n_correct": 130,
+            "total_cost_usd": 0.04626937715,
+            "cost_per_question_usd": 0.00025705209527777776,
+            "latency_median_s": 1.5935000000008586,
+            "latency_mean_s": 3.545200000000255,
+            "latency_p90_s": 3.797000000002299,
+            "tier_shares": {
+              "cypher-low": 0.9388888888888889,
+              "none": 0.06111111111111111
+            },
+            "tier_calls": {
+              "cypher-low": 180
+            }
+          },
+          "acceptance": null,
+          "vs_always_n": {
+            "accuracy": {
+              "mean": -0.11666666666666667,
+              "ci_low": -0.19444444444444445,
+              "ci_high": -0.03888888888888889
+            },
+            "cost_usd": {
+              "mean": -0.002966040704722222,
+              "ci_low": -0.0037092434077777778,
+              "ci_high": -0.002329228145
+            },
+            "latency_s": {
+              "mean": -47.579538888888806,
+              "ci_low": -60.509244444444164,
+              "ci_high": -36.035838888888755
+            }
+          },
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "always_n",
+            "corpus_id": "D1000",
+            "n_questions": 180,
+            "n_correct": 151,
+            "total_cost_usd": 0.580156704,
+            "cost_per_question_usd": 0.0032230927999999997,
+            "latency_median_s": 14.60950000000048,
+            "latency_mean_s": 51.124738888889055,
+            "latency_p90_s": 167.01600000000326,
+            "tier_shares": {
+              "need-default": 0.8888888888888888,
+              "none": 0.1111111111111111
+            },
+            "tier_calls": {
+              "need-default": 180
+            }
+          },
+          "acceptance": null,
+          "vs_always_n": null,
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "cascade_v1",
+            "corpus_id": "D1000",
+            "n_questions": 180,
+            "n_correct": 161,
+            "total_cost_usd": 0.37570747315,
+            "cost_per_question_usd": 0.0020872637397222225,
+            "latency_median_s": 2.492499999998472,
+            "latency_mean_s": 26.5825277777781,
+            "latency_p90_s": 104.0,
+            "tier_shares": {
+              "need-default": 0.31666666666666665,
+              "cypher-low": 0.6611111111111111,
+              "none": 0.022222222222222223
+            },
+            "tier_calls": {
+              "cypher-low": 180,
+              "need-default": 66
+            }
+          },
+          "acceptance": {
+            "n_accepted": 114,
+            "n_accepted_correct": 105,
+            "n_first_tier_correct": 130,
+            "precision": 0.9210526315789473,
+            "recall": 0.8076923076923077
+          },
+          "vs_always_n": {
+            "accuracy": {
+              "mean": 0.05555555555555555,
+              "ci_low": 0.005555555555555556,
+              "ci_high": 0.1111111111111111
+            },
+            "cost_usd": {
+              "mean": -0.0011358290602777777,
+              "ci_low": -0.0015382739180555556,
+              "ci_high": -0.0007720589375
+            },
+            "latency_s": {
+              "mean": -24.54221111111096,
+              "ci_low": -36.12307222222199,
+              "ci_high": -14.724688888888826
+            }
+          },
+          "oracle": {
+            "policy": "oracle(cascade_v1)",
+            "corpus_id": "D1000",
+            "n_questions": 180,
+            "n_correct": 168,
+            "total_cost_usd": 0.23049293715,
+            "cost_per_question_usd": 0.0012805163175,
+            "latency_median_s": 1.992500000000291,
+            "latency_mean_s": 24.559961111111484,
+            "latency_p90_s": 70.35900000000038,
+            "tier_shares": {
+              "cypher-low": 0.75,
+              "need-default": 0.22777777777777777,
+              "none": 0.022222222222222223
+            },
+            "tier_calls": {
+              "cypher-low": 180,
+              "need-default": 50
+            }
+          },
+          "random": {
+            "n_draws": 1000,
+            "n_escalated": 66,
+            "correct_mean": 141.778,
+            "correct_low": 136.0,
+            "correct_high": 148.0,
+            "cost_total_mean_usd": 0.25832779914599907,
+            "latency_mean_s": 22.240296816666945
+          },
+          "vs_random": {
+            "accuracy": {
+              "mean": 0.10678888888888889,
+              "ci_low": 0.06841666666666667,
+              "ci_high": 0.14585
+            },
+            "cost_usd": {
+              "mean": 0.0006521093000222277,
+              "ci_low": 0.00020507296161111524,
+              "ci_high": 0.0011725647081888993
+            },
+            "latency_s": {
+              "mean": 4.342230961111156,
+              "ci_low": -2.66504559444438,
+              "ci_high": 11.342386294444555
+            }
+          },
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "cascade_v1_iso",
+            "corpus_id": "D1000",
+            "n_questions": 180,
+            "n_correct": 164,
+            "total_cost_usd": 0.40210169515,
+            "cost_per_question_usd": 0.002233898306388889,
+            "latency_median_s": 2.610000000000582,
+            "latency_mean_s": 32.968966666666915,
+            "latency_p90_s": 122.51499999999942,
+            "tier_shares": {
+              "need-default": 0.3388888888888889,
+              "cypher-low": 0.6222222222222222,
+              "none": 0.03888888888888889
+            },
+            "tier_calls": {
+              "cypher-low": 170,
+              "need-default": 73
+            }
+          },
+          "acceptance": null,
+          "vs_always_n": {
+            "accuracy": {
+              "mean": 0.07222222222222222,
+              "ci_low": 0.027777777777777776,
+              "ci_high": 0.12222222222222222
+            },
+            "cost_usd": {
+              "mean": -0.000989194493611111,
+              "ci_low": -0.0013732877658333333,
+              "ci_high": -0.0006521303688888888
+            },
+            "latency_s": {
+              "mean": -18.155772222222144,
+              "ci_low": -26.897644444444147,
+              "ci_high": -10.698572222221971
+            }
+          },
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "cascade_v1_t3_glm64k",
+            "corpus_id": "D1000",
+            "n_questions": 180,
+            "n_correct": 163,
+            "total_cost_usd": 0.53043229315,
+            "cost_per_question_usd": 0.0029468460730555555,
+            "latency_median_s": 2.492499999998472,
+            "latency_mean_s": 41.02358333333381,
+            "latency_p90_s": 104.0,
+            "tier_shares": {
+              "need-default": 0.31666666666666665,
+              "cypher-low": 0.6388888888888888,
+              "need-default-64k": 0.03333333333333333,
+              "none": 0.011111111111111112
+            },
+            "tier_calls": {
+              "cypher-low": 180,
+              "need-default": 66,
+              "need-default-64k": 9
+            }
+          },
+          "acceptance": {
+            "n_accepted": 114,
+            "n_accepted_correct": 105,
+            "n_first_tier_correct": 130,
+            "precision": 0.9210526315789473,
+            "recall": 0.8076923076923077
+          },
+          "vs_always_n": {
+            "accuracy": {
+              "mean": 0.06666666666666667,
+              "ci_low": 0.016666666666666666,
+              "ci_high": 0.12222222222222222
+            },
+            "cost_usd": {
+              "mean": -0.0002762467269444444,
+              "ci_low": -0.0010572228241666666,
+              "ci_high": 0.0005843362677777779
+            },
+            "latency_s": {
+              "mean": -10.101155555555245,
+              "ci_low": -26.324599999999634,
+              "ci_high": 6.159866666666899
+            }
+          },
+          "oracle": {
+            "policy": "oracle(cascade_v1_t3_glm64k)",
+            "corpus_id": "D1000",
+            "n_questions": 180,
+            "n_correct": 170,
+            "total_cost_usd": 0.46400913715,
+            "cost_per_question_usd": 0.002577828539722222,
+            "latency_median_s": 1.992500000000291,
+            "latency_mean_s": 49.15796666666722,
+            "latency_p90_s": 70.35900000000038,
+            "tier_shares": {
+              "cypher-low": 0.7444444444444445,
+              "need-default-64k": 0.016666666666666666,
+              "need-default": 0.22777777777777777,
+              "none": 0.011111111111111112
+            },
+            "tier_calls": {
+              "cypher-low": 180,
+              "need-default": 50,
+              "need-default-64k": 9
+            }
+          },
+          "random": {
+            "n_draws": 1000,
+            "n_escalated": 66,
+            "correct_mean": 140.654,
+            "correct_low": 134.0,
+            "correct_high": 147.0,
+            "cost_total_mean_usd": 0.4188316508259996,
+            "latency_mean_s": 38.92738001111153
+          },
+          "vs_random": {
+            "accuracy": {
+              "mean": 0.12414444444444445,
+              "ci_low": 0.08439444444444445,
+              "ci_high": 0.16471666666666668
+            },
+            "cost_usd": {
+              "mean": 0.000620003568466669,
+              "ci_low": -0.00028166574444444604,
+              "ci_high": 0.0015547710769000086
+            },
+            "latency_s": {
+              "mean": 2.0962033222222844,
+              "ci_low": -14.458985016666524,
+              "ci_high": 18.079018538889017
+            }
+          },
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "cascade_v1_t3_glmlow",
+            "corpus_id": "D1000",
+            "n_questions": 180,
+            "n_correct": 163,
+            "total_cost_usd": 0.40570755315,
+            "cost_per_question_usd": 0.0022539308508333334,
+            "latency_median_s": 2.492499999998472,
+            "latency_mean_s": 27.64988888888921,
+            "latency_p90_s": 104.0,
+            "tier_shares": {
+              "need-default": 0.31666666666666665,
+              "cypher-low": 0.6333333333333333,
+              "need-low": 0.05
+            },
+            "tier_calls": {
+              "cypher-low": 180,
+              "need-default": 66,
+              "need-low": 9
+            }
+          },
+          "acceptance": {
+            "n_accepted": 114,
+            "n_accepted_correct": 105,
+            "n_first_tier_correct": 130,
+            "precision": 0.9210526315789473,
+            "recall": 0.8076923076923077
+          },
+          "vs_always_n": {
+            "accuracy": {
+              "mean": 0.06666666666666667,
+              "ci_low": 0.016666666666666666,
+              "ci_high": 0.12222222222222222
+            },
+            "cost_usd": {
+              "mean": -0.0009691619491666668,
+              "ci_low": -0.0014042672802777776,
+              "ci_high": -0.0005642237455555555
+            },
+            "latency_s": {
+              "mean": -23.474849999999847,
+              "ci_low": -35.15378888888855,
+              "ci_high": -13.66649444444451
+            }
+          },
+          "oracle": {
+            "policy": "oracle(cascade_v1_t3_glmlow)",
+            "corpus_id": "D1000",
+            "n_questions": 180,
+            "n_correct": 172,
+            "total_cost_usd": 0.25707215715,
+            "cost_per_question_usd": 0.0014281786508333332,
+            "latency_median_s": 1.992500000000291,
+            "latency_mean_s": 25.556577777778248,
+            "latency_p90_s": 70.35900000000038,
+            "tier_shares": {
+              "cypher-low": 0.7222222222222222,
+              "need-low": 0.05,
+              "need-default": 0.22777777777777777
+            },
+            "tier_calls": {
+              "cypher-low": 180,
+              "need-default": 50,
+              "need-low": 9
+            }
+          },
+          "random": {
+            "n_draws": 1000,
+            "n_escalated": 66,
+            "correct_mean": 139.891,
+            "correct_low": 133.0,
+            "correct_high": 147.0,
+            "cost_total_mean_usd": 0.2795208782459993,
+            "latency_mean_s": 22.874162266667003
+          },
+          "vs_random": {
+            "accuracy": {
+              "mean": 0.12838333333333335,
+              "ci_low": 0.08688333333333333,
+              "ci_high": 0.16908333333333334
+            },
+            "cost_usd": {
+              "mean": 0.0007010370828000036,
+              "ci_low": 0.000195460240255558,
+              "ci_high": 0.001275639092633341
+            },
+            "latency_s": {
+              "mean": 4.775726622222206,
+              "ci_low": -2.542581094444512,
+              "ci_high": 12.09782140555552
+            }
+          },
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "cascade_v1_t3_mimo",
+            "corpus_id": "D1000",
+            "n_questions": 180,
+            "n_correct": 164,
+            "total_cost_usd": 0.52446263215,
+            "cost_per_question_usd": 0.0029136812897222223,
+            "latency_median_s": 2.492499999998472,
+            "latency_mean_s": 30.47019444444468,
+            "latency_p90_s": 104.0,
+            "tier_shares": {
+              "need-default": 0.31666666666666665,
+              "cypher-low": 0.6333333333333333,
+              "need-mimo": 0.05
+            },
+            "tier_calls": {
+              "cypher-low": 180,
+              "need-default": 66,
+              "need-mimo": 9
+            }
+          },
+          "acceptance": {
+            "n_accepted": 114,
+            "n_accepted_correct": 105,
+            "n_first_tier_correct": 130,
+            "precision": 0.9210526315789473,
+            "recall": 0.8076923076923077
+          },
+          "vs_always_n": {
+            "accuracy": {
+              "mean": 0.07222222222222222,
+              "ci_low": 0.022222222222222223,
+              "ci_high": 0.12777777777777777
+            },
+            "cost_usd": {
+              "mean": -0.0003094115102777777,
+              "ci_low": -0.0010215137283333332,
+              "ci_high": 0.00046379426388888894
+            },
+            "latency_s": {
+              "mean": -20.65454444444438,
+              "ci_low": -32.99816111111082,
+              "ci_high": -9.902861111111028
+            }
+          },
+          "oracle": {
+            "policy": "oracle(cascade_v1_t3_mimo)",
+            "corpus_id": "D1000",
+            "n_questions": 180,
+            "n_correct": 171,
+            "total_cost_usd": 0.38223636315,
+            "cost_per_question_usd": 0.002123535350833333,
+            "latency_median_s": 1.992500000000291,
+            "latency_mean_s": 31.69641666666707,
+            "latency_p90_s": 70.35900000000038,
+            "tier_shares": {
+              "cypher-low": 0.7277777777777777,
+              "need-mimo": 0.044444444444444446,
+              "need-default": 0.22777777777777777
+            },
+            "tier_calls": {
+              "cypher-low": 180,
+              "need-default": 50,
+              "need-mimo": 9
+            }
+          },
+          "random": {
+            "n_draws": 1000,
+            "n_escalated": 66,
+            "correct_mean": 141.021,
+            "correct_low": 134.0,
+            "correct_high": 148.0,
+            "cost_total_mean_usd": 0.39524054274699955,
+            "latency_mean_s": 27.1850850555558
+          },
+          "vs_random": {
+            "accuracy": {
+              "mean": 0.12766111111111111,
+              "ci_low": 0.08750555555555556,
+              "ci_high": 0.16741666666666669
+            },
+            "cost_usd": {
+              "mean": 0.0007179004966833357,
+              "ci_low": -0.0001240946786000009,
+              "ci_high": 0.00159575664862778
+            },
+            "latency_s": {
+              "mean": 3.2851093888888823,
+              "ci_low": -6.148672105555504,
+              "ci_high": 12.576382211110912
+            }
+          },
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "label_router_dev",
+            "corpus_id": "D1000",
+            "n_questions": 180,
+            "n_correct": 161,
+            "total_cost_usd": 0.1165749392,
+            "cost_per_question_usd": 0.0006476385511111111,
+            "latency_median_s": 2.0235000000011496,
+            "latency_mean_s": 13.92990000000019,
+            "latency_p90_s": 17.40700000000288,
+            "tier_shares": {
+              "cypher-low": 0.6722222222222223,
+              "none": 0.06666666666666667,
+              "need-default": 0.2611111111111111
+            },
+            "tier_calls": {
+              "cypher-low": 130,
+              "need-default": 50
+            }
+          },
+          "acceptance": null,
+          "vs_always_n": {
+            "accuracy": {
+              "mean": 0.05555555555555555,
+              "ci_low": 0.005555555555555556,
+              "ci_high": 0.10555555555555556
+            },
+            "cost_usd": {
+              "mean": -0.002575454248888889,
+              "ci_low": -0.0033347038244444446,
+              "ci_high": -0.0019274526744444446
+            },
+            "latency_s": {
+              "mean": -37.19483888888887,
+              "ci_low": -47.98592777777766,
+              "ci_high": -27.195750000000206
+            }
+          },
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "n_first_v1_t3_glm64k",
+            "corpus_id": "D1000",
+            "n_questions": 180,
+            "n_correct": 159,
+            "total_cost_usd": 1.019421564,
+            "cost_per_question_usd": 0.005663453133333333,
+            "latency_median_s": 14.60950000000048,
+            "latency_mean_s": 96.8917666666671,
+            "latency_p90_s": 283.29700000000594,
+            "tier_shares": {
+              "need-default": 0.8888888888888888,
+              "need-default-64k": 0.07777777777777778,
+              "none": 0.03333333333333333
+            },
+            "tier_calls": {
+              "need-default": 180,
+              "need-default-64k": 20
+            }
+          },
+          "acceptance": {
+            "n_accepted": 160,
+            "n_accepted_correct": 151,
+            "n_first_tier_correct": 151,
+            "precision": 0.94375,
+            "recall": 1.0
+          },
+          "vs_always_n": {
+            "accuracy": {
+              "mean": 0.044444444444444446,
+              "ci_low": 0.016666666666666666,
+              "ci_high": 0.07777777777777778
+            },
+            "cost_usd": {
+              "mean": 0.002440360333333333,
+              "ci_low": 0.0013791586666666667,
+              "ci_high": 0.0036128304444444444
+            },
+            "latency_s": {
+              "mean": 45.76702777777803,
+              "ci_low": 25.11988888888898,
+              "ci_high": 68.93378333333385
+            }
+          },
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": "expected a row for question 'D1000:CONNECTED:E-19-2|C-395-7' in tier 'need-default-64k' (policy 'n_first_v1_t3_glm64k' reaches it), found none"
+        },
+        {
+          "summary": {
+            "policy": "n_first_v1_t3_glmlow",
+            "corpus_id": "D1000",
+            "n_questions": 180,
+            "n_correct": 157,
+            "total_cost_usd": 0.637722264,
+            "cost_per_question_usd": 0.0035429014666666665,
+            "latency_median_s": 14.60950000000048,
+            "latency_mean_s": 52.85052777777807,
+            "latency_p90_s": 171.43900000000576,
+            "tier_shares": {
+              "need-default": 0.8888888888888888,
+              "need-low": 0.1111111111111111
+            },
+            "tier_calls": {
+              "need-default": 180,
+              "need-low": 20
+            }
+          },
+          "acceptance": {
+            "n_accepted": 160,
+            "n_accepted_correct": 151,
+            "n_first_tier_correct": 151,
+            "precision": 0.94375,
+            "recall": 1.0
+          },
+          "vs_always_n": {
+            "accuracy": {
+              "mean": 0.03333333333333333,
+              "ci_low": 0.011111111111111112,
+              "ci_high": 0.06111111111111111
+            },
+            "cost_usd": {
+              "mean": 0.0003198086666666666,
+              "ci_low": 0.000174459,
+              "ci_high": 0.00048594299999999997
+            },
+            "latency_s": {
+              "mean": 1.7257888888890092,
+              "ci_low": 0.7957611111112379,
+              "ci_high": 2.857300000000315
+            }
+          },
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": "expected a row for question 'D1000:CONNECTED:E-19-2|C-395-7' in tier 'need-low' (policy 'n_first_v1_t3_glmlow' reaches it), found none"
+        },
+        {
+          "summary": {
+            "policy": "n_first_v1_t3_mimo",
+            "corpus_id": "D1000",
+            "n_questions": 180,
+            "n_correct": 160,
+            "total_cost_usd": 0.952154826,
+            "cost_per_question_usd": 0.005289749033333333,
+            "latency_median_s": 14.60950000000048,
+            "latency_mean_s": 64.64356111111124,
+            "latency_p90_s": 231.54699999999139,
+            "tier_shares": {
+              "need-default": 0.8888888888888888,
+              "need-mimo": 0.10555555555555556,
+              "none": 0.005555555555555556
+            },
+            "tier_calls": {
+              "need-default": 180,
+              "need-mimo": 20
+            }
+          },
+          "acceptance": {
+            "n_accepted": 160,
+            "n_accepted_correct": 151,
+            "n_first_tier_correct": 151,
+            "precision": 0.94375,
+            "recall": 1.0
+          },
+          "vs_always_n": {
+            "accuracy": {
+              "mean": 0.05,
+              "ci_low": 0.022222222222222223,
+              "ci_high": 0.08333333333333333
+            },
+            "cost_usd": {
+              "mean": 0.002066656233333333,
+              "ci_low": 0.0011612920833333333,
+              "ci_high": 0.003083855511111111
+            },
+            "latency_s": {
+              "mean": 13.518822222222177,
+              "ci_low": 7.017783333333419,
+              "ci_high": 21.179433333333712
+            }
+          },
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": "expected a row for question 'D1000:CONNECTED:E-19-2|C-395-7' in tier 'need-mimo' (policy 'n_first_v1_t3_mimo' reaches it), found none"
+        }
+      ],
+      "not_evaluated": [],
+      "breakdowns": {
+        "need label": {
+          "DOWNSTREAM_ALL": {
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 6,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 8,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 6,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 8,
+              "total": 10
+            }
+          },
+          "GENERIC": {
+            "always_c": {
+              "correct": 1,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 9,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 6,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 6,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 6,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 6,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 6,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 9,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 9,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 9,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 9,
+              "total": 10
+            }
+          },
+          "ITEM": {
+            "always_c": {
+              "correct": 41,
+              "total": 41
+            },
+            "always_n": {
+              "correct": 41,
+              "total": 41
+            },
+            "cascade_v1": {
+              "correct": 41,
+              "total": 41
+            },
+            "cascade_v1_iso": {
+              "correct": 41,
+              "total": 41
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 41,
+              "total": 41
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 41,
+              "total": 41
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 41,
+              "total": 41
+            },
+            "label_router_dev": {
+              "correct": 41,
+              "total": 41
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 41,
+              "total": 41
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 41,
+              "total": 41
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 41,
+              "total": 41
+            }
+          },
+          "NEIGHBOURS_DOWNSTREAM": {
+            "always_c": {
+              "correct": 13,
+              "total": 15
+            },
+            "always_n": {
+              "correct": 13,
+              "total": 15
+            },
+            "cascade_v1": {
+              "correct": 14,
+              "total": 15
+            },
+            "cascade_v1_iso": {
+              "correct": 14,
+              "total": 15
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 14,
+              "total": 15
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 14,
+              "total": 15
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 14,
+              "total": 15
+            },
+            "label_router_dev": {
+              "correct": 13,
+              "total": 15
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 13,
+              "total": 15
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 13,
+              "total": 15
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 13,
+              "total": 15
+            }
+          },
+          "PATH": {
+            "always_c": {
+              "correct": 23,
+              "total": 34
+            },
+            "always_n": {
+              "correct": 24,
+              "total": 34
+            },
+            "cascade_v1": {
+              "correct": 28,
+              "total": 34
+            },
+            "cascade_v1_iso": {
+              "correct": 28,
+              "total": 34
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 30,
+              "total": 34
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 30,
+              "total": 34
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 31,
+              "total": 34
+            },
+            "label_router_dev": {
+              "correct": 23,
+              "total": 34
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 29,
+              "total": 34
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 29,
+              "total": 34
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 30,
+              "total": 34
+            }
+          },
+          "SIGNAL_CHAIN": {
+            "always_c": {
+              "correct": 12,
+              "total": 30
+            },
+            "always_n": {
+              "correct": 30,
+              "total": 30
+            },
+            "cascade_v1": {
+              "correct": 30,
+              "total": 30
+            },
+            "cascade_v1_iso": {
+              "correct": 30,
+              "total": 30
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 30,
+              "total": 30
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 30,
+              "total": 30
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 30,
+              "total": 30
+            },
+            "label_router_dev": {
+              "correct": 30,
+              "total": 30
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 30,
+              "total": 30
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 30,
+              "total": 30
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "UNIT_SCOPE": {
+            "always_c": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_n": {
+              "correct": 19,
+              "total": 20
+            },
+            "cascade_v1": {
+              "correct": 20,
+              "total": 20
+            },
+            "cascade_v1_iso": {
+              "correct": 20,
+              "total": 20
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 20,
+              "total": 20
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 20,
+              "total": 20
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 20,
+              "total": 20
+            },
+            "label_router_dev": {
+              "correct": 20,
+              "total": 20
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 19,
+              "total": 20
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 19,
+              "total": 20
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 19,
+              "total": 20
+            }
+          },
+          "UPSTREAM_ALL": {
+            "always_c": {
+              "correct": 9,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 3,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 9,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 9,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 9,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 9,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 9,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 9,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 4,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 3,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 4,
+              "total": 10
+            }
+          },
+          "UPSTREAM_TO_FIRST_VALVE": {
+            "always_c": {
+              "correct": 1,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 6,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 3,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 6,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 3,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 3,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 3,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 6,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 6,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 7,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 6,
+              "total": 10
+            }
+          }
+        },
+        "family": {
+          "CONNECTED": {
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "COUNT_IN_UNIT": {
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "CROSS_UNIT": {
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 9,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 9,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 9,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 9,
+              "total": 10
+            }
+          },
+          "DOWNSTREAM_IN_UNIT": {
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 6,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 8,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 6,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 8,
+              "total": 10
+            }
+          },
+          "FLOW_PATH": {
+            "always_c": {
+              "correct": 2,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 4,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 5,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 5,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 6,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 7,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 7,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 2,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 5,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 6,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 6,
+              "total": 10
+            }
+          },
+          "INSTRUMENTS_OF_ITEM": {
+            "always_c": {
+              "correct": 2,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "LOOKUP_TYPE": {
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "LOOKUP_UNIT": {
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "LOOPS_NEAR_ITEM": {
+            "always_c": {
+              "correct": 1,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 9,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 6,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 6,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 6,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 6,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 6,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 9,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 9,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 9,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 9,
+              "total": 10
+            }
+          },
+          "LOOP_ACTUATED_VALVE": {
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "LOOP_MEASURED_EQUIPMENT": {
+            "always_c": {
+              "correct": 0,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "NEIGHBOURS_DOWNSTREAM": {
+            "always_c": {
+              "correct": 9,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 9,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 9,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 9,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 9,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 9,
+              "total": 10
+            }
+          },
+          "NO_PATH": {
+            "always_c": {
+              "correct": 8,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 7,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 9,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 9,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 8,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "SAME_UNIT": {
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "SHEETS_OF_TAG": {
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 10,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "UNANSWERABLE_TAG": {
+            "always_c": {
+              "correct": 8,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 8,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 9,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 9,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 9,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 8,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 9,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 8,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 9,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 8,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 9,
+              "total": 10
+            }
+          },
+          "UPSTREAM_ISOLATION": {
+            "always_c": {
+              "correct": 1,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 6,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 3,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 6,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 3,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 3,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 3,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 6,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 6,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 7,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 6,
+              "total": 10
+            }
+          },
+          "UPSTREAM_SOURCES": {
+            "always_c": {
+              "correct": 9,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 3,
+              "total": 10
+            },
+            "cascade_v1": {
+              "correct": 9,
+              "total": 10
+            },
+            "cascade_v1_iso": {
+              "correct": 9,
+              "total": 10
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 9,
+              "total": 10
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 9,
+              "total": 10
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 9,
+              "total": 10
+            },
+            "label_router_dev": {
+              "correct": 9,
+              "total": 10
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 4,
+              "total": 10
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 3,
+              "total": 10
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 4,
+              "total": 10
+            }
+          }
+        },
+        "k bin": {
+          "k=0": {
+            "always_c": {
+              "correct": 46,
+              "total": 69
+            },
+            "always_n": {
+              "correct": 68,
+              "total": 69
+            },
+            "cascade_v1": {
+              "correct": 67,
+              "total": 69
+            },
+            "cascade_v1_iso": {
+              "correct": 68,
+              "total": 69
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 67,
+              "total": 69
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 67,
+              "total": 69
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 67,
+              "total": 69
+            },
+            "label_router_dev": {
+              "correct": 68,
+              "total": 69
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 68,
+              "total": 69
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 68,
+              "total": 69
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 68,
+              "total": 69
+            }
+          },
+          "k=1-2": {
+            "always_c": {
+              "correct": 33,
+              "total": 45
+            },
+            "always_n": {
+              "correct": 38,
+              "total": 45
+            },
+            "cascade_v1": {
+              "correct": 38,
+              "total": 45
+            },
+            "cascade_v1_iso": {
+              "correct": 40,
+              "total": 45
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 38,
+              "total": 45
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 38,
+              "total": 45
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 38,
+              "total": 45
+            },
+            "label_router_dev": {
+              "correct": 41,
+              "total": 45
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 38,
+              "total": 45
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 39,
+              "total": 45
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 39,
+              "total": 45
+            }
+          },
+          "k>=3": {
+            "always_c": {
+              "correct": 35,
+              "total": 46
+            },
+            "always_n": {
+              "correct": 30,
+              "total": 46
+            },
+            "cascade_v1": {
+              "correct": 38,
+              "total": 46
+            },
+            "cascade_v1_iso": {
+              "correct": 38,
+              "total": 46
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 39,
+              "total": 46
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 40,
+              "total": 46
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 40,
+              "total": 46
+            },
+            "label_router_dev": {
+              "correct": 36,
+              "total": 46
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 34,
+              "total": 46
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 32,
+              "total": 46
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 34,
+              "total": 46
+            }
+          },
+          "unanswerable": {
+            "always_c": {
+              "correct": 16,
+              "total": 20
+            },
+            "always_n": {
+              "correct": 15,
+              "total": 20
+            },
+            "cascade_v1": {
+              "correct": 18,
+              "total": 20
+            },
+            "cascade_v1_iso": {
+              "correct": 18,
+              "total": 20
+            },
+            "cascade_v1_t3_glm64k": {
+              "correct": 19,
+              "total": 20
+            },
+            "cascade_v1_t3_glmlow": {
+              "correct": 18,
+              "total": 20
+            },
+            "cascade_v1_t3_mimo": {
+              "correct": 19,
+              "total": 20
+            },
+            "label_router_dev": {
+              "correct": 16,
+              "total": 20
+            },
+            "n_first_v1_t3_glm64k": {
+              "correct": 19,
+              "total": 20
+            },
+            "n_first_v1_t3_glmlow": {
+              "correct": 18,
+              "total": 20
+            },
+            "n_first_v1_t3_mimo": {
+              "correct": 19,
+              "total": 20
+            }
+          }
+        }
+      }
+    }
+  ],
+  "tier3": [
+    {
+      "tier": "need-mimo",
+      "n_runaways": 35,
+      "n_rows": 35,
+      "n_correct": 19,
+      "total_cost_usd": 0.5306695619999998,
+      "mean_latency_s": 89.7999714285708
+    },
+    {
+      "tier": "need-low",
+      "n_runaways": 35,
+      "n_rows": 35,
+      "n_correct": 14,
+      "total_cost_usd": 0.08229369430000001,
+      "mean_latency_s": 16.921857142858375
+    },
+    {
+      "tier": "need-default-64k",
+      "n_runaways": 35,
+      "n_rows": 35,
+      "n_correct": 21,
+      "total_cost_usd": 0.6056621600000002,
+      "mean_latency_s": 296.92011428571504
+    }
+  ],
+  "verdicts": [
+    {
+      "rule": "S1",
+      "status": "SELECTED",
+      "headline": "tier 3 = need-default-64k (21/35 correct)",
+      "details": [
+        "need-mimo: 19/35 correct (35 rows stored), cost $0.5307, mean latency 89.8 s",
+        "need-low: 14/35 correct (35 rows stored), cost $0.0823, mean latency 16.9 s",
+        "need-default-64k: 21/35 correct (35 rows stored), cost $0.6057, mean latency 296.9 s",
+        "dev corpora pooled: D100, D1000"
+      ]
+    },
+    {
+      "rule": "S2",
+      "status": "PASS",
+      "headline": "cascade_v1 on D1000",
+      "details": [
+        "accuracy 161 vs always-N 151 (needs >= 149): ok",
+        "cost per question $0.00209 vs $0.00322 (needs lower): ok"
+      ]
+    },
+    {
+      "rule": "S3 cascade_v1_iso",
+      "status": "PASS",
+      "headline": "cascade_v1_iso vs cascade_v1 on D1000",
+      "details": [
+        "+3 questions (needs >= 2): ok",
+        "total cost $0.4021 vs limit $0.4696 (1.25x primary): ok"
+      ]
+    },
+    {
+      "rule": "S3 label_router_dev",
+      "status": "FAIL",
+      "headline": "label_router_dev vs cascade_v1 on D1000",
+      "details": [
+        "+0 questions (needs >= 2): not met",
+        "total cost $0.1166 vs limit $0.4696 (1.25x primary): ok"
+      ]
+    }
+  ]
+}

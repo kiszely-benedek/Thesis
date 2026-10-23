@@ -1,0 +1,33 @@
+=== 18:00:08 load H100
+=== 18:00:26 ST-CYP-H100 (smoke, cap $0.02)
+    ST-CYP-H100: smoke stage done
+    46 rows: {'ANSWERED': 38, 'RETRIEVAL_ERROR': 8}
+=== 18:02:10 ST-CYP-H100 (full, cap $0.50)
+    ST-CYP-H100: complete
+    580 rows: {'ANSWERED': 492, 'RETRIEVAL_ERROR': 87, 'PARSE_FAILURE': 1}
+=== 18:20:08 replay INF-ST-CYP-H100 (no --allow-paid-calls: cache only)
+    INF-ST-CYP-H100: identical
+=== 18:20:38 load H1000
+=== 18:21:57 ST-CYP-H1000 (full, cap $0.50)
+    ST-CYP-H1000: complete
+    580 rows: {'ANSWERED': 466, 'RETRIEVAL_ERROR': 114}
+=== 18:39:38 replay INF-ST-CYP-H1000 (no --allow-paid-calls: cache only)
+    INF-ST-CYP-H1000: identical
+=== 18:42:16 ST-AG-H100 (smoke, cap $0.02)
+    ST-AG-H100: smoke stage done
+    20 rows: {'ANSWERED': 20}
+=== 18:43:32 ST-AG-H100 (full, cap $0.80)
+    ST-AG-H100: complete
+    580 rows: {'ANSWERED': 577, 'PARSE_FAILURE': 3}
+=== 19:11:45 ST-AG-H1000 (full, cap $1.00)
+    ST-AG-H1000: complete
+    580 rows: {'ANSWERED': 579, 'PARSE_FAILURE': 1}
+=== 19:41:11 ST-AG-H1000-C1 (full, cap $0.10)
+    ST-AG-H1000-C1: complete
+    48 rows: {'ANSWERED': 48}
+=== 19:49:22 replay INF-ST-AG-H100 (no --allow-paid-calls: cache only)
+    INF-ST-AG-H100: identical
+=== 19:49:33 replay INF-ST-AG-H1000 (no --allow-paid-calls: cache only)
+    INF-ST-AG-H1000: identical
+=== 19:50:30 restore D1000 (plant profile) alone in Neo4j
+=== 19:52:12 done: data/runs/sealed/report/report.md

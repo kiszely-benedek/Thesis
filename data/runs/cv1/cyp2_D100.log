@@ -1,0 +1,68 @@
+Received notification from DBMS server: <GqlStatusObject gql_status='01N50', status_description='warn: label does not exist. The label `Valve` does not exist in database `neo4j`. Verify that the spelling is correct.', position=<SummaryInputPosition line=2, column=44, offset=144>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 144, 'line': 2, 'column': 44}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: "MATCH p = shortestPath((a:PlantItem {tag:'TK-30-3'})-[:send_to*1..50]->(b:PlantItem {tag:'V-50-2'}))\nWITH [n IN nodes(p) WHERE n:Equipment OR n:Valve OR n:OperatedValve OR n:BallValve OR n:GlobeValve OR n:CheckValve] AS items\nUNWIND items AS it\nRETURN it.tag AS tag, labels(it) AS labels\nORDER BY tag"
+Received notification from DBMS server: <GqlStatusObject gql_status='01N50', status_description='warn: label does not exist. The label `Valve` does not exist in database `neo4j`. Verify that the spelling is correct.', position=<SummaryInputPosition line=5, column=24, offset=179>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 179, 'line': 5, 'column': 24}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: "MATCH (start:PlantItem {tag:'C-8-2'}), (end:PlantItem {tag:'C-21-2'})\nMATCH p = shortestPath((start)-[:send_to*..50]->(end))\nUNWIND nodes(p) AS n\nWITH p, n\nWHERE n:Equipment OR n:Valve OR n:BallValve OR n:GlobeValve OR n:CheckValve OR n:OperatedValve\nRETURN n.tag AS tag, labels(n) AS labels, [x IN nodes(p) | x.tag] AS full_path"
+Received notification from DBMS server: <GqlStatusObject gql_status='01N50', status_description='warn: label does not exist. The label `Valve` does not exist in database `neo4j`. Verify that the spelling is correct.', position=<SummaryInputPosition line=2, column=44, offset=148>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 148, 'line': 2, 'column': 44}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: "MATCH p = shortestPath((start:PlantItem {tag:'P-49-1'})-[:send_to*..50]->(end:PlantItem {tag:'TV-3-7'}))\nWITH [n IN nodes(p) WHERE n:Equipment OR n:Valve OR n:BallValve OR n:GlobeValve OR n:CheckValve OR n:OperatedValve] AS items\nUNWIND items AS it\nRETURN it.tag AS tag, labels(it) AS labels, it.piping_component_name AS piping_component_name\nORDER BY tag"
+Received notification from DBMS server: <GqlStatusObject gql_status='01N50', status_description='warn: label does not exist. The label `GateValve` does not exist in database `neo4j`. Verify that the spelling is correct.', position=<SummaryInputPosition line=2, column=60, offset=135>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 135, 'line': 2, 'column': 60}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: "MATCH p = (v:PipingComponent)-[:send_to*1..]->(t:PlantItem {tag:'TK-29-1'})\nWHERE (v:BallValve OR v:GlobeValve OR v:OperatedValve OR v:GateValve)\n  AND NOT (v:CheckValve)\n  AND NOT ()-[:control]->(v)\nRETURN DISTINCT v.tag AS valve_to_close\nORDER BY valve_to_close"
+Received notification from DBMS server: <GqlStatusObject gql_status='01N50', status_description='warn: label does not exist. The label `GateValve` does not exist in database `neo4j`. Verify that the spelling is correct.', position=<SummaryInputPosition line=4, column=41, offset=147>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 147, 'line': 4, 'column': 41}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: "MATCH (p:PlantItem {tag:'P-13-5'})\nMATCH path = (src)-[:send_to*1..]->(p)\nWHERE src:Equipment AND src <> p\nWITH p, src, [n IN nodes(path) WHERE (n:GateValve OR n:BallValve OR n:GlobeValve OR n:OperatedValve OR n:CheckValve) AND n.tag IS NOT NULL] AS valves\nWHERE size(valves) > 0\nRETURN src.tag AS upstream_equipment, [v IN valves | v.tag] AS valves_to_close"
+Received notification from DBMS server: <GqlStatusObject gql_status='01N50', status_description='warn: label does not exist. The label `GateValve` does not exist in database `neo4j`. Verify that the spelling is correct.', position=<SummaryInputPosition line=2, column=11, offset=70>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 70, 'line': 2, 'column': 11}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: "MATCH (t:Tank {tag:'T-5-4'})<-[:send_to*0..]-(up:PlantItem)\nWHERE (up:GateValve OR up:BallValve OR up:GlobeValve)\nRETURN DISTINCT up.tag AS valve_to_close\nORDER BY valve_to_close"
+run CYP2-D100-low: 180 rows to answer, 0 already on disk
+concurrency 4: up to that many questions in flight
+paid mode: up to 180 model calls; hard spend cap 0.15 USD
+estimated cost: 0.0720 USD
+{
+  "run_id": "CYP2-D100-low",
+  "n_rows": 180,
+  "n_new_rows": 180,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "cypher_rag_plant": {
+      "17-32": {
+        "ANSWERED": 4
+      },
+      "2": {
+        "ANSWERED": 18,
+        "RETRIEVAL_ERROR": 2
+      },
+      "1": {
+        "ANSWERED": 30,
+        "RETRIEVAL_ERROR": 3
+      },
+      "3-4": {
+        "ANSWERED": 11,
+        "RETRIEVAL_ERROR": 2
+      },
+      "5-8": {
+        "ANSWERED": 14,
+        "RETRIEVAL_ERROR": 1,
+        "PARSE_FAILURE": 1
+      },
+      "9-16": {
+        "ANSWERED": 5,
+        "RETRIEVAL_ERROR": 1
+      },
+      "0": {
+        "ANSWERED": 68
+      },
+      "unanswerable": {
+        "ANSWERED": 16,
+        "RETRIEVAL_ERROR": 4
+      }
+    }
+  },
+  "routing_recall": {},
+  "relaxed_routing_recall": {},
+  "evidence_node_recall": {},
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {},
+    "relaxed_routing_recall": {},
+    "evidence_node_recall": {}
+  },
+  "trace_rates": {
+    "cypher_rag_plant": {
+      "truncated_rate": 0.0
+    }
+  },
+  "mean_total_cost_usd": {
+    "cypher_rag_plant": 0.00015326317211111112
+  },
+  "stopped_by_spend_cap": false
+}

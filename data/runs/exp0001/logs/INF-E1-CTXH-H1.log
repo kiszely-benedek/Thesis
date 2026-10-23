@@ -1,0 +1,31 @@
+run INF-E1-CTXH-H1: 70 rows to answer, 0 already on disk
+replay mode: cache only, no network; stops at the first cache miss
+{
+  "run_id": "INF-E1-CTXH-H1",
+  "n_rows": 70,
+  "n_new_rows": 70,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "context_rag": {
+      "0": {
+        "ANSWERED": 62
+      },
+      "unanswerable": {
+        "ANSWERED": 8
+      }
+    }
+  },
+  "routing_recall": {},
+  "relaxed_routing_recall": {},
+  "evidence_node_recall": {},
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {},
+    "relaxed_routing_recall": {},
+    "evidence_node_recall": {}
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "context_rag": 0.0008957910714285713
+  },
+  "stopped_by_spend_cap": false
+}

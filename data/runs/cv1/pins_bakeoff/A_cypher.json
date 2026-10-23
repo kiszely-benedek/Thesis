@@ -1,0 +1,12 @@
+{
+ "backend": "openrouter",
+ "model_id": "z-ai/glm-5.3-flash",
+ "temperature": 0.0,
+ "seed": 0,
+ "max_output_tokens": 16384,
+ "extra": {
+  "reasoning": {
+   "effort": "low"
+  }
+ }
+}

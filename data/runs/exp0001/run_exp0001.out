@@ -1,0 +1,144 @@
+=== 21:14:32 replay INF-ST-AG-H100 (no --allow-paid-calls: cache only)
+    INF-ST-AG-H100: identical
+=== 21:15:00 load EX01
+    EX01: complete
+blind sheet for the reviewer: data\runs\exp0001\ex01\ex01_blind_sheet.md
+hidden key (do not open): data\runs\exp0001\ex01\ex01_blind_key.json
+=== 21:32:20 load H1
+=== 21:32:30 E1-CYP-H1 (smoke, cap $0.01)
+    E1-CYP-H1: smoke stage done
+    19 rows: {'ANSWERED': 16, 'RETRIEVAL_ERROR': 3}
+=== 21:33:20 E1-CYP-H1 (full, cap $0.15)
+    E1-CYP-H1: complete
+    70 rows: {'ANSWERED': 62, 'RETRIEVAL_ERROR': 8}
+=== 21:35:06 replay INF-E1-CYP-H1 (no --allow-paid-calls: cache only)
+    INF-E1-CYP-H1: identical
+=== 21:35:17 load H3
+=== 21:35:27 E1-CYP-H3 (full, cap $0.15)
+    E1-CYP-H3: complete
+    87 rows: {'ANSWERED': 68, 'RETRIEVAL_ERROR': 19}
+=== 21:38:08 replay INF-E1-CYP-H3 (no --allow-paid-calls: cache only)
+    INF-E1-CYP-H3: identical
+=== 21:38:19 load H10
+=== 21:38:30 E1-CYP-H10 (full, cap $0.15)
+    E1-CYP-H10: complete
+    95 rows: {'ANSWERED': 80, 'RETRIEVAL_ERROR': 15}
+=== 21:41:32 replay INF-E1-CYP-H10 (no --allow-paid-calls: cache only)
+    INF-E1-CYP-H10: identical
+=== 21:41:43 load H30
+=== 21:41:53 E1-CYP-H30 (full, cap $0.15)
+    E1-CYP-H30: complete
+    96 rows: {'ANSWERED': 76, 'RETRIEVAL_ERROR': 20}
+=== 21:44:54 replay INF-E1-CYP-H30 (no --allow-paid-calls: cache only)
+    INF-E1-CYP-H30: identical
+=== 21:45:06 restore D1000 (plant profile) alone in Neo4j
+=== 21:46:13 E1-AG-H1 (smoke, cap $0.02)
+    E1-AG-H1: smoke stage done
+    22 rows: {'ANSWERED': 22}
+=== 21:47:36 E1-AG-H1 (full, cap $0.20)
+    E1-AG-H1: complete
+    70 rows: {'ANSWERED': 70}
+=== 21:49:26 replay INF-E1-AG-H1 (no --allow-paid-calls: cache only)
+    INF-E1-AG-H1: identical
+=== 21:49:36 E1-AG-H3 (full, cap $0.20)
+    E1-AG-H3: complete
+    87 rows: {'ANSWERED': 87}
+=== 21:53:38 replay INF-E1-AG-H3 (no --allow-paid-calls: cache only)
+    INF-E1-AG-H3: identical
+=== 21:53:48 E1-AG-H10 (full, cap $0.20)
+    E1-AG-H10: complete
+    95 rows: {'ANSWERED': 95}
+=== 21:58:39 replay INF-E1-AG-H10 (no --allow-paid-calls: cache only)
+    INF-E1-AG-H10: identical
+=== 21:58:49 E1-AG-H30 (full, cap $0.20)
+    E1-AG-H30: complete
+    96 rows: {'ANSWERED': 96}
+=== 22:03:41 replay INF-E1-AG-H30 (no --allow-paid-calls: cache only)
+    INF-E1-AG-H30: identical
+=== 22:03:53 E1-CTXH-H1 (smoke, cap $0.03)
+    E1-CTXH-H1: smoke stage done
+    2 rows: {'ANSWERED': 2}
+gate: chars/token 2.67, output cost per question $0.00046, from 2 smoke rows
+  H1   high n= 68 prompt~    5733 tokens  $0.071
+  H3   high n= 87 prompt~   23240 tokens  $0.243
+  H10  high n= 95 prompt~   68000 tokens  $0.690
+  H30  high n= 96 prompt~  184572 tokens  $1.816
+  H1   low  n= 70 prompt~    5733 tokens  $0.073
+  H10  low  n= 95 prompt~   68000 tokens  $0.690
+gate: projected remaining ContextRAG cost $3.58 (limit $6.00)
+=== 22:04:25 E1-CTXH-H1 (full, cap $0.60)
+    E1-CTXH-H1: complete
+    70 rows: {'ANSWERED': 70}
+=== 22:05:51 E1-CTXH-H3 (full, cap $0.80)
+    E1-CTXH-H3: complete
+    87 rows: {'ANSWERED': 87}
+=== 22:08:47 E1-CTXH-H10 (full, cap $1.50)
+    E1-CTXH-H10: complete
+    95 rows: {'ANSWERED': 94, 'PARSE_FAILURE': 1}
+=== 22:14:05 E1-CTXH-H30 (full, cap $3.00)
+    E1-CTXH-H30: complete
+    96 rows: {'ANSWERED': 95, 'PARSE_FAILURE': 1}
+=== 22:20:31 E1-CTXL-H1 (full, cap $0.20)
+    E1-CTXL-H1: complete
+    70 rows: {'ANSWERED': 70}
+=== 22:21:31 E1-CTXL-H10 (full, cap $1.00)
+    E1-CTXL-H10: complete
+    95 rows: {'ANSWERED': 95}
+=== 22:23:45 replay INF-E1-CTXH-H1 (no --allow-paid-calls: cache only)
+    INF-E1-CTXH-H1: identical
+=== 22:23:55 replay INF-E1-CTXH-H3 (no --allow-paid-calls: cache only)
+    INF-E1-CTXH-H3: identical
+=== 22:24:04 replay INF-E1-CTXH-H10 (no --allow-paid-calls: cache only)
+    INF-E1-CTXH-H10: identical
+=== 22:24:14 replay INF-E1-CTXH-H30 (no --allow-paid-calls: cache only)
+    INF-E1-CTXH-H30: identical
+=== 22:24:27 replay INF-E1-CTXL-H1 (no --allow-paid-calls: cache only)
+    INF-E1-CTXL-H1: identical
+=== 22:24:36 replay INF-E1-CTXL-H10 (no --allow-paid-calls: cache only)
+    INF-E1-CTXL-H10: identical
+=== replay checks (all must read 'identical')
+==> data/runs/exp0001/replays/INF-E1-AG-H1/replay_check.txt <==
+identical
+
+==> data/runs/exp0001/replays/INF-E1-AG-H10/replay_check.txt <==
+identical
+
+==> data/runs/exp0001/replays/INF-E1-AG-H3/replay_check.txt <==
+identical
+
+==> data/runs/exp0001/replays/INF-E1-AG-H30/replay_check.txt <==
+identical
+
+==> data/runs/exp0001/replays/INF-E1-CTXH-H1/replay_check.txt <==
+identical
+
+==> data/runs/exp0001/replays/INF-E1-CTXH-H10/replay_check.txt <==
+identical
+
+==> data/runs/exp0001/replays/INF-E1-CTXH-H3/replay_check.txt <==
+identical
+
+==> data/runs/exp0001/replays/INF-E1-CTXH-H30/replay_check.txt <==
+identical
+
+==> data/runs/exp0001/replays/INF-E1-CTXL-H1/replay_check.txt <==
+identical
+
+==> data/runs/exp0001/replays/INF-E1-CTXL-H10/replay_check.txt <==
+identical
+
+==> data/runs/exp0001/replays/INF-E1-CYP-H1/replay_check.txt <==
+identical
+
+==> data/runs/exp0001/replays/INF-E1-CYP-H10/replay_check.txt <==
+identical
+
+==> data/runs/exp0001/replays/INF-E1-CYP-H3/replay_check.txt <==
+identical
+
+==> data/runs/exp0001/replays/INF-E1-CYP-H30/replay_check.txt <==
+identical
+
+==> data/runs/exp0001/replays/INF-ST-AG-H100/replay_check.txt <==
+identical
+=== 22:25:17 done: data/runs/exp0001/report/report.md ; EX01: score data/runs/exp0001/ex01 blind sheet, then ex01-tally

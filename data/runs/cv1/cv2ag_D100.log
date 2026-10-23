@@ -1,0 +1,89 @@
+run CV2-AG-D100: 180 rows to answer, 0 already on disk
+concurrency 4: up to that many questions in flight
+paid mode: up to 180 model calls; hard spend cap 0.25 USD
+estimated cost: 0.2700 USD
+{
+  "run_id": "CV2-AG-D100",
+  "n_rows": 180,
+  "n_new_rows": 180,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "graph_agent_low_steps": {
+      "17-32": {
+        "ANSWERED": 4
+      },
+      "2": {
+        "ANSWERED": 20
+      },
+      "1": {
+        "ANSWERED": 33
+      },
+      "3-4": {
+        "ANSWERED": 13
+      },
+      "5-8": {
+        "ANSWERED": 15,
+        "TIMED_OUT": 1
+      },
+      "9-16": {
+        "ANSWERED": 5,
+        "TIMED_OUT": 1
+      },
+      "0": {
+        "ANSWERED": 68
+      },
+      "unanswerable": {
+        "ANSWERED": 20
+      }
+    }
+  },
+  "routing_recall": {
+    "graph_agent_low_steps": 0.930379746835443
+  },
+  "relaxed_routing_recall": {
+    "graph_agent_low_steps": 0.930379746835443
+  },
+  "evidence_node_recall": {
+    "graph_agent_low_steps": 0.903801670576964
+  },
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {
+      "graph_agent_low_steps": {
+        "17-32": 0.0,
+        "2": 0.95,
+        "1": 1.0,
+        "3-4": 1.0,
+        "5-8": 0.7333333333333333,
+        "9-16": 0.8,
+        "0": 0.9852941176470589
+      }
+    },
+    "relaxed_routing_recall": {
+      "graph_agent_low_steps": {
+        "17-32": 0.0,
+        "2": 0.95,
+        "1": 1.0,
+        "3-4": 1.0,
+        "5-8": 0.7333333333333333,
+        "9-16": 0.8,
+        "0": 0.9852941176470589
+      }
+    },
+    "evidence_node_recall": {
+      "graph_agent_low_steps": {
+        "17-32": 0.0847873760488177,
+        "2": 0.8982206012378426,
+        "1": 1.0,
+        "3-4": 0.9131633870005964,
+        "5-8": 0.6347186147186147,
+        "9-16": 0.7877065007509118,
+        "0": 0.9730392156862746
+      }
+    }
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "graph_agent_low_steps": 0.0009856819711111112
+  },
+  "stopped_by_spend_cap": false
+}

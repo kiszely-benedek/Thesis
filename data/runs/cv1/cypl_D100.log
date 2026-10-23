@@ -1,0 +1,64 @@
+Received notification from DBMS server: <GqlStatusObject gql_status='01N50', status_description='warn: label does not exist. The label `GateValve` does not exist in database `neo4j`. Verify that the spelling is correct.', position=<SummaryInputPosition line=5, column=10, offset=123>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 123, 'line': 5, 'column': 10}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: "MATCH (target:PlantItem {tag: 'P-13-5'})\nMATCH p=()-[:send_to*1..]->(target)\nUNWIND nodes(p) AS v\nWITH DISTINCT v\nWHERE (v:GateValve OR v:BallValve OR v:GlobeValve)\n  AND NOT (v:OperatedValve)\n  AND NOT (v:ActuatingFunction)\nRETURN v.tag AS tag\nORDER BY tag"
+run CYPL-D100: 180 rows to answer, 0 already on disk
+concurrency 4: up to that many questions in flight
+paid mode: up to 180 model calls; hard spend cap 0.3 USD
+estimated cost: 0.1800 USD
+{
+  "run_id": "CYPL-D100",
+  "n_rows": 180,
+  "n_new_rows": 180,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "cypher_rag_plant": {
+      "17-32": {
+        "ANSWERED": 3,
+        "RETRIEVAL_ERROR": 1
+      },
+      "2": {
+        "RETRIEVAL_ERROR": 3,
+        "ANSWERED": 17
+      },
+      "1": {
+        "ANSWERED": 26,
+        "RETRIEVAL_ERROR": 7
+      },
+      "3-4": {
+        "ANSWERED": 11,
+        "RETRIEVAL_ERROR": 2
+      },
+      "5-8": {
+        "ANSWERED": 13,
+        "RETRIEVAL_ERROR": 3
+      },
+      "9-16": {
+        "ANSWERED": 5,
+        "RETRIEVAL_ERROR": 1
+      },
+      "0": {
+        "ANSWERED": 60,
+        "RETRIEVAL_ERROR": 8
+      },
+      "unanswerable": {
+        "ANSWERED": 14,
+        "RETRIEVAL_ERROR": 6
+      }
+    }
+  },
+  "routing_recall": {},
+  "relaxed_routing_recall": {},
+  "evidence_node_recall": {},
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {},
+    "relaxed_routing_recall": {},
+    "evidence_node_recall": {}
+  },
+  "trace_rates": {
+    "cypher_rag_plant": {
+      "truncated_rate": 0.0
+    }
+  },
+  "mean_total_cost_usd": {
+    "cypher_rag_plant": 0.0003889502777777778
+  },
+  "stopped_by_spend_cap": false
+}

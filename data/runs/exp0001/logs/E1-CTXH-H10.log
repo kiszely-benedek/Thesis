@@ -1,0 +1,43 @@
+run E1-CTXH-H10: 95 rows to answer, 0 already on disk
+concurrency 4: up to that many questions in flight
+paid mode: up to 95 model calls; hard spend cap 1.5 USD
+estimated cost: 1.9000 USD
+{
+  "run_id": "E1-CTXH-H10",
+  "n_rows": 95,
+  "n_new_rows": 95,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "context_rag": {
+      "0": {
+        "ANSWERED": 40
+      },
+      "1": {
+        "ANSWERED": 17,
+        "PARSE_FAILURE": 1
+      },
+      "2": {
+        "ANSWERED": 15
+      },
+      "3-4": {
+        "ANSWERED": 14
+      },
+      "unanswerable": {
+        "ANSWERED": 8
+      }
+    }
+  },
+  "routing_recall": {},
+  "relaxed_routing_recall": {},
+  "evidence_node_recall": {},
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {},
+    "relaxed_routing_recall": {},
+    "evidence_node_recall": {}
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "context_rag": 0.009596673684210527
+  },
+  "stopped_by_spend_cap": false
+}

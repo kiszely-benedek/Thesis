@@ -1,0 +1,1222 @@
+{
+  "cutoff_s": 120.0,
+  "n_boot": 10000,
+  "seed": 20261101,
+  "sizes": [
+    {
+      "corpus_id": "H1",
+      "n_sheets": 1,
+      "n_occurrence_nodes": 35,
+      "ctx_prompt_chars": 16606,
+      "ctx_prompt_tokens_median": 6222,
+      "chars_per_token": 2.6689167470266795
+    },
+    {
+      "corpus_id": "H3",
+      "n_sheets": 4,
+      "n_occurrence_nodes": 151,
+      "ctx_prompt_chars": 63277,
+      "ctx_prompt_tokens_median": 24719,
+      "chars_per_token": 2.559943354238317
+    },
+    {
+      "corpus_id": "H10",
+      "n_sheets": 10,
+      "n_occurrence_nodes": 448,
+      "ctx_prompt_chars": 182609,
+      "ctx_prompt_tokens_median": 71999,
+      "chars_per_token": 2.5363011320230573
+    },
+    {
+      "corpus_id": "H30",
+      "n_sheets": 30,
+      "n_occurrence_nodes": 1223,
+      "ctx_prompt_chars": 493397,
+      "ctx_prompt_tokens_median": 194218,
+      "chars_per_token": 2.5404649055846673
+    }
+  ],
+  "scope_families": {
+    "common": [
+      "CONNECTED",
+      "COUNT_IN_UNIT",
+      "DOWNSTREAM_IN_UNIT",
+      "DOWNSTREAM_ISOLATION",
+      "FLOW_PATH",
+      "INSTRUMENTS_OF_ITEM",
+      "LOOKUP_TYPE",
+      "LOOKUP_UNIT",
+      "LOOPS_NEAR_ITEM",
+      "LOOP_MEASURED_EQUIPMENT",
+      "NEIGHBOURS_DOWNSTREAM",
+      "NO_PATH",
+      "ROUTE_AVOIDING",
+      "SAME_UNIT",
+      "UNANSWERABLE_TAG",
+      "UNITS_REACHED",
+      "UPSTREAM_ISOLATION",
+      "UPSTREAM_SOURCES",
+      "VALVES_ON_PATH"
+    ],
+    "all": [
+      "CONNECTED",
+      "COUNT_IN_UNIT",
+      "CROSS_UNIT",
+      "DOWNSTREAM_IN_UNIT",
+      "DOWNSTREAM_ISOLATION",
+      "FEEDING_UNITS",
+      "FIRST_MEETING_POINT",
+      "FLOW_PATH",
+      "INSTRUMENTS_OF_ITEM",
+      "LOOKUP_TYPE",
+      "LOOKUP_UNIT",
+      "LOOPS_NEAR_ITEM",
+      "LOOP_ACTUATED_VALVE",
+      "LOOP_MEASURED_EQUIPMENT",
+      "NEIGHBOURS_DOWNSTREAM",
+      "NO_PATH",
+      "ROUTE_AVOIDING",
+      "SAME_UNIT",
+      "SHEETS_OF_TAG",
+      "UNANSWERABLE_TAG",
+      "UNITS_REACHED",
+      "UPSTREAM_ISOLATION",
+      "UPSTREAM_SOURCES",
+      "VALVES_ON_PATH"
+    ]
+  },
+  "cells": [
+    {
+      "corpus_id": "H1",
+      "policy": "ctx-high",
+      "scope": "common",
+      "n": 68,
+      "correct_at_120": 56,
+      "acc_at_120": {
+        "estimate": 0.8235294117647058,
+        "ci_low": 0.7163933737056788,
+        "ci_high": 0.8960651461491128
+      },
+      "acc_uncut": 0.8235294117647058,
+      "cost_mean": 0.0008984452205882354,
+      "cost_median": 0.0008447999999999999,
+      "latency_median": 3.617769499996939,
+      "latency_p90": 8.047609699999157,
+      "outcomes": {
+        "ANSWERED": 68,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H1",
+      "policy": "ctx-high",
+      "scope": "all",
+      "n": 68,
+      "correct_at_120": 56,
+      "acc_at_120": {
+        "estimate": 0.8235294117647058,
+        "ci_low": 0.7163933737056788,
+        "ci_high": 0.8960651461491128
+      },
+      "acc_uncut": 0.8235294117647058,
+      "cost_mean": 0.0008984452205882354,
+      "cost_median": 0.0008447999999999999,
+      "latency_median": 3.617769499996939,
+      "latency_p90": 8.047609699999157,
+      "outcomes": {
+        "ANSWERED": 68,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H1",
+      "policy": "ctx-low",
+      "scope": "common",
+      "n": 68,
+      "correct_at_120": 54,
+      "acc_at_120": {
+        "estimate": 0.7941176470588235,
+        "ci_low": 0.6835749340049412,
+        "ci_high": 0.8732055385903238
+      },
+      "acc_uncut": 0.7941176470588235,
+      "cost_mean": 0.0008443202205882353,
+      "cost_median": 0.0008278625,
+      "latency_median": 2.6571176999968884,
+      "latency_p90": 4.359663599992928,
+      "outcomes": {
+        "ANSWERED": 68,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H1",
+      "policy": "ctx-low",
+      "scope": "all",
+      "n": 68,
+      "correct_at_120": 54,
+      "acc_at_120": {
+        "estimate": 0.7941176470588235,
+        "ci_low": 0.6835749340049412,
+        "ci_high": 0.8732055385903238
+      },
+      "acc_uncut": 0.7941176470588235,
+      "cost_mean": 0.0008443202205882353,
+      "cost_median": 0.0008278625,
+      "latency_median": 2.6571176999968884,
+      "latency_p90": 4.359663599992928,
+      "outcomes": {
+        "ANSWERED": 68,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H1",
+      "policy": "cyp",
+      "scope": "common",
+      "n": 68,
+      "correct_at_120": 54,
+      "acc_at_120": {
+        "estimate": 0.7941176470588235,
+        "ci_low": 0.6835749340049412,
+        "ci_high": 0.8732055385903238
+      },
+      "acc_uncut": 0.7941176470588235,
+      "cost_mean": 0.00040507499999999997,
+      "cost_median": 0.00040685,
+      "latency_median": 6.62618024999756,
+      "latency_p90": 9.886174600011145,
+      "outcomes": {
+        "ANSWERED": 61,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 7,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H1",
+      "policy": "cyp",
+      "scope": "all",
+      "n": 68,
+      "correct_at_120": 54,
+      "acc_at_120": {
+        "estimate": 0.7941176470588235,
+        "ci_low": 0.6835749340049412,
+        "ci_high": 0.8732055385903238
+      },
+      "acc_uncut": 0.7941176470588235,
+      "cost_mean": 0.00040507499999999997,
+      "cost_median": 0.00040685,
+      "latency_median": 6.62618024999756,
+      "latency_p90": 9.886174600011145,
+      "outcomes": {
+        "ANSWERED": 61,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 7,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H1",
+      "policy": "ag",
+      "scope": "common",
+      "n": 68,
+      "correct_at_120": 60,
+      "acc_at_120": {
+        "estimate": 0.8823529411764706,
+        "ci_low": 0.7846488137630566,
+        "ci_high": 0.939165800610788
+      },
+      "acc_uncut": 0.8823529411764706,
+      "cost_mean": 0.0003341184558823529,
+      "cost_median": 0.00022865249999999999,
+      "latency_median": 7.329996750002465,
+      "latency_p90": 17.908996600002865,
+      "outcomes": {
+        "ANSWERED": 68,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H1",
+      "policy": "ag",
+      "scope": "all",
+      "n": 68,
+      "correct_at_120": 60,
+      "acc_at_120": {
+        "estimate": 0.8823529411764706,
+        "ci_low": 0.7846488137630566,
+        "ci_high": 0.939165800610788
+      },
+      "acc_uncut": 0.8823529411764706,
+      "cost_mean": 0.0003341184558823529,
+      "cost_median": 0.00022865249999999999,
+      "latency_median": 7.329996750002465,
+      "latency_p90": 17.908996600002865,
+      "outcomes": {
+        "ANSWERED": 68,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H1",
+      "policy": "cascade_v3",
+      "scope": "common",
+      "n": 68,
+      "correct_at_120": 64,
+      "acc_at_120": {
+        "estimate": 0.9411764705882353,
+        "ci_low": 0.8582811003734307,
+        "ci_high": 0.9768896085194669
+      },
+      "acc_uncut": 0.9411764705882353,
+      "cost_mean": 0.0005117098529411764,
+      "cost_median": 0.0004438375,
+      "latency_median": 8.10983639999904,
+      "latency_p90": 15.838752000010572,
+      "outcomes": {
+        "ANSWERED": 68,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H1",
+      "policy": "cascade_v3",
+      "scope": "all",
+      "n": 68,
+      "correct_at_120": 64,
+      "acc_at_120": {
+        "estimate": 0.9411764705882353,
+        "ci_low": 0.8582811003734307,
+        "ci_high": 0.9768896085194669
+      },
+      "acc_uncut": 0.9411764705882353,
+      "cost_mean": 0.0005117098529411764,
+      "cost_median": 0.0004438375,
+      "latency_median": 8.10983639999904,
+      "latency_p90": 15.838752000010572,
+      "outcomes": {
+        "ANSWERED": 68,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H3",
+      "policy": "ctx-high",
+      "scope": "common",
+      "n": 76,
+      "correct_at_120": 60,
+      "acc_at_120": {
+        "estimate": 0.7894736842105263,
+        "ci_low": 0.6850414943195869,
+        "ci_high": 0.8660496661781988
+      },
+      "acc_uncut": 0.7894736842105263,
+      "cost_mean": 0.0034225960526315788,
+      "cost_median": 0.0032401124999999996,
+      "latency_median": 4.898921199997858,
+      "latency_p90": 15.56392539999797,
+      "outcomes": {
+        "ANSWERED": 76,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H3",
+      "policy": "ctx-high",
+      "scope": "all",
+      "n": 83,
+      "correct_at_120": 65,
+      "acc_at_120": {
+        "estimate": 0.7831325301204819,
+        "ci_low": 0.6830297632703793,
+        "ci_high": 0.858185506830586
+      },
+      "acc_uncut": 0.7831325301204819,
+      "cost_mean": 0.0034098105421686746,
+      "cost_median": 0.0032373,
+      "latency_median": 4.890973600005964,
+      "latency_p90": 15.54780120000214,
+      "outcomes": {
+        "ANSWERED": 83,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H3",
+      "policy": "cyp",
+      "scope": "common",
+      "n": 76,
+      "correct_at_120": 53,
+      "acc_at_120": {
+        "estimate": 0.6973684210526315,
+        "ci_low": 0.5866558660798696,
+        "ci_high": 0.7890881069868022
+      },
+      "acc_uncut": 0.6973684210526315,
+      "cost_mean": 0.00042524046052631577,
+      "cost_median": 0.0004283625,
+      "latency_median": 6.711426150002808,
+      "latency_p90": 11.375151699998241,
+      "outcomes": {
+        "ANSWERED": 59,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 17,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H3",
+      "policy": "cyp",
+      "scope": "all",
+      "n": 83,
+      "correct_at_120": 60,
+      "acc_at_120": {
+        "estimate": 0.7228915662650602,
+        "ci_low": 0.618381028567237,
+        "ci_high": 0.8076820564058634
+      },
+      "acc_uncut": 0.7228915662650602,
+      "cost_mean": 0.00042041475903614457,
+      "cost_median": 0.00041672500000000006,
+      "latency_median": 6.551062300008198,
+      "latency_p90": 11.375151699998241,
+      "outcomes": {
+        "ANSWERED": 66,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 17,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H3",
+      "policy": "ag",
+      "scope": "common",
+      "n": 76,
+      "correct_at_120": 75,
+      "acc_at_120": {
+        "estimate": 0.9868421052631579,
+        "ci_low": 0.929161553705025,
+        "ci_high": 0.9976735798594324
+      },
+      "acc_uncut": 0.9868421052631579,
+      "cost_mean": 0.0004388105263157895,
+      "cost_median": 0.00024049249999999998,
+      "latency_median": 7.556847599997127,
+      "latency_p90": 16.849946900008945,
+      "outcomes": {
+        "ANSWERED": 76,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H3",
+      "policy": "ag",
+      "scope": "all",
+      "n": 83,
+      "correct_at_120": 82,
+      "acc_at_120": {
+        "estimate": 0.9879518072289156,
+        "ci_low": 0.9348626221234112,
+        "ci_high": 0.9978700774122952
+      },
+      "acc_uncut": 0.9879518072289156,
+      "cost_mean": 0.00046319698795180725,
+      "cost_median": 0.0002394,
+      "latency_median": 7.5178270999967935,
+      "latency_p90": 18.06868409999879,
+      "outcomes": {
+        "ANSWERED": 83,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H3",
+      "policy": "cascade_v3",
+      "scope": "common",
+      "n": 76,
+      "correct_at_120": 74,
+      "acc_at_120": {
+        "estimate": 0.9736842105263158,
+        "ci_low": 0.9090320424906206,
+        "ci_high": 0.9927534928693922
+      },
+      "acc_uncut": 0.9736842105263158,
+      "cost_mean": 0.000585066052631579,
+      "cost_median": 0.000481345,
+      "latency_median": 8.765230049997626,
+      "latency_p90": 19.342853200003447,
+      "outcomes": {
+        "ANSWERED": 76,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H3",
+      "policy": "cascade_v3",
+      "scope": "all",
+      "n": 83,
+      "correct_at_120": 81,
+      "acc_at_120": {
+        "estimate": 0.9759036144578314,
+        "ci_low": 0.9163352895899236,
+        "ci_high": 0.9933669729202098
+      },
+      "acc_uncut": 0.9759036144578314,
+      "cost_mean": 0.0005667610843373494,
+      "cost_median": 0.00047840000000000003,
+      "latency_median": 8.644794100000581,
+      "latency_p90": 19.239076699996076,
+      "outcomes": {
+        "ANSWERED": 83,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H10",
+      "policy": "ctx-high",
+      "scope": "common",
+      "n": 76,
+      "correct_at_120": 57,
+      "acc_at_120": {
+        "estimate": 0.75,
+        "ci_low": 0.6422303597102302,
+        "ci_high": 0.833712006174221
+      },
+      "acc_uncut": 0.75,
+      "cost_mean": 0.009614046710526316,
+      "cost_median": 0.0092018,
+      "latency_median": 5.915437999999995,
+      "latency_p90": 30.642212400009157,
+      "outcomes": {
+        "ANSWERED": 76,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H10",
+      "policy": "ctx-high",
+      "scope": "all",
+      "n": 91,
+      "correct_at_120": 65,
+      "acc_at_120": {
+        "estimate": 0.7142857142857143,
+        "ci_low": 0.6142727836093079,
+        "ci_high": 0.796939174012664
+      },
+      "acc_uncut": 0.7142857142857143,
+      "cost_mean": 0.009620589835164835,
+      "cost_median": 0.009295175,
+      "latency_median": 6.954306200001156,
+      "latency_p90": 29.360143000005337,
+      "outcomes": {
+        "ANSWERED": 90,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 1,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H10",
+      "policy": "ctx-low",
+      "scope": "common",
+      "n": 76,
+      "correct_at_120": 45,
+      "acc_at_120": {
+        "estimate": 0.5921052631578947,
+        "ci_low": 0.47978347984220315,
+        "ci_high": 0.6955637075889103
+      },
+      "acc_uncut": 0.5921052631578947,
+      "cost_mean": 0.009165592763157895,
+      "cost_median": 0.009126362499999999,
+      "latency_median": 4.33663460000389,
+      "latency_p90": 10.079258300007496,
+      "outcomes": {
+        "ANSWERED": 76,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H10",
+      "policy": "ctx-low",
+      "scope": "all",
+      "n": 91,
+      "correct_at_120": 51,
+      "acc_at_120": {
+        "estimate": 0.5604395604395604,
+        "ci_low": 0.45806952309152443,
+        "ci_high": 0.6579133367505703
+      },
+      "acc_uncut": 0.5604395604395604,
+      "cost_mean": 0.009171875549450549,
+      "cost_median": 0.009134175,
+      "latency_median": 4.719302000004973,
+      "latency_p90": 9.486835199997586,
+      "outcomes": {
+        "ANSWERED": 91,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H10",
+      "policy": "cyp",
+      "scope": "common",
+      "n": 76,
+      "correct_at_120": 55,
+      "acc_at_120": {
+        "estimate": 0.7236842105263158,
+        "ci_low": 0.6142442230029846,
+        "ci_high": 0.8115989464725769
+      },
+      "acc_uncut": 0.7236842105263158,
+      "cost_mean": 0.0004296542763157895,
+      "cost_median": 0.0004087,
+      "latency_median": 6.886344499991537,
+      "latency_p90": 12.372130999996443,
+      "outcomes": {
+        "ANSWERED": 62,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 14,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H10",
+      "policy": "cyp",
+      "scope": "all",
+      "n": 91,
+      "correct_at_120": 70,
+      "acc_at_120": {
+        "estimate": 0.7692307692307693,
+        "ci_low": 0.672831372058367,
+        "ci_high": 0.8438195490564182
+      },
+      "acc_uncut": 0.7692307692307693,
+      "cost_mean": 0.0004287398351648351,
+      "cost_median": 0.00041175,
+      "latency_median": 7.017758399997547,
+      "latency_p90": 10.618465300001844,
+      "outcomes": {
+        "ANSWERED": 77,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 14,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H10",
+      "policy": "ag",
+      "scope": "common",
+      "n": 76,
+      "correct_at_120": 71,
+      "acc_at_120": {
+        "estimate": 0.9342105263157895,
+        "ci_low": 0.8550628538100542,
+        "ci_high": 0.9715738869366242
+      },
+      "acc_uncut": 0.9342105263157895,
+      "cost_mean": 0.0005236475,
+      "cost_median": 0.0002886475,
+      "latency_median": 8.110865699996793,
+      "latency_p90": 21.818159500006004,
+      "outcomes": {
+        "ANSWERED": 76,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H10",
+      "policy": "ag",
+      "scope": "all",
+      "n": 91,
+      "correct_at_120": 86,
+      "acc_at_120": {
+        "estimate": 0.945054945054945,
+        "ci_low": 0.8777503545818438,
+        "ci_high": 0.9763052497099437
+      },
+      "acc_uncut": 0.945054945054945,
+      "cost_mean": 0.0005778323626373627,
+      "cost_median": 0.000292865,
+      "latency_median": 8.454489499999909,
+      "latency_p90": 21.788863000001584,
+      "outcomes": {
+        "ANSWERED": 91,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H10",
+      "policy": "cascade_v3",
+      "scope": "common",
+      "n": 76,
+      "correct_at_120": 72,
+      "acc_at_120": {
+        "estimate": 0.9473684210526315,
+        "ci_low": 0.8723414339669251,
+        "ci_high": 0.979344904984198
+      },
+      "acc_uncut": 0.9473684210526315,
+      "cost_mean": 0.000610527697368421,
+      "cost_median": 0.0004874,
+      "latency_median": 8.155002649997186,
+      "latency_p90": 23.2283038000096,
+      "outcomes": {
+        "ANSWERED": 76,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H10",
+      "policy": "cascade_v3",
+      "scope": "all",
+      "n": 91,
+      "correct_at_120": 87,
+      "acc_at_120": {
+        "estimate": 0.9560439560439561,
+        "ci_low": 0.8923674847182562,
+        "ci_high": 0.9827759122720942
+      },
+      "acc_uncut": 0.9560439560439561,
+      "cost_mean": 0.000579798956043956,
+      "cost_median": 0.000471875,
+      "latency_median": 7.980585800010886,
+      "latency_p90": 17.58196040000621,
+      "outcomes": {
+        "ANSWERED": 91,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H30",
+      "policy": "ctx-high",
+      "scope": "common",
+      "n": 76,
+      "correct_at_120": 50,
+      "acc_at_120": {
+        "estimate": 0.6578947368421053,
+        "ci_low": 0.5459568776794728,
+        "ci_high": 0.7546383007738648
+      },
+      "acc_uncut": 0.6578947368421053,
+      "cost_mean": 0.024937286842105263,
+      "cost_median": 0.024597112499999997,
+      "latency_median": 8.986702549998881,
+      "latency_p90": 34.42419930000324,
+      "outcomes": {
+        "ANSWERED": 76,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H30",
+      "policy": "ctx-high",
+      "scope": "all",
+      "n": 92,
+      "correct_at_120": 60,
+      "acc_at_120": {
+        "estimate": 0.6521739130434783,
+        "ci_low": 0.550524829810952,
+        "ci_high": 0.7416238822305832
+      },
+      "acc_uncut": 0.6521739130434783,
+      "cost_mean": 0.02496733804347826,
+      "cost_median": 0.024624174999999998,
+      "latency_median": 9.580678499991336,
+      "latency_p90": 34.42419930000324,
+      "outcomes": {
+        "ANSWERED": 91,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 1,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H30",
+      "policy": "cyp",
+      "scope": "common",
+      "n": 76,
+      "correct_at_120": 50,
+      "acc_at_120": {
+        "estimate": 0.6578947368421053,
+        "ci_low": 0.5459568776794728,
+        "ci_high": 0.7546383007738648
+      },
+      "acc_uncut": 0.6578947368421053,
+      "cost_mean": 0.0004186036184210526,
+      "cost_median": 0.00037711250000000004,
+      "latency_median": 6.881437199994252,
+      "latency_p90": 11.246981299991603,
+      "outcomes": {
+        "ANSWERED": 58,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 18,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H30",
+      "policy": "cyp",
+      "scope": "all",
+      "n": 92,
+      "correct_at_120": 63,
+      "acc_at_120": {
+        "estimate": 0.6847826086956522,
+        "ci_low": 0.5840649816969505,
+        "ci_high": 0.7706870257820566
+      },
+      "acc_uncut": 0.6847826086956522,
+      "cost_mean": 0.0004207932065217391,
+      "cost_median": 0.00040368749999999997,
+      "latency_median": 7.0189466000010725,
+      "latency_p90": 11.246970800006238,
+      "outcomes": {
+        "ANSWERED": 73,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 19,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H30",
+      "policy": "ag",
+      "scope": "common",
+      "n": 76,
+      "correct_at_120": 71,
+      "acc_at_120": {
+        "estimate": 0.9342105263157895,
+        "ci_low": 0.8550628538100542,
+        "ci_high": 0.9715738869366242
+      },
+      "acc_uncut": 0.9342105263157895,
+      "cost_mean": 0.0004311688157894737,
+      "cost_median": 0.0002807225,
+      "latency_median": 8.41679605000536,
+      "latency_p90": 19.24092179998115,
+      "outcomes": {
+        "ANSWERED": 76,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H30",
+      "policy": "ag",
+      "scope": "all",
+      "n": 92,
+      "correct_at_120": 87,
+      "acc_at_120": {
+        "estimate": 0.9456521739130435,
+        "ci_low": 0.8790130893472858,
+        "ci_high": 0.9765652816314958
+      },
+      "acc_uncut": 0.9456521739130435,
+      "cost_mean": 0.0005013289673913044,
+      "cost_median": 0.0003056825,
+      "latency_median": 8.830972449995897,
+      "latency_p90": 21.596986099997594,
+      "outcomes": {
+        "ANSWERED": 92,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H30",
+      "policy": "cascade_v3",
+      "scope": "common",
+      "n": 76,
+      "correct_at_120": 72,
+      "acc_at_120": {
+        "estimate": 0.9473684210526315,
+        "ci_low": 0.8723414339669251,
+        "ci_high": 0.979344904984198
+      },
+      "acc_uncut": 0.9473684210526315,
+      "cost_mean": 0.0006172122368421053,
+      "cost_median": 0.0004959575,
+      "latency_median": 8.932349949995114,
+      "latency_p90": 23.13895319999574,
+      "outcomes": {
+        "ANSWERED": 76,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H30",
+      "policy": "cascade_v3",
+      "scope": "all",
+      "n": 92,
+      "correct_at_120": 86,
+      "acc_at_120": {
+        "estimate": 0.9347826086956522,
+        "ci_low": 0.8649403972069417,
+        "ci_high": 0.9697702086260162
+      },
+      "acc_uncut": 0.9347826086956522,
+      "cost_mean": 0.0006010491304347826,
+      "cost_median": 0.00047953249999999997,
+      "latency_median": 8.504377150002256,
+      "latency_p90": 20.65435129999969,
+      "outcomes": {
+        "ANSWERED": 92,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    }
+  ],
+  "deltas": [
+    {
+      "corpus_id": "H1",
+      "scope": "common",
+      "a": "ctx-high",
+      "b": "cascade_v3",
+      "n": 68,
+      "delta": -0.11764705882352941,
+      "ci": {
+        "estimate": -0.11764705882352941,
+        "ci_low": -0.20588235294117646,
+        "ci_high": -0.029411764705882353
+      },
+      "metric": "acc@120"
+    },
+    {
+      "corpus_id": "H1",
+      "scope": "all",
+      "a": "ctx-high",
+      "b": "cascade_v3",
+      "n": 68,
+      "delta": -0.11764705882352941,
+      "ci": {
+        "estimate": -0.11764705882352941,
+        "ci_low": -0.20588235294117646,
+        "ci_high": -0.029411764705882353
+      },
+      "metric": "acc@120"
+    },
+    {
+      "corpus_id": "H1",
+      "scope": "all",
+      "a": "ctx-low",
+      "b": "ctx-high",
+      "n": 68,
+      "delta": -0.029411764705882353,
+      "ci": {
+        "estimate": -0.029411764705882353,
+        "ci_low": -0.11764705882352941,
+        "ci_high": 0.04411764705882353
+      },
+      "metric": "acc@120"
+    },
+    {
+      "corpus_id": "H1",
+      "scope": "all",
+      "a": "ctx-low",
+      "b": "ctx-high",
+      "n": 68,
+      "delta": -0.000054125,
+      "ci": {
+        "estimate": -0.000054125,
+        "ci_low": -0.00007916911764705882,
+        "ci_high": -0.00003305882352941178
+      },
+      "metric": "cost_usd"
+    },
+    {
+      "corpus_id": "H3",
+      "scope": "common",
+      "a": "ctx-high",
+      "b": "cascade_v3",
+      "n": 76,
+      "delta": -0.18421052631578946,
+      "ci": {
+        "estimate": -0.18421052631578946,
+        "ci_low": -0.27631578947368424,
+        "ci_high": -0.09210526315789473
+      },
+      "metric": "acc@120"
+    },
+    {
+      "corpus_id": "H3",
+      "scope": "all",
+      "a": "ctx-high",
+      "b": "cascade_v3",
+      "n": 83,
+      "delta": -0.1927710843373494,
+      "ci": {
+        "estimate": -0.1927710843373494,
+        "ci_low": -0.2891566265060241,
+        "ci_high": -0.10843373493975904
+      },
+      "metric": "acc@120"
+    },
+    {
+      "corpus_id": "H10",
+      "scope": "common",
+      "a": "ctx-high",
+      "b": "cascade_v3",
+      "n": 76,
+      "delta": -0.19736842105263158,
+      "ci": {
+        "estimate": -0.19736842105263158,
+        "ci_low": -0.2894736842105263,
+        "ci_high": -0.10526315789473684
+      },
+      "metric": "acc@120"
+    },
+    {
+      "corpus_id": "H10",
+      "scope": "all",
+      "a": "ctx-high",
+      "b": "cascade_v3",
+      "n": 91,
+      "delta": -0.24175824175824176,
+      "ci": {
+        "estimate": -0.24175824175824176,
+        "ci_low": -0.34065934065934067,
+        "ci_high": -0.15384615384615385
+      },
+      "metric": "acc@120"
+    },
+    {
+      "corpus_id": "H10",
+      "scope": "all",
+      "a": "ctx-low",
+      "b": "ctx-high",
+      "n": 91,
+      "delta": -0.15384615384615385,
+      "ci": {
+        "estimate": -0.15384615384615385,
+        "ci_low": -0.24175824175824176,
+        "ci_high": -0.06593406593406594
+      },
+      "metric": "acc@120"
+    },
+    {
+      "corpus_id": "H10",
+      "scope": "all",
+      "a": "ctx-low",
+      "b": "ctx-high",
+      "n": 91,
+      "delta": -0.0004487142857142858,
+      "ci": {
+        "estimate": -0.0004487142857142858,
+        "ci_low": -0.0006016648351648352,
+        "ci_high": -0.0003131153846153847
+      },
+      "metric": "cost_usd"
+    },
+    {
+      "corpus_id": "H30",
+      "scope": "common",
+      "a": "ctx-high",
+      "b": "cascade_v3",
+      "n": 76,
+      "delta": -0.2894736842105263,
+      "ci": {
+        "estimate": -0.2894736842105263,
+        "ci_low": -0.39473684210526316,
+        "ci_high": -0.18421052631578946
+      },
+      "metric": "acc@120"
+    },
+    {
+      "corpus_id": "H30",
+      "scope": "all",
+      "a": "ctx-high",
+      "b": "cascade_v3",
+      "n": 92,
+      "delta": -0.2826086956521739,
+      "ci": {
+        "estimate": -0.2826086956521739,
+        "ci_low": -0.3804347826086957,
+        "ci_high": -0.18478260869565216
+      },
+      "metric": "acc@120"
+    }
+  ],
+  "trends": [
+    {
+      "scope": "common",
+      "slope": -0.10964392592499642,
+      "ci": {
+        "estimate": -0.10964392592499642,
+        "ci_low": -0.19736163833484807,
+        "ci_high": -0.02198978544037751
+      },
+      "n_boot": 10000,
+      "seed": 20261101,
+      "sizes": [
+        "H1",
+        "H3",
+        "H10",
+        "H30"
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "id": "X1",
+      "wording": "The single-sheet advantage of ContextRAG shrinks with corpus size",
+      "value": "slope -0.110 per log10(sheets), 95% CI [-0.197, -0.022] over H1, H3, H10, H30 (common families)",
+      "verdict": "PASS"
+    },
+    {
+      "id": "X2",
+      "wording": "ChatP&ID's end holds: on one sheet ContextRAG is not worse than the cascade",
+      "value": "H1 common: delta -0.118 [-0.206, -0.029], n=68; all families: delta -0.118 [-0.206, -0.029], n=68; margin -0.05",
+      "verdict": "FAIL"
+    },
+    {
+      "id": "X3",
+      "wording": "Accuracy flip point",
+      "value": "s_acc = H1, the smallest measured size",
+      "verdict": "REPORTED"
+    },
+    {
+      "id": "X4",
+      "wording": "Cost and latency flip",
+      "value": "s_cost = H1; s_lat = H30; $/q ratio ctx-high/cascade_v3: H1 1.76, H3 6.02, H10 16.59, H30 41.54; median-latency ratio: H1 0.45, H3 0.57, H10 0.87, H30 1.13",
+      "verdict": "REPORTED"
+    },
+    {
+      "id": "X5",
+      "wording": "The context wall",
+      "value": "r = 2.54 chars/token over 348 calls; c = 16,435 chars/sheet; W = 143 sheets (window 922,000 prompt tokens); H100 (1,649,451 chars = 649,255 tokens): fits; H1000 (16,747,117 chars = 6,591,984 tokens): does not fit",
+      "verdict": "REPORTED"
+    },
+    {
+      "id": "X6",
+      "wording": "Effort sensitivity",
+      "value": "H1: delta acc -0.029 [-0.118, +0.044], delta $/q -0.00005 [-0.00008, -0.00003] (low minus high, n=68); H10: delta acc -0.154 [-0.242, -0.066], delta $/q -0.00045 [-0.00060, -0.00031] (low minus high, n=91)",
+      "verdict": "REPORTED"
+    }
+  ],
+  "absent": [
+    "ctx-low at H3: no run for tier 'context-luna-low' (arm 'ctx-low')",
+    "ctx-low at H30: no run for tier 'context-luna-low' (arm 'ctx-low')"
+  ],
+  "wall_sheets": 142.5266901624031
+}

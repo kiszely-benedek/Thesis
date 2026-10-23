@@ -1,0 +1,81 @@
+run AGL-PARA-D100: 252 rows to answer, 0 already on disk
+concurrency 4: up to that many questions in flight
+paid mode: up to 252 model calls; hard spend cap 0.6 USD
+estimated cost: 0.3780 USD
+{
+  "run_id": "AGL-PARA-D100",
+  "n_rows": 252,
+  "n_new_rows": 252,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "graph_agent_low_steps": {
+      "5-8": {
+        "ANSWERED": 28
+      },
+      "3-4": {
+        "ANSWERED": 28
+      },
+      "2": {
+        "ANSWERED": 35
+      },
+      "1": {
+        "ANSWERED": 49
+      },
+      "0": {
+        "ANSWERED": 77
+      },
+      "unanswerable": {
+        "ANSWERED": 28
+      },
+      "9-16": {
+        "ANSWERED": 7
+      }
+    }
+  },
+  "routing_recall": {
+    "graph_agent_low_steps": 0.9955357142857143
+  },
+  "relaxed_routing_recall": {
+    "graph_agent_low_steps": 0.9955357142857143
+  },
+  "evidence_node_recall": {
+    "graph_agent_low_steps": 0.9342766811506645
+  },
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {
+      "graph_agent_low_steps": {
+        "5-8": 0.9642857142857143,
+        "3-4": 1.0,
+        "2": 1.0,
+        "1": 1.0,
+        "0": 1.0,
+        "9-16": 1.0
+      }
+    },
+    "relaxed_routing_recall": {
+      "graph_agent_low_steps": {
+        "5-8": 0.9642857142857143,
+        "3-4": 1.0,
+        "2": 1.0,
+        "1": 1.0,
+        "0": 1.0,
+        "9-16": 1.0
+      }
+    },
+    "evidence_node_recall": {
+      "graph_agent_low_steps": {
+        "5-8": 0.7351190476190476,
+        "3-4": 0.9702380952380952,
+        "2": 0.8172413793103448,
+        "1": 1.0,
+        "0": 1.0,
+        "9-16": 0.9892183288409704
+      }
+    }
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "graph_agent_low_steps": 0.000508447876984127
+  },
+  "stopped_by_spend_cap": false
+}

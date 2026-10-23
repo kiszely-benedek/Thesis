@@ -1,0 +1,2544 @@
+{
+  "bound": {
+    "median_max_s": 10.0,
+    "p90_max_s": 60.0,
+    "cutoff_s": 120.0
+  },
+  "corpora": [
+    {
+      "corpus_id": "D100",
+      "n_questions": 180,
+      "policies": [
+        {
+          "summary": {
+            "policy": "cascade_v2",
+            "corpus_id": "D100",
+            "n_questions": 180,
+            "n_correct": 173,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 173,
+            "n_timed_out": 1,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.14909742283,
+            "cost_per_question_usd": 0.0008283190157222221,
+            "latency_median_s": 5.742500000000291,
+            "latency_mean_s": 12.066477777777614,
+            "latency_p90_s": 29.877000000002226,
+            "latency_p95_s": 42.203999999996086,
+            "latency_max_s": 150.20400000000154,
+            "tier_shares": {
+              "agent-low-steps": 0.3055555555555556,
+              "cypher-low": 0.6944444444444444
+            },
+            "tier_calls": {
+              "cypher-low": 180,
+              "agent-low-steps": 55
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "cascade_v2 on D100: median 5.7 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "cascade_v2 on D100: p90 29.9 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": {
+            "n_accepted": 125,
+            "n_accepted_correct": 118,
+            "n_first_tier_correct": 141,
+            "precision": 0.944,
+            "recall": 0.8368794326241135
+          },
+          "vs_always_n": {
+            "accuracy": {
+              "mean": 0.08888888888888889,
+              "ci_low": 0.03333333333333333,
+              "ci_high": 0.14444444444444443
+            },
+            "accuracy_at_cutoff": {
+              "mean": 0.11666666666666667,
+              "ci_low": 0.06111111111111111,
+              "ci_high": 0.17222222222222222
+            },
+            "cost_usd": {
+              "mean": -0.0017786079855555555,
+              "ci_low": -0.002225469423333333,
+              "ci_high": -0.001330431530388889
+            },
+            "latency_s": {
+              "mean": -23.418111111111198,
+              "ci_low": -30.21951111111092,
+              "ci_high": -16.878116666666827
+            }
+          },
+          "oracle": {
+            "policy": "oracle(cascade_v2)",
+            "corpus_id": "D100",
+            "n_questions": 180,
+            "n_correct": 177,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 177,
+            "n_timed_out": 1,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.09167076583,
+            "cost_per_question_usd": 0.0005092820323888889,
+            "latency_median_s": 5.344499999999243,
+            "latency_mean_s": 10.956938888888756,
+            "latency_p90_s": 19.48599999999351,
+            "latency_p95_s": 35.69999999999891,
+            "latency_max_s": 220.7350000000033,
+            "tier_shares": {
+              "cypher-low": 0.7833333333333333,
+              "agent-low-steps": 0.21666666666666667
+            },
+            "tier_calls": {
+              "cypher-low": 180,
+              "agent-low-steps": 39
+            }
+          },
+          "random": {
+            "n_draws": 1000,
+            "n_escalated": 55,
+            "correct_mean": 151.362,
+            "correct_low": 146.0,
+            "correct_high": 157.0,
+            "correct_at_cutoff_mean": 150.748,
+            "correct_at_cutoff_low": 145.0,
+            "correct_at_cutoff_high": 156.0,
+            "cost_total_mean_usd": 0.11453716882959986,
+            "latency_mean_s": 11.466073877777667
+          },
+          "vs_random": {
+            "accuracy": {
+              "mean": 0.12021111111111112,
+              "ci_low": 0.08088888888888889,
+              "ci_high": 0.16195
+            },
+            "accuracy_at_cutoff": {
+              "mean": 0.12362222222222222,
+              "ci_low": 0.08408333333333333,
+              "ci_high": 0.16541666666666666
+            },
+            "cost_usd": {
+              "mean": 0.00019200141111333418,
+              "ci_low": 8.039436921668386e-6,
+              "ci_high": 0.0003996089307277771
+            },
+            "latency_s": {
+              "mean": 0.6004038999999467,
+              "ci_low": -1.0224148777777855,
+              "ci_high": 2.2723836277776344
+            }
+          },
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "cascade_v2_iso",
+            "corpus_id": "D100",
+            "n_questions": 180,
+            "n_correct": 175,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 175,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.15897258878,
+            "cost_per_question_usd": 0.0008831810487777779,
+            "latency_median_s": 5.742500000000291,
+            "latency_mean_s": 11.947627777777598,
+            "latency_p90_s": 31.01600000000144,
+            "latency_p95_s": 42.203999999996086,
+            "latency_max_s": 93.8760000000002,
+            "tier_shares": {
+              "agent-low-steps": 0.3333333333333333,
+              "cypher-low": 0.6666666666666666
+            },
+            "tier_calls": {
+              "cypher-low": 170,
+              "agent-low-steps": 60
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "cascade_v2_iso on D100: median 5.7 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "cascade_v2_iso on D100: p90 31.0 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": null,
+          "vs_always_n": {
+            "accuracy": {
+              "mean": 0.1,
+              "ci_low": 0.05,
+              "ci_high": 0.15
+            },
+            "accuracy_at_cutoff": {
+              "mean": 0.12777777777777777,
+              "ci_low": 0.07777777777777778,
+              "ci_high": 0.18333333333333332
+            },
+            "cost_usd": {
+              "mean": -0.0017237459525000001,
+              "ci_low": -0.0021706428632222224,
+              "ci_high": -0.0012761319521666667
+            },
+            "latency_s": {
+              "mean": -23.536961111111214,
+              "ci_low": -30.382072222222178,
+              "ci_high": -16.905211111110894
+            }
+          },
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "always_c",
+            "corpus_id": "D100",
+            "n_questions": 180,
+            "n_correct": 141,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 141,
+            "n_timed_out": 1,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.04198519483,
+            "cost_per_question_usd": 0.00023325108238888892,
+            "latency_median_s": 4.797000000002299,
+            "latency_mean_s": 6.77561666666657,
+            "latency_p90_s": 10.562999999998283,
+            "latency_p95_s": 14.592999999997119,
+            "latency_max_s": 150.20400000000154,
+            "tier_shares": {
+              "cypher-low": 0.9666666666666667,
+              "none": 0.03333333333333333
+            },
+            "tier_calls": {
+              "cypher-low": 180
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "always_c on D100: median 4.8 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "always_c on D100: p90 10.6 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": null,
+          "vs_always_n": {
+            "accuracy": {
+              "mean": -0.08888888888888889,
+              "ci_low": -0.16111111111111112,
+              "ci_high": -0.016666666666666666
+            },
+            "accuracy_at_cutoff": {
+              "mean": -0.06111111111111111,
+              "ci_low": -0.13333333333333333,
+              "ci_high": 0.011111111111111112
+            },
+            "cost_usd": {
+              "mean": -0.002373675918888889,
+              "ci_low": -0.002817476251611111,
+              "ci_high": -0.0019457319428333333
+            },
+            "latency_s": {
+              "mean": -28.70897222222224,
+              "ci_low": -35.993922222222224,
+              "ci_high": -21.70709999999991
+            }
+          },
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "always_g",
+            "corpus_id": "D100",
+            "n_questions": 180,
+            "n_correct": 173,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 173,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.2379142446,
+            "cost_per_question_usd": 0.0013217458033333333,
+            "latency_median_s": 7.187499999997726,
+            "latency_mean_s": 15.452872222222217,
+            "latency_p90_s": 36.594999999999345,
+            "latency_p95_s": 53.09399999999732,
+            "latency_max_s": 120.0,
+            "tier_shares": {
+              "agent-low-steps": 0.9888888888888889,
+              "none": 0.011111111111111112
+            },
+            "tier_calls": {
+              "agent-low-steps": 180
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "always_g on D100: median 7.2 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "always_g on D100: p90 36.6 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": null,
+          "vs_always_n": {
+            "accuracy": {
+              "mean": 0.08888888888888889,
+              "ci_low": 0.03888888888888889,
+              "ci_high": 0.1388888888888889
+            },
+            "accuracy_at_cutoff": {
+              "mean": 0.11666666666666667,
+              "ci_low": 0.06666666666666667,
+              "ci_high": 0.16666666666666666
+            },
+            "cost_usd": {
+              "mean": -0.0012851811979444443,
+              "ci_low": -0.0017074389300000001,
+              "ci_high": -0.0008414771707222223
+            },
+            "latency_s": {
+              "mean": -20.031716666666593,
+              "ci_low": -26.492227777777185,
+              "ci_high": -13.701433333333181
+            }
+          },
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "always_n",
+            "corpus_id": "D100",
+            "n_questions": 180,
+            "n_correct": 157,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 152,
+            "n_timed_out": 20,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.46924686023,
+            "cost_per_question_usd": 0.002606927001277778,
+            "latency_median_s": 8.710500000001048,
+            "latency_mean_s": 35.48458888888881,
+            "latency_p90_s": 121.56200000000172,
+            "latency_p95_s": 174.09299999999712,
+            "latency_max_s": 187.95300000000134,
+            "tier_shares": {
+              "need-default": 0.9166666666666666,
+              "none": 0.08333333333333333
+            },
+            "tier_calls": {
+              "need-default": 180
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "always_n on D100: median 8.7 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "FAIL",
+              "headline": "always_n on D100: p90 121.6 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": null,
+          "vs_always_n": null,
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        }
+      ],
+      "not_evaluated": [],
+      "breakdowns": {
+        "need label": {
+          "DOWNSTREAM_ALL": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 9,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 8,
+              "total": 10
+            }
+          },
+          "GENERIC": {
+            "cascade_v2": {
+              "correct": 8,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 8,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 6,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "ITEM": {
+            "cascade_v2": {
+              "correct": 43,
+              "total": 43
+            },
+            "cascade_v2_iso": {
+              "correct": 43,
+              "total": 43
+            },
+            "always_c": {
+              "correct": 43,
+              "total": 43
+            },
+            "always_g": {
+              "correct": 43,
+              "total": 43
+            },
+            "always_n": {
+              "correct": 43,
+              "total": 43
+            }
+          },
+          "NEIGHBOURS_DOWNSTREAM": {
+            "cascade_v2": {
+              "correct": 13,
+              "total": 13
+            },
+            "cascade_v2_iso": {
+              "correct": 13,
+              "total": 13
+            },
+            "always_c": {
+              "correct": 13,
+              "total": 13
+            },
+            "always_g": {
+              "correct": 13,
+              "total": 13
+            },
+            "always_n": {
+              "correct": 13,
+              "total": 13
+            }
+          },
+          "PATH": {
+            "cascade_v2": {
+              "correct": 34,
+              "total": 34
+            },
+            "cascade_v2_iso": {
+              "correct": 34,
+              "total": 34
+            },
+            "always_c": {
+              "correct": 28,
+              "total": 34
+            },
+            "always_g": {
+              "correct": 34,
+              "total": 34
+            },
+            "always_n": {
+              "correct": 25,
+              "total": 34
+            }
+          },
+          "SIGNAL_CHAIN": {
+            "cascade_v2": {
+              "correct": 30,
+              "total": 30
+            },
+            "cascade_v2_iso": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_c": {
+              "correct": 12,
+              "total": 30
+            },
+            "always_g": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_n": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "UNIT_SCOPE": {
+            "cascade_v2": {
+              "correct": 20,
+              "total": 20
+            },
+            "cascade_v2_iso": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_c": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_n": {
+              "correct": 19,
+              "total": 20
+            }
+          },
+          "UPSTREAM_ALL": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 9,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 7,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 5,
+              "total": 10
+            }
+          },
+          "UPSTREAM_TO_FIRST_VALVE": {
+            "cascade_v2": {
+              "correct": 5,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 7,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 0,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 7,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 4,
+              "total": 10
+            }
+          }
+        },
+        "family": {
+          "CONNECTED": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 9,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "COUNT_IN_UNIT": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "CROSS_UNIT": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 9,
+              "total": 10
+            }
+          },
+          "DOWNSTREAM_IN_UNIT": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 9,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 8,
+              "total": 10
+            }
+          },
+          "FLOW_PATH": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 7,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 6,
+              "total": 10
+            }
+          },
+          "INSTRUMENTS_OF_ITEM": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 1,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "LOOKUP_TYPE": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "LOOKUP_UNIT": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "LOOPS_NEAR_ITEM": {
+            "cascade_v2": {
+              "correct": 8,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 8,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 6,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "LOOP_ACTUATED_VALVE": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "LOOP_MEASURED_EQUIPMENT": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 1,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "NEIGHBOURS_DOWNSTREAM": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "NO_PATH": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 8,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 5,
+              "total": 10
+            }
+          },
+          "SAME_UNIT": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "SHEETS_OF_TAG": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "UNANSWERABLE_TAG": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "UPSTREAM_ISOLATION": {
+            "cascade_v2": {
+              "correct": 5,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 7,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 0,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 7,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 4,
+              "total": 10
+            }
+          },
+          "UPSTREAM_SOURCES": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 9,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 7,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 5,
+              "total": 10
+            }
+          }
+        },
+        "k bin": {
+          "k=0": {
+            "cascade_v2": {
+              "correct": 67,
+              "total": 68
+            },
+            "cascade_v2_iso": {
+              "correct": 67,
+              "total": 68
+            },
+            "always_c": {
+              "correct": 44,
+              "total": 68
+            },
+            "always_g": {
+              "correct": 68,
+              "total": 68
+            },
+            "always_n": {
+              "correct": 66,
+              "total": 68
+            }
+          },
+          "k=1-2": {
+            "cascade_v2": {
+              "correct": 47,
+              "total": 53
+            },
+            "cascade_v2_iso": {
+              "correct": 49,
+              "total": 53
+            },
+            "always_c": {
+              "correct": 45,
+              "total": 53
+            },
+            "always_g": {
+              "correct": 50,
+              "total": 53
+            },
+            "always_n": {
+              "correct": 48,
+              "total": 53
+            }
+          },
+          "k>=3": {
+            "cascade_v2": {
+              "correct": 39,
+              "total": 39
+            },
+            "cascade_v2_iso": {
+              "correct": 39,
+              "total": 39
+            },
+            "always_c": {
+              "correct": 34,
+              "total": 39
+            },
+            "always_g": {
+              "correct": 35,
+              "total": 39
+            },
+            "always_n": {
+              "correct": 28,
+              "total": 39
+            }
+          },
+          "unanswerable": {
+            "cascade_v2": {
+              "correct": 20,
+              "total": 20
+            },
+            "cascade_v2_iso": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_c": {
+              "correct": 18,
+              "total": 20
+            },
+            "always_g": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_n": {
+              "correct": 15,
+              "total": 20
+            }
+          }
+        }
+      },
+      "diagnostics": [
+        {
+          "policy": "cascade_v2",
+          "boolean_no_questions": 12,
+          "boolean_no_answered_yes": 0,
+          "agent": {
+            "tier": "agent-low-steps",
+            "n_tried": 55,
+            "stop_reasons": {
+              "done": 47,
+              "prompt_budget": 6,
+              "deadline": 2
+            },
+            "answered_without_tool_call": {
+              "correct": 0,
+              "total": 0
+            },
+            "answered_touching_no_item": {
+              "correct": 5,
+              "total": 5
+            },
+            "named_tag_never_touched": {
+              "correct": 5,
+              "total": 5
+            },
+            "n_with_named_tags": 49
+          },
+          "isolation": {
+            "primary": {
+              "correct": 5,
+              "total": 10
+            },
+            "control_valves_excluded": {
+              "correct": 3,
+              "total": 8
+            }
+          }
+        },
+        {
+          "policy": "cascade_v2_iso",
+          "boolean_no_questions": 12,
+          "boolean_no_answered_yes": 0,
+          "agent": {
+            "tier": "agent-low-steps",
+            "n_tried": 60,
+            "stop_reasons": {
+              "done": 51,
+              "prompt_budget": 7,
+              "deadline": 2
+            },
+            "answered_without_tool_call": {
+              "correct": 0,
+              "total": 0
+            },
+            "answered_touching_no_item": {
+              "correct": 5,
+              "total": 5
+            },
+            "named_tag_never_touched": {
+              "correct": 5,
+              "total": 5
+            },
+            "n_with_named_tags": 54
+          },
+          "isolation": {
+            "primary": {
+              "correct": 7,
+              "total": 10
+            },
+            "control_valves_excluded": {
+              "correct": 5,
+              "total": 8
+            }
+          }
+        },
+        {
+          "policy": "always_c",
+          "boolean_no_questions": 12,
+          "boolean_no_answered_yes": 0,
+          "agent": null,
+          "isolation": {
+            "primary": {
+              "correct": 0,
+              "total": 10
+            },
+            "control_valves_excluded": {
+              "correct": 0,
+              "total": 8
+            }
+          }
+        },
+        {
+          "policy": "always_g",
+          "boolean_no_questions": 12,
+          "boolean_no_answered_yes": 0,
+          "agent": {
+            "tier": "agent-low-steps",
+            "n_tried": 180,
+            "stop_reasons": {
+              "done": 169,
+              "prompt_budget": 9,
+              "deadline": 2
+            },
+            "answered_without_tool_call": {
+              "correct": 0,
+              "total": 0
+            },
+            "answered_touching_no_item": {
+              "correct": 5,
+              "total": 5
+            },
+            "named_tag_never_touched": {
+              "correct": 5,
+              "total": 5
+            },
+            "n_with_named_tags": 154
+          },
+          "isolation": {
+            "primary": {
+              "correct": 7,
+              "total": 10
+            },
+            "control_valves_excluded": {
+              "correct": 5,
+              "total": 8
+            }
+          }
+        },
+        {
+          "policy": "always_n",
+          "boolean_no_questions": 12,
+          "boolean_no_answered_yes": 0,
+          "agent": null,
+          "isolation": {
+            "primary": {
+              "correct": 4,
+              "total": 10
+            },
+            "control_valves_excluded": {
+              "correct": 4,
+              "total": 8
+            }
+          }
+        }
+      ],
+      "late_charges": [
+        {
+          "run_id": "CV2-AG2-D100",
+          "strategy": "graph_agent_low_steps",
+          "n_abandoned_in_rows": 4,
+          "n_timeouts_logged": 4,
+          "n_late_logged": 2,
+          "late_cost_logged_usd": 0.00938748,
+          "estimate_usd": 0.0424
+        }
+      ]
+    },
+    {
+      "corpus_id": "D1000",
+      "n_questions": 180,
+      "policies": [
+        {
+          "summary": {
+            "policy": "cascade_v2",
+            "corpus_id": "D1000",
+            "n_questions": 180,
+            "n_correct": 171,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 171,
+            "n_timed_out": 1,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.15251868446,
+            "cost_per_question_usd": 0.0008473260247777777,
+            "latency_median_s": 7.257499999999709,
+            "latency_mean_s": 14.600300000000102,
+            "latency_p90_s": 33.265999999995984,
+            "latency_p95_s": 45.36000000000422,
+            "latency_max_s": 257.2039999999979,
+            "tier_shares": {
+              "agent-low-steps": 0.36666666666666664,
+              "cypher-low": 0.6333333333333333
+            },
+            "tier_calls": {
+              "cypher-low": 180,
+              "agent-low-steps": 66
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "cascade_v2 on D1000: median 7.3 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "cascade_v2 on D1000: p90 33.3 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": {
+            "n_accepted": 114,
+            "n_accepted_correct": 105,
+            "n_first_tier_correct": 130,
+            "precision": 0.9210526315789473,
+            "recall": 0.8076923076923077
+          },
+          "vs_always_n": {
+            "accuracy": {
+              "mean": 0.1111111111111111,
+              "ci_low": 0.05555555555555555,
+              "ci_high": 0.17222222222222222
+            },
+            "accuracy_at_cutoff": {
+              "mean": 0.14444444444444443,
+              "ci_low": 0.08333333333333333,
+              "ci_high": 0.20555555555555555
+            },
+            "cost_usd": {
+              "mean": -0.0023757667752222224,
+              "ci_low": -0.003094407710722222,
+              "ci_high": -0.0017619433044444445
+            },
+            "latency_s": {
+              "mean": -37.18552222222206,
+              "ci_low": -49.75717222222195,
+              "ci_high": -26.143627777777308
+            }
+          },
+          "oracle": {
+            "policy": "oracle(cascade_v2)",
+            "corpus_id": "D1000",
+            "n_questions": 180,
+            "n_correct": 180,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 179,
+            "n_timed_out": 1,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.11758206775,
+            "cost_per_question_usd": 0.0006532337097222222,
+            "latency_median_s": 5.804500000002008,
+            "latency_mean_s": 12.6684166666667,
+            "latency_p90_s": 30.561999999999898,
+            "latency_p95_s": 40.34299999999894,
+            "latency_max_s": 286.0630000000001,
+            "tier_shares": {
+              "cypher-low": 0.7222222222222222,
+              "agent-low-steps": 0.2777777777777778
+            },
+            "tier_calls": {
+              "cypher-low": 180,
+              "agent-low-steps": 50
+            }
+          },
+          "random": {
+            "n_draws": 1000,
+            "n_escalated": 66,
+            "correct_mean": 147.553,
+            "correct_low": 142.0,
+            "correct_high": 154.0,
+            "correct_at_cutoff_mean": 145.354,
+            "correct_at_cutoff_low": 139.0,
+            "correct_at_cutoff_high": 152.0,
+            "cost_total_mean_usd": 0.14654246445624025,
+            "latency_mean_s": 14.228805133333308
+          },
+          "vs_random": {
+            "accuracy": {
+              "mean": 0.1302611111111111,
+              "ci_low": 0.08828333333333334,
+              "ci_high": 0.1719388888888889
+            },
+            "accuracy_at_cutoff": {
+              "mean": 0.1424777777777778,
+              "ci_low": 0.10183333333333335,
+              "ci_high": 0.18333333333333332
+            },
+            "cost_usd": {
+              "mean": 0.00003320122224310974,
+              "ci_low": -0.00020094853505022372,
+              "ci_high": 0.0002487429305375557
+            },
+            "latency_s": {
+              "mean": 0.3714948666667938,
+              "ci_low": -1.6666578555555907,
+              "ci_high": 2.3534893500000162
+            }
+          },
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "cascade_v2_iso",
+            "corpus_id": "D1000",
+            "n_questions": 180,
+            "n_correct": 176,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 176,
+            "n_timed_out": 1,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.17178022646,
+            "cost_per_question_usd": 0.0009543345914444444,
+            "latency_median_s": 7.257499999999709,
+            "latency_mean_s": 13.968022222222286,
+            "latency_p90_s": 33.32600000000275,
+            "latency_p95_s": 47.298000000000684,
+            "latency_max_s": 120.89199999999983,
+            "tier_shares": {
+              "agent-low-steps": 0.4,
+              "cypher-low": 0.5944444444444444,
+              "none": 0.005555555555555556
+            },
+            "tier_calls": {
+              "cypher-low": 170,
+              "agent-low-steps": 73
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "cascade_v2_iso on D1000: median 7.3 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "cascade_v2_iso on D1000: p90 33.3 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": null,
+          "vs_always_n": {
+            "accuracy": {
+              "mean": 0.1388888888888889,
+              "ci_low": 0.08333333333333333,
+              "ci_high": 0.2
+            },
+            "accuracy_at_cutoff": {
+              "mean": 0.17222222222222222,
+              "ci_low": 0.1111111111111111,
+              "ci_high": 0.2388888888888889
+            },
+            "cost_usd": {
+              "mean": -0.0022687582085555557,
+              "ci_low": -0.003006731944611111,
+              "ci_high": -0.0016295169955555557
+            },
+            "latency_s": {
+              "mean": -37.81779999999988,
+              "ci_low": -50.08756666666621,
+              "ci_high": -26.684261111110562
+            }
+          },
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "always_c",
+            "corpus_id": "D1000",
+            "n_questions": 180,
+            "n_correct": 130,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 130,
+            "n_timed_out": 1,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.04626937715,
+            "cost_per_question_usd": 0.00025705209527777776,
+            "latency_median_s": 5.054500000000189,
+            "latency_mean_s": 7.6464888888888405,
+            "latency_p90_s": 11.40599999999904,
+            "latency_p95_s": 14.9529999999977,
+            "latency_max_s": 257.2039999999979,
+            "tier_shares": {
+              "cypher-low": 0.9388888888888889,
+              "none": 0.06111111111111111
+            },
+            "tier_calls": {
+              "cypher-low": 180
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "always_c on D1000: median 5.1 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "always_c on D1000: p90 11.4 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": null,
+          "vs_always_n": {
+            "accuracy": {
+              "mean": -0.11666666666666667,
+              "ci_low": -0.19444444444444445,
+              "ci_high": -0.03888888888888889
+            },
+            "accuracy_at_cutoff": {
+              "mean": -0.08333333333333333,
+              "ci_low": -0.16111111111111112,
+              "ci_high": 0.0
+            },
+            "cost_usd": {
+              "mean": -0.002966040704722222,
+              "ci_low": -0.0037092434077777778,
+              "ci_high": -0.002329228145
+            },
+            "latency_s": {
+              "mean": -44.139333333333326,
+              "ci_low": -57.0267888888886,
+              "ci_high": -32.69440000000013
+            }
+          },
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "always_g",
+            "corpus_id": "D1000",
+            "n_questions": 180,
+            "n_correct": 173,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 173,
+            "n_timed_out": 4,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.27409987249,
+            "cost_per_question_usd": 0.0015227770693888888,
+            "latency_median_s": 9.351000000000568,
+            "latency_mean_s": 18.010255555555624,
+            "latency_p90_s": 43.3130000000001,
+            "latency_p95_s": 58.611000000002605,
+            "latency_max_s": 121.82700000000295,
+            "tier_shares": {
+              "agent-low-steps": 0.9722222222222222,
+              "none": 0.027777777777777776
+            },
+            "tier_calls": {
+              "agent-low-steps": 180
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "always_g on D1000: median 9.4 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "always_g on D1000: p90 43.3 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": null,
+          "vs_always_n": {
+            "accuracy": {
+              "mean": 0.12222222222222222,
+              "ci_low": 0.06666666666666667,
+              "ci_high": 0.17777777777777778
+            },
+            "accuracy_at_cutoff": {
+              "mean": 0.15555555555555556,
+              "ci_low": 0.1,
+              "ci_high": 0.21666666666666667
+            },
+            "cost_usd": {
+              "mean": -0.001700315730611111,
+              "ci_low": -0.0024795120502222223,
+              "ci_high": -0.001034835447888889
+            },
+            "latency_s": {
+              "mean": -33.77556666666654,
+              "ci_low": -45.237088888888465,
+              "ci_high": -23.42415000000007
+            }
+          },
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "always_n",
+            "corpus_id": "D1000",
+            "n_questions": 180,
+            "n_correct": 151,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 145,
+            "n_timed_out": 29,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.580156704,
+            "cost_per_question_usd": 0.0032230927999999997,
+            "latency_median_s": 14.882500000001528,
+            "latency_mean_s": 51.785822222222166,
+            "latency_p90_s": 167.40600000000268,
+            "latency_p95_s": 253.43799999999828,
+            "latency_max_s": 422.09400000000096,
+            "tier_shares": {
+              "need-default": 0.8888888888888888,
+              "none": 0.1111111111111111
+            },
+            "tier_calls": {
+              "need-default": 180
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "FAIL",
+              "headline": "always_n on D1000: median 14.9 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "FAIL",
+              "headline": "always_n on D1000: p90 167.4 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": null,
+          "vs_always_n": null,
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        }
+      ],
+      "not_evaluated": [],
+      "breakdowns": {
+        "need label": {
+          "DOWNSTREAM_ALL": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 7,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 6,
+              "total": 10
+            }
+          },
+          "GENERIC": {
+            "cascade_v2": {
+              "correct": 7,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 7,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 1,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 9,
+              "total": 10
+            }
+          },
+          "ITEM": {
+            "cascade_v2": {
+              "correct": 41,
+              "total": 41
+            },
+            "cascade_v2_iso": {
+              "correct": 41,
+              "total": 41
+            },
+            "always_c": {
+              "correct": 41,
+              "total": 41
+            },
+            "always_g": {
+              "correct": 41,
+              "total": 41
+            },
+            "always_n": {
+              "correct": 41,
+              "total": 41
+            }
+          },
+          "NEIGHBOURS_DOWNSTREAM": {
+            "cascade_v2": {
+              "correct": 15,
+              "total": 15
+            },
+            "cascade_v2_iso": {
+              "correct": 15,
+              "total": 15
+            },
+            "always_c": {
+              "correct": 13,
+              "total": 15
+            },
+            "always_g": {
+              "correct": 15,
+              "total": 15
+            },
+            "always_n": {
+              "correct": 13,
+              "total": 15
+            }
+          },
+          "PATH": {
+            "cascade_v2": {
+              "correct": 34,
+              "total": 34
+            },
+            "cascade_v2_iso": {
+              "correct": 34,
+              "total": 34
+            },
+            "always_c": {
+              "correct": 23,
+              "total": 34
+            },
+            "always_g": {
+              "correct": 34,
+              "total": 34
+            },
+            "always_n": {
+              "correct": 24,
+              "total": 34
+            }
+          },
+          "SIGNAL_CHAIN": {
+            "cascade_v2": {
+              "correct": 30,
+              "total": 30
+            },
+            "cascade_v2_iso": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_c": {
+              "correct": 12,
+              "total": 30
+            },
+            "always_g": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_n": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "UNIT_SCOPE": {
+            "cascade_v2": {
+              "correct": 20,
+              "total": 20
+            },
+            "cascade_v2_iso": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_c": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g": {
+              "correct": 19,
+              "total": 20
+            },
+            "always_n": {
+              "correct": 19,
+              "total": 20
+            }
+          },
+          "UPSTREAM_ALL": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 9,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 8,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 3,
+              "total": 10
+            }
+          },
+          "UPSTREAM_TO_FIRST_VALVE": {
+            "cascade_v2": {
+              "correct": 4,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 9,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 1,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 9,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 6,
+              "total": 10
+            }
+          }
+        },
+        "family": {
+          "CONNECTED": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "COUNT_IN_UNIT": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "CROSS_UNIT": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 9,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 9,
+              "total": 10
+            }
+          },
+          "DOWNSTREAM_IN_UNIT": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 7,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 6,
+              "total": 10
+            }
+          },
+          "FLOW_PATH": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 2,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 4,
+              "total": 10
+            }
+          },
+          "INSTRUMENTS_OF_ITEM": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 2,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "LOOKUP_TYPE": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "LOOKUP_UNIT": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "LOOPS_NEAR_ITEM": {
+            "cascade_v2": {
+              "correct": 7,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 7,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 1,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 9,
+              "total": 10
+            }
+          },
+          "LOOP_ACTUATED_VALVE": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "LOOP_MEASURED_EQUIPMENT": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 0,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "NEIGHBOURS_DOWNSTREAM": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 9,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 9,
+              "total": 10
+            }
+          },
+          "NO_PATH": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 8,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 7,
+              "total": 10
+            }
+          },
+          "SAME_UNIT": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "SHEETS_OF_TAG": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 10,
+              "total": 10
+            }
+          },
+          "UNANSWERABLE_TAG": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 8,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 8,
+              "total": 10
+            }
+          },
+          "UPSTREAM_ISOLATION": {
+            "cascade_v2": {
+              "correct": 4,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 9,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 1,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 9,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 6,
+              "total": 10
+            }
+          },
+          "UPSTREAM_SOURCES": {
+            "cascade_v2": {
+              "correct": 10,
+              "total": 10
+            },
+            "cascade_v2_iso": {
+              "correct": 10,
+              "total": 10
+            },
+            "always_c": {
+              "correct": 9,
+              "total": 10
+            },
+            "always_g": {
+              "correct": 8,
+              "total": 10
+            },
+            "always_n": {
+              "correct": 3,
+              "total": 10
+            }
+          }
+        },
+        "k bin": {
+          "k=0": {
+            "cascade_v2": {
+              "correct": 67,
+              "total": 69
+            },
+            "cascade_v2_iso": {
+              "correct": 67,
+              "total": 69
+            },
+            "always_c": {
+              "correct": 46,
+              "total": 69
+            },
+            "always_g": {
+              "correct": 68,
+              "total": 69
+            },
+            "always_n": {
+              "correct": 68,
+              "total": 69
+            }
+          },
+          "k=1-2": {
+            "cascade_v2": {
+              "correct": 40,
+              "total": 45
+            },
+            "cascade_v2_iso": {
+              "correct": 43,
+              "total": 45
+            },
+            "always_c": {
+              "correct": 33,
+              "total": 45
+            },
+            "always_g": {
+              "correct": 44,
+              "total": 45
+            },
+            "always_n": {
+              "correct": 38,
+              "total": 45
+            }
+          },
+          "k>=3": {
+            "cascade_v2": {
+              "correct": 44,
+              "total": 46
+            },
+            "cascade_v2_iso": {
+              "correct": 46,
+              "total": 46
+            },
+            "always_c": {
+              "correct": 35,
+              "total": 46
+            },
+            "always_g": {
+              "correct": 41,
+              "total": 46
+            },
+            "always_n": {
+              "correct": 30,
+              "total": 46
+            }
+          },
+          "unanswerable": {
+            "cascade_v2": {
+              "correct": 20,
+              "total": 20
+            },
+            "cascade_v2_iso": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_c": {
+              "correct": 16,
+              "total": 20
+            },
+            "always_g": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_n": {
+              "correct": 15,
+              "total": 20
+            }
+          }
+        }
+      },
+      "diagnostics": [
+        {
+          "policy": "cascade_v2",
+          "boolean_no_questions": 15,
+          "boolean_no_answered_yes": 0,
+          "agent": {
+            "tier": "agent-low-steps",
+            "n_tried": 66,
+            "stop_reasons": {
+              "done": 57,
+              "prompt_budget": 7,
+              "deadline": 1,
+              "errors": 1
+            },
+            "answered_without_tool_call": {
+              "correct": 0,
+              "total": 0
+            },
+            "answered_touching_no_item": {
+              "correct": 7,
+              "total": 7
+            },
+            "named_tag_never_touched": {
+              "correct": 7,
+              "total": 7
+            },
+            "n_with_named_tags": 60
+          },
+          "isolation": {
+            "primary": {
+              "correct": 4,
+              "total": 10
+            },
+            "control_valves_excluded": {
+              "correct": 4,
+              "total": 7
+            }
+          }
+        },
+        {
+          "policy": "cascade_v2_iso",
+          "boolean_no_questions": 15,
+          "boolean_no_answered_yes": 0,
+          "agent": {
+            "tier": "agent-low-steps",
+            "n_tried": 73,
+            "stop_reasons": {
+              "done": 61,
+              "prompt_budget": 10,
+              "deadline": 1,
+              "errors": 1
+            },
+            "answered_without_tool_call": {
+              "correct": 0,
+              "total": 0
+            },
+            "answered_touching_no_item": {
+              "correct": 7,
+              "total": 7
+            },
+            "named_tag_never_touched": {
+              "correct": 7,
+              "total": 7
+            },
+            "n_with_named_tags": 67
+          },
+          "isolation": {
+            "primary": {
+              "correct": 9,
+              "total": 10
+            },
+            "control_valves_excluded": {
+              "correct": 6,
+              "total": 7
+            }
+          }
+        },
+        {
+          "policy": "always_c",
+          "boolean_no_questions": 15,
+          "boolean_no_answered_yes": 0,
+          "agent": null,
+          "isolation": {
+            "primary": {
+              "correct": 1,
+              "total": 10
+            },
+            "control_valves_excluded": {
+              "correct": 1,
+              "total": 7
+            }
+          }
+        },
+        {
+          "policy": "always_g",
+          "boolean_no_questions": 15,
+          "boolean_no_answered_yes": 0,
+          "agent": {
+            "tier": "agent-low-steps",
+            "n_tried": 180,
+            "stop_reasons": {
+              "done": 165,
+              "prompt_budget": 12,
+              "deadline": 2,
+              "errors": 1
+            },
+            "answered_without_tool_call": {
+              "correct": 0,
+              "total": 0
+            },
+            "answered_touching_no_item": {
+              "correct": 8,
+              "total": 8
+            },
+            "named_tag_never_touched": {
+              "correct": 8,
+              "total": 8
+            },
+            "n_with_named_tags": 154
+          },
+          "isolation": {
+            "primary": {
+              "correct": 9,
+              "total": 10
+            },
+            "control_valves_excluded": {
+              "correct": 6,
+              "total": 7
+            }
+          }
+        },
+        {
+          "policy": "always_n",
+          "boolean_no_questions": 15,
+          "boolean_no_answered_yes": 0,
+          "agent": null,
+          "isolation": {
+            "primary": {
+              "correct": 6,
+              "total": 10
+            },
+            "control_valves_excluded": {
+              "correct": 5,
+              "total": 7
+            }
+          }
+        }
+      ],
+      "late_charges": [
+        {
+          "run_id": "CV2-AG2-D1000",
+          "strategy": "graph_agent_low_steps",
+          "n_abandoned_in_rows": 7,
+          "n_timeouts_logged": 7,
+          "n_late_logged": 2,
+          "late_cost_logged_usd": 0.011272556,
+          "estimate_usd": 0.0742
+        }
+      ]
+    }
+  ],
+  "tier3": [
+    {
+      "tier": "need-mimo",
+      "n_runaways": 35,
+      "n_rows": 0,
+      "n_correct": 0,
+      "total_cost_usd": 0.0,
+      "mean_latency_s": 0.0
+    },
+    {
+      "tier": "need-low",
+      "n_runaways": 35,
+      "n_rows": 0,
+      "n_correct": 0,
+      "total_cost_usd": 0.0,
+      "mean_latency_s": 0.0
+    },
+    {
+      "tier": "need-default-64k",
+      "n_runaways": 35,
+      "n_rows": 0,
+      "n_correct": 0,
+      "total_cost_usd": 0.0,
+      "mean_latency_s": 0.0
+    }
+  ],
+  "verdicts": [
+    {
+      "rule": "S1",
+      "status": "INCOMPLETE",
+      "headline": "candidates without a row for every dev runaway: need-mimo, need-low, need-default-64k",
+      "details": [
+        "need-mimo: 0/35 correct (0 rows stored), cost $0.0000, mean latency 0.0 s",
+        "need-low: 0/35 correct (0 rows stored), cost $0.0000, mean latency 0.0 s",
+        "need-default-64k: 0/35 correct (0 rows stored), cost $0.0000, mean latency 0.0 s",
+        "dev corpora pooled: D100, D1000"
+      ]
+    },
+    {
+      "rule": "S2",
+      "status": "INCOMPLETE",
+      "headline": "cascade_v1 or always_n is not evaluated on D1000",
+      "details": []
+    },
+    {
+      "rule": "S3 cascade_v1_iso",
+      "status": "INCOMPLETE",
+      "headline": "cascade_v1_iso or cascade_v1 is not evaluated on D1000",
+      "details": []
+    },
+    {
+      "rule": "S3 label_router_dev",
+      "status": "INCOMPLETE",
+      "headline": "label_router_dev or cascade_v1 is not evaluated on D1000",
+      "details": []
+    },
+    {
+      "rule": "V2",
+      "status": "INCOMPLETE",
+      "headline": "not evaluated on D100: cascade_v1, cascade_v1_iso",
+      "details": []
+    },
+    {
+      "rule": "V3",
+      "status": "INCOMPLETE",
+      "headline": "not evaluated on D1000: cascade_v1, cascade_v1_iso",
+      "details": []
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+run CV2-AG2-D1000: 180 rows to answer, 0 already on disk
+concurrency 4: up to that many questions in flight
+paid mode: up to 180 model calls; hard spend cap 0.5 USD
+estimated cost: 0.2700 USD
+{
+  "run_id": "CV2-AG2-D1000",
+  "n_rows": 180,
+  "n_new_rows": 180,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "graph_agent_low_steps": {
+      "33+": {
+        "ANSWERED": 5
+      },
+      "17-32": {
+        "ANSWERED": 11,
+        "TIMED_OUT": 1
+      },
+      "1": {
+        "ANSWERED": 21
+      },
+      "3-4": {
+        "ANSWERED": 10,
+        "TIMED_OUT": 1
+      },
+      "9-16": {
+        "ANSWERED": 3,
+        "TIMED_OUT": 1
+      },
+      "5-8": {
+        "ANSWERED": 13,
+        "TIMED_OUT": 1
+      },
+      "2": {
+        "ANSWERED": 24
+      },
+      "0": {
+        "ANSWERED": 68,
+        "TIMED_OUT": 1
+      },
+      "unanswerable": {
+        "ANSWERED": 20
+      }
+    }
+  },
+  "routing_recall": {
+    "graph_agent_low_steps": 0.9161290322580645
+  },
+  "relaxed_routing_recall": {
+    "graph_agent_low_steps": 0.9161290322580645
+  },
+  "evidence_node_recall": {
+    "graph_agent_low_steps": 0.8724449807465575
+  },
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {
+      "graph_agent_low_steps": {
+        "33+": 0.0,
+        "17-32": 0.6363636363636364,
+        "1": 0.8571428571428571,
+        "3-4": 1.0,
+        "9-16": 1.0,
+        "5-8": 1.0,
+        "2": 0.9583333333333334,
+        "0": 1.0
+      }
+    },
+    "relaxed_routing_recall": {
+      "graph_agent_low_steps": {
+        "33+": 0.0,
+        "17-32": 0.6363636363636364,
+        "1": 0.8571428571428571,
+        "3-4": 1.0,
+        "9-16": 1.0,
+        "5-8": 1.0,
+        "2": 0.9583333333333334,
+        "0": 1.0
+      }
+    },
+    "evidence_node_recall": {
+      "graph_agent_low_steps": {
+        "33+": 0.0086460508818515,
+        "17-32": 0.6369588640211671,
+        "1": 0.8612714446047779,
+        "3-4": 0.8978787878787878,
+        "9-16": 0.7205882352941176,
+        "5-8": 0.8049165369920087,
+        "2": 0.9268076457360318,
+        "0": 0.974185924369748
+      }
+    }
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "graph_agent_low_steps": 0.0011105548471666666
+  },
+  "stopped_by_spend_cap": false
+}

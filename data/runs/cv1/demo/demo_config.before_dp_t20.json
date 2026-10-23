@@ -1,0 +1,42 @@
+{
+  "policy": "cascade_v3",
+  "question_deadline_s": 120.0,
+  "session_cap_usd": 5.0,
+  "calls_log_path": "data/runs/cv1/demo/calls.jsonl",
+  "corpora": [
+    {
+      "corpus_id": "D100",
+      "ingest_json": "data/runs/cv1/neo4jplant/D100/ingest.json",
+      "drawings_dir": "data/runs/cv1/drawings/D100",
+      "questions_jsonl": "data/runs/cv1/demo/examples/D100.en.jsonl",
+      "tier_runs": {
+        "cypher-luna": "data/runs/cv1/runs/CYPL2-D100",
+        "agent-luna": "data/runs/cv1/runs/AGL3-D100"
+      },
+      "recorded_runs": [
+        "data/runs/cv1/runs/CYPL2-D100",
+        "data/runs/cv1/runs/AGL3-D100",
+        "data/runs/cv1/runs/CYPL2-PARA-D100",
+        "data/runs/cv1/runs/AGL3-PARA-D100"
+      ]
+    },
+    {
+      "corpus_id": "D1000",
+      "ingest_json": "data/runs/cv1/neo4jplant/D1000/ingest.json",
+      "drawings_dir": "data/runs/cv1/drawings/D1000",
+      "questions_jsonl": "data/runs/cv1/demo/examples/D1000.jsonl",
+      "tier_runs": {
+        "cypher-luna": "data/runs/cv1/runs/CYPL2-D1000",
+        "agent-luna": "data/runs/cv1/runs/AGL3-D1000"
+      },
+      "recorded_runs": [
+        "data/runs/cv1/runs/CYPL2-D1000",
+        "data/runs/cv1/runs/AGL3-D1000"
+      ]
+    }
+  ],
+  "results": {
+    "ladder_report": "data/runs/exp0001/report/report.json",
+    "sealed_report": "data/runs/sealed/report/report.json"
+  }
+}

@@ -1,0 +1,53 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\qa\harness\__main__.py", line 3, in <module>
+    main()
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\qa\harness\cli.py", line 149, in main
+    summary = run_harness(
+              ^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\qa\harness\runner.py", line 104, in run_harness
+    n_new_rows, stopped_by_cap = fill_answers(
+                                 ^^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\qa\harness\fill.py", line 96, in fill_answers
+    raise blocker
+  File "C:\Users\Otthon\AppData\Local\Programs\Python\Python312\Lib\concurrent\futures\thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\qa\harness\fill.py", line 137, in _answer
+    return attempt(job.item, self._config, corpus, self._client, meter)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\qa\harness\attempt.py", line 104, in attempt
+    return _attempt(item, config, corpus, client, meter)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\qa\harness\attempt.py", line 129, in _attempt
+    step = answer_question(
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\qa\strategies\base.py", line 43, in answer_question
+    retrieval = strategy.retrieve(question.text)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\qa\agent\strategies.py", line 65, in retrieve
+    run = run_agent_loop(
+          ^^^^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\qa\agent\loop.py", line 43, in run_agent_loop
+    stop_reason = loop.run()
+                  ^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\qa\agent\loop.py", line 93, in run
+    if self._take_reply(index, response):
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\qa\agent\loop.py", line 111, in _take_reply
+    self._run_tool(index, response, action)
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\qa\agent\loop.py", line 122, in _run_tool
+    text = result.render(self._params.observation_chars, self._params.max_items_listed)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\qa\plant_api\results.py", line 84, in render
+    lines += [edge_line(edge, names) for edge in edges]
+              ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\qa\plant_api\results.py", line 197, in edge_line
+    line = f"{item_label(names[edge.source])} -{edge.relation}-> {item_label(names[edge.target])}"
+                         ~~~~~^^^^^^^^^^^^^
+KeyError: '56:034cd16cb700'
+run QAR-P2-D100: 180 rows to answer, 0 already on disk
+concurrency 4: up to that many questions in flight
+paid mode: up to 180 model calls; hard spend cap 2.5 USD
+estimated cost: 1.4400 USD

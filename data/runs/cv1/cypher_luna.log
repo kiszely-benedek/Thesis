@@ -1,0 +1,14 @@
+=== wipe Neo4j, then load D100 (plant profile)
+wiped []
+{'n_sheets': 101, 'n_nodes': 3867, 'n_relationships': 11653, 'n_connector_pairs_predicted': 215, 'n_unresolved': 0}
+=== CYP2-D100-low (GLM)
+  "stopped_by_spend_cap": false
+=== CYPL-D100 (Luna low)
+  "stopped_by_spend_cap": false
+=== wipe Neo4j, then load D1000 (plant profile)
+wiped ['D100']
+{'n_sheets': 1000, 'n_nodes': 37124, 'n_relationships': 111668, 'n_connector_pairs_predicted': 2138, 'n_unresolved': 0}
+=== CYP2-D1000-low (GLM)
+  "stopped_by_spend_cap": false
+=== CYPL-D1000 (Luna low)
+  "stopped_by_spend_cap": false

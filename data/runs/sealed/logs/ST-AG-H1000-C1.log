@@ -1,0 +1,62 @@
+run ST-AG-H1000-C1: 48 rows to answer, 0 already on disk
+paid mode: up to 48 model calls; hard spend cap 0.1 USD
+estimated cost: 0.1440 USD
+{
+  "run_id": "ST-AG-H1000-C1",
+  "n_rows": 48,
+  "n_new_rows": 48,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "graph_agent_low_steps": {
+      "0": {
+        "ANSWERED": 25
+      },
+      "1": {
+        "ANSWERED": 17
+      },
+      "2": {
+        "ANSWERED": 2
+      },
+      "unanswerable": {
+        "ANSWERED": 4
+      }
+    }
+  },
+  "routing_recall": {
+    "graph_agent_low_steps": 0.9545454545454546
+  },
+  "relaxed_routing_recall": {
+    "graph_agent_low_steps": 0.9545454545454546
+  },
+  "evidence_node_recall": {
+    "graph_agent_low_steps": 0.908080808080808
+  },
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {
+      "graph_agent_low_steps": {
+        "0": 0.96,
+        "1": 0.9411764705882353,
+        "2": 1.0
+      }
+    },
+    "relaxed_routing_recall": {
+      "graph_agent_low_steps": {
+        "0": 0.96,
+        "1": 0.9411764705882353,
+        "2": 1.0
+      }
+    },
+    "evidence_node_recall": {
+      "graph_agent_low_steps": {
+        "0": 0.9255555555555556,
+        "1": 0.8862745098039215,
+        "2": 0.875
+      }
+    }
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "graph_agent_low_steps": 0.0004008746875
+  },
+  "stopped_by_spend_cap": false
+}

@@ -5,13 +5,10 @@ __pycache__/
 .ruff_cache/
 .mypy_cache/
 
-# third-party reference files (e.g. the DEXPI example C01V04-VER.EX01.xml); tests skip when absent
-data/external/
+# SQLite side files of the LLM response caches (the .sqlite files themselves are committed)
+*.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm
 
 # local secrets (Neo4j and OpenRouter credentials) — never committed
 .env
-
-# generated question sets, run outputs and the LLM response cache (whether any of these is released is undecided)
-data/questions/
-data/runs/
-data/llm-cache/

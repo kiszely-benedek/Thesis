@@ -1,0 +1,4580 @@
+{
+  "bound": {
+    "median_max_s": 10.0,
+    "p90_max_s": 60.0,
+    "cutoff_s": 120.0
+  },
+  "corpora": [
+    {
+      "corpus_id": "H100",
+      "n_questions": 580,
+      "policies": [
+        {
+          "summary": {
+            "policy": "cascade_v3",
+            "corpus_id": "H100",
+            "n_questions": 580,
+            "n_correct": 548,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 548,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.361871805,
+            "cost_per_question_usd": 0.0006239169051724138,
+            "latency_median_s": 8.09255989999292,
+            "latency_mean_s": 11.327448947413195,
+            "latency_p90_s": 21.805187499980093,
+            "latency_p95_s": 30.432241899987275,
+            "latency_max_s": 84.54206350001186,
+            "tier_shares": {
+              "cypher-luna": 0.7310344827586207,
+              "agent-luna": 0.2689655172413793
+            },
+            "tier_calls": {
+              "cypher-luna": 580,
+              "agent-luna": 156
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "cascade_v3 on H100: median 8.1 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "cascade_v3 on H100: p90 21.8 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": {
+            "n_accepted": 424,
+            "n_accepted_correct": 404,
+            "n_first_tier_correct": 433,
+            "precision": 0.9528301886792453,
+            "recall": 0.9330254041570438
+          },
+          "vs_always_n": null,
+          "oracle": {
+            "policy": "oracle(cascade_v3)",
+            "corpus_id": "H100",
+            "n_questions": 580,
+            "n_correct": 565,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 565,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.37912617,
+            "cost_per_question_usd": 0.0006536658103448276,
+            "latency_median_s": 7.897901899996214,
+            "latency_mean_s": 11.768178251723494,
+            "latency_p90_s": 25.12272789999406,
+            "latency_p95_s": 36.1703903000016,
+            "latency_max_s": 84.54206350001186,
+            "tier_shares": {
+              "cypher-luna": 0.746551724137931,
+              "agent-luna": 0.253448275862069
+            },
+            "tier_calls": {
+              "cypher-luna": 580,
+              "agent-luna": 147
+            }
+          },
+          "random": {
+            "n_draws": 1000,
+            "n_escalated": 156,
+            "correct_mean": 465.695,
+            "correct_low": 457.0,
+            "correct_high": 475.0,
+            "correct_at_cutoff_mean": 465.695,
+            "correct_at_cutoff_low": 457.0,
+            "correct_at_cutoff_high": 475.0,
+            "cost_total_mean_usd": 0.3416165771800001,
+            "latency_mean_s": 10.71372766027848
+          },
+          "vs_random": {
+            "accuracy": {
+              "mean": 0.14190517241379308,
+              "ci_low": 0.1170844827586207,
+              "ci_high": 0.1658
+            },
+            "accuracy_at_cutoff": {
+              "mean": 0.14190517241379308,
+              "ci_low": 0.1170844827586207,
+              "ci_high": 0.1658
+            },
+            "cost_usd": {
+              "mean": 0.000034922806586206695,
+              "ci_low": -2.2525170431037867e-6,
+              "ci_high": 0.0000734663785517239
+            },
+            "latency_s": {
+              "mean": 0.6137212871347152,
+              "ci_low": -0.005711318689536961,
+              "ci_high": 1.2615697627686187
+            }
+          },
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "always_g_luna",
+            "corpus_id": "H100",
+            "n_questions": 580,
+            "n_correct": 551,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 551,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.36399618499999997,
+            "cost_per_question_usd": 0.0006275796293103448,
+            "latency_median_s": 8.525023550002516,
+            "latency_mean_s": 11.771043485861322,
+            "latency_p90_s": 22.453922299988335,
+            "latency_p95_s": 31.6685307000007,
+            "latency_max_s": 67.1373209999947,
+            "tier_shares": {
+              "agent-luna": 0.9948275862068966,
+              "none": 0.005172413793103448
+            },
+            "tier_calls": {
+              "agent-luna": 580
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "always_g_luna on H100: median 8.5 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "always_g_luna on H100: p90 22.5 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": null,
+          "vs_always_n": null,
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "always_c_luna",
+            "corpus_id": "H100",
+            "n_questions": 580,
+            "n_correct": 433,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 433,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.243826625,
+            "cost_per_question_usd": 0.0004203907327586207,
+            "latency_median_s": 6.691684350000287,
+            "latency_mean_s": 7.549915871206444,
+            "latency_p90_s": 11.557145200007653,
+            "latency_p95_s": 13.594039099996735,
+            "latency_max_s": 84.54206350001186,
+            "tier_shares": {
+              "cypher-luna": 0.8482758620689655,
+              "none": 0.15172413793103448
+            },
+            "tier_calls": {
+              "cypher-luna": 580
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "always_c_luna on H100: median 6.7 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "always_c_luna on H100: p90 11.6 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": null,
+          "vs_always_n": null,
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "cascade_v3_iso",
+            "corpus_id": "H100",
+            "n_questions": 580,
+            "n_correct": 556,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 556,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.36269995,
+            "cost_per_question_usd": 0.0006253447413793104,
+            "latency_median_s": 8.09255989999292,
+            "latency_mean_s": 11.314549214826961,
+            "latency_p90_s": 21.630294500013406,
+            "latency_p95_s": 30.432241899987275,
+            "latency_max_s": 84.54206350001186,
+            "tier_shares": {
+              "cypher-luna": 0.7137931034482758,
+              "agent-luna": 0.28620689655172415
+            },
+            "tier_calls": {
+              "cypher-luna": 560,
+              "agent-luna": 166
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "cascade_v3_iso on H100: median 8.1 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "cascade_v3_iso on H100: p90 21.6 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": null,
+          "vs_always_n": null,
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        }
+      ],
+      "not_evaluated": [],
+      "breakdowns": {
+        "need label": {
+          "DOWNSTREAM_ALL": {
+            "cascade_v3": {
+              "correct": 30,
+              "total": 40
+            },
+            "always_g_luna": {
+              "correct": 29,
+              "total": 40
+            },
+            "always_c_luna": {
+              "correct": 22,
+              "total": 40
+            },
+            "cascade_v3_iso": {
+              "correct": 30,
+              "total": 40
+            }
+          },
+          "GENERIC": {
+            "cascade_v3": {
+              "correct": 157,
+              "total": 160
+            },
+            "always_g_luna": {
+              "correct": 150,
+              "total": 160
+            },
+            "always_c_luna": {
+              "correct": 120,
+              "total": 160
+            },
+            "cascade_v3_iso": {
+              "correct": 157,
+              "total": 160
+            }
+          },
+          "ITEM": {
+            "cascade_v3": {
+              "correct": 89,
+              "total": 89
+            },
+            "always_g_luna": {
+              "correct": 88,
+              "total": 89
+            },
+            "always_c_luna": {
+              "correct": 84,
+              "total": 89
+            },
+            "cascade_v3_iso": {
+              "correct": 89,
+              "total": 89
+            }
+          },
+          "NEIGHBOURS_DOWNSTREAM": {
+            "cascade_v3": {
+              "correct": 28,
+              "total": 28
+            },
+            "always_g_luna": {
+              "correct": 28,
+              "total": 28
+            },
+            "always_c_luna": {
+              "correct": 18,
+              "total": 28
+            },
+            "cascade_v3_iso": {
+              "correct": 28,
+              "total": 28
+            }
+          },
+          "PATH": {
+            "cascade_v3": {
+              "correct": 70,
+              "total": 73
+            },
+            "always_g_luna": {
+              "correct": 73,
+              "total": 73
+            },
+            "always_c_luna": {
+              "correct": 59,
+              "total": 73
+            },
+            "cascade_v3_iso": {
+              "correct": 70,
+              "total": 73
+            }
+          },
+          "SIGNAL_CHAIN": {
+            "cascade_v3": {
+              "correct": 70,
+              "total": 70
+            },
+            "always_g_luna": {
+              "correct": 70,
+              "total": 70
+            },
+            "always_c_luna": {
+              "correct": 47,
+              "total": 70
+            },
+            "cascade_v3_iso": {
+              "correct": 70,
+              "total": 70
+            }
+          },
+          "UNIT_SCOPE": {
+            "cascade_v3": {
+              "correct": 76,
+              "total": 80
+            },
+            "always_g_luna": {
+              "correct": 78,
+              "total": 80
+            },
+            "always_c_luna": {
+              "correct": 69,
+              "total": 80
+            },
+            "cascade_v3_iso": {
+              "correct": 76,
+              "total": 80
+            }
+          },
+          "UPSTREAM_ALL": {
+            "cascade_v3": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_luna": {
+              "correct": 19,
+              "total": 20
+            },
+            "always_c_luna": {
+              "correct": 13,
+              "total": 20
+            },
+            "cascade_v3_iso": {
+              "correct": 20,
+              "total": 20
+            }
+          },
+          "UPSTREAM_TO_FIRST_VALVE": {
+            "cascade_v3": {
+              "correct": 8,
+              "total": 20
+            },
+            "always_g_luna": {
+              "correct": 16,
+              "total": 20
+            },
+            "always_c_luna": {
+              "correct": 1,
+              "total": 20
+            },
+            "cascade_v3_iso": {
+              "correct": 16,
+              "total": 20
+            }
+          }
+        },
+        "family": {
+          "CONNECTED": {
+            "cascade_v3": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_luna": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_c_luna": {
+              "correct": 18,
+              "total": 20
+            },
+            "cascade_v3_iso": {
+              "correct": 20,
+              "total": 20
+            }
+          },
+          "COUNT_IN_UNIT": {
+            "cascade_v3": {
+              "correct": 29,
+              "total": 30
+            },
+            "always_g_luna": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_c_luna": {
+              "correct": 26,
+              "total": 30
+            },
+            "cascade_v3_iso": {
+              "correct": 29,
+              "total": 30
+            }
+          },
+          "CROSS_UNIT": {
+            "cascade_v3": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_g_luna": {
+              "correct": 29,
+              "total": 30
+            },
+            "always_c_luna": {
+              "correct": 27,
+              "total": 30
+            },
+            "cascade_v3_iso": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "DOWNSTREAM_IN_UNIT": {
+            "cascade_v3": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_luna": {
+              "correct": 18,
+              "total": 20
+            },
+            "always_c_luna": {
+              "correct": 17,
+              "total": 20
+            },
+            "cascade_v3_iso": {
+              "correct": 20,
+              "total": 20
+            }
+          },
+          "DOWNSTREAM_ISOLATION": {
+            "cascade_v3": {
+              "correct": 10,
+              "total": 20
+            },
+            "always_g_luna": {
+              "correct": 11,
+              "total": 20
+            },
+            "always_c_luna": {
+              "correct": 5,
+              "total": 20
+            },
+            "cascade_v3_iso": {
+              "correct": 10,
+              "total": 20
+            }
+          },
+          "FEEDING_UNITS": {
+            "cascade_v3": {
+              "correct": 17,
+              "total": 20
+            },
+            "always_g_luna": {
+              "correct": 19,
+              "total": 20
+            },
+            "always_c_luna": {
+              "correct": 16,
+              "total": 20
+            },
+            "cascade_v3_iso": {
+              "correct": 17,
+              "total": 20
+            }
+          },
+          "FIRST_MEETING_POINT": {
+            "cascade_v3": {
+              "correct": 19,
+              "total": 20
+            },
+            "always_g_luna": {
+              "correct": 16,
+              "total": 20
+            },
+            "always_c_luna": {
+              "correct": 9,
+              "total": 20
+            },
+            "cascade_v3_iso": {
+              "correct": 19,
+              "total": 20
+            }
+          },
+          "FLOW_PATH": {
+            "cascade_v3": {
+              "correct": 27,
+              "total": 30
+            },
+            "always_g_luna": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_c_luna": {
+              "correct": 25,
+              "total": 30
+            },
+            "cascade_v3_iso": {
+              "correct": 27,
+              "total": 30
+            }
+          },
+          "INSTRUMENTS_OF_ITEM": {
+            "cascade_v3": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_luna": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_c_luna": {
+              "correct": 10,
+              "total": 20
+            },
+            "cascade_v3_iso": {
+              "correct": 20,
+              "total": 20
+            }
+          },
+          "LOOKUP_TYPE": {
+            "cascade_v3": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_g_luna": {
+              "correct": 29,
+              "total": 30
+            },
+            "always_c_luna": {
+              "correct": 27,
+              "total": 30
+            },
+            "cascade_v3_iso": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "LOOKUP_UNIT": {
+            "cascade_v3": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_g_luna": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_c_luna": {
+              "correct": 29,
+              "total": 30
+            },
+            "cascade_v3_iso": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "LOOPS_NEAR_ITEM": {
+            "cascade_v3": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_luna": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_c_luna": {
+              "correct": 14,
+              "total": 20
+            },
+            "cascade_v3_iso": {
+              "correct": 20,
+              "total": 20
+            }
+          },
+          "LOOP_ACTUATED_VALVE": {
+            "cascade_v3": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_g_luna": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_c_luna": {
+              "correct": 25,
+              "total": 30
+            },
+            "cascade_v3_iso": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "LOOP_MEASURED_EQUIPMENT": {
+            "cascade_v3": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_g_luna": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_c_luna": {
+              "correct": 19,
+              "total": 30
+            },
+            "cascade_v3_iso": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "NEIGHBOURS_DOWNSTREAM": {
+            "cascade_v3": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_g_luna": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_c_luna": {
+              "correct": 25,
+              "total": 30
+            },
+            "cascade_v3_iso": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "NO_PATH": {
+            "cascade_v3": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_luna": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_c_luna": {
+              "correct": 13,
+              "total": 20
+            },
+            "cascade_v3_iso": {
+              "correct": 20,
+              "total": 20
+            }
+          },
+          "ROUTE_AVOIDING": {
+            "cascade_v3": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_luna": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_c_luna": {
+              "correct": 19,
+              "total": 20
+            },
+            "cascade_v3_iso": {
+              "correct": 20,
+              "total": 20
+            }
+          },
+          "SAME_UNIT": {
+            "cascade_v3": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_luna": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_c_luna": {
+              "correct": 17,
+              "total": 20
+            },
+            "cascade_v3_iso": {
+              "correct": 20,
+              "total": 20
+            }
+          },
+          "SHEETS_OF_TAG": {
+            "cascade_v3": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_g_luna": {
+              "correct": 29,
+              "total": 30
+            },
+            "always_c_luna": {
+              "correct": 29,
+              "total": 30
+            },
+            "cascade_v3_iso": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "UNANSWERABLE_TAG": {
+            "cascade_v3": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_luna": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_c_luna": {
+              "correct": 12,
+              "total": 20
+            },
+            "cascade_v3_iso": {
+              "correct": 20,
+              "total": 20
+            }
+          },
+          "UNITS_REACHED": {
+            "cascade_v3": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_luna": {
+              "correct": 19,
+              "total": 20
+            },
+            "always_c_luna": {
+              "correct": 18,
+              "total": 20
+            },
+            "cascade_v3_iso": {
+              "correct": 20,
+              "total": 20
+            }
+          },
+          "UPSTREAM_ISOLATION": {
+            "cascade_v3": {
+              "correct": 17,
+              "total": 30
+            },
+            "always_g_luna": {
+              "correct": 25,
+              "total": 30
+            },
+            "always_c_luna": {
+              "correct": 3,
+              "total": 30
+            },
+            "cascade_v3_iso": {
+              "correct": 25,
+              "total": 30
+            }
+          },
+          "UPSTREAM_SOURCES": {
+            "cascade_v3": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_luna": {
+              "correct": 19,
+              "total": 20
+            },
+            "always_c_luna": {
+              "correct": 13,
+              "total": 20
+            },
+            "cascade_v3_iso": {
+              "correct": 20,
+              "total": 20
+            }
+          },
+          "VALVES_ON_PATH": {
+            "cascade_v3": {
+              "correct": 19,
+              "total": 20
+            },
+            "always_g_luna": {
+              "correct": 17,
+              "total": 20
+            },
+            "always_c_luna": {
+              "correct": 17,
+              "total": 20
+            },
+            "cascade_v3_iso": {
+              "correct": 19,
+              "total": 20
+            }
+          }
+        },
+        "k bin": {
+          "k=0": {
+            "cascade_v3": {
+              "correct": 221,
+              "total": 223
+            },
+            "always_g_luna": {
+              "correct": 219,
+              "total": 223
+            },
+            "always_c_luna": {
+              "correct": 172,
+              "total": 223
+            },
+            "cascade_v3_iso": {
+              "correct": 222,
+              "total": 223
+            }
+          },
+          "k=1-2": {
+            "cascade_v3": {
+              "correct": 181,
+              "total": 199
+            },
+            "always_g_luna": {
+              "correct": 185,
+              "total": 199
+            },
+            "always_c_luna": {
+              "correct": 151,
+              "total": 199
+            },
+            "cascade_v3_iso": {
+              "correct": 184,
+              "total": 199
+            }
+          },
+          "k>=3": {
+            "cascade_v3": {
+              "correct": 106,
+              "total": 118
+            },
+            "always_g_luna": {
+              "correct": 107,
+              "total": 118
+            },
+            "always_c_luna": {
+              "correct": 85,
+              "total": 118
+            },
+            "cascade_v3_iso": {
+              "correct": 110,
+              "total": 118
+            }
+          },
+          "unanswerable": {
+            "cascade_v3": {
+              "correct": 40,
+              "total": 40
+            },
+            "always_g_luna": {
+              "correct": 40,
+              "total": 40
+            },
+            "always_c_luna": {
+              "correct": 25,
+              "total": 40
+            },
+            "cascade_v3_iso": {
+              "correct": 40,
+              "total": 40
+            }
+          }
+        }
+      },
+      "diagnostics": [
+        {
+          "policy": "cascade_v3",
+          "boolean_no_questions": 36,
+          "boolean_no_answered_yes": 0,
+          "agent": {
+            "tier": "agent-luna",
+            "n_tried": 156,
+            "stop_reasons": {
+              "done": 153,
+              "prompt_budget": 2,
+              "errors": 1
+            },
+            "answered_without_tool_call": {
+              "correct": 0,
+              "total": 0
+            },
+            "answered_touching_no_item": {
+              "correct": 36,
+              "total": 36
+            },
+            "named_tag_never_touched": {
+              "correct": 23,
+              "total": 23
+            },
+            "n_with_named_tags": 132
+          },
+          "isolation": {
+            "primary": {
+              "correct": 17,
+              "total": 30
+            },
+            "control_valves_excluded": {
+              "correct": 11,
+              "total": 26
+            }
+          }
+        },
+        {
+          "policy": "always_g_luna",
+          "boolean_no_questions": 36,
+          "boolean_no_answered_yes": 0,
+          "agent": {
+            "tier": "agent-luna",
+            "n_tried": 580,
+            "stop_reasons": {
+              "done": 571,
+              "errors": 4,
+              "prompt_budget": 5
+            },
+            "answered_without_tool_call": {
+              "correct": 0,
+              "total": 3
+            },
+            "answered_touching_no_item": {
+              "correct": 43,
+              "total": 46
+            },
+            "named_tag_never_touched": {
+              "correct": 30,
+              "total": 33
+            },
+            "n_with_named_tags": 483
+          },
+          "isolation": {
+            "primary": {
+              "correct": 25,
+              "total": 30
+            },
+            "control_valves_excluded": {
+              "correct": 14,
+              "total": 26
+            }
+          }
+        },
+        {
+          "policy": "always_c_luna",
+          "boolean_no_questions": 36,
+          "boolean_no_answered_yes": 0,
+          "agent": null,
+          "isolation": {
+            "primary": {
+              "correct": 3,
+              "total": 30
+            },
+            "control_valves_excluded": {
+              "correct": 2,
+              "total": 26
+            }
+          }
+        },
+        {
+          "policy": "cascade_v3_iso",
+          "boolean_no_questions": 36,
+          "boolean_no_answered_yes": 0,
+          "agent": {
+            "tier": "agent-luna",
+            "n_tried": 166,
+            "stop_reasons": {
+              "done": 163,
+              "prompt_budget": 2,
+              "errors": 1
+            },
+            "answered_without_tool_call": {
+              "correct": 0,
+              "total": 0
+            },
+            "answered_touching_no_item": {
+              "correct": 36,
+              "total": 36
+            },
+            "named_tag_never_touched": {
+              "correct": 23,
+              "total": 23
+            },
+            "n_with_named_tags": 142
+          },
+          "isolation": {
+            "primary": {
+              "correct": 25,
+              "total": 30
+            },
+            "control_valves_excluded": {
+              "correct": 14,
+              "total": 26
+            }
+          }
+        }
+      ],
+      "late_charges": []
+    },
+    {
+      "corpus_id": "H1000",
+      "n_questions": 580,
+      "policies": [
+        {
+          "summary": {
+            "policy": "cascade_v3",
+            "corpus_id": "H1000",
+            "n_questions": 580,
+            "n_correct": 540,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 540,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.384034385,
+            "cost_per_question_usd": 0.00066212825,
+            "latency_median_s": 7.870310599995719,
+            "latency_mean_s": 11.0270346006894,
+            "latency_p90_s": 20.41312050000124,
+            "latency_p95_s": 30.653562799983774,
+            "latency_max_s": 92.25598930001433,
+            "tier_shares": {
+              "cypher-luna": 0.6793103448275862,
+              "agent-luna": 0.32068965517241377
+            },
+            "tier_calls": {
+              "cypher-luna": 580,
+              "agent-luna": 186
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "cascade_v3 on H1000: median 7.9 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "cascade_v3 on H1000: p90 20.4 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": {
+            "n_accepted": 394,
+            "n_accepted_correct": 373,
+            "n_first_tier_correct": 405,
+            "precision": 0.9467005076142132,
+            "recall": 0.9209876543209876
+          },
+          "vs_always_n": null,
+          "oracle": {
+            "policy": "oracle(cascade_v3)",
+            "corpus_id": "H1000",
+            "n_questions": 580,
+            "n_correct": 557,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 557,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.400747905,
+            "cost_per_question_usd": 0.0006909446637931035,
+            "latency_median_s": 7.53433479999876,
+            "latency_mean_s": 11.391607308965316,
+            "latency_p90_s": 24.99676859999454,
+            "latency_p95_s": 34.83789100001013,
+            "latency_max_s": 92.25598930001433,
+            "tier_shares": {
+              "cypher-luna": 0.6982758620689655,
+              "agent-luna": 0.3017241379310345
+            },
+            "tier_calls": {
+              "cypher-luna": 580,
+              "agent-luna": 175
+            }
+          },
+          "random": {
+            "n_draws": 1000,
+            "n_escalated": 186,
+            "correct_mean": 450.013,
+            "correct_low": 440.0,
+            "correct_high": 460.0,
+            "correct_at_cutoff_mean": 450.013,
+            "correct_at_cutoff_low": 440.0,
+            "correct_at_cutoff_high": 460.0,
+            "cost_total_mean_usd": 0.36804665142,
+            "latency_mean_s": 10.511071846384384
+          },
+          "vs_random": {
+            "accuracy": {
+              "mean": 0.15514999999999998,
+              "ci_low": 0.13187758620689655,
+              "ci_high": 0.17963275862068964
+            },
+            "accuracy_at_cutoff": {
+              "mean": 0.15514999999999998,
+              "ci_low": 0.13187758620689655,
+              "ci_high": 0.17963275862068964
+            },
+            "cost_usd": {
+              "mean": 0.00002756505789655173,
+              "ci_low": -0.000017937574681034606,
+              "ci_high": 0.00007401072726724074
+            },
+            "latency_s": {
+              "mean": 0.5159627543050154,
+              "ci_low": -0.1287991387388796,
+              "ci_high": 1.1866805108819458
+            }
+          },
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "always_g_luna",
+            "corpus_id": "H1000",
+            "n_questions": 580,
+            "n_correct": 545,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 545,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.399234405,
+            "cost_per_question_usd": 0.0006883351810344827,
+            "latency_median_s": 8.04291175000617,
+            "latency_mean_s": 11.680096423103207,
+            "latency_p90_s": 22.811573500010127,
+            "latency_p95_s": 31.76105519998964,
+            "latency_max_s": 86.038517900015,
+            "tier_shares": {
+              "agent-luna": 0.9982758620689656,
+              "none": 0.0017241379310344827
+            },
+            "tier_calls": {
+              "agent-luna": 580
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "always_g_luna on H1000: median 8.0 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "always_g_luna on H1000: p90 22.8 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": null,
+          "vs_always_n": null,
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "always_c_luna",
+            "corpus_id": "H1000",
+            "n_questions": 580,
+            "n_correct": 405,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 405,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.240079225,
+            "cost_per_question_usd": 0.0004139296982758621,
+            "latency_median_s": 5.946896699995705,
+            "latency_mean_s": 6.7675744915511915,
+            "latency_p90_s": 10.662496299992199,
+            "latency_p95_s": 12.99461469999369,
+            "latency_max_s": 38.114279900008114,
+            "tier_shares": {
+              "cypher-luna": 0.803448275862069,
+              "none": 0.19655172413793104
+            },
+            "tier_calls": {
+              "cypher-luna": 580
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "always_c_luna on H1000: median 5.9 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "always_c_luna on H1000: p90 10.7 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": null,
+          "vs_always_n": null,
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "cascade_v3_iso",
+            "corpus_id": "H1000",
+            "n_questions": 580,
+            "n_correct": 549,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 549,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.382379375,
+            "cost_per_question_usd": 0.0006592747844827587,
+            "latency_median_s": 7.870310599995719,
+            "latency_mean_s": 10.996560614999845,
+            "latency_p90_s": 21.127806400007103,
+            "latency_p95_s": 28.717552200010687,
+            "latency_max_s": 92.25598930001433,
+            "tier_shares": {
+              "cypher-luna": 0.6603448275862069,
+              "agent-luna": 0.3396551724137931
+            },
+            "tier_calls": {
+              "cypher-luna": 560,
+              "agent-luna": 197
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "cascade_v3_iso on H1000: median 7.9 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "cascade_v3_iso on H1000: p90 21.1 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": null,
+          "vs_always_n": null,
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        }
+      ],
+      "not_evaluated": [],
+      "breakdowns": {
+        "need label": {
+          "DOWNSTREAM_ALL": {
+            "cascade_v3": {
+              "correct": 27,
+              "total": 40
+            },
+            "always_g_luna": {
+              "correct": 29,
+              "total": 40
+            },
+            "always_c_luna": {
+              "correct": 19,
+              "total": 40
+            },
+            "cascade_v3_iso": {
+              "correct": 27,
+              "total": 40
+            }
+          },
+          "GENERIC": {
+            "cascade_v3": {
+              "correct": 152,
+              "total": 160
+            },
+            "always_g_luna": {
+              "correct": 146,
+              "total": 160
+            },
+            "always_c_luna": {
+              "correct": 112,
+              "total": 160
+            },
+            "cascade_v3_iso": {
+              "correct": 152,
+              "total": 160
+            }
+          },
+          "ITEM": {
+            "cascade_v3": {
+              "correct": 88,
+              "total": 88
+            },
+            "always_g_luna": {
+              "correct": 88,
+              "total": 88
+            },
+            "always_c_luna": {
+              "correct": 78,
+              "total": 88
+            },
+            "cascade_v3_iso": {
+              "correct": 88,
+              "total": 88
+            }
+          },
+          "NEIGHBOURS_DOWNSTREAM": {
+            "cascade_v3": {
+              "correct": 29,
+              "total": 29
+            },
+            "always_g_luna": {
+              "correct": 29,
+              "total": 29
+            },
+            "always_c_luna": {
+              "correct": 19,
+              "total": 29
+            },
+            "cascade_v3_iso": {
+              "correct": 29,
+              "total": 29
+            }
+          },
+          "PATH": {
+            "cascade_v3": {
+              "correct": 73,
+              "total": 73
+            },
+            "always_g_luna": {
+              "correct": 73,
+              "total": 73
+            },
+            "always_c_luna": {
+              "correct": 61,
+              "total": 73
+            },
+            "cascade_v3_iso": {
+              "correct": 73,
+              "total": 73
+            }
+          },
+          "SIGNAL_CHAIN": {
+            "cascade_v3": {
+              "correct": 70,
+              "total": 70
+            },
+            "always_g_luna": {
+              "correct": 70,
+              "total": 70
+            },
+            "always_c_luna": {
+              "correct": 38,
+              "total": 70
+            },
+            "cascade_v3_iso": {
+              "correct": 70,
+              "total": 70
+            }
+          },
+          "UNIT_SCOPE": {
+            "cascade_v3": {
+              "correct": 76,
+              "total": 80
+            },
+            "always_g_luna": {
+              "correct": 79,
+              "total": 80
+            },
+            "always_c_luna": {
+              "correct": 65,
+              "total": 80
+            },
+            "cascade_v3_iso": {
+              "correct": 76,
+              "total": 80
+            }
+          },
+          "UPSTREAM_ALL": {
+            "cascade_v3": {
+              "correct": 18,
+              "total": 20
+            },
+            "always_g_luna": {
+              "correct": 15,
+              "total": 20
+            },
+            "always_c_luna": {
+              "correct": 13,
+              "total": 20
+            },
+            "cascade_v3_iso": {
+              "correct": 18,
+              "total": 20
+            }
+          },
+          "UPSTREAM_TO_FIRST_VALVE": {
+            "cascade_v3": {
+              "correct": 7,
+              "total": 20
+            },
+            "always_g_luna": {
+              "correct": 16,
+              "total": 20
+            },
+            "always_c_luna": {
+              "correct": 0,
+              "total": 20
+            },
+            "cascade_v3_iso": {
+              "correct": 16,
+              "total": 20
+            }
+          }
+        },
+        "family": {
+          "CONNECTED": {
+            "cascade_v3": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_luna": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_c_luna": {
+              "correct": 15,
+              "total": 20
+            },
+            "cascade_v3_iso": {
+              "correct": 20,
+              "total": 20
+            }
+          },
+          "COUNT_IN_UNIT": {
+            "cascade_v3": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_g_luna": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_c_luna": {
+              "correct": 24,
+              "total": 30
+            },
+            "cascade_v3_iso": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "CROSS_UNIT": {
+            "cascade_v3": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_g_luna": {
+              "correct": 29,
+              "total": 30
+            },
+            "always_c_luna": {
+              "correct": 28,
+              "total": 30
+            },
+            "cascade_v3_iso": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "DOWNSTREAM_IN_UNIT": {
+            "cascade_v3": {
+              "correct": 19,
+              "total": 20
+            },
+            "always_g_luna": {
+              "correct": 19,
+              "total": 20
+            },
+            "always_c_luna": {
+              "correct": 17,
+              "total": 20
+            },
+            "cascade_v3_iso": {
+              "correct": 19,
+              "total": 20
+            }
+          },
+          "DOWNSTREAM_ISOLATION": {
+            "cascade_v3": {
+              "correct": 8,
+              "total": 20
+            },
+            "always_g_luna": {
+              "correct": 10,
+              "total": 20
+            },
+            "always_c_luna": {
+              "correct": 2,
+              "total": 20
+            },
+            "cascade_v3_iso": {
+              "correct": 8,
+              "total": 20
+            }
+          },
+          "FEEDING_UNITS": {
+            "cascade_v3": {
+              "correct": 16,
+              "total": 20
+            },
+            "always_g_luna": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_c_luna": {
+              "correct": 13,
+              "total": 20
+            },
+            "cascade_v3_iso": {
+              "correct": 16,
+              "total": 20
+            }
+          },
+          "FIRST_MEETING_POINT": {
+            "cascade_v3": {
+              "correct": 17,
+              "total": 20
+            },
+            "always_g_luna": {
+              "correct": 12,
+              "total": 20
+            },
+            "always_c_luna": {
+              "correct": 15,
+              "total": 20
+            },
+            "cascade_v3_iso": {
+              "correct": 17,
+              "total": 20
+            }
+          },
+          "FLOW_PATH": {
+            "cascade_v3": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_g_luna": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_c_luna": {
+              "correct": 27,
+              "total": 30
+            },
+            "cascade_v3_iso": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "INSTRUMENTS_OF_ITEM": {
+            "cascade_v3": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_luna": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_c_luna": {
+              "correct": 12,
+              "total": 20
+            },
+            "cascade_v3_iso": {
+              "correct": 20,
+              "total": 20
+            }
+          },
+          "LOOKUP_TYPE": {
+            "cascade_v3": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_g_luna": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_c_luna": {
+              "correct": 25,
+              "total": 30
+            },
+            "cascade_v3_iso": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "LOOKUP_UNIT": {
+            "cascade_v3": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_g_luna": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_c_luna": {
+              "correct": 25,
+              "total": 30
+            },
+            "cascade_v3_iso": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "LOOPS_NEAR_ITEM": {
+            "cascade_v3": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_luna": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_c_luna": {
+              "correct": 12,
+              "total": 20
+            },
+            "cascade_v3_iso": {
+              "correct": 20,
+              "total": 20
+            }
+          },
+          "LOOP_ACTUATED_VALVE": {
+            "cascade_v3": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_g_luna": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_c_luna": {
+              "correct": 22,
+              "total": 30
+            },
+            "cascade_v3_iso": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "LOOP_MEASURED_EQUIPMENT": {
+            "cascade_v3": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_g_luna": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_c_luna": {
+              "correct": 11,
+              "total": 30
+            },
+            "cascade_v3_iso": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "NEIGHBOURS_DOWNSTREAM": {
+            "cascade_v3": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_g_luna": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_c_luna": {
+              "correct": 22,
+              "total": 30
+            },
+            "cascade_v3_iso": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "NO_PATH": {
+            "cascade_v3": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_luna": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_c_luna": {
+              "correct": 16,
+              "total": 20
+            },
+            "cascade_v3_iso": {
+              "correct": 20,
+              "total": 20
+            }
+          },
+          "ROUTE_AVOIDING": {
+            "cascade_v3": {
+              "correct": 18,
+              "total": 20
+            },
+            "always_g_luna": {
+              "correct": 17,
+              "total": 20
+            },
+            "always_c_luna": {
+              "correct": 11,
+              "total": 20
+            },
+            "cascade_v3_iso": {
+              "correct": 18,
+              "total": 20
+            }
+          },
+          "SAME_UNIT": {
+            "cascade_v3": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_luna": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_c_luna": {
+              "correct": 17,
+              "total": 20
+            },
+            "cascade_v3_iso": {
+              "correct": 20,
+              "total": 20
+            }
+          },
+          "SHEETS_OF_TAG": {
+            "cascade_v3": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_g_luna": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_c_luna": {
+              "correct": 26,
+              "total": 30
+            },
+            "cascade_v3_iso": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "UNANSWERABLE_TAG": {
+            "cascade_v3": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_luna": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_c_luna": {
+              "correct": 12,
+              "total": 20
+            },
+            "cascade_v3_iso": {
+              "correct": 20,
+              "total": 20
+            }
+          },
+          "UNITS_REACHED": {
+            "cascade_v3": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_luna": {
+              "correct": 18,
+              "total": 20
+            },
+            "always_c_luna": {
+              "correct": 20,
+              "total": 20
+            },
+            "cascade_v3_iso": {
+              "correct": 20,
+              "total": 20
+            }
+          },
+          "UPSTREAM_ISOLATION": {
+            "cascade_v3": {
+              "correct": 15,
+              "total": 30
+            },
+            "always_g_luna": {
+              "correct": 26,
+              "total": 30
+            },
+            "always_c_luna": {
+              "correct": 4,
+              "total": 30
+            },
+            "cascade_v3_iso": {
+              "correct": 24,
+              "total": 30
+            }
+          },
+          "UPSTREAM_SOURCES": {
+            "cascade_v3": {
+              "correct": 18,
+              "total": 20
+            },
+            "always_g_luna": {
+              "correct": 15,
+              "total": 20
+            },
+            "always_c_luna": {
+              "correct": 13,
+              "total": 20
+            },
+            "cascade_v3_iso": {
+              "correct": 18,
+              "total": 20
+            }
+          },
+          "VALVES_ON_PATH": {
+            "cascade_v3": {
+              "correct": 19,
+              "total": 20
+            },
+            "always_g_luna": {
+              "correct": 19,
+              "total": 20
+            },
+            "always_c_luna": {
+              "correct": 16,
+              "total": 20
+            },
+            "cascade_v3_iso": {
+              "correct": 19,
+              "total": 20
+            }
+          }
+        },
+        "k bin": {
+          "k=0": {
+            "cascade_v3": {
+              "correct": 214,
+              "total": 217
+            },
+            "always_g_luna": {
+              "correct": 215,
+              "total": 217
+            },
+            "always_c_luna": {
+              "correct": 151,
+              "total": 217
+            },
+            "cascade_v3_iso": {
+              "correct": 216,
+              "total": 217
+            }
+          },
+          "k=1-2": {
+            "cascade_v3": {
+              "correct": 164,
+              "total": 185
+            },
+            "always_g_luna": {
+              "correct": 175,
+              "total": 185
+            },
+            "always_c_luna": {
+              "correct": 130,
+              "total": 185
+            },
+            "cascade_v3_iso": {
+              "correct": 170,
+              "total": 185
+            }
+          },
+          "k>=3": {
+            "cascade_v3": {
+              "correct": 122,
+              "total": 138
+            },
+            "always_g_luna": {
+              "correct": 115,
+              "total": 138
+            },
+            "always_c_luna": {
+              "correct": 96,
+              "total": 138
+            },
+            "cascade_v3_iso": {
+              "correct": 123,
+              "total": 138
+            }
+          },
+          "unanswerable": {
+            "cascade_v3": {
+              "correct": 40,
+              "total": 40
+            },
+            "always_g_luna": {
+              "correct": 40,
+              "total": 40
+            },
+            "always_c_luna": {
+              "correct": 28,
+              "total": 40
+            },
+            "cascade_v3_iso": {
+              "correct": 40,
+              "total": 40
+            }
+          }
+        }
+      },
+      "diagnostics": [
+        {
+          "policy": "cascade_v3",
+          "boolean_no_questions": 38,
+          "boolean_no_answered_yes": 0,
+          "agent": {
+            "tier": "agent-luna",
+            "n_tried": 186,
+            "stop_reasons": {
+              "done": 183,
+              "prompt_budget": 3
+            },
+            "answered_without_tool_call": {
+              "correct": 0,
+              "total": 0
+            },
+            "answered_touching_no_item": {
+              "correct": 42,
+              "total": 42
+            },
+            "named_tag_never_touched": {
+              "correct": 31,
+              "total": 31
+            },
+            "n_with_named_tags": 158
+          },
+          "isolation": {
+            "primary": {
+              "correct": 15,
+              "total": 30
+            },
+            "control_valves_excluded": {
+              "correct": 9,
+              "total": 20
+            }
+          }
+        },
+        {
+          "policy": "always_g_luna",
+          "boolean_no_questions": 38,
+          "boolean_no_answered_yes": 0,
+          "agent": {
+            "tier": "agent-luna",
+            "n_tried": 580,
+            "stop_reasons": {
+              "done": 569,
+              "prompt_budget": 11
+            },
+            "answered_without_tool_call": {
+              "correct": 0,
+              "total": 0
+            },
+            "answered_touching_no_item": {
+              "correct": 49,
+              "total": 49
+            },
+            "named_tag_never_touched": {
+              "correct": 40,
+              "total": 40
+            },
+            "n_with_named_tags": 483
+          },
+          "isolation": {
+            "primary": {
+              "correct": 26,
+              "total": 30
+            },
+            "control_valves_excluded": {
+              "correct": 16,
+              "total": 20
+            }
+          }
+        },
+        {
+          "policy": "always_c_luna",
+          "boolean_no_questions": 38,
+          "boolean_no_answered_yes": 0,
+          "agent": null,
+          "isolation": {
+            "primary": {
+              "correct": 4,
+              "total": 30
+            },
+            "control_valves_excluded": {
+              "correct": 1,
+              "total": 20
+            }
+          }
+        },
+        {
+          "policy": "cascade_v3_iso",
+          "boolean_no_questions": 38,
+          "boolean_no_answered_yes": 0,
+          "agent": {
+            "tier": "agent-luna",
+            "n_tried": 197,
+            "stop_reasons": {
+              "done": 194,
+              "prompt_budget": 3
+            },
+            "answered_without_tool_call": {
+              "correct": 0,
+              "total": 0
+            },
+            "answered_touching_no_item": {
+              "correct": 42,
+              "total": 42
+            },
+            "named_tag_never_touched": {
+              "correct": 31,
+              "total": 31
+            },
+            "n_with_named_tags": 169
+          },
+          "isolation": {
+            "primary": {
+              "correct": 24,
+              "total": 30
+            },
+            "control_valves_excluded": {
+              "correct": 15,
+              "total": 20
+            }
+          }
+        }
+      ],
+      "late_charges": []
+    }
+  ],
+  "tier3": [],
+  "verdicts": [],
+  "sealed": {
+    "claims_corpus": "H1000",
+    "small_corpus": "H100",
+    "sheets": {
+      "H100": 100,
+      "H1000": 1001
+    },
+    "scope_sizes": {
+      "H100": {
+        "headline": 460,
+        "held-out": 120
+      },
+      "H1000": {
+        "headline": 460,
+        "held-out": 120
+      }
+    },
+    "scope_rows": [
+      {
+        "corpus_id": "H100",
+        "scope": "headline",
+        "policy": "cascade_v3",
+        "summary": {
+          "policy": "cascade_v3",
+          "corpus_id": "H100",
+          "n_questions": 460,
+          "n_correct": 431,
+          "cutoff_s": 120.0,
+          "n_correct_at_cutoff": 431,
+          "n_timed_out": 0,
+          "n_latency_incomplete": 0,
+          "total_cost_usd": 0.3011799,
+          "cost_per_question_usd": 0.0006547389130434783,
+          "latency_median_s": 8.397823949999292,
+          "latency_mean_s": 11.492483146738564,
+          "latency_p90_s": 21.498928600005456,
+          "latency_p95_s": 30.359688099997584,
+          "latency_max_s": 77.50125099999423,
+          "tier_shares": {
+            "cypher-luna": 0.7130434782608696,
+            "agent-luna": 0.28695652173913044
+          },
+          "tier_calls": {
+            "cypher-luna": 460,
+            "agent-luna": 132
+          }
+        },
+        "accuracy": {
+          "estimate": 0.9369565217391305,
+          "ci_low": 0.9109252192047184,
+          "ci_high": 0.9557499561137526
+        },
+        "n_all_questions": 580,
+        "n_all_correct_at_cutoff": 548,
+        "latency_verdicts": [
+          {
+            "rule": "LB-1",
+            "status": "PASS",
+            "headline": "cascade_v3 on H100: median 8.4 s (limit 10 s)",
+            "details": []
+          },
+          {
+            "rule": "LB-2",
+            "status": "PASS",
+            "headline": "cascade_v3 on H100: p90 21.5 s (limit 60 s)",
+            "details": []
+          }
+        ],
+        "acceptance": {
+          "n_accepted": 328,
+          "n_accepted_correct": 311,
+          "n_first_tier_correct": 433,
+          "precision": 0.948170731707317,
+          "recall": 0.7182448036951501
+        },
+        "latency_median": {
+          "estimate": 8.397823949999292,
+          "ci_low": 8.02119670000684,
+          "ci_high": 8.786817599990172
+        },
+        "latency_p90": {
+          "estimate": 21.498928600005456,
+          "ci_low": 18.25510719999147,
+          "ci_high": 24.89625170000363
+        }
+      },
+      {
+        "corpus_id": "H100",
+        "scope": "headline",
+        "policy": "always_g_luna",
+        "summary": {
+          "policy": "always_g_luna",
+          "corpus_id": "H100",
+          "n_questions": 460,
+          "n_correct": 433,
+          "cutoff_s": 120.0,
+          "n_correct_at_cutoff": 433,
+          "n_timed_out": 0,
+          "n_latency_incomplete": 0,
+          "total_cost_usd": 0.30360802,
+          "cost_per_question_usd": 0.0006600174347826086,
+          "latency_median_s": 8.807625500005088,
+          "latency_mean_s": 12.266354012390618,
+          "latency_p90_s": 23.75289299999713,
+          "latency_p95_s": 33.50749390000419,
+          "latency_max_s": 67.1373209999947,
+          "tier_shares": {
+            "agent-luna": 0.9956521739130435,
+            "none": 0.004347826086956522
+          },
+          "tier_calls": {
+            "agent-luna": 460
+          }
+        },
+        "accuracy": {
+          "estimate": 0.941304347826087,
+          "ci_low": 0.9159480074280129,
+          "ci_high": 0.9593508014757164
+        },
+        "n_all_questions": 580,
+        "n_all_correct_at_cutoff": 551,
+        "latency_verdicts": [
+          {
+            "rule": "LB-1",
+            "status": "PASS",
+            "headline": "always_g_luna on H100: median 8.8 s (limit 10 s)",
+            "details": []
+          },
+          {
+            "rule": "LB-2",
+            "status": "PASS",
+            "headline": "always_g_luna on H100: p90 23.8 s (limit 60 s)",
+            "details": []
+          }
+        ],
+        "acceptance": null,
+        "latency_median": {
+          "estimate": 8.807625500005088,
+          "ci_low": 8.049603399995249,
+          "ci_high": 9.652667349993862
+        },
+        "latency_p90": {
+          "estimate": 23.75289299999713,
+          "ci_low": 20.330413600015163,
+          "ci_high": 27.889065200004552
+        }
+      },
+      {
+        "corpus_id": "H100",
+        "scope": "headline",
+        "policy": "always_c_luna",
+        "summary": {
+          "policy": "always_c_luna",
+          "corpus_id": "H100",
+          "n_questions": 460,
+          "n_correct": 340,
+          "cutoff_s": 120.0,
+          "n_correct_at_cutoff": 340,
+          "n_timed_out": 0,
+          "n_latency_incomplete": 0,
+          "total_cost_usd": 0.199011175,
+          "cost_per_question_usd": 0.0004326329891304348,
+          "latency_median_s": 6.951631849995465,
+          "latency_mean_s": 7.444749080869129,
+          "latency_p90_s": 11.341836900006456,
+          "latency_p95_s": 13.4613318000047,
+          "latency_max_s": 19.333937100003823,
+          "tier_shares": {
+            "cypher-luna": 0.8478260869565217,
+            "none": 0.15217391304347827
+          },
+          "tier_calls": {
+            "cypher-luna": 460
+          }
+        },
+        "accuracy": {
+          "estimate": 0.7391304347826086,
+          "ci_low": 0.6971392206901641,
+          "ci_high": 0.7771606264990487
+        },
+        "n_all_questions": 580,
+        "n_all_correct_at_cutoff": 433,
+        "latency_verdicts": [
+          {
+            "rule": "LB-1",
+            "status": "PASS",
+            "headline": "always_c_luna on H100: median 7.0 s (limit 10 s)",
+            "details": []
+          },
+          {
+            "rule": "LB-2",
+            "status": "PASS",
+            "headline": "always_c_luna on H100: p90 11.3 s (limit 60 s)",
+            "details": []
+          }
+        ],
+        "acceptance": null,
+        "latency_median": {
+          "estimate": 6.951631849995465,
+          "ci_low": 6.657596500001091,
+          "ci_high": 7.3449014499965415
+        },
+        "latency_p90": {
+          "estimate": 11.341836900006456,
+          "ci_low": 10.804926299999352,
+          "ci_high": 12.20626409999386
+        }
+      },
+      {
+        "corpus_id": "H100",
+        "scope": "headline",
+        "policy": "cascade_v3_iso",
+        "summary": {
+          "policy": "cascade_v3_iso",
+          "corpus_id": "H100",
+          "n_questions": 460,
+          "n_correct": 439,
+          "cutoff_s": 120.0,
+          "n_correct_at_cutoff": 439,
+          "n_timed_out": 0,
+          "n_latency_incomplete": 0,
+          "total_cost_usd": 0.302008045,
+          "cost_per_question_usd": 0.0006565392282608696,
+          "latency_median_s": 8.397823949999292,
+          "latency_mean_s": 11.476218266521139,
+          "latency_p90_s": 21.330932100012433,
+          "latency_p95_s": 29.75399560000369,
+          "latency_max_s": 77.50125099999423,
+          "tier_shares": {
+            "cypher-luna": 0.691304347826087,
+            "agent-luna": 0.30869565217391304
+          },
+          "tier_calls": {
+            "cypher-luna": 440,
+            "agent-luna": 142
+          }
+        },
+        "accuracy": {
+          "estimate": 0.9543478260869566,
+          "ci_low": 0.9312200267601665,
+          "ci_high": 0.9699496828993381
+        },
+        "n_all_questions": 580,
+        "n_all_correct_at_cutoff": 556,
+        "latency_verdicts": [
+          {
+            "rule": "LB-1",
+            "status": "PASS",
+            "headline": "cascade_v3_iso on H100: median 8.4 s (limit 10 s)",
+            "details": []
+          },
+          {
+            "rule": "LB-2",
+            "status": "PASS",
+            "headline": "cascade_v3_iso on H100: p90 21.3 s (limit 60 s)",
+            "details": []
+          }
+        ],
+        "acceptance": null,
+        "latency_median": {
+          "estimate": 8.397823949999292,
+          "ci_low": 8.02119670000684,
+          "ci_high": 8.786817599990172
+        },
+        "latency_p90": {
+          "estimate": 21.330932100012433,
+          "ci_low": 18.355171199989854,
+          "ci_high": 24.779212299981737
+        }
+      },
+      {
+        "corpus_id": "H100",
+        "scope": "held-out",
+        "policy": "cascade_v3",
+        "summary": {
+          "policy": "cascade_v3",
+          "corpus_id": "H100",
+          "n_questions": 120,
+          "n_correct": 105,
+          "cutoff_s": 120.0,
+          "n_correct_at_cutoff": 105,
+          "n_timed_out": 0,
+          "n_latency_incomplete": 0,
+          "total_cost_usd": 0.11662644,
+          "cost_per_question_usd": 0.000971887,
+          "latency_median_s": 9.858806849992106,
+          "latency_mean_s": 16.158603595832087,
+          "latency_p90_s": 35.93270320002193,
+          "latency_p95_s": 49.38746769999125,
+          "latency_max_s": 77.50125099999423,
+          "tier_shares": {
+            "agent-luna": 0.275,
+            "cypher-luna": 0.725
+          },
+          "tier_calls": {
+            "cypher-luna": 120,
+            "agent-luna": 33
+          }
+        },
+        "accuracy": {
+          "estimate": 0.875,
+          "ci_low": 0.8039690855177497,
+          "ci_high": 0.9227657111903032
+        },
+        "n_all_questions": 580,
+        "n_all_correct_at_cutoff": 548,
+        "latency_verdicts": [
+          {
+            "rule": "LB-1",
+            "status": "PASS",
+            "headline": "cascade_v3 on H100: median 9.9 s (limit 10 s)",
+            "details": []
+          },
+          {
+            "rule": "LB-2",
+            "status": "PASS",
+            "headline": "cascade_v3 on H100: p90 35.9 s (limit 60 s)",
+            "details": []
+          }
+        ],
+        "acceptance": {
+          "n_accepted": 87,
+          "n_accepted_correct": 81,
+          "n_first_tier_correct": 433,
+          "precision": 0.9310344827586207,
+          "recall": 0.18706697459584296
+        },
+        "latency_median": {
+          "estimate": 9.858806849992106,
+          "ci_low": 9.194200699996145,
+          "ci_high": 11.025749849999556
+        },
+        "latency_p90": {
+          "estimate": 35.93270320002193,
+          "ci_low": 24.89625170000363,
+          "ci_high": 43.99518610000814
+        }
+      },
+      {
+        "corpus_id": "H100",
+        "scope": "held-out",
+        "policy": "always_g_luna",
+        "summary": {
+          "policy": "always_g_luna",
+          "corpus_id": "H100",
+          "n_questions": 120,
+          "n_correct": 102,
+          "cutoff_s": 120.0,
+          "n_correct_at_cutoff": 102,
+          "n_timed_out": 0,
+          "n_latency_incomplete": 0,
+          "total_cost_usd": 0.14911205,
+          "cost_per_question_usd": 0.0012426004166666666,
+          "latency_median_s": 15.46053789999496,
+          "latency_mean_s": 19.8771782233321,
+          "latency_p90_s": 37.830322499983595,
+          "latency_p95_s": 52.73444550002023,
+          "latency_max_s": 67.1373209999947,
+          "tier_shares": {
+            "agent-luna": 0.9916666666666667,
+            "none": 0.008333333333333333
+          },
+          "tier_calls": {
+            "agent-luna": 120
+          }
+        },
+        "accuracy": {
+          "estimate": 0.85,
+          "ci_low": 0.7753231505975375,
+          "ci_high": 0.9029626596633118
+        },
+        "n_all_questions": 580,
+        "n_all_correct_at_cutoff": 551,
+        "latency_verdicts": [
+          {
+            "rule": "LB-1",
+            "status": "FAIL",
+            "headline": "always_g_luna on H100: median 15.5 s (limit 10 s)",
+            "details": []
+          },
+          {
+            "rule": "LB-2",
+            "status": "PASS",
+            "headline": "always_g_luna on H100: p90 37.8 s (limit 60 s)",
+            "details": []
+          }
+        ],
+        "acceptance": null,
+        "latency_median": {
+          "estimate": 15.46053789999496,
+          "ci_low": 13.951353999997082,
+          "ci_high": 16.739558699991903
+        },
+        "latency_p90": {
+          "estimate": 37.830322499983595,
+          "ci_low": 30.73004409998248,
+          "ci_high": 48.51193289998628
+        }
+      },
+      {
+        "corpus_id": "H100",
+        "scope": "held-out",
+        "policy": "always_c_luna",
+        "summary": {
+          "policy": "always_c_luna",
+          "corpus_id": "H100",
+          "n_questions": 120,
+          "n_correct": 84,
+          "cutoff_s": 120.0,
+          "n_correct_at_cutoff": 84,
+          "n_timed_out": 0,
+          "n_latency_incomplete": 0,
+          "total_cost_usd": 0.063583325,
+          "cost_per_question_usd": 0.0005298610416666666,
+          "latency_median_s": 8.59397805000117,
+          "latency_mean_s": 9.135302199998902,
+          "latency_p90_s": 12.417821499999263,
+          "latency_p95_s": 14.186860699992394,
+          "latency_max_s": 19.333937100003823,
+          "tier_shares": {
+            "none": 0.15,
+            "cypher-luna": 0.85
+          },
+          "tier_calls": {
+            "cypher-luna": 120
+          }
+        },
+        "accuracy": {
+          "estimate": 0.7,
+          "ci_low": 0.6128469049643513,
+          "ci_high": 0.7747449866132768
+        },
+        "n_all_questions": 580,
+        "n_all_correct_at_cutoff": 433,
+        "latency_verdicts": [
+          {
+            "rule": "LB-1",
+            "status": "PASS",
+            "headline": "always_c_luna on H100: median 8.6 s (limit 10 s)",
+            "details": []
+          },
+          {
+            "rule": "LB-2",
+            "status": "PASS",
+            "headline": "always_c_luna on H100: p90 12.4 s (limit 60 s)",
+            "details": []
+          }
+        ],
+        "acceptance": null,
+        "latency_median": {
+          "estimate": 8.59397805000117,
+          "ci_low": 8.275301899986516,
+          "ci_high": 9.194200699996145
+        },
+        "latency_p90": {
+          "estimate": 12.417821499999263,
+          "ci_low": 11.951179100004083,
+          "ci_high": 13.594039099996735
+        }
+      },
+      {
+        "corpus_id": "H100",
+        "scope": "held-out",
+        "policy": "cascade_v3_iso",
+        "summary": {
+          "policy": "cascade_v3_iso",
+          "corpus_id": "H100",
+          "n_questions": 120,
+          "n_correct": 105,
+          "cutoff_s": 120.0,
+          "n_correct_at_cutoff": 105,
+          "n_timed_out": 0,
+          "n_latency_incomplete": 0,
+          "total_cost_usd": 0.11662644,
+          "cost_per_question_usd": 0.000971887,
+          "latency_median_s": 9.858806849992106,
+          "latency_mean_s": 16.158603595832087,
+          "latency_p90_s": 35.93270320002193,
+          "latency_p95_s": 49.38746769999125,
+          "latency_max_s": 77.50125099999423,
+          "tier_shares": {
+            "agent-luna": 0.275,
+            "cypher-luna": 0.725
+          },
+          "tier_calls": {
+            "cypher-luna": 120,
+            "agent-luna": 33
+          }
+        },
+        "accuracy": {
+          "estimate": 0.875,
+          "ci_low": 0.8039690855177497,
+          "ci_high": 0.9227657111903032
+        },
+        "n_all_questions": 580,
+        "n_all_correct_at_cutoff": 556,
+        "latency_verdicts": [
+          {
+            "rule": "LB-1",
+            "status": "PASS",
+            "headline": "cascade_v3_iso on H100: median 9.9 s (limit 10 s)",
+            "details": []
+          },
+          {
+            "rule": "LB-2",
+            "status": "PASS",
+            "headline": "cascade_v3_iso on H100: p90 35.9 s (limit 60 s)",
+            "details": []
+          }
+        ],
+        "acceptance": null,
+        "latency_median": {
+          "estimate": 9.858806849992106,
+          "ci_low": 9.194200699996145,
+          "ci_high": 11.025749849999556
+        },
+        "latency_p90": {
+          "estimate": 35.93270320002193,
+          "ci_low": 24.89625170000363,
+          "ci_high": 43.99518610000814
+        }
+      },
+      {
+        "corpus_id": "H1000",
+        "scope": "headline",
+        "policy": "cascade_v3",
+        "summary": {
+          "policy": "cascade_v3",
+          "corpus_id": "H1000",
+          "n_questions": 460,
+          "n_correct": 422,
+          "cutoff_s": 120.0,
+          "n_correct_at_cutoff": 422,
+          "n_timed_out": 0,
+          "n_latency_incomplete": 0,
+          "total_cost_usd": 0.325225805,
+          "cost_per_question_usd": 0.0007070126195652173,
+          "latency_median_s": 8.184707450000133,
+          "latency_mean_s": 11.797317603043137,
+          "latency_p90_s": 22.511563199986995,
+          "latency_p95_s": 33.65108939999482,
+          "latency_max_s": 92.25598930001433,
+          "tier_shares": {
+            "cypher-luna": 0.6673913043478261,
+            "agent-luna": 0.33260869565217394
+          },
+          "tier_calls": {
+            "cypher-luna": 460,
+            "agent-luna": 153
+          }
+        },
+        "accuracy": {
+          "estimate": 0.9173913043478261,
+          "ci_low": 0.8886439443148875,
+          "ci_high": 0.9392248798699205
+        },
+        "n_all_questions": 580,
+        "n_all_correct_at_cutoff": 540,
+        "latency_verdicts": [
+          {
+            "rule": "LB-1",
+            "status": "PASS",
+            "headline": "cascade_v3 on H1000: median 8.2 s (limit 10 s)",
+            "details": []
+          },
+          {
+            "rule": "LB-2",
+            "status": "PASS",
+            "headline": "cascade_v3 on H1000: p90 22.5 s (limit 60 s)",
+            "details": []
+          }
+        ],
+        "acceptance": {
+          "n_accepted": 307,
+          "n_accepted_correct": 288,
+          "n_first_tier_correct": 405,
+          "precision": 0.9381107491856677,
+          "recall": 0.7111111111111111
+        },
+        "latency_median": {
+          "estimate": 8.184707450000133,
+          "ci_low": 7.702629949999391,
+          "ci_high": 8.700564299993857
+        },
+        "latency_p90": {
+          "estimate": 22.511563199986995,
+          "ci_low": 19.57368759999372,
+          "ci_high": 26.28226149999682
+        }
+      },
+      {
+        "corpus_id": "H1000",
+        "scope": "headline",
+        "policy": "always_g_luna",
+        "summary": {
+          "policy": "always_g_luna",
+          "corpus_id": "H1000",
+          "n_questions": 460,
+          "n_correct": 425,
+          "cutoff_s": 120.0,
+          "n_correct_at_cutoff": 425,
+          "n_timed_out": 0,
+          "n_latency_incomplete": 0,
+          "total_cost_usd": 0.34092875499999997,
+          "cost_per_question_usd": 0.0007411494673913042,
+          "latency_median_s": 8.188681499999802,
+          "latency_mean_s": 12.250027674782398,
+          "latency_p90_s": 24.92506860000867,
+          "latency_p95_s": 36.53527779999422,
+          "latency_max_s": 86.038517900015,
+          "tier_shares": {
+            "agent-luna": 0.9978260869565218,
+            "none": 0.002173913043478261
+          },
+          "tier_calls": {
+            "agent-luna": 460
+          }
+        },
+        "accuracy": {
+          "estimate": 0.9239130434782609,
+          "ci_low": 0.8960189062640287,
+          "ci_high": 0.9447853682986669
+        },
+        "n_all_questions": 580,
+        "n_all_correct_at_cutoff": 545,
+        "latency_verdicts": [
+          {
+            "rule": "LB-1",
+            "status": "PASS",
+            "headline": "always_g_luna on H1000: median 8.2 s (limit 10 s)",
+            "details": []
+          },
+          {
+            "rule": "LB-2",
+            "status": "PASS",
+            "headline": "always_g_luna on H1000: p90 24.9 s (limit 60 s)",
+            "details": []
+          }
+        ],
+        "acceptance": null,
+        "latency_median": {
+          "estimate": 8.188681499999802,
+          "ci_low": 7.63512100000662,
+          "ci_high": 8.923356000006606
+        },
+        "latency_p90": {
+          "estimate": 24.92506860000867,
+          "ci_low": 21.89962490000471,
+          "ci_high": 27.61644619997969
+        }
+      },
+      {
+        "corpus_id": "H1000",
+        "scope": "headline",
+        "policy": "always_c_luna",
+        "summary": {
+          "policy": "always_c_luna",
+          "corpus_id": "H1000",
+          "n_questions": 460,
+          "n_correct": 320,
+          "cutoff_s": 120.0,
+          "n_correct_at_cutoff": 320,
+          "n_timed_out": 0,
+          "n_latency_incomplete": 0,
+          "total_cost_usd": 0.196073725,
+          "cost_per_question_usd": 0.00042624722826086956,
+          "latency_median_s": 6.3404921000001195,
+          "latency_mean_s": 7.0908862582600705,
+          "latency_p90_s": 10.959596200002125,
+          "latency_p95_s": 13.02480439998908,
+          "latency_max_s": 38.114279900008114,
+          "tier_shares": {
+            "cypher-luna": 0.8152173913043478,
+            "none": 0.18478260869565216
+          },
+          "tier_calls": {
+            "cypher-luna": 460
+          }
+        },
+        "accuracy": {
+          "estimate": 0.6956521739130435,
+          "ci_low": 0.6521256483940902,
+          "ci_high": 0.7359378629425385
+        },
+        "n_all_questions": 580,
+        "n_all_correct_at_cutoff": 405,
+        "latency_verdicts": [
+          {
+            "rule": "LB-1",
+            "status": "PASS",
+            "headline": "always_c_luna on H1000: median 6.3 s (limit 10 s)",
+            "details": []
+          },
+          {
+            "rule": "LB-2",
+            "status": "PASS",
+            "headline": "always_c_luna on H1000: p90 11.0 s (limit 60 s)",
+            "details": []
+          }
+        ],
+        "acceptance": null,
+        "latency_median": {
+          "estimate": 6.3404921000001195,
+          "ci_low": 6.023863949994848,
+          "ci_high": 6.687235999997938
+        },
+        "latency_p90": {
+          "estimate": 10.959596200002125,
+          "ci_low": 10.078051200005575,
+          "ci_high": 11.623972100001993
+        }
+      },
+      {
+        "corpus_id": "H1000",
+        "scope": "headline",
+        "policy": "cascade_v3_iso",
+        "summary": {
+          "policy": "cascade_v3_iso",
+          "corpus_id": "H1000",
+          "n_questions": 460,
+          "n_correct": 431,
+          "cutoff_s": 120.0,
+          "n_correct_at_cutoff": 431,
+          "n_timed_out": 0,
+          "n_latency_incomplete": 0,
+          "total_cost_usd": 0.323570795,
+          "cost_per_question_usd": 0.0007034147717391305,
+          "latency_median_s": 8.184707450000133,
+          "latency_mean_s": 11.758893881956306,
+          "latency_p90_s": 22.511563199986995,
+          "latency_p95_s": 31.76105519998964,
+          "latency_max_s": 92.25598930001433,
+          "tier_shares": {
+            "cypher-luna": 0.6434782608695652,
+            "agent-luna": 0.3565217391304348
+          },
+          "tier_calls": {
+            "cypher-luna": 440,
+            "agent-luna": 164
+          }
+        },
+        "accuracy": {
+          "estimate": 0.9369565217391305,
+          "ci_low": 0.9109252192047184,
+          "ci_high": 0.9557499561137526
+        },
+        "n_all_questions": 580,
+        "n_all_correct_at_cutoff": 549,
+        "latency_verdicts": [
+          {
+            "rule": "LB-1",
+            "status": "PASS",
+            "headline": "cascade_v3_iso on H1000: median 8.2 s (limit 10 s)",
+            "details": []
+          },
+          {
+            "rule": "LB-2",
+            "status": "PASS",
+            "headline": "cascade_v3_iso on H1000: p90 22.5 s (limit 60 s)",
+            "details": []
+          }
+        ],
+        "acceptance": null,
+        "latency_median": {
+          "estimate": 8.184707450000133,
+          "ci_low": 7.702629949999391,
+          "ci_high": 8.700564299993857
+        },
+        "latency_p90": {
+          "estimate": 22.511563199986995,
+          "ci_low": 19.760231300009764,
+          "ci_high": 25.525805599994783
+        }
+      },
+      {
+        "corpus_id": "H1000",
+        "scope": "held-out",
+        "policy": "cascade_v3",
+        "summary": {
+          "policy": "cascade_v3",
+          "corpus_id": "H1000",
+          "n_questions": 120,
+          "n_correct": 98,
+          "cutoff_s": 120.0,
+          "n_correct_at_cutoff": 98,
+          "n_timed_out": 0,
+          "n_latency_incomplete": 0,
+          "total_cost_usd": 0.12839005,
+          "cost_per_question_usd": 0.0010699170833333334,
+          "latency_median_s": 9.221344649999082,
+          "latency_mean_s": 16.910032764167045,
+          "latency_p90_s": 36.99044210000284,
+          "latency_p95_s": 54.7687785000162,
+          "latency_max_s": 92.25598930001433,
+          "tier_shares": {
+            "agent-luna": 0.3,
+            "cypher-luna": 0.7
+          },
+          "tier_calls": {
+            "cypher-luna": 120,
+            "agent-luna": 36
+          }
+        },
+        "accuracy": {
+          "estimate": 0.8166666666666667,
+          "ci_low": 0.7379892641067634,
+          "ci_high": 0.8756978975578147
+        },
+        "n_all_questions": 580,
+        "n_all_correct_at_cutoff": 540,
+        "latency_verdicts": [
+          {
+            "rule": "LB-1",
+            "status": "PASS",
+            "headline": "cascade_v3 on H1000: median 9.2 s (limit 10 s)",
+            "details": []
+          },
+          {
+            "rule": "LB-2",
+            "status": "PASS",
+            "headline": "cascade_v3 on H1000: p90 37.0 s (limit 60 s)",
+            "details": []
+          }
+        ],
+        "acceptance": {
+          "n_accepted": 84,
+          "n_accepted_correct": 76,
+          "n_first_tier_correct": 405,
+          "precision": 0.9047619047619048,
+          "recall": 0.18765432098765433
+        },
+        "latency_median": {
+          "estimate": 9.221344649999082,
+          "ci_low": 8.66289770000003,
+          "ci_high": 10.499691200006055
+        },
+        "latency_p90": {
+          "estimate": 36.99044210000284,
+          "ci_low": 25.782242999994196,
+          "ci_high": 52.94423479998659
+        }
+      },
+      {
+        "corpus_id": "H1000",
+        "scope": "held-out",
+        "policy": "always_g_luna",
+        "summary": {
+          "policy": "always_g_luna",
+          "corpus_id": "H1000",
+          "n_questions": 120,
+          "n_correct": 96,
+          "cutoff_s": 120.0,
+          "n_correct_at_cutoff": 96,
+          "n_timed_out": 0,
+          "n_latency_incomplete": 0,
+          "total_cost_usd": 0.161395465,
+          "cost_per_question_usd": 0.0013449622083333333,
+          "latency_median_s": 14.918842350009072,
+          "latency_mean_s": 19.639386855833013,
+          "latency_p90_s": 40.202158600019175,
+          "latency_p95_s": 46.17441859999235,
+          "latency_max_s": 60.71522969999933,
+          "tier_shares": {
+            "agent-luna": 1.0
+          },
+          "tier_calls": {
+            "agent-luna": 120
+          }
+        },
+        "accuracy": {
+          "estimate": 0.8,
+          "ci_low": 0.7196316465662729,
+          "ci_high": 0.8617561908001696
+        },
+        "n_all_questions": 580,
+        "n_all_correct_at_cutoff": 545,
+        "latency_verdicts": [
+          {
+            "rule": "LB-1",
+            "status": "FAIL",
+            "headline": "always_g_luna on H1000: median 14.9 s (limit 10 s)",
+            "details": []
+          },
+          {
+            "rule": "LB-2",
+            "status": "PASS",
+            "headline": "always_g_luna on H1000: p90 40.2 s (limit 60 s)",
+            "details": []
+          }
+        ],
+        "acceptance": null,
+        "latency_median": {
+          "estimate": 14.918842350009072,
+          "ci_low": 13.219124700000975,
+          "ci_high": 16.9232737999846
+        },
+        "latency_p90": {
+          "estimate": 40.202158600019175,
+          "ci_low": 31.633924499998102,
+          "ci_high": 44.49430140000186
+        }
+      },
+      {
+        "corpus_id": "H1000",
+        "scope": "held-out",
+        "policy": "always_c_luna",
+        "summary": {
+          "policy": "always_c_luna",
+          "corpus_id": "H1000",
+          "n_questions": 120,
+          "n_correct": 77,
+          "cutoff_s": 120.0,
+          "n_correct_at_cutoff": 77,
+          "n_timed_out": 0,
+          "n_latency_incomplete": 0,
+          "total_cost_usd": 0.0629133,
+          "cost_per_question_usd": 0.0005242775,
+          "latency_median_s": 8.369759349996457,
+          "latency_mean_s": 9.095701848333011,
+          "latency_p90_s": 12.070599199993012,
+          "latency_p95_s": 14.684591500001261,
+          "latency_max_s": 38.114279900008114,
+          "tier_shares": {
+            "none": 0.19166666666666668,
+            "cypher-luna": 0.8083333333333333
+          },
+          "tier_calls": {
+            "cypher-luna": 120
+          }
+        },
+        "accuracy": {
+          "estimate": 0.6416666666666667,
+          "ci_low": 0.5527036937000394,
+          "ci_high": 0.721840562834114
+        },
+        "n_all_questions": 580,
+        "n_all_correct_at_cutoff": 405,
+        "latency_verdicts": [
+          {
+            "rule": "LB-1",
+            "status": "PASS",
+            "headline": "always_c_luna on H1000: median 8.4 s (limit 10 s)",
+            "details": []
+          },
+          {
+            "rule": "LB-2",
+            "status": "PASS",
+            "headline": "always_c_luna on H1000: p90 12.1 s (limit 60 s)",
+            "details": []
+          }
+        ],
+        "acceptance": null,
+        "latency_median": {
+          "estimate": 8.369759349996457,
+          "ci_low": 8.040803599993524,
+          "ci_high": 8.732006600002933
+        },
+        "latency_p90": {
+          "estimate": 12.070599199993012,
+          "ci_low": 10.77431739999156,
+          "ci_high": 14.684591500001261
+        }
+      },
+      {
+        "corpus_id": "H1000",
+        "scope": "held-out",
+        "policy": "cascade_v3_iso",
+        "summary": {
+          "policy": "cascade_v3_iso",
+          "corpus_id": "H1000",
+          "n_questions": 120,
+          "n_correct": 98,
+          "cutoff_s": 120.0,
+          "n_correct_at_cutoff": 98,
+          "n_timed_out": 0,
+          "n_latency_incomplete": 0,
+          "total_cost_usd": 0.12839005,
+          "cost_per_question_usd": 0.0010699170833333334,
+          "latency_median_s": 9.221344649999082,
+          "latency_mean_s": 16.910032764167045,
+          "latency_p90_s": 36.99044210000284,
+          "latency_p95_s": 54.7687785000162,
+          "latency_max_s": 92.25598930001433,
+          "tier_shares": {
+            "agent-luna": 0.3,
+            "cypher-luna": 0.7
+          },
+          "tier_calls": {
+            "cypher-luna": 120,
+            "agent-luna": 36
+          }
+        },
+        "accuracy": {
+          "estimate": 0.8166666666666667,
+          "ci_low": 0.7379892641067634,
+          "ci_high": 0.8756978975578147
+        },
+        "n_all_questions": 580,
+        "n_all_correct_at_cutoff": 549,
+        "latency_verdicts": [
+          {
+            "rule": "LB-1",
+            "status": "PASS",
+            "headline": "cascade_v3_iso on H1000: median 9.2 s (limit 10 s)",
+            "details": []
+          },
+          {
+            "rule": "LB-2",
+            "status": "PASS",
+            "headline": "cascade_v3_iso on H1000: p90 37.0 s (limit 60 s)",
+            "details": []
+          }
+        ],
+        "acceptance": null,
+        "latency_median": {
+          "estimate": 9.221344649999082,
+          "ci_low": 8.66289770000003,
+          "ci_high": 10.499691200006055
+        },
+        "latency_p90": {
+          "estimate": 36.99044210000284,
+          "ci_low": 25.782242999994196,
+          "ci_high": 52.94423479998659
+        }
+      }
+    ],
+    "split_rows": [
+      {
+        "corpus_id": "H100",
+        "policy": "cascade_v3",
+        "split": "dev-old",
+        "cell": {
+          "correct": 206,
+          "total": 220
+        },
+        "accuracy": {
+          "estimate": 0.9363636363636364,
+          "ci_low": 0.896030823892553,
+          "ci_high": 0.9617185846177507
+        }
+      },
+      {
+        "corpus_id": "H100",
+        "policy": "always_g_luna",
+        "split": "dev-old",
+        "cell": {
+          "correct": 214,
+          "total": 220
+        },
+        "accuracy": {
+          "estimate": 0.9727272727272728,
+          "ci_low": 0.9417863423335786,
+          "ci_high": 0.9874421835525837
+        }
+      },
+      {
+        "corpus_id": "H100",
+        "policy": "always_c_luna",
+        "split": "dev-old",
+        "cell": {
+          "correct": 167,
+          "total": 220
+        },
+        "accuracy": {
+          "estimate": 0.759090909090909,
+          "ci_low": 0.6984460969147994,
+          "ci_high": 0.8108426143881933
+        }
+      },
+      {
+        "corpus_id": "H100",
+        "policy": "cascade_v3_iso",
+        "split": "dev-old",
+        "cell": {
+          "correct": 214,
+          "total": 220
+        },
+        "accuracy": {
+          "estimate": 0.9727272727272728,
+          "ci_low": 0.9417863423335786,
+          "ci_high": 0.9874421835525837
+        }
+      },
+      {
+        "corpus_id": "H100",
+        "policy": "cascade_v3",
+        "split": "dev-new",
+        "cell": {
+          "correct": 120,
+          "total": 120
+        },
+        "accuracy": {
+          "estimate": 1.0,
+          "ci_low": 0.9689797289440706,
+          "ci_high": 1.0
+        }
+      },
+      {
+        "corpus_id": "H100",
+        "policy": "always_g_luna",
+        "split": "dev-new",
+        "cell": {
+          "correct": 117,
+          "total": 120
+        },
+        "accuracy": {
+          "estimate": 0.975,
+          "ci_low": 0.9290687625956524,
+          "ci_high": 0.9914619799012145
+        }
+      },
+      {
+        "corpus_id": "H100",
+        "policy": "always_c_luna",
+        "split": "dev-new",
+        "cell": {
+          "correct": 89,
+          "total": 120
+        },
+        "accuracy": {
+          "estimate": 0.7416666666666667,
+          "ci_low": 0.6567130404034741,
+          "ci_high": 0.8116271619194934
+        }
+      },
+      {
+        "corpus_id": "H100",
+        "policy": "cascade_v3_iso",
+        "split": "dev-new",
+        "cell": {
+          "correct": 120,
+          "total": 120
+        },
+        "accuracy": {
+          "estimate": 1.0,
+          "ci_low": 0.9689797289440706,
+          "ci_high": 1.0
+        }
+      },
+      {
+        "corpus_id": "H100",
+        "policy": "cascade_v3",
+        "split": "held-out",
+        "cell": {
+          "correct": 105,
+          "total": 120
+        },
+        "accuracy": {
+          "estimate": 0.875,
+          "ci_low": 0.8039690855177497,
+          "ci_high": 0.9227657111903032
+        }
+      },
+      {
+        "corpus_id": "H100",
+        "policy": "always_g_luna",
+        "split": "held-out",
+        "cell": {
+          "correct": 102,
+          "total": 120
+        },
+        "accuracy": {
+          "estimate": 0.85,
+          "ci_low": 0.7753231505975375,
+          "ci_high": 0.9029626596633118
+        }
+      },
+      {
+        "corpus_id": "H100",
+        "policy": "always_c_luna",
+        "split": "held-out",
+        "cell": {
+          "correct": 84,
+          "total": 120
+        },
+        "accuracy": {
+          "estimate": 0.7,
+          "ci_low": 0.6128469049643513,
+          "ci_high": 0.7747449866132768
+        }
+      },
+      {
+        "corpus_id": "H100",
+        "policy": "cascade_v3_iso",
+        "split": "held-out",
+        "cell": {
+          "correct": 105,
+          "total": 120
+        },
+        "accuracy": {
+          "estimate": 0.875,
+          "ci_low": 0.8039690855177497,
+          "ci_high": 0.9227657111903032
+        }
+      },
+      {
+        "corpus_id": "H100",
+        "policy": "cascade_v3",
+        "split": "held-out-wording",
+        "cell": {
+          "correct": 87,
+          "total": 90
+        },
+        "accuracy": {
+          "estimate": 0.9666666666666667,
+          "ci_low": 0.9065255864388708,
+          "ci_high": 0.9885998163675604
+        }
+      },
+      {
+        "corpus_id": "H100",
+        "policy": "always_g_luna",
+        "split": "held-out-wording",
+        "cell": {
+          "correct": 88,
+          "total": 90
+        },
+        "accuracy": {
+          "estimate": 0.9777777777777777,
+          "ci_low": 0.9225532261919241,
+          "ci_high": 0.9938846862051364
+        }
+      },
+      {
+        "corpus_id": "H100",
+        "policy": "always_c_luna",
+        "split": "held-out-wording",
+        "cell": {
+          "correct": 68,
+          "total": 90
+        },
+        "accuracy": {
+          "estimate": 0.7555555555555555,
+          "ci_low": 0.6575143545381369,
+          "ci_high": 0.8326733660463373
+        }
+      },
+      {
+        "corpus_id": "H100",
+        "policy": "cascade_v3_iso",
+        "split": "held-out-wording",
+        "cell": {
+          "correct": 87,
+          "total": 90
+        },
+        "accuracy": {
+          "estimate": 0.9666666666666667,
+          "ci_low": 0.9065255864388708,
+          "ci_high": 0.9885998163675604
+        }
+      },
+      {
+        "corpus_id": "H1000",
+        "policy": "cascade_v3",
+        "split": "dev-old",
+        "cell": {
+          "correct": 207,
+          "total": 220
+        },
+        "accuracy": {
+          "estimate": 0.9409090909090909,
+          "ci_low": 0.9015387028777413,
+          "ci_high": 0.9651455953045447
+        }
+      },
+      {
+        "corpus_id": "H1000",
+        "policy": "always_g_luna",
+        "split": "dev-old",
+        "cell": {
+          "correct": 215,
+          "total": 220
+        },
+        "accuracy": {
+          "estimate": 0.9772727272727273,
+          "ci_low": 0.94790916405021,
+          "ci_high": 0.9902542515079347
+        }
+      },
+      {
+        "corpus_id": "H1000",
+        "policy": "always_c_luna",
+        "split": "dev-old",
+        "cell": {
+          "correct": 157,
+          "total": 220
+        },
+        "accuracy": {
+          "estimate": 0.7136363636363636,
+          "ci_low": 0.65063451716323,
+          "ci_high": 0.7693052974199395
+        }
+      },
+      {
+        "corpus_id": "H1000",
+        "policy": "cascade_v3_iso",
+        "split": "dev-old",
+        "cell": {
+          "correct": 216,
+          "total": 220
+        },
+        "accuracy": {
+          "estimate": 0.9818181818181818,
+          "ci_low": 0.9541908921456921,
+          "ci_high": 0.9929074130844349
+        }
+      },
+      {
+        "corpus_id": "H1000",
+        "policy": "cascade_v3",
+        "split": "dev-new",
+        "cell": {
+          "correct": 117,
+          "total": 120
+        },
+        "accuracy": {
+          "estimate": 0.975,
+          "ci_low": 0.9290687625956524,
+          "ci_high": 0.9914619799012145
+        }
+      },
+      {
+        "corpus_id": "H1000",
+        "policy": "always_g_luna",
+        "split": "dev-new",
+        "cell": {
+          "correct": 114,
+          "total": 120
+        },
+        "accuracy": {
+          "estimate": 0.95,
+          "ci_low": 0.8951958053541377,
+          "ci_high": 0.9768859506955258
+        }
+      },
+      {
+        "corpus_id": "H1000",
+        "policy": "always_c_luna",
+        "split": "dev-new",
+        "cell": {
+          "correct": 86,
+          "total": 120
+        },
+        "accuracy": {
+          "estimate": 0.7166666666666667,
+          "ci_low": 0.6302963078582111,
+          "ci_high": 0.7895949080175528
+        }
+      },
+      {
+        "corpus_id": "H1000",
+        "policy": "cascade_v3_iso",
+        "split": "dev-new",
+        "cell": {
+          "correct": 117,
+          "total": 120
+        },
+        "accuracy": {
+          "estimate": 0.975,
+          "ci_low": 0.9290687625956524,
+          "ci_high": 0.9914619799012145
+        }
+      },
+      {
+        "corpus_id": "H1000",
+        "policy": "cascade_v3",
+        "split": "held-out",
+        "cell": {
+          "correct": 98,
+          "total": 120
+        },
+        "accuracy": {
+          "estimate": 0.8166666666666667,
+          "ci_low": 0.7379892641067634,
+          "ci_high": 0.8756978975578147
+        }
+      },
+      {
+        "corpus_id": "H1000",
+        "policy": "always_g_luna",
+        "split": "held-out",
+        "cell": {
+          "correct": 96,
+          "total": 120
+        },
+        "accuracy": {
+          "estimate": 0.8,
+          "ci_low": 0.7196316465662729,
+          "ci_high": 0.8617561908001696
+        }
+      },
+      {
+        "corpus_id": "H1000",
+        "policy": "always_c_luna",
+        "split": "held-out",
+        "cell": {
+          "correct": 77,
+          "total": 120
+        },
+        "accuracy": {
+          "estimate": 0.6416666666666667,
+          "ci_low": 0.5527036937000394,
+          "ci_high": 0.721840562834114
+        }
+      },
+      {
+        "corpus_id": "H1000",
+        "policy": "cascade_v3_iso",
+        "split": "held-out",
+        "cell": {
+          "correct": 98,
+          "total": 120
+        },
+        "accuracy": {
+          "estimate": 0.8166666666666667,
+          "ci_low": 0.7379892641067634,
+          "ci_high": 0.8756978975578147
+        }
+      },
+      {
+        "corpus_id": "H1000",
+        "policy": "cascade_v3",
+        "split": "held-out-wording",
+        "cell": {
+          "correct": 88,
+          "total": 90
+        },
+        "accuracy": {
+          "estimate": 0.9777777777777777,
+          "ci_low": 0.9225532261919241,
+          "ci_high": 0.9938846862051364
+        }
+      },
+      {
+        "corpus_id": "H1000",
+        "policy": "always_g_luna",
+        "split": "held-out-wording",
+        "cell": {
+          "correct": 90,
+          "total": 90
+        },
+        "accuracy": {
+          "estimate": 1.0,
+          "ci_low": 0.9590629315783191,
+          "ci_high": 0.9999999999999999
+        }
+      },
+      {
+        "corpus_id": "H1000",
+        "policy": "always_c_luna",
+        "split": "held-out-wording",
+        "cell": {
+          "correct": 63,
+          "total": 90
+        },
+        "accuracy": {
+          "estimate": 0.7,
+          "ci_low": 0.598732953143893,
+          "ci_high": 0.7848922194874346
+        }
+      },
+      {
+        "corpus_id": "H1000",
+        "policy": "cascade_v3_iso",
+        "split": "held-out-wording",
+        "cell": {
+          "correct": 88,
+          "total": 90
+        },
+        "accuracy": {
+          "estimate": 0.9777777777777777,
+          "ci_low": 0.9225532261919241,
+          "ci_high": 0.9938846862051364
+        }
+      }
+    ],
+    "gap_rows": [
+      {
+        "corpus_id": "H100",
+        "policy": "cascade_v3",
+        "dev": {
+          "correct": 326,
+          "total": 340
+        },
+        "held_out": {
+          "correct": 105,
+          "total": 120
+        },
+        "gap": {
+          "estimate": 0.08382352941176474,
+          "ci_low": 0.02450980392156865,
+          "ci_high": 0.14754901960784317
+        }
+      },
+      {
+        "corpus_id": "H100",
+        "policy": "always_g_luna",
+        "dev": {
+          "correct": 331,
+          "total": 340
+        },
+        "held_out": {
+          "correct": 102,
+          "total": 120
+        },
+        "gap": {
+          "estimate": 0.12352941176470589,
+          "ci_low": 0.05931372549019609,
+          "ci_high": 0.19019607843137254
+        }
+      },
+      {
+        "corpus_id": "H100",
+        "policy": "always_c_luna",
+        "dev": {
+          "correct": 256,
+          "total": 340
+        },
+        "held_out": {
+          "correct": 84,
+          "total": 120
+        },
+        "gap": {
+          "estimate": 0.05294117647058827,
+          "ci_low": -0.039215686274509776,
+          "ci_high": 0.14803921568627443
+        }
+      },
+      {
+        "corpus_id": "H100",
+        "policy": "cascade_v3_iso",
+        "dev": {
+          "correct": 334,
+          "total": 340
+        },
+        "held_out": {
+          "correct": 105,
+          "total": 120
+        },
+        "gap": {
+          "estimate": 0.10735294117647054,
+          "ci_low": 0.051470588235294046,
+          "ci_high": 0.16862745098039222
+        }
+      },
+      {
+        "corpus_id": "H1000",
+        "policy": "cascade_v3",
+        "dev": {
+          "correct": 324,
+          "total": 340
+        },
+        "held_out": {
+          "correct": 98,
+          "total": 120
+        },
+        "gap": {
+          "estimate": 0.13627450980392153,
+          "ci_low": 0.06666666666666665,
+          "ci_high": 0.21029411764705885
+        }
+      },
+      {
+        "corpus_id": "H1000",
+        "policy": "always_g_luna",
+        "dev": {
+          "correct": 329,
+          "total": 340
+        },
+        "held_out": {
+          "correct": 96,
+          "total": 120
+        },
+        "gap": {
+          "estimate": 0.16764705882352937,
+          "ci_low": 0.09313725490196079,
+          "ci_high": 0.24362745098039218
+        }
+      },
+      {
+        "corpus_id": "H1000",
+        "policy": "always_c_luna",
+        "dev": {
+          "correct": 243,
+          "total": 340
+        },
+        "held_out": {
+          "correct": 77,
+          "total": 120
+        },
+        "gap": {
+          "estimate": 0.07303921568627447,
+          "ci_low": -0.0235294117647058,
+          "ci_high": 0.17205882352941182
+        }
+      },
+      {
+        "corpus_id": "H1000",
+        "policy": "cascade_v3_iso",
+        "dev": {
+          "correct": 333,
+          "total": 340
+        },
+        "held_out": {
+          "correct": 98,
+          "total": 120
+        },
+        "gap": {
+          "estimate": 0.16274509803921566,
+          "ci_low": 0.09362745098039216,
+          "ci_high": 0.2348039215686274
+        }
+      }
+    ],
+    "scale_rows": [
+      {
+        "scope": "headline",
+        "policy": "cascade_v3",
+        "small_corpus": "H100",
+        "large_corpus": "H1000",
+        "sheets_small": 100,
+        "sheets_large": 1001,
+        "accuracy_small": {
+          "estimate": 0.9369565217391305,
+          "ci_low": 0.9109252192047184,
+          "ci_high": 0.9557499561137526
+        },
+        "accuracy_large": {
+          "estimate": 0.9173913043478261,
+          "ci_low": 0.8886439443148875,
+          "ci_high": 0.9392248798699205
+        },
+        "accuracy_diff": {
+          "estimate": -0.019565217391304346,
+          "ci_low": -0.05217391304347829,
+          "ci_high": 0.013043478260869601
+        },
+        "cost_per_question_small_usd": 0.0006547389130434783,
+        "cost_per_question_large_usd": 0.0007070126195652173,
+        "elasticity": {
+          "estimate": 0.03334453845770382,
+          "ci_low": -0.024248374588699544,
+          "ci_high": 0.09025986511282916
+        },
+        "latency_median_ratio": 0.9746224139410332,
+        "latency_p90_ratio": 1.0471016309148207
+      },
+      {
+        "scope": "headline",
+        "policy": "always_g_luna",
+        "small_corpus": "H100",
+        "large_corpus": "H1000",
+        "sheets_small": 100,
+        "sheets_large": 1001,
+        "accuracy_small": {
+          "estimate": 0.941304347826087,
+          "ci_low": 0.9159480074280129,
+          "ci_high": 0.9593508014757164
+        },
+        "accuracy_large": {
+          "estimate": 0.9239130434782609,
+          "ci_low": 0.8960189062640287,
+          "ci_high": 0.9447853682986669
+        },
+        "accuracy_diff": {
+          "estimate": -0.017391304347826098,
+          "ci_low": -0.050000000000000044,
+          "ci_high": 0.01521739130434785
+        },
+        "cost_per_question_small_usd": 0.0006600174347826086,
+        "cost_per_question_large_usd": 0.0007411494673913042,
+        "elasticity": {
+          "estimate": 0.05032854650178487,
+          "ci_low": -0.016796543701309667,
+          "ci_high": 0.11618597603637391
+        },
+        "latency_median_ratio": 0.9297263490591274,
+        "latency_p90_ratio": 1.0493487509084338
+      },
+      {
+        "scope": "headline",
+        "policy": "always_c_luna",
+        "small_corpus": "H100",
+        "large_corpus": "H1000",
+        "sheets_small": 100,
+        "sheets_large": 1001,
+        "accuracy_small": {
+          "estimate": 0.7391304347826086,
+          "ci_low": 0.6971392206901641,
+          "ci_high": 0.7771606264990487
+        },
+        "accuracy_large": {
+          "estimate": 0.6956521739130435,
+          "ci_low": 0.6521256483940902,
+          "ci_high": 0.7359378629425385
+        },
+        "accuracy_diff": {
+          "estimate": -0.04347826086956519,
+          "ci_low": -0.10000000000000009,
+          "ci_high": 0.015217391304347738
+        },
+        "cost_per_question_small_usd": 0.0004326329891304348,
+        "cost_per_question_large_usd": 0.00042624722826086956,
+        "elasticity": {
+          "estimate": -0.006455262162280903,
+          "ci_low": -0.025867577681423577,
+          "ci_high": 0.012601912373030273
+        },
+        "latency_median_ratio": 0.9120868648998229,
+        "latency_p90_ratio": 0.9662981663927724
+      },
+      {
+        "scope": "headline",
+        "policy": "cascade_v3_iso",
+        "small_corpus": "H100",
+        "large_corpus": "H1000",
+        "sheets_small": 100,
+        "sheets_large": 1001,
+        "accuracy_small": {
+          "estimate": 0.9543478260869566,
+          "ci_low": 0.9312200267601665,
+          "ci_high": 0.9699496828993381
+        },
+        "accuracy_large": {
+          "estimate": 0.9369565217391305,
+          "ci_low": 0.9109252192047184,
+          "ci_high": 0.9557499561137526
+        },
+        "accuracy_diff": {
+          "estimate": -0.017391304347826098,
+          "ci_low": -0.04565217391304355,
+          "ci_high": 0.01304347826086949
+        },
+        "cost_per_question_small_usd": 0.0006565392282608696,
+        "cost_per_question_large_usd": 0.0007034147717391305,
+        "elasticity": {
+          "estimate": 0.02993780862633682,
+          "ci_low": -0.027652931622676232,
+          "ci_high": 0.0886003894350629
+        },
+        "latency_median_ratio": 0.9746224139410332,
+        "latency_p90_ratio": 1.055348312696278
+      },
+      {
+        "scope": "held-out",
+        "policy": "cascade_v3",
+        "small_corpus": "H100",
+        "large_corpus": "H1000",
+        "sheets_small": 100,
+        "sheets_large": 1001,
+        "accuracy_small": {
+          "estimate": 0.875,
+          "ci_low": 0.8039690855177497,
+          "ci_high": 0.9227657111903032
+        },
+        "accuracy_large": {
+          "estimate": 0.8166666666666667,
+          "ci_low": 0.7379892641067634,
+          "ci_high": 0.8756978975578147
+        },
+        "accuracy_diff": {
+          "estimate": -0.05833333333333335,
+          "ci_low": -0.15000000000000002,
+          "ci_high": 0.033333333333333326
+        },
+        "cost_per_question_small_usd": 0.000971887,
+        "cost_per_question_large_usd": 0.0010699170833333334,
+        "elasticity": {
+          "estimate": 0.041716240836803385,
+          "ci_low": -0.07195786672269516,
+          "ci_high": 0.1475840283937499
+        },
+        "latency_median_ratio": 0.935340836909333,
+        "latency_p90_ratio": 1.0294366637013899
+      },
+      {
+        "scope": "held-out",
+        "policy": "always_g_luna",
+        "small_corpus": "H100",
+        "large_corpus": "H1000",
+        "sheets_small": 100,
+        "sheets_large": 1001,
+        "accuracy_small": {
+          "estimate": 0.85,
+          "ci_low": 0.7753231505975375,
+          "ci_high": 0.9029626596633118
+        },
+        "accuracy_large": {
+          "estimate": 0.8,
+          "ci_low": 0.7196316465662729,
+          "ci_high": 0.8617561908001696
+        },
+        "accuracy_diff": {
+          "estimate": -0.04999999999999993,
+          "ci_low": -0.14166666666666672,
+          "ci_high": 0.04999999999999993
+        },
+        "cost_per_question_small_usd": 0.0012426004166666666,
+        "cost_per_question_large_usd": 0.0013449622083333333,
+        "elasticity": {
+          "estimate": 0.03436367000764918,
+          "ci_low": -0.0473697931978552,
+          "ci_high": 0.11797852301790386
+        },
+        "latency_median_ratio": 0.9649626970620431,
+        "latency_p90_ratio": 1.0626966925813706
+      },
+      {
+        "scope": "held-out",
+        "policy": "always_c_luna",
+        "small_corpus": "H100",
+        "large_corpus": "H1000",
+        "sheets_small": 100,
+        "sheets_large": 1001,
+        "accuracy_small": {
+          "estimate": 0.7,
+          "ci_low": 0.6128469049643513,
+          "ci_high": 0.7747449866132768
+        },
+        "accuracy_large": {
+          "estimate": 0.6416666666666667,
+          "ci_low": 0.5527036937000394,
+          "ci_high": 0.721840562834114
+        },
+        "accuracy_diff": {
+          "estimate": -0.05833333333333324,
+          "ci_low": -0.17500000000000004,
+          "ci_high": 0.05833333333333335
+        },
+        "cost_per_question_small_usd": 0.0005298610416666666,
+        "cost_per_question_large_usd": 0.0005242775,
+        "elasticity": {
+          "estimate": -0.004598772873370487,
+          "ci_low": -0.029549435813114276,
+          "ci_high": 0.01915669889479488
+        },
+        "latency_median_ratio": 0.9739097890755397,
+        "latency_p90_ratio": 0.9720383885364859
+      },
+      {
+        "scope": "held-out",
+        "policy": "cascade_v3_iso",
+        "small_corpus": "H100",
+        "large_corpus": "H1000",
+        "sheets_small": 100,
+        "sheets_large": 1001,
+        "accuracy_small": {
+          "estimate": 0.875,
+          "ci_low": 0.8039690855177497,
+          "ci_high": 0.9227657111903032
+        },
+        "accuracy_large": {
+          "estimate": 0.8166666666666667,
+          "ci_low": 0.7379892641067634,
+          "ci_high": 0.8756978975578147
+        },
+        "accuracy_diff": {
+          "estimate": -0.05833333333333335,
+          "ci_low": -0.15000000000000002,
+          "ci_high": 0.033333333333333326
+        },
+        "cost_per_question_small_usd": 0.000971887,
+        "cost_per_question_large_usd": 0.0010699170833333334,
+        "elasticity": {
+          "estimate": 0.041716240836803385,
+          "ci_low": -0.07195786672269516,
+          "ci_high": 0.1475840283937499
+        },
+        "latency_median_ratio": 0.935340836909333,
+        "latency_p90_ratio": 1.0294366637013899
+      }
+    ],
+    "k_bin_rows": [
+      {
+        "corpus_id": "H100",
+        "policy": "cascade_v3",
+        "k_bin": "k=0",
+        "n_questions": 165,
+        "n_accepted": 126,
+        "n_accepted_correct": 125
+      },
+      {
+        "corpus_id": "H100",
+        "policy": "cascade_v3",
+        "k_bin": "k=1-2",
+        "n_questions": 154,
+        "n_accepted": 121,
+        "n_accepted_correct": 112
+      },
+      {
+        "corpus_id": "H100",
+        "policy": "cascade_v3",
+        "k_bin": "k>=3",
+        "n_questions": 101,
+        "n_accepted": 81,
+        "n_accepted_correct": 74
+      },
+      {
+        "corpus_id": "H100",
+        "policy": "cascade_v3",
+        "k_bin": "unanswerable",
+        "n_questions": 40,
+        "n_accepted": 0,
+        "n_accepted_correct": 0
+      },
+      {
+        "corpus_id": "H1000",
+        "policy": "cascade_v3",
+        "k_bin": "k=0",
+        "n_questions": 158,
+        "n_accepted": 110,
+        "n_accepted_correct": 108
+      },
+      {
+        "corpus_id": "H1000",
+        "policy": "cascade_v3",
+        "k_bin": "k=1-2",
+        "n_questions": 142,
+        "n_accepted": 112,
+        "n_accepted_correct": 98
+      },
+      {
+        "corpus_id": "H1000",
+        "policy": "cascade_v3",
+        "k_bin": "k>=3",
+        "n_questions": 120,
+        "n_accepted": 85,
+        "n_accepted_correct": 82
+      },
+      {
+        "corpus_id": "H1000",
+        "policy": "cascade_v3",
+        "k_bin": "unanswerable",
+        "n_questions": 40,
+        "n_accepted": 0,
+        "n_accepted_correct": 0
+      }
+    ],
+    "paired_rows": [
+      {
+        "claim": "K1",
+        "corpus_id": "H100",
+        "scope": "headline",
+        "policy": "cascade_v3",
+        "reference": "always_g_luna",
+        "comparison": {
+          "accuracy": {
+            "mean": -0.004347826086956522,
+            "ci_low": -0.02826086956521739,
+            "ci_high": 0.01956521739130435
+          },
+          "accuracy_at_cutoff": {
+            "mean": -0.004347826086956522,
+            "ci_low": -0.02826086956521739,
+            "ci_high": 0.01956521739130435
+          },
+          "cost_usd": {
+            "mean": -5.27852173913043e-6,
+            "ci_low": -0.00006031579347826087,
+            "ci_high": 0.00004669771739130436
+          },
+          "latency_s": {
+            "mean": -0.7738708656520549,
+            "ci_low": -1.600907405000006,
+            "ci_high": 0.012888922391246761
+          }
+        }
+      },
+      {
+        "claim": "K2",
+        "corpus_id": "H100",
+        "scope": "headline",
+        "policy": "cascade_v3",
+        "reference": "random escalation",
+        "comparison": {
+          "accuracy": {
+            "mean": 0.1383913043478261,
+            "ci_low": 0.11250652173913044,
+            "ci_high": 0.1647217391304348
+          },
+          "accuracy_at_cutoff": {
+            "mean": 0.1383913043478261,
+            "ci_low": 0.11250652173913044,
+            "ci_high": 0.1647217391304348
+          },
+          "cost_usd": {
+            "mean": 0.00003210776565217355,
+            "ci_low": -0.000011355128858695304,
+            "ci_high": 0.00007824316534782598
+          },
+          "latency_s": {
+            "mean": 0.5168862771363674,
+            "ci_low": -0.1991256829740591,
+            "ci_high": 1.2579238852106096
+          }
+        }
+      },
+      {
+        "claim": "Q5",
+        "corpus_id": "H100",
+        "scope": "headline",
+        "policy": "always_g_luna",
+        "reference": "always_c_luna",
+        "comparison": {
+          "accuracy": {
+            "mean": 0.20217391304347826,
+            "ci_low": 0.15869565217391304,
+            "ci_high": 0.24565217391304348
+          },
+          "accuracy_at_cutoff": {
+            "mean": 0.20217391304347826,
+            "ci_low": 0.15869565217391304,
+            "ci_high": 0.24565217391304348
+          },
+          "cost_usd": {
+            "mean": 0.0002273844456521739,
+            "ci_low": 0.00016963823913043478,
+            "ci_high": 0.0002889238478260869
+          },
+          "latency_s": {
+            "mean": 4.82160493152149,
+            "ci_low": 3.9995182597826067,
+            "ci_high": 5.716389700869173
+          }
+        }
+      },
+      {
+        "claim": "K1",
+        "corpus_id": "H100",
+        "scope": "held-out",
+        "policy": "cascade_v3",
+        "reference": "always_g_luna",
+        "comparison": {
+          "accuracy": {
+            "mean": 0.025,
+            "ci_low": -0.03333333333333333,
+            "ci_high": 0.08333333333333333
+          },
+          "accuracy_at_cutoff": {
+            "mean": 0.025,
+            "ci_low": -0.03333333333333333,
+            "ci_high": 0.08333333333333333
+          },
+          "cost_usd": {
+            "mean": -0.00027071341666666667,
+            "ci_low": -0.000430255,
+            "ci_high": -0.00011415995833333332
+          },
+          "latency_s": {
+            "mean": -3.7185746275000082,
+            "ci_low": -6.062724838331875,
+            "ci_high": -1.5197208008332987
+          }
+        }
+      },
+      {
+        "claim": "K2",
+        "corpus_id": "H100",
+        "scope": "held-out",
+        "policy": "cascade_v3",
+        "reference": "random escalation",
+        "comparison": {
+          "accuracy": {
+            "mean": 0.13218333333333335,
+            "ci_low": 0.08073333333333334,
+            "ci_high": 0.18485
+          },
+          "accuracy_at_cutoff": {
+            "mean": 0.13218333333333335,
+            "ci_low": 0.08073333333333334,
+            "ci_high": 0.18485
+          },
+          "cost_usd": {
+            "mean": 0.00010024018674999936,
+            "ci_low": -0.0000326641935833335,
+            "ci_high": 0.0002486324769166672
+          },
+          "latency_s": {
+            "mean": 1.555127263094361,
+            "ci_low": -0.5254377189022762,
+            "ci_high": 3.872293054426508
+          }
+        }
+      },
+      {
+        "claim": "Q5",
+        "corpus_id": "H100",
+        "scope": "held-out",
+        "policy": "always_g_luna",
+        "reference": "always_c_luna",
+        "comparison": {
+          "accuracy": {
+            "mean": 0.15,
+            "ci_low": 0.058333333333333334,
+            "ci_high": 0.24166666666666667
+          },
+          "accuracy_at_cutoff": {
+            "mean": 0.15,
+            "ci_low": 0.058333333333333334,
+            "ci_high": 0.24166666666666667
+          },
+          "cost_usd": {
+            "mean": 0.000712739375,
+            "ci_low": 0.0005577750833333333,
+            "ci_high": 0.0008726326666666667
+          },
+          "latency_s": {
+            "mean": 10.741876023333194,
+            "ci_low": 8.543866466669169,
+            "ci_high": 13.147018476667835
+          }
+        }
+      },
+      {
+        "claim": "K1",
+        "corpus_id": "H1000",
+        "scope": "headline",
+        "policy": "cascade_v3",
+        "reference": "always_g_luna",
+        "comparison": {
+          "accuracy": {
+            "mean": -0.006521739130434782,
+            "ci_low": -0.030434782608695653,
+            "ci_high": 0.015217391304347827
+          },
+          "accuracy_at_cutoff": {
+            "mean": -0.006521739130434782,
+            "ci_low": -0.030434782608695653,
+            "ci_high": 0.015217391304347827
+          },
+          "cost_usd": {
+            "mean": -0.00003413684782608695,
+            "ci_low": -0.00010127303260869564,
+            "ci_high": 0.000030217467391304356
+          },
+          "latency_s": {
+            "mean": -0.45271007173926237,
+            "ci_low": -1.357798099565543,
+            "ci_high": 0.42987340565210297
+          }
+        }
+      },
+      {
+        "claim": "K2",
+        "corpus_id": "H1000",
+        "scope": "headline",
+        "policy": "cascade_v3",
+        "reference": "random escalation",
+        "comparison": {
+          "accuracy": {
+            "mean": 0.14468478260869566,
+            "ci_low": 0.11768260869565217,
+            "ci_high": 0.17216956521739132
+          },
+          "accuracy_at_cutoff": {
+            "mean": 0.14468478260869566,
+            "ci_low": 0.11768260869565217,
+            "ci_high": 0.17216956521739132
+          },
+          "cost_usd": {
+            "mean": 0.000034339198086956585,
+            "ci_low": -0.000019856109184782896,
+            "ci_high": 0.00009316929396739103
+          },
+          "latency_s": {
+            "mean": 0.6305816471405236,
+            "ci_low": -0.14390561423625353,
+            "ci_high": 1.4405129961562857
+          }
+        }
+      },
+      {
+        "claim": "Q5",
+        "corpus_id": "H1000",
+        "scope": "headline",
+        "policy": "always_g_luna",
+        "reference": "always_c_luna",
+        "comparison": {
+          "accuracy": {
+            "mean": 0.22826086956521738,
+            "ci_low": 0.18478260869565216,
+            "ci_high": 0.2717391304347826
+          },
+          "accuracy_at_cutoff": {
+            "mean": 0.22826086956521738,
+            "ci_low": 0.18478260869565216,
+            "ci_high": 0.2717391304347826
+          },
+          "cost_usd": {
+            "mean": 0.0003149022391304348,
+            "ci_low": 0.00023889386956521736,
+            "ci_high": 0.0003981939565217391
+          },
+          "latency_s": {
+            "mean": 5.159141416522329,
+            "ci_low": 4.2217142847832605,
+            "ci_high": 6.189400704349258
+          }
+        }
+      },
+      {
+        "claim": "K1",
+        "corpus_id": "H1000",
+        "scope": "held-out",
+        "policy": "cascade_v3",
+        "reference": "always_g_luna",
+        "comparison": {
+          "accuracy": {
+            "mean": 0.016666666666666666,
+            "ci_low": -0.05,
+            "ci_high": 0.075
+          },
+          "accuracy_at_cutoff": {
+            "mean": 0.016666666666666666,
+            "ci_low": -0.05,
+            "ci_high": 0.075
+          },
+          "cost_usd": {
+            "mean": -0.00027504512499999995,
+            "ci_low": -0.00044290091666666665,
+            "ci_high": -0.00011833454166666668
+          },
+          "latency_s": {
+            "mean": -2.729354091665967,
+            "ci_low": -4.996740204166539,
+            "ci_high": -0.5921665291671767
+          }
+        }
+      },
+      {
+        "claim": "K2",
+        "corpus_id": "H1000",
+        "scope": "held-out",
+        "policy": "cascade_v3",
+        "reference": "random escalation",
+        "comparison": {
+          "accuracy": {
+            "mean": 0.12734166666666666,
+            "ci_low": 0.07738333333333335,
+            "ci_high": 0.17815
+          },
+          "accuracy_at_cutoff": {
+            "mean": 0.12734166666666666,
+            "ci_low": 0.07738333333333335,
+            "ci_high": 0.17815
+          },
+          "cost_usd": {
+            "mean": 0.00014295261575000007,
+            "ci_low": -0.000012261592541666246,
+            "ci_high": 0.00030879203579166586
+          },
+          "latency_s": {
+            "mean": 1.9312664620383013,
+            "ci_low": -0.2580202429725506,
+            "ci_high": 4.1954076427606095
+          }
+        }
+      },
+      {
+        "claim": "Q5",
+        "corpus_id": "H1000",
+        "scope": "held-out",
+        "policy": "always_g_luna",
+        "reference": "always_c_luna",
+        "comparison": {
+          "accuracy": {
+            "mean": 0.15833333333333333,
+            "ci_low": 0.06666666666666667,
+            "ci_high": 0.25
+          },
+          "accuracy_at_cutoff": {
+            "mean": 0.15833333333333333,
+            "ci_low": 0.06666666666666667,
+            "ci_high": 0.25
+          },
+          "cost_usd": {
+            "mean": 0.0008206847083333333,
+            "ci_low": 0.0006450997083333333,
+            "ci_high": 0.0009992138333333332
+          },
+          "latency_s": {
+            "mean": 10.5436850075,
+            "ci_low": 8.458799345833722,
+            "ci_high": 12.68714181750159
+          }
+        }
+      }
+    ],
+    "claims": [
+      {
+        "rule": "Q4 (primary) cascade_v3",
+        "status": "PASS",
+        "headline": "Q4 (primary) cascade_v3 [headline]: supported",
+        "details": [
+          "acc@C large minus small -0.020 [-0.052, +0.013] (needs the interval to contain 0 or lie above): ok",
+          "cost elasticity 0.033 [-0.024, 0.090] (needs < 0.5): ok"
+        ]
+      },
+      {
+        "rule": "K1",
+        "status": "FAIL",
+        "headline": "K1 [headline]: the cascade saves nothing",
+        "details": [
+          "acc@C -0.007 [-0.030, +0.015]: ok",
+          "$/question -0.00003 [-0.00010, +0.00003] (needs CI below 0): not met",
+          "latency s/question -0.45 [-1.36, +0.43] (needs CI below 0): not met"
+        ]
+      },
+      {
+        "rule": "K2",
+        "status": "PASS",
+        "headline": "K2 [headline]: supported",
+        "details": [
+          "acc@C +0.145 [+0.118, +0.172] (needs CI above 0)"
+        ]
+      },
+      {
+        "rule": "K3",
+        "status": "PASS",
+        "headline": "K3 [headline]: supported",
+        "details": [
+          "median 8.2 [7.7, 8.7] s (limit 10): ok",
+          "p90 22.5 [19.6, 26.3] s (limit 60): ok"
+        ]
+      },
+      {
+        "rule": "Q5",
+        "status": "PASS",
+        "headline": "Q5 [headline]: supported",
+        "details": [
+          "acc@C +0.228 [+0.185, +0.272] (needs CI above 0)"
+        ]
+      },
+      {
+        "rule": "Q4' always_g_luna",
+        "status": "PASS",
+        "headline": "Q4' always_g_luna [headline]: supported",
+        "details": [
+          "acc@C large minus small -0.017 [-0.050, +0.015] (needs the interval to contain 0 or lie above): ok",
+          "cost elasticity 0.050 [-0.017, 0.116] (needs < 0.5): ok"
+        ]
+      },
+      {
+        "rule": "Q4' always_c_luna",
+        "status": "PASS",
+        "headline": "Q4' always_c_luna [headline]: supported",
+        "details": [
+          "acc@C large minus small -0.043 [-0.100, +0.015] (needs the interval to contain 0 or lie above): ok",
+          "cost elasticity -0.006 [-0.026, 0.013] (needs < 0.5): ok"
+        ]
+      },
+      {
+        "rule": "Q4' cascade_v3_iso",
+        "status": "PASS",
+        "headline": "Q4' cascade_v3_iso [headline]: supported",
+        "details": [
+          "acc@C large minus small -0.017 [-0.046, +0.013] (needs the interval to contain 0 or lie above): ok",
+          "cost elasticity 0.030 [-0.028, 0.089] (needs < 0.5): ok"
+        ]
+      },
+      {
+        "rule": "Q4 (primary) cascade_v3",
+        "status": "PASS",
+        "headline": "Q4 (primary) cascade_v3 [held-out]: supported",
+        "details": [
+          "acc@C large minus small -0.058 [-0.150, +0.033] (needs the interval to contain 0 or lie above): ok",
+          "cost elasticity 0.042 [-0.072, 0.148] (needs < 0.5): ok"
+        ]
+      },
+      {
+        "rule": "K1",
+        "status": "PASS",
+        "headline": "K1 [held-out]: supported",
+        "details": [
+          "acc@C +0.017 [-0.050, +0.075]: ok",
+          "$/question -0.00028 [-0.00044, -0.00012] (needs CI below 0): ok",
+          "latency s/question -2.73 [-5.00, -0.59] (needs CI below 0): ok"
+        ]
+      },
+      {
+        "rule": "K2",
+        "status": "PASS",
+        "headline": "K2 [held-out]: supported",
+        "details": [
+          "acc@C +0.127 [+0.077, +0.178] (needs CI above 0)"
+        ]
+      },
+      {
+        "rule": "K3",
+        "status": "PASS",
+        "headline": "K3 [held-out]: supported",
+        "details": [
+          "median 9.2 [8.7, 10.5] s (limit 10): ok",
+          "p90 37.0 [25.8, 52.9] s (limit 60): ok"
+        ]
+      },
+      {
+        "rule": "Q5",
+        "status": "PASS",
+        "headline": "Q5 [held-out]: supported",
+        "details": [
+          "acc@C +0.158 [+0.067, +0.250] (needs CI above 0)"
+        ]
+      },
+      {
+        "rule": "Q4' always_g_luna",
+        "status": "PASS",
+        "headline": "Q4' always_g_luna [held-out]: supported",
+        "details": [
+          "acc@C large minus small -0.050 [-0.142, +0.050] (needs the interval to contain 0 or lie above): ok",
+          "cost elasticity 0.034 [-0.047, 0.118] (needs < 0.5): ok"
+        ]
+      },
+      {
+        "rule": "Q4' always_c_luna",
+        "status": "PASS",
+        "headline": "Q4' always_c_luna [held-out]: supported",
+        "details": [
+          "acc@C large minus small -0.058 [-0.175, +0.058] (needs the interval to contain 0 or lie above): ok",
+          "cost elasticity -0.005 [-0.030, 0.019] (needs < 0.5): ok"
+        ]
+      },
+      {
+        "rule": "Q4' cascade_v3_iso",
+        "status": "PASS",
+        "headline": "Q4' cascade_v3_iso [held-out]: supported",
+        "details": [
+          "acc@C large minus small -0.058 [-0.150, +0.033] (needs the interval to contain 0 or lie above): ok",
+          "cost elasticity 0.042 [-0.072, 0.148] (needs < 0.5): ok"
+        ]
+      },
+      {
+        "rule": "Q1",
+        "status": "NOT_RUN",
+        "headline": "Q1: not run - need-aware Hierarchical was dropped (ADR-0047, ADR-0048)",
+        "details": []
+      },
+      {
+        "rule": "Q2",
+        "status": "NOT_RUN",
+        "headline": "Q2: not run - need-aware Hierarchical was dropped (ADR-0047, ADR-0048)",
+        "details": []
+      },
+      {
+        "rule": "Q3",
+        "status": "NOT_RUN",
+        "headline": "Q3: not run - hier_agent was dropped (ADR-0047)",
+        "details": []
+      }
+    ],
+    "notes": [
+      "scope `headline` leaves out the family LOOP_ACTUATED_VALVE (ADR-0044 U2)"
+    ]
+  }
+}

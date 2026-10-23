@@ -1,0 +1,1558 @@
+[
+  {
+    "blind_id": "B001",
+    "qid": "CP14",
+    "arm": "ag",
+    "repeat": 1,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "H1007",
+        "P4711",
+        "H1008"
+      ],
+      "missing": [
+        "HV4750.01",
+        "PV4712.02"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B002",
+    "qid": "CP13",
+    "arm": "ctx-high",
+    "repeat": 3,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "T4750",
+        "P4712"
+      ],
+      "missing": [
+        "66KL21",
+        "75SA21",
+        "73KH12"
+      ],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B003",
+    "qid": "CP15",
+    "arm": "ctx-gpt5mini",
+    "repeat": 2,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "P4711",
+        "H1007",
+        "T4750"
+      ],
+      "missing": [
+        "HV4750.01"
+      ],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B004",
+    "qid": "CP12",
+    "arm": "cyp",
+    "repeat": 2,
+    "no_answer": true,
+    "tag_hits": null
+  },
+  {
+    "blind_id": "B005",
+    "qid": "CP13",
+    "arm": "ctx-gpt5mini",
+    "repeat": 2,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "T4750",
+        "66KL21",
+        "75SA21",
+        "73KH12",
+        "P4712"
+      ],
+      "missing": [],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B006",
+    "qid": "CP11",
+    "arm": "ctx-gpt5mini",
+    "repeat": 1,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "H1007"
+      ],
+      "missing": [],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B007",
+    "qid": "CP14",
+    "arm": "cyp",
+    "repeat": 2,
+    "no_answer": true,
+    "tag_hits": null
+  },
+  {
+    "blind_id": "B008",
+    "qid": "CP12",
+    "arm": "ctx-gpt5mini",
+    "repeat": 2,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [],
+      "missing": [
+        "HV4750.01",
+        "PV4712.02"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B009",
+    "qid": "CP11",
+    "arm": "ctx-gpt5mini",
+    "repeat": 3,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "H1007"
+      ],
+      "missing": [],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B010",
+    "qid": "CP13",
+    "arm": "ag",
+    "repeat": 3,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "T4750",
+        "P4712"
+      ],
+      "missing": [
+        "66KL21",
+        "75SA21",
+        "73KH12"
+      ],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B011",
+    "qid": "CP15",
+    "arm": "cyp",
+    "repeat": 2,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "P4711",
+        "H1007",
+        "T4750"
+      ],
+      "missing": [
+        "HV4750.01"
+      ],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B012",
+    "qid": "CP11",
+    "arm": "ag",
+    "repeat": 3,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "H1007"
+      ],
+      "missing": [],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B013",
+    "qid": "CP13",
+    "arm": "ctx-low",
+    "repeat": 1,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "T4750",
+        "P4712"
+      ],
+      "missing": [
+        "66KL21",
+        "75SA21",
+        "73KH12"
+      ],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B014",
+    "qid": "CP14",
+    "arm": "cyp",
+    "repeat": 3,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "H1007",
+        "P4711",
+        "H1008"
+      ],
+      "missing": [
+        "HV4750.01",
+        "PV4712.02"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B015",
+    "qid": "CP13",
+    "arm": "ctx-high",
+    "repeat": 1,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "T4750",
+        "P4712"
+      ],
+      "missing": [
+        "66KL21",
+        "75SA21",
+        "73KH12"
+      ],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B016",
+    "qid": "CP12",
+    "arm": "ctx-low",
+    "repeat": 2,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [],
+      "missing": [
+        "HV4750.01",
+        "PV4712.02"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B017",
+    "qid": "CP13",
+    "arm": "cascade_v3",
+    "repeat": 2,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "T4750",
+        "P4712"
+      ],
+      "missing": [
+        "66KL21",
+        "75SA21",
+        "73KH12"
+      ],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B018",
+    "qid": "CP15",
+    "arm": "ctx-gpt5mini",
+    "repeat": 3,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "P4711",
+        "H1007",
+        "T4750"
+      ],
+      "missing": [
+        "HV4750.01"
+      ],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B019",
+    "qid": "CP14",
+    "arm": "ctx-gpt5mini",
+    "repeat": 3,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "H1007",
+        "P4711",
+        "H1008"
+      ],
+      "missing": [
+        "HV4750.01",
+        "PV4712.02"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B020",
+    "qid": "CP14",
+    "arm": "ctx-low",
+    "repeat": 1,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "H1007",
+        "P4711",
+        "H1008"
+      ],
+      "missing": [
+        "HV4750.01",
+        "PV4712.02"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B021",
+    "qid": "CP12",
+    "arm": "ctx-low",
+    "repeat": 3,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [],
+      "missing": [
+        "HV4750.01",
+        "PV4712.02"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B022",
+    "qid": "CP14",
+    "arm": "ctx-high",
+    "repeat": 2,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "H1007",
+        "P4711",
+        "H1008"
+      ],
+      "missing": [
+        "HV4750.01",
+        "PV4712.02"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B023",
+    "qid": "CP12",
+    "arm": "cyp",
+    "repeat": 1,
+    "no_answer": true,
+    "tag_hits": null
+  },
+  {
+    "blind_id": "B024",
+    "qid": "CP14",
+    "arm": "cascade_v3",
+    "repeat": 1,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "H1007",
+        "P4711",
+        "H1008"
+      ],
+      "missing": [
+        "HV4750.01",
+        "PV4712.02"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B025",
+    "qid": "CP11",
+    "arm": "ctx-high",
+    "repeat": 2,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "H1007"
+      ],
+      "missing": [],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B026",
+    "qid": "CP14",
+    "arm": "cascade_v3",
+    "repeat": 2,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "H1007",
+        "P4711",
+        "H1008"
+      ],
+      "missing": [
+        "HV4750.01",
+        "PV4712.02"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B027",
+    "qid": "CP15",
+    "arm": "ctx-low",
+    "repeat": 2,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "P4711",
+        "H1007",
+        "T4750"
+      ],
+      "missing": [
+        "HV4750.01"
+      ],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B028",
+    "qid": "CP13",
+    "arm": "ctx-gpt5mini",
+    "repeat": 1,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "T4750",
+        "66KL21",
+        "75SA21",
+        "73KH12",
+        "P4712"
+      ],
+      "missing": [],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B029",
+    "qid": "CP12",
+    "arm": "ag",
+    "repeat": 2,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [],
+      "missing": [
+        "HV4750.01",
+        "PV4712.02"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B030",
+    "qid": "CP15",
+    "arm": "cascade_v3",
+    "repeat": 1,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "P4711",
+        "H1007",
+        "T4750"
+      ],
+      "missing": [
+        "HV4750.01"
+      ],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B031",
+    "qid": "CP15",
+    "arm": "ag",
+    "repeat": 1,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "P4711",
+        "H1007",
+        "T4750"
+      ],
+      "missing": [
+        "HV4750.01"
+      ],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B032",
+    "qid": "CP14",
+    "arm": "cyp",
+    "repeat": 1,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "H1007",
+        "P4711",
+        "H1008"
+      ],
+      "missing": [
+        "HV4750.01",
+        "PV4712.02"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B033",
+    "qid": "CP11",
+    "arm": "cyp",
+    "repeat": 2,
+    "no_answer": true,
+    "tag_hits": null
+  },
+  {
+    "blind_id": "B034",
+    "qid": "CP13",
+    "arm": "cyp",
+    "repeat": 1,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "T4750",
+        "P4712"
+      ],
+      "missing": [
+        "66KL21",
+        "75SA21",
+        "73KH12"
+      ],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B035",
+    "qid": "CP11",
+    "arm": "cyp",
+    "repeat": 3,
+    "no_answer": true,
+    "tag_hits": null
+  },
+  {
+    "blind_id": "B036",
+    "qid": "CP11",
+    "arm": "ctx-gpt5mini",
+    "repeat": 2,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [],
+      "missing": [
+        "H1007"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B037",
+    "qid": "CP11",
+    "arm": "ctx-high",
+    "repeat": 3,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "H1007"
+      ],
+      "missing": [],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B038",
+    "qid": "CP13",
+    "arm": "ctx-high",
+    "repeat": 2,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "T4750",
+        "P4712"
+      ],
+      "missing": [
+        "66KL21",
+        "75SA21",
+        "73KH12"
+      ],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B039",
+    "qid": "CP14",
+    "arm": "ctx-gpt5mini",
+    "repeat": 1,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "H1007",
+        "H1008"
+      ],
+      "missing": [
+        "P4711",
+        "HV4750.01",
+        "PV4712.02"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B040",
+    "qid": "CP13",
+    "arm": "cyp",
+    "repeat": 2,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "T4750",
+        "P4712"
+      ],
+      "missing": [
+        "66KL21",
+        "75SA21",
+        "73KH12"
+      ],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B041",
+    "qid": "CP12",
+    "arm": "cyp",
+    "repeat": 3,
+    "no_answer": true,
+    "tag_hits": null
+  },
+  {
+    "blind_id": "B042",
+    "qid": "CP13",
+    "arm": "ctx-gpt5mini",
+    "repeat": 3,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "T4750",
+        "66KL21",
+        "75SA21",
+        "73KH12",
+        "P4712"
+      ],
+      "missing": [],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B043",
+    "qid": "CP14",
+    "arm": "ctx-low",
+    "repeat": 2,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "H1007",
+        "P4711",
+        "H1008"
+      ],
+      "missing": [
+        "HV4750.01",
+        "PV4712.02"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B044",
+    "qid": "CP12",
+    "arm": "ctx-gpt5mini",
+    "repeat": 1,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [],
+      "missing": [
+        "HV4750.01",
+        "PV4712.02"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B045",
+    "qid": "CP15",
+    "arm": "ctx-high",
+    "repeat": 3,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "P4711",
+        "H1007",
+        "T4750"
+      ],
+      "missing": [
+        "HV4750.01"
+      ],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B046",
+    "qid": "CP15",
+    "arm": "cascade_v3",
+    "repeat": 3,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "P4711",
+        "H1007",
+        "T4750"
+      ],
+      "missing": [
+        "HV4750.01"
+      ],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B047",
+    "qid": "CP15",
+    "arm": "cyp",
+    "repeat": 1,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "P4711",
+        "H1007",
+        "T4750"
+      ],
+      "missing": [
+        "HV4750.01"
+      ],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B048",
+    "qid": "CP11",
+    "arm": "ctx-low",
+    "repeat": 2,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [],
+      "missing": [
+        "H1007"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B049",
+    "qid": "CP14",
+    "arm": "ctx-high",
+    "repeat": 3,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "H1007",
+        "P4711",
+        "H1008"
+      ],
+      "missing": [
+        "HV4750.01",
+        "PV4712.02"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B050",
+    "qid": "CP14",
+    "arm": "cascade_v3",
+    "repeat": 3,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "H1007",
+        "P4711",
+        "H1008"
+      ],
+      "missing": [
+        "HV4750.01",
+        "PV4712.02"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B051",
+    "qid": "CP11",
+    "arm": "ctx-low",
+    "repeat": 1,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [],
+      "missing": [
+        "H1007"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B052",
+    "qid": "CP12",
+    "arm": "ctx-high",
+    "repeat": 1,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [],
+      "missing": [
+        "HV4750.01",
+        "PV4712.02"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B053",
+    "qid": "CP14",
+    "arm": "ag",
+    "repeat": 2,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "H1007",
+        "P4711",
+        "H1008"
+      ],
+      "missing": [
+        "HV4750.01",
+        "PV4712.02"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B054",
+    "qid": "CP11",
+    "arm": "ag",
+    "repeat": 2,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "H1007"
+      ],
+      "missing": [],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B055",
+    "qid": "CP13",
+    "arm": "ctx-low",
+    "repeat": 3,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "T4750",
+        "P4712"
+      ],
+      "missing": [
+        "66KL21",
+        "75SA21",
+        "73KH12"
+      ],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B056",
+    "qid": "CP12",
+    "arm": "cascade_v3",
+    "repeat": 3,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [],
+      "missing": [
+        "HV4750.01",
+        "PV4712.02"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B057",
+    "qid": "CP12",
+    "arm": "cascade_v3",
+    "repeat": 2,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [],
+      "missing": [
+        "HV4750.01",
+        "PV4712.02"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B058",
+    "qid": "CP15",
+    "arm": "ctx-low",
+    "repeat": 3,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "P4711",
+        "H1007",
+        "T4750"
+      ],
+      "missing": [
+        "HV4750.01"
+      ],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B059",
+    "qid": "CP11",
+    "arm": "cascade_v3",
+    "repeat": 1,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "H1007"
+      ],
+      "missing": [],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B060",
+    "qid": "CP14",
+    "arm": "ctx-high",
+    "repeat": 1,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "H1007",
+        "P4711",
+        "H1008"
+      ],
+      "missing": [
+        "HV4750.01",
+        "PV4712.02"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B061",
+    "qid": "CP15",
+    "arm": "ctx-high",
+    "repeat": 2,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "P4711",
+        "H1007",
+        "T4750"
+      ],
+      "missing": [
+        "HV4750.01"
+      ],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B062",
+    "qid": "CP13",
+    "arm": "cascade_v3",
+    "repeat": 1,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "T4750",
+        "P4712"
+      ],
+      "missing": [
+        "66KL21",
+        "75SA21",
+        "73KH12"
+      ],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B063",
+    "qid": "CP14",
+    "arm": "ctx-gpt5mini",
+    "repeat": 2,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "H1007",
+        "P4711"
+      ],
+      "missing": [
+        "H1008",
+        "HV4750.01",
+        "PV4712.02"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B064",
+    "qid": "CP13",
+    "arm": "ctx-low",
+    "repeat": 2,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "T4750",
+        "P4712"
+      ],
+      "missing": [
+        "66KL21",
+        "75SA21",
+        "73KH12"
+      ],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B065",
+    "qid": "CP13",
+    "arm": "cascade_v3",
+    "repeat": 3,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "T4750",
+        "P4712"
+      ],
+      "missing": [
+        "66KL21",
+        "75SA21",
+        "73KH12"
+      ],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B066",
+    "qid": "CP15",
+    "arm": "ctx-low",
+    "repeat": 1,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "P4711",
+        "H1007",
+        "T4750"
+      ],
+      "missing": [
+        "HV4750.01"
+      ],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B067",
+    "qid": "CP12",
+    "arm": "ctx-low",
+    "repeat": 1,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [],
+      "missing": [
+        "HV4750.01",
+        "PV4712.02"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B068",
+    "qid": "CP15",
+    "arm": "ag",
+    "repeat": 2,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "P4711",
+        "H1007",
+        "T4750"
+      ],
+      "missing": [
+        "HV4750.01"
+      ],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B069",
+    "qid": "CP12",
+    "arm": "ctx-high",
+    "repeat": 2,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [],
+      "missing": [
+        "HV4750.01",
+        "PV4712.02"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B070",
+    "qid": "CP11",
+    "arm": "cyp",
+    "repeat": 1,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "H1007"
+      ],
+      "missing": [],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B071",
+    "qid": "CP12",
+    "arm": "ag",
+    "repeat": 1,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [],
+      "missing": [
+        "HV4750.01",
+        "PV4712.02"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B072",
+    "qid": "CP11",
+    "arm": "ctx-high",
+    "repeat": 1,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [],
+      "missing": [
+        "H1007"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B073",
+    "qid": "CP11",
+    "arm": "ag",
+    "repeat": 1,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "H1007"
+      ],
+      "missing": [],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B074",
+    "qid": "CP11",
+    "arm": "cascade_v3",
+    "repeat": 3,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "H1007"
+      ],
+      "missing": [],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B075",
+    "qid": "CP15",
+    "arm": "cyp",
+    "repeat": 3,
+    "no_answer": true,
+    "tag_hits": null
+  },
+  {
+    "blind_id": "B076",
+    "qid": "CP11",
+    "arm": "ctx-low",
+    "repeat": 3,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "H1007"
+      ],
+      "missing": [],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B077",
+    "qid": "CP14",
+    "arm": "ctx-low",
+    "repeat": 3,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "H1007",
+        "P4711",
+        "H1008"
+      ],
+      "missing": [
+        "HV4750.01",
+        "PV4712.02"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B078",
+    "qid": "CP15",
+    "arm": "ctx-high",
+    "repeat": 1,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "P4711",
+        "H1007",
+        "T4750"
+      ],
+      "missing": [
+        "HV4750.01"
+      ],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B079",
+    "qid": "CP12",
+    "arm": "cascade_v3",
+    "repeat": 1,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [],
+      "missing": [
+        "HV4750.01",
+        "PV4712.02"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B080",
+    "qid": "CP11",
+    "arm": "cascade_v3",
+    "repeat": 2,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "H1007"
+      ],
+      "missing": [],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B081",
+    "qid": "CP15",
+    "arm": "ctx-gpt5mini",
+    "repeat": 1,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "P4711",
+        "H1007",
+        "T4750"
+      ],
+      "missing": [
+        "HV4750.01"
+      ],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B082",
+    "qid": "CP12",
+    "arm": "ctx-gpt5mini",
+    "repeat": 3,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [],
+      "missing": [
+        "HV4750.01",
+        "PV4712.02"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B083",
+    "qid": "CP15",
+    "arm": "cascade_v3",
+    "repeat": 2,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "P4711",
+        "H1007",
+        "T4750"
+      ],
+      "missing": [
+        "HV4750.01"
+      ],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B084",
+    "qid": "CP13",
+    "arm": "cyp",
+    "repeat": 3,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "T4750",
+        "P4712"
+      ],
+      "missing": [
+        "66KL21",
+        "75SA21",
+        "73KH12"
+      ],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B085",
+    "qid": "CP13",
+    "arm": "ag",
+    "repeat": 1,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "T4750",
+        "P4712"
+      ],
+      "missing": [
+        "66KL21",
+        "75SA21",
+        "73KH12"
+      ],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B086",
+    "qid": "CP12",
+    "arm": "ag",
+    "repeat": 3,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [],
+      "missing": [
+        "HV4750.01",
+        "PV4712.02"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B087",
+    "qid": "CP13",
+    "arm": "ag",
+    "repeat": 2,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "T4750",
+        "P4712"
+      ],
+      "missing": [
+        "66KL21",
+        "75SA21",
+        "73KH12"
+      ],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B088",
+    "qid": "CP12",
+    "arm": "ctx-high",
+    "repeat": 3,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [],
+      "missing": [
+        "HV4750.01",
+        "PV4712.02"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  },
+  {
+    "blind_id": "B089",
+    "qid": "CP15",
+    "arm": "ag",
+    "repeat": 3,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "P4711",
+        "H1007",
+        "T4750"
+      ],
+      "missing": [
+        "HV4750.01"
+      ],
+      "forbidden_present": [],
+      "order_ok": true
+    }
+  },
+  {
+    "blind_id": "B090",
+    "qid": "CP14",
+    "arm": "ag",
+    "repeat": 3,
+    "no_answer": false,
+    "tag_hits": {
+      "found": [
+        "H1007",
+        "P4711"
+      ],
+      "missing": [
+        "H1008",
+        "HV4750.01",
+        "PV4712.02"
+      ],
+      "forbidden_present": [],
+      "order_ok": null
+    }
+  }
+]

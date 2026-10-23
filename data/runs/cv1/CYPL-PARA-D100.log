@@ -1,0 +1,59 @@
+run CYPL-PARA-D100: 252 rows to answer, 0 already on disk
+concurrency 4: up to that many questions in flight
+paid mode: up to 252 model calls; hard spend cap 0.4 USD
+estimated cost: 0.2520 USD
+{
+  "run_id": "CYPL-PARA-D100",
+  "n_rows": 252,
+  "n_new_rows": 252,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "cypher_rag_plant": {
+      "5-8": {
+        "ANSWERED": 20,
+        "RETRIEVAL_ERROR": 8
+      },
+      "3-4": {
+        "ANSWERED": 24,
+        "RETRIEVAL_ERROR": 4
+      },
+      "2": {
+        "ANSWERED": 30,
+        "RETRIEVAL_ERROR": 5
+      },
+      "1": {
+        "ANSWERED": 34,
+        "RETRIEVAL_ERROR": 15
+      },
+      "0": {
+        "ANSWERED": 65,
+        "RETRIEVAL_ERROR": 12
+      },
+      "unanswerable": {
+        "ANSWERED": 25,
+        "RETRIEVAL_ERROR": 3
+      },
+      "9-16": {
+        "ANSWERED": 5,
+        "RETRIEVAL_ERROR": 2
+      }
+    }
+  },
+  "routing_recall": {},
+  "relaxed_routing_recall": {},
+  "evidence_node_recall": {},
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {},
+    "relaxed_routing_recall": {},
+    "evidence_node_recall": {}
+  },
+  "trace_rates": {
+    "cypher_rag_plant": {
+      "truncated_rate": 0.0
+    }
+  },
+  "mean_total_cost_usd": {
+    "cypher_rag_plant": 0.00039589017857142856
+  },
+  "stopped_by_spend_cap": false
+}

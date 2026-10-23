@@ -1,0 +1,84 @@
+Retrying answer call after a transport error (attempt 1/5, waiting 1.00s)
+repeat 1 ctx-high CP11: ANSWERED
+repeat 1 ctx-high CP12: ANSWERED
+repeat 1 ctx-high CP13: ANSWERED
+repeat 1 ctx-high CP14: ANSWERED
+repeat 1 ctx-high CP15: ANSWERED
+repeat 1 ctx-low CP11: ANSWERED
+repeat 1 ctx-low CP12: ANSWERED
+repeat 1 ctx-low CP13: ANSWERED
+repeat 1 ctx-low CP14: ANSWERED
+repeat 1 ctx-low CP15: ANSWERED
+repeat 1 ctx-gpt5mini CP11: ANSWERED
+repeat 1 ctx-gpt5mini CP12: ANSWERED
+repeat 1 ctx-gpt5mini CP13: ANSWERED
+repeat 1 ctx-gpt5mini CP14: ANSWERED
+repeat 1 ctx-gpt5mini CP15: ANSWERED
+repeat 1 cyp CP11: ANSWERED
+repeat 1 cyp CP12: RETRIEVAL_ERROR
+repeat 1 cyp CP13: ANSWERED
+repeat 1 cyp CP14: ANSWERED
+repeat 1 cyp CP15: ANSWERED
+repeat 1 ag CP11: ANSWERED
+repeat 1 ag CP12: ANSWERED
+repeat 1 ag CP13: ANSWERED
+repeat 1 ag CP14: ANSWERED
+repeat 1 ag CP15: ANSWERED
+repeat 2 ctx-high CP11: ANSWERED
+repeat 2 ctx-high CP12: ANSWERED
+repeat 2 ctx-high CP13: ANSWERED
+repeat 2 ctx-high CP14: ANSWERED
+repeat 2 ctx-high CP15: ANSWERED
+repeat 2 ctx-low CP11: ANSWERED
+repeat 2 ctx-low CP12: ANSWERED
+repeat 2 ctx-low CP13: ANSWERED
+repeat 2 ctx-low CP14: ANSWERED
+repeat 2 ctx-low CP15: ANSWERED
+repeat 2 ctx-gpt5mini CP11: ANSWERED
+repeat 2 ctx-gpt5mini CP12: ANSWERED
+repeat 2 ctx-gpt5mini CP13: ANSWERED
+repeat 2 ctx-gpt5mini CP14: ANSWERED
+repeat 2 ctx-gpt5mini CP15: ANSWERED
+repeat 2 cyp CP11: RETRIEVAL_ERROR
+repeat 2 cyp CP12: RETRIEVAL_ERROR
+repeat 2 cyp CP13: ANSWERED
+repeat 2 cyp CP14: ANSWERED
+repeat 2 cyp CP15: ANSWERED
+repeat 2 ag CP11: ANSWERED
+repeat 2 ag CP12: ANSWERED
+repeat 2 ag CP13: ANSWERED
+repeat 2 ag CP14: ANSWERED
+repeat 2 ag CP15: ANSWERED
+repeat 3 ctx-high CP11: ANSWERED
+repeat 3 ctx-high CP12: ANSWERED
+repeat 3 ctx-high CP13: ANSWERED
+repeat 3 ctx-high CP14: ANSWERED
+repeat 3 ctx-high CP15: ANSWERED
+repeat 3 ctx-low CP11: ANSWERED
+repeat 3 ctx-low CP12: ANSWERED
+repeat 3 ctx-low CP13: ANSWERED
+repeat 3 ctx-low CP14: ANSWERED
+repeat 3 ctx-low CP15: ANSWERED
+repeat 3 ctx-gpt5mini CP11: ANSWERED
+repeat 3 ctx-gpt5mini CP12: ANSWERED
+repeat 3 ctx-gpt5mini CP13: ANSWERED
+repeat 3 ctx-gpt5mini CP14: ANSWERED
+repeat 3 ctx-gpt5mini CP15: ANSWERED
+repeat 3 cyp CP11: RETRIEVAL_ERROR
+repeat 3 cyp CP12: ANSWERED
+repeat 3 cyp CP13: ANSWERED
+repeat 3 cyp CP14: ANSWERED
+repeat 3 cyp CP15: RETRIEVAL_ERROR
+repeat 3 ag CP11: ANSWERED
+repeat 3 ag CP12: ANSWERED
+repeat 3 ag CP13: ANSWERED
+repeat 3 ag CP14: ANSWERED
+repeat 3 ag CP15: ANSWERED
+{
+  "run_id": "E1-EX01",
+  "n_new_rows": 75,
+  "n_cascade_rows": 15,
+  "stopped_by_spend_cap": false,
+  "not_applicable": {},
+  "spent_usd": 0.09728688
+}

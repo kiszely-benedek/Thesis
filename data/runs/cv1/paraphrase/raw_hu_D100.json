@@ -1,0 +1,218 @@
+[
+ {
+  "n": 1,
+  "h1": "El tud jutni az anyag a TK-3-3-ból a T-47-4-ig?",
+  "h2": "TK-3-3 → T-47-4: van folyamatáram-útvonal?",
+  "h3": "Van-e process flow path a TK-3-3-tól a T-47-4-ig?"
+ },
+ {
+  "n": 2,
+  "h1": "Átjut a közeg a P-32-1-ből az E-35-1-be?",
+  "h2": "P-32-1-től E-35-1-ig van áramlási út?",
+  "h3": "A P-32-1 után downstream elérhető az E-35-1 a process flow mentén?"
+ },
+ {
+  "n": 3,
+  "h1": "Mennyi hőcserélő van a 47-es üzemrészben?",
+  "h2": "47-es egység, hőcserélők száma?",
+  "h3": "Hány hőcserélő (HX) van a 47-es unitban?"
+ },
+ {
+  "n": 4,
+  "h1": "Mennyi nyomástartó edény van a 36-os üzemrészben?",
+  "h2": "Nyomástartó edények darabszáma a 36-os egységben?",
+  "h3": "Hány pressure vessel található a 36-os unitban?"
+ },
+ {
+  "n": 5,
+  "h1": "Mely más üzemrészekbe megy közvetlenül anyag a 19-es egységből?",
+  "h2": "19-es egységből közvetlenül táplált többi egység?",
+  "h3": "Mely másik unitokat táplálja közvetlenül a 19-es unit process flow-ja?"
+ },
+ {
+  "n": 6,
+  "h1": "Melyik másik üzemrészekbe folyik át közvetlenül anyag a 14-es egységből?",
+  "h2": "14-es egységből közvetlenül táplált többi egység?",
+  "h3": "Mely másik unitokat táplálja közvetlenül a 14-es unit process flow-ja?"
+ },
+ {
+  "n": 7,
+  "h1": "A 49-es üzemrészen belül melyik berendezésekbe és szelepekbe jut el a C-49-5-ből jövő anyag, akár közvetlenül, akár közvetve?",
+  "h2": "49-es egységen belül C-49-5-ből (közvetlenül/közvetve) áramot kapó berendezések, szelepek?",
+  "h3": "A 49-es unitban mely equipmentek és szelepek vannak a C-49-5-től downstream, közvetlenül vagy közvetve?"
+ },
+ {
+  "n": 8,
+  "h1": "A 2-es üzemrészen belül melyik berendezésekbe és szelepekbe jut el a T-2-2-ből jövő anyag, akár közvetlenül, akár közvetve?",
+  "h2": "2-es egységen belül T-2-2-ből (közvetlenül/közvetve) áramot kapó berendezések, szelepek?",
+  "h3": "A 2-es unitban mely equipmentek és szelepek vannak a T-2-2-től downstream, közvetlenül vagy közvetve?"
+ },
+ {
+  "n": 9,
+  "h1": "Le tudnád követni, merre megy az anyag a GV-6-13-tól a GV-16-2-ig? Írd le sorban az összes berendezést és szelepet, ami útba esik.",
+  "h2": "Útvonal GV-6-13 → GV-16-2, berendezések + szelepek sorrendben.",
+  "h3": "Trace-eld le a flow path-t a GV-6-13-tól a GV-16-2-ig, és listázd sorrendben az összes equipmentet és valve-ot."
+ },
+ {
+  "n": 10,
+  "h1": "Le tudnád követni, merre megy az anyag a BV-1-9-től a GV-13-2-ig? Írd le sorban az összes berendezést és szelepet, ami útba esik.",
+  "h2": "Útvonal BV-1-9 → GV-13-2, berendezések + szelepek sorrendben.",
+  "h3": "Trace-eld le a flow path-t a BV-1-9-től a GV-13-2-ig, és listázd sorrendben az összes equipmentet és valve-ot."
+ },
+ {
+  "n": 11,
+  "h1": "Melyik műszerek mérnek az E-30-3-on?",
+  "h2": "E-30-3 mérőműszerei?",
+  "h3": "Melyik instrument tagek mérik az E-30-3-at?"
+ },
+ {
+  "n": 12,
+  "h1": "Melyik műszerek mérnek a T-16-3-on?",
+  "h2": "T-16-3 mérőműszerei?",
+  "h3": "Melyik instrument tagek mérik a T-16-3-at?"
+ },
+ {
+  "n": 13,
+  "h1": "Mi az az LT-19-3, milyen fajta elem?",
+  "h2": "LT-19-3 típusa?",
+  "h3": "Milyen item type-hoz tartozik az LT-19-3 tag?"
+ },
+ {
+  "n": 14,
+  "h1": "Mi az a V-27-2, milyen fajta elem?",
+  "h2": "V-27-2 típusa?",
+  "h3": "Milyen item type-hoz tartozik a V-27-2 tag?"
+ },
+ {
+  "n": 15,
+  "h1": "A CHV-21-4 melyik üzemrészben van?",
+  "h2": "CHV-21-4 – melyik egység?",
+  "h3": "Melyik unitban van a CHV-21-4 tag?"
+ },
+ {
+  "n": 16,
+  "h1": "A PIC-13-4 melyik üzemrészben van?",
+  "h2": "PIC-13-4 – melyik egység?",
+  "h3": "Melyik unitban van a PIC-13-4 tag?"
+ },
+ {
+  "n": 17,
+  "h1": "Mely szabályozókörök működtetik azokat a szelepeket, amelyek közvetlenül a C-20-1-re vannak kötve?",
+  "h2": "C-20-1-hez közvetlenül kötött szelepekre ható szabályozókörök?",
+  "h3": "Melyik control loopok hatnak a C-20-1-re közvetlenül rákötött valve-okra?"
+ },
+ {
+  "n": 18,
+  "h1": "Mely szabályozókörök működtetik azokat a szelepeket, amelyek közvetlenül a V-18-5-re vannak kötve?",
+  "h2": "V-18-5-höz közvetlenül kötött szelepekre ható szabályozókörök?",
+  "h3": "Melyik control loopok hatnak a V-18-5-re közvetlenül rákötött valve-okra?"
+ },
+ {
+  "n": 19,
+  "h1": "Az LIC-18-3 szabályozókör melyik szelepet mozgatja?",
+  "h2": "LIC-18-3 kör → melyik szelep?",
+  "h3": "Melyik valve-ot vezérli az LIC-18-3 control loop?"
+ },
+ {
+  "n": 20,
+  "h1": "A TIC-41-3 szabályozókör melyik szelepet mozgatja?",
+  "h2": "TIC-41-3 kör → melyik szelep?",
+  "h3": "Melyik valve-ot vezérli a TIC-41-3 control loop?"
+ },
+ {
+  "n": 21,
+  "h1": "Az LIC-31-5 szabályozókör melyik berendezésen mér?",
+  "h2": "LIC-31-5 kör mért berendezése?",
+  "h3": "Az LIC-31-5 control loop melyik equipmentet méri?"
+ },
+ {
+  "n": 22,
+  "h1": "Az LIC-33-5 szabályozókör melyik berendezésen mér?",
+  "h2": "LIC-33-5 kör mért berendezése?",
+  "h3": "Az LIC-33-5 control loop melyik equipmentet méri?"
+ },
+ {
+  "n": 23,
+  "h1": "Melyik berendezésekbe és szelepekbe megy közvetlenül a GV-28-8-ból az anyag?",
+  "h2": "GV-28-8 után közvetlenül következő berendezések, szelepek?",
+  "h3": "Mely equipmentek és valve-ok vannak közvetlenül downstream a GV-28-8-tól?"
+ },
+ {
+  "n": 24,
+  "h1": "Melyik berendezésekbe és szelepekbe megy közvetlenül a P-23-1-ből az anyag?",
+  "h2": "P-23-1 után közvetlenül következő berendezések, szelepek?",
+  "h3": "Mely equipmentek és valve-ok vannak közvetlenül downstream a P-23-1-től?"
+ },
+ {
+  "n": 25,
+  "h1": "Le tudnád követni, merre megy az anyag a V-34-2-től a TK-50-6-ig? Írd le sorban az összes berendezést és szelepet, ami útba esik.",
+  "h2": "Útvonal V-34-2 → TK-50-6, berendezések + szelepek sorrendben.",
+  "h3": "Trace-eld le a flow path-t a V-34-2-től a TK-50-6-ig, és listázd sorrendben az összes equipmentet és valve-ot."
+ },
+ {
+  "n": 26,
+  "h1": "Le tudnád követni, merre megy az anyag a P-11-5-től a P-20-1-ig? Írd le sorban az összes berendezést és szelepet, ami útba esik.",
+  "h2": "Útvonal P-11-5 → P-20-1, berendezések + szelepek sorrendben.",
+  "h3": "Trace-eld le a flow path-t a P-11-5-től a P-20-1-ig, és listázd sorrendben az összes equipmentet és valve-ot."
+ },
+ {
+  "n": 27,
+  "h1": "Egy üzemrészben van az E-12-1 meg az E-12-4?",
+  "h2": "E-12-1 és E-12-4 – azonos egység?",
+  "h3": "Az E-12-1 és az E-12-4 ugyanabba a unitba tartozik?"
+ },
+ {
+  "n": 28,
+  "h1": "Egy üzemrészben van az E-19-5 meg a TK-17-4?",
+  "h2": "E-19-5 és TK-17-4 – azonos egység?",
+  "h3": "Az E-19-5 és a TK-17-4 ugyanabba a unitba tartozik?"
+ },
+ {
+  "n": 29,
+  "h1": "Melyik lapokon szerepel a P-23-1?",
+  "h2": "P-23-1 – rajzlapok?",
+  "h3": "Melyik sheeteken van rajta a P-23-1?"
+ },
+ {
+  "n": 30,
+  "h1": "Melyik lapokon szerepel a T-32-2?",
+  "h2": "T-32-2 – rajzlapok?",
+  "h3": "Melyik sheeteken van rajta a T-32-2?"
+ },
+ {
+  "n": 31,
+  "h1": "Mi az az FV-48-5, milyen fajta elem?",
+  "h2": "FV-48-5 típusa?",
+  "h3": "Milyen item type-hoz tartozik az FV-48-5 tag?"
+ },
+ {
+  "n": 32,
+  "h1": "Le tudnád követni, merre megy az anyag a V-13-7-től a GV-12-10-ig? Írd le sorban az összes berendezést és szelepet, ami útba esik.",
+  "h2": "Útvonal V-13-7 → GV-12-10, berendezések + szelepek sorrendben.",
+  "h3": "Trace-eld le a flow path-t a V-13-7-től a GV-12-10-ig, és listázd sorrendben az összes equipmentet és valve-ot."
+ },
+ {
+  "n": 33,
+  "h1": "Melyik szelepeket kell elzárni, hogy a T-26-1 le legyen választva minden áramlásirányban előtte lévő berendezésről?",
+  "h2": "T-26-1 izolálása az összes upstream berendezéstől – zárandó szelepek?",
+  "h3": "Mely valve-okat kell lezárni, hogy a T-26-1-et izoláljuk az összes upstream equipmenttől?"
+ },
+ {
+  "n": 34,
+  "h1": "Melyik szelepeket kell elzárni, hogy a T-13-5 le legyen választva minden áramlásirányban előtte lévő berendezésről?",
+  "h2": "T-13-5 izolálása az összes upstream berendezéstől – zárandó szelepek?",
+  "h3": "Mely valve-okat kell lezárni, hogy a T-13-5-öt izoláljuk az összes upstream equipmenttől?"
+ },
+ {
+  "n": 35,
+  "h1": "Melyik kiinduló elemekből jön végső soron a TK-23-4 betáplálása, olyanokból, amikbe semmi nem folyik be?",
+  "h2": "TK-23-4 végső forrásai (amikbe semmi nem folyik be)?",
+  "h3": "Melyek azok a source itemek, amelyekbe semmi nem folyik be, és végső soron a TK-23-4-et táplálják?"
+ },
+ {
+  "n": 36,
+  "h1": "Melyik kiinduló elemekből jön végső soron a V-39-1 betáplálása, olyanokból, amikbe semmi nem folyik be?",
+  "h2": "V-39-1 végső forrásai (amikbe semmi nem folyik be)?",
+  "h3": "Melyek azok a source itemek, amelyekbe semmi nem folyik be, és végső soron a V-39-1-et táplálják?"
+ }
+]

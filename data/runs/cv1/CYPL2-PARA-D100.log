@@ -1,0 +1,82 @@
+Retrying answer call after a transport error (attempt 1/5, waiting 1.00s)
+Retrying answer call after a transport error (attempt 1/5, waiting 1.00s)
+Retrying answer call after a transport error (attempt 2/5, waiting 2.00s)
+Retrying answer call after a transport error (attempt 2/5, waiting 2.00s)
+Retrying answer call after a transport error (attempt 3/5, waiting 4.00s)
+Retrying answer call after a transport error (attempt 3/5, waiting 4.00s)
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `dexpi_class` does not exist in database `neo4j`. Verify that the spelling is correct.', position=<SummaryInputPosition line=2, column=99, offset=138>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 138, 'line': 2, 'column': 99}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: 'MATCH (item:PlantItem {tag: "LT-19-3"})\nRETURN item.tag AS tag, item.node_class AS item_type, labels(item) AS classification_labels, item.dexpi_class AS dexpi_class, item.category AS category, item.dexpi_labels AS dexpi_labels'
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `category` does not exist in database `neo4j`. Verify that the spelling is correct.', position=<SummaryInputPosition line=2, column=132, offset=171>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 171, 'line': 2, 'column': 132}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: 'MATCH (item:PlantItem {tag: "LT-19-3"})\nRETURN item.tag AS tag, item.node_class AS item_type, labels(item) AS classification_labels, item.dexpi_class AS dexpi_class, item.category AS category, item.dexpi_labels AS dexpi_labels'
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `dexpi_labels` does not exist in database `neo4j`. Verify that the spelling is correct.', position=<SummaryInputPosition line=2, column=159, offset=198>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 198, 'line': 2, 'column': 159}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: 'MATCH (item:PlantItem {tag: "LT-19-3"})\nRETURN item.tag AS tag, item.node_class AS item_type, labels(item) AS classification_labels, item.dexpi_class AS dexpi_class, item.category AS category, item.dexpi_labels AS dexpi_labels'
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `dexpi_class` does not exist in database `neo4j`. Verify that the spelling is correct.', position=<SummaryInputPosition line=2, column=30, offset=69>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 69, 'line': 2, 'column': 30}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: 'MATCH (item:PlantItem {tag: "LT-19-3"})\nRETURN item.tag AS tag, item.dexpi_class AS item_type, labels(item) AS labels'
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `category` does not exist in database `neo4j`. Verify that the spelling is correct.', position=<SummaryInputPosition line=2, column=57, offset=95>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 95, 'line': 2, 'column': 57}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: 'MATCH (item:PlantItem {tag: "V-27-2"})\nRETURN item.tag AS tag, labels(item) AS item_type, item.category AS category, item.dexpi_class AS dexpi_class, item.node_class AS node_class'
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `dexpi_class` does not exist in database `neo4j`. Verify that the spelling is correct.', position=<SummaryInputPosition line=2, column=84, offset=122>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 122, 'line': 2, 'column': 84}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: 'MATCH (item:PlantItem {tag: "V-27-2"})\nRETURN item.tag AS tag, labels(item) AS item_type, item.category AS category, item.dexpi_class AS dexpi_class, item.node_class AS node_class'
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `dexpi_class` does not exist in database `neo4j`. Verify that the spelling is correct.', position=<SummaryInputPosition line=2, column=30, offset=68>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 68, 'line': 2, 'column': 30}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: "MATCH (item:PlantItem {tag: 'V-27-2'})\nRETURN item.tag AS tag, item.dexpi_class AS type, labels(item) AS labels"
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `category` does not exist in database `neo4j`. Verify that the spelling is correct.', position=<SummaryInputPosition line=4, column=13, offset=113>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 113, 'line': 4, 'column': 13}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: 'MATCH (item:PlantItem {tag: "V-27-2"})\nRETURN item.tag AS tag,\n       labels(item) AS element_types,\n       item.category AS category,\n       item.dexpi_class AS dexpi_class,\n       item.piping_component_name AS piping_component_name'
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `dexpi_class` does not exist in database `neo4j`. Verify that the spelling is correct.', position=<SummaryInputPosition line=5, column=13, offset=147>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 147, 'line': 5, 'column': 13}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: 'MATCH (item:PlantItem {tag: "V-27-2"})\nRETURN item.tag AS tag,\n       labels(item) AS element_types,\n       item.category AS category,\n       item.dexpi_class AS dexpi_class,\n       item.piping_component_name AS piping_component_name'
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `piping_component_name` does not exist in database `neo4j`. Verify that the spelling is correct.', position=<SummaryInputPosition line=6, column=13, offset=187>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 187, 'line': 6, 'column': 13}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: 'MATCH (item:PlantItem {tag: "V-27-2"})\nRETURN item.tag AS tag,\n       labels(item) AS element_types,\n       item.category AS category,\n       item.dexpi_class AS dexpi_class,\n       item.piping_component_name AS piping_component_name'
+Retrying answer call after a transport error (attempt 1/5, waiting 1.00s)
+Retrying answer call after a transport error (attempt 2/5, waiting 2.00s)
+Retrying answer call after a transport error (attempt 1/5, waiting 1.00s)
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `dexpi_class` does not exist in database `neo4j`. Verify that the spelling is correct.', position=<SummaryInputPosition line=2, column=61, offset=100>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 100, 'line': 2, 'column': 61}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: 'MATCH (item:PlantItem {tag: "FV-48-5"})\nRETURN item.tag AS tag, labels(item) AS element_types, item.dexpi_class AS dexpi_class, item.category AS category, item.piping_component_name AS piping_component_name'
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `category` does not exist in database `neo4j`. Verify that the spelling is correct.', position=<SummaryInputPosition line=2, column=94, offset=133>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 133, 'line': 2, 'column': 94}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: 'MATCH (item:PlantItem {tag: "FV-48-5"})\nRETURN item.tag AS tag, labels(item) AS element_types, item.dexpi_class AS dexpi_class, item.category AS category, item.piping_component_name AS piping_component_name'
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `piping_component_name` does not exist in database `neo4j`. Verify that the spelling is correct.', position=<SummaryInputPosition line=2, column=121, offset=160>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 160, 'line': 2, 'column': 121}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: 'MATCH (item:PlantItem {tag: "FV-48-5"})\nRETURN item.tag AS tag, labels(item) AS element_types, item.dexpi_class AS dexpi_class, item.category AS category, item.piping_component_name AS piping_component_name'
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `piping_component_name` does not exist in database `neo4j`. Verify that the spelling is correct.', position=<SummaryInputPosition line=5, column=57, offset=216>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 216, 'line': 5, 'column': 57}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: "MATCH path = (upstream:Equipment)-[:send_to*1..]->(tank:PlantItem {tag: 'T-13-5'})\nUNWIND nodes(path) AS item\nWITH DISTINCT item AS valve\nWHERE valve:BallValve\n   OR (valve:PipingComponent AND toLower(coalesce(valve.piping_component_name, '')) CONTAINS 'gate valve')\nAND NOT EXISTS { MATCH ()-[:control]->(valve) }\nRETURN valve.tag AS tag\nORDER BY tag"
+run CYPL2-PARA-D100: 252 rows to answer, 0 already on disk
+concurrency 4: up to that many questions in flight
+paid mode: up to 252 model calls; hard spend cap 0.4 USD
+estimated cost: 0.2520 USD
+{
+  "run_id": "CYPL2-PARA-D100",
+  "n_rows": 252,
+  "n_new_rows": 252,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "cypher_rag_plant": {
+      "5-8": {
+        "ANSWERED": 20,
+        "RETRIEVAL_ERROR": 8
+      },
+      "3-4": {
+        "ANSWERED": 24,
+        "RETRIEVAL_ERROR": 4
+      },
+      "2": {
+        "ANSWERED": 30,
+        "RETRIEVAL_ERROR": 5
+      },
+      "1": {
+        "ANSWERED": 34,
+        "RETRIEVAL_ERROR": 15
+      },
+      "0": {
+        "ANSWERED": 65,
+        "RETRIEVAL_ERROR": 12
+      },
+      "unanswerable": {
+        "ANSWERED": 25,
+        "RETRIEVAL_ERROR": 3
+      },
+      "9-16": {
+        "ANSWERED": 5,
+        "RETRIEVAL_ERROR": 2
+      }
+    }
+  },
+  "routing_recall": {},
+  "relaxed_routing_recall": {},
+  "evidence_node_recall": {},
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {},
+    "relaxed_routing_recall": {},
+    "evidence_node_recall": {}
+  },
+  "trace_rates": {
+    "cypher_rag_plant": {
+      "truncated_rate": 0.0
+    }
+  },
+  "mean_total_cost_usd": {
+    "cypher_rag_plant": 0.00039595962301587303
+  },
+  "stopped_by_spend_cap": false
+}

@@ -1,0 +1,13 @@
+{
+ "backend": "openrouter",
+ "model_id": "anthropic/claude-haiku-5.5",
+ "route_provider": "anthropic",
+ "temperature": null,
+ "seed": null,
+ "max_output_tokens": 16384,
+ "extra": {
+  "reasoning": {
+   "effort": "low"
+  }
+ }
+}

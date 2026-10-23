@@ -1,0 +1,51 @@
+{
+  "run_id": "PG-P1-low",
+  "experiment": "PG-P1-plant-arms-low",
+  "reported": false,
+  "corpora": [
+    "H100"
+  ],
+  "strategies": {
+    "hierarchical_plant": {
+      "route_mode": "flow_path",
+      "budget_mode": "through_line",
+      "sheet_hops": 1,
+      "max_context_chars": 100000
+    },
+    "hierarchical_need_rules_plant": {
+      "route_mode": "flow_path",
+      "budget_mode": "through_line",
+      "sheet_hops": 1,
+      "max_context_chars": 100000
+    }
+  },
+  "answer_pin": {
+    "backend": "openrouter",
+    "model_id": "z-ai/glm-5.3-flash",
+    "route_provider": null,
+    "temperature": 0.0,
+    "seed": 0,
+    "max_output_tokens": 16384,
+    "extra": {
+      "reasoning": {
+        "effort": "low"
+      }
+    }
+  },
+  "judge_pins": [],
+  "prompt_hashes": {
+    "cypher_query.txt": "4db890f93e15bc9264f1e053a3b0b8d1bbd311ce7fe5f1cef17f876a8f6deefa",
+    "final_answer.txt": "6a4968f433af7d71f7ad7aecb368016191fcbd41bd9a10b3bc945fc01cf024b5",
+    "legend_occurrence.txt": "072915e52ce1e07210d17813b3532b9ca15b60707b0f23a6291f2698c3b4b592",
+    "legend_plant.txt": "37f91d4019b3efdecc40e66b4b672ff62b171ca8d61ec82315ab7c8700706fdf",
+    "unit_router.txt": "05735b707145a84921902e06ce11711b4de1055ac6e6dec5b9582d2074df4e5a"
+  },
+  "question_set_sha256": "0107b9e572c75db7d0cbfdb9fb6faa90468b999bdbe8debbdc23abf16654d20f",
+  "context_wall": null,
+  "git_commit": "65cfe6da6fc505027af02ce2003403b5af7af45f",
+  "git_dirty": false,
+  "created_at": "2026-10-03T19:36:31.510615Z",
+  "repeats": 1,
+  "allow_paid_calls": true,
+  "max_spend_usd": 0.2
+}

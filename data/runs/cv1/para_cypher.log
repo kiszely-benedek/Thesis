@@ -1,0 +1,9 @@
+=== wipe Neo4j, then load D100 (plant profile)
+wiped ['D1000']
+=== CYP2-PARA-D100
+  "stopped_by_spend_cap": false
+=== CYPL-PARA-D100
+  "stopped_by_spend_cap": false
+=== wipe Neo4j, then load D1000 back
+wiped ['D100']
+done

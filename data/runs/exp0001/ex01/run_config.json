@@ -1,0 +1,137 @@
+{
+  "run_id": "E1-EX01",
+  "experiment": "EXP-0001",
+  "created_at": "2026-10-11T19:15:17.733103Z",
+  "git_commit": "7da8a4838ddeffd9a8b9a687b8efb07ac35d56ad",
+  "git_dirty": false,
+  "corpus_id": "EX01",
+  "ingest_sha256": "77aeea2382bf4da89b0e844025bd673ff51d06006ead552d736bdc9cc442d5a7",
+  "arms": {
+    "ctx-high": {
+      "strategy": "context_rag",
+      "params": {},
+      "pin": {
+        "backend": "openrouter",
+        "model_id": "openai/gpt-6-luna",
+        "route_provider": "openai",
+        "temperature": null,
+        "seed": 0,
+        "max_output_tokens": 16384,
+        "extra": {
+          "reasoning": {
+            "effort": "high"
+          }
+        }
+      },
+      "pin_sha256": "ffc026d3f42b3ddcc5fe43175a3c288bdd19f36063997fec2c8645a95fe70157",
+      "deadline_s": 300.0,
+      "not_applicable": null
+    },
+    "ctx-low": {
+      "strategy": "context_rag",
+      "params": {},
+      "pin": {
+        "backend": "openrouter",
+        "model_id": "openai/gpt-6-luna",
+        "route_provider": "openai",
+        "temperature": null,
+        "seed": 0,
+        "max_output_tokens": 16384,
+        "extra": {
+          "reasoning": {
+            "effort": "low"
+          }
+        }
+      },
+      "pin_sha256": "acf24178d47dd4873fc2a36e7f67efbf2dc7ab5de694711f3b934e6ef4f4c21d",
+      "deadline_s": 300.0,
+      "not_applicable": null
+    },
+    "ctx-gpt5mini": {
+      "strategy": "context_rag",
+      "params": {},
+      "pin": {
+        "backend": "openrouter",
+        "model_id": "openai/gpt-5-mini",
+        "route_provider": "openai",
+        "temperature": null,
+        "seed": 0,
+        "max_output_tokens": 16384,
+        "extra": {}
+      },
+      "pin_sha256": "11f971da4cab3dbb1bebdb104ec21fef8c7d5d09c552d1a810bbfa9c387f1564",
+      "deadline_s": 300.0,
+      "not_applicable": null
+    },
+    "cyp": {
+      "strategy": "cypher_rag_plant",
+      "params": {
+        "timeout_s": 30,
+        "row_cap": 200
+      },
+      "pin": {
+        "backend": "openrouter",
+        "model_id": "openai/gpt-6-luna",
+        "route_provider": "openai",
+        "temperature": null,
+        "seed": 0,
+        "max_output_tokens": 16384,
+        "extra": {
+          "reasoning": {
+            "effort": "low"
+          }
+        }
+      },
+      "pin_sha256": "acf24178d47dd4873fc2a36e7f67efbf2dc7ab5de694711f3b934e6ef4f4c21d",
+      "deadline_s": 120.0,
+      "not_applicable": null
+    },
+    "ag": {
+      "strategy": "graph_agent_low_steps",
+      "params": {
+        "max_steps": 40
+      },
+      "pin": {
+        "backend": "openrouter",
+        "model_id": "openai/gpt-6-luna",
+        "route_provider": "openai",
+        "temperature": null,
+        "seed": 0,
+        "max_output_tokens": 16384,
+        "extra": {
+          "reasoning": {
+            "effort": "high"
+          }
+        }
+      },
+      "pin_sha256": "ffc026d3f42b3ddcc5fe43175a3c288bdd19f36063997fec2c8645a95fe70157",
+      "deadline_s": 120.0,
+      "not_applicable": null
+    }
+  },
+  "repeats": 3,
+  "primer": true,
+  "prompt_hashes": {
+    "agent_graph_system.txt": "59a6a950480421eacffc6c536ea57c871a09716e3c76998b1ebddccc206aa3ad",
+    "agent_seed_rule.txt": "6422064a4956c502a8c56fb22ae0ad1aeb4fceed9180ac4da2778fb5635eff23",
+    "cypher_query.txt": "117d36cd98a326c4ed3b4505f7f6df9c8d68e998fda105271cbd95e40c14a830",
+    "final_answer.txt": "f9e22b901e45f7a38dfd85f307bf742dc6f3e4f9303ef48db77841ddf4912baf",
+    "legend_occurrence.txt": "48e48407317c96e5edc53eca64fc408fae65f62b67a652442a65e57b27ec2da6",
+    "legend_plant.txt": "3d6bf111495d7bfaa2b8371ed3e0a205e624ce7636aa8a0755d0db68ac6c2ae4",
+    "primer_pid_v1.txt": "198e62bdf4e6e6921013eae921db728ba7f6992d79d6c562fda84ae65c69a9d0",
+    "unit_router.txt": "05735b707145a84921902e06ce11711b4de1055ac6e6dec5b9582d2074df4e5a"
+  },
+  "question_file": "data\\external\\chatpid_ex01_qa.jsonl",
+  "question_file_sha256": "11e640b078fc29b098cd50dc2ef19b67b555c9610694819f7580257a9080797e",
+  "qids": [
+    "CP11",
+    "CP12",
+    "CP13",
+    "CP14",
+    "CP15"
+  ],
+  "cascade_policy": "cascade_v3",
+  "cascade_policy_sha256": "7b852c0739806984f96370fe74f0d75cf1c94d72eaeb764ae8923553e87990ff",
+  "allow_paid_calls": true,
+  "cap_usd": 0.4
+}

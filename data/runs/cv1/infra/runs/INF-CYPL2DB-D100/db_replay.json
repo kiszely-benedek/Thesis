@@ -1,0 +1,11 @@
+{
+  "source_run": "CYPL2-D100",
+  "strategy": "cypher_rag_plant",
+  "corpus_id": "D100",
+  "timeout_s": 30.0,
+  "row_cap": 200,
+  "n_source_questions": 180,
+  "n_original_retrieval_errors": 31,
+  "n_replay_errors": 31,
+  "measures": "database time only: the stored query run again plus the row formatting; no query-writing call, no answer-prompt build, no answer parsing"
+}

@@ -1,0 +1,53 @@
+[
+  {
+    "qid": "CP11",
+    "required_tags": ["H1007"],
+    "ordered": false,
+    "aliases": {},
+    "forbidden_tags": [],
+    "required_statements": [
+      "the feed from P4711 / the inlet has no path to T4750 that bypasses H1007 in the drawing"
+    ],
+    "note": "The recirculation via H1008 still enters T4750 but carries tank contents; mentioning it is not required."
+  },
+  {
+    "qid": "CP12",
+    "required_tags": ["HV4750.01", "PV4712.02"],
+    "ordered": false,
+    "aliases": {},
+    "forbidden_tags": ["TV4750.03"],
+    "required_statements": [],
+    "note": "The SV 104.01 relief line also enters T4750; naming it as 'not closed / relief' is not wrong. HV4750.01 and PV4712.02 sit on ActuatingFunction nodes that control a GlobeValve tagged C1 (five items carry C1): an answer that names only C1 does not identify the valve and is wrong."
+  },
+  {
+    "qid": "CP13",
+    "required_tags": ["T4750", "66KL21", "75SA21", "73KH12", "P4712"],
+    "ordered": true,
+    "aliases": {},
+    "forbidden_tags": [],
+    "required_statements": [],
+    "note": "The reducer between 75SA21 and 73KH12 has no printed tag; mentioning it is optional."
+  },
+  {
+    "qid": "CP14",
+    "required_tags": ["H1007", "P4711", "H1008", "HV4750.01", "PV4712.02"],
+    "ordered": false,
+    "aliases": {"P4711": ["inlet"]},
+    "forbidden_tags": [],
+    "required_statements": [
+      "path 1 runs T4750 <- HV4750.01 <- H1007 <- P4711 (or the inlet)",
+      "path 2 runs T4750 <- PV4712.02 <- H1008",
+      "each path names its valve: HV4750.01 for path 1, PV4712.02 for path 2"
+    ],
+    "note": "ChatP&ID's reference says TV4712.02; the file has no such tag. The valve on the H1008 -> T4750 line is PV4712.02 (TV4750.03 sits on the other H1008 outlet, which reaches no item). Order is checked per path by the reviewer, not by the tag order."
+  },
+  {
+    "qid": "CP15",
+    "required_tags": ["P4711", "H1007", "HV4750.01", "T4750"],
+    "ordered": true,
+    "aliases": {},
+    "forbidden_tags": [],
+    "required_statements": [],
+    "note": ""
+  }
+]

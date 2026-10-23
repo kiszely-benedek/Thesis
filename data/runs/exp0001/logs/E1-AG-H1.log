@@ -1,0 +1,101 @@
+stopped by the spend cap; rerun with the same --run-id to resume
+run E1-AG-H1: 70 rows to answer, 0 already on disk
+concurrency 4: up to that many questions in flight
+paid mode: up to 70 model calls; hard spend cap 0.02 USD
+estimated cost: 0.2100 USD
+STOPPED by the spend cap: the next question (expected up to 0.003000 USD, with 0.009000 USD reserved by items in flight) could reach or pass the run's cap of 0.020000 USD; 0.008275 USD spent so far. Rerun with the same --run-id to resume.
+{
+  "run_id": "E1-AG-H1",
+  "n_rows": 22,
+  "n_new_rows": 22,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "graph_agent_low_steps": {
+      "0": {
+        "ANSWERED": 22
+      }
+    }
+  },
+  "routing_recall": {
+    "graph_agent_low_steps": 1.0
+  },
+  "relaxed_routing_recall": {
+    "graph_agent_low_steps": 1.0
+  },
+  "evidence_node_recall": {
+    "graph_agent_low_steps": 0.9608150470219435
+  },
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {
+      "graph_agent_low_steps": {
+        "0": 1.0
+      }
+    },
+    "relaxed_routing_recall": {
+      "graph_agent_low_steps": {
+        "0": 1.0
+      }
+    },
+    "evidence_node_recall": {
+      "graph_agent_low_steps": {
+        "0": 0.9608150470219435
+      }
+    }
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "graph_agent_low_steps": 0.000420885
+  },
+  "stopped_by_spend_cap": true
+}
+run E1-AG-H1: 48 rows to answer, 22 already on disk
+concurrency 4: up to that many questions in flight
+paid mode: up to 48 model calls; hard spend cap 0.2 USD
+estimated cost: 0.1440 USD
+{
+  "run_id": "E1-AG-H1",
+  "n_rows": 70,
+  "n_new_rows": 48,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "graph_agent_low_steps": {
+      "0": {
+        "ANSWERED": 62
+      },
+      "unanswerable": {
+        "ANSWERED": 8
+      }
+    }
+  },
+  "routing_recall": {
+    "graph_agent_low_steps": 0.9838709677419355
+  },
+  "relaxed_routing_recall": {
+    "graph_agent_low_steps": 0.9838709677419355
+  },
+  "evidence_node_recall": {
+    "graph_agent_low_steps": 0.9265850945494994
+  },
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {
+      "graph_agent_low_steps": {
+        "0": 0.9838709677419355
+      }
+    },
+    "relaxed_routing_recall": {
+      "graph_agent_low_steps": {
+        "0": 0.9838709677419355
+      }
+    },
+    "evidence_node_recall": {
+      "graph_agent_low_steps": {
+        "0": 0.9265850945494994
+      }
+    }
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "graph_agent_low_steps": 0.0003339207857142857
+  },
+  "stopped_by_spend_cap": false
+}

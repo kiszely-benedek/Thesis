@@ -1,0 +1,87 @@
+run BO2-C-D100: 72 rows to answer, 0 already on disk
+concurrency 4: up to that many questions in flight
+paid mode: up to 72 model calls; hard spend cap 0.8 USD
+estimated cost: 0.2160 USD
+{
+  "run_id": "BO2-C-D100",
+  "n_rows": 72,
+  "n_new_rows": 72,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "graph_agent_low_steps": {
+      "17-32": {
+        "ANSWERED": 1
+      },
+      "2": {
+        "ANSWERED": 6
+      },
+      "1": {
+        "ANSWERED": 16
+      },
+      "5-8": {
+        "ANSWERED": 8
+      },
+      "3-4": {
+        "ANSWERED": 5
+      },
+      "0": {
+        "ANSWERED": 26
+      },
+      "unanswerable": {
+        "ANSWERED": 8
+      },
+      "9-16": {
+        "ANSWERED": 2
+      }
+    }
+  },
+  "routing_recall": {
+    "graph_agent_low_steps": 0.953125
+  },
+  "relaxed_routing_recall": {
+    "graph_agent_low_steps": 0.953125
+  },
+  "evidence_node_recall": {
+    "graph_agent_low_steps": 0.909055547406903
+  },
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {
+      "graph_agent_low_steps": {
+        "17-32": 0.0,
+        "2": 1.0,
+        "1": 1.0,
+        "5-8": 0.875,
+        "3-4": 1.0,
+        "0": 0.9615384615384616,
+        "9-16": 1.0
+      }
+    },
+    "relaxed_routing_recall": {
+      "graph_agent_low_steps": {
+        "17-32": 0.0,
+        "2": 1.0,
+        "1": 1.0,
+        "5-8": 0.875,
+        "3-4": 1.0,
+        "0": 0.9615384615384616,
+        "9-16": 1.0
+      }
+    },
+    "evidence_node_recall": {
+      "graph_agent_low_steps": {
+        "17-32": 0.006578947368421052,
+        "2": 0.9583333333333334,
+        "1": 0.9875,
+        "5-8": 0.658982683982684,
+        "3-4": 0.8325581395348838,
+        "0": 0.9700854700854701,
+        "9-16": 0.9830508474576272
+      }
+    }
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "graph_agent_low_steps": 0.0018469155555555555
+  },
+  "stopped_by_spend_cap": false
+}

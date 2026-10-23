@@ -1,0 +1,149 @@
+{
+  "corpus_id": "D100",
+  "config": {
+    "generator": {
+      "plant_id": "plant0",
+      "seed": 1,
+      "n_units": 52,
+      "equipment_per_unit_min": 18,
+      "equipment_per_unit_max": 36,
+      "p_recycle": 0.2,
+      "p_cross_link": 0.2,
+      "valves_per_stream_max": 2,
+      "p_control_loop": 0.5,
+      "equipment_weights": {
+        "CentrifugalPump": 1.0,
+        "Compressor": 1.0,
+        "HeatExchanger": 1.0,
+        "PressureVessel": 1.0,
+        "ProcessColumn": 1.0,
+        "Tank": 1.0
+      },
+      "fluid_codes": [
+        "PL",
+        "PG"
+      ]
+    },
+    "split": {
+      "strategy": "by_unit",
+      "sheet_equipment_budget": 18,
+      "seed": 1,
+      "duplication_rate": 0.25,
+      "equipment_classes": [
+        "Tank",
+        "ProcessColumn",
+        "CentrifugalPump",
+        "HeatExchanger",
+        "Compressor",
+        "PressureVessel"
+      ],
+      "numbering_scheme": "sequential",
+      "use_grid_reference": false,
+      "exact_match_tags": true,
+      "connector_label_detail": "drawing_only"
+    }
+  },
+  "counts": {
+    "n_sheets": 101,
+    "n_nodes": 3867,
+    "n_relationships": 11653,
+    "n_connector_pairs_predicted": 215,
+    "n_unresolved": 0
+  },
+  "store_profile": "plant",
+  "layer_counts": {
+    "n_occurrences": 0,
+    "n_plant_items": 3712,
+    "n_structure_nodes": 155,
+    "n_drawn_as": 0,
+    "n_invariants": 2
+  },
+  "stage_seconds": {
+    "generate": 1.6565953000026639,
+    "split": 0.06417789999977686,
+    "localize": 0.025357500002428424,
+    "resolve": 0.03757519999999204,
+    "plan": 0.160240099998191,
+    "load_recreate": 0.5508203999997932,
+    "load_wipe": 0.040708400003495626,
+    "load_schema": 0.08627870000054827,
+    "load_nodes": 0.6784320000006119,
+    "load_relationships": 0.6581289000023389,
+    "load_verify": 0.15306340000097407,
+    "load_total": 1.6166243999978178
+  },
+  "resolution": {
+    "n_sheets": 101,
+    "n_occurrences": 4212,
+    "n_connectors": 430,
+    "pairs_by_rule": {
+      "line_number": 202,
+      "service_direction": 13
+    },
+    "unresolved_by_reason": {},
+    "n_identity_groups": 62,
+    "ambiguous_tag_keys": 0,
+    "edge_attribute_conflicts": 0
+  },
+  "import_report": null,
+  "load_report": {
+    "corpus_id": "D100",
+    "nodes_written": 3867,
+    "relationships_written": 11653,
+    "batch_size": 5000,
+    "wipe_s": 0.040708400003495626,
+    "schema_s": 0.08627870000054827,
+    "nodes_s": 0.6784320000006119,
+    "relationships_s": 0.6581289000023389,
+    "verify_s": 0.15306340000097407,
+    "total_s": 1.6166243999978178,
+    "neo4j_version": "Neo4j Kernel 2026.09.0 (enterprise)",
+    "invariants_checked": 2
+  },
+  "gate_equal": null,
+  "gate_differences": [],
+  "resolution_score": null,
+  "neo4j_version": "Neo4j Kernel 2026.09.0 (enterprise)",
+  "environment": {
+    "git_commit": "a526e084da82738c191a0032669dfa441f7857f7",
+    "git_dirty": false,
+    "machine": {
+      "cpu_name": "AMD Ryzen 9 5900HX with Radeon Graphics",
+      "physical_cores": 8,
+      "logical_cores": 16,
+      "ram_bytes": 16542019584,
+      "os": "Windows-11-10.0.26200-SP0",
+      "python_version": "3.12.10",
+      "power_plugged": true
+    },
+    "clock": "perf_counter",
+    "clock_resolution_s": 1e-7,
+    "concurrency": null,
+    "neo4j_version": "Neo4j Kernel 2026.09.0 (enterprise)",
+    "neo4j_memory_settings": {
+      "server.memory.heap.initial_size": "512.00MiB",
+      "server.memory.heap.max_size": "1.00GiB",
+      "server.memory.pagecache.async": "false",
+      "server.memory.pagecache.directio": "false",
+      "server.memory.pagecache.flush.buffer.enabled": "false",
+      "server.memory.pagecache.flush.buffer.size_in_pages": "128",
+      "server.memory.pagecache.scan.prefetchers": "4",
+      "server.memory.pagecache.size": "512.00MiB",
+      "server.memory.query_cache.per_db_cache_num_entries": "1000",
+      "server.memory.query_cache.shared_cache_num_entries": "1000",
+      "server.memory.query_cache.sharing_enabled": "false"
+    },
+    "recorded_at": "2026-10-11T13:08:02.897895Z"
+  },
+  "store_footprint": {
+    "database": "neo4j",
+    "fresh_database": true,
+    "data_bytes": 3139061,
+    "tx_log_bytes": 1142764,
+    "metrics_store_bytes": 41960,
+    "metrics_reserved_bytes": 0,
+    "n_nodes": 3867,
+    "n_relationships": 11653,
+    "n_properties": 34369
+  }
+}

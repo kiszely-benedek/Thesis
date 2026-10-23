@@ -1,0 +1,13 @@
+{
+ "backend": "openrouter",
+ "model_id": "deepseek/deepseek-v4.1-flash",
+ "route_provider": "parasail/fp8",
+ "temperature": 0.0,
+ "seed": 0,
+ "max_output_tokens": 16384,
+ "extra": {
+  "reasoning": {
+   "effort": "low"
+  }
+ }
+}

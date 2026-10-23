@@ -1,0 +1,464 @@
+How to read the description below. Each node is one plant item (equipment, valve or instrument function), even if it is drawn on several sheets; sheets lists every sheet it is drawn on. Each edge is a direct connection between two items. send_to is material flow from source to target, also across sheets: lines that continue on another sheet are already joined, and such an edge has crossed_sheets (the sheet the line leaves, then the sheet it continues on). send_signal_to, control and measured_by are instrument wiring. Items at the edge of this excerpt may have connections that are not shown.
+
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d9" for="edge" attr.name="relation" attr.type="string" />
+  <key id="d8" for="edge" attr.name="line_number" attr.type="string" />
+  <key id="d7" for="edge" attr.name="fluid_code" attr.type="string" />
+  <key id="d6" for="node" attr.name="measured_variable" attr.type="string" />
+  <key id="d5" for="node" attr.name="loop_tag" attr.type="string" />
+  <key id="d4" for="node" attr.name="sheets" attr.type="string" />
+  <key id="d3" for="node" attr.name="node_class" attr.type="string" />
+  <key id="d2" for="node" attr.name="unit_id" attr.type="string" />
+  <key id="d1" for="node" attr.name="tag" attr.type="string" />
+  <key id="d0" for="node" attr.name="plant_id" attr.type="string" />
+  <graph edgedefault="directed">
+    <node id="59:7ec922fa635b">
+      <data key="d0">plant0</data>
+      <data key="d1">CHV-6-8</data>
+      <data key="d2">6</data>
+      <data key="d3">CheckValve</data>
+      <data key="d4">59</data>
+    </node>
+    <node id="61:01ac4dc837f7">
+      <data key="d0">plant0</data>
+      <data key="d1">GV-42-2</data>
+      <data key="d2">42</data>
+      <data key="d3">GlobeValve</data>
+      <data key="d4">61</data>
+    </node>
+    <node id="61:a79ecf6cbc2d">
+      <data key="d0">plant0</data>
+      <data key="d1">C-42-1</data>
+      <data key="d2">42</data>
+      <data key="d3">Compressor</data>
+      <data key="d4">59|61|62</data>
+    </node>
+    <node id="61:b2216fc4a3a7">
+      <data key="d0">plant0</data>
+      <data key="d1">GV-42-1</data>
+      <data key="d2">42</data>
+      <data key="d3">GlobeValve</data>
+      <data key="d4">61</data>
+    </node>
+    <node id="62:003d9971e16d">
+      <data key="d0">plant0</data>
+      <data key="d1">T-42-4</data>
+      <data key="d2">42</data>
+      <data key="d3">ProcessColumn</data>
+      <data key="d4">62</data>
+    </node>
+    <node id="62:014b4aaadd81">
+      <data key="d0">plant0</data>
+      <data key="d1">CHV-42-3</data>
+      <data key="d2">42</data>
+      <data key="d3">CheckValve</data>
+      <data key="d4">62</data>
+    </node>
+    <node id="62:01877789341f">
+      <data key="d5">LIC-42-1</data>
+      <data key="d6">L</data>
+      <data key="d0">plant0</data>
+      <data key="d1">LIC-42-1</data>
+      <data key="d2">42</data>
+      <data key="d3">ProcessInstrumentationFunction</data>
+      <data key="d4">62</data>
+    </node>
+    <node id="62:08f071c2af39">
+      <data key="d0">plant0</data>
+      <data key="d1">BV-42-4</data>
+      <data key="d2">42</data>
+      <data key="d3">BallValve</data>
+      <data key="d4">62</data>
+    </node>
+    <node id="62:110db6d335cb">
+      <data key="d0">plant0</data>
+      <data key="d1">BV-42-8</data>
+      <data key="d2">42</data>
+      <data key="d3">BallValve</data>
+      <data key="d4">62</data>
+    </node>
+    <node id="62:2e85c5e13497">
+      <data key="d0">plant0</data>
+      <data key="d1">V-42-2</data>
+      <data key="d2">42</data>
+      <data key="d3">PressureVessel</data>
+      <data key="d4">62</data>
+    </node>
+    <node id="62:30256adbed33">
+      <data key="d0">plant0</data>
+      <data key="d1">P-42-1</data>
+      <data key="d2">42</data>
+      <data key="d3">CentrifugalPump</data>
+      <data key="d4">62</data>
+    </node>
+    <node id="62:35a2e72809e0">
+      <data key="d0">plant0</data>
+      <data key="d1">V-42-5</data>
+      <data key="d2">42</data>
+      <data key="d3">PressureVessel</data>
+      <data key="d4">62</data>
+    </node>
+    <node id="62:3a2d9c70a95d">
+      <data key="d0">plant0</data>
+      <data key="d1">T-42-7</data>
+      <data key="d2">42</data>
+      <data key="d3">ProcessColumn</data>
+      <data key="d4">62</data>
+    </node>
+    <node id="62:3adc81b1416e">
+      <data key="d0">plant0</data>
+      <data key="d1">TK-42-2</data>
+      <data key="d2">42</data>
+      <data key="d3">Tank</data>
+      <data key="d4">62</data>
+    </node>
+    <node id="62:3e996527accd">
+      <data key="d5">LIC-42-1</data>
+      <data key="d6">L</data>
+      <data key="d0">plant0</data>
+      <data key="d1">LV-42-1</data>
+      <data key="d2">42</data>
+      <data key="d3">ActuatingFunction</data>
+      <data key="d4">62</data>
+    </node>
+    <node id="62:488f52a0ff01">
+      <data key="d0">plant0</data>
+      <data key="d1">BV-42-7</data>
+      <data key="d2">42</data>
+      <data key="d3">BallValve</data>
+      <data key="d4">62</data>
+    </node>
+    <node id="62:4ea2e703bca7">
+      <data key="d0">plant0</data>
+      <data key="d1">CHV-42-5</data>
+      <data key="d2">42</data>
+      <data key="d3">CheckValve</data>
+      <data key="d4">62</data>
+    </node>
+    <node id="62:5ba01083a4a0">
+      <data key="d0">plant0</data>
+      <data key="d1">CHV-42-4</data>
+      <data key="d2">42</data>
+      <data key="d3">CheckValve</data>
+      <data key="d4">62</data>
+    </node>
+    <node id="62:5bfd49e43a69">
+      <data key="d0">plant0</data>
+      <data key="d1">CHV-42-8</data>
+      <data key="d2">42</data>
+      <data key="d3">CheckValve</data>
+      <data key="d4">62</data>
+    </node>
+    <node id="62:6268c586013d">
+      <data key="d0">plant0</data>
+      <data key="d1">BV-42-9</data>
+      <data key="d2">42</data>
+      <data key="d3">BallValve</data>
+      <data key="d4">62</data>
+    </node>
+    <node id="62:77342aaa3d8e">
+      <data key="d5">TIC-42-2</data>
+      <data key="d6">T</data>
+      <data key="d0">plant0</data>
+      <data key="d1">TIC-42-2</data>
+      <data key="d2">42</data>
+      <data key="d3">ProcessInstrumentationFunction</data>
+      <data key="d4">62</data>
+    </node>
+    <node id="62:7db8de33ecb5">
+      <data key="d0">plant0</data>
+      <data key="d1">GV-42-4</data>
+      <data key="d2">42</data>
+      <data key="d3">GlobeValve</data>
+      <data key="d4">62</data>
+    </node>
+    <node id="62:80e0ab2ea6a9">
+      <data key="d0">plant0</data>
+      <data key="d1">BV-42-6</data>
+      <data key="d2">42</data>
+      <data key="d3">BallValve</data>
+      <data key="d4">62</data>
+    </node>
+    <node id="62:872194dd0ad1">
+      <data key="d0">plant0</data>
+      <data key="d1">E-42-2</data>
+      <data key="d2">42</data>
+      <data key="d3">HeatExchanger</data>
+      <data key="d4">62</data>
+    </node>
+    <node id="62:8f18c4fb0b28">
+      <data key="d5">TIC-42-2</data>
+      <data key="d6">T</data>
+      <data key="d0">plant0</data>
+      <data key="d1">TV-42-2</data>
+      <data key="d2">42</data>
+      <data key="d3">ActuatingFunction</data>
+      <data key="d4">62</data>
+    </node>
+    <node id="62:905c5874bb5f">
+      <data key="d5">LIC-42-1</data>
+      <data key="d6">L</data>
+      <data key="d0">plant0</data>
+      <data key="d1">LT-42-1</data>
+      <data key="d2">42</data>
+      <data key="d3">ProcessSignalGeneratingFunction</data>
+      <data key="d4">62</data>
+    </node>
+    <node id="62:92d7cb66edeb">
+      <data key="d0">plant0</data>
+      <data key="d1">V-42-3</data>
+      <data key="d2">42</data>
+      <data key="d3">PressureVessel</data>
+      <data key="d4">62</data>
+    </node>
+    <node id="62:9799b3f471ea">
+      <data key="d0">plant0</data>
+      <data key="d1">BV-42-5</data>
+      <data key="d2">42</data>
+      <data key="d3">BallValve</data>
+      <data key="d4">62</data>
+    </node>
+    <node id="62:a2ca418818ee">
+      <data key="d5">PIC-42-5</data>
+      <data key="d6">P</data>
+      <data key="d0">plant0</data>
+      <data key="d1">PIC-42-5</data>
+      <data key="d2">42</data>
+      <data key="d3">ProcessInstrumentationFunction</data>
+      <data key="d4">62</data>
+    </node>
+    <node id="62:a746780fe695">
+      <data key="d5">PIC-42-5</data>
+      <data key="d6">P</data>
+      <data key="d0">plant0</data>
+      <data key="d1">PT-42-5</data>
+      <data key="d2">42</data>
+      <data key="d3">ProcessSignalGeneratingFunction</data>
+      <data key="d4">62</data>
+    </node>
+    <node id="62:ba5ae53ea0eb">
+      <data key="d5">PIC-42-5</data>
+      <data key="d6">P</data>
+      <data key="d0">plant0</data>
+      <data key="d1">PV-42-5</data>
+      <data key="d2">42</data>
+      <data key="d3">ActuatingFunction</data>
+      <data key="d4">62</data>
+    </node>
+    <node id="62:c19dc5ab947f">
+      <data key="d0">plant0</data>
+      <data key="d1">C-42-4</data>
+      <data key="d2">42</data>
+      <data key="d3">Compressor</data>
+      <data key="d4">62</data>
+    </node>
+    <node id="62:c237e6ba2103">
+      <data key="d0">plant0</data>
+      <data key="d1">TK-42-3</data>
+      <data key="d2">42</data>
+      <data key="d3">Tank</data>
+      <data key="d4">62</data>
+    </node>
+    <node id="62:d209e777b697">
+      <data key="d0">plant0</data>
+      <data key="d1">T-42-6</data>
+      <data key="d2">42</data>
+      <data key="d3">ProcessColumn</data>
+      <data key="d4">62</data>
+    </node>
+    <node id="62:e0b704f2c821">
+      <data key="d0">plant0</data>
+      <data key="d1">T-42-5</data>
+      <data key="d2">42</data>
+      <data key="d3">ProcessColumn</data>
+      <data key="d4">62</data>
+    </node>
+    <node id="62:ee3becf7e9cf">
+      <data key="d5">TIC-42-2</data>
+      <data key="d6">T</data>
+      <data key="d0">plant0</data>
+      <data key="d1">TT-42-2</data>
+      <data key="d2">42</data>
+      <data key="d3">ProcessSignalGeneratingFunction</data>
+      <data key="d4">62</data>
+    </node>
+    <node id="62:f92e0bc8906b">
+      <data key="d0">plant0</data>
+      <data key="d1">C-42-2</data>
+      <data key="d2">42</data>
+      <data key="d3">Compressor</data>
+      <data key="d4">62</data>
+    </node>
+    <edge source="59:7ec922fa635b" target="61:a79ecf6cbc2d">
+      <data key="d7">PG</data>
+      <data key="d8">PG-1398</data>
+      <data key="d9">send_to</data>
+    </edge>
+    <edge source="61:a79ecf6cbc2d" target="61:01ac4dc837f7">
+      <data key="d7">PG</data>
+      <data key="d8">PG-1067</data>
+      <data key="d9">send_to</data>
+    </edge>
+    <edge source="61:a79ecf6cbc2d" target="61:b2216fc4a3a7">
+      <data key="d7">PL</data>
+      <data key="d8">PL-1066</data>
+      <data key="d9">send_to</data>
+    </edge>
+    <edge source="61:a79ecf6cbc2d" target="62:872194dd0ad1">
+      <data key="d7">PG</data>
+      <data key="d8">PG-1072</data>
+      <data key="d9">send_to</data>
+    </edge>
+    <edge source="62:014b4aaadd81" target="62:08f071c2af39">
+      <data key="d7">PG</data>
+      <data key="d8">PG-1073</data>
+      <data key="d9">send_to</data>
+    </edge>
+    <edge source="62:01877789341f" target="62:3e996527accd">
+      <data key="d9">send_signal_to</data>
+    </edge>
+    <edge source="62:08f071c2af39" target="62:30256adbed33">
+      <data key="d7">PG</data>
+      <data key="d8">PG-1073</data>
+      <data key="d9">send_to</data>
+    </edge>
+    <edge source="62:110db6d335cb" target="62:003d9971e16d">
+      <data key="d7">PG</data>
+      <data key="d8">PG-1081</data>
+      <data key="d9">send_to</data>
+    </edge>
+    <edge source="62:2e85c5e13497" target="62:488f52a0ff01">
+      <data key="d7">PL</data>
+      <data key="d8">PL-1075</data>
+      <data key="d9">send_to</data>
+    </edge>
+    <edge source="62:2e85c5e13497" target="62:5bfd49e43a69">
+      <data key="d7">PL</data>
+      <data key="d8">PL-1080</data>
+      <data key="d9">send_to</data>
+    </edge>
+    <edge source="62:2e85c5e13497" target="62:c237e6ba2103">
+      <data key="d7">PL</data>
+      <data key="d8">PL-1079</data>
+      <data key="d9">send_to</data>
+    </edge>
+    <edge source="62:30256adbed33" target="62:3a2d9c70a95d">
+      <data key="d7">PG</data>
+      <data key="d8">PG-1088</data>
+      <data key="d9">send_to</data>
+    </edge>
+    <edge source="62:30256adbed33" target="62:5ba01083a4a0">
+      <data key="d7">PL</data>
+      <data key="d8">PL-1077</data>
+      <data key="d9">send_to</data>
+    </edge>
+    <edge source="62:30256adbed33" target="62:9799b3f471ea">
+      <data key="d7">PL</data>
+      <data key="d8">PL-1074</data>
+      <data key="d9">send_to</data>
+    </edge>
+    <edge source="62:3adc81b1416e" target="62:e0b704f2c821">
+      <data key="d7">PG</data>
+      <data key="d8">PG-1083</data>
+      <data key="d9">send_to</data>
+    </edge>
+    <edge source="62:3e996527accd" target="62:110db6d335cb">
+      <data key="d9">control</data>
+    </edge>
+    <edge source="62:488f52a0ff01" target="62:f92e0bc8906b">
+      <data key="d7">PL</data>
+      <data key="d8">PL-1075</data>
+      <data key="d9">send_to</data>
+    </edge>
+    <edge source="62:4ea2e703bca7" target="62:3adc81b1416e">
+      <data key="d7">PL</data>
+      <data key="d8">PL-1077</data>
+      <data key="d9">send_to</data>
+    </edge>
+    <edge source="62:5ba01083a4a0" target="62:4ea2e703bca7">
+      <data key="d7">PL</data>
+      <data key="d8">PL-1077</data>
+      <data key="d9">send_to</data>
+    </edge>
+    <edge source="62:5bfd49e43a69" target="62:c19dc5ab947f">
+      <data key="d7">PL</data>
+      <data key="d8">PL-1080</data>
+      <data key="d9">send_to</data>
+    </edge>
+    <edge source="62:6268c586013d" target="62:35a2e72809e0">
+      <data key="d7">PL</data>
+      <data key="d8">PL-1084</data>
+      <data key="d9">send_to</data>
+    </edge>
+    <edge source="62:77342aaa3d8e" target="62:8f18c4fb0b28">
+      <data key="d9">send_signal_to</data>
+    </edge>
+    <edge source="62:7db8de33ecb5" target="62:6268c586013d">
+      <data key="d7">PL</data>
+      <data key="d8">PL-1084</data>
+      <data key="d9">send_to</data>
+    </edge>
+    <edge source="62:80e0ab2ea6a9" target="62:2e85c5e13497">
+      <data key="d7">PL</data>
+      <data key="d8">PL-1074</data>
+      <data key="d9">send_to</data>
+    </edge>
+    <edge source="62:872194dd0ad1" target="62:014b4aaadd81">
+      <data key="d7">PG</data>
+      <data key="d8">PG-1073</data>
+      <data key="d9">send_to</data>
+    </edge>
+    <edge source="62:872194dd0ad1" target="62:92d7cb66edeb">
+      <data key="d7">PL</data>
+      <data key="d8">PL-1076</data>
+      <data key="d9">send_to</data>
+    </edge>
+    <edge source="62:872194dd0ad1" target="62:a746780fe695">
+      <data key="d9">measured_by</data>
+    </edge>
+    <edge source="62:8f18c4fb0b28" target="62:6268c586013d">
+      <data key="d9">control</data>
+    </edge>
+    <edge source="62:905c5874bb5f" target="62:01877789341f">
+      <data key="d9">send_signal_to</data>
+    </edge>
+    <edge source="62:9799b3f471ea" target="62:80e0ab2ea6a9">
+      <data key="d7">PL</data>
+      <data key="d8">PL-1074</data>
+      <data key="d9">send_to</data>
+    </edge>
+    <edge source="62:a2ca418818ee" target="62:ba5ae53ea0eb">
+      <data key="d9">send_signal_to</data>
+    </edge>
+    <edge source="62:a746780fe695" target="62:a2ca418818ee">
+      <data key="d9">send_signal_to</data>
+    </edge>
+    <edge source="62:ba5ae53ea0eb" target="62:08f071c2af39">
+      <data key="d9">control</data>
+    </edge>
+    <edge source="62:c19dc5ab947f" target="62:110db6d335cb">
+      <data key="d7">PG</data>
+      <data key="d8">PG-1081</data>
+      <data key="d9">send_to</data>
+    </edge>
+    <edge source="62:c19dc5ab947f" target="62:905c5874bb5f">
+      <data key="d9">measured_by</data>
+    </edge>
+    <edge source="62:e0b704f2c821" target="62:7db8de33ecb5">
+      <data key="d7">PL</data>
+      <data key="d8">PL-1084</data>
+      <data key="d9">send_to</data>
+    </edge>
+    <edge source="62:e0b704f2c821" target="62:d209e777b697">
+      <data key="d7">PG</data>
+      <data key="d8">PG-1085</data>
+      <data key="d9">send_to</data>
+    </edge>
+    <edge source="62:e0b704f2c821" target="62:ee3becf7e9cf">
+      <data key="d9">measured_by</data>
+    </edge>
+    <edge source="62:ee3becf7e9cf" target="62:77342aaa3d8e">
+      <data key="d9">send_signal_to</data>
+    </edge>
+  </graph>
+</graphml>
