@@ -1,7 +1,7 @@
 ---
 adr: 0057
 title: Build generator v2 from process patterns with standard trims and ISA-5.1 instruments, beside a frozen v1, and measure it with the frozen system
-status: proposed
+status: accepted
 date: 2026-10-25
 supersedes: none. Opens the "rule-grounded realism, later phase" that ADR-0007 deferred; amends nothing accepted. Extends ADR-0044's tag rule to four control-valve bodies. Promotes 49 pyDEXPI classes into the schema under ADR-0016 rule 4 (named questions: §10 of the design note). ADR-0021, ADR-0025, ADR-0028, ADR-0053 (F1) carry over unchanged.
 design: 40-design/generator-v2-realism.md
@@ -119,3 +119,20 @@ rules; utility headers and utility sheets (still parked; only consumer-side stub
 **Revisit if:** a v1 golden changes; the v2 scale smoke breaks plant-generator.md's kill criterion or K-NEO; the
 composition bands cannot be met within three logged tuning rounds; a second real multi-sheet set becomes available
 (re-derive the bands); pyDEXPI gains a thermowell class or changes its abstraction.
+
+## Status
+
+**Accepted 2026-10-25 (user, in chat)**, with the design note's open questions (§16) answered as follows.
+
+| # | Question | Answer |
+|---|---|---|
+| Q1 | Utilities | Recommendation: consumer-side stubs (block valve, service code, open end at the sheet edge); headers and utility sheets stay parked |
+| Q2 | Prompts on v2 runs | Recommendation A: the frozen system (F1); a v2 legend only as a separately labelled system, and only if failures trace to it |
+| Q3 | Role of v2 | **Changed by the user: B.** v2 becomes the headline result ("mainly v2"); v1 stays reported as the first, sealed measurement and the development history. No v1 number is replaced or deleted |
+| Q4 | Duplication rate on v2 | Recommendation A: 0.25 (ADR-0028). Because v2 is now the headline, ADR-0028's user amendment applies to it: the H100g2 sensitivity runs at rates 0 and 0.5 are **required** |
+| Q5 | Paid runs | Recommendation A: both R4 and R5, each estimated after R3, capped and staged |
+
+**Consequence of Q3 = B.** R4, R5 and the H100g2 sensitivity points carry the thesis's headline numbers; R0–R3 and
+the composition report are their preconditions. The user also asked (2026-10-25) for real P&ID samples to be
+collected so that declared parameters can be checked against more than OPEN100
+(`10-literature/real-pid-samples-2026-10.md`, when filed).
