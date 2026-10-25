@@ -195,13 +195,13 @@ def topology_node_class(label: str) -> str | None:
     for the EXP-0001 path, where a real DEXPI file uses finer-grained subclasses (e.g.
     `ReciprocatingPump`) with no name of their own in the schema.
     """
-    if label in schema.IMPORTABLE_CLASSES:
+    if label in schema.V1_IMPORTABLE_CLASSES:
         return label
     dexpi_class = getattr(pydexpi_classes, label, None)
     if dexpi_class is None:
         return None
     for ancestor in base_model_utils.get_inheritance_from_dexpi_class(dexpi_class):
-        if ancestor.__name__ in schema.IMPORTABLE_CLASSES:
+        if ancestor.__name__ in schema.V1_IMPORTABLE_CLASSES:
             return ancestor.__name__
     return None
 

@@ -57,7 +57,7 @@ class SplitConfig(BaseModel):
     sheet_equipment_budget: int = Field(default=10, ge=1)
     seed: int = 0
     duplication_rate: float = Field(default=0.0, ge=0.0, le=1.0)
-    equipment_classes: set[str] = Field(default_factory=lambda: set(schema.EQUIPMENT_CLASSES))
+    equipment_classes: set[str] = Field(default_factory=lambda: set(schema.V1_EQUIPMENT_CLASSES))
     numbering_scheme: NumberingScheme = NumberingScheme.SEQUENTIAL
     use_grid_reference: bool = False
     exact_match_tags: bool = True

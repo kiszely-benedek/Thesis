@@ -27,7 +27,12 @@ from plantgraph.benchmark.generator_models import (
     StreamKind,
     ValveSpec,
 )
-from plantgraph.graph.schema import CLASS_SPECS, OPERATED_VALVE_CLASSES, VALVE_CLASSES, NodeClass
+from plantgraph.graph.schema import (
+    CLASS_SPECS,
+    V1_OPERATED_VALVE_CLASSES,
+    V1_VALVE_CLASSES,
+    NodeClass,
+)
 
 
 def plan_plant(config: GeneratorConfig, builder: PlantBuilder) -> GenerationRecord:
@@ -231,7 +236,7 @@ class _GenerationState:
         valve_count = self.rng.randint(0, self.config.valves_per_stream_max)
         valves: list[ValveSpec] = []
         for _ in range(valve_count):
-            node_class = self.rng.choice(sorted(VALVE_CLASSES))
+            node_class = self.rng.choice(sorted(V1_VALVE_CLASSES))
             node_id = self._next_node_id(unit_no, "va")
             tag, _, _ = self._next_tag(unit_no, node_class)
             valves.append(ValveSpec(node_id=node_id, node_class=node_class, tag=tag))
@@ -254,7 +259,7 @@ class _GenerationState:
         candidates = [
             valve
             for valve in self.valves_by_source.get(equipment_id, [])
-            if valve.node_class in OPERATED_VALVE_CLASSES
+            if valve.node_class in V1_OPERATED_VALVE_CLASSES
             and valve.node_id not in self.controlled_valves
         ]
         if not candidates:

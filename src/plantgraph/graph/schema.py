@@ -230,6 +230,36 @@ IMPORTABLE_CLASSES: frozenset[str] = (
     GENERATOR_CLASSES | CONNECTOR_CLASSES | {NodeClass.GENERIC_ITEM.value}
 )
 
+# v1 pins (ADR-0057): today's exact values as literals, NOT aliases of the live constants above.
+# Generator v2 grows the live sets; the v1 generator, its config defaults and the EX01 import read
+# these so v1 output stays byte-identical. Never edit them.
+V1_EQUIPMENT_CLASSES: frozenset[str] = frozenset(
+    {"CentrifugalPump", "Compressor", "Tank", "PressureVessel", "ProcessColumn", "HeatExchanger"}
+)
+V1_VALVE_CLASSES: frozenset[str] = frozenset({"GlobeValve", "BallValve", "CheckValve"})
+V1_OPERATED_VALVE_CLASSES: frozenset[str] = frozenset({"GlobeValve", "BallValve"})
+V1_IMPORTABLE_CLASSES: frozenset[str] = frozenset(
+    {
+        "CentrifugalPump",
+        "Compressor",
+        "Tank",
+        "PressureVessel",
+        "ProcessColumn",
+        "HeatExchanger",
+        "GlobeValve",
+        "BallValve",
+        "CheckValve",
+        "ProcessSignalGeneratingFunction",
+        "ProcessInstrumentationFunction",
+        "ActuatingFunction",
+        "FlowOutPipeOffPageConnector",
+        "FlowInPipeOffPageConnector",
+        "FlowOutSignalOffPageConnector",
+        "FlowInSignalOffPageConnector",
+        "GenericItem",
+    }
+)
+
 #: `GenericItem` is allowed at both ends of every topology relation in the schema: validation
 #: cannot know the fallback's semantics — that is promotion's job (ADR-0016 rule 4).
 _GENERIC_ITEM: frozenset[str] = frozenset({NodeClass.GENERIC_ITEM.value})

@@ -63,7 +63,7 @@ class GeneratorConfig(BaseModel):
     valves_per_stream_max: int = Field(default=2, ge=0)
     p_control_loop: float = Field(default=0.5, ge=0.0, le=1.0)
     equipment_weights: dict[str, float] = Field(
-        default_factory=lambda: dict.fromkeys(sorted(schema.EQUIPMENT_CLASSES), 1.0)
+        default_factory=lambda: dict.fromkeys(sorted(schema.V1_EQUIPMENT_CLASSES), 1.0)
     )
     fluid_codes: list[str] = Field(default_factory=lambda: ["PL", "PG"], min_length=1)
 
@@ -79,11 +79,11 @@ class GeneratorConfig(BaseModel):
     @field_validator("equipment_weights")
     @classmethod
     def _check_equipment_weights(cls, weights: dict[str, float]) -> dict[str, float]:
-        unknown = sorted(set(weights) - schema.EQUIPMENT_CLASSES)
+        unknown = sorted(set(weights) - schema.V1_EQUIPMENT_CLASSES)
         if unknown:
             raise ValueError(
                 f"equipment_weights has unknown node_class(es) {unknown}; "
-                f"expected a subset of {sorted(schema.EQUIPMENT_CLASSES)}"
+                f"expected a subset of {sorted(schema.V1_EQUIPMENT_CLASSES)}"
             )
         non_positive = {name: value for name, value in weights.items() if value <= 0}
         if non_positive:
