@@ -47,7 +47,7 @@ markers = [
 line-length = 100
 target-version = "py312"
 src = ["src", "tests"]
-extend-exclude = ["docs"]
+extend-exclude = ["docs", "data"]
 
 [tool.ruff.format]
 # adattáblák: egy csatlakozó = egy sor; a formázó szétdobná őket soronként egy mezőre
