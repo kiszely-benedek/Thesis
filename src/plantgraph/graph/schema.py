@@ -13,7 +13,9 @@ Terms, because the code is about an engineering domain the reader may not know:
   "unit contains its items" edge would break the splitter's
   neighbourhood-based clustering).
 - **node_class**: a pyDEXPI class name (e.g. `CentrifugalPump`), together with
-  its curated ancestor-class chain as a Neo4j label (`labels_for`).
+  its ancestor-class chain as a Neo4j label (`labels_for`). The set of classes, and each one's
+  chain, category and piping kind, come from the generated table `schema_vocabulary.py`
+  (ADR-0058); the node types themselves live in `schema_classes.py`.
 
 This module holds the valid node and edge types and their required properties
 — the `validate_plant_graph` and `validate_sheet_graph` functions built on top
@@ -28,53 +30,17 @@ from __future__ import annotations
 
 from enum import Enum
 
-from pydantic import BaseModel, ConfigDict
+from plantgraph.graph.schema_classes import (
+    ClassSpec,
+    NodeCategory,
+    NodeClass,
+    PipingKind,
+    VocabularyRow,
+)
+from plantgraph.graph.schema_vocabulary import VOCABULARY
 
-
-class NodeCategory(str, Enum):
-    """Which functional group a node_class belongs to (a column of the §4.2 table)."""
-
-    EQUIPMENT = "equipment"
-    PIPING = "piping"
-    INSTRUMENTATION = "instrumentation"
-    CONNECTOR = "connector"
-    STRUCTURE = "structure"
-    #: the `GenericItem` fallback's category, when pyDEXPI's ancestor chain has no curated root
-    #: (ADR-0016, kg-construction.md §3.1 "Label cut-off")
-    OTHER = "other"
-
-
-class NodeClass(str, Enum):
-    """Every node class in the schema — a curated name chain, verified against pyDEXPI 1.2.0.
-
-    12 classes are produced by the generator, 4 stub classes by the splitter
-    (when it cuts an edge, it places an off-page connector stub on both
-    sheets), and 4 structural classes exist only in the graph store
-    (`plant-generator.md` §4.2).
-    """
-
-    CENTRIFUGAL_PUMP = "CentrifugalPump"
-    COMPRESSOR = "Compressor"
-    TANK = "Tank"
-    PRESSURE_VESSEL = "PressureVessel"
-    PROCESS_COLUMN = "ProcessColumn"
-    HEAT_EXCHANGER = "HeatExchanger"
-    GLOBE_VALVE = "GlobeValve"
-    BALL_VALVE = "BallValve"
-    CHECK_VALVE = "CheckValve"
-    PROCESS_SIGNAL_GENERATING_FUNCTION = "ProcessSignalGeneratingFunction"
-    PROCESS_INSTRUMENTATION_FUNCTION = "ProcessInstrumentationFunction"
-    ACTUATING_FUNCTION = "ActuatingFunction"
-    FLOW_OUT_PIPE_OFF_PAGE_CONNECTOR = "FlowOutPipeOffPageConnector"
-    FLOW_IN_PIPE_OFF_PAGE_CONNECTOR = "FlowInPipeOffPageConnector"
-    FLOW_OUT_SIGNAL_OFF_PAGE_CONNECTOR = "FlowOutSignalOffPageConnector"
-    FLOW_IN_SIGNAL_OFF_PAGE_CONNECTOR = "FlowInSignalOffPageConnector"
-    PROCESS_PLANT = "ProcessPlant"
-    PLANT_SECTION = "PlantSection"
-    DRAWING_SET = "DrawingSet"
-    SHEET = "Sheet"
-    #: fallback for a real file's pyDEXPI class the schema has not curated (ADR-0016)
-    GENERIC_ITEM = "GenericItem"
+# Re-exported: callers import these from `plantgraph.graph.schema`, whichever file defines them.
+__all__ = ["ClassSpec", "NodeCategory", "NodeClass", "PipingKind", "VocabularyRow"]
 
 
 class Relation(str, Enum):
@@ -84,6 +50,9 @@ class Relation(str, Enum):
     SEND_SIGNAL_TO = "send_signal_to"
     CONTROL = "control"
     MEASURED_BY = "measured_by"
+    #: a vessel or heat exchanger -> its `Agitator` (the stirrer inside it); the only place pyDEXPI
+    #: links one equipment item to another (ADR-0058)
+    HAS_AGITATOR = "has_agitator"
     IS_LOCATED_IN = "is_located_in"
     HAS_SHEET = "has_sheet"
     IS_DRAWN_ON = "is_drawn_on"
@@ -97,98 +66,19 @@ class Relation(str, Enum):
     DRAWN_AS = "drawn_as"
 
 
-class ClassSpec(BaseModel):
-    """A node_class's Neo4j label chain, category, and tag prefix — one row of the §4.2 table."""
-
-    model_config = ConfigDict(frozen=True)
-
-    labels: tuple[str, ...]
-    category: NodeCategory
-    tag_prefix: str | None = None
+def _structure(name: NodeClass) -> ClassSpec:
+    return ClassSpec(labels=(name.value,), category=NodeCategory.STRUCTURE)
 
 
+# The derived rows, then the five classes the rule does not cover: the four structural ones, and
+# `GenericItem`. Its per-instance ancestor chain (`dexpi_labels`) is a node property, not this
+# class-level entry; the latter only gives the Neo4j label (`adapters/pydexpi_generic.py`).
 CLASS_SPECS: dict[NodeClass, ClassSpec] = {
-    NodeClass.CENTRIFUGAL_PUMP: ClassSpec(
-        labels=("CentrifugalPump", "Pump", "Equipment", "TaggedPlantItem"),
-        category=NodeCategory.EQUIPMENT,
-        tag_prefix="P",
-    ),
-    NodeClass.COMPRESSOR: ClassSpec(
-        labels=("Compressor", "Equipment", "TaggedPlantItem"),
-        category=NodeCategory.EQUIPMENT,
-        tag_prefix="C",
-    ),
-    NodeClass.TANK: ClassSpec(
-        labels=("Tank", "Vessel", "Equipment", "TaggedPlantItem"),
-        category=NodeCategory.EQUIPMENT,
-        tag_prefix="TK",
-    ),
-    NodeClass.PRESSURE_VESSEL: ClassSpec(
-        labels=("PressureVessel", "Vessel", "Equipment", "TaggedPlantItem"),
-        category=NodeCategory.EQUIPMENT,
-        tag_prefix="V",
-    ),
-    NodeClass.PROCESS_COLUMN: ClassSpec(
-        labels=("ProcessColumn", "Equipment", "TaggedPlantItem"),
-        category=NodeCategory.EQUIPMENT,
-        tag_prefix="T",
-    ),
-    NodeClass.HEAT_EXCHANGER: ClassSpec(
-        labels=("HeatExchanger", "Equipment", "TaggedPlantItem"),
-        category=NodeCategory.EQUIPMENT,
-        tag_prefix="E",
-    ),
-    NodeClass.GLOBE_VALVE: ClassSpec(
-        labels=("GlobeValve", "OperatedValve", "PipingComponent"),
-        category=NodeCategory.PIPING,
-        tag_prefix="GV",
-    ),
-    NodeClass.BALL_VALVE: ClassSpec(
-        labels=("BallValve", "OperatedValve", "PipingComponent"),
-        category=NodeCategory.PIPING,
-        tag_prefix="BV",
-    ),
-    NodeClass.CHECK_VALVE: ClassSpec(
-        labels=("CheckValve", "PipingComponent"),
-        category=NodeCategory.PIPING,
-        tag_prefix="CHV",
-    ),
-    NodeClass.PROCESS_SIGNAL_GENERATING_FUNCTION: ClassSpec(
-        labels=("ProcessSignalGeneratingFunction",),
-        category=NodeCategory.INSTRUMENTATION,
-        tag_prefix="{var}T",
-    ),
-    NodeClass.PROCESS_INSTRUMENTATION_FUNCTION: ClassSpec(
-        labels=("ProcessInstrumentationFunction",),
-        category=NodeCategory.INSTRUMENTATION,
-        tag_prefix="{var}IC",
-    ),
-    NodeClass.ACTUATING_FUNCTION: ClassSpec(
-        labels=("ActuatingFunction",),
-        category=NodeCategory.INSTRUMENTATION,
-    ),
-    NodeClass.FLOW_OUT_PIPE_OFF_PAGE_CONNECTOR: ClassSpec(
-        labels=("FlowOutPipeOffPageConnector", "PipeOffPageConnector"),
-        category=NodeCategory.CONNECTOR,
-    ),
-    NodeClass.FLOW_IN_PIPE_OFF_PAGE_CONNECTOR: ClassSpec(
-        labels=("FlowInPipeOffPageConnector", "PipeOffPageConnector"),
-        category=NodeCategory.CONNECTOR,
-    ),
-    NodeClass.FLOW_OUT_SIGNAL_OFF_PAGE_CONNECTOR: ClassSpec(
-        labels=("FlowOutSignalOffPageConnector", "SignalOffPageConnector"),
-        category=NodeCategory.CONNECTOR,
-    ),
-    NodeClass.FLOW_IN_SIGNAL_OFF_PAGE_CONNECTOR: ClassSpec(
-        labels=("FlowInSignalOffPageConnector", "SignalOffPageConnector"),
-        category=NodeCategory.CONNECTOR,
-    ),
-    NodeClass.PROCESS_PLANT: ClassSpec(labels=("ProcessPlant",), category=NodeCategory.STRUCTURE),
-    NodeClass.PLANT_SECTION: ClassSpec(labels=("PlantSection",), category=NodeCategory.STRUCTURE),
-    NodeClass.DRAWING_SET: ClassSpec(labels=("DrawingSet",), category=NodeCategory.STRUCTURE),
-    NodeClass.SHEET: ClassSpec(labels=("Sheet",), category=NodeCategory.STRUCTURE),
-    # the per-instance ancestor chain (`dexpi_labels`) is a node property, not this
-    # class-level entry — the latter only gives the Neo4j label (`adapters/pydexpi_generic.py`)
+    **{NodeClass(row.name): row for row in VOCABULARY},
+    NodeClass.PROCESS_PLANT: _structure(NodeClass.PROCESS_PLANT),
+    NodeClass.PLANT_SECTION: _structure(NodeClass.PLANT_SECTION),
+    NodeClass.DRAWING_SET: _structure(NodeClass.DRAWING_SET),
+    NodeClass.SHEET: _structure(NodeClass.SHEET),
     NodeClass.GENERIC_ITEM: ClassSpec(labels=("GenericItem",), category=NodeCategory.OTHER),
 }
 
@@ -203,23 +93,80 @@ def _classes_in_category(category: NodeCategory) -> frozenset[str]:
     )
 
 
+def _piping_classes_of_kind(*kinds: PipingKind) -> frozenset[str]:
+    """The piping node_class names whose `ClassSpec.piping_kind` is one of `kinds`."""
+    return frozenset(
+        node_class.value for node_class, spec in CLASS_SPECS.items() if spec.piping_kind in kinds
+    )
+
+
+def _classes_with_label(*labels: str) -> frozenset[str]:
+    """The node_class names whose label chain contains any of `labels` (a family, e.g. `Vessel`)."""
+    return frozenset(
+        node_class.value
+        for node_class, spec in CLASS_SPECS.items()
+        if any(label in spec.labels for label in labels)
+    )
+
+
 EQUIPMENT_CLASSES: frozenset[str] = _classes_in_category(NodeCategory.EQUIPMENT)
-VALVE_CLASSES: frozenset[str] = _classes_in_category(NodeCategory.PIPING)
-OPERATED_VALVE_CLASSES: frozenset[str] = frozenset(
-    {NodeClass.GLOBE_VALVE.value, NodeClass.BALL_VALVE.value}
+PIPING_CLASSES: frozenset[str] = _classes_in_category(NodeCategory.PIPING)
+# "Valve" = something that opens, closes, checks or relieves flow. Fittings, pipe tees, flow meters
+# and spec breaks are piping but not valves: a valve count must not include a pipe tee.
+VALVE_CLASSES: frozenset[str] = _piping_classes_of_kind("operated", "check", "safety")
+OPERATED_VALVE_CLASSES: frozenset[str] = _piping_classes_of_kind("operated")
+FITTING_CLASSES: frozenset[str] = _piping_classes_of_kind("fitting")
+JUNCTION_CLASSES: frozenset[str] = _piping_classes_of_kind("junction")
+PRIMARY_ELEMENT_CLASSES: frozenset[str] = _piping_classes_of_kind("primary_element")
+BREAK_CLASSES: frozenset[str] = _piping_classes_of_kind("break")
+# The valve bodies a control loop's actuator may drive: a declared list, not derived (ADR-0044,
+# extended from two bodies to six by ADR-0058).
+CONTROL_VALVE_BODY_CLASSES: frozenset[str] = frozenset(
+    {
+        NodeClass.GLOBE_VALVE.value,
+        NodeClass.BALL_VALVE.value,
+        NodeClass.BUTTERFLY_VALVE.value,
+        NodeClass.ANGLE_VALVE.value,
+        NodeClass.ANGLE_GLOBE_VALVE.value,
+        NodeClass.ANGLE_BALL_VALVE.value,
+    }
 )
+# What can own an agitator: the vessel and heat-exchanger families (pyDEXPI's `agitator` field).
+AGITATED_EQUIPMENT_CLASSES: frozenset[str] = _classes_with_label("Vessel", "HeatExchanger")
 CONNECTOR_CLASSES: frozenset[str] = _classes_in_category(NodeCategory.CONNECTOR)
 # Classes whose nodes may have no printed tag. A connector stub is a drawing symbol, not a tagged
 # item. An actuator is drawn as part of its control valve and shares the valve's printed tag
-# (ADR-0044: ISA *Control Loop Foundation* Figs. 7-16..7-19; DEXPI C01 example).
-UNTAGGED_CLASSES: frozenset[str] = CONNECTOR_CLASSES | {NodeClass.ACTUATING_FUNCTION.value}
+# (ADR-0044: ISA *Control Loop Foundation* Figs. 7-16..7-19; DEXPI C01 example). A pipe tee,
+# reducer, flange, coupling and the like are plain pipe parts: a P&ID prints no tag next to them,
+# and the spec break and the electrical actuator are untagged like the plain actuator.
+UNTAGGED_CLASSES: frozenset[str] = CONNECTOR_CLASSES | frozenset(
+    node_class.value
+    for node_class in (
+        NodeClass.ACTUATING_FUNCTION,
+        NodeClass.ACTUATING_ELECTRICAL_FUNCTION,
+        NodeClass.PROPERTY_BREAK,
+        NodeClass.PIPE_TEE,
+        NodeClass.PIPE_REDUCER,
+        NodeClass.BLIND_FLANGE,
+        NodeClass.LINE_BLIND,
+        NodeClass.FLANGE,
+        NodeClass.FLANGED_CONNECTION,
+        NodeClass.PIPE_COUPLING,
+        NodeClass.CLAMPED_FLANGE_COUPLING,
+        NodeClass.COMPENSATOR,
+        NodeClass.HOSE,
+        NodeClass.FUNNEL,
+        NodeClass.PENETRATION,
+        NodeClass.VENTILATION_DEVICE,
+    )
+)
 
 # produced only by the generator (equipment + piping component + instrumentation) —
 # this is the plant graph's "known class" set, without the connector and structural classes.
 # Not among §4.5's named constants, but validation.py needs it —
 # so it stays public, not underscored: two modules share it because of the file limit.
 GENERATOR_CLASSES: frozenset[str] = (
-    EQUIPMENT_CLASSES | VALVE_CLASSES | _classes_in_category(NodeCategory.INSTRUMENTATION)
+    EQUIPMENT_CLASSES | PIPING_CLASSES | _classes_in_category(NodeCategory.INSTRUMENTATION)
 )
 KNOWN_CLASSES: frozenset[str] = frozenset(node_class.value for node_class in NodeClass)
 
@@ -260,62 +207,69 @@ V1_IMPORTABLE_CLASSES: frozenset[str] = frozenset(
     }
 )
 
+# every NodeClass name v1 had: the importable ones plus the 4 structural classes. The CLASS_NAME
+# answer prompt lists them, so its text stays byte-identical on v1 corpora while the enum grows.
+V1_NODE_CLASSES: frozenset[str] = V1_IMPORTABLE_CLASSES | frozenset(
+    {"ProcessPlant", "PlantSection", "DrawingSet", "Sheet"}
+)
+
 #: `GenericItem` is allowed at both ends of every topology relation in the schema: validation
 #: cannot know the fallback's semantics — that is promotion's job (ADR-0016 rule 4).
 _GENERIC_ITEM: frozenset[str] = frozenset({NodeClass.GENERIC_ITEM.value})
 
+# Signal flow: a sensor (PSGF) feeds an indicator or controller (PIF / PCF, which may feed another
+# controller in a cascade), which feeds an actuator (AF: a valve's; AEF: a machine's start/stop or
+# speed signal).
+_SIGNAL_SOURCES: frozenset[str] = frozenset(
+    {
+        NodeClass.PROCESS_SIGNAL_GENERATING_FUNCTION.value,
+        NodeClass.PROCESS_INSTRUMENTATION_FUNCTION.value,
+        NodeClass.PROCESS_CONTROL_FUNCTION.value,
+        NodeClass.FLOW_IN_SIGNAL_OFF_PAGE_CONNECTOR.value,
+    }
+)
+_SIGNAL_TARGETS: frozenset[str] = frozenset(
+    {
+        NodeClass.PROCESS_INSTRUMENTATION_FUNCTION.value,
+        NodeClass.PROCESS_CONTROL_FUNCTION.value,
+        NodeClass.ACTUATING_FUNCTION.value,
+        NodeClass.ACTUATING_ELECTRICAL_FUNCTION.value,
+        NodeClass.FLOW_OUT_SIGNAL_OFF_PAGE_CONNECTOR.value,
+    }
+)
+_ACTUATORS: frozenset[str] = frozenset(
+    {NodeClass.ACTUATING_FUNCTION.value, NodeClass.ACTUATING_ELECTRICAL_FUNCTION.value}
+)
+_FLOW_IN_SIGNAL: frozenset[str] = frozenset({NodeClass.FLOW_IN_SIGNAL_OFF_PAGE_CONNECTOR.value})
+_FLOW_OUT_SIGNAL: frozenset[str] = frozenset({NodeClass.FLOW_OUT_SIGNAL_OFF_PAGE_CONNECTOR.value})
+
 RELATION_ENDPOINTS: dict[Relation, tuple[frozenset[str], frozenset[str]]] = {
     Relation.SEND_TO: (
         EQUIPMENT_CLASSES
-        | VALVE_CLASSES
+        | PIPING_CLASSES
         | _GENERIC_ITEM
         | {NodeClass.FLOW_IN_PIPE_OFF_PAGE_CONNECTOR.value},
         EQUIPMENT_CLASSES
-        | VALVE_CLASSES
+        | PIPING_CLASSES
         | _GENERIC_ITEM
         | {NodeClass.FLOW_OUT_PIPE_OFF_PAGE_CONNECTOR.value},
     ),
-    Relation.SEND_SIGNAL_TO: (
-        frozenset(
-            {
-                NodeClass.PROCESS_SIGNAL_GENERATING_FUNCTION.value,
-                NodeClass.PROCESS_INSTRUMENTATION_FUNCTION.value,
-                NodeClass.FLOW_IN_SIGNAL_OFF_PAGE_CONNECTOR.value,
-            }
-        )
-        | _GENERIC_ITEM,
-        frozenset(
-            {
-                NodeClass.PROCESS_INSTRUMENTATION_FUNCTION.value,
-                NodeClass.ACTUATING_FUNCTION.value,
-                NodeClass.FLOW_OUT_SIGNAL_OFF_PAGE_CONNECTOR.value,
-            }
-        )
-        | _GENERIC_ITEM,
-    ),
+    Relation.SEND_SIGNAL_TO: (_SIGNAL_SOURCES | _GENERIC_ITEM, _SIGNAL_TARGETS | _GENERIC_ITEM),
+    # an actuator drives a valve body; only an electrical actuator may drive a machine (the pair
+    # rule in `validation.py` enforces that: this table only lists the classes allowed per end)
     Relation.CONTROL: (
-        frozenset(
-            {NodeClass.ACTUATING_FUNCTION.value, NodeClass.FLOW_IN_SIGNAL_OFF_PAGE_CONNECTOR.value}
-        )
-        | _GENERIC_ITEM,
-        frozenset(
-            {
-                NodeClass.GLOBE_VALVE.value,
-                NodeClass.BALL_VALVE.value,
-                NodeClass.FLOW_OUT_SIGNAL_OFF_PAGE_CONNECTOR.value,
-            }
-        )
-        | _GENERIC_ITEM,
+        _ACTUATORS | _FLOW_IN_SIGNAL | _GENERIC_ITEM,
+        CONTROL_VALVE_BODY_CLASSES | EQUIPMENT_CLASSES | _FLOW_OUT_SIGNAL | _GENERIC_ITEM,
     ),
     Relation.MEASURED_BY: (
-        EQUIPMENT_CLASSES | {NodeClass.FLOW_IN_SIGNAL_OFF_PAGE_CONNECTOR.value} | _GENERIC_ITEM,
-        frozenset(
-            {
-                NodeClass.PROCESS_SIGNAL_GENERATING_FUNCTION.value,
-                NodeClass.FLOW_OUT_SIGNAL_OFF_PAGE_CONNECTOR.value,
-            }
-        )
+        EQUIPMENT_CLASSES | PIPING_CLASSES | _FLOW_IN_SIGNAL | _GENERIC_ITEM,
+        frozenset({NodeClass.PROCESS_SIGNAL_GENERATING_FUNCTION.value})
+        | _FLOW_OUT_SIGNAL
         | _GENERIC_ITEM,
+    ),
+    Relation.HAS_AGITATOR: (
+        AGITATED_EQUIPMENT_CLASSES | _GENERIC_ITEM,
+        frozenset({NodeClass.AGITATOR.value}) | _GENERIC_ITEM,
     ),
     # the fallback's edge relation: any importable class may sit at either endpoint
     # (ADR-0016 rule 2) — the schema doesn't know its meaning, it only preserves it

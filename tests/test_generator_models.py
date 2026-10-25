@@ -9,9 +9,10 @@ from plantgraph.benchmark.generator_models import GeneratorConfig
 from plantgraph.graph import schema
 
 
-def test_default_equipment_weights_cover_every_schema_equipment_class() -> None:
+def test_default_equipment_weights_cover_the_v1_equipment_classes() -> None:
+    # the v1 generator keeps its six classes however much the schema grows (ADR-0057)
     config = GeneratorConfig()
-    assert set(config.equipment_weights) == schema.EQUIPMENT_CLASSES
+    assert set(config.equipment_weights) == schema.V1_EQUIPMENT_CLASSES
     assert all(weight == 1.0 for weight in config.equipment_weights.values())
 
 

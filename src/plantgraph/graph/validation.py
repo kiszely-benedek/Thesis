@@ -15,12 +15,14 @@ from pydantic import BaseModel
 
 from plantgraph.graph.schema import (
     CONNECTOR_CLASSES,
+    EQUIPMENT_CLASSES,
     GENERATOR_CLASSES,
     IMPORTABLE_CLASSES,
     KNOWN_CLASSES,
     RELATION_ENDPOINTS,
     TOPOLOGY_RELATIONS,
     UNTAGGED_CLASSES,
+    NodeClass,
     Relation,
 )
 
@@ -206,4 +208,38 @@ def _validate_edge(plant: nx.DiGraph[str], source: str, target: str) -> list[Sch
                 detail=f"relation {relation!r} may not end at node_class {target_class!r}",
             )
         )
+    violations.extend(
+        _check_machine_control_pair(edge_id, relation, source_class, target_class, allowed_from)
+    )
     return violations
+
+
+def _check_machine_control_pair(
+    edge_id: str,
+    relation: object,
+    source_class: object,
+    target_class: object,
+    allowed_from: frozenset[str],
+) -> list[SchemaViolation]:
+    """A `control` edge into equipment (a machine's start/stop) needs an electrical actuator source.
+
+    `RELATION_ENDPOINTS` lists the classes allowed at each end, so it admits a valve actuator
+    (`ActuatingFunction`) driving equipment; only the pair (`ActuatingElectricalFunction`,
+    equipment) is meaningful. A source the table already rejects is not reported twice, and
+    `GenericItem` is exempt, as everywhere (ADR-0016).
+    """
+    if relation != Relation.CONTROL.value or target_class not in EQUIPMENT_CLASSES:
+        return []
+    exempt = {NodeClass.ACTUATING_ELECTRICAL_FUNCTION.value, NodeClass.GENERIC_ITEM.value}
+    if source_class in exempt or source_class not in allowed_from:
+        return []  # a valid source, or one the endpoint table already flags
+    return [
+        SchemaViolation(
+            kind="bad_endpoint",
+            subject=edge_id,
+            detail=(
+                f"relation 'control' into equipment {target_class!r} must start at "
+                f"{NodeClass.ACTUATING_ELECTRICAL_FUNCTION.value!r}, found {source_class!r}"
+            ),
+        )
+    ]

@@ -24,7 +24,7 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, ValidationError
 
-from plantgraph.graph.schema import NodeClass
+from plantgraph.graph.schema import V1_NODE_CLASSES
 from plantgraph.llm.models import (
     ChatMessage,
     ChatRequest,
@@ -49,8 +49,9 @@ _ANSWER_FORMAT_PLACEHOLDER = "<<ANSWER_FORMAT_INSTRUCTION>>"
 
 #: One fixed sentence per `AnswerType`, telling the model the shape `answer`
 #: must take. `CLASS_NAME` is not listed here: its instruction is generated
-#: from `schema.NodeClass` (`_answer_format_instruction`) so the allowed
-#: names can never drift out of step with the schema.
+#: from `schema.V1_NODE_CLASSES` (`_answer_format_instruction`): the v1 vocabulary, pinned so the
+#: prompt does not change when the schema grows (ADR-0057). Corpora with a larger vocabulary get
+#: their own list in a later task (ADR-0058, Q3).
 _FIXED_FORMAT_INSTRUCTIONS: dict[AnswerType, str] = {
     AnswerType.UNIT_ID: 'Answer with the unit identifier as a string, for example "12".',
     AnswerType.TAG: "Answer with a single tag, exactly as printed on the diagram.",
@@ -73,7 +74,7 @@ _FIXED_FORMAT_INSTRUCTIONS: dict[AnswerType, str] = {
 def _answer_format_instruction(answer_type: AnswerType) -> str:
     """The fixed, per-`AnswerType` sentence telling the model how to shape `answer` (§8)."""
     if answer_type is AnswerType.CLASS_NAME:
-        names = ", ".join(sorted(node_class.value for node_class in NodeClass))
+        names = ", ".join(sorted(V1_NODE_CLASSES))
         return f"Answer with one of these class names, exactly as written: {names}."
     return _FIXED_FORMAT_INSTRUCTIONS[answer_type]
 

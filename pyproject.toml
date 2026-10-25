@@ -54,6 +54,7 @@ extend-exclude = ["docs", "data"]
 exclude = [
     "src/plantgraph/benchmark/open100/annotations.py",
     "src/plantgraph/benchmark/open100/manifest.py",
+    "src/plantgraph/graph/schema_vocabulary.py",
 ]
 
 [tool.ruff.lint]
@@ -72,6 +73,8 @@ convention = "google"
 # adattáblák: egy csatlakozó = egy sor, a hosszú megjegyzés hozzátartozik
 "src/plantgraph/benchmark/open100/annotations.py" = ["E501"]
 "src/plantgraph/benchmark/open100/manifest.py" = ["E501"]
+# generated table: one class per line
+"src/plantgraph/graph/schema_vocabulary.py" = ["E501"]
 
 [tool.mypy]
 python_version = "3.12"

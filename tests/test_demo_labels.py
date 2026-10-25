@@ -14,7 +14,7 @@ from plantgraph.demo.app.server import _ERROR_OF, ERROR_CODES, create_app
 from plantgraph.demo.app.state import AppState
 from plantgraph.demo.app.store_probe import StoreKind
 from plantgraph.demo.app.topics import TOPIC_ORDER, topic_of
-from plantgraph.graph.schema import GENERATOR_CLASSES
+from plantgraph.graph.schema import GENERATOR_CLASSES, V1_IMPORTABLE_CLASSES
 from plantgraph.qa.agent.models import StopReason
 from plantgraph.qa.cascade.policy import load_policies
 from plantgraph.qa.models import Outcome, QuestionFamily
@@ -71,7 +71,12 @@ def test_the_answer_values_are_english_yes_and_no() -> None:
 
 def test_every_plant_class_the_generator_makes_has_a_plain_name() -> None:
     # `UnresolvedOffPageConnector` and `GenericItem` can appear in answers too (design 20.3)
-    classes = GENERATOR_CLASSES | {"UnresolvedOffPageConnector", "GenericItem"}
+    # The schema now also lists the v2 classes (ADR-0058); plain names for those come with the demo
+    # glyphs (V2-T15), so this test covers the classes the v1 generator makes.
+    classes = (GENERATOR_CLASSES & V1_IMPORTABLE_CLASSES) | {
+        "UnresolvedOffPageConnector",
+        "GenericItem",
+    }
 
     _assert_has_text(LABELS.class_names, classes)
 

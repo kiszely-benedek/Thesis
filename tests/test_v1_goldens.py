@@ -23,6 +23,8 @@ from plantgraph.benchmark.split_models import SplitConfig
 from plantgraph.graph import schema
 from plantgraph.ingest.headline import HeadlinePreset
 from plantgraph.ingest.pipeline import run_synthetic
+from plantgraph.qa.final_answer import _answer_format_instruction
+from plantgraph.qa.models import AnswerType
 from plantgraph.qa.schema_text import build_schema_text
 from plantgraph.store.plant_rows import StoreProfile
 from qa_cypher_corpus import four_unit_corpus, load_plan_of
@@ -150,9 +152,74 @@ def test_the_ex01_import_is_unchanged() -> None:
 # ---- the V1_* pins -----------------------------------------------------------------------------
 
 
-def test_the_v1_pins_equal_the_live_schema_constants() -> None:
-    """Verifies the pins today; V2-T1 grows the live sets and must update this test on purpose."""
-    assert schema.V1_EQUIPMENT_CLASSES == schema.EQUIPMENT_CLASSES
-    assert schema.V1_VALVE_CLASSES == schema.VALVE_CLASSES
-    assert schema.V1_OPERATED_VALVE_CLASSES == schema.OPERATED_VALVE_CLASSES
-    assert schema.V1_IMPORTABLE_CLASSES == schema.IMPORTABLE_CLASSES
+_LIVE_AND_PINNED = [
+    (schema.EQUIPMENT_CLASSES, schema.V1_EQUIPMENT_CLASSES),
+    (schema.VALVE_CLASSES, schema.V1_VALVE_CLASSES),
+    (schema.OPERATED_VALVE_CLASSES, schema.V1_OPERATED_VALVE_CLASSES),
+    (schema.IMPORTABLE_CLASSES, schema.V1_IMPORTABLE_CLASSES),
+    (schema.KNOWN_CLASSES, schema.V1_NODE_CLASSES),
+]
+
+
+@pytest.mark.parametrize(("live", "pinned"), _LIVE_AND_PINNED)
+def test_each_v1_pin_is_a_proper_subset_of_its_live_schema_constant(
+    live: frozenset[str], pinned: frozenset[str]
+) -> None:
+    """Since V2-T1 the live sets are larger; the pins stay the v1 vocabulary inside them."""
+    assert pinned < live
+
+
+@pytest.mark.parametrize(("live", "pinned"), _LIVE_AND_PINNED)
+def test_the_live_constant_restricted_to_v1_classes_equals_the_pin(
+    live: frozenset[str], pinned: frozenset[str]
+) -> None:
+    """Growing the schema added classes only; it did not move a v1 class in or out of a set."""
+    assert live & schema.V1_NODE_CLASSES == pinned
+
+
+def test_the_class_name_answer_instruction_lists_exactly_the_21_v1_classes() -> None:
+    """The CLASS_NAME prompt text is pinned to v1 while the enum grows (ADR-0057, ADR-0058 Q3)."""
+    v1_names = (
+        "ActuatingFunction, BallValve, CentrifugalPump, CheckValve, Compressor, DrawingSet, "
+        "FlowInPipeOffPageConnector, FlowInSignalOffPageConnector, FlowOutPipeOffPageConnector, "
+        "FlowOutSignalOffPageConnector, GenericItem, GlobeValve, HeatExchanger, PlantSection, "
+        "PressureVessel, ProcessColumn, ProcessInstrumentationFunction, ProcessPlant, "
+        "ProcessSignalGeneratingFunction, Sheet, Tank"
+    )
+    expected = f"Answer with one of these class names, exactly as written: {v1_names}."
+    assert _answer_format_instruction(AnswerType.CLASS_NAME) == expected
+
+
+def test_the_v1_classes_keep_their_label_chains_and_tag_prefixes() -> None:
+    """The ancestry rule reproduces every v1 row; the 16 chains and 9 prefixes are literals."""
+    chains = {
+        "CentrifugalPump": ("CentrifugalPump", "Pump", "Equipment", "TaggedPlantItem"),
+        "Compressor": ("Compressor", "Equipment", "TaggedPlantItem"),
+        "Tank": ("Tank", "Vessel", "Equipment", "TaggedPlantItem"),
+        "PressureVessel": ("PressureVessel", "Vessel", "Equipment", "TaggedPlantItem"),
+        "ProcessColumn": ("ProcessColumn", "Equipment", "TaggedPlantItem"),
+        "HeatExchanger": ("HeatExchanger", "Equipment", "TaggedPlantItem"),
+        "GlobeValve": ("GlobeValve", "OperatedValve", "PipingComponent"),
+        "BallValve": ("BallValve", "OperatedValve", "PipingComponent"),
+        "CheckValve": ("CheckValve", "PipingComponent"),
+        "ProcessSignalGeneratingFunction": ("ProcessSignalGeneratingFunction",),
+        "ProcessInstrumentationFunction": ("ProcessInstrumentationFunction",),
+        "ActuatingFunction": ("ActuatingFunction",),
+        "FlowOutPipeOffPageConnector": ("FlowOutPipeOffPageConnector", "PipeOffPageConnector"),
+        "FlowInPipeOffPageConnector": ("FlowInPipeOffPageConnector", "PipeOffPageConnector"),
+        "FlowOutSignalOffPageConnector": (
+            "FlowOutSignalOffPageConnector",
+            "SignalOffPageConnector",
+        ),
+        "FlowInSignalOffPageConnector": ("FlowInSignalOffPageConnector", "SignalOffPageConnector"),
+    }
+    prefixes = {
+        "CentrifugalPump": "P", "Compressor": "C", "Tank": "TK", "PressureVessel": "V",
+        "ProcessColumn": "T", "HeatExchanger": "E", "GlobeValve": "GV", "BallValve": "BV",
+        "CheckValve": "CHV", "ProcessSignalGeneratingFunction": "{var}T",
+        "ProcessInstrumentationFunction": "{var}IC",
+    }  # fmt: skip
+    for name, labels in chains.items():
+        spec = schema.CLASS_SPECS[schema.NodeClass(name)]
+        assert spec.labels == labels, name
+        assert spec.tag_prefix == prefixes.get(name), name

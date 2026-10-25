@@ -30,7 +30,7 @@ def test_off_page_connector_key_matches_connector_observation_shape() -> None:
 def test_split_config_defaults_cover_the_design_note_equipment_list() -> None:
     config = SplitConfig()
     assert config.strategy == "flow_greedy"
-    assert config.equipment_classes == set(schema.EQUIPMENT_CLASSES)
+    assert config.equipment_classes == set(schema.V1_EQUIPMENT_CLASSES)
     assert config.numbering_scheme is NumberingScheme.SEQUENTIAL
 
 

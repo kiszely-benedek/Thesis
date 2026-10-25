@@ -6,7 +6,8 @@ objects, following the DEXPI data-exchange standard. Two modules make up this
 package's content: `pydexpi_builder` (builds a real `DexpiModel` from the
 generator's topology decisions) and `pydexpi_adapter` (turns that model into the
 `nx.DiGraph` defined by `graph.schema`, via pyDEXPI's own loading and abstraction
-steps). This is the only place in the codebase where the `pydexpi` package appears
+steps). `pydexpi_vocabulary` derives the schema's class table from pyDEXPI's class hierarchy
+(ADR-0058). This is the only place in the codebase where the `pydexpi` package appears
 (ADR-0003: pyDEXPI is AGPL-3.0 licensed, so it is kept behind a thin adapter —
 see the "Import rule" in `plant-generator.md`).
 """

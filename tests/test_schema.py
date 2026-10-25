@@ -30,7 +30,7 @@ def test_valid_plant_graph_has_no_violations() -> None:
 
 def test_plant_graph_rejects_an_unknown_node_class() -> None:
     plant = _valid_plant()
-    plant.nodes["p1"]["node_class"] = "SteamTrap"
+    plant.nodes["p1"]["node_class"] = "Silo"  # a pyDEXPI class outside the allowlist
     violations = validation.validate_plant_graph(plant)
     # the bad node_class flags a violation both on its own node and on the edges
     # touching it (bad_endpoint) — here we only check that p1 itself is reported
@@ -138,9 +138,9 @@ def test_labels_for_returns_the_curated_ancestor_chain() -> None:
 
 def test_labels_for_raises_on_an_unknown_class() -> None:
     try:
-        schema.labels_for("SteamTrap")
+        schema.labels_for("Silo")
     except ValueError as error:
-        assert "SteamTrap" in str(error)
+        assert "Silo" in str(error)
     else:
         raise AssertionError("expected labels_for to raise on an unknown node_class")
 
@@ -165,5 +165,62 @@ def test_sheet_graph_allows_an_actuator_with_no_tag_but_not_an_untagged_valve() 
     assert [(v.kind, v.subject) for v in violations] == [("missing_property", "v1")]
 
 
-def test_untagged_classes_are_the_connectors_and_the_actuator() -> None:
-    assert schema.UNTAGGED_CLASSES == schema.CONNECTOR_CLASSES | {"ActuatingFunction"}
+def test_untagged_classes_are_the_connectors_the_actuators_and_the_plain_pipe_parts() -> None:
+    plain_pipe_parts = {
+        "PipeTee", "PipeReducer", "BlindFlange", "LineBlind", "Flange", "FlangedConnection",
+        "PipeCoupling", "ClampedFlangeCoupling", "Compensator", "Hose", "Funnel", "Penetration",
+        "VentilationDevice", "PropertyBreak",
+    }  # fmt: skip
+    actuators = {"ActuatingFunction", "ActuatingElectricalFunction"}
+    assert schema.UNTAGGED_CLASSES == schema.CONNECTOR_CLASSES | actuators | plain_pipe_parts
+
+
+def _plant_with_machine_and_actuator(actuator_class: str) -> nx.DiGraph[str]:
+    plant: nx.DiGraph[str] = nx.DiGraph()
+    plant.add_node("p1", node_class="CentrifugalPump", tag="P-101", plant_id="p0", unit_id="u1")
+    plant.add_node("a1", node_class=actuator_class, plant_id="p0", unit_id="u1")
+    plant.add_edge("a1", "p1", relation="control")
+    return plant
+
+
+def test_an_electrical_actuator_may_control_a_machine() -> None:
+    plant = _plant_with_machine_and_actuator("ActuatingElectricalFunction")
+    assert validation.validate_plant_graph(plant) == []
+
+
+def test_a_valve_actuator_may_not_control_a_machine() -> None:
+    plant = _plant_with_machine_and_actuator("ActuatingFunction")
+    violations = validation.validate_plant_graph(plant)
+    assert [(v.kind, v.subject) for v in violations] == [("bad_endpoint", "a1->p1")]
+    assert "ActuatingElectricalFunction" in violations[0].detail
+
+
+def test_a_signal_connector_may_not_control_a_machine_and_is_reported_once() -> None:
+    sheet = _plant_with_machine_and_actuator("FlowInSignalOffPageConnector")
+    sheet.nodes["a1"].update(connector_number="C-1", referenced_drawing_number="2")
+    violations = validation.validate_sheet_graph(sheet)
+    assert [(v.kind, v.subject) for v in violations] == [("bad_endpoint", "a1->p1")]
+
+
+def test_a_vessel_may_have_an_agitator_but_a_pump_may_not() -> None:
+    plant: nx.DiGraph[str] = nx.DiGraph()
+    for node_id, node_class in (("t1", "Tank"), ("g1", "Agitator"), ("p1", "CentrifugalPump")):
+        plant.add_node(node_id, node_class=node_class, tag=node_id, plant_id="p0", unit_id="u1")
+    plant.add_edge("t1", "g1", relation="has_agitator")
+    assert validation.validate_plant_graph(plant) == []
+
+    plant.add_edge("p1", "g1", relation="has_agitator")
+    violations = validation.validate_plant_graph(plant)
+    assert [(v.kind, v.subject) for v in violations] == [("bad_endpoint", "p1->g1")]
+
+
+def test_a_cascade_controller_chain_and_an_electrical_actuator_are_valid_signal_targets() -> None:
+    plant: nx.DiGraph[str] = nx.DiGraph()
+    chain = ("ProcessSignalGeneratingFunction", "ProcessControlFunction", "ProcessControlFunction")
+    for index, node_class in enumerate((*chain, "ActuatingElectricalFunction")):
+        plant.add_node(
+            f"n{index}", node_class=node_class, tag=f"n{index}", plant_id="p0", unit_id="u"
+        )
+    for index in range(3):
+        plant.add_edge(f"n{index}", f"n{index + 1}", relation="send_signal_to")
+    assert validation.validate_plant_graph(plant) == []
