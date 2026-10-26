@@ -34,18 +34,12 @@ from pathlib import Path
 
 import networkx as nx
 
-from plantgraph.adapters.pydexpi_adapter import (
-    abstract_conceptual_graph,
-    load_complete_graph,
-    map_conceptual_graph,
-)
-from plantgraph.adapters.pydexpi_builder import generate_plant
 from plantgraph.adapters.pydexpi_proteus_import import (
     ImportedSheet,
     VocabularyName,
     import_proteus_sheet,
 )
-from plantgraph.benchmark.generator_models import GeneratorConfig
+from plantgraph.benchmark.generator_dispatch import AnyGeneratorConfig, generate_plant_graph_any
 from plantgraph.benchmark.models import SplitManifest
 from plantgraph.benchmark.sheet_graph import SheetGraph
 from plantgraph.benchmark.split_models import SplitConfig
@@ -102,7 +96,7 @@ class ProteusCorpus:
 
 
 def build_synthetic_corpus(
-    generator_config: GeneratorConfig, split_config: SplitConfig
+    generator_config: AnyGeneratorConfig, split_config: SplitConfig
 ) -> SyntheticCorpus:
     """Generate a plant, split it into sheets, and resolve it — the one shared synthetic path.
 
@@ -159,7 +153,7 @@ def build_proteus_corpus(path: Path, vocabulary: VocabularyName = "v1") -> Prote
 def run_synthetic(
     *,
     corpus_id: str,
-    generator_config: GeneratorConfig,
+    generator_config: AnyGeneratorConfig,
     split_config: SplitConfig,
     check: bool,
     settings: Neo4jSettings | None,
@@ -271,22 +265,13 @@ def _proteus_config(path: Path, vocabulary: VocabularyName) -> dict[str, str]:
     return config
 
 
-def generate_plant_graph(generator_config: GeneratorConfig) -> nx.DiGraph[str]:
-    """The generator's full round trip (build -> load -> abstract -> map), as one stage.
+def generate_plant_graph(generator_config: AnyGeneratorConfig) -> nx.DiGraph[str]:
+    """The generator's full round trip as one stage, for a v1 or a v2 config (see the dispatch).
 
-    `benchmark/scale_smoke.py` times these four steps separately for the
-    generator's own design note; the ingest CLI only needs the resulting
-    plant graph, so they are folded into the single "generate" stage here.
-    Public so `qa/corpus.py` can rebuild the same ground-truth plant from a
-    saved `GeneratorConfig` without going through the rest of the pipeline.
+    Public so `qa/corpus.py` can rebuild the same ground-truth plant from a saved config
+    without going through the rest of the pipeline.
     """
-    generated = generate_plant(generator_config)
-    complete = load_complete_graph(generated.model)
-    conceptual = abstract_conceptual_graph(complete)
-    plant, _conversion = map_conceptual_graph(
-        conceptual, generated.record.plant_id, generated.record.stream_kind
-    )
-    return plant
+    return generate_plant_graph_any(generator_config)
 
 
 def _check_gate(

@@ -28,6 +28,7 @@ from plantgraph.benchmark.models import IdentityGroup, SplitManifest
 from plantgraph.benchmark.sheet_graph import SheetGraph
 from plantgraph.benchmark.split_models import SplitConfig
 from plantgraph.benchmark.strategies import STRATEGIES, StrategyFn
+from plantgraph.benchmark.v2.split_by_sheet_group import V2_STRATEGIES
 
 
 def split(plant: nx.DiGraph[str], config: SplitConfig) -> tuple[list[SheetGraph], SplitManifest]:
@@ -62,10 +63,12 @@ def split(plant: nx.DiGraph[str], config: SplitConfig) -> tuple[list[SheetGraph]
 
 
 def _strategy(name: str) -> StrategyFn:
+    # v2 strategies are kept apart from `STRATEGIES`, which the v1 tests iterate over
+    available = {**STRATEGIES, **V2_STRATEGIES}
     try:
-        return STRATEGIES[name]
+        return available[name]
     except KeyError:
-        known = sorted(STRATEGIES)
+        known = sorted(available)
         raise ValueError(f"unknown split strategy {name!r}; choose one of {known}") from None
 
 

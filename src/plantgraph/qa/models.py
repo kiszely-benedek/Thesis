@@ -32,7 +32,7 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from plantgraph.benchmark.generator_models import GeneratorConfig
+from plantgraph.benchmark.generator_dispatch import AnyGeneratorConfig
 from plantgraph.benchmark.split_models import SplitConfig
 from plantgraph.llm.models import ContextWall, ModelPin
 
@@ -295,7 +295,7 @@ class CorpusRecord(BaseModel):
 
     corpus_id: str
     role: str = Field(pattern=r"^(dev|test)$")
-    generator_config: GeneratorConfig
+    generator_config: AnyGeneratorConfig
     split_config: SplitConfig
     n_sheets: int
     #: Occurrence-graph node count as loaded into Neo4j (`IngestCounts.n_nodes`).

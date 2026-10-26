@@ -27,6 +27,7 @@ from plantgraph.qa.models import AnswerType, Question, QuestionFamily
 from plantgraph.qa.questions.availability import KBin, k_bin_of_k
 from plantgraph.qa.questions.common import (
     build_question,
+    is_path_item,
     nodes_of_classes,
     send_to_predecessors,
     send_to_successors,
@@ -316,22 +317,33 @@ def route_avoiding_candidates(
     for source_id in sorted(equipment):
         rng = random.Random(f"{seed}:ROUTE_AVOIDING:{source_id}")
         wants_yes = rng.random() < 0.5
-        # a direct neighbour has no item strictly inside its path, so it cannot be a target
+        # a target needs an item strictly inside its path to avoid (a tee does not count)
         targets = {
             t: r
             for t, r in cache.of(source_id).items()
-            if t in equipment and t != source_id and r.parent != source_id
+            if t in equipment
+            and t != source_id
+            and _items_inside(plant, path_to(cache.of(source_id), source_id, t))
         }
         for target_id in one_target_per_bin(targets, rng):
             path = path_to(cache.of(source_id), source_id, target_id)
-            removed = _removed_item(cache.successors, path, wants_yes, rng)
+            removed = _removed_item(plant, cache.successors, path, wants_yes, rng)
             wants_yes = not wants_yes
             questions.append(_route_question(plant, index, corpus_id, seed, path, *removed))
     return questions
 
 
+def _items_inside(plant: nx.DiGraph[str], path: list[str]) -> list[str]:
+    """The equipment items and valves strictly between a path's two ends, in path order."""
+    return [node_id for node_id in path[1:-1] if is_path_item(plant, node_id)]
+
+
 def _removed_item(
-    successors: dict[str, list[str]], path: list[str], wants_yes: bool, rng: random.Random
+    plant: nx.DiGraph[str],
+    successors: dict[str, list[str]],
+    path: list[str],
+    wants_yes: bool,
+    rng: random.Random,
 ) -> tuple[str, dict[str, str]]:
     """Pick the item V strictly inside `path` whose removal gives the wanted answer.
 
@@ -339,7 +351,7 @@ def _removed_item(
     other answer is used.
     """
     source_id, target_id = path[0], path[-1]
-    trees = {v: _tree_without(successors, source_id, v) for v in path[1:-1]}
+    trees = {v: _tree_without(successors, source_id, v) for v in _items_inside(plant, path)}
     if not trees:
         raise ValueError(f"expected a path with an item inside, found {path}")
     wanted = [v for v, tree in trees.items() if (target_id in tree) == wants_yes]

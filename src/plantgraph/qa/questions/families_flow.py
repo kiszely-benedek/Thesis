@@ -18,7 +18,14 @@ from plantgraph.benchmark.models import SplitManifest
 from plantgraph.benchmark.sheet_graph import SheetGraph
 from plantgraph.qa.models import AnswerType, Question, QuestionFamily
 from plantgraph.qa.questions.availability import KBin, k_bin_of_k
-from plantgraph.qa.questions.common import build_question, send_to_successors, tagged_nodes_by_tag
+from plantgraph.qa.questions.common import (
+    ItemHop,
+    build_question,
+    is_path_item,
+    next_path_items,
+    send_to_successors,
+    tagged_nodes_by_tag,
+)
 from plantgraph.qa.questions.evidence import Evidence, SheetIndex
 from plantgraph.qa.questions.templates import flow_path_text, neighbours_downstream_text
 
@@ -33,17 +40,17 @@ def neighbours_downstream_candidates(
     corpus_id: str,
     seed: int,
 ) -> list[Question]:
-    """One candidate per node with at least one direct `send_to` successor."""
+    """One candidate per item with at least one item directly downstream of it.
+
+    "Directly" looks through unnamed pipe fittings (a tee), so evidence holds the fittings too.
+    """
     index = SheetIndex.from_sheets(sheets, manifest)
     questions = []
     for node_id, tag in tagged_nodes_by_tag(plant):
-        successor_ids = send_to_successors(plant, node_id)
-        if not successor_ids:
+        hops = next_path_items(plant, node_id) if is_path_item(plant, node_id) else []
+        if not hops:
             continue
-        evidence = Evidence(
-            nodes=frozenset({node_id, *successor_ids}),
-            edges=frozenset((node_id, successor_id) for successor_id in successor_ids),
-        )
+        evidence = _hops_evidence(node_id, hops)
         questions.append(
             build_question(
                 corpus_id=corpus_id,
@@ -52,7 +59,7 @@ def neighbours_downstream_candidates(
                 template_version=_TEMPLATE_VERSION,
                 text=neighbours_downstream_text(tag),
                 answer_type=AnswerType.TAG_SET,
-                reference=sorted(str(plant.nodes[n]["tag"]) for n in successor_ids),
+                reference=sorted(str(plant.nodes[hop.item_id]["tag"]) for hop in hops),
                 evidence=evidence,
                 anchors=[tag],
                 plant=plant,
@@ -61,6 +68,17 @@ def neighbours_downstream_candidates(
             )
         )
     return questions
+
+
+def _hops_evidence(node_id: str, hops: list[ItemHop]) -> Evidence:
+    """Every node and edge between `node_id` and the items it feeds, fittings included."""
+    nodes = {node_id}
+    edges: set[tuple[str, str]] = set()
+    for hop in hops:
+        chain = [node_id, *hop.via, hop.item_id]
+        nodes.update(chain)
+        edges.update(zip(chain, chain[1:], strict=False))
+    return Evidence(nodes=frozenset(nodes), edges=frozenset(edges))
 
 
 def flow_path_candidates(
@@ -83,10 +101,13 @@ def flow_path_candidates(
     successors = {node_id: send_to_successors(plant, node_id) for node_id in plant.nodes}
     questions = []
     for source_id, source_tag in tagged_nodes_by_tag(plant):
+        if not is_path_item(plant, source_id):
+            continue
         reached = reach_from(plant, successors, source_id, index)
         del reached[source_id]  # a path from a node to itself is not a question
+        items_reached = {n: r for n, r in reached.items() if is_path_item(plant, n)}
         rng = random.Random(f"{seed}:{source_id}")  # one stream per source: draws stay independent
-        for target_id in one_target_per_bin(reached, rng):
+        for target_id in one_target_per_bin(items_reached, rng):
             path = path_to(reached, source_id, target_id)
             questions.append(
                 _flow_path_question(
@@ -136,7 +157,7 @@ def _flow_path_question(
         template_version=_TEMPLATE_VERSION,
         text=flow_path_text(source_tag, target_tag),
         answer_type=AnswerType.TAG_PATH,
-        reference=[str(plant.nodes[node_id]["tag"]) for node_id in path],
+        reference=[str(plant.nodes[n]["tag"]) for n in path if is_path_item(plant, n)],
         evidence=evidence,
         anchors=[source_tag, target_tag],
         plant=plant,
@@ -172,57 +193,75 @@ def reach_from(
     same number of hops away, so the best parent seen in that layer wins
     outright. Only parents are stored; full paths are rebuilt for the few
     targets that become questions.
+
+    Comparing two parents' tag sequences would cost a path rebuild per tie, and a v2 plant has
+    many ties (parallel branches between two tees). Instead each layer is ranked once, so a
+    comparison is one integer test: see `_rank_layer`.
     """
     reached = {source_id: Reached(parent=None, k=0)}
+    rank = {source_id: 0}
     frontier = [source_id]
     while frontier:
         found: dict[str, Reached] = {}
         for node_id in frontier:
-            _offer_successors(plant, successors, node_id, reached, found, index, source_id)
+            _offer_successors(successors, node_id, reached, found, index, rank)
         reached.update(found)
+        rank = _rank_layer(plant, found, rank)
         frontier = sorted(found)
     return reached
 
 
 def _offer_successors(
-    plant: nx.DiGraph[str],
     successors: dict[str, list[str]],
     node_id: str,
     reached: dict[str, Reached],
     found: dict[str, Reached],
     index: SheetIndex,
-    source_id: str,
+    rank: dict[str, int],
 ) -> None:
-    """Offer `node_id` as parent of each of its new successors; keep the smaller-tag parent."""
+    """Offer `node_id` as parent of each of its new successors; keep the smaller-ranked parent."""
     for successor_id in successors[node_id]:
         if successor_id in reached:
             continue
         current = found.get(successor_id)
-        if current is not None and not _path_is_smaller(
-            plant, reached, source_id, node_id, current
-        ):
+        if current is not None and not _outranks(rank, node_id, current):
             continue
         k = reached[node_id].k + index.crosses(node_id, successor_id)
         found[successor_id] = Reached(parent=node_id, k=k)
 
 
-def _path_is_smaller(
-    plant: nx.DiGraph[str],
-    reached: dict[str, Reached],
-    source_id: str,
-    new_parent: str,
-    current: Reached,
-) -> bool:
-    """Whether the path through `new_parent` has smaller printed tags than the one via `current`."""
+def _outranks(rank: dict[str, int], new_parent: str, current: Reached) -> bool:
+    """Whether `new_parent`'s path has strictly smaller tags than the one via `current`."""
     if current.parent is None:
         raise ValueError("expected a stored non-source parent when comparing tie candidates")
-    return _tag_sequence(plant, reached, source_id, new_parent) < _tag_sequence(
-        plant, reached, source_id, current.parent
-    )
+    return rank[new_parent] < rank[current.parent]
 
 
-def _tag_sequence(
-    plant: nx.DiGraph[str], reached: dict[str, Reached], source_id: str, node_id: str
-) -> list[str]:
-    """Printed tags along the walk's path to `node_id` — never the internal ids."""
-    return [str(plant.nodes[n]["tag"]) for n in path_to(reached, source_id, node_id)]
+def _rank_layer(
+    plant: nx.DiGraph[str], layer: dict[str, Reached], parent_rank: dict[str, int]
+) -> dict[str, int]:
+    """Rank one BFS layer by the tag sequence of its paths (0 = smallest; equal sequences tie).
+
+    Every path in a layer has the same length, so two sequences compare first by their parents'
+    sequences (already ranked, one layer up) and then by the node's own tag. An untagged fitting
+    counts as its node id: that only breaks ties between routes through unnamed fittings.
+    """
+
+    def sequence_key(node_id: str) -> tuple[int, str]:
+        parent = layer[node_id].parent
+        if parent is None:
+            raise ValueError(f"expected a parent for {node_id!r} in a layer past the source")
+        return parent_rank[parent], str(plant.nodes[node_id].get("tag", node_id))
+
+    if len(layer) == 1:  # most layers of a long chain: nothing to compare
+        return dict.fromkeys(layer, 0)
+    keys = {node_id: sequence_key(node_id) for node_id in layer}
+    ranks: dict[str, int] = {}
+    previous: tuple[int, str] | None = None
+    rank = -1
+    for node_id in sorted(layer, key=keys.__getitem__):
+        if keys[node_id] != previous:
+            rank += 1
+            previous = keys[node_id]
+        ranks[node_id] = rank
+    return ranks

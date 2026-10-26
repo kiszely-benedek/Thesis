@@ -35,7 +35,7 @@ from pathlib import Path
 
 import networkx as nx
 
-from plantgraph.benchmark.generator_models import GeneratorConfig
+from plantgraph.benchmark.generator_dispatch import AnyGeneratorConfig, generator_config_from_json
 from plantgraph.benchmark.models import SplitManifest
 from plantgraph.benchmark.sheet_graph import SheetGraph
 from plantgraph.benchmark.split_models import SplitConfig
@@ -80,7 +80,7 @@ class CorpusArtifacts:
 
     corpus_id: str
     #: `None` for a Proteus corpus, which has no generator/split configuration.
-    generator_config: GeneratorConfig | None
+    generator_config: AnyGeneratorConfig | None
     split_config: SplitConfig | None
     #: The imported file's path, as a string; `None` for a synthetic corpus.
     source_path: str | None
@@ -143,7 +143,7 @@ def _rebuild_artifacts(result: IngestResult) -> CorpusArtifacts:
 
 
 def _rebuild_synthetic_artifacts(result: IngestResult) -> CorpusArtifacts:
-    generator_config = GeneratorConfig.model_validate(result.config["generator"])
+    generator_config = generator_config_from_json(result.config["generator"])
     split_config = SplitConfig.model_validate(result.config["split"])
     corpus = build_synthetic_corpus(generator_config, split_config)
     load_plan = build_load_plan(

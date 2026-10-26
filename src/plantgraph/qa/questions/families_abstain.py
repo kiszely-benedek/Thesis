@@ -12,11 +12,17 @@ from __future__ import annotations
 
 import random
 import re
+from dataclasses import dataclass
 
 import networkx as nx
 
 from plantgraph.benchmark.models import SplitManifest
 from plantgraph.benchmark.sheet_graph import SheetGraph
+from plantgraph.benchmark.v2.tags import (
+    EQUIPMENT_SEQUENCE_WIDTH,
+    INSTRUMENT_SEQUENCE_WIDTH,
+    parse_tag,
+)
 from plantgraph.graph.schema import EQUIPMENT_CLASSES, VALVE_CLASSES, Relation
 from plantgraph.qa.models import AnswerType, Question, QuestionFamily
 from plantgraph.qa.questions.common import (
@@ -40,17 +46,53 @@ DEFAULT_PAIRS_PER_SOURCE = 3
 _TAG_GRAMMAR = re.compile(r"^(?P<prefix>.+)-(?P<unit>\d+)-(?P<seq>\d+)$")
 
 
-def _highest_seq_by_group(plant: nx.DiGraph[str]) -> dict[tuple[str, str], int]:
-    """Highest sequence number per `(prefix, unit)`, over equipment and valve tags only."""
-    highest: dict[tuple[str, str], int] = {}
+@dataclass(frozen=True)
+class _TagParts:
+    """A tag split into the group it numbers within, its sequence number, and how to write one."""
+
+    prefix: str
+    unit: str
+    seq: int
+    #: digits the sequence is zero-padded to (1 = no padding); v2 tags are fixed-width
+    width: int
+    #: what stands between the unit and the sequence: "-" in v1 (`GV-2-3`), nothing in v2 (`P-1203`)
+    separator: str
+
+    @property
+    def group(self) -> tuple[str, str]:
+        return (self.prefix, self.unit)
+
+    def with_seq(self, seq: int) -> str | None:
+        """The tag of the same group with sequence `seq`, or None if it no longer fits the width."""
+        if seq >= 10**self.width and self.width > 1:
+            return None
+        return f"{self.prefix}-{self.unit}{self.separator}{seq:0{self.width}d}"
+
+
+def _split_tag(tag: str) -> _TagParts | None:
+    """Read a v1 tag (`GV-2-3`) first, else a v2 tag (`P-1203A`, `PSV-12012`); None if neither."""
+    match = _TAG_GRAMMAR.match(tag)
+    if match is not None:
+        return _TagParts(match["prefix"], match["unit"], int(match["seq"]), 1, "-")
+    parsed = parse_tag(tag)
+    if parsed is None:
+        return None
+    width = EQUIPMENT_SEQUENCE_WIDTH if parsed.kind == "equipment" else INSTRUMENT_SEQUENCE_WIDTH
+    return _TagParts(parsed.letters, str(parsed.unit), parsed.sequence, width, "")
+
+
+def _highest_by_group(plant: nx.DiGraph[str]) -> dict[tuple[str, str], _TagParts]:
+    """The highest-numbered tag per `(prefix, unit)`, over equipment and valve tags only."""
+    highest: dict[tuple[str, str], _TagParts] = {}
     for node_id, tag in tagged_nodes_by_tag(plant):
         if plant.nodes[node_id]["node_class"] not in EQUIPMENT_CLASSES | VALVE_CLASSES:
             continue
-        match = _TAG_GRAMMAR.match(tag)
-        if match is None:
+        parts = _split_tag(tag)
+        if parts is None:
             continue
-        group = (match["prefix"], match["unit"])
-        highest[group] = max(highest.get(group, 0), int(match["seq"]))
+        best = highest.get(parts.group)
+        if best is None or parts.seq > best.seq:
+            highest[parts.group] = parts
     return highest
 
 
@@ -59,16 +101,19 @@ def absent_tags(plant: nx.DiGraph[str]) -> list[str]:
 
     Each is the group's highest sequence number plus one, so it looks like a
     real neighbour of existing tags. If that tag is somehow taken (a loop tag
-    shares the grammar), the sequence moves on until it is free.
+    shares the grammar), the sequence moves on until it is free. A v2 group whose
+    sequence is already at the fixed width's limit has no such tag and is skipped.
     """
     taken = {str(data["tag"]) for _, data in plant.nodes(data=True) if "tag" in data}
-    highest = _highest_seq_by_group(plant)
+    highest = _highest_by_group(plant)
     tags = []
-    for prefix, unit in sorted(highest):
-        seq = highest[(prefix, unit)] + 1
-        while f"{prefix}-{unit}-{seq}" in taken:
+    for group in sorted(highest):
+        parts = highest[group]
+        seq = parts.seq + 1
+        while (tag := parts.with_seq(seq)) in taken:
             seq += 1
-        tags.append(f"{prefix}-{unit}-{seq}")
+        if tag is not None:
+            tags.append(tag)
     return tags
 
 

@@ -7,9 +7,11 @@ None of this reads an equipment attribute (ADR-0021, ADR-0018 A1) — only
 
 from __future__ import annotations
 
+from dataclasses import dataclass
+
 import networkx as nx
 
-from plantgraph.graph.schema import Relation
+from plantgraph.graph.schema import EQUIPMENT_CLASSES, VALVE_CLASSES, Relation
 from plantgraph.qa.models import AnswerType, AnswerValue, Question, QuestionFamily
 from plantgraph.qa.questions.evidence import (
     Evidence,
@@ -18,6 +20,51 @@ from plantgraph.qa.questions.evidence import (
     evidence_sheets,
     evidence_tags,
 )
+
+#: What a path or neighbour question names: equipment items and valves. Everything else a pipe
+#: carries on a v2 drawing (tees, reducers, strainers, flow elements) is drawn on the line but is
+#: never listed in an answer; v1 plants contain nothing else, so for them every node is an item.
+PATH_ITEM_CLASSES: frozenset[str] = EQUIPMENT_CLASSES | VALVE_CLASSES
+
+
+@dataclass(frozen=True)
+class ItemHop:
+    """The next item downstream of a node, and the unnamed pipe fittings between them."""
+
+    item_id: str
+    #: node ids strictly between the two items, in flow order (empty when they touch)
+    via: tuple[str, ...]
+
+
+def is_path_item(plant: nx.DiGraph[str], node_id: str) -> bool:
+    """Whether `node_id` is an equipment item or a valve, the only things a path answer lists."""
+    return str(plant.nodes[node_id].get("node_class")) in PATH_ITEM_CLASSES
+
+
+def next_path_items(plant: nx.DiGraph[str], node_id: str) -> list[ItemHop]:
+    """The items `node_id` sends material to directly, looking through non-item pipe fittings.
+
+    Breadth-first over `send_to`: a tee or reducer is passed through, an item stops the walk.
+    An item reached by two routes keeps the shorter one (a tie: the route met first, walking
+    successors in node-id order), so the result is deterministic. On a v1 plant this equals
+    `send_to_successors`, hop for hop.
+    """
+    found: dict[str, ItemHop] = {}
+    seen = {node_id}
+    frontier: list[tuple[str, tuple[str, ...]]] = [(node_id, ())]
+    while frontier:
+        next_frontier: list[tuple[str, tuple[str, ...]]] = []
+        for current, via in frontier:
+            for successor in send_to_successors(plant, current):
+                if successor in seen:
+                    continue
+                if is_path_item(plant, successor):
+                    found.setdefault(successor, ItemHop(successor, via))
+                else:
+                    seen.add(successor)
+                    next_frontier.append((successor, (*via, successor)))
+        frontier = next_frontier
+    return [found[item_id] for item_id in sorted(found)]
 
 
 def tagged_nodes_by_tag(plant: nx.DiGraph[str]) -> list[tuple[str, str]]:

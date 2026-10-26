@@ -20,23 +20,16 @@ from __future__ import annotations
 import argparse
 import re
 import sys
-import time
-from dataclasses import dataclass
 from pathlib import Path
 from typing import get_args
 
 from plantgraph.adapters.pydexpi_proteus_import import VocabularyName
-from plantgraph.benchmark.generator_models import GeneratorConfig
-from plantgraph.benchmark.split_models import ConnectorLabelDetail, SplitConfig
-from plantgraph.ingest.headline import (
-    HeadlinePreset,
-    SizeSearchResult,
-    check_realized_sheets,
-    smallest_n_units,
-)
+from plantgraph.benchmark.split_models import ConnectorLabelDetail
+from plantgraph.ingest.headline import SizeSearchResult, check_realized_sheets
 from plantgraph.ingest.load_step import StoreMeasurement
 from plantgraph.ingest.models import IngestResult
 from plantgraph.ingest.pipeline import run_proteus, run_synthetic
+from plantgraph.ingest.synthetic_setup import synthetic_setup
 from plantgraph.store.neo4j_loader import DatabaseRecreationRefused
 from plantgraph.store.neo4j_settings import Neo4jSettings, from_env, missing_required_vars
 from plantgraph.store.plant_rows import StoreProfile
@@ -96,23 +89,11 @@ def _write_result(result: IngestResult, out_dir: Path) -> None:
     out_path.write_text(result.model_dump_json(indent=2), encoding="utf-8")
 
 
-@dataclass(frozen=True)
-class _SyntheticSetup:
-    """The generator and splitter settings a `synthetic` run resolved from its flags."""
-
-    n_units: int
-    generator_config: GeneratorConfig
-    split_config: SplitConfig
-    search: SizeSearchResult | None
-
-
 def _run_synthetic(
     args: argparse.Namespace, settings: Neo4jSettings | None
 ) -> tuple[IngestResult, SizeSearchResult | None]:
-    setup = _synthetic_setup(args)
-    corpus_id = args.corpus_id or _default_synthetic_corpus_id(
-        setup.n_units, setup.split_config.sheet_equipment_budget, args.seed
-    )
+    setup = synthetic_setup(args)
+    corpus_id = args.corpus_id or setup.default_corpus_id
     result = run_synthetic(
         corpus_id=corpus_id,
         generator_config=setup.generator_config,
@@ -123,67 +104,6 @@ def _run_synthetic(
         measurement=_measurement_from_flags(args),
     )
     return result, setup.search
-
-
-def _synthetic_setup(args: argparse.Namespace) -> _SyntheticSetup:
-    """Turn the flags into configs: the headline preset, a size search, or the plain flags."""
-    _check_size_flags(args)
-    if not args.headline:
-        generator_config = GeneratorConfig(
-            n_units=args.n_units,
-            seed=args.seed,
-            **_equipment_range_overrides(args),
-        )
-        return _SyntheticSetup(args.n_units, generator_config, _split_config_from_flags(args), None)
-
-    preset = HeadlinePreset()
-    search = _search_size(args.target_sheets, preset, args.seed) if args.target_sheets else None
-    n_units = search.n_units if search else args.n_units
-    return _SyntheticSetup(
-        n_units, preset.generator_config(n_units, args.seed), preset.split_config(args.seed), search
-    )
-
-
-def _check_size_flags(args: argparse.Namespace) -> None:
-    """Exactly one of --n-units/--target-sheets; the search and the eq range follow the preset."""
-    if (args.n_units is None) == (args.target_sheets is None):
-        raise SystemExit("error: give exactly one of --n-units and --target-sheets")
-    if args.target_sheets is not None and not args.headline:
-        raise SystemExit("error: --target-sheets needs --headline (the search assumes the preset)")
-    if args.headline and (args.eq_min is not None or args.eq_max is not None):
-        raise SystemExit("error: --eq-min/--eq-max do not combine with --headline (preset values)")
-
-
-def _search_size(target_sheets: int, preset: HeadlinePreset, seed: int) -> SizeSearchResult:
-    """Run the size search and report it on stderr, so stdout stays one JSON line."""
-    start = time.perf_counter()
-    search = smallest_n_units(target_sheets, preset, seed)
-    print(
-        f"size search: target {target_sheets} sheets -> {search.n_units} units "
-        f"({search.predicted_sheets} predicted) in {time.perf_counter() - start:.2f} s",
-        file=sys.stderr,
-    )
-    return search
-
-
-def _equipment_range_overrides(args: argparse.Namespace) -> dict[str, int]:
-    """Only the bounds the user gave, so the generator's own defaults stay the fallback."""
-    overrides = {
-        "equipment_per_unit_min": args.eq_min,
-        "equipment_per_unit_max": args.eq_max,
-    }
-    return {name: value for name, value in overrides.items() if value is not None}
-
-
-def _split_config_from_flags(args: argparse.Namespace) -> SplitConfig:
-    return SplitConfig(
-        strategy=args.strategy,
-        sheet_equipment_budget=args.budget,
-        seed=args.seed,
-        connector_label_detail=ConnectorLabelDetail(args.label_detail),
-        duplication_rate=args.duplication_rate,
-        exact_match_tags=not args.inexact_tags,
-    )
 
 
 def _run_proteus(args: argparse.Namespace, settings: Neo4jSettings | None) -> IngestResult:
@@ -217,10 +137,6 @@ def _settings_from_env_or_raise() -> Neo4jSettings:
     settings = from_env()
     assert settings is not None, "missing_required_vars() reported none missing"
     return settings
-
-
-def _default_synthetic_corpus_id(n_units: int, budget: int, seed: int) -> str:
-    return f"syn-u{n_units}-b{budget}-s{seed}"
 
 
 def _sanitize_corpus_id(text: str) -> str:
@@ -280,13 +196,26 @@ def _add_synthetic_subparser(
         type=int,
         default=None,
         help="instead of --n-units: the fewest units whose corpus has at least this many sheets "
-        "(needs --headline)",
+        "(needs --headline or --headline-v2)",
     )
     parser.add_argument(
         "--headline",
         action="store_true",
         help="apply the headline preset (ADR-0025/0028): by_unit, budget 18, drawing_only labels, "
         "duplication 0.25, exact tags, 18-36 equipment per unit; it overrides the split flags",
+    )
+    parser.add_argument(
+        "--headline-v2",
+        action="store_true",
+        help="the headline preset for the v2 generator (ADR-0057): the generator's own sheets, "
+        "drawing_only labels, exact tags; corpus id D<sheets>g2 (seed 1) or H<sheets>g2",
+    )
+    parser.add_argument(
+        "--headline-duplication-rate",
+        type=float,
+        default=0.25,
+        help="--headline-v2 only: share of cross-sheet equipment also drawn as a reference "
+        "(ADR-0028 headline 0.25; the sensitivity runs use 0 and 0.5)",
     )
     parser.add_argument(
         "--eq-min", type=int, default=None, help="equipment per unit, lower bound (not headline)"

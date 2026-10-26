@@ -19,6 +19,7 @@ import networkx as nx
 from plantgraph.graph.schema import CONNECTOR_CLASSES, Relation
 from plantgraph.qa.graph_view import GraphView
 from plantgraph.qa.models import Question
+from plantgraph.qa.questions.common import is_path_item, next_path_items
 
 #: Key a strategy puts in `RetrievalResult.trace` to say which sheets it routed to.
 #: The harness reads it generically; a strategy without routing just omits it.
@@ -34,7 +35,8 @@ class GoldScoring:
 
     #: Printed numbers of every off-page connector in the corpus.
     connector_tags: frozenset[str]
-    #: `(from_tag, to_tag)` for every `send_to` edge between two tagged plant items.
+    #: `(from_tag, to_tag)` for every `send_to` edge between two tagged plant items, and for every
+    #: equipment-or-valve pair joined only through unnamed pipe fittings (a v2 tee or reducer).
     valid_edges: frozenset[tuple[str, str]]
 
 
@@ -55,6 +57,11 @@ def _connector_numbers(view: GraphView) -> frozenset[str]:
 
 
 def _send_to_tag_edges(plant: nx.DiGraph[str]) -> frozenset[tuple[str, str]]:
+    edges = _direct_tag_edges(plant) | _edges_through_fittings(plant)
+    return frozenset(edges)
+
+
+def _direct_tag_edges(plant: nx.DiGraph[str]) -> set[tuple[str, str]]:
     edges: set[tuple[str, str]] = set()
     for source, target, data in plant.edges(data=True):
         if data.get("relation") != Relation.SEND_TO.value:
@@ -62,7 +69,19 @@ def _send_to_tag_edges(plant: nx.DiGraph[str]) -> frozenset[tuple[str, str]]:
         source_tag, target_tag = plant.nodes[source].get("tag"), plant.nodes[target].get("tag")
         if source_tag is not None and target_tag is not None:
             edges.add((str(source_tag), str(target_tag)))
-    return frozenset(edges)
+    return edges
+
+
+def _edges_through_fittings(plant: nx.DiGraph[str]) -> set[tuple[str, str]]:
+    """A path answer lists only equipment and valves, so fittings between two are stepped over."""
+    edges: set[tuple[str, str]] = set()
+    for node_id in plant.nodes:
+        if not is_path_item(plant, node_id):
+            continue
+        for hop in next_path_items(plant, node_id):
+            if hop.via:  # a direct edge is already in `_direct_tag_edges`
+                edges.add((str(plant.nodes[node_id]["tag"]), str(plant.nodes[hop.item_id]["tag"])))
+    return edges
 
 
 def routing_hit(question: Question, trace: dict[str, Any]) -> bool | None:
