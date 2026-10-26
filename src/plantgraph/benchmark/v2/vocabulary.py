@@ -63,9 +63,11 @@ FITTING_CODES: frozenset[str] = _prefixes(FITTING_CLASSES)
 
 #: First letters (the measured or initiating variable): 15 of them (design 5.3).
 ISA_FIRST_LETTERS = "ABCFHILPSTUVXYZ"
-#: Modifier after the first letter: D = differential, F = ratio, Q = totalised. ISA also has S
-#: (safety), left out because `PSV` is a hardware code and `PS...` would be ambiguous.
-ISA_MODIFIERS = "DFQ"
+#: Modifier after the first letter: D = differential, F = ratio, Q = totalised, S = safety.
+#: `S` is also the switch function letter (`PSHH` = pressure switch high-high), and `PSV` reads as
+#: P + safety + V (pressure safety valve). The parser stores only `letters`/`first`/`functions`,
+#: so it never has to decide which role an `S` plays.
+ISA_MODIFIERS = "DFQS"
 #: Function letters: E element, G gauge, I indicate, T transmit, C control, S switch, V valve,
 #: A alarm, Y relay.
 ISA_FUNCTION_LETTERS = "EGITCSVAY"

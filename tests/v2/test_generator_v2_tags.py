@@ -19,6 +19,7 @@ from plantgraph.benchmark.v2.vocabulary import (
     SAFETY_CODES,
     SPARE_SUFFIXES,
     VALVE_CODES,
+    is_isa_letters,
 )
 from plantgraph.qa.anchors import _TOKEN_RE  # the pattern a question uses to find a tag
 
@@ -56,7 +57,10 @@ def test_equipment_round_trip(type_code: str, train: str | None) -> None:
     )
 
 
-@pytest.mark.parametrize("letters", ["FIC", "PDT", "XV", "YY", "LSHH", "ZSO", "UC", "FQI", "LIAH"])
+@pytest.mark.parametrize(
+    "letters",
+    ["FIC", "PDT", "XV", "YY", "LSHH", "PSHH", "TSLL", "ZSO", "UC", "FQI", "LIAH", "PSAH"],
+)
 def test_instrument_round_trip(letters: str) -> None:
     parsed = tags.parse_tag(tags.format_instrument_tag(letters, 7, 999))
     assert parsed is not None
@@ -83,6 +87,20 @@ def test_hardware_code_round_trip(kind: str, codes: frozenset[str], formatter: _
 def test_ambiguous_codes_are_the_documented_ones() -> None:
     # hardware codes that are also valid ISA letters; parse reads them as hardware
     assert AMBIGUOUS_LETTERS == {"BFV", "BV", "FA", "PGV", "PSE", "PSV", "PVSV", "SG", "ST"}
+
+
+def test_safety_modifier_and_switch_function_share_the_letter_s() -> None:
+    # S is a modifier in PSV (pressure safety valve) and the function in PSHH (switch, high-high)
+    assert {"PSV", "PSE"} <= AMBIGUOUS_LETTERS
+    for letters in ("PSV", "PSE", "PSHH", "LSHH", "TSLL"):
+        assert is_isa_letters(letters)
+    assert tags.parse_tag("PSV-12012") == tags.ParsedTag(
+        kind="safety", letters="PSV", first="P", functions="SV", unit=12, sequence=12
+    )
+    assert tags.format_safety_tag("PSV", 12, 12) == "PSV-12012"
+    switch = tags.parse_tag("PSHH-12012")
+    assert switch is not None
+    assert (switch.kind, switch.first, switch.functions) == ("instrument", "P", "SHH")
 
 
 def test_line_number_round_trip() -> None:
