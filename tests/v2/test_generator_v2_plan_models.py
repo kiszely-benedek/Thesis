@@ -49,7 +49,7 @@ def test_specs_are_frozen() -> None:
         (line, "items"),
         (instrument, "loop_tag"),
         (link, "target_id"),
-        (NodeGold(role="r", drawing_group="1:1"), "role"),
+        (NodeGold(role="r", drawing_group="1:G1", sheet_group="1:1"), "role"),
     ):
         with pytest.raises(ValidationError, match="frozen"):
             setattr(spec, field, "changed")
@@ -97,7 +97,7 @@ def test_record_serializes_with_its_gold_parts() -> None:
         trains=(TrainRecord(train_no=1, conventions=conventions),),
         units=(UnitRecord(unit_no=1, train_no=1, pattern="U4", variant="plain"),),
         stream_kind={"6-P-10001-A1A-N": StreamKindV2.PROCESS},
-        node_gold={"eq1": NodeGold(role="feed_tank", drawing_group="1:1")},
+        node_gold={"eq1": NodeGold(role="feed_tank", drawing_group="1:G1", sheet_group="1:1")},
     )
     restored = GenerationRecordV2.model_validate_json(record.model_dump_json())
     assert restored == record

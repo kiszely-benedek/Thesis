@@ -10,6 +10,7 @@ from pydantic import ValidationError
 from plantgraph.benchmark.generator_models import GeneratorConfig
 from plantgraph.benchmark.v2.config import (
     GENERATED_EQUIPMENT_CLASSES,
+    FlowsheetKnobs,
     GeneratorConfigV2,
     PatternKnobs,
     SheetKnobs,
@@ -47,7 +48,7 @@ def test_defaults_carry_the_declared_values() -> None:
 
 
 def test_json_round_trip_keeps_the_discriminator() -> None:
-    config = GeneratorConfigV2(n_units=5, seed=7, equipment_weights={"Tank": 2.0})
+    config = GeneratorConfigV2(n_units=5, seed=7, flowsheet={"core_weights": {"U6": 3.0}})
     data = json.loads(config.model_dump_json())
     assert data["generator_version"] == "v2"
     assert GeneratorConfigV2.model_validate(data) == config
@@ -65,17 +66,26 @@ def test_n_units_is_required_and_positive() -> None:
         GeneratorConfigV2(n_units=0)
 
 
-def test_equipment_weight_keys_must_be_generated_classes() -> None:
-    with pytest.raises(ValidationError, match="SpiralHeatExchanger"):
-        GeneratorConfigV2(n_units=1, equipment_weights={"SpiralHeatExchanger": 1.0})
-    with pytest.raises(ValidationError, match="NoSuchClass"):
-        GeneratorConfigV2(n_units=1, equipment_weights={"NoSuchClass": 1.0})
+def test_the_config_has_no_equipment_weights_the_decks_own_the_class_choice() -> None:
+    assert "equipment_weights" not in GeneratorConfigV2.model_fields
 
 
-@pytest.mark.parametrize("bad", [0.0, -1.0])
-def test_equipment_weights_must_be_positive(bad: float) -> None:
+def test_flowsheet_weights_are_positive_and_name_known_patterns_and_counts() -> None:
     with pytest.raises(ValidationError, match="strictly positive"):
-        GeneratorConfigV2(n_units=1, equipment_weights={"Tank": bad})
+        FlowsheetKnobs(core_weights={"U6": 0.0})
+    with pytest.raises(ValidationError, match=r"unknown patterns \['U10'\]"):
+        FlowsheetKnobs(conditioning_weights={"U10": 1.0})
+    with pytest.raises(ValidationError, match="outside the grammar's range 0..2"):
+        FlowsheetKnobs(conditioning_count_weights={3: 1.0})
+    with pytest.raises(ValidationError, match="outside the grammar's range 1..3"):
+        FlowsheetKnobs(separation_count_weights={0: 1.0})
+
+
+def test_the_flowsheet_defaults_are_the_declared_values_and_survive_json() -> None:
+    knobs = FlowsheetKnobs()
+    assert knobs.core_weights == {"U3+U2": 1.0, "U3": 1.0, "U6": 2.0}
+    assert knobs.conditioning_count_weights == {0: 1.0, 1: 1.0, 2: 1.0}
+    assert FlowsheetKnobs.model_validate_json(knobs.model_dump_json()) == knobs
 
 
 @pytest.mark.parametrize("bad", [0.0, -2.0])

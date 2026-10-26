@@ -220,10 +220,15 @@ class PlantBuilderV2(Protocol):
 
 
 class NodeGold(_Spec):
-    """What a node is *for* in its pattern, and which drawing group it is planned into."""
+    """What a node is *for* in its pattern, and where it is drawn (all gold).
+
+    `drawing_group` is the pattern's group of the node (`3:G1`); `sheet_group` is the sheet that
+    group lands on after the merge (`3:1`, unit then sheet number), which the splitter honours.
+    """
 
     role: str  # e.g. `reflux_drum`, `cv_station_bypass`
     drawing_group: str
+    sheet_group: str
 
 
 class TrainRecord(_Spec):

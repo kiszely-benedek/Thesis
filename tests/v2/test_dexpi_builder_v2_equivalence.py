@@ -131,11 +131,12 @@ def test_duplicate_ids_and_unknown_references_raise() -> None:
         builder.add_line(line(1, "eq1", (twin, twin), "eq2"))
 
 
-def test_a_line_may_end_only_at_equipment_or_a_tee() -> None:
+def test_a_line_may_start_at_a_valve_of_an_earlier_line_but_not_at_an_unknown_part() -> None:
     builder = _base()
     builder.add_line(line(1, "eq1", (item("v", "GateValve", "GTV-1001"),), "eq2"))
-    with pytest.raises(ValueError, match="must name added equipment or a PipeTee"):
-        builder.add_line(line(2, "v", (item("w", "GateValve", "GTV-1002"),), None))
+    builder.add_line(line(2, "v", (item("w", "GateValve", "GTV-1002"),), None))
+    with pytest.raises(ValueError, match="inline part of a line added earlier"):
+        builder.add_line(line(3, "nope", (item("x", "GateValve", "GTV-1003"),), None))
 
 
 def test_a_bad_line_number_and_a_bad_class_raise_before_anything_is_built() -> None:

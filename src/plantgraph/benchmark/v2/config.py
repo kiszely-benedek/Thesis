@@ -255,37 +255,116 @@ class PatternKnobs(BaseModel):
         return self
 
 
-class FlowsheetKnobs(BaseModel):
-    """Extra long-range streams the flowsheet grammar may add (base 8.1)."""
+#: the patterns each flowsheet slot may hold (design 8.1); U10 (desalter) is deliberately absent:
+#: it is not generated (decided 2026-10-25), so it has no weight and no slot entry
+CONDITIONING_PATTERNS: frozenset[str] = frozenset({"U5", "U7", "U8"})
+CORE_PATTERNS: frozenset[str] = frozenset(
+    {"U3+U2", "U3", "U6"}
+)  # "U3+U2": reactor, then compressor
+SEPARATION_PATTERNS: frozenset[str] = frozenset({"U1", "U6"})
+MAX_CONDITIONING_UNITS = 2  # Conditioning{0..2}
+MAX_SEPARATION_UNITS = 3  # Separation{1..3}
 
+
+def _default_conditioning_count_weights() -> dict[int, float]:
+    return {0: 1.0, 1: 1.0, 2: 1.0}
+
+
+def _default_conditioning_weights() -> dict[str, float]:
+    return {"U5": 1.0, "U7": 1.0, "U8": 1.0}
+
+
+def _default_core_weights() -> dict[str, float]:
+    return {"U3+U2": 1.0, "U3": 1.0, "U6": 2.0}
+
+
+def _default_separation_count_weights() -> dict[int, float]:
+    return {1: 1.0, 2: 1.0, 3: 1.0}
+
+
+def _default_separation_weights() -> dict[str, float]:
+    return {"U1": 1.0, "U6": 1.0}
+
+
+def _require_keys_within(weights: dict[str, float], allowed: frozenset[str], name: str) -> None:
+    unknown = sorted(set(weights) - allowed)
+    if unknown:
+        raise ValueError(
+            f"{name} has unknown patterns {unknown}; expected a subset of {sorted(allowed)}"
+        )
+
+
+def _require_counts_within(weights: dict[int, float], low: int, high: int, name: str) -> None:
+    outside = sorted(count for count in weights if not low <= count <= high)
+    if outside:
+        raise ValueError(f"{name} has counts {outside} outside the grammar's range {low}..{high}")
+
+
+class FlowsheetKnobs(BaseModel):
+    """How the flowsheet grammar draws a train and which extra streams it may add (base 8.1).
+
+    Every weight is declared, not measured (pid-vocabulary 13.2): uniform where no source ranks
+    the choices. A weight is for a draw from the master stream; a pattern the generator does not
+    have yet is dropped from the draw by the planner, so these defaults stay valid as patterns
+    arrive.
+    """
+
+    #: how many conditioning units (U5 / U7 / U8) sit between the feed farm and the core
+    conditioning_count_weights: dict[int, float] = Field(
+        default_factory=_default_conditioning_count_weights
+    )
+    conditioning_weights: dict[str, float] = Field(default_factory=_default_conditioning_weights)
+    core_weights: dict[str, float] = Field(default_factory=_default_core_weights)
+    separation_count_weights: dict[int, float] = Field(
+        default_factory=_default_separation_count_weights
+    )
+    separation_weights: dict[str, float] = Field(default_factory=_default_separation_weights)
+    #: both are read by patterns that arrive later (a column side draw, a blending additive feed)
     p_side_draw: Probability = 0.2  # a column side product to a later tank
     p_shared_farm_feed: Probability = 0.2  # a second feed from an earlier train's product tanks
 
+    @field_validator(
+        "conditioning_count_weights",
+        "conditioning_weights",
+        "core_weights",
+        "separation_count_weights",
+        "separation_weights",
+    )
+    @classmethod
+    def _check_positive(cls, weights: dict[str, float]) -> dict[str, float]:
+        _require_positive({str(key): value for key, value in weights.items()}, "flowsheet weights")
+        return weights
+
+    @model_validator(mode="after")
+    def _check_slots(self) -> FlowsheetKnobs:
+        _require_keys_within(
+            self.conditioning_weights, CONDITIONING_PATTERNS, "conditioning_weights"
+        )
+        _require_keys_within(self.core_weights, CORE_PATTERNS, "core_weights")
+        _require_keys_within(self.separation_weights, SEPARATION_PATTERNS, "separation_weights")
+        _require_counts_within(
+            self.conditioning_count_weights, 0, MAX_CONDITIONING_UNITS, "conditioning_count_weights"
+        )
+        _require_counts_within(
+            self.separation_count_weights, 1, MAX_SEPARATION_UNITS, "separation_count_weights"
+        )
+        return self
+
 
 class GeneratorConfigV2(BaseModel):
-    """Everything the v2 generator reads. Identity fields first, then the knob groups."""
+    """Everything the v2 generator reads. Identity fields first, then the knob groups.
+
+    There is no per-class equipment weight: which class a role gets is a variant deck (`deck.py`,
+    pid-vocabulary 13.4), and a second weight would overlap it.
+    """
 
     generator_version: Literal["v2"] = "v2"
     plant_id: str = Field(default="plant0", pattern=r"^[a-z0-9]+$")
     seed: int = 0
     n_units: int = Field(ge=1)  # no declared default: the size search picks it
-    #: weight overrides per equipment class; a class absent here keeps its pattern's own weight
-    equipment_weights: dict[str, float] = Field(default_factory=dict)
     sheets: SheetKnobs = Field(default_factory=SheetKnobs)
     trims: TrimConvention = Field(default_factory=TrimConvention)
     instruments: InstrumentConvention = Field(default_factory=InstrumentConvention)
     density: InstrumentDensity = Field(default_factory=InstrumentDensity)
     patterns: PatternKnobs = Field(default_factory=PatternKnobs)
     flowsheet: FlowsheetKnobs = Field(default_factory=FlowsheetKnobs)
-
-    @field_validator("equipment_weights")
-    @classmethod
-    def _check_equipment_weights(cls, weights: dict[str, float]) -> dict[str, float]:
-        unknown = sorted(set(weights) - GENERATED_EQUIPMENT_CLASSES)
-        if unknown:
-            raise ValueError(
-                f"equipment_weights has classes the v2 generator does not generate: {unknown}; "
-                f"expected a subset of {sorted(GENERATED_EQUIPMENT_CLASSES)}"
-            )
-        _require_positive(weights, "equipment_weights")
-        return weights

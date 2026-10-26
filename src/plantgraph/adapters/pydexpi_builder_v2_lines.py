@@ -80,16 +80,17 @@ def build_line_system(
     section: dexpi.PlantSection,
     line_list: dict[str, str],
     items: list[dexpi.PipingNetworkSegmentItem],
-    source: dexpi.PipingSourceItem | None,
-    target: dexpi.PipingTargetItem | None,
+    source: dexpi.Nozzle | dexpi.PipingNetworkSegmentItem | None,
+    target: dexpi.Nozzle | dexpi.PipingNetworkSegmentItem | None,
 ) -> dexpi.PipingNetworkSystem:
     """One system with one segment: `source`, the `items` in order, `target`.
 
     `line_list` is the output of `line_list_fields`.
 
-    `source` / `target` are a nozzle, a pipe tee of another line (a branch or a merge) or None
-    (open end). pyDEXPI raises `IndexError` if the first *item* is named as the source, so an
-    open start is passed as None and the first pipe is left dangling.
+    `source` / `target` are a nozzle, an inline part of another line (a tee: a branch or a merge; a
+    valve: the join to another unit) or None (open end). pyDEXPI raises `IndexError` if the first
+    *item* of this line is named as the source, so an open start is passed as None and the first
+    pipe is left dangling.
     """
     # pipes between the ends and the items: always one more than there are items
     pipes: list[dexpi.PipingConnection] = [
