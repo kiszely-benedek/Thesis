@@ -193,18 +193,26 @@ def pump_trims(
     vessel_id: str,
     dst_id: str | None,
     pressure_mode: PumpPressureMode = "per_pump_pi",
+    suction_head: tuple[LineItemSpec, ...] = (),
+    suction_src_id: str | None = None,
+    discharge_tail: tuple[LineItemSpec, ...] = (),
 ) -> TrimPlan:
     """Every trim of one pump, with its suction and discharge lines: vessel -> pump -> `dst_id`.
 
     Draws the optional parts (min-flow line, vent and drain, flush tap) in a fixed order so the
-    result depends only on the unit's stream.
+    result depends only on the unit's stream. A pump inside a spared set takes its line ends from
+    the set: `suction_head` parts come first on the suction line, `suction_src_id` replaces the
+    vessel as its source (a pump that branches off a header tee), and `discharge_tail` parts
+    close the discharge line (the header's merge tees). The min-flow line still returns to
+    `vessel_id`.
     """
     pd_pump = needs_external_relief(pump_class)
     min_flow = ctx.chance(ctx.config.p_min_flow)
     suction = suction_for(pump_class)(ctx, style, pd_pump)
     discharge = pump_discharge(ctx, style, pressure_mode == "per_pump_pi", pd_pump, min_flow)
-    suction_line = main_line(ctx, style, vessel_id, suction.run, pump_id)
-    discharge_line = main_line(ctx, style, pump_id, discharge.run, dst_id)
+    suction_run = (*suction_head, *suction.run)
+    suction_line = main_line(ctx, style, suction_src_id or vessel_id, suction_run, pump_id)
+    discharge_line = main_line(ctx, style, pump_id, (*discharge.run, *discharge_tail), dst_id)
     parts = [  # the two main lines come first: every branch below starts at one of their tees
         suction.with_main_line(suction_line).with_port_prefix("suction"),
         discharge.with_main_line(discharge_line).with_port_prefix("discharge"),
