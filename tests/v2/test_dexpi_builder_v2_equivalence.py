@@ -21,7 +21,6 @@ from plantgraph.adapters.pydexpi_io import load_json, save_json
 from plantgraph.benchmark.v2.plan_models import (
     EquipmentSpec,
     GenerationRecordV2,
-    LinkSpec,
 )
 from plantgraph.graph.schema import Relation
 from v2_micro_plans import (
@@ -149,23 +148,6 @@ def test_a_bad_line_number_and_a_bad_class_raise_before_anything_is_built() -> N
     with pytest.raises(ValueError, match="expected a piping class"):
         builder.add_line(line(1, "eq1", (item("v", "Tank", "TK-1"),), "eq2"))
     assert builder._equipment["eq1"].nozzles == []  # no nozzle was left behind
-
-
-@pytest.mark.parametrize(
-    "action",
-    [
-        lambda b: b.add_line(line(1, "eq1", (item("p", "PropertyBreak"),), "eq2")),
-        lambda b: b.add_instrument(instrument("a", "ActuatingElectricalFunction", None, "HS-1001")),
-        lambda b: b.add_link(
-            LinkSpec(relation=Relation.HAS_AGITATOR, source_id="eq4", target_id="eq1")
-        ),
-    ],
-    ids=["property_break", "electrical_actuator", "has_agitator"],
-)
-def test_t5_constructs_are_refused(action: object) -> None:
-    builder = _base()
-    with pytest.raises(ValueError, match="T5|expected ProcessSignal"):
-        action(builder)  # type: ignore[operator]
 
 
 def test_wiring_mistakes_raise() -> None:

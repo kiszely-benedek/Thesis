@@ -30,6 +30,8 @@ from plantgraph.graph.schema import Relation
 _PSGF = "ProcessSignalGeneratingFunction"
 _PIF = "ProcessInstrumentationFunction"
 _AF = "ActuatingFunction"
+_AEF = "ActuatingElectricalFunction"
+_PCF = "ProcessControlFunction"
 
 
 def item(node_id: str, node_class: str, tag: str | None = None) -> LineItemSpec:
@@ -213,6 +215,60 @@ def plan_local_instrument(builder: PlantBuilderV2) -> None:
     link(builder, Relation.MEASURED_BY, "eq4", "li-pi")
 
 
+def motor_pump(builder: PlantBuilderV2, node_id: str, seq: int) -> str:
+    """A motor-driven pump `node_id` in unit 1 (tag `P-1xxx`); returns its tag."""
+    tag = format_equipment_tag("P", 1, seq)
+    spec = EquipmentSpec(
+        node_id=node_id, node_class="CentrifugalPump", unit_no=1, tag=tag, has_motor=True
+    )
+    builder.add_equipment(spec)
+    return tag
+
+
+def plan_motor_start(builder: PlantBuilderV2) -> None:
+    """A motor pump started by a hand switch (HS -> AEF -> pump), with a running-status lamp."""
+    motor_pump(builder, "ms-p", 50)
+    switch = format_instrument_tag("HS", 1, 40)
+    builder.add_instrument(instrument("ms-hs", _PIF, switch, switch))
+    builder.add_instrument(instrument("ms-aef", _AEF, None, switch))
+    status = format_instrument_tag("YI", 1, 40)
+    builder.add_instrument(instrument("ms-yi", _PSGF, status, status))
+    link(builder, Relation.SEND_SIGNAL_TO, "ms-hs", "ms-aef")
+    link(builder, Relation.CONTROL, "ms-aef", "ms-p")
+    link(builder, Relation.MEASURED_BY, "ms-p", "ms-yi")
+
+
+def plan_speed_control(builder: PlantBuilderV2) -> None:
+    """A variable-speed pump: pressure transmitter -> controller (PCF) -> AEF -> pump."""
+    motor_pump(builder, "sc-p", 51)
+    loop = format_instrument_tag("PIC", 1, 41)
+    builder.add_instrument(instrument("sc-pt", _PSGF, format_instrument_tag("PT", 1, 41), loop))
+    builder.add_instrument(instrument("sc-pic", _PCF, loop, loop))
+    builder.add_instrument(instrument("sc-aef", _AEF, None, loop))
+    link(builder, Relation.MEASURED_BY, "eq4", "sc-pt")
+    link(builder, Relation.SEND_SIGNAL_TO, "sc-pt", "sc-pic")
+    link(builder, Relation.SEND_SIGNAL_TO, "sc-pic", "sc-aef")
+    link(builder, Relation.CONTROL, "sc-aef", "sc-p")
+
+
+def plan_agitator(builder: PlantBuilderV2) -> None:
+    """A motor-driven agitator in the vessel `eq4`."""
+    tag = format_equipment_tag("M", 1, 52)
+    spec = EquipmentSpec(node_id="ag-m", node_class="Agitator", unit_no=1, tag=tag, has_motor=True)
+    builder.add_equipment(spec)
+    link(builder, Relation.HAS_AGITATOR, "eq4", "ag-m")
+
+
+def plan_property_break(builder: PlantBuilderV2) -> None:
+    """A spec break between two valves of one line."""
+    parts = (
+        item("pb-v1", "GateValve", format_valve_tag("GTV", 1, 41)),
+        item("pb-br", "PropertyBreak"),
+        item("pb-v2", "GateValve", format_valve_tag("GTV", 1, 42)),
+    )
+    builder.add_line(line(15, "eq3", parts, "eq1"))
+
+
 #: every construct plan, by name; each is meant to run after `plan_base`
 CONSTRUCT_PLANS: dict[str, Callable[[PlantBuilderV2], None]] = {
     "straight": plan_straight,
@@ -226,6 +282,10 @@ CONSTRUCT_PLANS: dict[str, Callable[[PlantBuilderV2], None]] = {
     "trip": plan_trip,
     "hand_switch": plan_hand_switch,
     "local_instrument": plan_local_instrument,
+    "motor_start": plan_motor_start,
+    "speed_control": plan_speed_control,
+    "agitator": plan_agitator,
+    "property_break": plan_property_break,
 }
 
 

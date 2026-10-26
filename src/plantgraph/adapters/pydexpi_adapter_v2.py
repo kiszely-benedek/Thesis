@@ -30,7 +30,7 @@ def plant_graph_v2(
         conceptual,
         record.plant_id,
         record.stream_kind,
-        vocabulary=schema.IMPORTABLE_CLASSES,
+        vocabulary=schema.V2_IMPORTABLE_CLASSES,
         piping_units=read_piping_units(model),
         node_gold={node_id: gold.model_dump() for node_id, gold in record.node_gold.items()},
     )

@@ -26,6 +26,7 @@ BUBBLE_CLASSES = frozenset(
 _LOOP_MEMBER_CLASSES = BUBBLE_CLASSES | {
     NodeClass.PROCESS_SIGNAL_GENERATING_FUNCTION.value,
     NodeClass.ACTUATING_FUNCTION.value,
+    NodeClass.ACTUATING_ELECTRICAL_FUNCTION.value,  # a machine's start/stop joins its HS's loop
 }
 _BUBBLE_LABEL = NodeClass.PROCESS_INSTRUMENTATION_FUNCTION.value
 _TAG_FIELDS = (

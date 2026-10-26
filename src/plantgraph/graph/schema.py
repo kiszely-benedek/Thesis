@@ -177,6 +177,10 @@ IMPORTABLE_CLASSES: frozenset[str] = (
     GENERATOR_CLASSES | CONNECTOR_CLASSES | {NodeClass.GENERIC_ITEM.value}
 )
 
+# The `vocabulary` argument of the pyDEXPI adapter and importer: v1's set is the default there, this
+# is the v2 one (the allowlist classes plus `GenericItem`, ADR-0058). An alias, not a second list.
+V2_IMPORTABLE_CLASSES: frozenset[str] = IMPORTABLE_CLASSES
+
 # v1 pins (ADR-0057): today's exact values as literals, NOT aliases of the live constants above.
 # Generator v2 grows the live sets; the v1 generator, its config defaults and the EX01 import read
 # these so v1 output stays byte-identical. Never edit them.

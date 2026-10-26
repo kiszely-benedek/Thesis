@@ -6,6 +6,8 @@ Terms (ISA-5.1 is the standard that names instruments by letters on the drawing)
 - **PIF** (`ProcessInstrumentationFunction`): the bubble that does something with a signal, e.g.
   controller `FIC-1014` or hand switch `HS-1015`. A PCF (`ProcessControlFunction`) is a
   controller PIF.
+- **AEF** (`ActuatingElectricalFunction`): the start/stop or speed input of a motor-driven machine,
+  the electrical counterpart of an AF (`pydexpi_builder_v2_equipment.py`).
 - **AF** (`ActuatingFunction`): the actuator of a valve. It carries no tag of its own; the valve's
   tag stands for it (ADR-0044).
 - **Actuating system**: pyDEXPI's record of what an AF operates, plus its small hardware: for an
@@ -20,6 +22,7 @@ from typing import cast
 import pydexpi.dexpi_classes.pydantic_classes as dexpi
 from pydexpi.toolkits import instrumentation_toolkit
 
+from plantgraph.adapters.pydexpi_builder_v2_equipment import create_electrical_actuator
 from plantgraph.adapters.pydexpi_loop_tags import BUBBLE_CLASSES
 from plantgraph.benchmark.v2.plan_models import InstrumentSpec
 from plantgraph.benchmark.v2.tags import parse_tag
@@ -30,6 +33,7 @@ Instrument = (
     dexpi.ProcessSignalGeneratingFunction
     | dexpi.ProcessInstrumentationFunction
     | dexpi.ActuatingFunction
+    | dexpi.ActuatingElectricalFunction
 )
 
 
@@ -41,10 +45,12 @@ def create_instrument(spec: InstrumentSpec, section: dexpi.PlantSection) -> Inst
         return _create_bubble(spec, section)
     if spec.node_class == NodeClass.ACTUATING_FUNCTION.value:
         return _create_actuator(spec, section)
-    # ActuatingElectricalFunction (a machine's start/stop) is V2-T5
+    if spec.node_class == NodeClass.ACTUATING_ELECTRICAL_FUNCTION.value:
+        return _create_electrical_actuator(spec, section)
     raise ValueError(
         f"expected ProcessSignalGeneratingFunction, ProcessInstrumentationFunction, "
-        f"ProcessControlFunction or ActuatingFunction for instrument {spec.node_id!r}, "
+        f"ProcessControlFunction, ActuatingFunction or ActuatingElectricalFunction for "
+        f"instrument {spec.node_id!r}, "
         f"got {spec.node_class!r}"
     )
 
@@ -84,6 +90,14 @@ def _create_actuator(spec: InstrumentSpec, section: dexpi.PlantSection) -> Instr
     return dexpi.ActuatingFunction(id=spec.node_id, parentStructure=section)
 
 
+def _create_electrical_actuator(spec: InstrumentSpec, section: dexpi.PlantSection) -> Instrument:
+    if spec.tag is not None:
+        raise ValueError(
+            f"an electrical actuator carries no tag; {spec.node_id!r} has {spec.tag!r}"
+        )
+    return create_electrical_actuator(spec.node_id, section)
+
+
 def _require_tag(spec: InstrumentSpec) -> str:
     if spec.tag is None:
         raise ValueError(f"expected a tag on {spec.node_class} {spec.node_id!r}, got None")
@@ -97,7 +111,8 @@ def connect_signal(source: Instrument, target: Instrument) -> None:
     """Join two instruments by the signal line their kinds call for.
 
     A sensor feeds a bubble (measuring line); a bubble feeds an actuator or another bubble
-    (signal line). Anything else has no meaning on a P&ID.
+    (signal line); an actuator here may be an AEF, a machine's start/stop. Anything else has no
+    meaning on a P&ID.
     """
     line_id = f"{source.id}-to-{target.id}"
     if isinstance(source, dexpi.ProcessSignalGeneratingFunction) and _is_bubble(target):
@@ -106,7 +121,9 @@ def connect_signal(source: Instrument, target: Instrument) -> None:
             source,
             dexpi.MeasuringLineFunction(id=line_id),
         )
-    elif _is_bubble(source) and isinstance(target, dexpi.ActuatingFunction):
+    elif _is_bubble(source) and isinstance(
+        target, dexpi.ActuatingFunction | dexpi.ActuatingElectricalFunction
+    ):
         instrumentation_toolkit.add_actuating_function_to_instrumentation_function(
             cast(dexpi.ProcessInstrumentationFunction, source),
             target,

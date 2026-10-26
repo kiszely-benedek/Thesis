@@ -27,8 +27,12 @@ def dexpi_class_named(node_class: str) -> type[dexpi.DexpiBaseModel]:
     return cast(type[dexpi.DexpiBaseModel], cls)
 
 
-def create_line_item(spec: LineItemSpec, fluid_code: str) -> dexpi.PipingComponent:
-    """One inline part, with its printed tag in the field its pyDEXPI class uses for it."""
+def create_line_item(spec: LineItemSpec, fluid_code: str) -> dexpi.PipingNetworkSegmentItem:
+    """One inline part, with its printed tag in the field its pyDEXPI class uses for it.
+
+    A `PropertyBreak` (where the pipe spec changes) is not a pyDEXPI `PipingComponent` but sits
+    in the segment like one; it has no fluid code and no tag.
+    """
     _require_inline_class(spec)
     cls = dexpi_class_named(spec.node_class)
     fields: dict[str, str] = {}
@@ -36,13 +40,10 @@ def create_line_item(spec: LineItemSpec, fluid_code: str) -> dexpi.PipingCompone
         fields["fluidCode"] = fluid_code
     if spec.tag is not None:
         fields[_tag_field(cls, spec)] = spec.tag
-    return cast(dexpi.PipingComponent, cls(id=spec.node_id, **fields))
+    return cast(dexpi.PipingNetworkSegmentItem, cls(id=spec.node_id, **fields))
 
 
 def _require_inline_class(spec: LineItemSpec) -> None:
-    if spec.node_class in schema.BREAK_CLASSES:
-        # a `PropertyBreak` is not a pyDEXPI `PipingComponent`; it arrives with V2-T5
-        raise ValueError(f"{spec.node_class} ({spec.node_id!r}) is not supported inline before T5")
     if spec.node_class not in schema.PIPING_CLASSES:
         raise ValueError(
             f"expected a piping class for inline item {spec.node_id!r}, got {spec.node_class!r}"
@@ -78,7 +79,7 @@ def build_line_system(
     spec: LineSpec,
     section: dexpi.PlantSection,
     line_list: dict[str, str],
-    items: list[dexpi.PipingComponent],
+    items: list[dexpi.PipingNetworkSegmentItem],
     source: dexpi.PipingSourceItem | None,
     target: dexpi.PipingTargetItem | None,
 ) -> dexpi.PipingNetworkSystem:

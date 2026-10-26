@@ -180,8 +180,7 @@ def test_inline_parts_take_the_unit_of_their_line() -> None:
 
 def _vocabulary_cases() -> list[tuple[str, str]]:
     equipment = [(name, "equipment") for name in sorted(schema.EQUIPMENT_CLASSES)]
-    # PropertyBreak (kind "break") is refused until V2-T5
-    piping = [(name, "piping") for name in sorted(schema.PIPING_CLASSES - schema.BREAK_CLASSES)]
+    piping = [(name, "piping") for name in sorted(schema.PIPING_CLASSES)]
     return equipment + piping
 
 

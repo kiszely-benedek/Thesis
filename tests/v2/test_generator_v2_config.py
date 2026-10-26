@@ -40,6 +40,7 @@ def test_defaults_carry_the_declared_values() -> None:
         "drain_pot": 1.0,
     }
     assert config.trims.pump_pressure_mode_weights == {"per_pump_pi": 3.0, "header_pt": 1.0}
+    assert config.instruments.p_motor_hs == 1.0
     assert config.instruments.p_cascade == 0.5
     assert config.instruments.p_split_range == 0.0
     assert config.patterns.p_triple_pump_set == 0.15

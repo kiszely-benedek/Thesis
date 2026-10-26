@@ -32,6 +32,7 @@ from plantgraph.adapters.pydexpi_loop_tags import (
     assign_loop_tags,
     find_carrier_sensors,
 )
+from plantgraph.adapters.pydexpi_rules_v2 import uses_v2_rules, v2_relation_of
 from plantgraph.adapters.pydexpi_units import assign_piping_units, assign_valve_units
 from plantgraph.graph import schema
 
@@ -145,7 +146,7 @@ def map_conceptual_graph(
     mapped_nodes, nodes_dropped = _map_nodes(conceptual, plant_id, vocabulary, carriers.keys())
     parent_folds = _fold_parent_structure(conceptual, mapped_nodes, section_code)
     chosen_edges, edges_mapped, edges_dropped, collapsed = _map_edges(
-        conceptual, mapped_nodes, stream_kind
+        conceptual, mapped_nodes, stream_kind, uses_v2_rules(vocabulary)
     )
 
     plant: nx.DiGraph[str] = nx.DiGraph()
@@ -240,7 +241,7 @@ def topology_node_class(
     The generator always gives an exact name match; the ancestor-class branch is needed
     for the EXP-0001 path, where a real DEXPI file uses finer-grained subclasses (e.g.
     `ReciprocatingPump`) with no name of their own in the schema. `vocabulary` is the set of
-    classes that count as known: the v1 set by default, `schema.IMPORTABLE_CLASSES` for v2.
+    classes that count as known: the v1 set by default, `schema.V2_IMPORTABLE_CLASSES` for v2.
     """
     if label in vocabulary:
         return label
@@ -309,11 +310,16 @@ _RELATION_PRIORITY = (
     schema.Relation.SEND_SIGNAL_TO,
     schema.Relation.CONTROL,
     schema.Relation.MEASURED_BY,
+    schema.Relation.HAS_AGITATOR,
 )
 
 
-def _relation_of(attrs: Mapping[str, object]) -> tuple[schema.Relation, bool] | None:
+def _relation_of(
+    attrs: Mapping[str, object], v2_rules: bool = False
+) -> tuple[schema.Relation, bool] | None:
     """A pyDEXPI conceptual edge's schema relation, and whether its direction must be reversed."""
+    if v2_rules and (v2_relation := v2_relation_of(attrs)) is not None:
+        return v2_relation
     label, attr_name = attrs.get("label"), attrs.get("attr_name")
     if label in _PIPE_LABELS:
         return schema.Relation.SEND_TO, False
@@ -347,12 +353,13 @@ def _map_edges(
     conceptual: nx.MultiDiGraph[str],
     mapped_nodes: dict[str, dict[str, object]],
     stream_kind: Mapping[str, Enum],
+    v2_rules: bool = False,
 ) -> tuple[_ChosenEdges, dict[str, int], dict[str, int], int]:
     """Collect the topology edges and resolve them onto a `DiGraph` by parallel-edge priority.
 
     Returns the final (ordered pair -> relation, properties) mapping, the count of
     winning edges per relation, the count of rejected edge kinds, and how many
-    parallel edges the priority rule collapsed.
+    parallel edges the priority rule collapsed. `v2_rules` switches on the v2 reference edges.
     """
     candidates: list[_EdgeCandidate] = []
     dropped: collections.Counter[str] = collections.Counter()
@@ -362,7 +369,7 @@ def _map_edges(
             continue  # already resolved into unit_id (_fold_parent_structure)
         if source not in mapped_nodes or target not in mapped_nodes:
             continue  # one endpoint is a structural or unknown class — not a topology edge
-        mapped = _relation_of(attrs)
+        mapped = _relation_of(attrs, v2_rules)
         if mapped is None:
             dropped[f"{attrs.get('label')}/{attrs.get('attr_name')}"] += 1
             continue

@@ -153,7 +153,9 @@ class TrimConvention(BaseModel):
 class InstrumentConvention(BaseModel):
     """Chances of the optional control-loop shapes (design 5.1, 5.3)."""
 
-    p_motor_hs: Probability = 0.5  # a hand switch (start/stop) on a motor-driven machine
+    #: a hand switch (start/stop) on a motor-driven machine; 1.0 (user, 2026-10-26): every drawn
+    #: motor in the real samples has one
+    p_motor_hs: Probability = 1.0
     p_cascade: Probability = 0.5  # master controller feeding a slave per eligible slot
     p_split_range: Probability = 0.0  # one controller, two valves; off: one unconfirmed case
 
