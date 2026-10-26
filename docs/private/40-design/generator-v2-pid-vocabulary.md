@@ -478,6 +478,9 @@ Still open for the user (vetoes only; defaults hold if unanswered):
    liquid-ring vacuum), `SpiralHeatExchanger` (viscous / fouling service), `ElectricalSeparator` with its U10
    crude-desalter pattern. Each is a one-line toggle. U10 is the only new pattern, so dropping `ElectricalSeparator`
    also removes U10.
+   **Decided 2026-10-25:** keep `EjectorPump` and `RotaryCompressor`; do not generate `SpiralHeatExchanger` or
+   `ElectricalSeparator` (U10 dropped). Both stay in the schema allowlist for import. 23 generated equipment
+   classes; T10 has no U10 slot and T13 no desalter.
 2. **Main-session borderline keeps:** `Agitator`, `StaticMixer`, `RotaryMixer`, `InLineMixer`, `AirEjector`,
    `Furnace` (no burner, chimney or blower nodes), `AirCoolingSystem`.
 
@@ -488,3 +491,270 @@ Still open for the user (vetoes only; defaults hold if unanswered):
 - A visible Custom* `typeName` on import: it changes every schema text (F1).
 - Widening the allowlist later: the rule takes any class list; the proposed version's placements (ADR-0058
   "Proposed version") are the starting point.
+
+## 13. Declared parameter values (for T8–T10)
+
+Added 2026-10-25, after T3. Base §8.2, base §4.4/§12 and this note (§5.2, §7.2) name knobs but give no value.
+This section gives each one a value. It changes no accepted decision. Two findings need the user (§13.8).
+It follows the 2026-10-25 decision: 23 generated equipment classes, no `SpiralHeatExchanger` variant in U5, no U10
+slot, `p_desalter` unused.
+
+### 13.1 How to read the values
+
+**Grounding tags.**
+- **[HC]** a sample hand count (samples note, sheet ID).
+- **[C]** an OPEN100 figure computed in the composition note.
+- **[B]** derived from an acceptance band; the arithmetic is in §13.7.
+- **[R]** a codified rule, or a value already in the base note or this note.
+- **[U]** declared, with a one-line reason why the value is a neutral choice.
+
+**Rule V (declared; it generalises §7.2's "primary class dealt twice per deck").**
+- An axis that chooses a class or an arrangement deals its **primary** option twice per deck and every alternative
+  once.
+- An optional item (written `[x]` in base §7.2) is a deck {absent 1, present 1}.
+- A size range is uniform over the range the note gives.
+
+No value is a frequency claim (composition note §10). Rule V exists so that no single weight needs its own
+justification.
+
+**Draws and decks.**
+- Pattern choices per grammar slot are weighted draws from the master stream (base §8.2).
+- Variant axes and role classes are **decks** (§5.2, §7.2). There is one deck per key: `"{pattern}.{axis}"` or
+  `"role:{role}"` (`VariantDecks` takes any string key). Multiplicities are integers ≥ 1. To switch an option off,
+  remove it from the deck.
+
+### 13.2 Flowsheet grammar (T10; `FlowsheetKnobs`)
+
+| Knob | Value | Grounding |
+|---|---|---|
+| `conditioning_count_weights` (Conditioning{0..2}) | 0 : 1, 1 : 1, 2 : 1 (mean 1) | [U] uniform over the grammar's range; the base note names the range but no knob, and T10 needs one |
+| `conditioning_weights` | U5 1 : U7 1 : U8 1 | [U] no source ranks feed-conditioning steps, so equal |
+| `core_weights` | `U3+U2` 1 : `U3` 1 : `U6` 2 | [U] U3 vs U6 1 : 1, then U2 on U3's gas outlet as an optional item (1 : 1) |
+| `separation_count_weights` (Separation{1..3}) | 1 : 1, 2 : 1, 3 : 1 (mean 2) | [U] uniform over the grammar's range |
+| `separation_weights` (U1 \| U6) | U1 1 : U6 1 | [U] equal; base §8.1 names the alternatives, not a weight |
+| `units_per_train_min` / `_max` | 3 / 9, **derived, not config fields** | [R] the grammar fixes them: first train 4–9 (FeedFarm + 0–2 + 1–2 + 1–3 + ProductFarm), later trains 3–8. T10 asserts the range; a train cut short by `n_units` is exempt. Separate fields could contradict the count weights |
+| `p_side_draw`, `p_shared_farm_feed` | 0.2, 0.2 | [R] base §8.1, already in config |
+
+Consequence, used in §13.7: a later train has **5.25 units** on average. Per train that is U4 1, U5 ⅓, U7 ⅓, U8 ⅓,
+U3 ½, U2 ¼, U6 1½ (½ as Core, 1 as Separation) and U1 1.
+
+### 13.3 Pattern variants (`variant_weights`; T9 now, T13/T14 later)
+
+| Deck key | Options : multiplicity | Grounding | Task |
+|---|---|---|---|
+| `pump_set.group` | `with_suction_vessel` 2 : `own_sheet` 1 | [R] §7.1; FB&D rule vs WTP [HC]; already in config | T9 |
+| `U4.tank_count` | 2 : 1, 3 : 1, 4 : 1 | [R] base "2–4", uniform | T9 |
+| `U4.transfer_pump` | CentrifugalPump 2 : RotaryPump 1 | Rule V | T9 |
+| `U4.metering` | none 4 : MassFlow 1 : PositiveDisplacement 1 : Turbine 1 : VolumeFlow 1 | Rule V: optional 1 : 1, then 4 meter classes equal | T9 |
+| `U4.manifold` | GateValve 2 : PlugValve 1 | Rule V (PlugValve is the base's "variant") | T9 |
+| `U4.tank_service` | flammable 1 : non_flammable 1 | [U] neutral. Flammable = breather + arrestor (6.19); non-flammable = `VentilationDevice` | T9 |
+| `U6.vessel` | PressureVessel 2 : GravitationalSeparator 1 | Rule V | T9 |
+| U7 | no axis | — | T9 |
+| `U1.vacuum` | none 2 : air_ejector 1 : liquid_ring 1 | Rule V; ejectors on H2 [HC] | T13 |
+| `U1.condenser` | TubularHeatExchanger 2 : AirCoolingSystem 1 | Rule V (tubular is primary, §7.2) | T13 |
+| `U1.feed_preheater`, `U1.reflux_sight_glass` | absent 1 : present 1 each | Rule V (optional) | T13 |
+| `U2.compressor` | Centrifugal 2 : Reciprocating 1 : Rotary 1 | Rule V | T14 |
+| `U2.aftercooler` | TubularHeatExchanger 2 : AirCoolingSystem 1 | Rule V | T14 |
+| `U2.suction_filter`, `U2.discharge_ko_drum` | absent 1 : present 1 each | Rule V (optional) | T14 |
+| `U3.reactor` | plain 2 : agitated 1 | Rule V; agitated reactor on D2 [HC] | T14 |
+| `U5.exchanger_count` | 2 : 1, 3 : 1, 4 : 1 | [R] base "2–4", uniform | T13 |
+| `U5.trim_heater` | absent 1 : ElectricHeater 1 | Rule V (optional) | T13 |
+| `U5.utility` (per exchanger) | steam 1 : cooling_water 1 | [U] neutral; base U5 names both stubs | T13 |
+| `U8.mixer` | StaticMixer 2 : RotaryMixer 1 : eductor (`EjectorPump`) 1 | Rule V | T14 |
+| `U8.agitated_vessel`, `U8.additive_injection` (plain / `InLineMixer`) | 1 : 1 each | Rule V (optional) | T14 |
+
+Already in config, unchanged: `p_column_combined` 0.3, `p_triple_pump_set` 0.15, `p_single_pump` 0.2,
+`condensate_mode_weights` 2 : 1 : 1, `pump_pressure_mode_weights` 3 : 1, `p_split_range` 0.
+
+**Pump-set drawing group (T3's reading confirmed).** §7.1's "variant `own_sheet`, 2 : 1" means
+`with_suction_vessel` 2 : `own_sheet` 1. FB&D's rule is the default and WTP's separate pump sheets are the variant,
+so each deck cycle of three pump sets has one `own_sheet`. Two rules make the variant well defined (§13.6):
+- only spared sets (A/B, A/B/C) are dealt from this deck. A single pump always stays with its suction vessel.
+  The 8 WTP pump-sheet titles all name lettered sets [R].
+- an `own_sheet` group is never merged back.
+
+### 13.4 Class weights per role (`class_weights`; T7 trims, T8, T9)
+
+| Role | Classes : multiplicity | Grounding |
+|---|---|---|
+| Block valve (pump, CV station, PSV, exchanger utility, filter) | GateValve 2 : ButterflyValve 1 | Rule V; gate is primary (§7.2); butterfly "large-line blocks" (base §4.2) |
+| Compressor suction block | ButterflyValve, fixed | [R] base 6.16 / L16 |
+| Vent / drain valve | GateValve 2 : BallValve 1 | Rule V |
+| Tank bottom drain | GateValve 2 : AngleBallValve 1; on rotary-pump farms AnglePlugValve, fixed | Rule V; §5.2 U4, §5.4 |
+| Control-valve body | GlobeValve 2 : BallValve 1 : ButterflyValve 1 | Rule V; ADR-0044 |
+| Letdown control-valve body (drum or separator liquid outlet) | AngleValve 2 : AngleGlobeValve 1 : AngleBallValve 1 | Rule V; base U3 letdown, §5.4 |
+| CV-station bypass; on-off valve | GlobeValve; BallValve, both fixed | [R] L9; base 6.9 |
+| Pressure-tap root | BallValve 2 : NeedleValve 1 | Rule V; C01 ball-valve root [V] |
+| DP-tap root; temperature / analyser tap root | NeedleValve; BlindFlange, both fixed | [R] base §4.2, §4.3 |
+| Dosing-line isolation (U8) | GateValve 2 : StraightwayValve 1 | Rule V; §5.2 U8 [L]/[U] |
+| Check: pump discharge / minimum flow / compressor discharge | SwingCheckValve / GlobeCheckValve / CheckValve, fixed | [R] L1, L6, L16 |
+| Vessel PSV | SpringLoadedGlobeSafetyValve 2 : SpringLoadedAngleGlobeSafetyValve 1 | Rule V |
+| PD-pump relief | SpringLoadedAngleGlobeSafetyValve, fixed | [R] 6.5 |
+| Flow element, liquid | FlowMeasuringElement 2 : ElectromagneticFlowMeter 1 | Rule V |
+| Flow element, gas / steam | FlowMeasuringElement 2 : VenturiTube 1 : FlowNozzle 1 | Rule V; base §4.2 services |
+| U8 main / additive meter | ElectromagneticFlowMeter / MassFlowMeasuringElement, fixed | [R] base U8 |
+| Sight glass | SightGlass 2 : IlluminatedSightGlass 1 | Rule V |
+| Skillet | PipeFlangeSpade 1 : PipeFlangeSpacer 1 | [U] closed and open positions; neither is primary |
+| Purge-connection meter (deck over flush connections, §5.4) | plain 2 : `VariableAreaFlowMeter` 1 | Rule V; base §4.2 "rotameter on purge lines" (no other placement exists) |
+| U5 exchanger | TubularHeatExchanger 2 : PlateHeatExchanger 1 | Rule V |
+| Strainers, pump classes outside the decks above | as base 6.1, 6.2, 7.1 | [R] |
+
+`GeneratorConfigV2.equipment_weights` (T3) now overlaps the equipment decks. T9/T10 should document it as a
+multiplier on deck multiplicities, or drop it. That is a coder choice; no value depends on it.
+
+### 13.5 Instrument density (`InstrumentDensity`; T8)
+
+| Knob | Value | Grounding |
+|---|---|---|
+| `monitor_points_per_major_item` | uniform integer 5–7 (mean 6) | [B] instruments : valves ≈ 1.36, OPEN100's value inside the 1.0–1.8 band (§13.7) |
+| major items (constant `MONITORED_MAJOR_CLASSES`) | ProcessColumn, PressureVessel, Gravitational- and ScrubbingSeparator, Tubular- and PlateHeatExchanger, AirCoolingSystem, ElectricHeater, Furnace, the 3 compressors | [U]. Pumps, tanks, filters, mixers, agitators and ejectors are left out because their patterns already give them a fixed instrument set |
+| point mounting | a dedicated nozzle on the item (PSGF on `Nozzle`, v1 rule); no root valve | [R] base §4.3 "on equipment". No valve is added, so the ratio arithmetic stays clean |
+| `monitor_variable_weights` | T 1 : P 1 | [U] neutral; the samples show T and P bubbles in similar numbers: T 40, P 34, my sums of the [HC] letters over H1, H2, H3, D1, F2 (samples §3.2; F2 lower bounds) |
+| `p_monitor_local` | 0.7 (local gauge `TI`/`PI`, one PSGF), else `TT → TI` / `PT → PI` | [B]/[C] OPEN100's leaf share, 242 / 350 = 69 % [C]; keeps degree-1 ≥ 55 % (§13.7) |
+| `tray_temperature_points` | 2–4 | [R] base U1 |
+| `reactor_temperature_points` | 3–5 | [R] base U3 |
+| `p_optional_instrument` (every `[…]` instrument in base §7.2: AT/AI on distillate, FT/FI on header or inlet, LSLL / LSHH alarms, U7 FIC) | 0.5 | [U] an optional item at even odds (Rule V) |
+| `p_point_level_switch` (`LSH → LAH`, `LSL → LAL` on tanks, drums, drain pots) | 0.5 | [U] even odds; LSL / LSLL on H2, H3 [HC] show the template, not a rate |
+| `p_bearing_temperature` (`TT → TIAH` on pumps and compressors) | 0.5 | [U] even odds; the template exists in base §4.4 |
+| `p_indicator_alarm` (alarm letters on an indicator PIF; letters only, no node) | 0.5 | [U] even odds; samples §5 "alarm levels next to an indicator" |
+| `p_motor_current` (`IT → II`, U2) | 0.5 | [U] even odds; HW1 IT/II [HC] |
+| `p_vfd` (U2 compressor, U8 dosing pumps) | 0.5 | [U] even odds; Valdosta speed set points [Vw] |
+| `p_multivariable` (`UC` on the U3 reactor) | 0.5 | [U] even odds; D1 UC ×1 [HC] |
+| hand switches per motor | 1 (the HS of §5.1), no new knob | [R] §5.1. `p_motor_hs` stays 0.5 |
+
+Each monitoring point takes its own `SEQ3` number. The worst unit (U1 at k = 7) needs about 100 instrument
+numbers, well under the 999 overflow.
+
+### 13.6 Sheet rules T10 needs (clarifications, no new knob)
+
+1. **Own-sheet pump groups** come from spared sets only (§13.3). The merge step never merges them, because
+   merging would undo the variant.
+2. **Combined column variant** (`p_column_combined` 0.3) is one pattern group. The caps govern *merging* only
+   (base §9, step 3); a pattern group is never split. So this sheet may exceed `max_symbols_before_stubs`. If the
+   combined group would hold more than 16 equipment items (maximum 4 + 6 pumps + preheater + drain pot +
+   5 ejector-stage items = 17), it falls back to G1/G2. That keeps every sheet within 1–16 equipment.
+3. **U7 keeps its own unit and its own group** and never joins another unit's group. Base §7.2 lets U7 join the
+   downstream unit's first group, but that contradicts "every sheet shows one unit" (ADR-0025, S16). The accepted
+   invariant wins.
+
+### 13.7 Arithmetic: expected composition against the bands
+
+These are **expected values from my arithmetic over the trim and pattern tables, not a run.** R1 measures them.
+Read them as ±20 %.
+
+**Assumptions.**
+- Counting rule of base §12.1; AF and AEF are not counted.
+- One later train in the long run; the first train's extra feed farm is ignored.
+- Pumps per set: 0.2 × 1 + 0.65 × 2 + 0.15 × 3 = **1.95**.
+- Base 6.4 = one casing vent plus one drain per pump. If T7 reads it as one valve, V falls by about 2 per set.
+- A CV with its station = 1 + 0.6 × (3 + 0.3) = **2.98 valves**, 0.6 × (0.5 × 2 + 0.3) = 0.78 fittings.
+- A vessel PSV = 1 + 0.5 × 2 + 0.3 = **2.3 valves**.
+
+**Worked example: U6, drum and pump set on one sheet, before the monitoring points.**
+
+Drum:
+
+| Item | Instruments | Valves |
+|---|---|---|
+| PIC → PV (station) | 2 | 2.98 |
+| LIC → LV (station) + cascade 0.5 × (FT, FIC) | 2 + 1 | 2.98 |
+| LSHH trip → XV, ZSO/ZSC 0.5 × 2 | 2 + 1 | 1 |
+| Local PI, TI on top (6.12); LG; TI on the inlet | 4 | — |
+| [LSLL] 0.5 × 2; point level 0.5 × 2 | 2 | — |
+| PSV | — | 2.3 |
+| Vent and drain (KLM) | — | 2 |
+| Flush connection | — | 0.3 |
+| Battery limit | — | 1 |
+| **Drum total** | **14** | **12.56** |
+
+Pump set:
+- Per pump, valves: suction block 1, PI root 0.75, check 1, block 1, vent and drain 2, minimum flow 0.6 = 6.35.
+- Per pump, instruments: PI 0.75, HS + YI 0.5 × 2, TT + TIAH 0.5 × 2 = 2.75.
+- Header-PT mode adds 0.25 V and 0.5 I per set.
+- **Set: V = 12.63, I = 5.86.**
+
+Unit total: I₀ = 19.9, V = 25.2, 1 major item. With k = 6 and s = 0.7, I = 19.9 + 6 × 1.3 = 27.7. Symbols on the
+sheet ≈ 2.95 E + 25.2 V + 16.4 fittings + 27.7 I + ≈ 4 stubs = **76**.
+
+**All units, same method.**
+
+| Unit | Per train | E | V | I₀ (k = 0) | Major items | Sheets |
+|---|---|---|---|---|---|---|
+| U4 (3 tanks on average) | 1 | 5.0 | 27 | 31 | 0 | 1.3 |
+| U5 | ⅓ | 3.5 | 24 | 17 | 3.5 | 1.0 |
+| U7 | ⅓ | 2.0 | 9.5 | 6 | 0 | 1.0 |
+| U8 | ⅓ | 4.0 | 22 | 14 | 0.5 | 1.3 |
+| U3 | ½ | 7.5 | 46 | 44 | 5 | 2.3 |
+| U2 | ¼ | 4.0 | 30 | 24 | 3.5 | 1.0 |
+| U6 | 1½ | 3.0 | 25 | 20 | 1 | 1.3 |
+| U1 (incl. ½ vacuum variants) | 1 | 10.2 | 62 | 46 | 5.25 | 2.2 |
+| **Per train** | 5.25 units | **27.6** | **175.5** | **147.3** | **M = 11.46** | **7.95** |
+
+**Derivation of k [B].** Each monitoring point adds 2 − s nodes. Solving I₀ + k · M · (2 − s) = 1.36 · V:
+
+k = (1.36 × 175.5 − 147.3) / (11.46 × 1.3) = 91.4 / 14.9 = **6.1 → 6**.
+
+With k = 6: I = 147.3 + 89.4 = 236.7, so I : V = **1.35**, I per sheet = **29.8**, V per sheet = **22.1**.
+
+**Degree-1 share [B].**
+- In I₀: about 75 of the 147 nodes have degree 1 (local gauges, indicator PIFs, HS, YI, limit switches). Loops and
+  trips have degree ≥ 2.
+- Each monitoring point adds exactly one degree-1 node, so N = 68.8 points add 68.8.
+- Result: (75 + 68.8) / 236.7 = **61 %**. With s = 0.5 it would be ≈ 58 %, which is why s follows OPEN100's 69 %.
+
+**Off-page stubs.**
+- Cuts: 6.9 cross-unit streams × 2, plus U1 and U3 internal cuts, plus own-sheet pump sets ≈ 23 per train.
+- Open line ends: utility stubs, relief to flare, open gas stubs ≈ 16 per train.
+
+**Symbols per sheet** = (27.6 + 175.5 + 236.7 + ≈ 97 fittings + 39 stubs) / 7.95 ≈ **72**.
+
+| Band (base §12.1, §7.1) | Expected | Verdict |
+|---|---|---|
+| Symbols per sheet, mean 56–109 | ≈ 72 | meets |
+| ≥ 95 % of sheets inside 40–134 symbols | ≈ 76–90 % inside. Below 40: U7 sheets ≈ 25; A/B pump sets on their own sheet ≈ 38 (≈ 1.15 sheets per train); 2-tank farms whose pumps went to their own sheet ≈ 31. Above 134: combined column sheets ≈ 170–190 (0.3 per train) | **at risk → Q8** |
+| Valves per sheet, mean 15–28 | ≈ 22 | meets |
+| Instruments per sheet, mean 20–38 | ≈ 30 | meets (k derived) |
+| Instruments : valves 1.0–1.8 | ≈ 1.35 | meets (k derived) |
+| Off-page stubs, mean 5–11 | ≈ 4.9 if open line ends count; ≈ 2.9 for splitter cuts only. Duplication 0.25 adds an unmeasured share | **at risk → Q7** |
+| Off-page stubs, every sheet ≤ 21 | maximum ≈ 15 (combined vacuum column) | meets |
+| Equipment, every sheet 1–16 | ≤ 16 by rule 13.6.2 | meets by construction |
+| Equipment, ≥ 90 % of sheets ≤ 10 | ≈ 99 %; only some combined column sheets exceed 10 (≈ 1 % of sheets) | meets |
+| Instruments of degree 1 ≥ 55 % | ≈ 61 % | meets (s chosen) |
+| Equipment in A/B(/C) groups 25–45 % | ≈ 40 % (9.3 spared pumps + 1.0 ejectors + 0.67 filters of 27.6) | meets, near the top. Lever: `p_single_pump` |
+| Units on ≥ 2 sheets 25–65 % | ≈ 40 % | meets |
+| One unit per sheet | 100 % by rule 13.6.3 | meets |
+| Class coverage at D1000g2 | ≈ 126 trains. The rarest classes (IlluminatedSightGlass, PipeFlangeSpacer) are expected about 20–30 times | meets; D100g2 reported |
+
+If R1 misses a band that is marked "meets", the levers are, in order: k and s (instrument bands), `p_single_pump`
+(spare share), `p_side_draw` / `p_shared_farm_feed` (stubs). Each change is one logged sweep row (base §12.1).
+
+### 13.8 Open questions for the user (each with a recommendation)
+
+**Q7. What counts as an off-page stub in the composition report?**
+- *A (recommended):* every pipe line end that leaves the drawing: utility supply and return stubs, relief lines to
+  a flare or relief header, open gas stubs, unmatched ports.
+  - Not counted: vent and drain ends closed by a blind flange or a funnel, and atmospheric vents.
+  - Why: OPEN100's 8.0 is PID2Graph's inlet/outlet label, which marks every continuation arrow. On the real sheets
+    every utility consumer has an off-sheet arrow (samples §6). No run has happened, so this is a clarification,
+    not a tuning.
+  - Expected ≈ 4.9, still at the band's floor. If R1 shows < 5, report the gap: v2 draws no instrument-air or
+    header arrows, which real sheets do.
+- *B:* splitter connectors only. Expected ≈ 2.9, so the 5–11 band fails by construction.
+
+**Q8. The per-sheet symbol range (≥ 95 % in 40–134) against the accepted variants.**
+The accepted, sample-grounded variants (own-sheet pump sets, combined column sheets) plus the one-unit-per-sheet
+rule for U7 put an expected 10–24 % of sheets outside 40–134. The real samples do the same: 5 of the 15 inventoried
+sheets fall outside 40–134, by my sums of the [HC] counts (equipment + valves + instruments + off-sheet; fittings
+not inventoried, so these are lower bounds).
+- above: D1 ≥ 153;
+- below: D2 ≥ 18, D3 ≥ 8, O1 ≥ 28, WM ≥ 30.
+
+The options:
+- *A (recommended):* keep the **mean** band 56–109 as the pass/fail density criterion. Report the per-sheet
+  distribution and the share inside 40–134 with no pass mark, as §7.1 already does for signal connectors. This is
+  the same kind of recalibration as Q6.
+- *B:* keep the band, set `own_sheet` and `p_column_combined` to 0, and fold U7 into its downstream unit (a
+  structural change). This loses two variants the samples show and is still borderline (U7 ≈ 5 % of sheets).
+- *C:* keep the band and variants, and give own-sheet pump sets WTP's H3 instrument set (header PT + PI,
+  PSLL / PSHH pump trips, HS on every pump). This adds a template, lifts A/B pump sheets to ≈ 41, and still
+  leaves the combined columns and U7 outside.

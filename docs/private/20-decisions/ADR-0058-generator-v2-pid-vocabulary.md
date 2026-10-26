@@ -147,3 +147,9 @@ shrank.
   chimney or blower nodes), `AirCoolingSystem`.
 - Kept and flagged by the architect for a fluid-process reason: `EjectorPump`, `RotaryCompressor`,
   `SpiralHeatExchanger`, `ElectricalSeparator` (crude desalter).
+
+**Flagged classes, decided 2026-10-25 (user delegated: "are they necessary? If yeah, then they can stay").**
+Kept for generation: `EjectorPump` (eductor in blending and tank mixing) and `RotaryCompressor` (screw compressor,
+common in gas boosting and air service). Not generated: `SpiralHeatExchanger` (niche fouling service) and
+`ElectricalSeparator`, which also drops the U10 crude-desalter pattern and its task share. Both stay in the schema
+allowlist, so a real DEXPI file that contains them keeps its class; the generator emits 23 equipment classes.
