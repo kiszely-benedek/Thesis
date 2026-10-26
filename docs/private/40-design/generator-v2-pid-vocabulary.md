@@ -758,3 +758,8 @@ The options:
 - *C:* keep the band and variants, and give own-sheet pump sets WTP's H3 instrument set (header PT + PI,
   PSLL / PSHH pump trips, HS on every pump). This adds a template, lifts A/B pump sheets to ≈ 41, and still
   leaves the combined columns and U7 outside.
+
+**Decided 2026-10-26 (user, in chat).** Q7 = A (every pipe line end that leaves the drawing counts as an off-page
+stub; closed vents and drains and atmospheric vents do not). Q8 = A (the mean band 56–109 symbols per sheet is the
+pass/fail criterion; the share inside 40–134 is reported without a pass mark). `p_motor_hs` = 1.0 (every drawn motor
+gets its start/stop switch, as on every motor in the samples), replacing the declared 0.5.
