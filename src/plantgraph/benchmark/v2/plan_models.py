@@ -19,7 +19,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from plantgraph.benchmark.v2.streams import train_rng
 from plantgraph.benchmark.v2.vocabulary import ItemKind, TrainConventions, draw_train_conventions
-from plantgraph.graph.schema import Relation
+from plantgraph.graph.schema import NodeClass, Relation
 
 
 class StreamKindV2(str, Enum):
@@ -30,6 +30,9 @@ class StreamKindV2(str, Enum):
     RECYCLE = "recycle"  # compressor anti-surge, gas recycle, pump minimum flow
     TRIM = "trim"  # vents, drains, bypasses, taps, relief lines
     UTILITY_STUB = "utility_stub"  # a utility line that ends at the sheet edge
+
+
+_BREAK = NodeClass.PROPERTY_BREAK.value
 
 
 class _Spec(BaseModel):
@@ -54,12 +57,25 @@ class LineItemSpec(_Spec):
     tag: str | None = None
 
 
+class LineRun(_Spec):
+    """One stretch of a line that carries a single line number (see `LineSpec.runs`)."""
+
+    line_number: str
+    src_id: str | None
+    dst_id: str | None
+    items: tuple[LineItemSpec, ...]
+
+
 class LineSpec(_Spec):
     """One run of pipe: `src_id`, then `items` in flow order, then `dst_id`.
 
     A None end is open (the line enters or leaves the drawing there). An end that names an inline
     tee of another line makes this line a branch or a merge. Edges carry the line number and
     fluid code; all inline items belong to `unit_no`.
+
+    A **spec break** (a `PropertyBreak` item) is where the pipe class changes, and a line changes
+    its number there. When `line_number_after_break` is set, the one `PropertyBreak` among `items`
+    ends the stretch numbered `line_number`; the stretch after it has the other number.
     """
 
     line_number: str
@@ -68,6 +84,7 @@ class LineSpec(_Spec):
     src_id: str | None
     dst_id: str | None
     items: tuple[LineItemSpec, ...] = ()
+    line_number_after_break: str | None = None
 
     @model_validator(mode="after")
     def _check_has_a_pipe(self) -> LineSpec:
@@ -79,6 +96,57 @@ class LineSpec(_Spec):
                 f"dst_id={self.dst_id!r}"
             )
         return self
+
+    @model_validator(mode="after")
+    def _check_break_numbering(self) -> LineSpec:
+        if self.line_number_after_break is None:
+            return self
+        breaks = [i for i, item in enumerate(self.items) if item.node_class == _BREAK]
+        if len(breaks) != 1:
+            raise ValueError(
+                f"line {self.line_number!r} gives a number after its break, so it needs exactly "
+                f"one {_BREAK} item; got {len(breaks)}"
+            )
+        has_downstream = breaks[0] < len(self.items) - 1 or self.dst_id is not None
+        if not has_downstream or self.line_number_after_break == self.line_number:
+            raise ValueError(
+                f"line {self.line_number!r}: the break must be followed by a part or an end, and "
+                f"the number after it must differ; got {self.line_number_after_break!r}"
+            )
+        return self
+
+    @property
+    def line_numbers(self) -> tuple[str, ...]:
+        """Every line number the line uses: one, or two when it has a spec break."""
+        if self.line_number_after_break is None:
+            return (self.line_number,)
+        return (self.line_number, self.line_number_after_break)
+
+    def runs(self) -> tuple[LineRun, ...]:
+        """The stretches with one number each; two when the line has a spec break.
+
+        The break is the last part of the first stretch and the source end of the second, the
+        way a tee is the end of a branch: both backends build lines from these, so they agree.
+        """
+        if self.line_number_after_break is None:
+            whole = LineRun(
+                line_number=self.line_number,
+                src_id=self.src_id,
+                dst_id=self.dst_id,
+                items=self.items,
+            )
+            return (whole,)
+        cut = next(i for i, item in enumerate(self.items) if item.node_class == _BREAK) + 1
+        before = LineRun(
+            line_number=self.line_number, src_id=self.src_id, dst_id=None, items=self.items[:cut]
+        )
+        after = LineRun(
+            line_number=self.line_number_after_break,
+            src_id=self.items[cut - 1].node_id,
+            dst_id=self.dst_id,
+            items=self.items[cut:],
+        )
+        return (before, after)
 
 
 class InstrumentSpec(_Spec):

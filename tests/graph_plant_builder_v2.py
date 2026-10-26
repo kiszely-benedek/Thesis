@@ -13,6 +13,7 @@ from plantgraph.benchmark.v2.plan_models import (
     EquipmentSpec,
     InstrumentSpec,
     LineItemSpec,
+    LineRun,
     LineSpec,
     LinkSpec,
 )
@@ -40,20 +41,27 @@ class GraphPlantBuilderV2:
         )
 
     def add_line(self, spec: LineSpec) -> None:
-        """Add the inline items and chain `send_to` edges: `src -> item ... -> dst`."""
-        for end_id in (spec.src_id, spec.dst_id):
+        """Add the inline items and chain `send_to` edges: `src -> item ... -> dst`.
+
+        A line with a spec break is two runs (see `LineSpec.runs`), each with its own number.
+        """
+        for run in spec.runs():
+            self._add_run(run, spec)
+
+    def _add_run(self, run: LineRun, spec: LineSpec) -> None:
+        for end_id in (run.src_id, run.dst_id):
             if end_id is not None:
-                self._require_node(end_id, f"line {spec.line_number!r}")
-        for item in spec.items:
+                self._require_node(end_id, f"line {run.line_number!r}")
+        for item in run.items:
             self._add_line_item(item, spec.unit_no)
-        chain = [spec.src_id, *(item.node_id for item in spec.items), spec.dst_id]
+        chain = [run.src_id, *(item.node_id for item in run.items), run.dst_id]
         known = [node_id for node_id in chain if node_id is not None]
         for upstream, downstream in zip(known, known[1:], strict=False):
             self.graph.add_edge(
                 upstream,
                 downstream,
                 relation=Relation.SEND_TO.value,
-                line_number=spec.line_number,
+                line_number=run.line_number,
                 fluid_code=spec.fluid_code,
             )
 

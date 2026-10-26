@@ -14,7 +14,7 @@ from typing import cast
 import pydexpi.dexpi_classes.pydantic_classes as dexpi
 from pydexpi.toolkits import piping_toolkit as piping
 
-from plantgraph.benchmark.v2.plan_models import LineItemSpec, LineSpec
+from plantgraph.benchmark.v2.plan_models import LineItemSpec
 from plantgraph.benchmark.v2.tags import parse_line_number
 from plantgraph.graph import schema
 
@@ -76,7 +76,7 @@ def line_list_fields(line_number: str) -> dict[str, str]:
 
 def build_line_system(
     stream_id: str,
-    spec: LineSpec,
+    fluid_code: str,
     section: dexpi.PlantSection,
     line_list: dict[str, str],
     items: list[dexpi.PipingNetworkSegmentItem],
@@ -104,11 +104,11 @@ def build_line_system(
         target_connector_item=target,  # type: ignore[arg-type]
         connectivity_convention=piping.PipingConnectionConvention.USE_ITEMS,
         id=f"{stream_id}-sg",
-        fluidCode=spec.fluid_code,
+        fluidCode=fluid_code,
     )
     return dexpi.PipingNetworkSystem(
         id=f"{stream_id}-ps",
-        fluidCode=spec.fluid_code,
+        fluidCode=fluid_code,
         segments=[segment],
         parentStructure=section,
         **line_list,

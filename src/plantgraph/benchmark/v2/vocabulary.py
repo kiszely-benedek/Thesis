@@ -243,7 +243,17 @@ def _sensor_kind(letters: str) -> ItemKind:
         return ItemKind.TRANSMITTER
     if letters[-1] in "IG":
         return ItemKind.LOCAL_INDICATOR
-    raise ValueError(f"a sensor's letters end in T, E, I or G (or are ZSO/ZSC), got {letters!r}")
+    if _is_switch_sensor(letters):
+        return ItemKind.SWITCH
+    raise ValueError(
+        "a sensor's letters end in T, E, I or G, are ZSO/ZSC or are a switch such as LSH, "
+        f"got {letters!r}"
+    )
+
+
+def _is_switch_sensor(letters: str) -> bool:
+    """A point switch (`LSH`, `LSL`): S among the function letters, then a high / low modifier."""
+    return "S" in letters[1:] and letters.endswith(("H", "L"))
 
 
 def _bubble_kind(node_class: str, letters: str) -> ItemKind:

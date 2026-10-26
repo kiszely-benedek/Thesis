@@ -160,6 +160,74 @@ class InstrumentConvention(BaseModel):
     p_split_range: Probability = 0.0  # one controller, two valves; off: one unconfirmed case
 
 
+#: Equipment that gets a set of monitoring points; pumps, tanks, filters, mixers, agitators and
+#: ejectors are left out because their patterns already give them a fixed instrument set.
+MONITORED_MAJOR_CLASSES: frozenset[str] = frozenset(
+    member.value
+    for member in (
+        NodeClass.PROCESS_COLUMN,
+        NodeClass.PRESSURE_VESSEL,
+        NodeClass.GRAVITATIONAL_SEPARATOR,
+        NodeClass.SCRUBBING_SEPARATOR,
+        NodeClass.TUBULAR_HEAT_EXCHANGER,
+        NodeClass.PLATE_HEAT_EXCHANGER,
+        NodeClass.AIR_COOLING_SYSTEM,
+        NodeClass.ELECTRIC_HEATER,
+        NodeClass.FURNACE,
+        NodeClass.CENTRIFUGAL_COMPRESSOR,
+        NodeClass.RECIPROCATING_COMPRESSOR,
+        NodeClass.ROTARY_COMPRESSOR,
+    )
+)
+
+
+class IntRange(BaseModel):
+    """An inclusive whole-number range; a draw from it is uniform."""
+
+    low: int = Field(ge=0)
+    high: int = Field(ge=0)
+
+    @model_validator(mode="after")
+    def _check_order(self) -> IntRange:
+        if self.low > self.high:
+            raise ValueError(f"expected low <= high, got {self.low} > {self.high}")
+        return self
+
+
+def _default_monitor_variable_weights() -> dict[Literal["T", "P"], float]:
+    return {"T": 1.0, "P": 1.0}
+
+
+class InstrumentDensity(BaseModel):
+    """How many instruments the patterns add beyond the control loops (pid-vocabulary 13.5).
+
+    Every value is declared, not measured: a neutral choice (even odds for an optional item) or
+    a value chosen so the instruments-to-valves ratio lands in the acceptance band (13.7).
+    """
+
+    #: monitoring points per major item, each a nozzle-mounted gauge or transmitter
+    monitor_points_per_major_item: IntRange = IntRange(low=5, high=7)
+    monitor_variable_weights: dict[Literal["T", "P"], float] = Field(
+        default_factory=_default_monitor_variable_weights
+    )
+    p_monitor_local: Probability = 0.7  # a gauge (`TI`/`PI`), else `TT -> TI` / `PT -> PI`
+    tray_temperature_points: IntRange = IntRange(low=2, high=4)
+    reactor_temperature_points: IntRange = IntRange(low=3, high=5)
+    p_optional_instrument: Probability = 0.5  # every `[...]` instrument of base 7.2
+    p_point_level_switch: Probability = 0.5  # `LSH -> LAH`, `LSL -> LAL`
+    p_bearing_temperature: Probability = 0.5  # `TT -> TIAH` on pumps and compressors
+    p_indicator_alarm: Probability = 0.5  # alarm letters on an indicator bubble
+    p_motor_current: Probability = 0.5  # `IT -> II` on a compressor
+    p_vfd: Probability = 0.5  # variable speed on a compressor or dosing pump
+    p_multivariable: Probability = 0.5  # `UC` on the reactor
+
+    @field_validator("monitor_variable_weights")
+    @classmethod
+    def _check_weights(cls, weights: dict[str, float]) -> dict[str, float]:
+        _require_positive(weights, "monitor_variable_weights")
+        return weights
+
+
 class PatternKnobs(BaseModel):
     """Shape choices inside the process patterns (base 7.1, 7.2; pid-vocabulary 7.1)."""
 
@@ -206,6 +274,7 @@ class GeneratorConfigV2(BaseModel):
     sheets: SheetKnobs = Field(default_factory=SheetKnobs)
     trims: TrimConvention = Field(default_factory=TrimConvention)
     instruments: InstrumentConvention = Field(default_factory=InstrumentConvention)
+    density: InstrumentDensity = Field(default_factory=InstrumentDensity)
     patterns: PatternKnobs = Field(default_factory=PatternKnobs)
     flowsheet: FlowsheetKnobs = Field(default_factory=FlowsheetKnobs)
 

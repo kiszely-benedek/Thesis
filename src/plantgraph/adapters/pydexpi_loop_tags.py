@@ -23,11 +23,15 @@ from plantgraph.graph.schema import NodeClass
 BUBBLE_CLASSES = frozenset(
     {NodeClass.PROCESS_INSTRUMENTATION_FUNCTION.value, NodeClass.PROCESS_CONTROL_FUNCTION.value}
 )
-_LOOP_MEMBER_CLASSES = BUBBLE_CLASSES | {
-    NodeClass.PROCESS_SIGNAL_GENERATING_FUNCTION.value,
-    NodeClass.ACTUATING_FUNCTION.value,
-    NodeClass.ACTUATING_ELECTRICAL_FUNCTION.value,  # a machine's start/stop joins its HS's loop
-}
+#: what a bubble pulls into its loop; another bubble is never pulled in, because in a cascade the
+#: master and the slave are two loops that happen to be wired together
+_LOOP_MEMBER_CLASSES = frozenset(
+    {
+        NodeClass.PROCESS_SIGNAL_GENERATING_FUNCTION.value,
+        NodeClass.ACTUATING_FUNCTION.value,
+        NodeClass.ACTUATING_ELECTRICAL_FUNCTION.value,  # a machine's start/stop joins its HS's loop
+    }
+)
 _BUBBLE_LABEL = NodeClass.PROCESS_INSTRUMENTATION_FUNCTION.value
 _TAG_FIELDS = (
     "processInstrumentationFunctionCategory",
@@ -43,11 +47,15 @@ def assign_loop_tags(plant: nx.DiGraph[str]) -> None:
             continue
         loop_tag = plant.nodes[node_id]["tag"]
         variable = loop_tag[0] if loop_tag else None
-        members = [node_id, *plant.predecessors(node_id), *plant.successors(node_id)]
+        neighbours = [*plant.predecessors(node_id), *plant.successors(node_id)]
+        members = [node_id] + [
+            member
+            for member in neighbours
+            if plant.nodes[member]["node_class"] in _LOOP_MEMBER_CLASSES
+        ]
         for member in members:
-            if plant.nodes[member]["node_class"] in _LOOP_MEMBER_CLASSES:
-                plant.nodes[member]["loop_tag"] = loop_tag
-                plant.nodes[member]["measured_variable"] = variable
+            plant.nodes[member]["loop_tag"] = loop_tag
+            plant.nodes[member]["measured_variable"] = variable
 
 
 def find_carrier_sensors(conceptual: nx.MultiDiGraph[str]) -> dict[str, list[str]]:

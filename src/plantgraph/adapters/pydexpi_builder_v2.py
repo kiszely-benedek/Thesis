@@ -39,6 +39,7 @@ from plantgraph.adapters.pydexpi_builder_v2_lines import (
 from plantgraph.benchmark.v2.plan_models import (
     EquipmentSpec,
     InstrumentSpec,
+    LineRun,
     LineSpec,
     LinkSpec,
 )
@@ -113,19 +114,24 @@ class DexpiPlantBuilderV2:
             self._motor_driven.add(spec.node_id)
 
     def add_line(self, spec: LineSpec) -> None:
-        """Add one line: a `PipingNetworkSystem` with a single segment and its inline parts."""
+        """Add one line: a `PipingNetworkSystem` per run (two when the line has a spec break)."""
         section = self._section(spec.unit_no)
-        line_list = line_list_fields(spec.line_number)  # validate before anything is built
-        source_owner = self._line_end_owner(spec.src_id, spec, "src_id")
-        target_owner = self._line_end_owner(spec.dst_id, spec, "dst_id")
-        items = [create_line_item(item, spec.fluid_code) for item in spec.items]
-        for item_spec in spec.items:  # before anything is registered
+        for run in spec.runs():
+            self._add_run(run, spec.fluid_code, section)
+
+    def _add_run(self, run: LineRun, fluid_code: str, section: dexpi.PlantSection) -> None:
+        """One run: a system with a single segment and its inline parts."""
+        line_list = line_list_fields(run.line_number)  # validate before anything is built
+        source_owner = self._line_end_owner(run.src_id, run, "src_id")
+        target_owner = self._line_end_owner(run.dst_id, run, "dst_id")
+        items = [create_line_item(item, fluid_code) for item in run.items]
+        for item_spec in run.items:  # before anything is registered
             self._require_new_id(item_spec.node_id)
-        self._require_distinct_ids([item_spec.node_id for item_spec in spec.items])
+        self._require_distinct_ids([item_spec.node_id for item_spec in run.items])
         self._line_seq += 1
         system = build_line_system(
             f"{self.plant_id}-L{self._line_seq}",
-            spec,
+            fluid_code,
             section,
             line_list,
             items,
@@ -133,7 +139,7 @@ class DexpiPlantBuilderV2:
             self._line_connector(target_owner),
         )
         self._model.pipingNetworkSystems.append(system)
-        for item_spec, part in zip(spec.items, items, strict=True):
+        for item_spec, part in zip(run.items, items, strict=True):
             self._items[item_spec.node_id] = part
             self._item_classes[item_spec.node_id] = item_spec.node_class
 
@@ -174,25 +180,25 @@ class DexpiPlantBuilderV2:
     # ---- lines ----------------------------------------------------------------------------------
 
     def _line_end_owner(
-        self, node_id: str | None, spec: LineSpec, field: str
-    ) -> dexpi.Equipment | dexpi.PipeTee | None:
-        """The equipment or pipe tee at a line end; None for an open end."""
+        self, node_id: str | None, run: LineRun, field: str
+    ) -> dexpi.Equipment | dexpi.PipeTee | dexpi.PropertyBreak | None:
+        """The equipment, pipe tee or spec break at a line end; None for an open end."""
         if node_id is None:
             return None
         if node_id in self._equipment:
             return self._equipment[node_id]
         item = self._items.get(node_id)
-        if isinstance(item, dexpi.PipeTee):
+        if isinstance(item, dexpi.PipeTee | dexpi.PropertyBreak):
             return item
         raise ValueError(
-            f"line {spec.line_number!r}: {field} must name added equipment or a PipeTee on "
-            f"another line, got {node_id!r}"
+            f"line {run.line_number!r}: {field} must name added equipment or a PipeTee on "
+            f"another line (or the PropertyBreak this line continues from), got {node_id!r}"
         )
 
     def _line_connector(
-        self, owner: dexpi.Equipment | dexpi.PipeTee | None
-    ) -> dexpi.Nozzle | dexpi.PipeTee | None:
-        """Equipment gets a fresh nozzle for this line end; a tee is joined directly."""
+        self, owner: dexpi.Equipment | dexpi.PipeTee | dexpi.PropertyBreak | None
+    ) -> dexpi.Nozzle | dexpi.PipeTee | dexpi.PropertyBreak | None:
+        """Equipment gets a fresh nozzle for this line end; a tee or a break is joined directly."""
         if isinstance(owner, dexpi.Equipment):
             return self._new_nozzle(owner)
         return owner

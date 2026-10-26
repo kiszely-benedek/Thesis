@@ -28,9 +28,11 @@ from plantgraph.benchmark.v2.plan_models import (
     StreamKindV2,
 )
 from plantgraph.benchmark.v2.trim_context import LineStyle, TrimContext
+from plantgraph.benchmark.v2.vocabulary import LINE_SPECS
 from plantgraph.graph.schema import NodeClass, Relation
 
 _PSGF = NodeClass.PROCESS_SIGNAL_GENERATING_FUNCTION.value
+_BREAK = NodeClass.PROPERTY_BREAK.value
 
 
 class TrimPlan(BaseModel):
@@ -117,7 +119,14 @@ def main_line(
     run: tuple[LineItemSpec, ...],
     dst_id: str | None,
 ) -> LineSpec:
-    """The caller's main line around a trim's `run`, with the next line number of the unit."""
+    """The caller's main line around a trim's `run`, with the next line number of the unit.
+
+    A `PropertyBreak` in the run is a spec change (rule L20), so the stretch after it gets a new
+    line number whose spec is the next piping class (`_style_after_break`).
+    """
+    after_break = None
+    if any(part.node_class == _BREAK for part in run):
+        after_break = ctx.numbering.line_number(_style_after_break(style))
     return LineSpec(
         line_number=ctx.numbering.line_number(style),
         fluid_code=style.service,
@@ -125,7 +134,15 @@ def main_line(
         src_id=src_id,
         dst_id=dst_id,
         items=run,
+        line_number_after_break=after_break,
     )
+
+
+def _style_after_break(style: LineStyle) -> LineStyle:
+    """The next piping class in rating order (the last steps back): the spec always changes."""
+    index = LINE_SPECS.index(style.spec)
+    following = LINE_SPECS[index + 1] if index + 1 < len(LINE_SPECS) else LINE_SPECS[index - 1]
+    return style.model_copy(update={"spec": following})
 
 
 class TrimDraft:
