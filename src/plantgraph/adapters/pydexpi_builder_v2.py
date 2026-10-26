@@ -1,0 +1,328 @@
+"""Builds a real pyDEXPI `DexpiModel` from the v2 planner's specs (generator-v2-realism.md, V2-T4).
+
+The v2 backend of the `PlantBuilderV2` protocol (`benchmark/v2/plan_models.py`): every call adds
+pyDEXPI objects with explicit ids (pyDEXPI's default is `uuid4`, which would differ on every run
+and break "same seed, same graph"). A spec's `node_id` is the id of its DEXPI object, so the graph
+node ids equal the plan's ids. Helper objects (pipes, nozzles, signal lines) derive their ids from
+the spec ids or from a counter; planners must not use ids like `<plant_id>-L3`.
+
+Two V2-T5 constructs are refused with a message instead of being half-built: motor components
+(`has_motor` is accepted and ignored, it has no graph effect) and `ActuatingElectricalFunction`,
+`PropertyBreak` and `has_agitator` (these raise).
+"""
+
+from __future__ import annotations
+
+import datetime
+import importlib.metadata
+from typing import cast
+
+import pydexpi.dexpi_classes.pydantic_classes as dexpi
+
+from plantgraph.adapters.pydexpi_builder_v2_instruments import (
+    Instrument,
+    connect_signal,
+    create_actuating_system,
+    create_carrier,
+    create_instrument,
+)
+from plantgraph.adapters.pydexpi_builder_v2_lines import (
+    build_line_system,
+    create_line_item,
+    dexpi_class_named,
+    line_list_fields,
+)
+from plantgraph.benchmark.v2.plan_models import (
+    EquipmentSpec,
+    InstrumentSpec,
+    LineSpec,
+    LinkSpec,
+)
+from plantgraph.graph import schema
+from plantgraph.graph.schema import NodeClass, Relation
+
+#: Fixed export timestamp, so two runs of one plan give byte-identical JSON (as in the v1 builder).
+_FIXED_EXPORT_TIME = datetime.datetime(2026, 1, 1)
+
+
+class DexpiPlantBuilderV2:
+    """The pyDEXPI implementation of `PlantBuilderV2`: builds a `DexpiModel`."""
+
+    def __init__(self, plant_id: str) -> None:
+        self.plant_id = plant_id
+        meta_data = dexpi.MetaData(id=f"{plant_id}-meta", drawingNumber=plant_id)
+        self._model = dexpi.ConceptualModel(id=f"{plant_id}-cm", metaData=meta_data)
+        self._plant = dexpi.ProcessPlant(
+            id=f"{plant_id}-plant", processPlantIdentificationCode=plant_id
+        )
+        self._model.plantStructureItems.append(self._plant)
+        self._sections: dict[int, dexpi.PlantSection] = {}
+        self._equipment: dict[str, dexpi.Equipment] = {}
+        self._items: dict[str, dexpi.PipingComponent] = {}  # inline parts, by plan id
+        self._item_classes: dict[str, str] = {}
+        self._instruments: dict[str, Instrument] = {}
+        self._instrument_specs: dict[str, InstrumentSpec] = {}
+        self._sensors_with_bubble: set[str] = set()
+        self._actuated_valves: set[str] = set()
+        self._nozzle_seq: dict[str, int] = {}
+        self._line_seq = 0
+
+    @property
+    def backend_version(self) -> str:
+        """The installed pyDEXPI version; ends up in `GenerationRecordV2.pydexpi_version`."""
+        return importlib.metadata.version("pydexpi")
+
+    # ---- PlantBuilderV2 protocol ----------------------------------------------------------------
+
+    def add_section(self, unit_no: int, name: str) -> None:
+        """Add a `PlantSection` (a process unit) under the `ProcessPlant`."""
+        if unit_no in self._sections:
+            raise ValueError(f"unit {unit_no} was added twice")
+        section = dexpi.PlantSection(
+            id=f"{self.plant_id}-u{unit_no}",
+            plantSectionIdentificationCode=str(unit_no),
+            plantSectionName=name,
+            parentStructure=self._plant,
+        )
+        self._model.plantStructureItems.append(section)
+        self._sections[unit_no] = section
+
+    def add_equipment(self, spec: EquipmentSpec) -> None:
+        """Add one piece of equipment under its `PlantSection`, into `taggedPlantItems`."""
+        self._require_new_id(spec.node_id)
+        if spec.node_class not in schema.EQUIPMENT_CLASSES:
+            raise ValueError(
+                f"expected an equipment class for {spec.node_id!r}, got {spec.node_class!r}"
+            )
+        # `has_motor` is not built here: the motor component is V2-T5, and pyDEXPI drops it
+        # from the graph anyway
+        prefix, _, sequence = spec.tag.partition("-")
+        equipment = cast(
+            dexpi.Equipment,
+            dexpi_class_named(spec.node_class)(
+                id=spec.node_id,
+                tagName=spec.tag,
+                tagNamePrefix=prefix,
+                tagNameSequenceNumber=sequence,
+                parentStructure=self._section(spec.unit_no),
+            ),
+        )
+        self._model.taggedPlantItems.append(equipment)
+        self._equipment[spec.node_id] = equipment
+
+    def add_line(self, spec: LineSpec) -> None:
+        """Add one line: a `PipingNetworkSystem` with a single segment and its inline parts."""
+        section = self._section(spec.unit_no)
+        line_list = line_list_fields(spec.line_number)  # validate before anything is built
+        source_owner = self._line_end_owner(spec.src_id, spec, "src_id")
+        target_owner = self._line_end_owner(spec.dst_id, spec, "dst_id")
+        items = [create_line_item(item, spec.fluid_code) for item in spec.items]
+        for item_spec in spec.items:  # before anything is registered
+            self._require_new_id(item_spec.node_id)
+        self._require_distinct_ids([item_spec.node_id for item_spec in spec.items])
+        self._line_seq += 1
+        system = build_line_system(
+            f"{self.plant_id}-L{self._line_seq}",
+            spec,
+            section,
+            line_list,
+            items,
+            self._line_connector(source_owner),
+            self._line_connector(target_owner),
+        )
+        self._model.pipingNetworkSystems.append(system)
+        for item_spec, part in zip(spec.items, items, strict=True):
+            self._items[item_spec.node_id] = part
+            self._item_classes[item_spec.node_id] = item_spec.node_class
+
+    def add_instrument(self, spec: InstrumentSpec) -> None:
+        """Add one sensor, bubble or actuator; it joins the model through `add_link`."""
+        self._require_new_id(spec.node_id)
+        instrument = create_instrument(spec, self._section(spec.unit_no))
+        self._instruments[spec.node_id] = instrument
+        self._instrument_specs[spec.node_id] = spec
+        if isinstance(instrument, dexpi.ProcessInstrumentationFunction):
+            self._model.processInstrumentationFunctions.append(instrument)
+
+    def add_link(self, spec: LinkSpec) -> None:
+        """Add a sensing, a signal or an actuation; both ends must exist already."""
+        if spec.relation is Relation.MEASURED_BY:
+            self._link_measurement(spec)
+        elif spec.relation is Relation.SEND_SIGNAL_TO:
+            self._link_signal(spec)
+        elif spec.relation is Relation.CONTROL:
+            self._link_control(spec)
+        else:
+            raise ValueError(f"{spec.relation.value} links are built in V2-T5, not yet supported")
+
+    def build(self) -> dexpi.DexpiModel:
+        """Seal the model: wrap lone sensors, check nothing dangles, return the `DexpiModel`."""
+        self._seal()
+        return dexpi.DexpiModel(
+            id=f"{self.plant_id}-model",
+            conceptualModel=self._model,
+            exportDateTime=_FIXED_EXPORT_TIME,
+            originatingSystemName="plantgraph",
+            originatingSystemVendorName="plantgraph",
+            originatingSystemVersion=importlib.metadata.version("plantgraph"),
+        )
+
+    # ---- lines ----------------------------------------------------------------------------------
+
+    def _line_end_owner(
+        self, node_id: str | None, spec: LineSpec, field: str
+    ) -> dexpi.Equipment | dexpi.PipeTee | None:
+        """The equipment or pipe tee at a line end; None for an open end."""
+        if node_id is None:
+            return None
+        if node_id in self._equipment:
+            return self._equipment[node_id]
+        item = self._items.get(node_id)
+        if isinstance(item, dexpi.PipeTee):
+            return item
+        raise ValueError(
+            f"line {spec.line_number!r}: {field} must name added equipment or a PipeTee on "
+            f"another line, got {node_id!r}"
+        )
+
+    def _line_connector(
+        self, owner: dexpi.Equipment | dexpi.PipeTee | None
+    ) -> dexpi.Nozzle | dexpi.PipeTee | None:
+        """Equipment gets a fresh nozzle for this line end; a tee is joined directly."""
+        if isinstance(owner, dexpi.Equipment):
+            return self._new_nozzle(owner)
+        return owner
+
+    def _new_nozzle(self, owner: dexpi.Equipment) -> dexpi.Nozzle:
+        """A nozzle (a flanged connection on a vessel) for one line end or one sensor."""
+        seq = self._nozzle_seq.get(owner.id, 0) + 1
+        self._nozzle_seq[owner.id] = seq
+        nozzle = dexpi.Nozzle(id=f"{owner.id}-nz{seq}", subTagName=f"N{seq}")
+        owner.nozzles.append(nozzle)
+        return nozzle
+
+    # ---- links ----------------------------------------------------------------------------------
+
+    def _link_measurement(self, spec: LinkSpec) -> None:
+        """`measured_by`: the sensor's `sensingLocation` is the sensed thing.
+
+        Equipment is sensed through a nozzle of its own (pyDEXPI keeps the edge only for a
+        nozzle with one connection); a valve, flow element or flange is the location itself.
+        """
+        sensor = self._sensor(spec.target_id)
+        if sensor.sensingLocation is not None:
+            raise ValueError(f"sensor {spec.target_id!r} already has a sensing location")
+        if spec.source_id in self._equipment:
+            location: dexpi.SensingLocation = self._new_nozzle(self._equipment[spec.source_id])
+        elif spec.source_id in self._items:
+            location = self._items[spec.source_id]
+        else:
+            raise ValueError(
+                f"measured_by link: expected added equipment or an inline part as the sensed "
+                f"thing, got {spec.source_id!r}"
+            )
+        sensor.sensingLocation = location
+
+    def _link_signal(self, spec: LinkSpec) -> None:
+        """`send_signal_to`: a sensor feeds a bubble, a bubble feeds an actuator or a bubble."""
+        source = self._instrument(spec.source_id, "send_signal_to link source")
+        target = self._instrument(spec.target_id, "send_signal_to link target")
+        if spec.source_id in self._sensors_with_bubble:
+            raise ValueError(f"sensor {spec.source_id!r} already feeds a bubble")
+        self._check_loop_tag(spec)
+        connect_signal(source, target)
+        if isinstance(source, dexpi.ProcessSignalGeneratingFunction):
+            self._sensors_with_bubble.add(spec.source_id)
+
+    def _check_loop_tag(self, spec: LinkSpec) -> None:
+        """A sensor or actuator wired to a bubble must carry that bubble's tag as its loop tag.
+
+        The adapter derives `loop_tag` from the bubble; the plan states it too, so a mismatch
+        would make the DEXPI graph differ from the oracle without any error.
+        """
+        source = self._instrument_specs[spec.source_id]
+        target = self._instrument_specs[spec.target_id]
+        if source.node_class == NodeClass.PROCESS_SIGNAL_GENERATING_FUNCTION.value:
+            bubble, member = target, source
+        elif target.node_class == NodeClass.ACTUATING_FUNCTION.value:
+            bubble, member = source, target
+        else:
+            return  # bubble to bubble (a cascade): no single loop tag to compare
+        if member.loop_tag != bubble.tag:
+            raise ValueError(
+                f"{member.node_id!r} is wired to {bubble.tag!r} but states loop tag "
+                f"{member.loop_tag!r}; expected {bubble.tag!r}"
+            )
+
+    def _link_control(self, spec: LinkSpec) -> None:
+        """`control`: an actuator operates a valve body; builds the actuating system."""
+        actuator = self._instruments.get(spec.source_id)
+        if not isinstance(actuator, dexpi.ActuatingFunction):
+            raise ValueError(
+                f"control link: expected an ActuatingFunction as the source, got {spec.source_id!r}"
+                " (machine control through an ActuatingElectricalFunction is V2-T5)"
+            )
+        valve_class = self._item_classes.get(spec.target_id)
+        if valve_class not in schema.CONTROL_VALVE_BODY_CLASSES:
+            raise ValueError(
+                f"control link: expected a control valve body as the target, got "
+                f"{spec.target_id!r} ({valve_class})"
+            )
+        if spec.target_id in self._actuated_valves or actuator.systems is not None:
+            raise ValueError(
+                f"control link {spec.source_id!r} -> {spec.target_id!r}: already actuated"
+            )
+        valve = cast(dexpi.OperatedValve, self._items[spec.target_id])
+        self._model.actuatingSystems.append(create_actuating_system(actuator, valve, valve_class))
+        self._actuated_valves.add(spec.target_id)
+
+    # ---- lookups and checks ---------------------------------------------------------------------
+
+    def _section(self, unit_no: int) -> dexpi.PlantSection:
+        try:
+            return self._sections[unit_no]
+        except KeyError:
+            raise ValueError(f"unit {unit_no} was never added via add_section") from None
+
+    def _instrument(self, node_id: str, context: str) -> Instrument:
+        try:
+            return self._instruments[node_id]
+        except KeyError:
+            raise ValueError(f"{context}: {node_id!r} was not added via add_instrument") from None
+
+    def _sensor(self, node_id: str) -> dexpi.ProcessSignalGeneratingFunction:
+        instrument = self._instrument(node_id, "measured_by link target")
+        if not isinstance(instrument, dexpi.ProcessSignalGeneratingFunction):
+            raise ValueError(f"measured_by link: expected a sensor as the target, got {node_id!r}")
+        return instrument
+
+    def _require_new_id(self, node_id: str) -> None:
+        taken = self._equipment.keys() | self._items.keys() | self._instruments.keys()
+        if node_id in taken:
+            raise ValueError(f"node id {node_id!r} added twice")
+
+    def _require_distinct_ids(self, node_ids: list[str]) -> None:
+        if len(set(node_ids)) != len(node_ids):
+            raise ValueError(f"a line lists the same node id twice: {sorted(node_ids)}")
+
+    def _seal(self) -> None:
+        """Wrap sensors that have no bubble; refuse sensors with no location, loose actuators."""
+        for node_id, instrument in self._instruments.items():
+            if isinstance(instrument, dexpi.ProcessSignalGeneratingFunction):
+                self._seal_sensor(node_id, instrument)
+            elif isinstance(instrument, dexpi.ActuatingFunction) and instrument.systems is None:
+                raise ValueError(f"actuator {node_id!r} operates no valve; expected a control link")
+
+    def _seal_sensor(self, node_id: str, sensor: dexpi.ProcessSignalGeneratingFunction) -> None:
+        if sensor.sensingLocation is None:
+            raise ValueError(f"sensor {node_id!r} senses nothing; expected a measured_by link")
+        if node_id in self._sensors_with_bubble:
+            return
+        spec = self._instrument_specs[node_id]
+        if spec.loop_tag != spec.tag:
+            raise ValueError(
+                f"local instrument {node_id!r} is its own loop: expected loop tag {spec.tag!r}, "
+                f"got {spec.loop_tag!r}"
+            )
+        self._model.processInstrumentationFunctions.append(create_carrier(sensor))
+        self._sensors_with_bubble.add(node_id)
