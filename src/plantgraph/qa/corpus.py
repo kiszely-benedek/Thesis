@@ -175,7 +175,7 @@ def _rebuild_synthetic_artifacts(result: IngestResult) -> CorpusArtifacts:
 
 def _rebuild_proteus_artifacts(result: IngestResult) -> CorpusArtifacts:
     path = Path(result.config["source_file"])
-    corpus = build_proteus_corpus(path)
+    corpus = build_proteus_corpus(path, result.config.get("vocabulary", "v1"))
     load_plan = build_load_plan(
         result.corpus_id,
         corpus.localized_sheets,

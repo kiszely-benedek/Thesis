@@ -40,7 +40,11 @@ from plantgraph.adapters.pydexpi_adapter import (
     map_conceptual_graph,
 )
 from plantgraph.adapters.pydexpi_builder import generate_plant
-from plantgraph.adapters.pydexpi_proteus_import import ImportedSheet, import_proteus_sheet
+from plantgraph.adapters.pydexpi_proteus_import import (
+    ImportedSheet,
+    VocabularyName,
+    import_proteus_sheet,
+)
 from plantgraph.benchmark.generator_models import GeneratorConfig
 from plantgraph.benchmark.models import SplitManifest
 from plantgraph.benchmark.sheet_graph import SheetGraph
@@ -126,16 +130,18 @@ def build_synthetic_corpus(
     )
 
 
-def build_proteus_corpus(path: Path) -> ProteusCorpus:
+def build_proteus_corpus(path: Path, vocabulary: VocabularyName = "v1") -> ProteusCorpus:
     """Import one Proteus XML drawing and resolve it — the one shared Proteus path.
 
     `run_proteus` calls this once per run; `qa/corpus.py` calls it again with
     the same source path to rebuild a corpus from a saved `ingest.json`
-    (design `qa-system.md` §18.1 item 1).
+    (design `qa-system.md` §18.1 item 1). `vocabulary` is the import's class set (`"v1"`/`"v2"`).
     """
     stage_seconds: dict[str, float] = {}
 
-    imported, stage_seconds["import"] = _timed(lambda: import_proteus_sheet(path))
+    imported, stage_seconds["import"] = _timed(
+        lambda: import_proteus_sheet(path, vocabulary=vocabulary)
+    )
     (localized_sheets, occurrence_map), stage_seconds["localize"] = _timed(
         lambda: localize([imported.sheet])
     )
@@ -217,15 +223,17 @@ def run_proteus(
     settings: Neo4jSettings | None,
     store_profile: StoreProfile = "occurrence",
     measurement: StoreMeasurement = NO_MEASUREMENT,
+    vocabulary: VocabularyName = "v1",
 ) -> IngestResult:
     """Import one Proteus XML drawing as a single-sheet corpus, resolve, and (optionally) load it.
 
     There is no `check` argument here: a lone imported file has no answer key
     to check the resolver against (design §1) — `import_proteus_sheet`'s own
     `ImportReport` is this path's accuracy report instead, and it is coverage
-    against the file's own classes, not a resolver score.
+    against the file's own classes, not a resolver score. The `vocabulary` is written into the
+    run's `config` only for `"v2"`, so a v1 record stays byte-identical to what it was.
     """
-    corpus = build_proteus_corpus(path)
+    corpus = build_proteus_corpus(path, vocabulary)
     stage_seconds = dict(corpus.stage_seconds)
 
     plan, stage_seconds["plan"] = _timed(
@@ -238,7 +246,7 @@ def run_proteus(
 
     return IngestResult(
         corpus_id=corpus_id,
-        config={"source_file": str(path)},
+        config=_proteus_config(path, vocabulary),
         counts=compute_ingest_counts(corpus.localized_sheets, corpus.resolution, plan),
         store_profile=store_profile,
         layer_counts=compute_layer_counts(plan),
@@ -253,6 +261,14 @@ def run_proteus(
 
 
 # --- steps shared by both entry points -----------------------------------------------------
+
+
+def _proteus_config(path: Path, vocabulary: VocabularyName) -> dict[str, str]:
+    """The import record: the source file, plus the vocabulary when it is not the v1 default."""
+    config = {"source_file": str(path)}
+    if vocabulary != "v1":
+        config["vocabulary"] = vocabulary
+    return config
 
 
 def generate_plant_graph(generator_config: GeneratorConfig) -> nx.DiGraph[str]:

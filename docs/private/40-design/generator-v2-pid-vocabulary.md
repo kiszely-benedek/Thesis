@@ -166,6 +166,13 @@ Constants:
 
 `VISIBLE_NODE_PROPERTIES` and `VISIBLE_EDGE_PROPERTIES` do not change.
 
+**Addendum (T6): `PropertyBreak` is not a `measured_by` source.** The `measured_by` row above said
+equipment and all piping; a probe on pyDEXPI 1.2.0 shows `PropertyBreak` is not a `SensingLocation` (its MRO
+is `PipingNetworkSegmentItem` and the piping-node mixins), and `ProcessSignalGeneratingFunction(sensingLocation=
+PropertyBreak(...))` is rejected by pydantic validation. A sensor cannot be located on a break, so
+`schema.RELATION_ENDPOINTS[MEASURED_BY]` now lists `PIPING_CLASSES - BREAK_CLASSES`; `send_to` and everything else keep
+it (`test_a_property_break_can_be_sent_through_but_not_sensed`).
+
 ## 4. Importing a real DEXPI file (recommended and kept: cheap, S)
 
 - `topology_node_class(label, vocabulary: frozenset[str] = V1_IMPORTABLE_CLASSES)` keeps today's behaviour.

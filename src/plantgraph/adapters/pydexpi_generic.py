@@ -119,19 +119,21 @@ def _checked(labels: tuple[str, ...]) -> tuple[str, ...]:
 
 def prepare_generic(
     conceptual: nx.MultiDiGraph[str],
+    vocabulary: frozenset[str] = schema.V1_IMPORTABLE_CLASSES,
 ) -> tuple[nx.MultiDiGraph[str], dict[str, GenericInfo]]:
     """Relabel every node that would otherwise be dropped to `GenericItem`, on a copy (§3.1 rule 1).
 
     Schema-unknown classes thus reach `map_conceptual_graph` as an already known
     class (`GenericItem` is in `schema.IMPORTABLE_CLASSES`), instead of being
     dropped by it. Structural classes (`PlantSection`, `ProcessPlant`) are
-    deliberately left untouched — the adapter processes those differently.
+    deliberately left untouched — the adapter processes those differently. `vocabulary` is the
+    set of classes that count as known (v1 by default): under v2 more classes stay themselves.
     """
     prepared = conceptual.copy()
     infos: dict[str, GenericInfo] = {}
     for node_id, attrs in conceptual.nodes(data=True):
         label = str(attrs.get("label"))
-        if label in _STRUCTURE_LABELS or topology_node_class(label) is not None:
+        if label in _STRUCTURE_LABELS or topology_node_class(label, vocabulary) is not None:
             continue
         infos[node_id] = classify(label)
         prepared.nodes[node_id]["label"] = schema.NodeClass.GENERIC_ITEM.value

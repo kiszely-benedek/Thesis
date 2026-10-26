@@ -25,6 +25,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import get_args
 
+from plantgraph.adapters.pydexpi_proteus_import import VocabularyName
 from plantgraph.benchmark.generator_models import GeneratorConfig
 from plantgraph.benchmark.split_models import ConnectorLabelDetail, SplitConfig
 from plantgraph.ingest.headline import (
@@ -193,6 +194,7 @@ def _run_proteus(args: argparse.Namespace, settings: Neo4jSettings | None) -> In
         settings=settings,
         store_profile=args.store_profile,
         measurement=_measurement_from_flags(args),
+        vocabulary=args.vocabulary,
     )
 
 
@@ -351,6 +353,15 @@ def _add_proteus_subparser(subparsers: argparse._SubParsersAction[argparse.Argum
     parser = subparsers.add_parser("proteus", help="import one Proteus XML drawing")
     parser.add_argument("path", type=Path, help="the Proteus XML file")
     parser.add_argument("--corpus-id", default=None, help="defaults to the sanitized file stem")
+    parser.add_argument(
+        "--vocabulary",
+        choices=list(get_args(VocabularyName)),
+        default="v1",
+        help=(
+            "which pyDEXPI classes keep their own name (ADR-0058): 'v1' = the original 16, "
+            "'v2' = the grown allowlist; use a separate --corpus-id for v2 (e.g. EX01v2)"
+        ),
+    )
     parser.add_argument("--no-neo4j", action="store_true", help="skip the Neo4j load entirely")
     _add_store_profile_argument(parser)
     _add_measurement_arguments(parser)

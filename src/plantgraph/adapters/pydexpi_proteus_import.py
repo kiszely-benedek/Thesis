@@ -42,7 +42,11 @@ from plantgraph.adapters.pydexpi_generic import (
 )
 from plantgraph.adapters.pydexpi_io import load_proteus
 from plantgraph.benchmark.sheet_graph import SheetGraph
+from plantgraph.graph import schema
 from plantgraph.graph.validation import SchemaViolation, validate_sheet_graph
+
+#: which set of classes keeps its own name on import; the key of `schema.IMPORT_VOCABULARIES`
+VocabularyName = Literal["v1", "v2"]
 
 
 class ImportReport(BaseModel):
@@ -79,7 +83,11 @@ class ImportedSheet:
 
 
 def import_proteus_sheet(
-    path: Path, *, sheet_id: str | None = None, plant_id: str | None = None
+    path: Path,
+    *,
+    sheet_id: str | None = None,
+    plant_id: str | None = None,
+    vocabulary: VocabularyName = "v1",
 ) -> ImportedSheet:
     """Load a Proteus XML file, and produce a single `SheetGraph`, in the schema's `DiGraph` form.
 
@@ -91,7 +99,12 @@ def import_proteus_sheet(
     The returned sheet has no off-page connectors (`sheet.connectors == []`):
     translating DEXPI connector references into schema classes is still an open
     question (§11), and EX01 is a single sheet, so it doesn't need this yet.
+
+    `vocabulary` picks the classes that keep their own name: `"v1"` (default) is the original
+    16, `"v2"` the grown allowlist (ADR-0058), so a `ReciprocatingPump` stays one instead of
+    becoming a `GenericItem`. Anything outside the chosen set still falls back as before.
     """
+    known_classes = schema.IMPORT_VOCABULARIES[vocabulary]
     model = load_proteus(path.parent, path.name)
     conceptual = _load_conceptual_graph(model)
 
@@ -101,8 +114,10 @@ def import_proteus_sheet(
 
     # generic fallback (ADR-0016, §3.1): relabels schema-unknown classes to GenericItem
     # on a copy, before the adapter would otherwise drop them
-    prepared, generic_infos = prepare_generic(conceptual)
-    plant, conversion = map_conceptual_graph(prepared, resolved_plant_id, stream_kind={})
+    prepared, generic_infos = prepare_generic(conceptual, known_classes)
+    plant, conversion = map_conceptual_graph(
+        prepared, resolved_plant_id, stream_kind={}, vocabulary=known_classes
+    )
     annotate_generic(plant, generic_infos, conceptual)
     _related_to_added, related_to_collapsed = add_related_to_edges(plant, conceptual)
 

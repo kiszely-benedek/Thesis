@@ -211,6 +211,12 @@ V1_IMPORTABLE_CLASSES: frozenset[str] = frozenset(
     }
 )
 
+#: the importable vocabularies by the name the `--vocabulary` flag and the import record use
+IMPORT_VOCABULARIES: dict[str, frozenset[str]] = {
+    "v1": V1_IMPORTABLE_CLASSES,
+    "v2": V2_IMPORTABLE_CLASSES,
+}
+
 # every NodeClass name v1 had: the importable ones plus the 4 structural classes. The CLASS_NAME
 # answer prompt lists them, so its text stays byte-identical on v1 corpora while the enum grows.
 V1_NODE_CLASSES: frozenset[str] = V1_IMPORTABLE_CLASSES | frozenset(
@@ -265,8 +271,10 @@ RELATION_ENDPOINTS: dict[Relation, tuple[frozenset[str], frozenset[str]]] = {
         _ACTUATORS | _FLOW_IN_SIGNAL | _GENERIC_ITEM,
         CONTROL_VALVE_BODY_CLASSES | EQUIPMENT_CLASSES | _FLOW_OUT_SIGNAL | _GENERIC_ITEM,
     ),
+    # a `PropertyBreak` is not a pyDEXPI `SensingLocation`, so no sensor can be located on one
+    # (probed on pyDEXPI 1.2.0, design pid-vocabulary section 3.4): it is sent through, never sensed
     Relation.MEASURED_BY: (
-        EQUIPMENT_CLASSES | PIPING_CLASSES | _FLOW_IN_SIGNAL | _GENERIC_ITEM,
+        EQUIPMENT_CLASSES | (PIPING_CLASSES - BREAK_CLASSES) | _FLOW_IN_SIGNAL | _GENERIC_ITEM,
         frozenset({NodeClass.PROCESS_SIGNAL_GENERATING_FUNCTION.value})
         | _FLOW_OUT_SIGNAL
         | _GENERIC_ITEM,

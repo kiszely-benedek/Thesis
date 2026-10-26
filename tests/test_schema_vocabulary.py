@@ -269,7 +269,16 @@ def test_send_to_and_measured_by_cover_equipment_and_all_piping() -> None:
     measured_from, _ = schema.RELATION_ENDPOINTS[schema.Relation.MEASURED_BY]
     everything = schema.EQUIPMENT_CLASSES | schema.PIPING_CLASSES
     assert everything <= send_from & send_to
-    assert everything <= measured_from
+    assert everything - schema.BREAK_CLASSES <= measured_from
+
+
+def test_a_property_break_can_be_sent_through_but_not_sensed() -> None:
+    """pyDEXPI's `sensingLocation` takes a `SensingLocation`, and `PropertyBreak` is not one."""
+    assert not issubclass(pydexpi_classes.PropertyBreak, pydexpi_classes.SensingLocation)
+    measured_from, _ = schema.RELATION_ENDPOINTS[schema.Relation.MEASURED_BY]
+    send_from, _ = schema.RELATION_ENDPOINTS[schema.Relation.SEND_TO]
+    assert "PropertyBreak" not in measured_from
+    assert "PropertyBreak" in send_from
 
 
 # ---- the table writer --------------------------------------------------------------------------
