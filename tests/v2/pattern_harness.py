@@ -42,7 +42,7 @@ class PatternHarness(TrimHarness):
             1, random.Random(seed), config.trims, conventions, decks, self.ctx.numbering
         )
         self.pctx = PatternContext(
-            self.ctx, config.instruments, config.density, config.patterns, style
+            self.ctx, config.instruments, config.density, config.patterns, style, config.flowsheet
         )
 
     def build(self, instance: PatternInstance) -> PatternInstance:

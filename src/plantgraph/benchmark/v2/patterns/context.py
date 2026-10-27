@@ -3,15 +3,17 @@
 `TrimContext` (one per process unit) carries the random stream, numbering and class decks the trims
 use. A pattern also reads three more groups of declared knobs, which are not part of
 `TrimConvention`: how loops are shaped (`InstrumentConvention`), how many instruments there are
-(`InstrumentDensity`) and the pattern shapes (`PatternKnobs`).
+(`InstrumentDensity`) and the pattern shapes (`PatternKnobs`). The flowsheet knobs ride along for
+the one a pattern reads (`p_side_draw`).
 """
 
 from __future__ import annotations
 
 import random
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from plantgraph.benchmark.v2.config import (
+    FlowsheetKnobs,
     GeneratorConfigV2,
     InstrumentConvention,
     InstrumentDensity,
@@ -31,6 +33,7 @@ class PatternContext:
     density: InstrumentDensity
     knobs: PatternKnobs
     style: LineStyle
+    flowsheet: FlowsheetKnobs = field(default_factory=FlowsheetKnobs)  # `p_side_draw` is read here
 
     @classmethod
     def from_config(
@@ -45,7 +48,9 @@ class PatternContext:
     ) -> PatternContext:
         """The context of unit `unit_no`, its knobs read from `config`."""
         trim = TrimContext(unit_no, rng, config.trims, conventions, decks, numbering)
-        return cls(trim, config.instruments, config.density, config.patterns, style)
+        return cls(
+            trim, config.instruments, config.density, config.patterns, style, config.flowsheet
+        )
 
     @property
     def unit_no(self) -> int:

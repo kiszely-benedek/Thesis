@@ -162,7 +162,10 @@ def test_taken_out_ports_are_no_longer_open_and_the_last_ones_are() -> None:
 
 def test_the_registry_builds_every_listed_pattern_and_names_the_known_ones_on_a_miss() -> None:
     h = PatternHarness()
-    assert available_patterns() == frozenset({"U4", "U6", "U7"})
+    assert available_patterns() == frozenset({"U1", "U2", "U3", "U4", "U5", "U6", "U7", "U8"})
     assert build_pattern("U7", h.pctx).pattern == "U7"
-    with pytest.raises(ValueError, match=r"no pattern 'U1'.*\['U4', 'U6', 'U7'\]"):
-        build_pattern("U1", h.pctx)
+    # U10 (the desalter) is never generated, so it stays a good example of an unknown id
+    with pytest.raises(
+        ValueError, match=r"no pattern 'U10'.*\['U1', 'U2', 'U3', 'U4', 'U5', 'U6', 'U7', 'U8'\]"
+    ):
+        build_pattern("U10", h.pctx)

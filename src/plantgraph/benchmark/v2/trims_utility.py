@@ -32,7 +32,8 @@ STEAM_SERVICES = frozenset({"LPS", "MPS"})
 _HOT_SERVICES = frozenset({"LPS", "MPS", "CD"})
 
 
-def _utility_style(style: LineStyle, service: str) -> LineStyle:
+def utility_style(style: LineStyle, service: str) -> LineStyle:
+    """The line style of a utility line: its service code, hot services insulated."""
     insulation = "H" if service in _HOT_SERVICES else "N"
     return style.model_copy(update={"service": service, "insulation": insulation})
 
@@ -51,19 +52,21 @@ def utility_supply_stub(
     service: str,
     exchanger_id: str,
     relief_tee: bool = False,
+    inline: tuple[LineItemSpec, ...] = (),
 ) -> TrimPlan:
-    """6.13: `open start -> block valve -> [gauge tap] -> utility inlet nozzle` (C4).
+    """6.13: `open start -> block valve -> [inline] -> [gauge tap] -> utility inlet nozzle` (C4).
 
     Cooling water gets a thermometer tap with even odds; steam always gets a pressure gauge (L15).
-    `relief_tee` adds a `PipeTee` for an atmospheric steam relief (port `relief_tee`).
+    `relief_tee` adds a `PipeTee` for an atmospheric steam relief (port `relief_tee`). `inline`
+    holds the parts of a control valve the caller plans; the station's branches are the caller's.
     """
     _require(service, COOLING_WATER_SERVICES | STEAM_SERVICES, "a supply service")
-    stub_style = _utility_style(style, service)
+    stub_style = utility_style(style, service)
     draft = TrimDraft(ctx, stub_style)
     block = draft.dealt_part("block_valve", "utility_supply_block")
     tap_tee = tee_part(draft, "supply_tap_tee") if _wants_supply_tap(ctx, service) else None
     relief = tee_part(draft, "steam_relief_tee") if relief_tee else None
-    parts = [block, *[tee for tee in (tap_tee, relief) if tee is not None]]
+    parts = [block, *inline, *[tee for tee in (tap_tee, relief) if tee is not None]]
     draft.line(None, parts, exchanger_id, StreamKindV2.UTILITY_STUB)
     if tap_tee is not None:
         _supply_gauge(draft, tap_tee, service)
@@ -95,8 +98,8 @@ def utility_return_stub(
     """
     _require(service, COOLING_WATER_SERVICES | STEAM_SERVICES, "a supply service")
     if service in COOLING_WATER_SERVICES:
-        return _cooling_water_return(ctx, _utility_style(style, "CWR"), exchanger_id)
-    return _condensate_return(ctx, _utility_style(style, "CD"), exchanger_id)
+        return _cooling_water_return(ctx, utility_style(style, "CWR"), exchanger_id)
+    return _condensate_return(ctx, utility_style(style, "CD"), exchanger_id)
 
 
 def _cooling_water_return(ctx: TrimContext, style: LineStyle, exchanger_id: str) -> TrimPlan:
@@ -197,9 +200,12 @@ def exchanger_vent_drain(ctx: TrimContext, style: LineStyle, exchanger_id: str) 
 # ---- small steam trims ------------------------------------------------------------------------
 
 
-def steam_stub_relief(ctx: TrimContext, style: LineStyle, tee_id: str) -> TrimPlan:
-    """A PSV on a steam supply stub that discharges to the atmosphere (open end)."""
-    draft = TrimDraft(ctx, _utility_style(style, "LPS"))
+def steam_stub_relief(
+    ctx: TrimContext, style: LineStyle, tee_id: str, service: str = "LPS"
+) -> TrimPlan:
+    """A PSV on a steam supply stub (of steam `service`) that discharges to the atmosphere."""
+    _require(service, STEAM_SERVICES, "a steam service")
+    draft = TrimDraft(ctx, utility_style(style, service))
     valve = draft.dealt_part("vessel_psv", "steam_stub_psv")
     draft.line(tee_id, [valve], None, style=draft.style.branch())
     return draft.finish(psv=valve)

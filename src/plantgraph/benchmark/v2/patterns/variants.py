@@ -1,4 +1,4 @@
-"""The variant decks of the T9 patterns (pid-vocabulary 13.3) and the label a variant gets.
+"""The variant decks of the patterns (pid-vocabulary 13.3) and the label a variant gets.
 
 Each axis of a pattern that has alternatives is a deck (`deck.py`): every card is dealt once per
 cycle, and a primary option appears twice (Rule V, pid-vocabulary 13.1). Nothing here is a
@@ -27,6 +27,26 @@ PATTERN_DECKS: dict[str, dict[str, int]] = {
     "U4.manifold": {"GateValve": 2, "PlugValve": 1},
     "U4.tank_service": {"flammable": 1, "non_flammable": 1},
     "U6.vessel": {"PressureVessel": 2, "GravitationalSeparator": 1},
+    "U1.vacuum": {"none": 2, "air_ejector": 1, "liquid_ring": 1},
+    "U1.condenser": {"TubularHeatExchanger": 2, "AirCoolingSystem": 1},
+    "U1.feed_preheater": {"absent": 1, "present": 1},
+    "U1.reflux_sight_glass": {"absent": 1, "present": 1},
+    "U5.exchanger_count": {"2": 1, "3": 1, "4": 1},
+    "U5.exchanger": {"TubularHeatExchanger": 2, "PlateHeatExchanger": 1},
+    "U5.trim_heater": {"absent": 1, "ElectricHeater": 1},
+    "U5.utility": {"steam": 1, "cooling_water": 1},
+    "U2.compressor": {
+        "CentrifugalCompressor": 2,
+        "ReciprocatingCompressor": 1,
+        "RotaryCompressor": 1,
+    },
+    "U2.aftercooler": {"TubularHeatExchanger": 2, "AirCoolingSystem": 1},
+    "U2.suction_filter": {"absent": 1, "present": 1},
+    "U2.discharge_ko_drum": {"absent": 1, "present": 1},
+    "U3.reactor": {"plain": 2, "agitated": 1},
+    "U8.mixer": {"StaticMixer": 2, "RotaryMixer": 1, "EjectorPump": 1},
+    "U8.agitated_vessel": {"absent": 1, "present": 1},
+    "U8.additive_injection": {"plain": 1, "InLineMixer": 1},
 }
 
 PUMP_SET_GROUP_DECK = "pump_set.group"
@@ -62,7 +82,7 @@ def pattern_deck_variants(
 def all_deck_variants(
     knobs: PatternKnobs | None = None, trims: TrimConvention | None = None
 ) -> dict[str, tuple[str, ...]]:
-    """Every deck a T9 pattern deals from: the role decks of the trims and the pattern decks."""
+    """Every deck a pattern deals from: the role decks of the trims and the pattern decks."""
     return {**role_deck_variants(), **pattern_deck_variants(knobs, trims)}
 
 

@@ -7,11 +7,14 @@ main line (`close_run`) before it combines the plans whose branches hang on it.
 
 from __future__ import annotations
 
+from plantgraph.benchmark.v2.instrument_draft import parsed_tag_of, part_of
+from plantgraph.benchmark.v2.instruments import transmitter_with_bubble
 from plantgraph.benchmark.v2.patterns.context import PatternContext
 from plantgraph.benchmark.v2.plan_models import EquipmentSpec, LineSpec, StreamKindV2
 from plantgraph.benchmark.v2.trim_context import LineStyle
-from plantgraph.benchmark.v2.trim_plan import TrimDraft, TrimPlan, main_line
+from plantgraph.benchmark.v2.trim_plan import TrimDraft, TrimPlan, combine, main_line
 from plantgraph.benchmark.v2.trims_extra import pressure_tap, tee_part, temperature_tap
+from plantgraph.benchmark.v2.trims_valves import flow_element
 from plantgraph.benchmark.v2.vocabulary import SpareNaming, spare_members
 
 
@@ -61,6 +64,16 @@ def tee_plan(ctx: PatternContext, role: str) -> TrimPlan:
     draft = TrimDraft(ctx.trim, ctx.style)
     tee = tee_part(draft, role)
     return draft.finish(run=(tee,), tee=tee)
+
+
+def block_valve_plan(ctx: PatternContext, role: str) -> TrimPlan:
+    """A block valve, gate or butterfly after the deck, as an open run."""
+    return part_plan(ctx, ctx.trim.deal_class("block_valve"), role)
+
+
+def run_of(*plans: TrimPlan) -> TrimPlan:
+    """The plans joined in flow order, ports dropped: their parts form one line's run."""
+    return combine(*(quiet(plan) for plan in plans))
 
 
 def local_gauge(ctx: PatternContext, letters: str, location_id: str, role: str) -> TrimPlan:
@@ -134,3 +147,31 @@ def with_stream_kinds(plan: TrimPlan) -> TrimPlan:
         for number in line.line_numbers:
             kinds.setdefault(number, StreamKindV2.PROCESS)
     return plan.model_copy(update={"stream_kinds": kinds})
+
+
+def thermometer_line(
+    ctx: PatternContext,
+    src_id: str,
+    dst_id: str,
+    role: str,
+    style: LineStyle | None = None,
+) -> TrimPlan:
+    """A line `src -> tee -> dst` with a local `TI` on the tee: the "TI on every exchanger outlet".
+
+    The tee is `<role>_tee` and the thermometer `<role>_ti`; the tee's port is `tee`.
+    """
+    tee = tee_plan(ctx, f"{role}_tee")
+    main = close_run(ctx, tee, src_id, dst_id, style=style)
+    return combine(main, thermometer_tap(ctx, tee.ports["tee"], f"{role}_ti"))
+
+
+def flow_indicator_plan(ctx: PatternContext) -> TrimPlan:
+    """A liquid flow element inline (the open `run`) with `FT -> FI` on it, both of one number.
+
+    The transmitter takes the element's number, as a totaliser does (`FE-12050`, `FT-12050`).
+    """
+    element = flow_element(ctx.trim, ctx.style, "liquid")
+    part = part_of(element, "element")
+    number = parsed_tag_of(part, ctx.unit_no).sequence
+    monitor = transmitter_with_bubble(ctx.trim, ctx.style, part.node_id, "FT", "FI", number)
+    return combine(element, quiet(monitor))

@@ -8,19 +8,29 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
+from plantgraph.benchmark.v2.patterns.blending import build_blending
+from plantgraph.benchmark.v2.patterns.column import build_distillation_column
+from plantgraph.benchmark.v2.patterns.compression import build_compressor_stage
 from plantgraph.benchmark.v2.patterns.context import PatternContext
 from plantgraph.benchmark.v2.patterns.filter_package import build_filter_package
+from plantgraph.benchmark.v2.patterns.heat import build_exchanger_train
 from plantgraph.benchmark.v2.patterns.ports import PatternInstance
+from plantgraph.benchmark.v2.patterns.reaction import build_reactor_system
 from plantgraph.benchmark.v2.patterns.separation import build_flash_drum
 from plantgraph.benchmark.v2.patterns.storage import build_tank_farm
 
 PatternBuilder = Callable[[PatternContext], PatternInstance]
 
-#: pattern id -> builder; U1, U2, U3, U5 and U8 follow in later tasks, U10 is not generated
+#: pattern id -> builder; U10 is not generated
 PATTERN_BUILDERS: dict[str, PatternBuilder] = {
+    "U1": build_distillation_column,
+    "U2": build_compressor_stage,
+    "U3": build_reactor_system,
     "U4": build_tank_farm,
+    "U5": build_exchanger_train,
     "U6": build_flash_drum,
     "U7": build_filter_package,
+    "U8": build_blending,
 }
 
 

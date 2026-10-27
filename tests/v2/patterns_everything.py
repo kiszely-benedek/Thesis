@@ -20,15 +20,16 @@ from plantgraph.benchmark.v2.patterns.pump_set import build_pump_set
 from plantgraph.benchmark.v2.patterns.separation import build_flash_drum
 from plantgraph.benchmark.v2.patterns.storage import build_tank_farm
 
-_ALL_ON_DENSITY = InstrumentDensity(
+ALL_ON_DENSITY = InstrumentDensity(
     p_optional_instrument=1.0,
     p_point_level_switch=1.0,
     p_bearing_temperature=1.0,
     p_indicator_alarm=1.0,
+    p_motor_current=1.0,
 )
 
 
-def _all_on(ctx: PatternContext) -> PatternContext:
+def all_on(ctx: PatternContext) -> PatternContext:
     """The context with every optional instrument and trim switched on."""
     ctx.trim.config = TrimConvention(
         p_min_flow=1.0,
@@ -44,7 +45,7 @@ def _all_on(ctx: PatternContext) -> PatternContext:
         p_flush_connection=1.0,
     )
     return dataclasses.replace(
-        ctx, instruments=InstrumentConvention(p_cascade=1.0), density=_ALL_ON_DENSITY
+        ctx, instruments=InstrumentConvention(p_cascade=1.0), density=ALL_ON_DENSITY
     )
 
 
@@ -55,7 +56,7 @@ def build_pattern_plant(h: PatternHarness) -> list[PatternInstance]:
     of each class follow; they are part of the plant but not pattern instances of their own.
     """
     instances: list[PatternInstance] = []
-    for ctx in (h.pctx, _all_on(h.pctx)):
+    for ctx in (h.pctx, all_on(h.pctx)):
         for _ in range(3):  # three: the deck of the vessel and the tank count cycle once
             for build in (build_tank_farm, build_flash_drum, build_filter_package):
                 instance = build(ctx)

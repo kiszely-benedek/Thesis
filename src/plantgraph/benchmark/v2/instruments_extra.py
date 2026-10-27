@@ -9,6 +9,7 @@ to be combined with the plan of the part it instruments.
 | `split_range_loop` | one controller, two valves (off by default: `p_split_range` is 0) |
 | `machine_start_stop` | `HS -> AEF -> machine`, plus a running-status `YI` on the machine |
 | `speed_control_loop` | `xT -> xIC -> AEF -> machine` (variable-speed drive) |
+| `ratio_speed_loop` | `FFT, FT -> FFIC -> AEF -> machine` (ratio set by pump speed) |
 | `point_level_alarm` | `LSH -> LAH` or `LSL -> LAL` |
 | `drain_pot_instruments` | level loop, `CT -> CSHH -> AF -> XV` tube-leak trip, `CT -> CI` |
 | `multivariable_controller` | `TT, PT -> UC` on a reactor |
@@ -137,6 +138,37 @@ def speed_control_loop(
     draft.feed(controller, actuator)
     draft.operate(actuator, machine_id)
     return draft.finish(transmitter=sensor, controller=controller, actuator=actuator)
+
+
+def ratio_speed_loop(
+    ctx: TrimContext,
+    style: LineStyle,
+    wild_element_id: str,
+    element_id: str,
+    machine_id: str,
+    number: int | None = None,
+) -> TrimPlan:
+    """`FFT, FT -> FFIC -> AEF -> machine`: a ratio controller sets a dosing pump's speed.
+
+    The same loop as `ratio_control_loop`, with the pump's variable-speed drive in place of the
+    control valve. `number` is the loop number (a fresh one by default).
+    """
+    draft = InstrumentDraft(ctx, style)
+    loop_number = draft.new_number() if number is None else number
+    sensor, controller = draft.sensor_and_bubble(
+        "FT", "FFIC", loop_number, element_id, "ratio_speed", controller=True
+    )
+    controller_tag = draft.tag("FFIC", loop_number)
+    wild = draft.sensor(
+        draft.tag("FFT", loop_number), controller_tag, wild_element_id, "ratio_wild"
+    )
+    draft.feed(wild, controller)
+    actuator = draft.actuator_node(controller_tag, "speed_actuator", True)
+    draft.feed(controller, actuator)
+    draft.operate(actuator, machine_id)
+    return draft.finish(
+        transmitter=sensor, transmitter_wild=wild, controller=controller, actuator=actuator
+    )
 
 
 # ---- level switches, drain pot, reactor ------------------------------------------------------

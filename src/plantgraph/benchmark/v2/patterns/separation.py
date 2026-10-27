@@ -66,7 +66,7 @@ def build_flash_drum(ctx: PatternContext) -> PatternInstance:
     drum_plan = equipment_plan(ctx, vessel_class, "V", "flash_drum")
     drum = drum_plan.ports["equipment"]
     pumps = build_pump_set(
-        ctx, drum, "CentrifugalPump", "liquid_pump", header=_liquid_outlet_header(ctx, drum)
+        ctx, drum, "CentrifugalPump", "liquid_pump", header=liquid_outlet_header(ctx, drum)
     )
     feed = _feed_plan(ctx, drum)
     vapour = _vapour_plan(ctx, drum, vessel_class)
@@ -118,22 +118,31 @@ def _vapour_plan(ctx: PatternContext, drum: str, vessel_class: str) -> TrimPlan:
     return close_run(ctx, combine(quiet(trims), quiet(valve), quiet(loop)), drum, None, style=style)
 
 
-def _liquid_outlet_header(ctx: PatternContext, drum: str) -> TrimPlan:
-    """The valve that holds the drum level, on the pump discharge; a flow cascade with `p_cascade`.
+def liquid_outlet_header(
+    ctx: PatternContext, vessel_id: str, allow_cascade: bool = True
+) -> TrimPlan:
+    """The valve that holds the vessel level, on the pump discharge; cascade with `p_cascade`.
 
     Cascade: the level controller sets the set point of a flow controller (level over flow).
-    The body is a letdown valve (angle body: the liquid drops pressure across it).
+    The body is a letdown valve (angle body: the liquid drops pressure across it). The plan is the
+    open `run` of the discharge header (valve, then battery limit); used by U6 and the column U1.
     """
+    control = level_control_valve(ctx, vessel_id, allow_cascade)
+    return quiet(combine(quiet(control), quiet(battery_limit(ctx.trim, ctx.style))))
+
+
+def level_control_valve(
+    ctx: PatternContext, vessel_id: str, allow_cascade: bool = True
+) -> TrimPlan:
+    """The letdown valve and its level loop (a flow cascade with `p_cascade`), as an open `run`."""
     style = ctx.style
-    if ctx.chance(ctx.instruments.p_cascade):
+    if allow_cascade and ctx.chance(ctx.instruments.p_cascade):
         element = flow_element(ctx.trim, style, "liquid")
         valve = control_valve(ctx.trim, style, "F", letdown=True)
         loop = flow_control_loop(ctx.trim, style, element, valve)
-        control = combine(loop, cascade_master(ctx.trim, style, loop, "L", drum))
-    else:
-        valve = control_valve(ctx.trim, style, "L", letdown=True)
-        control = combine(valve, control_loop(ctx.trim, style, part_of(valve, "body"), drum))
-    return quiet(combine(quiet(control), quiet(battery_limit(ctx.trim, style))))
+        return combine(loop, cascade_master(ctx.trim, style, loop, "L", vessel_id))
+    valve = control_valve(ctx.trim, style, "L", letdown=True)
+    return combine(valve, control_loop(ctx.trim, style, part_of(valve, "body"), vessel_id))
 
 
 def _drum_instruments(ctx: PatternContext, drum: str) -> TrimPlan:
