@@ -21,6 +21,8 @@ class AttemptSettings:
     primer: bool
     #: The call-time budget written into a `TIMED_OUT` row's trace; the meter enforces it.
     question_deadline_s: float | None
+    #: The corpus's own CLASS_NAME vocabulary; `None` keeps the pinned v1 list in the prompt.
+    class_names: tuple[str, ...] | None = None
 
     @classmethod
     def from_config(cls, config: RunConfig) -> AttemptSettings:

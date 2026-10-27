@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from collections.abc import Callable
+from collections.abc import Callable, Collection
 from pathlib import Path
 from typing import Any
 
@@ -49,9 +49,9 @@ _ANSWER_FORMAT_PLACEHOLDER = "<<ANSWER_FORMAT_INSTRUCTION>>"
 
 #: One fixed sentence per `AnswerType`, telling the model the shape `answer`
 #: must take. `CLASS_NAME` is not listed here: its instruction is generated
-#: from `schema.V1_NODE_CLASSES` (`_answer_format_instruction`): the v1 vocabulary, pinned so the
-#: prompt does not change when the schema grows (ADR-0057). Corpora with a larger vocabulary get
-#: their own list in a later task (ADR-0058, Q3).
+#: (`_answer_format_instruction`) from the corpus's own class list or, when the corpus gives none,
+#: from `schema.V1_NODE_CLASSES`: the v1 vocabulary, pinned so the prompt does not change when
+#: the schema grows (ADR-0057, ADR-0058 Q3).
 _FIXED_FORMAT_INSTRUCTIONS: dict[AnswerType, str] = {
     AnswerType.UNIT_ID: 'Answer with the unit identifier as a string, for example "12".',
     AnswerType.TAG: "Answer with a single tag, exactly as printed on the diagram.",
@@ -71,10 +71,16 @@ _FIXED_FORMAT_INSTRUCTIONS: dict[AnswerType, str] = {
 }
 
 
-def _answer_format_instruction(answer_type: AnswerType) -> str:
-    """The fixed, per-`AnswerType` sentence telling the model how to shape `answer` (§8)."""
+def _answer_format_instruction(
+    answer_type: AnswerType, class_names: Collection[str] | None = None
+) -> str:
+    """The per-`AnswerType` sentence telling the model how to shape `answer` (§8).
+
+    `class_names` is the corpus's CLASS_NAME vocabulary (`class_vocabulary.py`); `None` means the
+    pinned v1 list.
+    """
     if answer_type is AnswerType.CLASS_NAME:
-        names = ", ".join(sorted(V1_NODE_CLASSES))
+        names = ", ".join(sorted(V1_NODE_CLASSES if class_names is None else class_names))
         return f"Answer with one of these class names, exactly as written: {names}."
     return _FIXED_FORMAT_INSTRUCTIONS[answer_type]
 
@@ -96,19 +102,21 @@ def render_final_answer_request(
     question_text: str,
     answer_type: AnswerType,
     primer: bool = False,
+    class_names: Collection[str] | None = None,
 ) -> ChatRequest:
     """Build the one shared final-answer request every strategy ends with (§8; ADR-0013 point 6).
 
     Only `context` differs between strategies: the instruction, the question
     and the answer-format rule all come from the same template and the same
     `answer_type`, so the JSON-output contract never depends on which
-    strategy produced the context. `primer` adds the P&ID reading primer (`primer.py`).
+    strategy produced the context. `primer` adds the P&ID reading primer (`primer.py`);
+    `class_names` replaces the v1 CLASS_NAME list on a corpus with its own vocabulary.
     """
     rendered = (
         fill_primer_slot(template_text(), primer=primer)
         .replace(_CONTEXT_PLACEHOLDER, context)
         .replace(_QUESTION_PLACEHOLDER, question_text)
-        .replace(_ANSWER_FORMAT_PLACEHOLDER, _answer_format_instruction(answer_type))
+        .replace(_ANSWER_FORMAT_PLACEHOLDER, _answer_format_instruction(answer_type, class_names))
     )
     return ChatRequest(
         pin=pin,
@@ -300,6 +308,7 @@ def run_final_step(
     wall: ContextWall | None,
     send: SendChatRequest,
     primer: bool = False,
+    class_names: Collection[str] | None = None,
 ) -> FinalStepResult:
     """Run the one shared final-answer step every strategy ends with (§7, §8; ADR-0013 point 6).
 
@@ -316,6 +325,7 @@ def run_final_step(
         question_text=question_text,
         answer_type=answer_type,
         primer=primer,
+        class_names=class_names,
     )
     prompt_chars = len(request.messages[0].content)
     decision = check_fit(prompt_chars, wall)

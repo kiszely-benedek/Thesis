@@ -13,8 +13,8 @@ Design `sealed-test-run.md` section 5 and 7.2. In three steps, with no network a
 
 Writes `questions.jsonl`, `splits.json` (question id -> `dev-old | dev-new | held-out |
 held-out-wording`) and `availability.json` into `--out`; the pool goes to `--pool-out`.
-Only test corpora (`H<sheets>`) are accepted: the held-out families must never be
-generated on a dev corpus (`D<sheets>`).
+Only test corpora are accepted (`H<sheets>`, or `H<sheets>g2` and `H<sheets>g2d<percent>` for the
+v2 generator): the held-out families must never be generated on a dev corpus (`D<sheets>`).
 """
 
 from __future__ import annotations
@@ -48,7 +48,9 @@ from plantgraph.qa.scoring import score_answer
 
 SPLITS_FILENAME = "splits.json"
 WORDING_SPLIT = "held-out-wording"
-_TEST_CORPUS_ID = re.compile(r"H\d+")
+#: `H100` (v1), `H100g2` (v2 at the preset duplication rate) and `H100g2d0` / `H100g2d50` (v2 with
+#: another duplication rate, in percent); see `ingest.headline_v2.headline_corpus_id_v2`.
+_TEST_CORPUS_ID = re.compile(r"H\d+(g2(d\d+)?)?")
 
 
 class SealedSet(BaseModel):
@@ -82,15 +84,15 @@ class SealedAvailability(BaseModel):
 
 
 def require_test_corpus(corpus_id: str) -> None:
-    """Refuse anything that is not a test corpus (`H<sheets>`), the dev ones included.
+    """Refuse anything that is not a test corpus id (v1 or v2 form), the dev ones included.
 
     Raises:
         ValueError: the id does not look like a test corpus id.
     """
     if not _TEST_CORPUS_ID.fullmatch(corpus_id):
         raise ValueError(
-            f"expected a test corpus id like 'H100' (held-out families are never generated on "
-            f"a dev corpus), found {corpus_id!r}"
+            f"expected a test corpus id like 'H100' or 'H100g2' (held-out families are never "
+            f"generated on a dev corpus), found {corpus_id!r}"
         )
 
 

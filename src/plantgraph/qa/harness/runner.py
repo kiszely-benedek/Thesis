@@ -16,6 +16,7 @@ from pathlib import Path
 import httpx2
 
 from plantgraph.infra.environment import collect_run_environment
+from plantgraph.qa.class_vocabulary import answer_class_names
 from plantgraph.qa.corpus import load_corpus_artifacts
 from plantgraph.qa.graph_view import NetworkxGraphView
 from plantgraph.qa.harness.attempt import LoadedCorpus
@@ -215,6 +216,7 @@ def _load_corpus(
         ),
         record=build_corpus_record(artifacts, ingest_path, corpus_roles[corpus_id]),
         cypher=cypher_source_factory(artifacts.load_plan) if cypher_profile is not None else None,
+        class_names=answer_class_names(artifacts.generator_config, artifacts.load_plan),
     )
 
 

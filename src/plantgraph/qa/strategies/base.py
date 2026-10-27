@@ -7,6 +7,7 @@ type: `Strategy.retrieve` takes a plain string, so a strategy cannot read
 
 from __future__ import annotations
 
+from collections.abc import Collection
 from typing import Protocol
 
 from plantgraph.llm.models import ContextWall, ModelPin, QuestionDeadline, RequestTimedOut
@@ -56,12 +57,14 @@ def answer_question(
     wall: ContextWall | None,
     send: SendChatRequest,
     primer: bool = False,
+    class_names: Collection[str] | None = None,
 ) -> FinalStepResult:
     """Retrieve with `strategy`, then run the shared final step (§7, §8).
 
     `question.answer_type` is used only by the final step, to word the answer
-    format; retrieval receives `question.text` alone. `primer` is passed on to the final
-    step. A failed retrieval returns its `failure` outcome and makes no call. A final call
+    format; retrieval receives `question.text` alone. `primer` and `class_names` (the corpus's
+    CLASS_NAME vocabulary, `None` for the v1 list) are passed on to the final step.
+    A failed retrieval returns its `failure` outcome and makes no call. A final call
     that runs out of time returns `TIMED_OUT` with the retrieval trace kept, so the row can
     still be diagnosed (`trace["timed_out"]` says which limit was hit).
     """
@@ -85,6 +88,7 @@ def answer_question(
             wall=wall,
             send=send,
             primer=primer,
+            class_names=class_names,
         )
     except (RequestTimedOut, QuestionDeadline) as error:
         cause = "request" if isinstance(error, RequestTimedOut) else "deadline"

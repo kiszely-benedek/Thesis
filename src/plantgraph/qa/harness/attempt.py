@@ -56,6 +56,8 @@ class LoadedCorpus:
     record: CorpusRecord
     #: The checked database for CypherRAG; `None` when the run does not include it.
     cypher: CypherSource | None
+    #: The corpus's own CLASS_NAME vocabulary (v2 corpora); `None` keeps the pinned v1 list.
+    class_names: tuple[str, ...] | None = None
 
 
 @dataclass(frozen=True)
@@ -137,7 +139,7 @@ def attempt(
 
     `meter` belongs to this item alone.
     """
-    settings = AttemptSettings.from_config(config)
+    settings = replace(AttemptSettings.from_config(config), class_names=corpus.class_names)
     answer = run_unscored(item.strategy, item.question, settings, client, meter)
     if isinstance(answer, ProviderError):
         return answer
@@ -196,6 +198,7 @@ def _answer_unscored(
             wall=settings.context_wall,
             send=send,
             primer=settings.primer,
+            class_names=settings.class_names,
         )
     except ProviderError as error:
         return error

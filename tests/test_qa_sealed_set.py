@@ -10,6 +10,7 @@ import pytest
 
 import qa_toy_plant_dev2
 import qa_toy_plant_heldout
+from plantgraph.ingest.headline_v2 import TEST_SEEDS_V2, headline_corpus_id_v2
 from plantgraph.qa.models import AnswerType, Question, QuestionFamily
 from plantgraph.qa.questions import sealed_set
 from plantgraph.qa.questions.availability import AvailabilityReport, BinTargets, KBin
@@ -61,12 +62,49 @@ def test_the_pool_holds_every_heldout_family() -> None:
         assert set(report.candidates[family]) == set(KBin)
 
 
-@pytest.mark.parametrize("corpus_id", ["H100", "H1000"])
+@pytest.mark.parametrize(
+    "corpus_id",
+    [
+        "H100",
+        "H1000",
+        "H1g2",
+        "H3g2",
+        "H10g2",
+        "H30g2",
+        "H100g2",
+        "H100g2d0",
+        "H100g2d50",
+        "H1000g2",
+    ],
+)
 def test_a_test_corpus_is_accepted(corpus_id: str) -> None:
     require_test_corpus(corpus_id)
 
 
-@pytest.mark.parametrize("corpus_id", ["D100", "D1000", "toy", "H", "XH100"])
+def test_every_registered_v2_test_corpus_id_is_accepted() -> None:
+    """The ids `headline_corpus_id_v2` gives the registered test seeds all pass the check."""
+    for sheets, seed in TEST_SEEDS_V2.items():
+        require_test_corpus(headline_corpus_id_v2(sheets, seed))
+    for rate in (0.0, 0.5):
+        require_test_corpus(headline_corpus_id_v2(100, TEST_SEEDS_V2[100], rate))
+
+
+@pytest.mark.parametrize(
+    "corpus_id",
+    [
+        "D100",
+        "D1000",
+        "toy",
+        "H",
+        "XH100",
+        "D100g2",
+        "X100g2s2",
+        "H100g2s2",
+        "Hg2",
+        "H100g2d",
+        "H100d50",
+    ],
+)
 def test_anything_but_a_test_corpus_is_refused(corpus_id: str) -> None:
     with pytest.raises(ValueError, match="test corpus"):
         require_test_corpus(corpus_id)

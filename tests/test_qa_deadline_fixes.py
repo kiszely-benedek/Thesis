@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from pathlib import Path
+from types import SimpleNamespace
 from typing import Any
 
 import pytest
@@ -183,7 +184,8 @@ def config(tmp_path: Path) -> RunConfig:
 def timed_out(config: RunConfig) -> Answered:
     meter = UsageMeter(SpendGuard(None), deadline_s=_DEADLINE_S)
     item = WorkItem(_AgentLikeStrategy(meter), _question(), 0)  # type: ignore[arg-type]
-    outcome = attempt(item, config, None, _HangingClient(), meter)  # type: ignore[arg-type]
+    corpus = SimpleNamespace(class_names=None)  # only the CLASS_NAME list is read on a timeout
+    outcome = attempt(item, config, corpus, _HangingClient(), meter)  # type: ignore[arg-type]
     assert isinstance(outcome, Answered)
     return outcome
 
