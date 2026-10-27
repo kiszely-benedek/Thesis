@@ -33,8 +33,6 @@ from plantgraph.qa.exp0001.report_models import (
 
 #: Q4's non-inferiority margin: ContextRAG may be at most 5 points worse on one sheet (X2).
 NON_INFERIORITY_MARGIN = -0.05
-#: Sizes where the effort sensitivity (X6) is measured.
-EFFORT_SIZES = ("H1", "H10")
 
 WORDING = {
     "X1": "The single-sheet advantage of ContextRAG shrinks with corpus size",
@@ -47,14 +45,36 @@ WORDING = {
 
 
 @dataclass(frozen=True)
+class Edition:
+    """What differs between the v1 and v2 report: the sizes X6 reads, and X3's stage C text."""
+
+    #: Sizes where the effort sensitivity (X6) is measured; empty when X6 was not run at all.
+    effort_sizes: tuple[str, ...] = ("H1", "H10")
+    #: When set, X6 is reported as not run, with this text (v2: ADR-0060 point 4).
+    x6_not_run: str | None = None
+    #: Appended to X3's "no flip" text unless the largest size is H100 (stage C already ran).
+    stage_c_note: str = "stage C becomes eligible"
+
+
+V1_EDITION = Edition()
+V2_EDITION = Edition(
+    effort_sizes=(),
+    x6_not_run="not run on v2 (ADR-0060), see EXP-0001",
+    stage_c_note="stage C not applicable on v2 (ADR-0060)",
+)
+
+#: Measured ContextRAG prompt lengths of v1's two big corpora (`_results.md` PROMPT-04).
+V1_BIG_PROMPTS = (("H100", 1_649_451), ("H1000", 16_747_117))
+
+
+@dataclass(frozen=True)
 class WallSettings:
-    """What X5 needs besides the measured calls: the model's window and the two big prompts."""
+    """What X5 needs besides the measured calls: the model's window and the big prompts."""
 
     #: Luna's `max_prompt_tokens` from the listing re-read on the run day (922,000 on 2026-10-10).
     max_prompt_tokens: int = 922_000
-    #: Measured ContextRAG prompt lengths (`_results.md` PROMPT-04); never called at these sizes.
-    h100_chars: int = 1_649_451
-    h1000_chars: int = 16_747_117
+    #: (corpus id, prompt chars) of corpora too big to call; X5 says whether each fits the window.
+    big_prompts: tuple[tuple[str, int], ...] = V1_BIG_PROMPTS
 
 
 @dataclass(frozen=True)
@@ -70,6 +90,7 @@ class ClaimInputs:
     #: Per-call chars/token ratios of every ContextRAG-high call.
     ratios: Sequence[float]
     wall: WallSettings
+    edition: Edition = V1_EDITION
 
 
 def _verdict(claim: str, value: str, verdict: Verdict) -> ClaimVerdict:
@@ -125,10 +146,10 @@ def claim_x2(deltas: Sequence[PairedDelta], smallest: str) -> ClaimVerdict:
 
 
 def _nominal_sheets(corpus_id: str) -> int:
-    """The sheet count in a corpus id such as `H30` (the design's nominal size)."""
-    match = re.fullmatch(r"H(\d+)", corpus_id)
+    """The sheet count in a corpus id such as `H30` or `H30g2` (the design's nominal size)."""
+    match = re.fullmatch(r"H(\d+)(?:g2)?", corpus_id)
     if match is None:
-        raise ValueError(f"expected a corpus id like 'H30', found {corpus_id!r}")
+        raise ValueError(f"expected a corpus id like 'H30' or 'H30g2', found {corpus_id!r}")
     return int(match.group(1))
 
 
@@ -147,7 +168,7 @@ def claim_x3(inputs: ClaimInputs) -> ClaimVerdict:
     if flip is None:
         text = f"no accuracy flip up to {_nominal_sheets(bounds[-1][0])} sheets"
         if bounds[-1][0] != "H100":
-            text += "; stage C becomes eligible"
+            text += f"; {inputs.edition.stage_c_note}"
         return _verdict("X3", text, "REPORTED")
     if previous is None:
         return _verdict("X3", f"s_acc = {flip}, the smallest measured size", "REPORTED")
@@ -209,7 +230,7 @@ def wall_figures(inputs: ClaimInputs) -> WallFigures | str:
 
 
 def claim_x5(inputs: ClaimInputs) -> ClaimVerdict:
-    """Chars per token, chars per sheet, the wall in sheets, and whether H100 and H1000 fit."""
+    """Chars per token, chars per sheet, the wall in sheets, and whether the big corpora fit."""
     figures = wall_figures(inputs)
     if isinstance(figures, str):
         return _not_run("X5", figures)
@@ -219,7 +240,7 @@ def claim_x5(inputs: ClaimInputs) -> ClaimVerdict:
         f"c = {figures.chars_per_sheet:,.0f} chars/sheet",
         f"W = {figures.wall_sheets:,.0f} sheets (window {limit:,} prompt tokens)",
     ]
-    for name, chars in (("H100", inputs.wall.h100_chars), ("H1000", inputs.wall.h1000_chars)):
+    for name, chars in inputs.wall.big_prompts:
         fits = fits_in_window(chars, figures.chars_per_token, limit)
         tokens = chars / figures.chars_per_token
         verdict = "fits" if fits else "does not fit"
@@ -227,10 +248,12 @@ def claim_x5(inputs: ClaimInputs) -> ClaimVerdict:
     return _verdict("X5", "; ".join(parts), "REPORTED")
 
 
-def claim_x6(deltas: Sequence[PairedDelta]) -> ClaimVerdict:
+def claim_x6(deltas: Sequence[PairedDelta], edition: Edition = V1_EDITION) -> ClaimVerdict:
     """Accuracy and cost difference of ContextRAG-low against -high, where both ran."""
+    if edition.x6_not_run is not None:
+        return _verdict("X6", edition.x6_not_run, "NOT_RUN")
     parts = []
-    for corpus_id in EFFORT_SIZES:
+    for corpus_id in edition.effort_sizes:
         accuracy = _pick_delta(deltas, corpus_id, SCOPE_ALL, CTX_LOW, CTX_HIGH, "acc@120")
         cost = _pick_delta(deltas, corpus_id, SCOPE_ALL, CTX_LOW, CTX_HIGH, "cost_usd")
         if accuracy is not None and cost is not None:
@@ -252,5 +275,5 @@ def all_claims(inputs: ClaimInputs) -> list[ClaimVerdict]:
         claim_x3(inputs),
         claim_x4(inputs),
         claim_x5(inputs),
-        claim_x6(inputs.deltas),
+        claim_x6(inputs.deltas, inputs.edition),
     ]

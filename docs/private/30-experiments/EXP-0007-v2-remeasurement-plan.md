@@ -215,6 +215,9 @@ Outputs go to `data/runs/exp0007/{r1,r2}/`. Each run note goes to `30-experiment
   - **at most 92 per size** (23 families × 4; FIRST_MEETING_POINT unavailable);
   - v1 had 70 / 87 / 95 / 96 including FIRST_MEETING_POINT 0 / 1 / 4 / 4 (`data/runs/exp0001/questions/*`);
   - drawn once and hashed into `E7.sha256` before any call.
+- **Deferred (user, 2026-10-27, ADR-0060 status):** the ContextRAG arm `E7-CTXH-<c>` is not run for now and has
+  no script; the report runs without it (X1, X2, X5 read "not run"). It is built only when the user asks. R4 and R5
+  run once, at the frozen system named in `E7.system` (F1, or a tuned system after the dev work).
 - **Arms:** `E7-CTXH-<c>` (context_rag, `pin_agent_luna_final_high`), `E7-CYP-<c>`, `E7-AG-<c>`, and cascade_v3
   as an offline join. **No ctx-low** (ADR-0060 4B). No EX01.
 - **Claims:**

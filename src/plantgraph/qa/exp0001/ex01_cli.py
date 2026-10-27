@@ -1,4 +1,6 @@
-"""`python -m plantgraph.qa.exp0001 ex01 | ex01-review | ex01-tally | report` (design §11).
+"""The `python -m plantgraph.qa.exp0001` commands (design §11; the last two serve EXP-0007).
+
+Commands: ex01, ex01-review, ex01-tally, report, prompt-size, duplication-report.
 
 **Paid calls are off unless `--allow-paid-calls` is typed**, and then `--cap` is required. Without
 the flag the run reads only the response caches and stops at the first cache miss.
@@ -12,6 +14,10 @@ from pathlib import Path
 
 from plantgraph.llm.models import CacheMiss
 from plantgraph.qa.chatpid_qa import DEFAULT_PATH
+from plantgraph.qa.exp0001.duplication_report import (
+    add_duplication_arguments,
+    duplication_command,
+)
 from plantgraph.qa.exp0001.ex01_arms import ARM_DEFINITIONS
 from plantgraph.qa.exp0001.ex01_review import (
     KEY_NAME,
@@ -24,6 +30,7 @@ from plantgraph.qa.exp0001.ex01_review import (
 )
 from plantgraph.qa.exp0001.ex01_runner import Ex01Settings, load_ex01_questions, run_ex01
 from plantgraph.qa.exp0001.ex01_store import Ex01RunDir
+from plantgraph.qa.exp0001.prompt_size import add_prompt_size_arguments, prompt_size_command
 from plantgraph.qa.exp0001.report_cli import add_report_arguments, report_command
 
 _DATA = Path("data") / "runs" / "exp0001"
@@ -42,6 +49,12 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     _add_out_dir(tally_command)
     add_report_arguments(
         commands.add_parser("report", help="the EXP-0001 report over the stored runs")
+    )
+    add_prompt_size_arguments(
+        commands.add_parser("prompt-size", help="ContextRAG's prompt size per corpus (no call)")
+    )
+    add_duplication_arguments(
+        commands.add_parser("duplication-report", help="cascade_v3 at d0 / d25 / d50, paired")
     )
     return parser.parse_args(argv)
 
@@ -72,6 +85,10 @@ def main(argv: list[str] | None = None) -> None:
         _cmd_review(args)
     elif args.command == "report":
         report_command(args)
+    elif args.command == "prompt-size":
+        prompt_size_command(args)
+    elif args.command == "duplication-report":
+        duplication_command(args)
     else:
         _cmd_tally(args)
 

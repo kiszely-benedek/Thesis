@@ -1,7 +1,7 @@
 ---
 adr: 0060
 title: Re-measure on v2 with F1 identified by an unchanged system-side path set plus byte-identical replays, one freeze commit for R4 and R5, ContextRAG at high effort only, caps written from a pilot before the first call
-status: proposed
+status: accepted
 date: 2026-10-27
 supersedes: none. Applies ADR-0053 (sealed protocol) to R5 and ADR-0054 (ladder protocol) to R4 on v2 corpora, with the deviations named here. Replaces, for v2 runs only, ADR-0053 decision 5's allowed-paths diff by the check in point 1. Settles ADR-0054 decision 5 (stage C) for v2 as not applicable. ADR-0028 (rate 0.25, required d0/d50 points), ADR-0029, ADR-0035, ADR-0038, ADR-0045, ADR-0057 Q2–Q5, ADR-0058 point 5 and ADR-0059 carry over unchanged.
 design: 30-experiments/EXP-0007-v2-remeasurement-plan.md
@@ -112,3 +112,43 @@ the five remaining held-out families.
 - **Revisit if:** a replay is not byte-identical; Luna's listing differs on the run day; the pilot correction
   exceeds 3.0; the ContextRAG smoke at H30g2 bills above $0.25 per million prompt tokens; or R2 finds a dev family
   with fewer than 4 candidates on the ladder corpora or fewer than 20 at H100g2.
+
+## Status
+
+**Accepted 2026-10-27 (user, in chat)**, with these answers and one change of order:
+
+| # | Question (plan §12) | Answer |
+|---|---|---|
+| 1 | The protocol as a whole | accepted, with the path-list exception below |
+| 2 | OpenRouter balance | $31 on 2026-10-27 (user) |
+| 3 | The $15 gate for the R4 ContextRAG remainder | **changed by the user**: ContextRAG is the reference arm; no money goes to it until the quality of the frozen system on v2 is known. ContextRAG runs last (stage 5 below) |
+| 4 | d0 / d50 points | full R5 recipe |
+| 5 | EX01 on the v2 vocabulary | not run |
+
+**Path-list exception (S0-a).** RM-T1 had to carry the corpus's class list to the final step, so besides
+`qa/final_answer.py` it touched `qa/class_vocabulary.py` (new), `qa/strategies/base.py`,
+`qa/harness/attempt.py`, `qa/harness/attempt_models.py` and `qa/harness/runner.py` (commit `dc19941`). These
+six files are named exceptions to the unchanged-path check. F1 identity rests on the replays: ST-AG-H100,
+E1-AG-H1/H30 and E1-CTXH-H1/H30 are byte-identical at `dc19941` with all eight prompt hashes equal (cache-only,
+2026-10-27); the Cypher replay (S0-d) is still required before the first paid call.
+
+**Order of the paid stages (user, 2026-10-27).** Each stage is estimated, capped and shown to the user before it
+starts; a stage starts only if the balance covers its cap.
+
+1. Free gates S0 (incl. the Cypher replay) and R1/R2.
+2. Pilot on D100g2: 10 families, both tiers, cap $0.10 (plan §7).
+3. **Dev quality check on D100g2**: the dev question set, both frozen tiers. Diagnostic only; nothing is tuned
+   on it (F1). It answers "is the frozen system roughly right on v2" before any sealed or reference spend.
+4. R4 tiers on the ladder (Cypher and agent at H1g2–H30g2), then R5 (tiers on H100g2, H1000g2, d0, d50, the
+   concurrency-1 control).
+5. R4 ContextRAG reference arm (H1g2–H30g2, high effort), last, and only on the user's go after stages 3–4.
+
+**Amended later the same day (user):** the ContextRAG reference arm is **not run for now** (cost), and the
+system will probably be tuned on v2 before the headline runs. Consequences:
+
+- Stages 2–3 (pilot, dev quality check on D100g2) run first, on dev data only.
+- If the dev check shows failures worth fixing, tuning happens on dev and tuning seeds only (D/X corpora, never a
+  seed in 5000–5999). The tuned system is a **new, separately labelled system**, not F1 (ADR-0057 Q2); F1's v1
+  numbers stay as they are.
+- R4 and R5 (both use registered test seeds) wait until that system is frozen at E7. They run once, on it.
+- The ContextRAG reference arm stays deferred until the user asks for it.

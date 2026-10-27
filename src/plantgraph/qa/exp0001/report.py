@@ -20,7 +20,9 @@ from plantgraph.qa.exp0001.report_cells import (
     paired_vectors,
 )
 from plantgraph.qa.exp0001.report_claims import (
+    V1_EDITION,
     ClaimInputs,
+    Edition,
     WallSettings,
     all_claims,
     wall_figures,
@@ -39,6 +41,8 @@ from plantgraph.qa.exp0001.report_models import (
 
 #: The ladder the slope is fitted on; H100 (stage C) is shown beside it, never in the slope.
 LADDER_IDS = ("H1", "H3", "H10", "H30")
+#: The same ladder on v2 plants (`g2` = generator v2); there is no stage C.
+LADDER_IDS_V2 = ("H1g2", "H3g2", "H10g2", "H30g2")
 
 
 def build_ladder_report(
@@ -46,6 +50,7 @@ def build_ladder_report(
     cutoff_s: float,
     ladder_ids: Sequence[str] = LADDER_IDS,
     wall: WallSettings | None = None,
+    edition: Edition = V1_EDITION,
 ) -> LadderReport:
     """Tables, paired differences, the slope and the X1-X6 verdicts for the corpora given.
 
@@ -69,6 +74,7 @@ def build_ladder_report(
         trend=trend,
         ratios=ratios,
         wall=wall or WallSettings(),
+        edition=edition,
     )
     figures = wall_figures(inputs)
     return LadderReport(

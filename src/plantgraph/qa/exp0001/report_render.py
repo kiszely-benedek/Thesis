@@ -8,20 +8,26 @@ from pathlib import Path
 from plantgraph.qa.exp0001.ladder_stats import log10_sheets
 from plantgraph.qa.exp0001.report_models import ArmCell, LadderReport, PairedDelta, SizePoint, Trend
 
+DEFAULT_TITLE = "EXP-0001 report"
 FIGURE_COLUMNS = [
     "corpus_id", "n_sheets", "log10_sheets", "arm", "scope", "n",
     "acc_at_120", "acc_ci_low", "acc_ci_high", "cost_mean", "latency_median",
 ]  # fmt: skip
 
 
-def write_report(report: LadderReport, out_dir: Path, h1000_sheets: int = 1001) -> list[Path]:
+def write_report(
+    report: LadderReport,
+    out_dir: Path,
+    h1000_sheets: int = 1001,
+    title: str = DEFAULT_TITLE,
+) -> list[Path]:
     """Write `report.md`, `report.json`, `figure.csv` and `figure_marks.csv` into `out_dir`.
 
     The marks file holds the figure's vertical lines: the H1000 wall and X5's fitted wall.
     """
     out_dir.mkdir(parents=True, exist_ok=True)
     paths = {
-        "report.md": render_markdown(report),
+        "report.md": render_markdown(report, title),
         "report.json": report.model_dump_json(indent=2),
     }
     for name, text in paths.items():
@@ -60,10 +66,10 @@ def _write_marks(path: Path, wall_sheets: float | None, h1000_sheets: int) -> Pa
     return path
 
 
-def render_markdown(report: LadderReport) -> str:
+def render_markdown(report: LadderReport, title: str = DEFAULT_TITLE) -> str:
     """The whole report as one markdown document."""
     parts = [
-        "# EXP-0001 report",
+        f"# {title}",
         f"Cutoff {report.cutoff_s:g} s (acc@{report.cutoff_s:g}); paired bootstrap "
         f"{report.n_boot} resamples, seed {report.seed}, 95 % percentile CI.",
         "## Claims",

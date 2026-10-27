@@ -1,0 +1,14 @@
+{
+  "name": "always_ctx_high",
+  "tiers": [
+    {
+      "name": "context-luna-high",
+      "strategy": "context_rag",
+      "pin_sha256": "ffc026d3f42b3ddcc5fe43175a3c288bdd19f36063997fec2c8645a95fe70157",
+      "accept": [
+        "answered"
+      ]
+    }
+  ],
+  "fallback_to_first_answer": true
+}
