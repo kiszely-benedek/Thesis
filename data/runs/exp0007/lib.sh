@@ -189,10 +189,11 @@ load_dev_plant() {  # D100g2 alone in the database, checked against the plant R1
 
 dev_tier_runs() {  # dev_tier_runs <run prefix P7|Q7> <with smoke yes|no>: Cypher tier, then agent tier, on D100g2
   step load_D100g2 load_dev_plant
-  for tier in cyp ag; do
-    id=$1-$(upper $tier)-D100g2
-    if [ "$2" = yes ]; then step smoke_$tier tier_run $tier "$id-SMOKE" D100g2 dev smoke "$S/questions_smoke"; fi
-    step full_$tier tier_run $tier "$id" D100g2 dev full
+  # own names: tier_run sets the shell-global `tier` and `id`, which would rename the full run after its smoke
+  for dev_tier in cyp ag; do
+    dev_id=$1-$(upper $dev_tier)-D100g2
+    if [ "$2" = yes ]; then step smoke_$dev_tier tier_run $dev_tier "$dev_id-SMOKE" D100g2 dev smoke "$S/questions_smoke"; fi
+    step full_$dev_tier tier_run $dev_tier "$dev_id" D100g2 dev full
   done
 }
 

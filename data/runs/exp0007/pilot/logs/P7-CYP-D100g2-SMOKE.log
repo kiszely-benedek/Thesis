@@ -1,0 +1,49 @@
+run P7-CYP-D100g2-SMOKE: 2 rows to answer, 0 already on disk
+concurrency 4: up to that many questions in flight
+paid mode: up to 2 model calls; hard spend cap 0.01 USD
+estimated cost: 0.0020 USD
+{
+  "run_id": "P7-CYP-D100g2-SMOKE",
+  "n_rows": 2,
+  "n_new_rows": 2,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "cypher_rag_plant": {
+      "0": {
+        "RETRIEVAL_ERROR": 1,
+        "ANSWERED": 1
+      }
+    }
+  },
+  "routing_recall": {},
+  "relaxed_routing_recall": {},
+  "evidence_node_recall": {},
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {},
+    "relaxed_routing_recall": {},
+    "evidence_node_recall": {}
+  },
+  "trace_rates": {
+    "cypher_rag_plant": {
+      "truncated_rate": 0.0
+    }
+  },
+  "mean_total_cost_usd": {
+    "cypher_rag_plant": 0.00037193750000000004
+  },
+  "stopped_by_spend_cap": false
+}
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\qa\harness\__main__.py", line 3, in <module>
+    main()
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\qa\harness\cli.py", line 157, in main
+    summary = run_harness(
+              ^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\qa\harness\runner.py", line 98, in run_harness
+    config = run_dir.freeze(config)  # from here on, nothing may change the config
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\qa\harness\run_dir.py", line 63, in freeze
+    raise ValueError(
+ValueError: run 'P7-CYP-D100g2-SMOKE' is already frozen with different ['question_set_sha256']; use a new run_id, or restore the inputs it was started with
