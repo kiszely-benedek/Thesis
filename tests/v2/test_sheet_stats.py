@@ -89,3 +89,9 @@ def test_every_sheet_shows_one_unit() -> None:
 def test_the_mean_symbols_per_sheet_is_inside_the_design_band() -> None:
     mean = spread([s.symbols for s in _all_stats()]).mean
     assert 56 <= mean <= 109
+
+
+def test_a_controller_bubble_is_an_instrument_symbol() -> None:
+    """`ProcessControlFunction` (pyDEXPI: a subclass of the instrumentation function) is drawn."""
+    assert symbol_kind("ProcessControlFunction") is SymbolKind.INSTRUMENT
+    assert is_symbol("ProcessControlFunction")

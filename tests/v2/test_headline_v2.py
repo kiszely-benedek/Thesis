@@ -14,7 +14,11 @@ from plantgraph.benchmark.v2.planner import plan_plant
 from plantgraph.benchmark.v2.split_by_sheet_group import by_sheet_group
 from plantgraph.ingest.headline import check_realized_sheets
 from plantgraph.ingest.headline_v2 import (
+    TEST_SEED_RANGE,
+    TEST_SEEDS_V2,
+    TUNING_SEEDS,
     HeadlinePresetV2,
+    first_single_sheet_seed,
     headline_corpus_id_v2,
     smallest_n_units_v2,
 )
@@ -64,10 +68,39 @@ def test_the_size_search_rejects_a_target_below_one() -> None:
         smallest_n_units_v2(0, HeadlinePresetV2(), 1)
 
 
-def test_corpus_ids_carry_the_version_and_the_dev_or_test_role() -> None:
+def test_corpus_ids_name_the_dev_corpus_the_registered_test_corpus_and_any_other_tuning_plant() -> (
+    None
+):
     assert headline_corpus_id_v2(100, seed=1) == "D100g2"
-    assert headline_corpus_id_v2(1000, seed=0) == "H1000g2"
-    assert headline_corpus_id_v2(100, seed=2) == "H100g2"
+    assert headline_corpus_id_v2(1000, seed=5003) == "H1000g2"
+    assert headline_corpus_id_v2(100, seed=5002) == "H100g2"
+    # a tuning plant of a registered size is never named like the test corpus
+    assert headline_corpus_id_v2(100, seed=2) == "X100g2s2"
+    assert headline_corpus_id_v2(1000, seed=0) == "X1000g2s0"
+
+
+def test_a_duplication_rate_other_than_the_preset_adds_a_suffix() -> None:
+    assert headline_corpus_id_v2(100, 5002, duplication_rate=0.25) == "H100g2"
+    assert headline_corpus_id_v2(100, 5002, duplication_rate=0.0) == "H100g2d0"
+    assert headline_corpus_id_v2(100, 5002, duplication_rate=0.5) == "H100g2d50"
+
+
+def test_the_test_seeds_are_inside_the_test_range_and_apart_from_every_tuning_seed() -> None:
+    assert set(TEST_SEEDS_V2.values()) <= set(TEST_SEED_RANGE)
+    assert not set(TEST_SEEDS_V2.values()) & set(TUNING_SEEDS)
+    # H3, H10 and H30 are nested prefixes of one plant; H100 and H1000 are two further plants
+    assert TEST_SEEDS_V2[3] == TEST_SEEDS_V2[10] == TEST_SEEDS_V2[30]
+    assert len({TEST_SEEDS_V2[n] for n in (30, 100, 1000)}) == 3
+
+
+def test_the_one_sheet_test_seed_is_the_first_one_sheet_plan_from_5100() -> None:
+    assert first_single_sheet_seed(5100, 5399) == TEST_SEEDS_V2[1]
+    assert smallest_n_units_v2(1, HeadlinePresetV2(), TEST_SEEDS_V2[1]).n_units == 1
+
+
+def test_a_range_without_a_one_sheet_plan_is_refused() -> None:
+    with pytest.raises(ValueError, match="one-sheet one-unit plant"):
+        first_single_sheet_seed(5, 4)
 
 
 def test_by_sheet_group_numbers_sheets_in_drawing_order_and_matches_the_plan() -> None:

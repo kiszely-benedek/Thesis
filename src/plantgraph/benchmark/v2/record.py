@@ -10,6 +10,7 @@ from plantgraph.benchmark.v2.patterns.ports import PatternInstance
 from plantgraph.benchmark.v2.plan_models import (
     GenerationRecordV2,
     NodeGold,
+    SpareSetRecord,
     StreamKindV2,
     UnitRecord,
 )
@@ -31,6 +32,7 @@ def build_record(plan: PlantPlanV2, pydexpi_version: str) -> GenerationRecordV2:
         stream_kind=_stream_kinds(plan),
         item_kind=_item_kinds(plan),
         node_gold=_node_gold(plan),
+        spare_sets=_spare_sets(plan),
         open_stub_count=plan.open_stub_count,
         feed_farm_fill_count=0,  # every unit's first in-port finds a taker (see flowsheet.wire)
     )
@@ -95,3 +97,16 @@ def _node_gold(plan: PlantPlanV2) -> dict[str, NodeGold]:
                 sheet_group=unit.sheets.sheet_of[node_id],
             )
     return gold
+
+
+def _spare_sets(plan: PlantPlanV2) -> tuple[SpareSetRecord, ...]:
+    """Every installed A/B(/C) set of the plant, taken from the units' plans."""
+    return tuple(
+        SpareSetRecord(
+            unit_no=unit.slot.unit_no,
+            role=unit.instance.plan.roles[node_ids[0]],
+            node_ids=node_ids,
+        )
+        for unit in plan.units
+        for node_ids in unit.instance.plan.spare_sets
+    )

@@ -454,7 +454,7 @@ primary class is dealt twice per deck: centrifugal pumps, gate valves as blocks,
 | T13 | Patterns B: U1 (vacuum/ejector, cascades, condensate variants), U5 (spiral), U10 desalter | `patterns/{column,heat,desalting}.py` | per pattern + S22 | — | M |
 | T14 | Patterns C: U2 (screw, VFD, IT), U3 (furnace without blower, DBB, agitated reactor, skillets, UC), U8 (eductor, rotary mixer, in-line mixer, agitator, dosing VFD) | `patterns/{compression,reaction,blending}.py` | per pattern + S19 | — | M |
 | T15 | Demo families and glyphs for the 98 classes (rule-based) | `demo/drawing/{families,glyphs,glyph_families}.py` | every class → glyph; v1 exports unchanged | visual check possible | S |
-| T16 | Composition + coverage report, invariant suite S1–S24, headline preset v2 | `benchmark/v2/{composition,coverage}.py`, `tests/v2/test_invariants.py`, `ingest/headline_v2.py` | report = hand count on a fixture; coverage 0 absent at D1000g2 | **headline corpus** → R0–R3 free, visual check, then paid R4/R5 estimates to the user | M |
+| T16 | Composition + coverage report, invariant suite S1–S24, headline preset v2 (**replaced 2026-10-27 by T16a + T16b, §14.6**) | `benchmark/v2/{composition,coverage}.py`, `tests/v2/test_invariants.py`, `ingest/headline_v2.py` | report = hand count on a fixture; coverage 0 absent at D1000g2 | **headline corpus** → R0–R3 free, visual check, then paid R4/R5 estimates to the user | M |
 
 Totals after T0: **16 tasks — 4 S (T2, T6, T11, T15), 9 M, 3 L (T4, T7, T10)**.
 
@@ -770,3 +770,280 @@ The options:
 stub; closed vents and drains and atmospheric vents do not). Q8 = A (the mean band 56–109 symbols per sheet is the
 pass/fail criterion; the share inside 40–134 is reported without a pass mark). `p_motor_hs` = 1.0 (every drawn motor
 gets its start/stop switch, as on every motor in the samples), replacing the declared 0.5.
+
+## 14. T16 and tuning round 1
+
+Added 2026-10-27, after T15. It replaces the T16 row of §9 with two tasks (§14.6) and is decided in ADR-0059
+(proposed). It changes no accepted decision; the one rule it reads differently (where §12.1's report is computed) is
+named in §14.3.
+
+**Measurement basis.** Every figure here comes from plan-level runs I made today (`uv run python`, no Neo4j, no
+paid call) or from one corpus build of D100g2 seed 1 without Neo4j. The scripts are in the session scratchpad
+(`t16/`), not in the repo. "Plan level" = `sheet_stats(plan_plant(...))`. "Corpus level" = the sheet graphs of
+`build_synthetic_corpus`, before localize. Seeds used: 1–90, all inside the tuning range that §14.5 declares.
+
+### 14.1 What fails, and why
+
+The baseline reproduces T14's D100g2 rows (seeds 1–3: mean symbols 87.0 / 87.5 / 81.6; max stubs 26 / 21 / 26).
+At D1000g2 (seed 1, 621 units, 1,000 sheets), max stubs is **29**, and 6 sheets exceed 21.
+
+The pass/fail bands under Q7 = A / Q8 = A are all met except **max stubs ≤ 21**. The share inside 40–134 (75–80 %)
+is a reported figure, not a pass mark (Q8 = A, decided 2026-10-26).
+
+Per pattern and layout, over seeds 1–60 at 60 units each (5,699 sheets):
+
+| Sheet | n | Mean symbols | > 134 | < 40 | Max stubs | > 21 stubs |
+|---|---|---|---|---|---|---|
+| U1 combined, air ejector, sheet 1 | 55 | 275.7 | 55 | 0 | 30 | **47** |
+| U1 combined, no vacuum / liquid ring, sheet 1 | 105 / 44 | 204.9 / 231.2 | 104 / 44 | 0 | 18 / 18 | 0 |
+| U1 two sheets, column side (sheet 1, all vacuum kinds) | 448 | 125.5–129.3 | 172 | 0 | 13 | 0 |
+| U1 two sheets, air ejector, overhead (sheet 2) | 106 | 152.8 | 79 | 0 | 21 | 0 |
+| U2 (one group, never split) | 173 | 111.8 | 16 | 0 | 10 | 0 |
+| U7 (one unit, one sheet) | 229 | 34.3 | 0 | 203 | 3 | 0 |
+| U4 sheet 1 (two tanks that miss the merge cap) | 705 | 64.5 | 0 | 262 | 13 | 0 |
+| U6 sheet 2 (own-sheet pump set) | 262 | 44.0 | 0 | 88 | 7 | 0 |
+
+**Reading.**
+- Every sheet above 134 is **one pattern group already larger than the 100-symbol merge cap**. The cap governs
+  merging only, and a pattern group is never split (§13.6.2).
+- Every sheet above 21 stubs is the **combined layout with the air-ejector vacuum**. The two-stage ejector pair
+  brings motive-steam stubs, the inter-condenser's cooling-water stubs and the silencer's open end, all onto a sheet
+  that already carries the column's stubs.
+- The sheets below 40 are the two **sample-grounded** small-sheet cases (U7 alone; own-sheet pump sets, WTP H3
+  [HC]), plus two-tank U4 groups that the merge cap keeps apart. Checked over seeds 1–30: all 120 U4 first sheets
+  below 40 hold exactly two tanks, with the pumps in the next group.
+
+**Counting-rule defect found (not a tuning).** `benchmark/v2/symbols.py` lists only PSGF and PIF as instruments.
+Since ADR-0058 every controller is a `ProcessControlFunction`, which `symbol_kind` maps to `not_drawn`. Measured:
+1.9–2.1 controller bubbles per sheet are uncounted (D100g2 seeds 1–3). The merge step's group sizes miss them too.
+The rule of base §12.1 says "PSGF + PIF", written when every controller was a PIF; pyDEXPI makes PCF a subclass
+of PIF. Counting PCF therefore **restores** the fixed rule rather than tuning it.
+- Effect, D100g2 seed 1: instruments per sheet 31.0 → 32.5; I : V 1.23 → 1.29.
+- At D1000g2, max stubs stays 29 with the fix alone.
+
+### 14.2 Tuning round 1
+
+**Target.** The one failing pass/fail band (max stubs ≤ 21), with every mean kept in band.
+
+**Why not ≥ 95 % in 40–134.** Q8 = A made it a reported share. The measurements below also show it cannot be
+reached under the accepted rules:
+- The best combination of every candidate that keeps "one unit per sheet" reaches **89.5 %**.
+- What remains below 40 is U7 and own-sheet pump sets, both sample-grounded.
+- The 15 hand-inventoried real sheets put 10 inside 40–134 (67 %; lower bounds, §13.8). v2's 77–81 % is already
+  *more* uniform than the real sample.
+
+**Candidates.** Seeds 1–30, 60 units each, plan level, today's counting rule:
+
+| # | Change (declared parameter or rule) | Sheets / plant | Mean symbols | In 40–134 | < 40 / > 134 | Max stubs (sheets > 21) | V / I / I:V | Realism effect |
+|---|---|---|---|---|---|---|---|---|
+| — | baseline | 95.1 | 85.4 | 78.7 % | 11.6 / 9.7 % | 29 (22) | 24.6 / 30.9 / 1.26 | — |
+| C1 | `p_column_combined` 0.3 → 0 | 98.7 | 82.4 | 81.0 % | 11.2 / 7.8 % | 21 (0) | 23.7 / 29.7 / 1.26 | loses the FB&D "Column Systems (Combined)" layout and D1's one-sheet column (16 equipment, ≥ 153 symbols [HC]). Max stubs lands exactly on the limit |
+| **C2** | **U1: the air-ejector package (2 × A/B ejectors, inter-condenser) is its own drawing group, not pinned** | 97.8 | 83.2 | 80.7 % | 11.3 / 8.0 % | **19 (0)** | 23.9 / 30.0 / 1.26 | **adds realism**: WTP draws condensers + 2-stage ejectors on their own sheet (H2, DEP-00003004 [HC]), apart from the reboiler sheet (H1) |
+| C2′ | as C2, plus the liquid-ring machine | 99.8 | 81.5 | 79.4 % | 13.1 / 7.5 % | 19 (0) | 23.4 / 29.4 / 1.26 | a one-machine sheet; adds 62 sheets < 40 and has no sample behind it |
+| C3 | C2′ + reboiler (and preheater) as their own U1 group, re-merged under the cap | 109.7 | 74.6 | 81.4 % | 15.1 / 3.5 % | 19 (0) | 21.3 / 26.8 / 1.26 | H1 shows a reboiler alone [HC], but F2 shows column + reboilers together; +15 % sheets, mean symbols falls |
+| C4 | U2: KO drum (+ filter) and compressor + cooler as two groups, re-merged under the cap | 96.6 | 84.1 | 79.3 % | 11.4 / 9.2 % | 29 (22) | 24.2 / 30.4 / 1.26 | FB&D "compressors 1 (complex)" puts the stage on one sheet; no sample shows a compressor P&ID (samples §8) |
+| C5 | `max_symbols_before_stubs` 100 → 80 / 120 / 134 | 103.0 / 92.3 / 90.2 | 79.2 / 87.8 / 89.7 | 73.7 / 80.2 / 80.0 % | 17.4 / 8.9; 9.7 / 10.0; 8.4 / 11.6 % | 29 (22) each | 22.7 / 28.5; 25.3 / 31.8; 25.9 / 32.5 | moves a declared [C] cap (OPEN100 mean + 1 sd − stubs) without a new source; does not touch the stub failure |
+| C6 | U7 / small units share a sheet with a neighbouring unit | not simulated | | | | | | breaks ADR-0025's one-unit-per-sheet rule (S16, the splitter's `_require_one_unit_per_sheet`), prefix stability (unit *u*'s sheet would depend on unit *u* + 1, so `smallest_n_units_v2` and S15 fail), `sheet_group = "{u}:{k}"` and the `by_unit` reading of `k`. Needs a superseding ADR; §13.6.3 already rejected it |
+| C7 | merge U3's furnace group G1 into G2 unconditionally | not simulated | | | | | | U3 sheet 1 already averages 92.7 symbols (3 of 340 below 40), so there is nothing to gain; it would push G1 + G2 over the cap |
+| all | C1 + C2′ + C3 + C4 + cap 120 | 104.3 | 78.2 | **89.5 %** | 10.0 / 0.5 % | 21 (0) | 22.4 / 28.2 / 1.26 | the ceiling under one unit per sheet. Left below 40: U7 103, U4 81, U1 66, U6 34, U8 14, U3 14 sheets |
+
+**Decision for round 1: the counting-rule correction + C2.** It is the smallest change that fixes the failing band,
+it is grounded in a real sheet, and it removes no accepted variant. C1 would also pass, but exactly at the limit
+(21), and it deletes a sample-grounded layout.
+
+Round 1 measured, plan level, with the correction and C2 together:
+
+| Corpus | Units / sheets | Mean symbols | In 40–134 (reported) | Mean V / I | I : V | Stubs mean / max | Max equipment; ≤ 10 share |
+|---|---|---|---|---|---|---|---|
+| D100g2 seed 1 | 59 / 100 | 85.7 | 77.0 % | 24.4 / 31.4 | 1.29 | 7.1 / 16 | 9; 100 % |
+| seed 2 | 59 / 101 | 86.6 | 81.2 % | 24.1 / 32.4 | 1.34 | 7.2 / 17 | 10; 100 % |
+| seed 3 | 57 / 100 | 80.5 | 76.0 % | 22.6 / 29.6 | 1.31 | 6.7 / 16 | 10; 100 % |
+| D1000g2 seed 1 | 602 / 1,000 | 84.5 | 80.1 % | 23.6 / 32.0 | 1.35 | 6.9 / 19 | 10; 100 % |
+| seeds 31–90 (60 units each, out-of-sample for the choice) | 60 plants, 98.2 sheets each | 82.4 | 80.0 % | 23.2 / 31.0 | 1.34 | 6.8 / 20 | 12; 99.7 % |
+| band | | 56–109 | — | 15–28 / 20–38 | 1.0–1.8 | 5–11 / ≤ 21 | ≤ 16; ≥ 90 % |
+
+Further measurements:
+- **Ejector-package sheets** (C2 alone, before the PCF correction): 79 sheets over seeds 1–30, 57–69 symbols, at
+  most 14 stubs. All are inside 40–134.
+- **Combined column sheets** (kept; same basis): 107 sheets, mean 213 symbols; **160 without fittings** (118–223). D1, the
+  densest real sheet, has ≥ 153 on the same basis (equipment + valves + instruments + off-sheet; the samples count no
+  fittings). The combined layout is as dense as the densest real sheet, not beyond it.
+- **Corpus level, D100g2 seeds 1–3:** units on ≥ 2 sheets 59.3 / 50.8 / 59.6 % (band 25–65 %). Instruments with
+  sheet-graph degree 1: 65.8 / 64.7 / 65.1 % (band ≥ 55 %).
+- **Not yet measurable:** the A/B(/C) equipment share (25–45 %). Consecutive spare naming leaves no trace in the
+  tag, so a gold field is needed (§14.6, T16b).
+
+**What changes, exactly (T16a).**
+1. `benchmark/v2/symbols.py`: `ProcessControlFunction` counts as an instrument.
+2. `benchmark/v2/patterns/column.py::_drawing_groups`:
+   - The air-ejector equipment (`build_vacuum(kind="air_ejector")` returns them) forms its own group. That group
+     comes after the overhead group: two sheets → G1 column side, G2 overhead, G3 ejectors; combined → G1, G2
+     ejectors. Own-sheet pump groups stay pinned and are numbered after it.
+   - The group is not pinned, so the merge rejoins it to the overhead group whenever the caps allow.
+   - The 16-equipment fallback of §13.6.2 counts the combined group without the ejectors, because they are no
+     longer on that sheet.
+   - Liquid-ring stays in the overhead group.
+3. Nothing else. No new knob, no new random draw, no change outside `benchmark/v2/`.
+
+**Must stay byte-identical.**
+- **v1:** every `V1_*` golden, the v1 question sets, `GeneratorConfig` JSON. No shared module is touched.
+- **v2:** for a fixed `(seed, n_units)`, every node id, class, tag, line number, link and port. Only `sheet_group`
+  (and so per-unit sheet counts, and the `n_units` the size search returns) may differ.
+  - Recorded as a **plan digest without sheet assignments**, taken *before* the edit (the V2-T0 pattern) on D100g2
+    seeds 1–3, and asserted equal after.
+  - S14 (same seed ⇒ same bytes under `PYTHONHASHSEED` 1–3) and S15 (prefix stability) must still pass.
+
+**Tuning log (ADR-0057: at most three logged rounds).**
+
+| Round | Date | Change | Reason | Failing band before → after | Rounds left |
+|---|---|---|---|---|---|
+| — | 2026-10-27 | counting rule: PCF counted as an instrument | restores base §12.1's rule (PCF ⊂ PIF in pyDEXPI); not a tuning | no band changes verdict | 3 |
+| **1** | 2026-10-27 | U1 air-ejector package as its own drawing group (C2) | H2 [HC]; fixes the stub maximum without dropping a variant | max stubs 26–29 → 16–20 (D100g2, D1000g2, seeds 31–90) | **2** |
+
+The R1 run note copies this table and adds the corpus-level row once T16b's report exists.
+
+**T16a measured** (implemented; plan level via `smallest_n_units_v2` and `sheet_stats`). The round-1 table above is
+reproduced exactly: D100g2 seeds 1 / 2 / 3 give 59 / 59 / 57 units, 100 / 101 / 100 sheets, mean symbols
+85.7 / 86.6 / 80.5, share in 40-134 77.0 / 81.2 / 76.0 %, max stubs 16 / 17 / 16; D1000g2 gives 602 units, 1,000
+sheets, mean symbols 84.5, 80.1 %, max stubs 19. Max equipment per sheet 9-10, 100 % of sheets at 10 or fewer. The
+plan digest without sheet assignments (`tests/v2/test_plan_digest_without_sheets.py`, seeds 1-3 at 60 units) was
+recorded before the edit and is unchanged after it. One consequence: a combined column with an air ejector now falls
+back to two sheets only when its equipment *without* the 5-item package exceeds the cap, so the `layout` text of the
+variant label can differ from before for such a column (the plan itself does not).
+
+### 14.3 One counting rule for plan and corpus
+
+**Rule (unchanged from base §12.1 / Q7 = A, with the §14.1 correction).**
+- **Symbol** = equipment + valves + fittings except `PipeTee` + primary elements + PSGF + PIF (incl. PCF) +
+  off-page stubs. Not counted: AF, AEF, `PropertyBreak`, `PipeTee`.
+- **Off-page stub** = a line crossing to another sheet (one on each side) + an open line end not closed by
+  `BlindFlange` / `Funnel` / `VentilationDevice`.
+- Signal crossings are reported apart, with no band.
+
+**Authoritative: the plan** (`sheet_stats`). Two reasons:
+- Open line ends exist only in the plan. pyDEXPI's graph keeps no node for an open pipe end, so a sheet graph
+  cannot see 3.88 of the 7.20 stubs per sheet (D100g2 seed 1).
+- The plan is independent of ADR-0028's duplication rate, which is an experimental condition (0 / 0.25 / 0.5), not
+  part of the drawing.
+
+**Reconciliation, measured on D100g2 seed 1, today's code:**
+
+| | Duplication 0 | Duplication 0.25 (preset) |
+|---|---|---|
+| Sheets where corpus symbols (connectors excluded) = plan symbols without stubs | **103 / 103** | 81 / 103 (+0.22 reference copies per sheet) |
+| Sheets where corpus pipe connectors = plan crossings | **103 / 103** | 63 / 103 (0.45 crossings per sheet absorbed by reference copies) |
+| Per sheet: crossings + open ends = plan stubs | 3.32 + 3.88 = 7.20 | same plan |
+| Signal connectors = plan signal cuts | 0.58 = 0.58 | 0.58 = 0.58 |
+
+This explains T12's **3.3** stubs per sheet against T13's **5.06**: T12 counted corpus connectors, which are
+crossings only. The report therefore:
+- states every band on the plan;
+- runs an **exact** check at duplication 0 (per sheet: symbols equal, connectors = crossings, signal connectors =
+  signal cuts);
+- at the preset's 0.25 reports the two deltas (reference copies added, crossings absorbed) without a band;
+- measures the degree-1 share and "one unit per sheet" on the sheet graphs, because they are properties of the
+  graph the system reads.
+
+### 14.4 Open items, decided
+
+| Item | Recommendation | Reason |
+|---|---|---|
+| S6 vs the condensate drain pot | **Exempt role `condensate_drain_pot`** in S6, named in the test | H1, the sheet this trim copies, draws the pot with LT/LC/LV and CSHH and no PSV (14 manual + 1 CV valves [HC]). Adding a PSV would be invention |
+| FIRST_MEETING_POINT, 0 candidates on v2 | **Leave at 0; report it** as "not available on v2: streams join at tees, not items" | It is a sealed held-out family (ADR-0035). Redefining it after seeing v2 data would be a post-hoc change. R5's held-out comparison runs over the remaining families, stated in its pre-registration |
+| `p_shared_farm_feed` | **Leave unimplemented; set its default to 0.0** and reject any other value with "not implemented in v2.0" | An unused knob at 0.2 would make every v2 `ingest.json` claim an edge that is not there. The extra edge is additive and [U] as to frequency. Cross-sheet structure already comes from cross-unit streams and side draws |
+| U3 `recycle_gas` open | **Keep open**, counted in the record's open in-ports | Closing it means a later unit (U2) rewires an earlier one, which breaks S15. Composition-neutral: an open end and a crossing are each one stub on U3's sheet |
+| Tank-farm HS-XV + trip XV in series | **Keep** | Base U4 lists both. An overfill trip with its own valve is [U] (no tank-farm sheet is in the sample), and valves per sheet are in band (22.6–24.4) |
+
+Also: §8's coverage target "79 generator classes" is **77** since the 2026-10-25 decision (Spiral, Electrical
+dropped). 23 equipment + 47 piping leaves + `CheckValve` + `PropertyBreak` + 5 instrumentation = 77.
+
+### 14.5 Headline v2 corpora and fresh seeds
+
+**Seed policy.**
+- **Tuning range:** seeds 0–999 are dev and tuning seeds; every composition sweep stays inside it.
+- **Test range:** seeds 5000–5999 are test seeds. No recorded run uses one. The seeds found in
+  `30-experiments/` and `data/` run configs are 0, 1, 2, 3, 31, 41, 100–104 and 20261101.
+- **Fixed in advance:** a test seed is written into `TEST_SEEDS_V2` (in `ingest/headline_v2.py`) and into ADR-0059
+  before its corpus is generated.
+- **Guard:** the composition CLI refuses a test seed unless `--allow-test-seed` is given. That flag is meant for
+  use only after the R5 freeze, so the tuning instrument never looks at a test plant.
+
+| Corpus id | Target sheets | Seed | Role | Runs |
+|---|---|---|---|---|
+| `D100g2` | 100 | 1 | dev | R0, R1, R2, R3 |
+| `D1000g2` | 1,000 | 1 | dev | R0, R1 (coverage acceptance), R2 |
+| `X100g2s2`, `X100g2s3` | 100 | 2, 3 | tuning, plan level only | R1's two further seeds |
+| `H1g2` | 1 | first seed in 5100–5399 whose one-unit plan has one sheet (v1's H1 rule, EXP-0001). On today's code that is 5100 (106 of 300 qualify); re-scan after T16a and record it | test | R3, R4 |
+| `H3g2`, `H10g2`, `H30g2` | 3, 10, 30 | 5001 (one plant, nested prefixes, like v1's seed 3) | test | R3, R4 |
+| `H100g2` | 100 | 5002 | test | R3, R5, R6 |
+| `H100g2d0`, `H100g2d50` | 100 | 5002, duplication 0 / 0.5 | test | ADR-0028 sensitivity (required, ADR-0057 Q4) |
+| `H1000g2` | 1,000 | 5003 | test | R3, R5 |
+
+`headline_corpus_id_v2` changes: `D` for seed 1; `H` only for the registered test seed of that size; `X…s{seed}`
+for any other seed. Today seed 2 at 100 sheets would be named `H100g2`, which collides with the test corpus.
+`test_headline_v2.py`'s id test changes with it (v2 only).
+
+**R0 must be re-taken.** The R0 figures (D1000g2 ingest 245.9 s / 1.39 GB, question generation 2,736 s / 2.14 GB,
+D100g2 Neo4j load 8.6 s) are from the pre-T13 generator. U1–U3, U5 and U8 were added since then.
+
+### 14.6 Coder tasks
+
+| # | Task | Files | Tests | Acceptance | Size |
+|---|---|---|---|---|---|
+| **T16a** | Counting-rule correction + tuning round 1 (§14.2) | `benchmark/v2/symbols.py`, `benchmark/v2/patterns/column.py` (+ its docstring) | (1) plan digest without sheets, recorded before the edit, equal after (D100g2 seeds 1–3); (2) PCF is an instrument symbol; (3) air-ejector U1: ejectors in their own group in both layouts, the 16-equipment fallback counts without them, liquid ring unchanged; (4) S14, S15, S20 still green | D100g2 seeds 1–3 and D1000g2 plan-level: max stubs ≤ 21 and every mean in band, values printed in the hand-over | S |
+| **T16b** | Composition + coverage report, invariant suite S1–S24, headline preset v2 | `benchmark/v2/composition.py` (report model + CLI), `benchmark/v2/coverage.py`, `benchmark/v2/composition_bands.py` (band table, if the 400-line cap needs it); `ingest/headline_v2.py` (`TEST_SEEDS_V2`, ids, H1 scan); `benchmark/v2/config.py` (`p_shared_farm_feed` 0.0 + validator); spare-set gold: `TrimPlan.spare_sets` filled by `assembly.spared_set` (count ≥ 2), carried into `GenerationRecordV2`; `tests/v2/test_invariants_plant.py`, `tests/v2/test_invariants_corpus.py`, `tests/v2/test_composition.py`, `tests/v2/test_coverage.py` | below | below | M |
+
+**Status 2026-10-27:** T16a and T16b implemented. T16b measured, plan level, D100g2 seed 1 / D1000g2:
+every pass/fail band passes (symbols 85.7 / 84.5, stubs max 16 / 19, A/B share 0.438 / 0.393, units on ≥ 2
+sheets 0.593 / 0.510); corpus rows at D100g2 seed 1: degree-1 share 0.658, reference copies 0.230 and crossings
+absorbed 0.460 per sheet at duplication 0.25; plan and corpus agree on 100 % of sheets at duplication 0;
+coverage at D1000g2 77 / 77.
+
+**T16b content.**
+- **Report** (`CompositionReport`, Pydantic, frozen). Each row is
+  `(quantity, value, band, verdict ∈ {pass, fail, reported})`.
+  - Plan bands (§14.3): symbols mean; share inside 40–134 (*reported*); valves; instruments; I : V; stubs mean and
+    max; equipment 1–16 and ≥ 90 % ≤ 10; A/B share; units on ≥ 2 sheets; signal cuts (*reported*).
+  - Corpus rows: degree 1; one unit per sheet; the duplication-0 reconciliation (exact); the 0.25 deltas.
+  - Per pattern and layout: mean and range of symbols and stubs, which names who misses a band.
+  - CLI: `python -m plantgraph.benchmark.v2.composition --target-sheets 100 --seeds 1 2 3 [--corpus]
+    [--json PATH]`. Prints the table; with `--corpus` it builds without Neo4j. Refuses test seeds (§14.5).
+- **Coverage** (`coverage.py`): for each of the 77 generator classes, the count, the patterns it came from, and the
+  §6 grounding letter as a checked-in table. Absent classes are named. A class outside the 77 is an error (S24).
+  - Measured today (plan level, round 1 simulated): **D1000g2 77 / 77 present**; rarest EjectorPump 7,
+    ReciprocatingCompressor 7, RotaryMixer 8.
+  - D100g2 seeds 1 / 2 / 3: 75 / 74 / 76 present. Absent: seed 1 EjectorPump, CentrifugalCompressor; seed 2
+    ReciprocatingCompressor, LiquidFilter, GasFilter; seed 3 ReciprocatingCompressor.
+- **Invariants.**
+  - `test_invariants_plant.py`: S1–S12, S19, S21–S24 on oracle plants of seeds 1–5 at ~30 sheets. It reuses
+    `tests/v2/pattern_checks.py`, `instrument_invariants.py` and `machine_checks.py`. S6 has the drain-pot
+    exemption.
+  - `test_invariants_corpus.py`: S13, S14, S15, S16 (one unit per sheet, G1 at DRAWING_ONLY, identity P = R = 1.0
+    at exact tags) and S20, on `corpus_v2.corpus(30)`.
+  - S17 and S18 stay in `tests/test_v1_goldens.py` and `tests/test_schema_vocabulary.py`; the suite's docstring
+    maps every S-number to its file.
+  - New checks: **S13**; **S23** (on-off letter and spare naming constant per train, read from parsed tags);
+    **S24** (plan classes ⊆ the 77; no Custom* in the DEXPI model; parents only `CheckValve` and PIF as PCF's
+    parent).
+- **Tests of the report.**
+  - A hand-built 2-unit, 3-sheet fixture plan. Its per-sheet symbols, stubs (crossings and open ends), valves and
+    instruments are counted by hand in the test's docstring and equal the report.
+  - The duplication-0 reconciliation on `corpus(30)`.
+  - The coverage test: absent list = expected on a fixture; 0 absent on D1000g2, as a `slow` marker or a CLI
+    acceptance step, not in the default suite if it exceeds about 60 s.
+- **Acceptance.**
+  - The CLI prints the table for D100g2 seeds 1–3 and D1000g2. Every pass/fail band passes, or the hand-over names
+    the miss with its per-pattern row; a miss becomes tuning round 2, never a silent edit.
+  - Coverage at D1000g2: 0 absent.
+  - The full suite, `ruff`, `mypy --strict` and the v1 goldens are green.
+  - The main session then runs R0 (re-take), R1, R2 and R3 (free) and the visual check, and brings the R4 / R5
+    estimates to the user.
+
+### 14.7 Open questions for the user
+
+1. **Round 1 = the ejector package on its own sheet (C2)** rather than dropping the combined column layout (C1).
+   Recommendation: C2. It is grounded in WTP H2, keeps both column layouts, and leaves max stubs at 16–20 instead
+   of exactly 21.
+2. **Stop chasing the 95 %.** Per Q8 = A, the 40–134 share is reported (77–81 %, against 10 of 15 real sheets).
+   Reaching 95 % would need U7 to share sheets with other units, which supersedes ADR-0025, and dropping the
+   own-sheet pump variant. Recommendation: do neither; report the share and the real-sample comparison.

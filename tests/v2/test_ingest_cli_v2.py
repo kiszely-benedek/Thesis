@@ -39,7 +39,7 @@ def test_the_acceptance_command_writes_a_ten_sheet_v2_corpus_without_neo4j(
 ) -> None:
     result = _run(_ACCEPTANCE, tmp_path, capsys)
 
-    assert result.corpus_id == "H10g2"
+    assert result.corpus_id == "X10g2s0"  # seed 0 is a tuning seed, not the registered test seed
     assert result.counts.n_sheets == 10
     assert result.counts.n_nodes > 0 and result.counts.n_relationships > 0
     assert result.load_report is None  # nothing was loaded
@@ -47,7 +47,7 @@ def test_the_acceptance_command_writes_a_ten_sheet_v2_corpus_without_neo4j(
     assert result.config["split"]["duplication_rate"] == 0.25
     assert (tmp_path / "ingest.json").exists()
     assert (
-        json.loads((tmp_path / "ingest.json").read_text(encoding="utf-8"))["corpus_id"] == "H10g2"
+        json.loads((tmp_path / "ingest.json").read_text(encoding="utf-8"))["corpus_id"] == "X10g2s0"
     )
 
 

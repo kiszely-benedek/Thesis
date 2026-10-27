@@ -247,6 +247,18 @@ class UnitRecord(_Spec):
     variant: str
 
 
+class SpareSetRecord(_Spec):
+    """One installed A/B(/C) set: identical machines of one role, one running and the rest spare.
+
+    **Gold.** With consecutive spare naming (`P-1203`, `P-1204`) nothing in the tags says the two
+    machines are one set, so the answer key names the members (node ids, in installation order).
+    """
+
+    unit_no: int = Field(ge=1)
+    role: str  # the pattern's role of every member, e.g. `transfer_pump`
+    node_ids: tuple[str, ...]
+
+
 class GenerationRecordV2(BaseModel):
     """The generation's answer key (gold): never stored in the graph under retrieval.
 
@@ -262,6 +274,7 @@ class GenerationRecordV2(BaseModel):
     stream_kind: dict[str, StreamKindV2] = Field(default_factory=dict)  # by line number
     item_kind: dict[str, ItemKind] = Field(default_factory=dict)  # by tag
     node_gold: dict[str, NodeGold] = Field(default_factory=dict)  # by node id
+    spare_sets: tuple[SpareSetRecord, ...] = ()  # every A/B(/C) set, in unit then plan order
     #: wiring never raises: an unmatched out-port becomes an open stub, an unmatched in-port takes
     #: the train's feed farm (base 8.2); both counts are reported
     open_stub_count: int = 0

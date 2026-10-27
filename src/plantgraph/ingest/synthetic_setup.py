@@ -91,7 +91,7 @@ def _headline_v2_setup(args: argparse.Namespace) -> SyntheticSetup:
         preset.generator_config(search.n_units, args.seed),
         preset.split_config(args.seed),
         search,
-        headline_corpus_id_v2(args.target_sheets, args.seed),
+        headline_corpus_id_v2(args.target_sheets, args.seed, preset.duplication_rate),
     )
 
 

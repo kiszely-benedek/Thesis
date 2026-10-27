@@ -6,8 +6,13 @@ while the generator is sized in **units** (process areas), so `smallest_n_units_
 into the other. Unlike v1, the sheet count comes from the planner itself (`plan_plant`, no pyDEXPI),
 not from a formula.
 
-Corpus ids carry the version: `D100g2` is the dev corpus (seed 1) of about 100 sheets, `H100g2` a
-test corpus (a fresh seed); see `headline_corpus_id_v2`.
+Corpus ids carry the version: `D100g2` is the dev corpus (seed 1) of about 100 sheets, `H100g2` the
+test corpus of that size (its seed is fixed in `TEST_SEEDS_V2`), `X100g2s2` any other tuning plant;
+see `headline_corpus_id_v2`.
+
+**Seed ranges** (design vocabulary 14.5). Seeds 0-999 are dev and tuning seeds: every composition
+sweep stays inside them. Seeds 5000-5999 are test seeds, never looked at while tuning; the ones a
+corpus will use are written down in `TEST_SEEDS_V2` before that corpus is generated.
 """
 
 from __future__ import annotations
@@ -22,6 +27,25 @@ from plantgraph.ingest.headline import SizeSearchResult
 
 #: the dev corpora use this seed; every other seed is a test corpus (ADR-0045's rule)
 DEV_SEED = 1
+
+#: seeds 0-999 are free to tune on; 5000-5999 are reserved for test plants
+TUNING_SEEDS = range(0, 1000)
+TEST_SEED_RANGE = range(5000, 6000)
+
+#: target sheets -> the one test seed of that size. 3, 10 and 30 sheets are nested prefixes of one
+#: plant (as v1's seed 3 was), so they share a seed. The 1-sheet seed is the first one in 5100-5399
+#: whose one-unit plan fits on one sheet (`first_single_sheet_seed`; the scan is re-run in a test).
+TEST_SEEDS_V2: dict[int, int] = {
+    1: 5100,
+    3: 5001,
+    10: 5001,
+    30: 5001,
+    100: 5002,
+    1000: 5003,
+}
+
+#: the duplication rate the ids call "the preset"; any other rate adds a `d<percent>` suffix
+_PRESET_DUPLICATION_RATE = 0.25
 
 
 class SplitConfigV2(SplitConfig):
@@ -114,7 +138,35 @@ def _confirmed(
     )
 
 
-def headline_corpus_id_v2(target_sheets: int, seed: int) -> str:
-    """`D100g2` for the dev seed, `H100g2` for any other (test) seed."""
-    prefix = "D" if seed == DEV_SEED else "H"
-    return f"{prefix}{target_sheets}g2"
+def headline_corpus_id_v2(
+    target_sheets: int, seed: int, duplication_rate: float = _PRESET_DUPLICATION_RATE
+) -> str:
+    """The id of a v2 headline corpus.
+
+    `D100g2` for the dev seed, `H100g2` only for the test seed registered for that size, and
+    `X100g2s2` (the seed spelled out) for every other tuning seed, so a tuning plant is never
+    mistaken for a test corpus. A duplication rate other than the preset's 0.25 adds `d0` / `d50`.
+    """
+    if seed == DEV_SEED:
+        prefix, suffix = "D", ""
+    elif TEST_SEEDS_V2.get(target_sheets) == seed:
+        prefix, suffix = "H", ""
+    else:
+        prefix, suffix = "X", f"s{seed}"
+    rate = (
+        "" if duplication_rate == _PRESET_DUPLICATION_RATE else f"d{round(duplication_rate * 100)}"
+    )
+    return f"{prefix}{target_sheets}g2{suffix}{rate}"
+
+
+def first_single_sheet_seed(first: int, last: int) -> int:
+    """The first seed in `first..last` whose one-unit plant is drawn on one sheet (the H1 rule).
+
+    Raises:
+        ValueError: if no seed in the range qualifies.
+    """
+    preset = HeadlinePresetV2()
+    for seed in range(first, last + 1):
+        if plan_plant(preset.generator_config(1, seed)).sheet_count == 1:
+            return seed
+    raise ValueError(f"expected a one-sheet one-unit plant among seeds {first}..{last}, found none")

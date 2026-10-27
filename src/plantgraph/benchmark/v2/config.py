@@ -321,7 +321,9 @@ class FlowsheetKnobs(BaseModel):
     separation_weights: dict[str, float] = Field(default_factory=_default_separation_weights)
     #: both are read by patterns that arrive later (a column side draw, a blending additive feed)
     p_side_draw: Probability = 0.2  # a column side product to a later tank
-    p_shared_farm_feed: Probability = 0.2  # a second feed from an earlier train's product tanks
+    #: a second feed from an earlier train's product tanks; not implemented in v2.0, so only 0.0
+    #: is accepted (an unused knob at 0.2 would make every `ingest.json` claim an edge not drawn)
+    p_shared_farm_feed: Probability = 0.0
 
     @field_validator(
         "conditioning_count_weights",
@@ -334,6 +336,15 @@ class FlowsheetKnobs(BaseModel):
     def _check_positive(cls, weights: dict[str, float]) -> dict[str, float]:
         _require_positive({str(key): value for key, value in weights.items()}, "flowsheet weights")
         return weights
+
+    @field_validator("p_shared_farm_feed")
+    @classmethod
+    def _check_farm_feed_unused(cls, value: float) -> float:
+        if value != 0.0:
+            raise ValueError(
+                f"p_shared_farm_feed is not implemented in v2.0: expected 0.0, got {value}"
+            )
+        return value
 
     @model_validator(mode="after")
     def _check_slots(self) -> FlowsheetKnobs:

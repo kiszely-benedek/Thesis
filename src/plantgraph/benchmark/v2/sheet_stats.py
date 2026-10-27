@@ -42,6 +42,7 @@ class SheetStats(BaseModel):
     instruments: int  # sensors and bubbles
     symbols: int  # equipment + valves + fittings + instruments, without stubs
     stubs: int  # off-page stubs: open ends that are not closed, plus crossings
+    crossings: int  # the part of `stubs` that is a line passing to or from another sheet
     signal_cuts: int
 
 
@@ -49,16 +50,25 @@ def sheet_stats(plan: PlantPlanV2) -> list[SheetStats]:
     """The stats of every sheet of the plant, in unit order then sheet order."""
     sheet_of = {node: sheet for unit in plan.units for node, sheet in unit.sheets.sheet_of.items()}
     classes: dict[str, str] = {}
-    stubs: Counter[str] = Counter()
+    open_ends: Counter[str] = Counter()
+    crossings: Counter[str] = Counter()
     signal_cuts: Counter[str] = Counter()
     for unit in plan.units:
         unit_plan = unit.instance.plan
         classes.update(plan_node_classes(unit_plan))
-        stubs.update(_line_stubs(unit_plan, sheet_of, classes))
+        for line in unit_plan.lines:
+            open_ends.update(_open_end_stubs(line, sheet_of, classes))
+            crossings.update(_crossing_stubs(line, sheet_of))
         signal_cuts.update(_signal_cuts(unit_plan, sheet_of))
     counts = _kind_counts(sheet_of, classes)
     return [
-        _stats_of(sheet, counts[sheet], stubs[sheet], signal_cuts[sheet])
+        _stats_of(
+            sheet,
+            counts[sheet],
+            open_ends[sheet] + crossings[sheet],
+            crossings[sheet],
+            signal_cuts[sheet],
+        )
         for sheet in _sheets_in_order(sheet_of.values())
     ]
 
@@ -78,7 +88,9 @@ def _kind_counts(
     return counts
 
 
-def _stats_of(sheet: str, kinds: Counter[SymbolKind], stubs: int, signal_cuts: int) -> SheetStats:
+def _stats_of(
+    sheet: str, kinds: Counter[SymbolKind], stubs: int, crossings: int, signal_cuts: int
+) -> SheetStats:
     fittings = kinds[SymbolKind.FITTING] + kinds[SymbolKind.PRIMARY_ELEMENT]
     drawn = kinds[SymbolKind.EQUIPMENT] + kinds[SymbolKind.VALVE] + fittings
     return SheetStats(
@@ -89,22 +101,12 @@ def _stats_of(sheet: str, kinds: Counter[SymbolKind], stubs: int, signal_cuts: i
         instruments=kinds[SymbolKind.INSTRUMENT],
         symbols=drawn + kinds[SymbolKind.INSTRUMENT] + stubs,
         stubs=stubs,
+        crossings=crossings,
         signal_cuts=signal_cuts,
     )
 
 
 # ---- stubs ---------------------------------------------------------------------------------------
-
-
-def _line_stubs(
-    plan: TrimPlan, sheet_of: Mapping[str, str], classes: Mapping[str, str]
-) -> list[str]:
-    """The sheet of every stub the plan's lines make: open ends and crossings."""
-    stubs: list[str] = []
-    for line in plan.lines:
-        stubs += _open_end_stubs(line, sheet_of, classes)
-        stubs += _crossing_stubs(line, sheet_of)
-    return stubs
 
 
 def _chain(line: LineSpec) -> list[str]:

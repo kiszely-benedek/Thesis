@@ -24,6 +24,7 @@ from plantgraph.benchmark.v2.instruments_extra import machine_start_stop
 from plantgraph.benchmark.v2.patterns.assembly import (
     line_containing,
     quiet,
+    spare_set_plan,
     spared_set,
     with_stream_kinds,
 )
@@ -94,7 +95,7 @@ def build_pump_set(
     ]
     # the header's valve branches start at tees of the first pump's discharge line: they come last
     header_extra = [header.model_copy(update={"run": ()})] if header is not None else []
-    equipment = TrimPlan(equipment=tuple(pumps), roles={pump.node_id: role for pump in pumps})
+    equipment = spare_set_plan(pumps, role)
     plan = combine(
         equipment,
         manifold.plan,

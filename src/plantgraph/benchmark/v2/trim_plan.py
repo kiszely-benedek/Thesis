@@ -48,6 +48,11 @@ class TrimPlan(BaseModel):
     roles: dict[str, str] = Field(default_factory=dict)  # node id -> role, for the answer key
     stream_kinds: dict[str, StreamKindV2] = Field(default_factory=dict)  # by line number
     ports: dict[str, str] = Field(default_factory=dict)  # port name -> node id
+    #: gold: the node ids of every installed A/B(/C) set (two or more identical machines).
+    #: Consecutive spare naming (`P-1203`, `P-1204`) leaves no trace of a set in the tags, so it is
+    #: kept here. Left out of dumps on purpose: the frozen plan digest (design 14.2) hashes only
+    #: what is drawn.
+    spare_sets: tuple[tuple[str, ...], ...] = Field(default=(), exclude=True)
 
     def write(self, builder: PlantBuilderV2) -> None:
         """Send the plan to `builder`: equipment, lines, instruments, links, in that order.
@@ -99,6 +104,7 @@ def combine(*plans: TrimPlan) -> TrimPlan:
         roles=_merge_keyed([plan.roles for plan in plans], "role"),
         stream_kinds=_merge_keyed([plan.stream_kinds for plan in plans], "stream kind"),
         ports=_merge_keyed([plan.ports for plan in plans], "port"),
+        spare_sets=tuple(spare for plan in plans for spare in plan.spare_sets),
     )
 
 

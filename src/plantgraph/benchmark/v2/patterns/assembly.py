@@ -52,6 +52,20 @@ def spared_set(
     return machines
 
 
+def spare_set_plan(machines: list[EquipmentSpec], role: str) -> TrimPlan:
+    """A plan holding the machines of one `spared_set`, all of `role`; two or more are a spare set.
+
+    The set is recorded as gold (`TrimPlan.spare_sets`): consecutive spare naming leaves no trace
+    of it in the tags. A lone machine is just equipment.
+    """
+    spare_sets = (tuple(machine.node_id for machine in machines),) if len(machines) >= 2 else ()
+    return TrimPlan(
+        equipment=tuple(machines),
+        roles={machine.node_id: role for machine in machines},
+        spare_sets=spare_sets,
+    )
+
+
 def part_plan(ctx: PatternContext, node_class: str, role: str) -> TrimPlan:
     """A plan whose open `run` is one new inline part of `node_class` (port `part`)."""
     draft = TrimDraft(ctx.trim, ctx.style)

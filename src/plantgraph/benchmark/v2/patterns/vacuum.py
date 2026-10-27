@@ -28,6 +28,7 @@ from plantgraph.benchmark.v2.patterns.assembly import (
     part_plan,
     quiet,
     run_of,
+    spare_set_plan,
     spared_set,
     tee_plan,
     thermometer_tap,
@@ -119,9 +120,7 @@ def _air_ejector_system(
     stage_two = _ejector_stage(ctx, style, second, cooler_id, outlet_tee, (silencer,), None)
     outlet_ti = thermometer_tap(ctx, outlet_tee.ports["tee"], "intercondenser_outlet_ti")
     steam = [_motive_steam(ctx, ejector.node_id) for ejector in (*first, *second)]
-    machines = TrimPlan(
-        equipment=(*first, *second), roles={e.node_id: "air_ejector" for e in (*first, *second)}
-    )
+    machines = combine(spare_set_plan(first, "air_ejector"), spare_set_plan(second, "air_ejector"))
     parts = [quiet(cooler), machines, stage_one, stage_two, outlet_ti, cooler_trims.plan, *steam]
     ids = (*(e.node_id for e in (*first, *second)), cooler_id)
     return Vacuum(plan=combine(*(quiet(part) for part in parts)), equipment_ids=ids)

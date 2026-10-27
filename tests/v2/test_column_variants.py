@@ -15,6 +15,7 @@ from test_column import column, letters, one
 from trim_harness import ids_with_role
 
 from plantgraph.benchmark.v2.config import SheetKnobs
+from plantgraph.benchmark.v2.patterns import column as column_module
 from plantgraph.benchmark.v2.patterns.column import build_distillation_column
 from plantgraph.benchmark.v2.sheets import assign_unit_sheets
 from plantgraph.graph.schema import Relation
@@ -95,13 +96,37 @@ def test_the_vapour_passes_stage_one_the_intercondenser_and_stage_two_then_a_sil
     assert "CWS" in _inbound_services(graph, cooler)
 
 
-def test_the_air_ejector_system_is_drawn_with_the_condenser_and_the_drum() -> None:
-    _, instance, graph = column(_AIR, patterns={"p_column_combined": 0.0})
+def _ejector_ids(instance: object) -> set[str]:
+    plan = instance.plan  # type: ignore[attr-defined]
+    return {*ids_with_role(plan, "air_ejector"), *ids_with_role(plan, "intercondenser")}
+
+
+def test_the_air_ejector_package_is_its_own_unpinned_group_after_the_overhead_group() -> None:
+    """Two sheets: G1 column side, G2 condenser and drum, G3 ejectors and inter-condenser."""
+    _, instance, _ = column(_AIR, patterns={"p_column_combined": 0.0})
     group = instance.drawing_group_of
-    for role in ("air_ejector", "intercondenser"):
-        assert {group[n] for n in ids_with_role(instance.plan, role)} == {
-            group[one(instance, "reflux_drum")]
-        }
+    assert {group[n] for n in _ejector_ids(instance)} == {"G3"}
+    assert group[one(instance, "reflux_drum")] == "G2"
+    assert len(_ejector_ids(instance)) == 5 and not instance.pinned_groups
+
+
+def test_a_combined_column_with_an_air_ejector_keeps_the_ejectors_in_a_second_group() -> None:
+    """Combined: G1 holds all but the ejector package, which is G2 (the merge may rejoin it)."""
+    _, instance, _ = column(_AIR, patterns={"p_column_combined": 1.0})
+    group = instance.drawing_group_of
+    assert "layout=combined" in instance.variant
+    assert {group[n] for n in _ejector_ids(instance)} == {"G2"}
+    assert {g for n, g in group.items() if n not in _ejector_ids(instance)} == {"G1"}
+
+
+def test_the_ejector_group_comes_before_the_pinned_pump_groups() -> None:
+    _, instance, _ = column(
+        {**_AIR, "pump_set.group": ("own_sheet",)}, patterns={"p_column_combined": 0.0}
+    )
+    groups = _groups(instance)
+    assert groups["G3"] == {"air_ejector", "intercondenser"}
+    assert groups["G4"] == {"reflux_pump"} and groups["G5"] == {"bottoms_pump"}
+    assert instance.pinned_groups == {"G4", "G5"}
 
 
 # ---- liquid-ring pump ---------------------------------------------------------------------------
@@ -180,16 +205,45 @@ def test_combined_layout_is_one_group_and_one_sheet() -> None:
     assert assign_unit_sheets(1, instance, SheetKnobs()).sheet_count == 1
 
 
-def test_a_combined_column_with_too_much_equipment_falls_back_to_two_sheets() -> None:
-    """Three pumps per set, a preheater, two drain pots and a two-stage ejector exceed 16 items."""
-    _, instance, _ = column(
-        {**_AIR, "U1.feed_preheater": ("present",)},
-        patterns={"p_column_combined": 1.0, "p_triple_pump_set": 1.0, "p_single_pump": 0.0},
-        trims={"condensate_mode_weights": {"drain_pot": 1.0}},
+def _with_equipment_cap(monkeypatch: pytest.MonkeyPatch, cap: int) -> None:
+    """Make the column read a smaller equipment cap than the default 16."""
+    monkeypatch.setattr(
+        column_module, "SheetKnobs", lambda: SheetKnobs(max_equipment_per_sheet=cap)
     )
-    assert len(instance.plan.equipment) > 16
-    assert set(instance.drawing_group_of.values()) == {"G1", "G2"}
+
+
+_TOO_BIG = {
+    "patterns": {"p_column_combined": 1.0, "p_triple_pump_set": 1.0, "p_single_pump": 0.0},
+    "trims": {"condensate_mode_weights": {"drain_pot": 1.0}},
+}
+
+
+def test_the_combined_fallback_counts_the_equipment_without_the_ejector_package(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """18 items with the 5-item ejector package, 13 without: a cap of 14 still draws one sheet."""
+    _with_equipment_cap(monkeypatch, 14)
+    _, instance, _ = column({**_AIR, "U1.feed_preheater": ("present",)}, **_TOO_BIG)
+    assert len(instance.plan.equipment) == 18
+    assert "layout=combined" in instance.variant
+
+
+def test_a_combined_column_with_too_much_equipment_falls_back_to_two_sheets(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Below 13 items (the column without ejectors) the combined sheet falls back."""
+    _with_equipment_cap(monkeypatch, 12)
+    _, instance, _ = column({**_AIR, "U1.feed_preheater": ("present",)}, **_TOO_BIG)
+    assert set(instance.drawing_group_of.values()) == {"G1", "G2", "G3"}
     assert "layout=two_sheets" in instance.variant
+
+
+def test_the_liquid_ring_pump_stays_in_the_overhead_group() -> None:
+    _, instance, _ = column(_RING, patterns={"p_column_combined": 0.0})
+    group = instance.drawing_group_of
+    (ring,) = ids_with_role(instance.plan, "liquid_ring_pump")
+    assert group[ring] == group[one(instance, "reflux_drum")] == "G2"
+    assert set(group.values()) == {"G1", "G2"}
 
 
 @pytest.mark.parametrize("combined", [0.0, 1.0])

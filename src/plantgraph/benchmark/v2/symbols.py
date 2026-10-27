@@ -3,9 +3,9 @@
 A P&ID **symbol** is one drawn shape: a machine, a valve, a fitting, a flow element, an instrument
 bubble. The rule is fixed in the design before any measurement so it cannot be tuned: a symbol is
 equipment, a valve, a fitting, a primary element (the flow element that senses a flow), a
-signal-generating function (the sensor) or an indicating/controlling function (the bubble). A
-`PipeTee` is a junction, not a symbol; a spec break and the actuators are drawn as part of their
-line or valve.
+signal-generating function (the sensor) or an indicating/controlling function (the bubble,
+which includes the controller `ProcessControlFunction`). A `PipeTee` is a junction, not a symbol;
+a spec break and the actuators are drawn as part of their line or valve.
 """
 
 from __future__ import annotations
@@ -33,6 +33,8 @@ _INSTRUMENT_CLASSES = frozenset(
     {
         NodeClass.PROCESS_SIGNAL_GENERATING_FUNCTION.value,
         NodeClass.PROCESS_INSTRUMENTATION_FUNCTION.value,
+        # a controller bubble: pyDEXPI makes it a subclass of the instrumentation function
+        NodeClass.PROCESS_CONTROL_FUNCTION.value,
     }
 )
 

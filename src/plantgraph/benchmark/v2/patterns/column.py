@@ -16,6 +16,7 @@ Variants (one deck each, `variants.PATTERN_DECKS`): vacuum device none / air eje
 pump (`vacuum.py`), condenser class, feed preheater, reflux sight glass. `p_column_combined` draws
 the system on one sheet, else on two (column and reboiler, then condenser and drum); the combined
 sheet falls back to two when it would hold more equipment than a sheet may (pid-vocabulary 13.6).
+An air-ejector package is its own drawing group after the overhead one (tuning round 1, 14.2).
 `p_side_draw` adds a tray draw as a further liquid out-port. Ports: `feed`, `distillate`,
 [`side_draw`], [`vapour`], `bottoms` last, because the flowsheet grammar feeds the next unit from
 the last port of a phase (the bottoms of one column feed the next separation).
@@ -178,9 +179,16 @@ def build_distillation_column(ctx: PatternContext) -> PatternInstance:
     ]
     plan = with_stream_kinds(combine(*(quiet(part) for part in parts)))
     column_side = [*reboiler.ids, *(preheater.ids if preheater else ())]
-    overhead_side = [*condenser.ids, *vapour.equipment_ids]
+    # the air-ejector package is drawn apart from the condenser and drum (pid-vocabulary 14.2)
+    ejectors = list(vapour.equipment_ids) if choices.vacuum == "air_ejector" else []
+    overhead_side = [*condenser.ids, *(vapour.equipment_ids if not ejectors else ())]
     groups, layout = _drawing_groups(
-        [column, *column_side], [drum, *overhead_side], reflux, bottoms, choices.combined
+        [column, *column_side],
+        [drum, *overhead_side],
+        ejectors,
+        reflux,
+        bottoms,
+        choices.combined,
     )
     ports = _ports(plan, choices, feed_tee, vapour.valve_body_id, reflux, bottoms, side_flow)
     return PatternInstance(
@@ -221,14 +229,17 @@ def _ports(
 def _drawing_groups(
     column_side: list[str],
     overhead_side: list[str],
+    ejectors: list[str],
     reflux: PumpSet,
     bottoms: PumpSet,
     combined: bool,
 ) -> tuple[DrawingGroups, str]:
-    """G1 column side, G2 overhead side (one group when combined); own-sheet pump sets pinned after.
+    """G1 column side, G2 overhead side (one group when combined), then the air-ejector package.
 
-    Returns the groups and the layout drawn: `combined`, or `two_sheets` (also the fallback when a
-    combined sheet would hold more equipment than the sheet cap, pid-vocabulary 13.6 rule 2).
+    The ejector group is not pinned, so the merge step rejoins it to the overhead group whenever
+    the caps allow; own-sheet pump sets come last, pinned. Returns the groups and the layout drawn:
+    `combined`, or `two_sheets` (also the fallback when the combined sheet, without the ejectors
+    that are no longer on it, would hold more equipment than the sheet cap, pid-vocabulary 13.6).
     """
     column_ids = [*column_side, *([] if bottoms.own_sheet else bottoms.pump_ids)]
     overhead_ids = [*overhead_side, *([] if reflux.own_sheet else reflux.pump_ids)]
@@ -242,6 +253,9 @@ def _drawing_groups(
         groups.put(column_ids, "G1")
         groups.put(overhead_ids, "G2")
         next_group = 3
+    if ejectors:
+        groups.put(ejectors, f"G{next_group}")
+        next_group += 1
     for pumps in (reflux, bottoms):
         if pumps.own_sheet:
             groups.put(pumps.pump_ids, f"G{next_group}", pinned=True)

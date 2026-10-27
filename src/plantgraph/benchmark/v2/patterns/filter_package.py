@@ -21,6 +21,7 @@ from plantgraph.benchmark.v2.patterns.assembly import (
     part_plan,
     pressure_gauge_tap,
     quiet,
+    spare_set_plan,
     spared_set,
     tee_plan,
     with_stream_kinds,
@@ -69,7 +70,7 @@ def build_filter_package(ctx: PatternContext) -> PatternInstance:
     taps.append(pressure_gauge_tap(ctx, outlet_gauge.ports["tee"], "outlet_pi"))
     taps += [differential_pressure(ctx.trim, ctx.style, tee.ports["tee"]) for tee in dp_tees]
     drains = [vessel_vent_drain(ctx.trim, ctx.style, filter_id) for filter_id in (fa, fb)]
-    equipment = TrimPlan(equipment=tuple(filters), roles={fa: "filter", fb: "filter"})
+    equipment = spare_set_plan(filters, "filter")
     plan = combine(equipment, lines, *(quiet(part) for part in [*taps, *drains]))
     plan = with_stream_kinds(plan)
     groups = DrawingGroups()
