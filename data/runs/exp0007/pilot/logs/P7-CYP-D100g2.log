@@ -1,0 +1,38 @@
+run P7-CYP-D100g2: 10 rows to answer, 0 already on disk
+concurrency 4: up to that many questions in flight
+paid mode: up to 10 model calls; hard spend cap 0.04 USD
+estimated cost: 0.0100 USD
+{
+  "run_id": "P7-CYP-D100g2",
+  "n_rows": 10,
+  "n_new_rows": 10,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "cypher_rag_plant": {
+      "0": {
+        "RETRIEVAL_ERROR": 2,
+        "ANSWERED": 7
+      },
+      "1": {
+        "ANSWERED": 1
+      }
+    }
+  },
+  "routing_recall": {},
+  "relaxed_routing_recall": {},
+  "evidence_node_recall": {},
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {},
+    "relaxed_routing_recall": {},
+    "evidence_node_recall": {}
+  },
+  "trace_rates": {
+    "cypher_rag_plant": {
+      "truncated_rate": 0.125
+    }
+  },
+  "mean_total_cost_usd": {
+    "cypher_rag_plant": 0.0004774225
+  },
+  "stopped_by_spend_cap": false
+}
