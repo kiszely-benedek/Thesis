@@ -1,0 +1,25 @@
+{
+ "stage": "dev-check-resume",
+ "entries": [
+  {
+   "run_id": "Q7-CYP-D100g2",
+   "tier": "cyp",
+   "n_questions": 163,
+   "v1_cost_per_question_usd": 0.0003888641666666667,
+   "correction": 1.268461412640836,
+   "cost_per_question_usd": 0.0004932591901754015,
+   "cap_usd": 0.15,
+   "basis": "v1 0.000389 x 1.268"
+  },
+  {
+   "run_id": "Q7-AG-D100g2",
+   "tier": "ag",
+   "n_questions": 163,
+   "v1_cost_per_question_usd": 0.0005113215277777778,
+   "correction": 1.1601945947250987,
+   "cost_per_question_usd": 0.00089,
+   "cap_usd": 0.2,
+   "basis": "resume after the $0.15 cap: +$0.05 approved by the user 2026-10-27; measured $0.00089/q on the first 140"
+  }
+ ]
+}
