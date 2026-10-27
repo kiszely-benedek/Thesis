@@ -108,7 +108,7 @@ def _draw_page(
         draw_line(pdf, line, layout.scale)
         counts.lines += 1
     for symbol in layout.symbols:
-        draw_symbol(pdf, symbol, layout.scale)
+        draw_symbol(pdf, symbol, layout.scale, cfg.glyph_style)
         counts.symbols += 1
         if symbol.family in ("pipe_flag", "signal_flag"):
             counts.flags += 1

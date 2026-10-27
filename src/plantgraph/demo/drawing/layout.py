@@ -90,7 +90,7 @@ def layout_sheet(sheet: SheetGraph, config: LayoutConfig | None = None) -> Sheet
         push_to_end=[i for i in flow_ids if _is_outgoing_pipe_flag(nodes[i])],
         sweeps=cfg.sweeps,
     )
-    widths = {i: symbol_size(nodes[i].family, cfg)[0] for i in flow_ids}
+    widths = {i: symbol_size(nodes[i].family, cfg, nodes[i].node_class)[0] for i in flow_ids}
     canvas = _make_canvas(_fit_scale(layered, widths, band.counts, cfg), cfg)
 
     geometry = place_flow(layered, widths, cfg, canvas.width, canvas.flow_top, canvas.flow_height)
@@ -175,7 +175,7 @@ def _flow_terminals(
     terminals: dict[str, Terminal] = {}
     for node_id in flow_ids:
         x, y = geometry.positions[node_id]
-        width, height = symbol_size(nodes[node_id].family, cfg)
+        width, height = symbol_size(nodes[node_id].family, cfg, nodes[node_id].node_class)
         layer = geometry.layer_of[node_id]
         terminals[node_id] = Terminal(
             Box(x, y, width, height), geometry.left_gutter(layer), geometry.right_gutter(layer), y

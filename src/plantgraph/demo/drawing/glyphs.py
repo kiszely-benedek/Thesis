@@ -12,16 +12,19 @@ import math
 from fpdf import FPDF
 
 from plantgraph.demo.drawing.geometry import Box, symbol_box
-from plantgraph.demo.drawing.models import PlacedSymbol, RoutedLine
+from plantgraph.demo.drawing.glyph_text import BIG_PT as _BIG_PT
+from plantgraph.demo.drawing.glyph_text import MIN_TEXT_PT as MIN_TEXT_PT  # re-exported
+from plantgraph.demo.drawing.glyph_text import SMALL_PT as _SMALL_PT
+from plantgraph.demo.drawing.glyph_text import centred as _centred
+from plantgraph.demo.drawing.glyph_text import set_font as _set_font
+from plantgraph.demo.drawing.glyphs_iso import draw_iso_symbol
+from plantgraph.demo.drawing.models import GlyphStyle, PlacedSymbol, RoutedLine
 
-MIN_TEXT_PT = 4.0  # smallest text the renderer prints, however crowded the sheet
 BLACK = (0, 0, 0)
 BLUE = (0, 70, 200)  # signals
 WHITE = (255, 255, 255)
 FLAG_FILL = (255, 247, 214)
 _SIGNAL_RELATIONS = frozenset({"send_signal_to", "control", "measured_by"})
-_BIG_PT = 7.0  # first (most important) label line at scale 1
-_SMALL_PT = 5.0  # the other label lines at scale 1
 
 
 def draw_line(pdf: FPDF, line: RoutedLine, scale: float) -> None:
@@ -65,8 +68,17 @@ def _line_number(pdf: FPDF, line: RoutedLine, scale: float) -> None:
     pdf.text(x, start[1] - 1.5, text)
 
 
-def draw_symbol(pdf: FPDF, symbol: PlacedSymbol, scale: float) -> None:
-    """Draw the glyph of the symbol's family and print its labels inside."""
+def draw_symbol(
+    pdf: FPDF, symbol: PlacedSymbol, scale: float, style: GlyphStyle = "classic"
+) -> None:
+    """Draw the glyph of the symbol's family and print its labels inside.
+
+    The "iso" style draws a standard symbol per class (`glyphs_iso`); off-page flags look the same
+    in both styles.
+    """
+    if style == "iso" and symbol.family not in ("pipe_flag", "signal_flag"):
+        draw_iso_symbol(pdf, symbol, scale)
+        return
     pdf.set_draw_color(*BLACK)
     pdf.set_fill_color(*WHITE)
     pdf.set_text_color(*BLACK)
@@ -158,21 +170,3 @@ def _stack_labels(
         size = max(MIN_TEXT_PT, min(base * scale, 1.1 * pitch))
         baseline = symbol.y - symbol.height / 2 + pitch * (index + 1) + 0.35 * size
         _centred(pdf, text, x, baseline, size, index == 0, fit)
-
-
-def _centred(
-    pdf: FPDF, text: str, x: float, baseline: float, size: float, bold: bool, max_width: float
-) -> None:
-    """Print `text` centred on x; shrink towards the floor if wider than `max_width`."""
-    size = max(MIN_TEXT_PT, size)
-    _set_font(pdf, size, bold)
-    width = pdf.get_string_width(text)
-    if width > max_width and size > MIN_TEXT_PT:
-        size = max(MIN_TEXT_PT, size * max_width / width)
-        _set_font(pdf, size, bold)
-        width = pdf.get_string_width(text)
-    pdf.text(x - width / 2, baseline, text)
-
-
-def _set_font(pdf: FPDF, size: float, bold: bool) -> None:
-    pdf.set_font("helvetica", "B" if bold else "", size)

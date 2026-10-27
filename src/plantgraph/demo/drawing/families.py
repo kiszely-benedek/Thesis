@@ -11,20 +11,23 @@ from typing import Any, Literal
 
 import networkx as nx
 
+from plantgraph.demo.drawing.glyph_families import SMALL_GLYPH_SIZE, TALL_GLYPHS, glyph_of
 from plantgraph.demo.drawing.models import Family, LayoutConfig
 from plantgraph.graph import schema
-from plantgraph.graph.schema import NodeClass
+from plantgraph.graph.schema import NodeCategory, NodeClass
 
 #: Symbols that sit in the pipe-flow drawing; the others sit in the instrument band above it.
-FLOW_FAMILIES: frozenset[str] = frozenset({"equipment", "valve", "pipe_flag"})
-
-_INSTRUMENT_CLASSES = frozenset(
-    {
-        NodeClass.PROCESS_SIGNAL_GENERATING_FUNCTION.value,
-        NodeClass.PROCESS_INSTRUMENTATION_FUNCTION.value,
-        NodeClass.ACTUATING_FUNCTION.value,
-    }
+FLOW_FAMILIES: frozenset[str] = frozenset(
+    {"equipment", "valve", "fitting", "junction", "primary_element", "break", "pipe_flag"}
 )
+
+#: The piping kinds that are neither valves nor equipment, each its own layout family.
+_INLINE_FAMILY: dict[str, Family] = {
+    "fitting": "fitting",
+    "junction": "junction",
+    "primary_element": "primary_element",
+    "break": "break",
+}
 _PIPE_FLAG_CLASSES = frozenset(
     {
         NodeClass.FLOW_IN_PIPE_OFF_PAGE_CONNECTOR.value,
@@ -36,6 +39,19 @@ _SIGNAL_FLAG_CLASSES = frozenset(
         NodeClass.FLOW_IN_SIGNAL_OFF_PAGE_CONNECTOR.value,
         NodeClass.FLOW_OUT_SIGNAL_OFF_PAGE_CONNECTOR.value,
     }
+)
+
+
+#: Families printed as tag plus class name (an untagged item shows the class name alone).
+_CLASS_LABELLED = frozenset(
+    {"equipment", "valve", "fitting", "junction", "primary_element", "break"}
+)
+
+#: Every instrumentation class (a sensor, a controller, an actuator): drawn as a bubble in the band.
+_INSTRUMENT_CLASSES: frozenset[str] = frozenset(
+    node_class.value
+    for node_class, spec in schema.CLASS_SPECS.items()
+    if spec.category is NodeCategory.INSTRUMENTATION
 )
 
 
@@ -69,11 +85,23 @@ def family_of(node_class: str) -> Family:
         return "valve"
     if node_class in _INSTRUMENT_CLASSES:
         return "instrument"
+    inline = _inline_family(node_class)
+    if inline is not None:
+        return inline
     if node_class in _PIPE_FLAG_CLASSES:
         return "pipe_flag"
     if node_class in _SIGNAL_FLAG_CLASSES:
         return "signal_flag"
     raise ValueError(f"cannot draw node_class {node_class!r}; expected one of the sheet classes")
+
+
+def _inline_family(node_class: str) -> Family | None:
+    """The family of a piping class that is not a valve (fitting, pipe tee, flow meter, break)."""
+    try:
+        kind = schema.CLASS_SPECS[NodeClass(node_class)].piping_kind
+    except ValueError:
+        return None  # not a schema class at all; `family_of` raises for it
+    return None if kind is None else _INLINE_FAMILY.get(kind)
 
 
 def classify_nodes(graph: nx.DiGraph[str]) -> dict[str, NodeInfo]:
@@ -87,11 +115,22 @@ def classify_nodes(graph: nx.DiGraph[str]) -> dict[str, NodeInfo]:
     return infos
 
 
-def symbol_size(family: Family, config: LayoutConfig) -> tuple[float, float]:
-    """Width and height of a symbol family: flags are larger because they carry more text."""
+def symbol_size(
+    family: Family, config: LayoutConfig, node_class: str | None = None
+) -> tuple[float, float]:
+    """Width and height of a symbol: flags are larger (more text).
+
+    In the ISO style inline items are smaller and columns taller; classic ignores `node_class`.
+    """
     if family in ("pipe_flag", "signal_flag"):
         return config.flag_width, config.flag_height
-    return config.box_width, config.box_height
+    width, height = config.box_width, config.box_height
+    if config.glyph_style == "classic":
+        return width, height
+    factors = SMALL_GLYPH_SIZE.get(family)
+    if factors is None and node_class is not None:
+        factors = TALL_GLYPHS.get(glyph_of(node_class))
+    return (width, height) if factors is None else (width * factors[0], height * factors[1])
 
 
 def target_sheet(info: NodeInfo) -> str | None:
@@ -105,7 +144,7 @@ def target_sheet(info: NodeInfo) -> str | None:
 def symbol_labels(info: NodeInfo) -> tuple[str, ...]:
     """The text lines printed inside a symbol; properties the node lacks are left out."""
     attrs = info.attrs
-    if info.family in ("equipment", "valve"):
+    if info.family in _CLASS_LABELLED:
         return _present(attrs.get("tag"), info.node_class)
     if info.family == "instrument":
         # an actuating function has no tag of its own: it shares its valve's

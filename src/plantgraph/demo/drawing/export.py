@@ -13,10 +13,12 @@ from pathlib import Path
 
 from plantgraph.benchmark.sheet_graph import SheetGraph
 from plantgraph.demo.drawing.geometry import count_foreign_crossings, count_overlaps
+from plantgraph.demo.drawing.glyph_families import glyph_style_for
 from plantgraph.demo.drawing.layout import layout_sheet
 from plantgraph.demo.drawing.models import (
     DrawingIndex,
     DrawingReport,
+    GlyphStyle,
     LayoutConfig,
     SheetLayout,
 )
@@ -39,7 +41,7 @@ def export_drawings(
     Raises:
         ValueError: the drawing does not match the corpus (symbols, flags or lines missing).
     """
-    cfg = config or LayoutConfig()
+    cfg = config or LayoutConfig(glyph_style=_style_of(sheets))
     started = time.perf_counter()
     layouts = [layout_sheet(sheet, cfg) for sheet in sheets]
     layout_s = time.perf_counter() - started
@@ -58,6 +60,12 @@ def export_drawings(
     )
     _write(out_dir / corpus_id, rendered.data, index)
     return index
+
+
+def _style_of(sheets: Sequence[SheetGraph]) -> GlyphStyle:
+    """The ISO style if any sheet holds a class beyond v1's, else classic."""
+    classes = (attrs["node_class"] for sheet in sheets for _, attrs in sheet.graph.nodes(data=True))
+    return glyph_style_for(classes)
 
 
 def _report(

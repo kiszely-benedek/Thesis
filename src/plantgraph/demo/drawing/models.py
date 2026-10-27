@@ -12,7 +12,24 @@ from pydantic import BaseModel, ConfigDict
 
 #: What a symbol is drawn as. `*_flag` is an off-page connector: the arrow-shaped marker a
 #: drawing uses to say "this pipe (or signal) continues on another sheet".
-Family = Literal["equipment", "valve", "instrument", "pipe_flag", "signal_flag"]
+#: The four inline families (`fitting`, `junction`, `primary_element`, `break`) are the small items
+#: on a pipe that are not valves: a reducer, a pipe tee, a flow meter, a marker where the pipe's
+#: specification changes.
+Family = Literal[
+    "equipment",
+    "valve",
+    "fitting",
+    "junction",
+    "primary_element",
+    "break",
+    "instrument",
+    "pipe_flag",
+    "signal_flag",
+]
+
+#: "classic" is the original drawing; "iso" draws a standard symbol per kind of item (see
+#: `glyph_families.py`). Classic stays the default so v1 exports do not change.
+GlyphStyle = Literal["classic", "iso"]
 
 
 class LayoutConfig(BaseModel):
@@ -34,6 +51,7 @@ class LayoutConfig(BaseModel):
     band_fraction: float = 0.25  # share of the drawing height for the instrument band (top)
     flow_fraction: float = 0.70  # share for the pipe-flow drawing (bottom); the rest is a gap
     band_rows: int = 4
+    glyph_style: GlyphStyle = "classic"
     sweeps: int = 4  # barycenter sweeps; fixed, so the result is deterministic
 
     @property
