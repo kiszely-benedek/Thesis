@@ -1,0 +1,45 @@
+{
+  "stage": "pilot",
+  "entries": [
+    {
+      "run_id": "P7-CYP-D100g2-SMOKE",
+      "tier": "cyp",
+      "n_questions": 2,
+      "v1_cost_per_question_usd": 0.0,
+      "correction": 1.0,
+      "cost_per_question_usd": 0.001,
+      "cap_usd": 0.01,
+      "basis": "fixed pilot cap (plan section 5)"
+    },
+    {
+      "run_id": "P7-CYP-D100g2",
+      "tier": "cyp",
+      "n_questions": 10,
+      "v1_cost_per_question_usd": 0.0,
+      "correction": 1.0,
+      "cost_per_question_usd": 0.001,
+      "cap_usd": 0.04,
+      "basis": "fixed pilot cap (plan section 5)"
+    },
+    {
+      "run_id": "P7-AG-D100g2-SMOKE",
+      "tier": "ag",
+      "n_questions": 2,
+      "v1_cost_per_question_usd": 0.0,
+      "correction": 1.0,
+      "cost_per_question_usd": 0.003,
+      "cap_usd": 0.01,
+      "basis": "fixed pilot cap (plan section 5)"
+    },
+    {
+      "run_id": "P7-AG-D100g2",
+      "tier": "ag",
+      "n_questions": 10,
+      "v1_cost_per_question_usd": 0.0,
+      "correction": 1.0,
+      "cost_per_question_usd": 0.003,
+      "cap_usd": 0.04,
+      "basis": "fixed pilot cap (plan section 5)"
+    }
+  ]
+}
