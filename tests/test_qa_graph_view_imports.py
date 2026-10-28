@@ -26,6 +26,9 @@ _CHECKED_FILES = (
     _QA_DIR / "context_render.py",
     _QA_DIR / "unit_router.py",
     _QA_DIR / "strategies" / "hierarchical.py",
+    _QA_DIR.parent
+    / "graph"
+    / "line_view.py",  # the line view is built from drawings only (ADR-0061)
 )
 _BANNED_MODULES = (
     "plantgraph.qa.corpus",

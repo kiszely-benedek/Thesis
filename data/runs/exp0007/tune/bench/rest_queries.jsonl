@@ -1,0 +1,2 @@
+{"query_id":"route_shortest_1:CHV-12001->XV-54011","group":"shape","query":"MATCH p = SHORTEST 1 (a:PlantItem {tag: 'CHV-12001'})-[:send_to]->+(b:PlantItem {tag: 'XV-54011'}) RETURN [n IN nodes(p) | n.tag] AS tags"}
+{"query_id":"route_all_paths_count:CHV-12001->XV-54011","group":"shape","query":"MATCH p = (a:PlantItem {tag: 'CHV-12001'})-[:send_to*1..]->(b:PlantItem {tag: 'XV-54011'}) RETURN count(p) AS n_paths"}

@@ -7,6 +7,7 @@ from collections import Counter
 from pathlib import Path
 
 from plantgraph.qa.cascade.evaluate import DEFAULT_CUTOFF_S, LatencyBound
+from plantgraph.qa.cascade.infra_cypher_bench_cli import add_bench_arguments, bench_command
 from plantgraph.qa.cascade.infra_cypher_replay_cli import add_replay_arguments, replay_command
 from plantgraph.qa.cascade.infra_probe_cli import add_probe_arguments, probe_command
 from plantgraph.qa.cascade.infra_report_cli import add_report_arguments, report_command
@@ -50,6 +51,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     add_probe_arguments(commands.add_parser("infra-probe"))
     add_report_arguments(commands.add_parser("infra-report"))
     add_replay_arguments(commands.add_parser("infra-cypher-replay"))
+    add_bench_arguments(commands.add_parser("infra-cypher-bench"))
     commands.choices["needed"].add_argument("--tier", required=True)
     commands.choices["needed"].add_argument("--out-root", type=Path, default=DEFAULT_QSUB_ROOT)
     return parser.parse_args(argv)
@@ -156,6 +158,9 @@ def main(argv: list[str] | None = None, *, open_cascade: OpenCascade = open_for_
         return
     if args.command == "infra-cypher-replay":
         replay_command(args)
+        return
+    if args.command == "infra-cypher-bench":
+        bench_command(args)
         return
     if args.command == "report":
         _run_report(args)

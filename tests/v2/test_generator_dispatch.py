@@ -31,13 +31,15 @@ def _stored_generator_blocks() -> list[tuple[Path, dict[str, object]]]:
     return blocks
 
 
-def test_every_stored_ingest_json_dispatches_to_v1_and_dumps_back_unchanged() -> None:
+def test_every_stored_ingest_json_dispatches_to_its_version_and_dumps_back_unchanged() -> None:
     blocks = _stored_generator_blocks()
     if not blocks:
         pytest.skip("no ingest.json under data/ (the run outputs are git-ignored)")
     for path, block in blocks:
+        # the v2 runs of EXP-0007 store v2 configs; every other stored config is v1 and must stay v1
+        expected = GeneratorConfigV2 if block.get("generator_version") == "v2" else GeneratorConfig
         config = generator_config_from_json(block)
-        assert type(config) is GeneratorConfig, path
+        assert type(config) is expected, path
         assert config.model_dump(mode="json") == block, path
         assert _ANY.validate_python(block) == config, path
 
