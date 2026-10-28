@@ -1,0 +1,42 @@
+families that lost 2 or more questions (stop rule 3): none
+setting B, cascade_v4 against the previous round: fixed 19, broke 4 (still improving, needs 3)
+# V2T tuning: X100g2s211, setting B
+
+Cypher timeout 120 s; limit 900 s (hang guard). 163 questions. Primary number: uncut accuracy.
+
+| policy | uncut | acc@120 | acc@300 | in limit | beyond | oracle gap | p50 s | p90 s |
+|---|---|---|---|---|---|---|---|---|
+| cascade_v4 | 152/163 | 150/163 | 152/163 | 152/163 | 0 | 6 | 6.6 | 26.1 |
+| cascade_v4_iso | 158/163 | 156/163 | 158/163 | 158/163 | 0 | 0 | 6.6 | 26.1 |
+
+Cypher tier: 123/163 accepted (115 correct); rejected by rule: answered 5, not_abstained 2, rows 33; correct answers rejected only for being cut at the row cap: 0.
+
+Oracle (either tier correct): 158/163.
+
+Variant choice: **cascade_v4_iso** (cascade_v4_iso replaces cascade_v4 iff its primary accuracy on T is >= cascade_v4's; counts uncut: v4 152, v4_iso 158 of 163).
+
+Per family vs the previous round (cascade_v4):
+
+| family | before | now | change |
+|---|---|---|---|
+| LOOPS_NEAR_ITEM | 7 | 6 | -1 |
+| UPSTREAM_ISOLATION | 4 | 3 | -1 |
+| CONNECTED | 10 | 10 | +0 |
+| COUNT_IN_UNIT | 10 | 10 | +0 |
+| CROSS_UNIT | 10 | 10 | +0 |
+| INSTRUMENTS_OF_ITEM | 7 | 7 | +0 |
+| LOOKUP_TYPE | 7 | 7 | +0 |
+| LOOKUP_UNIT | 7 | 7 | +0 |
+| LOOP_ACTUATED_VALVE | 10 | 10 | +0 |
+| LOOP_MEASURED_EQUIPMENT | 6 | 6 | +0 |
+| NEIGHBOURS_DOWNSTREAM | 10 | 10 | +0 |
+| SAME_UNIT | 6 | 6 | +0 |
+| SHEETS_OF_TAG | 10 | 10 | +0 |
+| UNANSWERABLE_TAG | 10 | 10 | +0 |
+| UPSTREAM_SOURCES | 10 | 10 | +0 |
+| DOWNSTREAM_IN_UNIT | 9 | 10 | +1 |
+| FLOW_PATH | 3 | 10 | +7 |
+| NO_PATH | 1 | 10 | +9 |
+
+
+wrote data\runs\exp0007\tune\rounds\r2\B\tune_report.md and data\runs\exp0007\tune\rounds\r2\B\tune_report.json
