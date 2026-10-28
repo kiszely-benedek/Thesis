@@ -22,6 +22,7 @@ from pydantic import BaseModel, ConfigDict
 from plantgraph.qa.corpus import load_corpus_artifacts
 from plantgraph.qa.graph_view import NetworkxGraphView
 from plantgraph.qa.harness.canonical_programs import run_canonical_program
+from plantgraph.qa.harness.gold import GoldScoring
 from plantgraph.qa.models import (
     AnswerType,
     AnswerValue,
@@ -53,34 +54,50 @@ class FamilyExpressiveness(BaseModel):
         return self.n_equal / self.n_questions if self.n_questions else 1.0
 
 
-def output_equals_reference(question: Question, output: AnswerValue) -> bool:
+def output_equals_reference(
+    question: Question, output: AnswerValue, scoring: GoldScoring | None = None
+) -> bool:
     """Whether a program's output is the reference answer, by the same rules as model answers.
 
-    A `TAG_PATH` must match the reference route exactly (a model's answer may be any valid
-    route; a program has no excuse for a different one). `None` means "not present".
+    A `TAG_PATH` must match the reference route exactly, unless `scoring` is given: then it is
+    scored like a model's answer, so any valid route counts. The line view needs that: it finds
+    the route with the fewest line items, the reference the one with the fewest pipe parts, and
+    on a v2 plant (parallel branches) the two differ although both are valid. `None` means
+    "not present".
     """
-    if question.answer_type is AnswerType.TAG_PATH and question.answerable:
-        return output == question.reference
     answer = FinalAnswer(answer=output, not_present=output is None)
+    if question.answer_type is AnswerType.TAG_PATH and question.answerable:
+        if scoring is None:
+            return output == question.reference
+        return score_answer(
+            question,
+            Outcome.ANSWERED,
+            answer,
+            connector_tags=scoring.connector_tags,
+            valid_edges=scoring.valid_edges,
+        ).correct
     return score_answer(question, Outcome.ANSWERED, answer).correct
 
 
-def _verdict(graph: ItemGraph, question: Question) -> str:
+def _verdict(graph: ItemGraph, question: Question, scoring: GoldScoring | None) -> str:
     """`"equal"`, `"different"`, or `"error"` when a primitive rejected the program's call."""
     try:
         output = run_canonical_program(graph, question)
     except PlantApiError:
         return "error"
-    return "equal" if output_equals_reference(question, output) else "different"
+    return "equal" if output_equals_reference(question, output, scoring) else "different"
 
 
 def evaluate_programs(
-    questions: list[Question], graph: ItemGraph
+    questions: list[Question], graph: ItemGraph, scoring: GoldScoring | None = None
 ) -> dict[QuestionFamily, FamilyExpressiveness]:
-    """Run each question's canonical program and tally the verdicts per family."""
+    """Run each question's canonical program and tally the verdicts per family.
+
+    `scoring` makes a path question count any valid route (`output_equals_reference`).
+    """
     verdicts: dict[QuestionFamily, Counter[str]] = defaultdict(Counter)
     for question in questions:
-        verdicts[question.family][_verdict(graph, question)] += 1
+        verdicts[question.family][_verdict(graph, question, scoring)] += 1
     return {
         family: FamilyExpressiveness(
             family=family, n_questions=c.total(), n_equal=c["equal"], n_errors=c["error"]

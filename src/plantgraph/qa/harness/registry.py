@@ -21,10 +21,12 @@ from plantgraph.llm.models import ModelPin
 from plantgraph.qa.agent.loop import RemainingSeconds
 from plantgraph.qa.agent.models import AgentParams
 from plantgraph.qa.agent.strategies import (
+    GRAPH_AGENT_LINES_NAME,
     GRAPH_AGENT_LOW_STEPS_NAME,
     GRAPH_AGENT_NAME,
     HIER_AGENT_NAME,
     GraphAgent,
+    GraphAgentLines,
     GraphAgentLowSteps,
     HierAgent,
 )
@@ -59,7 +61,16 @@ _NEED_RULES_NAMES: dict[str, Representation] = {
     need_strategy_name(RuleNeedClassifier.name, rep): rep for rep in REPRESENTATIONS
 }
 
-_AGENT_NAMES = (GRAPH_AGENT_NAME, GRAPH_AGENT_LOW_STEPS_NAME, HIER_AGENT_NAME)
+_AGENT_NAMES = (
+    GRAPH_AGENT_NAME,
+    GRAPH_AGENT_LOW_STEPS_NAME,
+    GRAPH_AGENT_LINES_NAME,
+    HIER_AGENT_NAME,
+)
+_AGENT_CLASS_OF_NAME: dict[str, type[GraphAgent]] = {
+    GRAPH_AGENT_LOW_STEPS_NAME: GraphAgentLowSteps,
+    GRAPH_AGENT_LINES_NAME: GraphAgentLines,
+}
 
 STRATEGY_FACTORIES: dict[str, StrategyFactory] = {
     ContextRag.name: lambda view, _params: ContextRag(view),
@@ -198,10 +209,10 @@ def _build_agent(
     if llm is None:
         raise ValueError(f"expected a model sender for {name} (it calls the model), found none")
     loop_params = AgentParams.model_validate(params)  # unknown keys are an error
-    plant = build_item_graph(view)
+    plant = build_item_graph(view, line_view=name == GRAPH_AGENT_LINES_NAME)
     if name == HIER_AGENT_NAME:
         return HierAgent(view, plant, llm.pin, llm.send, params=loop_params, primer=llm.primer)
-    agent_class = GraphAgentLowSteps if name == GRAPH_AGENT_LOW_STEPS_NAME else GraphAgent
+    agent_class = _AGENT_CLASS_OF_NAME.get(name, GraphAgent)
     return agent_class(
         plant,
         llm.pin,

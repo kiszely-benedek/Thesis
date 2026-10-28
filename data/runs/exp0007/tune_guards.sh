@@ -10,9 +10,9 @@
 # Environment:
 #   LINE_CORPORA     "corpus-id:ingest.json ..." for LINE-01 (default: D100g2 of the dev check)
 #   API02_CORPUS     "corpus-id:ingest.json:questions.jsonl" (default: D100g2 dev set)
-#   API02_MIN_SHARE  smallest accepted share per family (default 0: report only; 1.0 once the plant API
-#                    has the "line" relation group, QT-2a. On 2026-10-27 DOWNSTREAM_IN_UNIT, FLOW_PATH
-#                    and NEIGHBOURS_DOWNSTREAM score 0.1-0.2: the families the fittings break)
+#   API02_MIN_SHARE  smallest accepted share per family (default 1.0: since QT-2a the plant API has the
+#                    "line" relation group and all 18 dev families are expressible. Before it,
+#                    DOWNSTREAM_IN_UNIT, FLOW_PATH and NEIGHBOURS_DOWNSTREAM scored 0.1-0.2 because of fittings)
 #   E7_NEO4J_DATABASE  needed only with --with-neo4j (S0-d, the Cypher replay): a temporary database
 set -eu
 cd "$(git rev-parse --show-toplevel)"
@@ -25,7 +25,7 @@ init_stage; mkdir -p $S/logs
 D=$X/dev_check/neo4jplant/D100g2
 LINE_CORPORA=${LINE_CORPORA:-D100g2:$D/ingest.json}
 API02_CORPUS=${API02_CORPUS:-D100g2:$D/ingest.json:$X/dev_check/questions/D100g2/questions.jsonl}
-API02_MIN_SHARE=${API02_MIN_SHARE:-0}
+API02_MIN_SHARE=${API02_MIN_SHARE:-1.0}
 
 echo "--- 1a: F1's frozen inputs"
 sha256sum -c --quiet $SEALED/F1.sha256 || die "a file hashed in F1.sha256 changed"

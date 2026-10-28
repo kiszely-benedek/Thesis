@@ -52,6 +52,11 @@ class PlantApi:
         self._max_items = max_items
         self._sets: dict[str, tuple[str, ...]] = {}
 
+    @property
+    def has_line_view(self) -> bool:
+        """True when the `"line"` relation group, the `kind` filter and `Valve` are available."""
+        return self._graph.has_line_view
+
     def find(self, where: ItemFilter, limit: int = DEFAULT_MAX_ITEMS) -> ItemSet:
         """Items matching `where`, sorted by tag; the first `limit` are listed, all are counted."""
         if limit < 1:

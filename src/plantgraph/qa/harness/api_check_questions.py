@@ -16,6 +16,7 @@ from pathlib import Path
 from plantgraph.qa.corpus import load_corpus_artifacts
 from plantgraph.qa.graph_view import NetworkxGraphView
 from plantgraph.qa.harness.api_expressiveness import evaluate_programs, render_table
+from plantgraph.qa.harness.gold import build_gold_scoring
 from plantgraph.qa.models import Question
 from plantgraph.qa.plant_api.item_graph import build_item_graph
 
@@ -37,7 +38,15 @@ def main(argv: list[str] | None = None) -> None:
 
     artifacts = load_corpus_artifacts(args.corpus_id, args.ingest_json)
     view = NetworkxGraphView(artifacts.corpus_id, artifacts.localized_sheets, artifacts.resolution)
-    rows = evaluate_programs(read_questions(args.questions), build_item_graph(view))
+    plant = artifacts.gold.plant
+    if plant is None:
+        raise ValueError(f"expected a synthetic corpus with ground truth, found {args.corpus_id!r}")
+    # the line view reads fittings away, so a path counts when it is valid, as in real scoring
+    rows = evaluate_programs(
+        read_questions(args.questions),
+        build_item_graph(view, line_view=True),
+        build_gold_scoring(plant, view),
+    )
     print(render_table(rows))
     below = sorted(r.family.value for r in rows.values() if r.share < args.min_share)
     if below:

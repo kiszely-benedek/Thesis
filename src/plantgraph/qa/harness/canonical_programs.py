@@ -17,7 +17,7 @@ from collections.abc import Callable
 
 from plantgraph.qa.models import AnswerValue, Question, QuestionFamily
 from plantgraph.qa.plant_api.item_graph import ItemGraph
-from plantgraph.qa.plant_api.model import ItemFilter, ItemRecord
+from plantgraph.qa.plant_api.model import ItemFilter, ItemRecord, RelationGroup
 from plantgraph.qa.plant_api.primitives import PlantApi
 from plantgraph.qa.plant_api.results import Subgraph
 
@@ -41,6 +41,15 @@ def run_canonical_program(graph: ItemGraph, question: Question) -> AnswerValue:
     return PROGRAMS[question.family](PlantApi(graph, max_items=_NO_LIMIT), question)
 
 
+def _flow(api: PlantApi) -> RelationGroup:
+    """`line` when the plant has the line view (flow through untagged fittings), else `flow`.
+
+    A question about what is next to a valve means the next valve or equipment item, which on a
+    v2 drawing may sit behind a pipe tee; only the line view sees through it.
+    """
+    return "line" if api.has_line_view else "flow"
+
+
 # --- small helpers over results ---------------------------------------------------------------
 
 
@@ -56,6 +65,11 @@ def _tags_where(sub: Subgraph, label: str | None = None) -> list[str]:
 def _single(tags: list[str]) -> str | None:
     """The one tag, or `None` when the program found zero or several (a mismatch, not a crash)."""
     return tags[0] if len(tags) == 1 else None
+
+
+def _valve_label(api: PlantApi) -> str:
+    """`Valve` (valves only) in the line view; `PipingComponent` (every valve is one) otherwise."""
+    return "Valve" if api.has_line_view else _VALVE
 
 
 def _find(api: PlantApi, tag: str) -> list[ItemRecord]:
@@ -80,7 +94,7 @@ def _lookup_unit(api: PlantApi, question: Question) -> AnswerValue:
 
 
 def _neighbours_downstream(api: PlantApi, question: Question) -> AnswerValue:
-    return _tags_where(api.neighbours(question.anchors[0], "downstream", "flow"))
+    return _tags_where(api.neighbours(question.anchors[0], "downstream", _flow(api)))
 
 
 def _loop_actuated_valve(api: PlantApi, question: Question) -> AnswerValue:
@@ -96,14 +110,14 @@ def _loop_measured_equipment(api: PlantApi, question: Question) -> AnswerValue:
 
 
 def _flow_path(api: PlantApi, question: Question) -> AnswerValue:
-    path = api.path(question.anchors[0], question.anchors[1])
+    path = api.path(question.anchors[0], question.anchors[1], _flow(api))
     return [item.tag for item in path.items if item.tag is not None] if path.found else None
 
 
 def _upstream_isolation(api: PlantApi, question: Question) -> AnswerValue:
     # the walk includes an operated valve and does not go beyond it: those stops are the answer
     sub = api.traverse(
-        question.anchors[0], "upstream", "flow", stop_at=ItemFilter(label=_OPERATED_VALVE)
+        question.anchors[0], "upstream", _flow(api), stop_at=ItemFilter(label=_OPERATED_VALVE)
     )
     return sorted(m.item.tag for m in sub.members if m.is_stop and m.item.tag is not None)
 
@@ -111,7 +125,7 @@ def _upstream_isolation(api: PlantApi, question: Question) -> AnswerValue:
 def _cross_unit(api: PlantApi, question: Question) -> AnswerValue:
     unit = question.anchors[0]
     in_unit = api.find(ItemFilter(unit=unit), limit=1)
-    sub = api.neighbours(in_unit.handle, "downstream", "flow", where=ItemFilter(not_unit=unit))
+    sub = api.neighbours(in_unit.handle, "downstream", _flow(api), where=ItemFilter(not_unit=unit))
     return _units_of(sub)
 
 
@@ -127,7 +141,7 @@ def _unanswerable_tag(api: PlantApi, question: Question) -> AnswerValue:
 
 
 def _no_path(api: PlantApi, question: Question) -> AnswerValue:
-    path = api.path(question.anchors[0], question.anchors[1])
+    path = api.path(question.anchors[0], question.anchors[1], _flow(api))
     return None if not path.found else [item.tag or "" for item in path.items]
 
 
@@ -139,12 +153,12 @@ def _sheets_of_tag(api: PlantApi, question: Question) -> AnswerValue:
 
 
 def _connected(api: PlantApi, question: Question) -> AnswerValue:
-    return "yes" if api.path(question.anchors[0], question.anchors[1]).found else "no"
+    return "yes" if api.path(question.anchors[0], question.anchors[1], _flow(api)).found else "no"
 
 
 def _downstream_in_unit(api: PlantApi, question: Question) -> AnswerValue:
     tag, unit = question.anchors
-    sub = api.traverse(tag, "downstream", "flow", walk_only=ItemFilter(unit=unit))
+    sub = api.traverse(tag, "downstream", _flow(api), walk_only=ItemFilter(unit=unit))
     return sorted(
         m.item.tag
         for m in sub.members
@@ -159,13 +173,13 @@ def _instruments_of_item(api: PlantApi, question: Question) -> AnswerValue:
 
 def _upstream_sources(api: PlantApi, question: Question) -> AnswerValue:
     """All ancestors of the item, keeping those with no flow predecessor of their own."""
-    ancestors = api.traverse(question.anchors[0], "upstream", "flow")
+    ancestors = api.traverse(question.anchors[0], "upstream", _flow(api))
     tags = [m.item.tag for m in ancestors.members if m.item.tag is not None]
     return sorted(tag for tag in tags if _has_no_flow_predecessor(api, tag))
 
 
 def _has_no_flow_predecessor(api: PlantApi, tag: str) -> bool:
-    return api.neighbours(tag, "upstream", "flow").total_items == 0
+    return api.neighbours(tag, "upstream", _flow(api)).total_items == 0
 
 
 def _same_unit(api: PlantApi, question: Question) -> AnswerValue:
@@ -177,7 +191,9 @@ def _same_unit(api: PlantApi, question: Question) -> AnswerValue:
 
 def _loops_near_item(api: PlantApi, question: Question) -> AnswerValue:
     """Adjacent valves, then their actuators, then those actuators' controllers (loop tags)."""
-    valves = api.neighbours(question.anchors[0], "both", "flow", where=ItemFilter(label=_VALVE))
+    valves = api.neighbours(
+        question.anchors[0], "both", _flow(api), where=ItemFilter(label=_valve_label(api))
+    )
     if valves.total_items == 0:
         return []
     actuators = api.neighbours(valves.handle, "upstream", "signal")

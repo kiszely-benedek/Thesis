@@ -11,6 +11,8 @@ package presents the result as **one connected graph of plant items**:
   connector pairs, so a walk crosses sheets as if they were one page.
 - `item_graph`: the merged graph, built once per corpus from a `GraphView`.
 - `traversal`: pure breadth-first closure and shortest path.
+- `line_graph`, `line_render`: the optional line view (V2T): flow between line items through the
+  untagged pipe parts, a `kind` per item, line-end marks, and how they read in the text.
 - `results`: what a primitive returns, and how it renders to bounded text.
 - `primitives`: `PlantApi`, the six operations with result handles.
 - `tool_registry`: the primitives as named tools with argument schemas, for an agent.

@@ -9,6 +9,7 @@ from plantgraph.graph import schema
 from plantgraph.qa.graph_view import GraphView
 from plantgraph.qa.graph_view import ItemRecord as OccurrenceRecord  # one drawing of an item
 from plantgraph.qa.plant_api.contraction import Contraction, contract
+from plantgraph.qa.plant_api.line_graph import add_line_view
 from plantgraph.qa.plant_api.model import (
     RELATION_GROUPS,
     UNRESOLVED_CONNECTOR_CLASS,
@@ -27,25 +28,49 @@ from plantgraph.qa.serialize import graphml_safe
 _ITEM_PROPERTY_KEYS = schema.VISIBLE_NODE_PROPERTIES - {"node_class"}
 
 
+def _sorted_edges(edges: Iterable[ItemEdge]) -> tuple[ItemEdge, ...]:
+    return tuple(sorted(edges, key=lambda e: (e.source, e.target, e.relation)))
+
+
+def _index_edges(
+    edges: Iterable[ItemEdge],
+) -> tuple[dict[str, list[ItemEdge]], dict[str, list[ItemEdge]]]:
+    """Edges by source and by target."""
+    outgoing: dict[str, list[ItemEdge]] = defaultdict(list)
+    incoming: dict[str, list[ItemEdge]] = defaultdict(list)
+    for edge in edges:
+        outgoing[edge.source].append(edge)
+        incoming[edge.target].append(edge)
+    return outgoing, incoming
+
+
 class ItemGraph:
-    """Items and the edges between them; read-only lookups and one-hop steps."""
+    """Items and the edges between them; read-only lookups and one-hop steps.
+
+    Args:
+        items, edges, ids_by_tag: the merged plant.
+        line_edges: the `line_to` edges of the line view (`line_graph.add_line_view`), whose
+            `items` then carry a `kind`; `None` for a graph without the line view (the v1 plant
+            API: the relation group `"line"`, the `kind` filter and the label `Valve` are refused).
+    """
 
     def __init__(
         self,
         items: Iterable[ItemRecord],
         edges: Iterable[ItemEdge],
         ids_by_tag: Mapping[str, tuple[str, ...]],
+        line_edges: Iterable[ItemEdge] | None = None,
     ) -> None:
         self._items = {item.item_id: item for item in items}
-        self._edges = tuple(sorted(edges, key=lambda e: (e.source, e.target, e.relation)))
+        self._edges = _sorted_edges(edges)
         self._ids_by_tag = dict(ids_by_tag)
-        self._outgoing: dict[str, list[ItemEdge]] = defaultdict(list)
-        self._incoming: dict[str, list[ItemEdge]] = defaultdict(list)
-        for edge in self._edges:
-            self._outgoing[edge.source].append(edge)
-            self._incoming[edge.target].append(edge)
+        self._outgoing, self._incoming = _index_edges(self._edges)
+        self._line_edges = None if line_edges is None else _sorted_edges(line_edges)
+        self._line_outgoing, self._line_incoming = _index_edges(self._line_edges or ())
         # folded -> as written, so a refusal can list the values in the spelling a filter accepts
         self._labels = {x.lower(): x for item in self._items.values() for x in item.labels}
+        if self._line_edges is not None:
+            self._labels.setdefault("valve", "Valve")  # the line view's umbrella label
         self._classes = {item.node_class.lower(): item.node_class for item in self._items.values()}
         self._units = {normalize_unit_id(u): u for i in self._items.values() if (u := i.unit_id)}
         self._sheets = sorted({sheet for item in self._items.values() for sheet in item.sheets})
@@ -55,6 +80,16 @@ class ItemGraph:
     def edges(self) -> tuple[ItemEdge, ...]:
         """Every edge, sorted by (source, target, relation)."""
         return self._edges
+
+    @property
+    def has_line_view(self) -> bool:
+        """True when `"line"` edges, the `kind` filter and the label `Valve` are available."""
+        return self._line_edges is not None
+
+    @property
+    def line_edges(self) -> tuple[ItemEdge, ...]:
+        """Every `line_to` edge, sorted; empty without the line view."""
+        return self._line_edges or ()
 
     @property
     def sheets(self) -> list[str]:
@@ -93,16 +128,25 @@ class ItemGraph:
     ) -> list[tuple[str, ItemEdge]]:
         """(neighbour id, edge) for each edge leaving `item_id` in `direction`, sorted."""
         allowed = RELATION_GROUPS[relations]
+        outgoing, incoming = self._adjacency(relations)
         found: list[tuple[str, ItemEdge]] = []
         if direction in ("downstream", "both"):
-            found += [
-                (e.target, e) for e in self._outgoing.get(item_id, ()) if e.relation in allowed
-            ]
+            found += [(e.target, e) for e in outgoing.get(item_id, ()) if e.relation in allowed]
         if direction in ("upstream", "both"):
-            found += [
-                (e.source, e) for e in self._incoming.get(item_id, ()) if e.relation in allowed
-            ]
+            found += [(e.source, e) for e in incoming.get(item_id, ()) if e.relation in allowed]
         return sorted(found, key=lambda step: (*self.sort_key(step[0]), step[1].relation))
+
+    def _adjacency(
+        self, relations: RelationGroup
+    ) -> tuple[dict[str, list[ItemEdge]], dict[str, list[ItemEdge]]]:
+        """Edges by source and target: the line edges for `"line"`, else the drawn ones."""
+        if relations != "line":
+            return self._outgoing, self._incoming
+        if self._line_edges is None:
+            raise PlantApiError(
+                "expected relations flow, signal or any (this plant has no line view), found 'line'"
+            )
+        return self._line_outgoing, self._line_incoming
 
     def select(self, where: ItemFilter, among: Iterable[str] | None = None) -> list[str]:
         """Ids matching every set field of `where`, sorted; `among` limits the candidates.
@@ -128,16 +172,21 @@ class ItemGraph:
         """Every field except `tag`, which `_candidates` already applied."""
         sheets = {normalize_scalar(sheet) for sheet in item.sheets}
         checks = (
-            where.label is None or where.label.lower() in {x.lower() for x in item.labels},
+            where.label is None or _has_label(item, where.label),
             where.node_class is None or where.node_class.lower() == item.node_class.lower(),
             where.unit is None or _same_unit(where.unit, item.unit_id),
             where.not_unit is None or not _same_unit(where.not_unit, item.unit_id),
             where.sheet is None or normalize_scalar(where.sheet) in sheets,
+            where.kind is None or item.kind == where.kind,
         )
         return all(checks)
 
     def _check_vocabulary(self, where: ItemFilter) -> None:
         """Refuse an unknown label, class, unit or sheet, listing the valid values."""
+        if where.kind is not None and self._line_edges is None:
+            raise PlantApiError(
+                f"expected no kind filter (this plant has no line view), found {where.kind!r}"
+            )
         if where.label is not None:
             self._require_label_or_class("label", where.label, self._labels, self._classes)
         if where.node_class is not None:
@@ -182,6 +231,13 @@ def _require_known(
     )
 
 
+def _has_label(item: ItemRecord, label: str) -> bool:
+    """A class in the item's chain; in the line view `Valve` is every item of kind valve."""
+    folded = label.lower()
+    in_chain = folded in {x.lower() for x in item.labels}
+    return in_chain or (folded == "valve" and item.kind == "valve")
+
+
 def _same_unit(wanted: str, unit_id: str | None) -> bool:
     return unit_id is not None and normalize_unit_id(wanted) == normalize_unit_id(unit_id)
 
@@ -189,11 +245,13 @@ def _same_unit(wanted: str, unit_id: str | None) -> bool:
 # --- building the graph from a GraphView -------------------------------------
 
 
-def build_item_graph(view: GraphView) -> ItemGraph:
+def build_item_graph(view: GraphView, *, line_view: bool = False) -> ItemGraph:
     """Merge the view's drawings into items and its edges into item edges (design §3.1).
 
     Args:
         view: the resolver-built occurrence graph; never the gold plant.
+        line_view: also fold flow through untagged pipe parts (`line_graph`); off gives the v1
+            graph exactly.
 
     Raises:
         ValueError: an identity group's home drawing is missing, or contraction fails.
@@ -202,7 +260,11 @@ def build_item_graph(view: GraphView) -> ItemGraph:
     contraction = contract({o.local_key: o.node_class for o in occurrences}, view.edges())
     drawings = _drawings_by_item(occurrences, contraction)
     items = [_item_record(item_id, members) for item_id, members in drawings.items()]
-    return ItemGraph(items, contraction.edges, _ids_by_tag(drawings))
+    ids_by_tag = _ids_by_tag(drawings)
+    if not line_view:
+        return ItemGraph(items, contraction.edges, ids_by_tag)
+    line_items, line_edges = add_line_view(items, contraction.edges)
+    return ItemGraph(line_items, contraction.edges, ids_by_tag, line_edges)
 
 
 def _drawings_by_item(

@@ -21,19 +21,23 @@ def _prompt_file(name: str) -> str:
     return (_PROMPTS_DIR / name).read_text(encoding="utf-8")
 
 
-def render_system_prompt(params: AgentParams, *, primer: bool, seeded: bool) -> str:
+def render_system_prompt(
+    params: AgentParams, *, primer: bool, seeded: bool, line_view: bool = False
+) -> str:
     """The system prompt: tool reference from the registry, step limit, primer and seed rule.
 
     Args:
         params: its `max_steps` is told to the model.
         primer: add the P&ID reading primer (`primer.py`); off leaves no trace of it.
         seeded: add the paragraph about the seed map (`hier_agent`).
+        line_view: the V2T prompt, which also describes `line_to`, `kind` and the line-end marks.
     """
-    template = fill_primer_slot(_prompt_file("agent_graph_system.txt"), primer=primer)
+    template_name = "agent_graph_system_v2t.txt" if line_view else "agent_graph_system.txt"
+    template = fill_primer_slot(_prompt_file(template_name), primer=primer)
     seed_rule = _prompt_file("agent_seed_rule.txt").strip() if seeded else ""
     text = (
         template.replace(_SEED_RULE_SLOT, seed_rule)
-        .replace(_TOOLS_SLOT, compact_tool_reference())
+        .replace(_TOOLS_SLOT, compact_tool_reference(line_view=line_view))
         .replace(_MAX_STEPS_SLOT, str(params.max_steps))
     )
     return text.rstrip() + "\n"
@@ -48,10 +52,13 @@ def plant_summary(graph: ItemGraph) -> str:
     if not sheets:
         raise ValueError("expected a plant with at least one sheet, found none")
     unit_part = f' and {len(units)} units (for example "{units[0]}")' if units else ""
+    relations = "flow (send_to), signal (send_signal_to, control, measured_by)"
+    if graph.has_line_view:  # the umbrella label `Valve` and the line relation exist only there
+        labels = sorted({*labels, "Valve"})
+        relations = f"line (line_to), {relations}"
     return (
         f'The plant has {len(sheets)} sheets (for example "{sheets[0]}"){unit_part}. '
-        f"Item labels: {', '.join(labels)}. "
-        "Relations: flow (send_to), signal (send_signal_to, control, measured_by)."
+        f"Item labels: {', '.join(labels)}. Relations: {relations}."
     )
 
 

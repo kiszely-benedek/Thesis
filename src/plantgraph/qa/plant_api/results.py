@@ -12,6 +12,7 @@ from collections.abc import Iterable, Mapping, Sequence
 
 from pydantic import BaseModel, ConfigDict
 
+from plantgraph.qa.plant_api.line_render import kind_part, marks_suffix, via_suffix
 from plantgraph.qa.plant_api.model import (
     GroupBy,
     ItemEdge,
@@ -258,14 +259,21 @@ def item_label(item: ItemRecord) -> str:
 
 
 def item_line(item: ItemRecord) -> str:
-    """`TAG (Class, unit U, sheets S1,S2)`; the unit is omitted when the item has none."""
+    """`TAG (Class, unit U, sheets S1,S2)`; the unit is omitted when the item has none.
+
+    In the line view the kind follows the class and a line end is marked after the parentheses.
+    """
     unit = f", unit {item.unit_id}" if item.unit_id is not None else ""
-    return f"{item_label(item)} ({item.node_class}{unit}, sheets {','.join(item.sheets)})"
+    return (
+        f"{item_label(item)} ({item.node_class}{kind_part(item)}{unit}, "
+        f"sheets {','.join(item.sheets)}){marks_suffix(item)}"
+    )
 
 
 def edge_line(edge: ItemEdge, names: Mapping[str, ItemRecord]) -> str:
     """`A -send_to-> B [crosses S3→S4]`; the crossing shows only for an off-page edge."""
     line = f"{item_label(names[edge.source])} -{edge.relation}-> {item_label(names[edge.target])}"
+    line += via_suffix(edge)
     if not edge.via:
         return line
     return f"{line} [crosses {sheet_of_key(edge.via[0])}→{sheet_of_key(edge.via[-1])}]"

@@ -15,7 +15,11 @@ StopReason = Literal[
 
 
 class AgentParams(BaseModel):
-    """Loop limits. Fixed by design, not tuned: tuning is paid at every point (design §5.4)."""
+    """Loop limits. F1 keeps the defaults below (design §5.4: tuning is paid at every point).
+
+    The V2T agent `graph_agent_lines` sets larger ones in its params file (ADR-0061, design
+    `qa-tuning-v2.md` §4.4), chosen from the longest reference answers of the dev check.
+    """
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 

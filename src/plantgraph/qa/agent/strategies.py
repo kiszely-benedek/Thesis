@@ -29,6 +29,8 @@ GRAPH_AGENT_NAME = "graph_agent"
 HIER_AGENT_NAME = "hier_agent"
 #: `graph_agent` with `step_effort="low"`: a separate name so one run can hold both variants.
 GRAPH_AGENT_LOW_STEPS_NAME = "graph_agent_low_steps"
+#: The V2T agent (ADR-0061): `graph_agent` over the line view, with the V2T prompt and limits.
+GRAPH_AGENT_LINES_NAME = "graph_agent_lines"
 
 _CONTEXT_HEADING = "Tool results gathered for this question:"
 
@@ -38,6 +40,7 @@ class GraphAgent:
 
     name = GRAPH_AGENT_NAME
     _seeded = False
+    _line_view = False
 
     def __init__(
         self,
@@ -53,12 +56,18 @@ class GraphAgent:
 
         `remaining_s` reports the question's unspent time budget (`None` return: no deadline).
         """
+        if self._line_view and not item_graph.has_line_view:
+            raise ValueError(
+                f"expected an item graph with the line view for {self.name}, found none"
+            )
         self._graph = item_graph
         self._pin = pin
         self._send = send
         self._remaining_s = remaining_s
         self.params = params or AgentParams()
-        self._system_prompt = render_system_prompt(self.params, primer=primer, seeded=self._seeded)
+        self._system_prompt = render_system_prompt(
+            self.params, primer=primer, seeded=self._seeded, line_view=self._line_view
+        )
         self._summary = plant_summary(item_graph)
 
     @property
@@ -105,6 +114,17 @@ class GraphAgentLowSteps(GraphAgent):
     ) -> None:
         low = (params or AgentParams()).model_copy(update={"step_effort": "low"})
         super().__init__(item_graph, pin, send, params=low, primer=primer, remaining_s=remaining_s)
+
+
+class GraphAgentLines(GraphAgent):
+    """`GraphAgent` over the line view (`line_to`, `kind`, line-end marks), for V2T.
+
+    Its limits (32,000-character observations, 400 listed items, ...) come from a params file like
+    any agent's; only the item graph and the prompt differ from `graph_agent`.
+    """
+
+    name = GRAPH_AGENT_LINES_NAME
+    _line_view = True
 
 
 class HierAgent(GraphAgent):

@@ -21,7 +21,7 @@ from plantgraph.qa.cascade.report_models import AgentDiagnostics, Cell, PolicyDi
 from plantgraph.qa.models import AnswerType, Outcome, Question, QuestionResult
 from plantgraph.qa.plant_api.item_graph import ItemGraph
 
-AGENT_STRATEGIES = ("graph_agent", "graph_agent_low_steps", "hier_agent")
+AGENT_STRATEGIES = ("graph_agent", "graph_agent_low_steps", "graph_agent_lines", "hier_agent")
 _YES_WORDS = ("yes", "true", "1")
 
 
