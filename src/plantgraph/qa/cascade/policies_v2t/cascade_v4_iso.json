@@ -1,0 +1,29 @@
+{
+  "name": "cascade_v4_iso",
+  "tiers": [
+    {
+      "name": "cypher-v2t",
+      "strategy": "cypher_rag_lines",
+      "pin_sha256": "acf24178d47dd4873fc2a36e7f67efbf2dc7ab5de694711f3b934e6ef4f4c21d",
+      "accept": [
+        "answered",
+        "not_abstained",
+        "rows",
+        "complete"
+      ]
+    },
+    {
+      "name": "agent-v2t",
+      "strategy": "graph_agent_lines",
+      "pin_sha256": "ffc026d3f42b3ddcc5fe43175a3c288bdd19f36063997fec2c8645a95fe70157",
+      "accept": [
+        "answered"
+      ]
+    }
+  ],
+  "fallback_to_first_answer": true,
+  "start_tier_by_label": {
+    "UPSTREAM_TO_FIRST_VALVE": 1,
+    "DOWNSTREAM_TO_FIRST_VALVE": 1
+  }
+}

@@ -17,14 +17,14 @@ from plantgraph.qa.need.labels import NeedLabel
 SignalsByTier = Mapping[str, Mapping[str, Signals]]
 
 
-def is_accepted(signals: Signals, rules: frozenset[AcceptRule]) -> bool:
-    """True when every rule holds.
+def first_failed_rule(signals: Signals, rules: frozenset[AcceptRule]) -> AcceptRule | None:
+    """The first rule that does not hold (checked in the order below), or `None` when all hold.
 
     Raises:
-        ValueError: `ROWS` on a tier whose answers carry no query row count.
+        ValueError: `ROWS` or `COMPLETE` on a tier whose answers carry no query record.
     """
     if AcceptRule.ANSWERED in rules and signals.outcome is not Outcome.ANSWERED:
-        return False
+        return AcceptRule.ANSWERED
     if AcceptRule.ROWS in rules:
         if signals.n_rows is None:
             raise ValueError(
@@ -32,8 +32,23 @@ def is_accepted(signals: Signals, rules: frozenset[AcceptRule]) -> bool:
                 f"rule, found none on {signals.question_id!r}"
             )
         if signals.n_rows == 0:
-            return False
-    return not (AcceptRule.NOT_ABSTAINED in rules and signals.not_present is not False)
+            return AcceptRule.ROWS
+    if AcceptRule.NOT_ABSTAINED in rules and signals.not_present is not False:
+        return AcceptRule.NOT_ABSTAINED
+    if AcceptRule.COMPLETE in rules:
+        if signals.truncated is None:
+            raise ValueError(
+                f"expected tier {signals.tier!r} to record whether its query result was cut "
+                f"for the 'complete' rule, found none on {signals.question_id!r}"
+            )
+        if signals.truncated:
+            return AcceptRule.COMPLETE
+    return None
+
+
+def is_accepted(signals: Signals, rules: frozenset[AcceptRule]) -> bool:
+    """True when every rule holds (see `first_failed_rule` for the order and the errors)."""
+    return first_failed_rule(signals, rules) is None
 
 
 @dataclass(frozen=True)

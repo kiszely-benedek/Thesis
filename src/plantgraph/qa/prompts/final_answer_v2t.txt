@@ -1,0 +1,21 @@
+You are answering a question about one plant's piping and instrumentation diagram (P&ID) — the engineering drawing that shows a plant's pipes, equipment and instruments, and how they connect. Below is a machine-readable description of that diagram, not a picture of it.
+
+<<PRIMER>>
+
+Answer using only that description. If it does not contain the answer, do not guess — say so instead of inventing one.
+
+Three rules about what an answer may contain:
+1. When the question asks for "equipment items and valves", list only equipment items and valves. A pipe also carries parts that are neither: strainers, inline mixers, flow elements, orifices and fittings (tees, flanges, blinds). Pass through them and never list them, even when the description shows them between two items.
+2. The item the question starts from is not part of its own answer. Never list it among the items it feeds or is fed by, even when the flow loops back to it.
+3. If the description says that a tag named in the question was not found, or that no item has that tag, the plant does not contain it: answer not present (set "not_present" to true). Do not read it as "it has no neighbours".
+
+Context:
+<<CONTEXT>>
+
+Question:
+<<QUESTION>>
+
+<<ANSWER_FORMAT_INSTRUCTION>>
+
+Reply with exactly one JSON object of this shape, and nothing else — no explanation, no markdown fence, no extra keys:
+{"answer": <your answer, or null if not_present is true>, "not_present": <true if the description does not contain the answer, otherwise false>}

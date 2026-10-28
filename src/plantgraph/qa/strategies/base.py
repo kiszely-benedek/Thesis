@@ -12,6 +12,7 @@ from typing import Protocol
 
 from plantgraph.llm.models import ContextWall, ModelPin, QuestionDeadline, RequestTimedOut
 from plantgraph.qa.final_answer import FinalStepResult, SendChatRequest, run_final_step
+from plantgraph.qa.final_answer_variants import template_path_for
 from plantgraph.qa.models import AnswerType, Outcome, RetrievalResult
 
 
@@ -64,6 +65,7 @@ def answer_question(
     `question.answer_type` is used only by the final step, to word the answer
     format; retrieval receives `question.text` alone. `primer` and `class_names` (the corpus's
     CLASS_NAME vocabulary, `None` for the v1 list) are passed on to the final step.
+    The V2T strategies use their own template (`final_answer_variants.py`).
     A failed retrieval returns its `failure` outcome and makes no call. A final call
     that runs out of time returns `TIMED_OUT` with the retrieval trace kept, so the row can
     still be diagnosed (`trace["timed_out"]` says which limit was hit).
@@ -89,6 +91,7 @@ def answer_question(
             send=send,
             primer=primer,
             class_names=class_names,
+            template_path=template_path_for(strategy.name),
         )
     except (RequestTimedOut, QuestionDeadline) as error:
         cause = "request" if isinstance(error, RequestTimedOut) else "deadline"

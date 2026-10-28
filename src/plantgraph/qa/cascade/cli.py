@@ -1,4 +1,4 @@
-"""`python -m plantgraph.qa.cascade` sub-commands: join, needed, report, ask, infra-*."""
+"""`python -m plantgraph.qa.cascade` sub-commands (join, needed, report, tune-report, ask, ...)."""
 
 from __future__ import annotations
 
@@ -29,6 +29,7 @@ from plantgraph.qa.cascade.needed import write_needed
 from plantgraph.qa.cascade.policy import load_policy
 from plantgraph.qa.cascade.report import build_report
 from plantgraph.qa.cascade.report_render import write_report
+from plantgraph.qa.cascade.tune_cli import add_tune_arguments, tune_command
 
 
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
@@ -52,6 +53,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     add_report_arguments(commands.add_parser("infra-report"))
     add_replay_arguments(commands.add_parser("infra-cypher-replay"))
     add_bench_arguments(commands.add_parser("infra-cypher-bench"))
+    add_tune_arguments(commands.add_parser("tune-report"))
     commands.choices["needed"].add_argument("--tier", required=True)
     commands.choices["needed"].add_argument("--out-root", type=Path, default=DEFAULT_QSUB_ROOT)
     return parser.parse_args(argv)
@@ -161,6 +163,9 @@ def main(argv: list[str] | None = None, *, open_cascade: OpenCascade = open_for_
         return
     if args.command == "infra-cypher-bench":
         bench_command(args)
+        return
+    if args.command == "tune-report":
+        tune_command(args)
         return
     if args.command == "report":
         _run_report(args)

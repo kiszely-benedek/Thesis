@@ -103,6 +103,7 @@ def render_final_answer_request(
     answer_type: AnswerType,
     primer: bool = False,
     class_names: Collection[str] | None = None,
+    template_path: Path | None = None,
 ) -> ChatRequest:
     """Build the one shared final-answer request every strategy ends with (§8; ADR-0013 point 6).
 
@@ -111,9 +112,11 @@ def render_final_answer_request(
     `answer_type`, so the JSON-output contract never depends on which
     strategy produced the context. `primer` adds the P&ID reading primer (`primer.py`);
     `class_names` replaces the v1 CLASS_NAME list on a corpus with its own vocabulary.
+    `template_path` swaps in another template (V2T, `final_answer_variants.py`); `None` is F1's.
     """
+    template = template_text() if template_path is None else template_path.read_text("utf-8")
     rendered = (
-        fill_primer_slot(template_text(), primer=primer)
+        fill_primer_slot(template, primer=primer)
         .replace(_CONTEXT_PLACEHOLDER, context)
         .replace(_QUESTION_PLACEHOLDER, question_text)
         .replace(_ANSWER_FORMAT_PLACEHOLDER, _answer_format_instruction(answer_type, class_names))
@@ -309,6 +312,7 @@ def run_final_step(
     send: SendChatRequest,
     primer: bool = False,
     class_names: Collection[str] | None = None,
+    template_path: Path | None = None,
 ) -> FinalStepResult:
     """Run the one shared final-answer step every strategy ends with (§7, §8; ADR-0013 point 6).
 
@@ -326,6 +330,7 @@ def run_final_step(
         answer_type=answer_type,
         primer=primer,
         class_names=class_names,
+        template_path=template_path,
     )
     prompt_chars = len(request.messages[0].content)
     decision = check_fit(prompt_chars, wall)

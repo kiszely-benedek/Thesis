@@ -38,6 +38,15 @@ def query_row_count(row: QuestionResult) -> int | None:
     return n_rows if isinstance(n_rows, int) else None
 
 
+def query_truncated(row: QuestionResult) -> bool | None:
+    """Whether a Cypher result was cut at the row cap (from the trace); `None` when not recorded."""
+    retrieval = row.trace.get("retrieval")
+    if not isinstance(retrieval, dict):
+        return None
+    truncated = retrieval.get("truncated")
+    return truncated if isinstance(truncated, bool) else None
+
+
 def extract_signals(
     row: QuestionResult,
     tier: str,
@@ -70,4 +79,5 @@ def extract_signals(
         final_latency_s=row.latency_s,
         latency_complete=local_compute_s is not None,
         need_label=need_label,
+        truncated=query_truncated(row),
     )

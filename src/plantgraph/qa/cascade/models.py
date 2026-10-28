@@ -19,6 +19,8 @@ class AcceptRule(str, Enum):
     ROWS = "rows"
     #: The final answer does not say "not present in the diagram".
     NOT_ABSTAINED = "not_abstained"
+    #: The Cypher result was not cut at the row cap (V2T, ADR-0061): a cut list is a partial answer.
+    COMPLETE = "complete"
 
 
 class TierSpec(BaseModel):
@@ -74,6 +76,8 @@ class Signals(BaseModel):
     latency_complete: bool
     #: Rules need label; `None` when no run recorded one and no anchor finder was given.
     need_label: NeedLabel | None
+    #: The query result was cut at the row cap; `None` for a tier that runs no query (or no record).
+    truncated: bool | None = None
 
 
 class Decision(BaseModel):

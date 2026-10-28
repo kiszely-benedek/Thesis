@@ -15,6 +15,8 @@ from plantgraph.qa.models import Outcome
 from plantgraph.qa.need.labels import NeedLabel
 
 POLICIES_DIR = Path(__file__).parent / "policies"
+#: The V2T policies live apart, so a default report of F1's policies does not list them.
+V2T_POLICIES_DIR = Path(__file__).parent / "policies_v2t"
 
 
 def load_policy(path: Path) -> CascadePolicy:
