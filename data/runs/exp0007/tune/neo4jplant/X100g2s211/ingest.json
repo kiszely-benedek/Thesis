@@ -170,18 +170,18 @@
     "n_invariants": 5
   },
   "stage_seconds": {
-    "generate": 8.347644199995557,
-    "split": 0.21270750000257976,
-    "localize": 0.08012960001360625,
-    "resolve": 0.10314039999502711,
-    "plan": 0.8372878000081982,
-    "load_recreate": 0.5485820000176318,
-    "load_wipe": 0.0443995000096038,
-    "load_schema": 0.12645830001565628,
-    "load_nodes": 2.012035099993227,
-    "load_relationships": 1.8769291999924462,
-    "load_verify": 0.35258750000502914,
-    "load_total": 4.412432399985846
+    "generate": 7.529649700009031,
+    "split": 0.21839520000503398,
+    "localize": 0.09063339998829179,
+    "resolve": 0.084513900015736,
+    "plan": 0.7909259999869391,
+    "load_recreate": 0.5429053000116255,
+    "load_wipe": 0.041678100009448826,
+    "load_schema": 0.1289235000149347,
+    "load_nodes": 1.9498191000020597,
+    "load_relationships": 1.8192190999980085,
+    "load_verify": 0.3302548000065144,
+    "load_total": 4.269909900001949
   },
   "resolution": {
     "n_sheets": 101,
@@ -202,12 +202,12 @@
     "nodes_written": 9947,
     "relationships_written": 33321,
     "batch_size": 5000,
-    "wipe_s": 0.0443995000096038,
-    "schema_s": 0.12645830001565628,
-    "nodes_s": 2.012035099993227,
-    "relationships_s": 1.8769291999924462,
-    "verify_s": 0.35258750000502914,
-    "total_s": 4.412432399985846,
+    "wipe_s": 0.041678100009448826,
+    "schema_s": 0.1289235000149347,
+    "nodes_s": 1.9498191000020597,
+    "relationships_s": 1.8192190999980085,
+    "verify_s": 0.3302548000065144,
+    "total_s": 4.269909900001949,
     "neo4j_version": "Neo4j Kernel 2026.09.0 (enterprise)",
     "invariants_checked": 5
   },
@@ -216,7 +216,7 @@
   "resolution_score": null,
   "neo4j_version": "Neo4j Kernel 2026.09.0 (enterprise)",
   "environment": {
-    "git_commit": "ee8e164ec611656001d5ecffe88a2c06a72f4d7e",
+    "git_commit": "c6260dc99b329133b9b4c9840e3a76484f68122e",
     "git_dirty": true,
     "machine": {
       "cpu_name": "AMD Ryzen 9 5900HX with Radeon Graphics",
@@ -244,7 +244,7 @@
       "server.memory.query_cache.shared_cache_num_entries": "1000",
       "server.memory.query_cache.sharing_enabled": "false"
     },
-    "recorded_at": "2026-10-28T19:44:35.318260Z"
+    "recorded_at": "2026-10-28T20:04:13.993778Z"
   },
   "store_footprint": null
 }

@@ -1,0 +1,48 @@
+run T7S-AG-X100g2s211: 2 rows to answer, 0 already on disk
+concurrency 4: up to that many questions in flight
+paid mode: up to 2 model calls; hard spend cap 0.02 USD
+estimated cost: 0.0050 USD
+{
+  "run_id": "T7S-AG-X100g2s211",
+  "n_rows": 2,
+  "n_new_rows": 2,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "graph_agent_lines": {
+      "0": {
+        "ANSWERED": 2
+      }
+    }
+  },
+  "routing_recall": {
+    "graph_agent_lines": 1.0
+  },
+  "relaxed_routing_recall": {
+    "graph_agent_lines": 1.0
+  },
+  "evidence_node_recall": {
+    "graph_agent_lines": 1.0
+  },
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {
+      "graph_agent_lines": {
+        "0": 1.0
+      }
+    },
+    "relaxed_routing_recall": {
+      "graph_agent_lines": {
+        "0": 1.0
+      }
+    },
+    "evidence_node_recall": {
+      "graph_agent_lines": {
+        "0": 1.0
+      }
+    }
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "graph_agent_lines": 0.000519625
+  },
+  "stopped_by_spend_cap": false
+}

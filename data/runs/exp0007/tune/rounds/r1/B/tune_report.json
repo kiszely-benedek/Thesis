@@ -1,0 +1,498 @@
+{
+  "corpus_id": "X100g2s211",
+  "setting": {
+    "name": "B",
+    "cypher_timeout_s": 120.0,
+    "question_deadline_s": null,
+    "hang_guard_s": 900.0
+  },
+  "n_questions": 163,
+  "oracle_correct": 143,
+  "results": {
+    "cascade_v4": {
+      "policy": "cascade_v4",
+      "n_questions": 163,
+      "n_correct_uncut": 137,
+      "n_correct_in_limit": 137,
+      "n_beyond_limit": 0,
+      "n_correct_within": {
+        "120": 135,
+        "300": 137
+      },
+      "latency_median_s": 6.761696700035827,
+      "latency_p90_s": 33.62020780003513,
+      "cost_per_question_usd": 0.0011328508588957056,
+      "tier_shares": {
+        "cypher-v2t": 0.7361963190184049,
+        "agent-v2t": 0.26380368098159507
+      },
+      "by_family": {
+        "CONNECTED": {
+          "correct": 10,
+          "total": 10
+        },
+        "COUNT_IN_UNIT": {
+          "correct": 10,
+          "total": 10
+        },
+        "CROSS_UNIT": {
+          "correct": 10,
+          "total": 10
+        },
+        "DOWNSTREAM_IN_UNIT": {
+          "correct": 9,
+          "total": 10
+        },
+        "FLOW_PATH": {
+          "correct": 3,
+          "total": 10
+        },
+        "INSTRUMENTS_OF_ITEM": {
+          "correct": 7,
+          "total": 7
+        },
+        "LOOKUP_TYPE": {
+          "correct": 7,
+          "total": 7
+        },
+        "LOOKUP_UNIT": {
+          "correct": 7,
+          "total": 7
+        },
+        "LOOPS_NEAR_ITEM": {
+          "correct": 7,
+          "total": 10
+        },
+        "LOOP_ACTUATED_VALVE": {
+          "correct": 10,
+          "total": 10
+        },
+        "LOOP_MEASURED_EQUIPMENT": {
+          "correct": 6,
+          "total": 6
+        },
+        "NEIGHBOURS_DOWNSTREAM": {
+          "correct": 10,
+          "total": 10
+        },
+        "NO_PATH": {
+          "correct": 1,
+          "total": 10
+        },
+        "SAME_UNIT": {
+          "correct": 6,
+          "total": 6
+        },
+        "SHEETS_OF_TAG": {
+          "correct": 10,
+          "total": 10
+        },
+        "UNANSWERABLE_TAG": {
+          "correct": 10,
+          "total": 10
+        },
+        "UPSTREAM_ISOLATION": {
+          "correct": 4,
+          "total": 10
+        },
+        "UPSTREAM_SOURCES": {
+          "correct": 10,
+          "total": 10
+        }
+      },
+      "correct_ids": [
+        "X100g2s211:CONNECTED:V-2401|P-2401",
+        "X100g2s211:INSTRUMENTS_OF_ITEM:E-5503",
+        "X100g2s211:LOOKUP_TYPE:TI-4047",
+        "X100g2s211:LOOKUP_UNIT:TIAH-43012",
+        "X100g2s211:LOOP_ACTUATED_VALVE:LSHH-59011",
+        "X100g2s211:LOOP_MEASURED_EQUIPMENT:LAL-37024",
+        "X100g2s211:NEIGHBOURS_DOWNSTREAM:GTV-26034",
+        "X100g2s211:SAME_UNIT:TK-6401|P-6401A",
+        "X100g2s211:SHEETS_OF_TAG:T-1901",
+        "X100g2s211:COUNT_IN_UNIT:6|ProcessColumn",
+        "X100g2s211:FLOW_PATH:YV-32002|NV-32002",
+        "X100g2s211:INSTRUMENTS_OF_ITEM:TK-201",
+        "X100g2s211:LOOKUP_TYPE:P-2301B",
+        "X100g2s211:LOOKUP_UNIT:TT-13013",
+        "X100g2s211:LOOP_ACTUATED_VALVE:CSHH-25021",
+        "X100g2s211:LOOP_MEASURED_EQUIPMENT:TIC-39004",
+        "X100g2s211:NEIGHBOURS_DOWNSTREAM:GTV-43006",
+        "X100g2s211:SAME_UNIT:P-2101B|TK-2002",
+        "X100g2s211:SHEETS_OF_TAG:V-5201",
+        "X100g2s211:DOWNSTREAM_IN_UNIT:EJ-4202B|42",
+        "X100g2s211:INSTRUMENTS_OF_ITEM:P-5101B",
+        "X100g2s211:LOOKUP_TYPE:LSHH-26092",
+        "X100g2s211:LOOKUP_UNIT:LIC-7051",
+        "X100g2s211:LOOPS_NEAR_ITEM:TK-3703",
+        "X100g2s211:LOOP_ACTUATED_VALVE:HS-60001",
+        "X100g2s211:LOOP_MEASURED_EQUIPMENT:TI-7070",
+        "X100g2s211:SAME_UNIT:V-5901|P-5901",
+        "X100g2s211:SHEETS_OF_TAG:V-2101",
+        "X100g2s211:UPSTREAM_SOURCES:P-3801B",
+        "X100g2s211:CONNECTED:E-2603|E-4702",
+        "X100g2s211:COUNT_IN_UNIT:61|ButterflyValve",
+        "X100g2s211:INSTRUMENTS_OF_ITEM:P-1301",
+        "X100g2s211:LOOKUP_TYPE:GTV-12018",
+        "X100g2s211:LOOKUP_UNIT:HS-48001",
+        "X100g2s211:LOOPS_NEAR_ITEM:V-6301",
+        "X100g2s211:LOOP_ACTUATED_VALVE:PIC-25040",
+        "X100g2s211:LOOP_MEASURED_EQUIPMENT:TIAH-18035",
+        "X100g2s211:NEIGHBOURS_DOWNSTREAM:TV-50031",
+        "X100g2s211:SAME_UNIT:K-3601|P-3502",
+        "X100g2s211:SHEETS_OF_TAG:E-5403",
+        "X100g2s211:UPSTREAM_ISOLATION:P-5001B",
+        "X100g2s211:UPSTREAM_SOURCES:TK-101",
+        "X100g2s211:INSTRUMENTS_OF_ITEM:P-1201",
+        "X100g2s211:LOOKUP_TYPE:BFV-10003",
+        "X100g2s211:LOOKUP_UNIT:YI-37012",
+        "X100g2s211:LOOP_ACTUATED_VALVE:PIC-56007",
+        "X100g2s211:LOOP_MEASURED_EQUIPMENT:TI-6033",
+        "X100g2s211:NEIGHBOURS_DOWNSTREAM:GTV-30004",
+        "X100g2s211:SAME_UNIT:P-502|V-501",
+        "X100g2s211:SHEETS_OF_TAG:E-601",
+        "X100g2s211:INSTRUMENTS_OF_ITEM:V-3601",
+        "X100g2s211:LOOKUP_TYPE:TT-40034",
+        "X100g2s211:LOOKUP_UNIT:PSV-39007",
+        "X100g2s211:LOOPS_NEAR_ITEM:TK-6003",
+        "X100g2s211:LOOP_MEASURED_EQUIPMENT:PSHH-39020",
+        "X100g2s211:SAME_UNIT:E-5801|P-5901",
+        "X100g2s211:COUNT_IN_UNIT:61|GateValve",
+        "X100g2s211:DOWNSTREAM_IN_UNIT:V-1802|18",
+        "X100g2s211:INSTRUMENTS_OF_ITEM:D-3601",
+        "X100g2s211:LOOKUP_TYPE:PI-47054",
+        "X100g2s211:LOOKUP_UNIT:GTV-30011",
+        "X100g2s211:COUNT_IN_UNIT:37|GateValve",
+        "X100g2s211:CROSS_UNIT:15",
+        "X100g2s211:NEIGHBOURS_DOWNSTREAM:GTV-26036",
+        "X100g2s211:COUNT_IN_UNIT:2|NeedleValve",
+        "X100g2s211:DOWNSTREAM_IN_UNIT:H-5001|50",
+        "X100g2s211:LOOP_ACTUATED_VALVE:PIC-58040",
+        "X100g2s211:UPSTREAM_ISOLATION:V-3801",
+        "X100g2s211:CROSS_UNIT:42",
+        "X100g2s211:LOOP_ACTUATED_VALVE:LSHH-27002",
+        "X100g2s211:NEIGHBOURS_DOWNSTREAM:GTV-2006",
+        "X100g2s211:SHEETS_OF_TAG:P-5601",
+        "X100g2s211:CONNECTED:TK-802|P-802",
+        "X100g2s211:CROSS_UNIT:21",
+        "X100g2s211:SHEETS_OF_TAG:P-801",
+        "X100g2s211:CONNECTED:P-2501A|T-2501",
+        "X100g2s211:CROSS_UNIT:13",
+        "X100g2s211:LOOP_ACTUATED_VALVE:LSHH-27004",
+        "X100g2s211:CROSS_UNIT:20",
+        "X100g2s211:NEIGHBOURS_DOWNSTREAM:GTV-39005",
+        "X100g2s211:SHEETS_OF_TAG:P-6001",
+        "X100g2s211:CROSS_UNIT:1",
+        "X100g2s211:SHEETS_OF_TAG:P-802",
+        "X100g2s211:CROSS_UNIT:34",
+        "X100g2s211:LOOP_ACTUATED_VALVE:LSHH-48004",
+        "X100g2s211:COUNT_IN_UNIT:2|ButterflyValve",
+        "X100g2s211:CROSS_UNIT:16",
+        "X100g2s211:LOOP_ACTUATED_VALVE:LSHH-48002",
+        "X100g2s211:CROSS_UNIT:17",
+        "X100g2s211:LOOPS_NEAR_ITEM:TK-4802",
+        "X100g2s211:SHEETS_OF_TAG:T-3001",
+        "X100g2s211:CROSS_UNIT:39",
+        "X100g2s211:DOWNSTREAM_IN_UNIT:TK-6002|60",
+        "X100g2s211:LOOPS_NEAR_ITEM:TK-4801",
+        "X100g2s211:COUNT_IN_UNIT:27|CentrifugalPump",
+        "X100g2s211:LOOPS_NEAR_ITEM:TK-2701",
+        "X100g2s211:NEIGHBOURS_DOWNSTREAM:PSV-2011",
+        "X100g2s211:LOOPS_NEAR_ITEM:TK-2702",
+        "X100g2s211:UPSTREAM_ISOLATION:P-802",
+        "X100g2s211:DOWNSTREAM_IN_UNIT:P-701|7",
+        "X100g2s211:NEIGHBOURS_DOWNSTREAM:PSV-2006",
+        "X100g2s211:CONNECTED:P-1901A|D-1901",
+        "X100g2s211:FLOW_PATH:TV-36021|CHV-37003",
+        "X100g2s211:NEIGHBOURS_DOWNSTREAM:PSV-8012",
+        "X100g2s211:COUNT_IN_UNIT:48|CentrifugalPump",
+        "X100g2s211:DOWNSTREAM_IN_UNIT:V-1101|11",
+        "X100g2s211:UPSTREAM_SOURCES:P-201",
+        "X100g2s211:UPSTREAM_SOURCES:TK-201",
+        "X100g2s211:CONNECTED:E-2301|E-2503",
+        "X100g2s211:COUNT_IN_UNIT:42|TubularHeatExchanger",
+        "X100g2s211:UPSTREAM_ISOLATION:D-1901",
+        "X100g2s211:FLOW_PATH:BFV-36006|PSV-37011",
+        "X100g2s211:COUNT_IN_UNIT:26|GlobeCheckValve",
+        "X100g2s211:DOWNSTREAM_IN_UNIT:E-2502|25",
+        "X100g2s211:UPSTREAM_SOURCES:P-202",
+        "X100g2s211:CONNECTED:TK-6002|TK-803",
+        "X100g2s211:UPSTREAM_SOURCES:E-301",
+        "X100g2s211:DOWNSTREAM_IN_UNIT:T-3001|30",
+        "X100g2s211:DOWNSTREAM_IN_UNIT:TK-3301|33",
+        "X100g2s211:CONNECTED:P-5801|P-5102A",
+        "X100g2s211:UPSTREAM_SOURCES:P-3302",
+        "X100g2s211:UPSTREAM_SOURCES:EH-301",
+        "X100g2s211:UPSTREAM_SOURCES:E-1002",
+        "X100g2s211:CONNECTED:T-1301|T-3001",
+        "X100g2s211:CONNECTED:V-1101|P-802",
+        "X100g2s211:UPSTREAM_SOURCES:E-3602",
+        "X100g2s211:UNANSWERABLE_TAG:FLOW_PATH:E-1901|BV-35005",
+        "X100g2s211:UNANSWERABLE_TAG:NEIGHBOURS_DOWNSTREAM:TV-39024",
+        "X100g2s211:UNANSWERABLE_TAG:NEIGHBOURS_DOWNSTREAM:FA-48034",
+        "X100g2s211:UNANSWERABLE_TAG:FLOW_PATH:P-802|BV-1004",
+        "X100g2s211:UNANSWERABLE_TAG:FLOW_PATH:TK-201|LV-25060",
+        "X100g2s211:UNANSWERABLE_TAG:NEIGHBOURS_DOWNSTREAM:CHV-26011",
+        "X100g2s211:UNANSWERABLE_TAG:LOOKUP_TYPE:GTV-58029",
+        "X100g2s211:NO_PATH:FLOW_PATH:E-3901|P-3001",
+        "X100g2s211:UNANSWERABLE_TAG:FLOW_PATH:D-1901|PV-18009",
+        "X100g2s211:UNANSWERABLE_TAG:FLOW_PATH:V-1201|BFV-24003",
+        "X100g2s211:UNANSWERABLE_TAG:LOOKUP_TYPE:FA-32023"
+      ]
+    },
+    "cascade_v4_iso": {
+      "policy": "cascade_v4_iso",
+      "n_questions": 163,
+      "n_correct_uncut": 140,
+      "n_correct_in_limit": 140,
+      "n_beyond_limit": 0,
+      "n_correct_within": {
+        "120": 138,
+        "300": 140
+      },
+      "latency_median_s": 6.761696700035827,
+      "latency_p90_s": 32.34173770004418,
+      "cost_per_question_usd": 0.0010761121165644171,
+      "tier_shares": {
+        "cypher-v2t": 0.7177914110429447,
+        "agent-v2t": 0.2822085889570552
+      },
+      "by_family": {
+        "CONNECTED": {
+          "correct": 10,
+          "total": 10
+        },
+        "COUNT_IN_UNIT": {
+          "correct": 10,
+          "total": 10
+        },
+        "CROSS_UNIT": {
+          "correct": 10,
+          "total": 10
+        },
+        "DOWNSTREAM_IN_UNIT": {
+          "correct": 9,
+          "total": 10
+        },
+        "FLOW_PATH": {
+          "correct": 3,
+          "total": 10
+        },
+        "INSTRUMENTS_OF_ITEM": {
+          "correct": 7,
+          "total": 7
+        },
+        "LOOKUP_TYPE": {
+          "correct": 7,
+          "total": 7
+        },
+        "LOOKUP_UNIT": {
+          "correct": 7,
+          "total": 7
+        },
+        "LOOPS_NEAR_ITEM": {
+          "correct": 7,
+          "total": 10
+        },
+        "LOOP_ACTUATED_VALVE": {
+          "correct": 10,
+          "total": 10
+        },
+        "LOOP_MEASURED_EQUIPMENT": {
+          "correct": 6,
+          "total": 6
+        },
+        "NEIGHBOURS_DOWNSTREAM": {
+          "correct": 10,
+          "total": 10
+        },
+        "NO_PATH": {
+          "correct": 1,
+          "total": 10
+        },
+        "SAME_UNIT": {
+          "correct": 6,
+          "total": 6
+        },
+        "SHEETS_OF_TAG": {
+          "correct": 10,
+          "total": 10
+        },
+        "UNANSWERABLE_TAG": {
+          "correct": 10,
+          "total": 10
+        },
+        "UPSTREAM_ISOLATION": {
+          "correct": 7,
+          "total": 10
+        },
+        "UPSTREAM_SOURCES": {
+          "correct": 10,
+          "total": 10
+        }
+      },
+      "correct_ids": [
+        "X100g2s211:CONNECTED:V-2401|P-2401",
+        "X100g2s211:INSTRUMENTS_OF_ITEM:E-5503",
+        "X100g2s211:LOOKUP_TYPE:TI-4047",
+        "X100g2s211:LOOKUP_UNIT:TIAH-43012",
+        "X100g2s211:LOOP_ACTUATED_VALVE:LSHH-59011",
+        "X100g2s211:LOOP_MEASURED_EQUIPMENT:LAL-37024",
+        "X100g2s211:NEIGHBOURS_DOWNSTREAM:GTV-26034",
+        "X100g2s211:SAME_UNIT:TK-6401|P-6401A",
+        "X100g2s211:SHEETS_OF_TAG:T-1901",
+        "X100g2s211:UPSTREAM_ISOLATION:F-2201B",
+        "X100g2s211:COUNT_IN_UNIT:6|ProcessColumn",
+        "X100g2s211:FLOW_PATH:YV-32002|NV-32002",
+        "X100g2s211:INSTRUMENTS_OF_ITEM:TK-201",
+        "X100g2s211:LOOKUP_TYPE:P-2301B",
+        "X100g2s211:LOOKUP_UNIT:TT-13013",
+        "X100g2s211:LOOP_ACTUATED_VALVE:CSHH-25021",
+        "X100g2s211:LOOP_MEASURED_EQUIPMENT:TIC-39004",
+        "X100g2s211:NEIGHBOURS_DOWNSTREAM:GTV-43006",
+        "X100g2s211:SAME_UNIT:P-2101B|TK-2002",
+        "X100g2s211:SHEETS_OF_TAG:V-5201",
+        "X100g2s211:DOWNSTREAM_IN_UNIT:EJ-4202B|42",
+        "X100g2s211:INSTRUMENTS_OF_ITEM:P-5101B",
+        "X100g2s211:LOOKUP_TYPE:LSHH-26092",
+        "X100g2s211:LOOKUP_UNIT:LIC-7051",
+        "X100g2s211:LOOPS_NEAR_ITEM:TK-3703",
+        "X100g2s211:LOOP_ACTUATED_VALVE:HS-60001",
+        "X100g2s211:LOOP_MEASURED_EQUIPMENT:TI-7070",
+        "X100g2s211:SAME_UNIT:V-5901|P-5901",
+        "X100g2s211:SHEETS_OF_TAG:V-2101",
+        "X100g2s211:UPSTREAM_ISOLATION:P-3901",
+        "X100g2s211:UPSTREAM_SOURCES:P-3801B",
+        "X100g2s211:CONNECTED:E-2603|E-4702",
+        "X100g2s211:COUNT_IN_UNIT:61|ButterflyValve",
+        "X100g2s211:INSTRUMENTS_OF_ITEM:P-1301",
+        "X100g2s211:LOOKUP_TYPE:GTV-12018",
+        "X100g2s211:LOOKUP_UNIT:HS-48001",
+        "X100g2s211:LOOPS_NEAR_ITEM:V-6301",
+        "X100g2s211:LOOP_ACTUATED_VALVE:PIC-25040",
+        "X100g2s211:LOOP_MEASURED_EQUIPMENT:TIAH-18035",
+        "X100g2s211:NEIGHBOURS_DOWNSTREAM:TV-50031",
+        "X100g2s211:SAME_UNIT:K-3601|P-3502",
+        "X100g2s211:SHEETS_OF_TAG:E-5403",
+        "X100g2s211:UPSTREAM_ISOLATION:P-5001B",
+        "X100g2s211:UPSTREAM_SOURCES:TK-101",
+        "X100g2s211:INSTRUMENTS_OF_ITEM:P-1201",
+        "X100g2s211:LOOKUP_TYPE:BFV-10003",
+        "X100g2s211:LOOKUP_UNIT:YI-37012",
+        "X100g2s211:LOOP_ACTUATED_VALVE:PIC-56007",
+        "X100g2s211:LOOP_MEASURED_EQUIPMENT:TI-6033",
+        "X100g2s211:NEIGHBOURS_DOWNSTREAM:GTV-30004",
+        "X100g2s211:SAME_UNIT:P-502|V-501",
+        "X100g2s211:SHEETS_OF_TAG:E-601",
+        "X100g2s211:INSTRUMENTS_OF_ITEM:V-3601",
+        "X100g2s211:LOOKUP_TYPE:TT-40034",
+        "X100g2s211:LOOKUP_UNIT:PSV-39007",
+        "X100g2s211:LOOPS_NEAR_ITEM:TK-6003",
+        "X100g2s211:LOOP_MEASURED_EQUIPMENT:PSHH-39020",
+        "X100g2s211:SAME_UNIT:E-5801|P-5901",
+        "X100g2s211:COUNT_IN_UNIT:61|GateValve",
+        "X100g2s211:DOWNSTREAM_IN_UNIT:V-1802|18",
+        "X100g2s211:INSTRUMENTS_OF_ITEM:D-3601",
+        "X100g2s211:LOOKUP_TYPE:PI-47054",
+        "X100g2s211:LOOKUP_UNIT:GTV-30011",
+        "X100g2s211:COUNT_IN_UNIT:37|GateValve",
+        "X100g2s211:CROSS_UNIT:15",
+        "X100g2s211:NEIGHBOURS_DOWNSTREAM:GTV-26036",
+        "X100g2s211:COUNT_IN_UNIT:2|NeedleValve",
+        "X100g2s211:DOWNSTREAM_IN_UNIT:H-5001|50",
+        "X100g2s211:LOOP_ACTUATED_VALVE:PIC-58040",
+        "X100g2s211:UPSTREAM_ISOLATION:V-3801",
+        "X100g2s211:CROSS_UNIT:42",
+        "X100g2s211:LOOP_ACTUATED_VALVE:LSHH-27002",
+        "X100g2s211:NEIGHBOURS_DOWNSTREAM:GTV-2006",
+        "X100g2s211:SHEETS_OF_TAG:P-5601",
+        "X100g2s211:CONNECTED:TK-802|P-802",
+        "X100g2s211:CROSS_UNIT:21",
+        "X100g2s211:SHEETS_OF_TAG:P-801",
+        "X100g2s211:UPSTREAM_ISOLATION:E-602",
+        "X100g2s211:CONNECTED:P-2501A|T-2501",
+        "X100g2s211:CROSS_UNIT:13",
+        "X100g2s211:LOOP_ACTUATED_VALVE:LSHH-27004",
+        "X100g2s211:CROSS_UNIT:20",
+        "X100g2s211:NEIGHBOURS_DOWNSTREAM:GTV-39005",
+        "X100g2s211:SHEETS_OF_TAG:P-6001",
+        "X100g2s211:CROSS_UNIT:1",
+        "X100g2s211:SHEETS_OF_TAG:P-802",
+        "X100g2s211:CROSS_UNIT:34",
+        "X100g2s211:LOOP_ACTUATED_VALVE:LSHH-48004",
+        "X100g2s211:COUNT_IN_UNIT:2|ButterflyValve",
+        "X100g2s211:CROSS_UNIT:16",
+        "X100g2s211:LOOP_ACTUATED_VALVE:LSHH-48002",
+        "X100g2s211:CROSS_UNIT:17",
+        "X100g2s211:LOOPS_NEAR_ITEM:TK-4802",
+        "X100g2s211:SHEETS_OF_TAG:T-3001",
+        "X100g2s211:CROSS_UNIT:39",
+        "X100g2s211:DOWNSTREAM_IN_UNIT:TK-6002|60",
+        "X100g2s211:LOOPS_NEAR_ITEM:TK-4801",
+        "X100g2s211:COUNT_IN_UNIT:27|CentrifugalPump",
+        "X100g2s211:LOOPS_NEAR_ITEM:TK-2701",
+        "X100g2s211:NEIGHBOURS_DOWNSTREAM:PSV-2011",
+        "X100g2s211:LOOPS_NEAR_ITEM:TK-2702",
+        "X100g2s211:UPSTREAM_ISOLATION:P-802",
+        "X100g2s211:DOWNSTREAM_IN_UNIT:P-701|7",
+        "X100g2s211:NEIGHBOURS_DOWNSTREAM:PSV-2006",
+        "X100g2s211:CONNECTED:P-1901A|D-1901",
+        "X100g2s211:FLOW_PATH:TV-36021|CHV-37003",
+        "X100g2s211:NEIGHBOURS_DOWNSTREAM:PSV-8012",
+        "X100g2s211:COUNT_IN_UNIT:48|CentrifugalPump",
+        "X100g2s211:DOWNSTREAM_IN_UNIT:V-1101|11",
+        "X100g2s211:UPSTREAM_SOURCES:P-201",
+        "X100g2s211:UPSTREAM_SOURCES:TK-201",
+        "X100g2s211:CONNECTED:E-2301|E-2503",
+        "X100g2s211:COUNT_IN_UNIT:42|TubularHeatExchanger",
+        "X100g2s211:UPSTREAM_ISOLATION:D-1901",
+        "X100g2s211:FLOW_PATH:BFV-36006|PSV-37011",
+        "X100g2s211:COUNT_IN_UNIT:26|GlobeCheckValve",
+        "X100g2s211:DOWNSTREAM_IN_UNIT:E-2502|25",
+        "X100g2s211:UPSTREAM_SOURCES:P-202",
+        "X100g2s211:CONNECTED:TK-6002|TK-803",
+        "X100g2s211:UPSTREAM_SOURCES:E-301",
+        "X100g2s211:DOWNSTREAM_IN_UNIT:T-3001|30",
+        "X100g2s211:DOWNSTREAM_IN_UNIT:TK-3301|33",
+        "X100g2s211:CONNECTED:P-5801|P-5102A",
+        "X100g2s211:UPSTREAM_SOURCES:P-3302",
+        "X100g2s211:UPSTREAM_SOURCES:EH-301",
+        "X100g2s211:UPSTREAM_SOURCES:E-1002",
+        "X100g2s211:CONNECTED:T-1301|T-3001",
+        "X100g2s211:CONNECTED:V-1101|P-802",
+        "X100g2s211:UPSTREAM_SOURCES:E-3602",
+        "X100g2s211:UNANSWERABLE_TAG:FLOW_PATH:E-1901|BV-35005",
+        "X100g2s211:UNANSWERABLE_TAG:NEIGHBOURS_DOWNSTREAM:TV-39024",
+        "X100g2s211:UNANSWERABLE_TAG:NEIGHBOURS_DOWNSTREAM:FA-48034",
+        "X100g2s211:UNANSWERABLE_TAG:FLOW_PATH:P-802|BV-1004",
+        "X100g2s211:UNANSWERABLE_TAG:FLOW_PATH:TK-201|LV-25060",
+        "X100g2s211:UNANSWERABLE_TAG:NEIGHBOURS_DOWNSTREAM:CHV-26011",
+        "X100g2s211:UNANSWERABLE_TAG:LOOKUP_TYPE:GTV-58029",
+        "X100g2s211:NO_PATH:FLOW_PATH:E-3901|P-3001",
+        "X100g2s211:UNANSWERABLE_TAG:FLOW_PATH:D-1901|PV-18009",
+        "X100g2s211:UNANSWERABLE_TAG:FLOW_PATH:V-1201|BFV-24003",
+        "X100g2s211:UNANSWERABLE_TAG:LOOKUP_TYPE:FA-32023"
+      ]
+    }
+  },
+  "cypher": {
+    "n_tried": 163,
+    "n_accepted": 120,
+    "n_accepted_correct": 108,
+    "rejected_by": {
+      "rows": 30,
+      "answered": 12,
+      "not_abstained": 1
+    },
+    "n_cut_but_correct": 0
+  },
+  "choice": {
+    "chosen": "cascade_v4_iso",
+    "setting": "B",
+    "basis": "uncut",
+    "n_questions": 163,
+    "n_correct_v4": 137,
+    "n_correct_v4_iso": 140,
+    "rule": "cascade_v4_iso replaces cascade_v4 iff its primary accuracy on T is >= cascade_v4's"
+  }
+}
