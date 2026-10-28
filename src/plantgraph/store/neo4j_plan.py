@@ -57,6 +57,7 @@ from plantgraph.store.neo4j_rows import (
     check_unique_uids,
 )
 from plantgraph.store.plant_invariants import InvariantStatement, invariant_statements
+from plantgraph.store.plant_line_rows import plant_lines_rows
 from plantgraph.store.plant_rows import (
     StoreProfile,
     drawn_as_rows,
@@ -127,7 +128,8 @@ def build_load_plan(
         batch_size: rows per `UNWIND` batch; a starting value, not measured
             (§7.4).
         profile: `occurrence` (every drawing, the default), `plant` (one node
-            per physical item) or `both`, linked by `drawn_as` (ADR-0036).
+            per physical item), `both`, linked by `drawn_as` (ADR-0036), or
+            `plant_lines` (`plant` plus the `line_to` line view, see `plant_line_rows.py`).
 
     Raises:
         ValueError: if `corpus_id` or `batch_size` has an unsafe shape, the
@@ -166,12 +168,14 @@ def _rows_for_profile(
     resolution: Resolution,
     asserted_by: Literal["resolver", "oracle"],
 ) -> tuple[list[NodeRow], list[RelationshipRow]]:
-    """The occurrence layer, the plant layer, or both joined by `drawn_as`."""
+    """The occurrence layer, the plant layer (with or without the line view), or both layers."""
     if profile == "occurrence":
         return (
             all_node_rows(corpus_id, sheets),
             all_relationship_rows(corpus_id, sheets, resolution, asserted_by),
         )
+    if profile == "plant_lines":
+        return plant_lines_rows(corpus_id, sheets, resolution, asserted_by)
     plant_nodes = plant_node_rows(corpus_id, sheets, resolution)
     plant_relationships = plant_relationship_rows(corpus_id, sheets, resolution, asserted_by)
     if profile == "plant":

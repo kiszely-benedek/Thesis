@@ -179,7 +179,8 @@ def _add_store_profile_argument(parser: argparse.ArgumentParser) -> None:
         default="both",
         help=(
             "which graph layers to store (ADR-0036): 'occurrence' = every drawn symbol, "
-            "'plant' = one node per physical item, 'both' = both, linked by drawn_as"
+            "'plant' = one node per physical item, 'both' = both, linked by drawn_as, "
+            "'plant_lines' = plant plus the line_to line view (V2T Cypher arm)"
         ),
     )
 

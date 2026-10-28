@@ -53,6 +53,11 @@ _INSTRUMENT_CLASSES = (
     - _ACTUATOR_CLASSES
 )
 
+#: The Neo4j relationship type of a line edge, and the umbrella label on every valve. Both the
+#: plant API and the `plant_lines` store profile use these names.
+LINE_TO_RELATION = "line_to"
+VALVE_LABEL = "Valve"
+
 NO_INFLOW_MARK = "[no inflow]"
 NO_OUTFLOW_MARK = "[no outflow]"
 

@@ -98,6 +98,34 @@ WITH i,
 WHERE size(right_sections) <> 1 OR all_links <> 1
 RETURN count(i) AS violations"""
 
+# --- the line view of the `plant_lines` profile (store/plant_line_rows.py) ---------------------
+
+_LINE_KINDS = "['equipment', 'valve']"
+
+# every item has a kind, and a node is a :Valve exactly when its kind is valve
+_INV_8 = f"""
+MATCH (i:{_ITEM} {{corpus_id: $corpus_id}})
+WHERE i.kind IS NULL OR (i:Valve) <> (i.kind = 'valve')
+RETURN count(i) AS violations"""
+
+# a line edge joins two line items (equipment or valve) and carries its two properties
+_INV_9 = f"""
+MATCH (a:{_ITEM} {{corpus_id: $corpus_id}})-[r:line_to]->(b:{_ITEM})
+WHERE NOT a.kind IN {_LINE_KINDS} OR NOT b.kind IN {_LINE_KINDS}
+   OR r.via_tags IS NULL OR r.n_fittings IS NULL
+RETURN count(r) AS violations"""
+
+# a line item is marked "no inflow" / "no outflow" exactly when no line_to edge enters / leaves it;
+# an item of another kind carries no mark
+_INV_10 = f"""
+MATCH (i:{_ITEM} {{corpus_id: $corpus_id}})
+WITH i, EXISTS {{ (i)<-[:line_to]-() }} AS has_in, EXISTS {{ (i)-[:line_to]->() }} AS has_out
+WHERE CASE WHEN i.kind IN {_LINE_KINDS}
+           THEN i.no_inflow IS NULL OR i.no_outflow IS NULL
+                OR i.no_inflow = has_in OR i.no_outflow = has_out
+           ELSE i.no_inflow IS NOT NULL OR i.no_outflow IS NOT NULL END
+RETURN count(i) AS violations"""
+
 #: (id, profiles that must satisfy it, description, query)
 _INVARIANTS: tuple[tuple[str, frozenset[str], str, str], ...] = (
     ("INV-1", frozenset({"both"}), "every plant item has at least one drawn_as", _INV_1),
@@ -122,15 +150,33 @@ _INVARIANTS: tuple[tuple[str, frozenset[str], str, str], ...] = (
     ),
     (
         "INV-6",
-        frozenset({"plant", "both"}),
+        frozenset({"plant", "both", "plant_lines"}),
         "no topology relationship joins a plant item and a non-item",
         _INV_6,
     ),
     (
         "INV-7",
-        frozenset({"plant", "both"}),
+        frozenset({"plant", "both", "plant_lines"}),
         "an item with a unit_id has exactly one is_located_in, to that unit's PlantSection",
         _INV_7,
+    ),
+    (
+        "INV-8",
+        frozenset({"plant_lines"}),
+        "every plant item has a kind, and is a :Valve exactly when its kind is valve",
+        _INV_8,
+    ),
+    (
+        "INV-9",
+        frozenset({"plant_lines"}),
+        "every line_to joins two line items and has via_tags and n_fittings",
+        _INV_9,
+    ),
+    (
+        "INV-10",
+        frozenset({"plant_lines"}),
+        "no_inflow / no_outflow mark exactly the line items with no line_to in / out",
+        _INV_10,
     ),
 )
 

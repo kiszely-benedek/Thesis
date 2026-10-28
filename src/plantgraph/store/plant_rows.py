@@ -35,8 +35,9 @@ from plantgraph.store.neo4j_rows import (
     uid,
 )
 
-#: which layers of the graph one load writes (ADR-0036)
-StoreProfile = Literal["occurrence", "plant", "both"]
+#: which layers of the graph one load writes (ADR-0036). `plant_lines` is the plant layer plus the
+#: line view (`store/plant_line_rows.py`): `line_to` edges, a `kind` on every item, a `Valve` label.
+StoreProfile = Literal["occurrence", "plant", "both", "plant_lines"]
 
 _TOPOLOGY_RELATION_VALUES: frozenset[str] = frozenset(
     relation.value for relation in schema.TOPOLOGY_RELATIONS

@@ -8,7 +8,8 @@ the text cannot drift from the code. The one fixed paragraph explains the
 shape of the store. Which paragraph depends on the plan's store profile
 (ADR-0036): `occurrence` describes every drawing as drawn (sheets, off-page
 connectors and the links between them); `plant` describes one node per
-physical item, with the sheet-crossing lines already joined.
+physical item, with the sheet-crossing lines already joined; `plant_lines` adds the line view
+(`line_to`, kind, :Valve, line-end marks; paragraph in `schema_text_lines.py`).
 
 Bookkeeping the store adds for its own use (`CorpusNode`, `uid`, `corpus_id`)
 is never mentioned: it is noise to the model and not part of the drawing.
@@ -20,6 +21,12 @@ import re
 from collections.abc import Iterable
 
 from plantgraph.graph import schema
+from plantgraph.graph.line_view import LINE_TO_RELATION
+from plantgraph.qa.schema_text_lines import (
+    LINE_EDGE_PROPERTIES,
+    LINE_NODE_PROPERTIES,
+    PLANT_LINES_PARAGRAPH,
+)
 from plantgraph.store.neo4j_plan import LoadPlan
 
 _BOOKKEEPING_LABEL = "CorpusNode"
@@ -98,7 +105,7 @@ def _check_labels(labels: Iterable[str]) -> None:
 
 
 def _check_relationship_types(types: Iterable[str]) -> None:
-    known = {relation.value for relation in schema.Relation}
+    known = {relation.value for relation in schema.Relation} | {LINE_TO_RELATION}
     for relationship_type in types:
         if relationship_type not in known:
             raise ValueError(
@@ -126,8 +133,11 @@ def _paragraph_for(plan: LoadPlan) -> str:
         return _STRUCTURE_PARAGRAPH
     if plan.profile == "plant":
         return _PLANT_PARAGRAPH
+    if plan.profile == "plant_lines":
+        return PLANT_LINES_PARAGRAPH
     raise ValueError(
-        f"expected a load plan with profile 'occurrence' or 'plant', found {plan.profile!r}: "
+        f"expected a load plan with profile 'occurrence', 'plant' or 'plant_lines', "
+        f"found {plan.profile!r}: "
         "a store holding both layers answers the same pattern twice, so no LLM arm reads it"
     )
 
@@ -141,11 +151,15 @@ def build_schema_text(plan: LoadPlan) -> str:
     """
     paragraph = _paragraph_for(plan)  # first: a `both` plan fails before anything is listed
     node_properties = sorted(schema.VISIBLE_NODE_PROPERTIES)
+    if plan.profile == "plant_lines":
+        node_properties = sorted({*node_properties, *LINE_NODE_PROPERTIES})
     # `relation` is the relationship's type, not a stored property
     visible_edge = set(schema.VISIBLE_EDGE_PROPERTIES) - {"relation"}
-    if plan.profile == "plant":
+    if plan.profile in ("plant", "plant_lines"):
         visible_edge |= schema.PLANT_EDGE_PROVENANCE_PROPERTIES
     edge_properties = sorted(visible_edge)
+    if plan.profile == "plant_lines":
+        edge_properties += [f"{name} (line_to only)" for name in LINE_EDGE_PROPERTIES]
     return "\n".join(
         [
             "Node labels: " + ", ".join(schema_labels(plan)),

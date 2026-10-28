@@ -12,6 +12,7 @@ from collections.abc import Sequence
 
 from plantgraph.graph.line_view import (
     LINE_ITEM_CLASSES,
+    LINE_TO_RELATION,
     LineEdge,
     LineEnds,
     fold_line_edges,
@@ -20,7 +21,7 @@ from plantgraph.graph.line_view import (
 )
 from plantgraph.qa.plant_api.model import ItemEdge, ItemRecord
 
-LINE_RELATION = "line_to"
+LINE_RELATION = LINE_TO_RELATION
 
 
 def add_line_view(
