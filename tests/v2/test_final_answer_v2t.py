@@ -22,7 +22,7 @@ from qa_agent_fakes import PIN
 
 #: sha256 of `prompts/final_answer.txt` at the commit before QT-5: F1's text must not move.
 _F1_TEMPLATE_SHA256 = "f9e22b901e45f7a38dfd85f307bf742dc6f3e4f9303ef48db77841ddf4912baf"
-_RULES_HEADER = "Three rules about what an answer may contain:"
+_RULES_HEADER = "Four rules about what an answer may contain:"
 
 
 @dataclass
@@ -70,7 +70,7 @@ def test_the_v2t_strategy_names_are_the_two_tuned_strategies() -> None:
 
 
 @pytest.mark.parametrize("name", sorted(V2T_STRATEGY_NAMES))
-def test_a_v2t_strategy_gets_the_three_rules(name: str) -> None:
+def test_a_v2t_strategy_gets_the_rules(name: str) -> None:
     prompt = _prompt_sent_by(name)
 
     assert _RULES_HEADER in prompt
@@ -79,6 +79,7 @@ def test_a_v2t_strategy_gets_the_three_rules(name: str) -> None:
     assert "starts with A and ends with B" in prompt  # tuning round 2: a path keeps its start item
     assert "answer not present" in prompt
     assert "no flow path exists" in prompt  # tuning round 2: no path is not present, as in F1
+    assert "name each loop by its loop head" in prompt  # tuning round 3
     assert "the context" in prompt and "Which items does P-101 feed?" in prompt
 
 
@@ -102,5 +103,5 @@ def test_the_v2t_template_is_f1s_text_plus_the_rules_block() -> None:
     v2t = V2T_TEMPLATE_PATH.read_text(encoding="utf-8")
 
     start = v2t.index("\n" + _RULES_HEADER)
-    end = v2t.index("\n", v2t.index("3. If the description")) + 1  # end of rule 3's line
+    end = v2t.index("\n", v2t.index("4. When the question asks for control loops")) + 1  # last rule
     assert v2t[:start] + v2t[end:] == f1
