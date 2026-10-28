@@ -96,13 +96,20 @@ def _sort_label_lists(value: Any, label_names: frozenset[str]) -> Any:
     return [_sort_label_lists(item, label_names) for item in value]
 
 
-#: Which graph the arm queries: every drawing as drawn, or one node per physical item (ADR-0036).
-CypherProfile = Literal["occurrence", "plant"]
+#: Which graph the arm queries: every drawing as drawn, one node per physical item (ADR-0036), or
+#: the plant plus the `line_to` line view (V2T, ADR-0061).
+CypherProfile = Literal["occurrence", "plant", "plant_lines"]
 
 OCCURRENCE_NAME = "cypher_rag"
 PLANT_NAME = "cypher_rag_plant"
-#: Strategy name -> the store profile that arm reads.
-PROFILE_OF_NAME: dict[str, CypherProfile] = {OCCURRENCE_NAME: "occurrence", PLANT_NAME: "plant"}
+LINES_NAME = "cypher_rag_lines"
+#: Strategy name -> the store profile that arm reads. `cypher_rag_lines` is built in
+#: `cypher_rag_lines.py`, not by `CypherRag`.
+PROFILE_OF_NAME: dict[str, CypherProfile] = {
+    OCCURRENCE_NAME: "occurrence",
+    PLANT_NAME: "plant",
+    LINES_NAME: "plant_lines",
+}
 
 
 class CypherRag:
@@ -167,6 +174,8 @@ class CypherRag:
 
 
 def _name_of(profile: CypherProfile) -> str:
+    if profile == "plant_lines":
+        raise ValueError("expected CypherRag for 'occurrence' or 'plant'; use CypherRagLines")
     return PLANT_NAME if profile == "plant" else OCCURRENCE_NAME
 
 

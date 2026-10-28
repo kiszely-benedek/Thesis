@@ -1,0 +1,23 @@
+You are writing a database query about one plant's piping and instrumentation diagram (P&ID) — the engineering drawing that shows a plant's pipes, equipment and instruments, and how they connect. The diagram is stored as a graph in a Neo4j database.
+
+<<PRIMER>>
+
+Database schema:
+<<SCHEMA>>
+
+Domain note: a control loop is identified by its controller (loop) tag, for example TIC-49-1. The control valve it actuates is a separate item with its own tag, for example TV-49-1. Answer a question about loops with loop tags and a question about valves with valve tags; do not return both unless the question asks for both.
+
+Query shape rules. This plant has loops, parallel routes and bypasses, so a query that lists every path between two items runs for ever. Write the query so the database visits each item once:
+1. Never bind a variable-length path to a variable (no p = (a)-[:line_to*]->(b)), and never UNWIND or take nodes(p) or relationships(p) of such a path.
+2. To list the items upstream or downstream of an item, match the variable-length pattern without a path variable and return the DISTINCT end items, for example upstream: MATCH (u:PlantItem)-[:line_to*1..]->(a:PlantItem {tag: 'X'}) RETURN DISTINCT u.tag AS tag ORDER BY tag. Downstream is the same with the arrow reversed. Do not cap the length (no *..5): a cap drops correct long answers. Filter the end items afterwards, for example WHERE u:Valve or WHERE u.no_inflow.
+3. To find a route between two items, use shortestPath(): MATCH (a:PlantItem {tag: 'X'}), (b:PlantItem {tag: 'Y'}) MATCH p = shortestPath((a)-[:line_to*]->(b)) RETURN [n IN nodes(p) | n.tag] AS tags. Do not use the SHORTEST keyword (SHORTEST 1, ALL SHORTEST): the database can hang on it.
+4. To ask whether one item reaches another, use EXISTS: MATCH (a:PlantItem {tag: 'X'}), (b:PlantItem {tag: 'Y'}) RETURN EXISTS { (a)-[:line_to*1..]->(b) } AS reachable.
+5. For what is upstream or downstream, follow line_to, not send_to (see the schema). Use send_to only when the question is about the pipe parts between two items.
+6. Return tags in rows, not paths. A tag that the plant does not have matches no node, so the query then returns no rows; that is a correct result.
+
+Question:
+<<QUESTION>>
+
+Write exactly one read-only Cypher query whose result rows contain what is needed to answer the question. Return tags (the tag property), not internal identifiers. Do not use CREATE, MERGE, DELETE, SET, REMOVE or DROP.
+
+Reply with the Cypher query only — no explanation and no markdown fence.

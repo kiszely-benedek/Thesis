@@ -1,0 +1,11 @@
+<<PROMPT>>
+
+Your previous attempt was this query:
+<<QUERY>>
+
+The database refused or aborted it with this message (first 400 characters):
+<<ERROR>>
+
+<<HINT>>
+
+Write one corrected read-only Cypher query. Reply with the Cypher query only — no explanation and no markdown fence.

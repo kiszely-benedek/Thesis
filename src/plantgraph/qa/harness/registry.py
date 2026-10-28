@@ -44,7 +44,8 @@ from plantgraph.qa.need.rules import RuleNeedClassifier
 from plantgraph.qa.plant_api.item_graph import ItemGraph, build_item_graph
 from plantgraph.qa.strategies.base import Strategy
 from plantgraph.qa.strategies.context_rag import ContextRag
-from plantgraph.qa.strategies.cypher_rag import PROFILE_OF_NAME, CypherRag
+from plantgraph.qa.strategies.cypher_rag import LINES_NAME, PROFILE_OF_NAME, CypherRag
+from plantgraph.qa.strategies.cypher_rag_lines import CypherRagLines
 from plantgraph.qa.strategies.hierarchical import Hierarchical, hierarchical_name
 from plantgraph.qa.strategies.hierarchical_need import NeedAwareHierarchical, need_strategy_name
 from plantgraph.qa.unit_router import UnitRouter
@@ -137,13 +138,24 @@ def build_strategy(
     return factory(view, params)
 
 
-def _build_cypher_rag(name: str, params: dict[str, Any], cypher: CypherDeps | None) -> CypherRag:
+def _build_cypher_rag(
+    name: str, params: dict[str, Any], cypher: CypherDeps | None
+) -> CypherRag | CypherRagLines:
     if cypher is None:
         raise ValueError(f"expected a database connection for {name}, found none")
     missing = [key for key in ("timeout_s", "row_cap") if key not in params]
     if missing:
         # no default: both are set in the pilot, on dev corpora (`qa-system.md` §7)
         raise ValueError(f"expected {name} params to include {missing}, found {sorted(params)}")
+    if name == LINES_NAME:
+        return CypherRagLines(
+            cypher.source,
+            cypher.pin,
+            cypher.send,
+            timeout_s=float(params["timeout_s"]),
+            row_cap=int(params["row_cap"]),
+            primer=cypher.primer,
+        )
     return CypherRag(
         cypher.source,
         cypher.pin,
