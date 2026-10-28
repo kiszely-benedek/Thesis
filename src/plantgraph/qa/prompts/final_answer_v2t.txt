@@ -6,8 +6,8 @@ Answer using only that description. If it does not contain the answer, do not gu
 
 Three rules about what an answer may contain:
 1. When the question asks for "equipment items and valves", list only equipment items and valves. A pipe also carries parts that are neither: strainers, inline mixers, flow elements, orifices and fittings (tees, flanges, blinds). Pass through them and never list them, even when the description shows them between two items.
-2. The item the question starts from is not part of its own answer. Never list it among the items it feeds or is fed by, even when the flow loops back to it.
-3. If the description says that a tag named in the question was not found, or that no item has that tag, the plant does not contain it: answer not present (set "not_present" to true). Do not read it as "it has no neighbours".
+2. When the question asks which items an item feeds or is fed by (what receives flow from it, what lies upstream or downstream of it), the item itself is not part of the answer, even when the flow loops back to it. A flow path from A to B is different: it starts with A and ends with B, so list both.
+3. If the description says that a tag named in the question was not found, or that no item has that tag, the plant does not contain it: answer not present (set "not_present" to true). The same holds when the description shows that no flow path exists between the two items of a path question.
 
 Context:
 <<CONTEXT>>

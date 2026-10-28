@@ -75,8 +75,10 @@ def test_a_v2t_strategy_gets_the_three_rules(name: str) -> None:
 
     assert _RULES_HEADER in prompt
     assert "list only equipment items and valves" in prompt
-    assert "is not part of its own answer" in prompt
+    assert "the item itself is not part of the answer" in prompt
+    assert "starts with A and ends with B" in prompt  # tuning round 2: a path keeps its start item
     assert "answer not present" in prompt
+    assert "no flow path exists" in prompt  # tuning round 2: no path is not present, as in F1
     assert "the context" in prompt and "Which items does P-101 feed?" in prompt
 
 
