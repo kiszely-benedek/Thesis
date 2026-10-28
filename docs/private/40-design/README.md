@@ -29,6 +29,7 @@ A design note is finished when it answers all five:
 | `demo/` drawing export + app | One PDF per corpus (one page per sheet, flags link pages) and a local web UI answering through the cascade, replay-first, paid calls guarded (ADR-0024, ADR-0049) | [demo-app.md](demo-app.md) | **draft — awaiting review** (2026-10-10) |
 | `infra/` + replays | Infrastructure cost at D100/D1000(/D4000): one-time build, standing footprint, per-question local compute from zero-spend replays; money only via a cited price (ADR-0051) | [infra-cost.md](infra-cost.md) | **draft — awaiting review** (2026-10-10) |
 | EXP-0001 (single-sheet end) | ContextRAG (Luna high) vs frozen cascade_v3 and tiers on a size ladder H1/H3/H10/H30 + EX01 anchor (5 ChatP&ID questions); H100 conditional; EX01 runner + report as new files only (ADR-0054) | [exp0001-single-sheet.md](exp0001-single-sheet.md) | **draft — awaiting review** (2026-10-11) |
+| `qa` tuning on v2 (V2T) | Separately labelled tuned system, accuracy first: line view through fittings in both tiers, one Cypher repair round, cascade_v4 without a deadline; fresh tuning plants T/V, ≤ 3 rounds, freeze at E7 (ADR-0061) | [qa-tuning-v2.md](qa-tuning-v2.md) | **draft — awaiting review** (2026-10-27) |
 | *(tooling)* `/parallel-implement` | Run several Sonnet `coder` subagents on one design note, file-owned (ADR-0006) | [parallel-coder-skill.md](parallel-coder-skill.md) | **draft — awaiting review** |
 
 ## Standing constraints
