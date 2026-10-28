@@ -170,18 +170,18 @@
     "n_invariants": 5
   },
   "stage_seconds": {
-    "generate": 5.904971599986311,
-    "split": 0.15413810004247352,
-    "localize": 0.07244690001243725,
-    "resolve": 0.08446189999813214,
-    "plan": 0.5959859000286087,
-    "load_recreate": 0.5614329999662004,
-    "load_wipe": 0.05156610003905371,
-    "load_schema": 0.13692050002282485,
-    "load_nodes": 1.7969141000066884,
-    "load_relationships": 1.491892000020016,
-    "load_verify": 0.34462700004223734,
-    "load_total": 3.821935099957045
+    "generate": 6.242540199949872,
+    "split": 0.15864229999715462,
+    "localize": 0.0657336000003852,
+    "resolve": 0.07197849999647588,
+    "plan": 0.703474499983713,
+    "load_recreate": 0.5578355000470765,
+    "load_wipe": 0.05124419997446239,
+    "load_schema": 0.1544737999793142,
+    "load_nodes": 2.241316600004211,
+    "load_relationships": 1.523534199979622,
+    "load_verify": 0.4062719000503421,
+    "load_total": 4.376864199992269
   },
   "resolution": {
     "n_sheets": 101,
@@ -202,12 +202,12 @@
     "nodes_written": 9947,
     "relationships_written": 33321,
     "batch_size": 5000,
-    "wipe_s": 0.05156610003905371,
-    "schema_s": 0.13692050002282485,
-    "nodes_s": 1.7969141000066884,
-    "relationships_s": 1.491892000020016,
-    "verify_s": 0.34462700004223734,
-    "total_s": 3.821935099957045,
+    "wipe_s": 0.05124419997446239,
+    "schema_s": 0.1544737999793142,
+    "nodes_s": 2.241316600004211,
+    "relationships_s": 1.523534199979622,
+    "verify_s": 0.4062719000503421,
+    "total_s": 4.376864199992269,
     "neo4j_version": "Neo4j Kernel 2026.09.0 (enterprise)",
     "invariants_checked": 5
   },
@@ -216,7 +216,7 @@
   "resolution_score": null,
   "neo4j_version": "Neo4j Kernel 2026.09.0 (enterprise)",
   "environment": {
-    "git_commit": "1c37ea0c4e5abb86553fb6fc7b0f2387982bb7c2",
+    "git_commit": "7ab54fbe2bd433189af7c54fabe20dd23fbfa79b",
     "git_dirty": true,
     "machine": {
       "cpu_name": "AMD Ryzen 9 5900HX with Radeon Graphics",
@@ -244,7 +244,7 @@
       "server.memory.query_cache.shared_cache_num_entries": "1000",
       "server.memory.query_cache.sharing_enabled": "false"
     },
-    "recorded_at": "2026-10-28T21:30:12.942322Z"
+    "recorded_at": "2026-10-28T21:53:55.889735Z"
   },
   "store_footprint": null
 }
