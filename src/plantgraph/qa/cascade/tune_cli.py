@@ -7,7 +7,12 @@ from pathlib import Path
 
 from plantgraph.qa.cascade.join import TierSource
 from plantgraph.qa.cascade.limits import SETTINGS
-from plantgraph.qa.cascade.tune_compare import family_changes, regressed_families
+from plantgraph.qa.cascade.tune_compare import (
+    family_changes,
+    regressed_families,
+    round_change,
+    round_verdict,
+)
 from plantgraph.qa.cascade.tune_models import TuneReport
 from plantgraph.qa.cascade.tune_render import render_tune_report, write_tune_report
 from plantgraph.qa.cascade.tune_report import build_tune_report
@@ -43,6 +48,8 @@ def tune_command(args: argparse.Namespace) -> None:
         changes = family_changes(report, previous, V4)
         dropped = regressed_families(changes)
         print(f"families that lost 2 or more questions (stop rule 3): {dropped or 'none'}")
+        verdict = round_verdict(round_change(report, previous, V4))
+        print(f"setting {args.setting}, cascade_v4 against the previous round: {verdict}")
     markdown, json_path = write_tune_report(report, args.out, changes)
     print(render_tune_report(report, changes))
     print(f"wrote {markdown} and {json_path}")

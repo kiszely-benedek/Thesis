@@ -6,7 +6,7 @@ Everything runs offline over toy stored runs (`cascade_toy`): no model call, no 
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 import pytest
 
@@ -183,23 +183,25 @@ def test_run_problems_catches_tiers_with_different_v2t_templates(tmp_path: Path)
 # ---- the pre-registered choice -------------------------------------------------------------
 
 
+@pytest.mark.parametrize("setting", ["A", "B"])
 @pytest.mark.parametrize(
     ("n_v4", "n_iso", "chosen"),
     [(100, 101, V4_ISO), (100, 100, V4_ISO), (100, 99, V4)],
 )
-def test_iso_replaces_v4_iff_its_uncut_accuracy_on_t_is_at_least_v4s(
-    n_v4: int, n_iso: int, chosen: str
+def test_iso_replaces_v4_iff_its_primary_accuracy_on_t_is_at_least_v4s(
+    setting: Literal["A", "B"], n_v4: int, n_iso: int, chosen: str
 ) -> None:
-    choice = select_variant(TUNING_CORPUS_ID, 163, n_v4, n_iso)
+    choice = select_variant(TUNING_CORPUS_ID, setting, 163, n_v4, n_iso)
 
     assert choice.chosen == chosen and (choice.n_correct_v4, choice.n_correct_v4_iso) == (
         n_v4,
         n_iso,
     )
+    assert choice.basis == ("within 120 s" if setting == "A" else "uncut")
 
 
 def test_the_choice_is_refused_on_any_corpus_but_the_tuning_set() -> None:
     with pytest.raises(ValueError, match="tuning set 'X100g2s211', found 'X100g2s212'"):
-        select_variant("X100g2s212", 163, 100, 100)
+        select_variant("X100g2s212", "A", 163, 100, 100)
     with pytest.raises(ValueError, match="correct count in 0..10"):
-        select_variant(TUNING_CORPUS_ID, 10, 11, 5)
+        select_variant(TUNING_CORPUS_ID, "B", 10, 11, 5)

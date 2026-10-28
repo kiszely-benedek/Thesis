@@ -34,6 +34,7 @@ from plantgraph.qa.exp0007.pilot import (
 )
 from plantgraph.qa.exp0007.prompt_inputs import prompt_inputs_of, write_prompt_inputs
 from plantgraph.qa.exp0007.run_costs import read_question_costs
+from plantgraph.qa.exp0007.tune_cli import add_tune_commands
 
 EXIT_CHECK_FAILED = 1
 EXIT_CORRECTION_TOO_HIGH = 4
@@ -274,6 +275,7 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--questions-root", type=Path, required=True)
     p.add_argument("--cutoff-s", type=float, default=120.0)
     p.add_argument("--out", type=Path, required=True)
+    add_tune_commands(sub)
     return parser
 
 

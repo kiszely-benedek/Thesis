@@ -93,6 +93,7 @@ def variant_result(evaluation: Evaluation, by_family: FamilyCells) -> VariantRes
         cost_per_question_usd=summary.cost_per_question_usd,
         tier_shares=summary.tier_shares,
         by_family={family: cells[summary.policy] for family, cells in by_family.items()},
+        correct_ids=tuple(s.decision.question_id for s in evaluation.scored if s.correct),
     )
 
 
@@ -135,13 +136,26 @@ def build_tune_report(
         oracle_correct=two_tier_oracle(joins[V4]),
         results=results,
         cypher=cypher_acceptance(joins[V4]),
-        choice=_choice(corpus_id, results),
+        choice=_choice(corpus_id, setting, results),
     )
 
 
-def _choice(corpus_id: str, results: Mapping[str, VariantResult]) -> VariantChoice | None:
-    """The pre-registered choice; defined on the tuning set only."""
+def primary_correct(result: VariantResult, setting: LimitSetting) -> int:
+    """The count a setting is judged on: A within its 120 s limit, B uncut (no deadline)."""
+    return result.n_correct_in_limit if setting.name == "A" else result.n_correct_uncut
+
+
+def _choice(
+    corpus_id: str, setting: LimitSetting, results: Mapping[str, VariantResult]
+) -> VariantChoice | None:
+    """The pre-registered choice on the setting's primary number; only defined on T."""
     if corpus_id != TUNING_CORPUS_ID:
         return None
     v4, iso = results[V4], results[V4_ISO]
-    return select_variant(corpus_id, v4.n_questions, v4.n_correct_uncut, iso.n_correct_uncut)
+    return select_variant(
+        corpus_id,
+        setting.name,
+        v4.n_questions,
+        primary_correct(v4, setting),
+        primary_correct(iso, setting),
+    )

@@ -16,7 +16,8 @@ def render_tune_report(report: TuneReport, changes: list[FamilyChange] | None = 
         f"# V2T tuning: {report.corpus_id}, setting {setting.name}",
         "",
         f"Cypher timeout {setting.cypher_timeout_s:g} s; limit {setting.cutoff_s:g} s "
-        f"({limit_kind}). {report.n_questions} questions. Primary number: uncut accuracy.",
+        f"({limit_kind}). {report.n_questions} questions. Primary number: "
+        f"{'accuracy within 120 s' if setting.name == 'A' else 'uncut accuracy'}.",
         "",
         *_variant_table(report),
         *_cypher_lines(report),
@@ -78,7 +79,7 @@ def _choice_lines(report: TuneReport) -> list[str]:
     if choice is None:
         return ["Variant choice: not defined here (the rule is fixed on the tuning set only).", ""]
     return [
-        f"Variant choice: **{choice.chosen}** ({choice.rule}; "
+        f"Variant choice: **{choice.chosen}** ({choice.rule}; counts {choice.basis}: "
         f"v4 {choice.n_correct_v4}, v4_iso {choice.n_correct_v4_iso} of {choice.n_questions}).",
         "",
     ]

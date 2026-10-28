@@ -34,6 +34,8 @@ class VariantResult(BaseModel):
     tier_shares: dict[str, float]
     #: Family -> correct answers (uncut) out of its questions.
     by_family: dict[str, Cell]
+    #: Ids of the questions answered correctly with no latency limit: what rounds are compared on.
+    correct_ids: tuple[str, ...] = ()
 
 
 class CypherAcceptance(BaseModel):
@@ -80,3 +82,12 @@ class FamilyChange(BaseModel):
     def delta(self) -> int:
         """Current minus previous correct answers."""
         return self.current - self.previous
+
+
+class RoundChange(BaseModel):
+    """Questions one policy newly got right (fixed) or newly got wrong (broken) between rounds."""
+
+    model_config = ConfigDict(frozen=True)
+
+    fixed: list[str]
+    broken: list[str]

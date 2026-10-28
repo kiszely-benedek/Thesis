@@ -7,6 +7,7 @@
 #   3. API-02: the canonical programs against the question references on the dev questions.
 #
 #   sh data/runs/exp0007/tune_guards.sh [--with-neo4j]
+# On a clean tree it also writes tune/guards/PASSED (commit + whether 1c ran); tune.sh requires it.
 # Environment:
 #   LINE_CORPORA     "corpus-id:ingest.json ..." for LINE-01 (default: D100g2 of the dev check)
 #   API02_CORPUS     "corpus-id:ingest.json:questions.jsonl" (default: D100g2 dev set)
@@ -19,7 +20,7 @@ cd "$(git rev-parse --show-toplevel)"
 . data/runs/exp0007/lib.sh
 parse_paid_args "$@"
 S=$X/tune/guards; EXPERIMENT=EXP-0007-TUNE-GUARD
-init_stage; mkdir -p $S/logs
+init_stage; mkdir -p $S/logs; rm -f $S/PASSED
 [ "$ALLOW_PAID" = no ] || die "this script is free: --allow-paid-calls is not accepted"
 
 D=$X/dev_check/neo4jplant/D100g2
@@ -70,3 +71,10 @@ $P -m plantgraph.qa.harness.api_check_questions --corpus-id "${API02_CORPUS%%:*}
   --ingest-json "${rest%%:*}" --questions "${rest#*:}" --min-share "$API02_MIN_SHARE" \
   || die "3 failed: API-02"
 echo "=== tune guards passed at $(git rev-parse --short HEAD) (Cypher replay: $WITH_NEO4J)"
+if [ -n "$(git status --porcelain)" ]; then
+  echo "ALL CHECKED GATES PASSED, but the tree is not clean: no PASSED file. Commit, then rerun."
+  exit 0
+fi
+printf '%s
+with_cypher_replay=%s
+' "$(git rev-parse HEAD)" "$WITH_NEO4J" > $S/PASSED
