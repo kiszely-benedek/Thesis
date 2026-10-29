@@ -1,0 +1,16 @@
+{
+ "context_length": 1050000,
+ "max_prompt_tokens": 922000,
+ "pricing": {
+  "completion": "0.0000005",
+  "overrides": [
+   {
+    "completion": "0.00000075",
+    "min_prompt_tokens": 272000,
+    "prompt": "0.0000002"
+   }
+  ],
+  "prompt": "0.0000001"
+ },
+ "tag": "openai"
+}

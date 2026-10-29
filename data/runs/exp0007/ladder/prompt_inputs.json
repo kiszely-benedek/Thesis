@@ -1,0 +1,26 @@
+[
+ {
+  "class_names_sha256": "a676ff2d45966212cb2a69308e2569b5298cece666379c10b8edf302e9fbd05b",
+  "corpus_id": "H1g2",
+  "n_class_names": 32,
+  "schema_text_sha256": "d8462b95dc79b13084869863a3e4e253def341df725e1a94fff95ad5d453e2d2"
+ },
+ {
+  "class_names_sha256": "38dbb0387930f8319a507e916e0498948f41babc2a16dc0410f76d41d6750a50",
+  "corpus_id": "H3g2",
+  "n_class_names": 44,
+  "schema_text_sha256": "202452fc0532c86053ca08974f14260e05d681ccf8221eca3d02eb1e34864329"
+ },
+ {
+  "class_names_sha256": "7c0746a810c7a53de239d081a7b6ea2b9bb530741396532b18b424defcf52797",
+  "corpus_id": "H10g2",
+  "n_class_names": 59,
+  "schema_text_sha256": "58a3e32cb0b21c57e4e1c1882ffaf24cde4efe59d4d747811d6367f7e95dc2d3"
+ },
+ {
+  "class_names_sha256": "5cab56eeca791c40f70fb23bac1b2ad0cf9f56d07fe216bddff010cbc3042a58",
+  "corpus_id": "H30g2",
+  "n_class_names": 78,
+  "schema_text_sha256": "bc5686a8e334624f10f2341fb0e7d52454d02a62f5b845978eba41c984dc1f74"
+ }
+]

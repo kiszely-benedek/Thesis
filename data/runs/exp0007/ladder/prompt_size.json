@@ -1,0 +1,54 @@
+[
+ {
+  "corpus_id": "H1g2",
+  "sheets": 1,
+  "occurrence_nodes": 104,
+  "context_chars": 42155,
+  "prompt_chars": 44242,
+  "chars_per_sheet": 44242,
+  "chars_per_node": 405.3,
+  "est_prompt_tokens": 17253,
+  "above_price_step": false,
+  "fits_window": true,
+  "seconds": 0.1
+ },
+ {
+  "corpus_id": "H3g2",
+  "sheets": 3,
+  "occurrence_nodes": 260,
+  "context_chars": 105606,
+  "prompt_chars": 107693,
+  "chars_per_sheet": 35898,
+  "chars_per_node": 406.2,
+  "est_prompt_tokens": 42261,
+  "above_price_step": false,
+  "fits_window": true,
+  "seconds": 0.2
+ },
+ {
+  "corpus_id": "H10g2",
+  "sheets": 11,
+  "occurrence_nodes": 1035,
+  "context_chars": 417365,
+  "prompt_chars": 419452,
+  "chars_per_sheet": 38132,
+  "chars_per_node": 403.3,
+  "est_prompt_tokens": 165138,
+  "above_price_step": false,
+  "fits_window": true,
+  "seconds": 0.5
+ },
+ {
+  "corpus_id": "H30g2",
+  "sheets": 30,
+  "occurrence_nodes": 2853,
+  "context_chars": 1158713,
+  "prompt_chars": 1160800,
+  "chars_per_sheet": 38693,
+  "chars_per_node": 406.1,
+  "est_prompt_tokens": 457333,
+  "above_price_step": true,
+  "fits_window": true,
+  "seconds": 1.9
+ }
+]
