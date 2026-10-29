@@ -95,7 +95,9 @@ report() {
       || die "the tune report for $rep_c failed, see $S/logs/tune_report_$rep_c.txt"
   done
   # the ladder report of EXP-0001's shape: X1-X5 compare ContextRAG with the cascade where both ran
+  # the arm policies live in inputs/, not under $S (the report's default looks in $S/inputs)
   $P -m plantgraph.qa.exp0001 report --edition v2 --system v2t --root $S --out $S/report \
+    --ctx-high-policy $IN/always_ctx_high.json --ctx-low-policy $IN/always_ctx_low.json \
     --footnote "$CTX_FOOTNOTE" > $S/logs/report.stdout.txt 2>&1 \
     || die "the ladder report failed, see $S/logs/report.stdout.txt"
 }

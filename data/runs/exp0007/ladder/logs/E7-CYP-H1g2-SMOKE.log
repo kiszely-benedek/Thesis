@@ -1,0 +1,38 @@
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `piping_component_name` does not exist in database `e7tune`. Verify that the spelling is correct.', position=<SummaryInputPosition line=1, column=62, offset=61>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 61, 'line': 1, 'column': 62}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: "MATCH (n:PlantItem) WHERE n.tag IN ['P-101A', 'TK-102'] OR n.piping_component_name IN ['P-101A', 'TK-102'] RETURN DISTINCT n.tag AS tag, n.piping_component_name AS name"
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `piping_component_name` does not exist in database `e7tune`. Verify that the spelling is correct.', position=<SummaryInputPosition line=1, column=140, offset=139>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 139, 'line': 1, 'column': 140}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: "MATCH (n:PlantItem) WHERE n.tag IN ['P-101A', 'TK-102'] OR n.piping_component_name IN ['P-101A', 'TK-102'] RETURN DISTINCT n.tag AS tag, n.piping_component_name AS name"
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `piping_component_name` does not exist in database `e7tune`. Verify that the spelling is correct.', position=<SummaryInputPosition line=1, column=52, offset=51>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 51, 'line': 1, 'column': 52}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: "MATCH (n:PlantItem) WHERE n.tag IN ['TK-101'] OR n.piping_component_name IN ['TK-101'] RETURN DISTINCT n.tag AS tag, n.piping_component_name AS name"
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `piping_component_name` does not exist in database `e7tune`. Verify that the spelling is correct.', position=<SummaryInputPosition line=1, column=120, offset=119>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 119, 'line': 1, 'column': 120}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: "MATCH (n:PlantItem) WHERE n.tag IN ['TK-101'] OR n.piping_component_name IN ['TK-101'] RETURN DISTINCT n.tag AS tag, n.piping_component_name AS name"
+run E7-CYP-H1g2-SMOKE: 2 rows to answer, 0 already on disk
+concurrency 4: up to that many questions in flight
+paid mode: up to 2 model calls; hard spend cap 0.02 USD
+estimated cost: 0.0014 USD
+{
+  "run_id": "E7-CYP-H1g2-SMOKE",
+  "n_rows": 2,
+  "n_new_rows": 2,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "cypher_rag_lines": {
+      "0": {
+        "ANSWERED": 2
+      }
+    }
+  },
+  "routing_recall": {},
+  "relaxed_routing_recall": {},
+  "evidence_node_recall": {},
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {},
+    "relaxed_routing_recall": {},
+    "evidence_node_recall": {}
+  },
+  "trace_rates": {
+    "cypher_rag_lines": {
+      "truncated_rate": 0.0
+    }
+  },
+  "mean_total_cost_usd": {
+    "cypher_rag_lines": 0.0004778
+  },
+  "stopped_by_spend_cap": false
+}

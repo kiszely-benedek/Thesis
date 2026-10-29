@@ -1,0 +1,387 @@
+{
+  "corpus_id": "H3g2",
+  "setting": {
+    "name": "A",
+    "cypher_timeout_s": 30.0,
+    "question_deadline_s": 120.0,
+    "hang_guard_s": null
+  },
+  "n_questions": 82,
+  "oracle_correct": 78,
+  "results": {
+    "cascade_v4": {
+      "policy": "cascade_v4",
+      "n_questions": 82,
+      "n_correct_uncut": 69,
+      "n_correct_in_limit": 69,
+      "n_beyond_limit": 0,
+      "n_correct_within": {
+        "120": 69,
+        "300": 69
+      },
+      "latency_median_s": 7.303814150014659,
+      "latency_p90_s": 30.800209599896334,
+      "cost_per_question_usd": 0.0008088702439024391,
+      "tier_shares": {
+        "cypher-v2t": 0.7560975609756098,
+        "agent-v2t": 0.24390243902439024
+      },
+      "by_family": {
+        "CONNECTED": {
+          "correct": 4,
+          "total": 4
+        },
+        "COUNT_IN_UNIT": {
+          "correct": 4,
+          "total": 4
+        },
+        "CROSS_UNIT": {
+          "correct": 1,
+          "total": 1
+        },
+        "DOWNSTREAM_IN_UNIT": {
+          "correct": 3,
+          "total": 4
+        },
+        "DOWNSTREAM_ISOLATION": {
+          "correct": 0,
+          "total": 4
+        },
+        "FEEDING_UNITS": {
+          "correct": 1,
+          "total": 1
+        },
+        "FLOW_PATH": {
+          "correct": 4,
+          "total": 4
+        },
+        "INSTRUMENTS_OF_ITEM": {
+          "correct": 4,
+          "total": 4
+        },
+        "LOOKUP_TYPE": {
+          "correct": 4,
+          "total": 4
+        },
+        "LOOKUP_UNIT": {
+          "correct": 4,
+          "total": 4
+        },
+        "LOOPS_NEAR_ITEM": {
+          "correct": 4,
+          "total": 4
+        },
+        "LOOP_ACTUATED_VALVE": {
+          "correct": 4,
+          "total": 4
+        },
+        "LOOP_MEASURED_EQUIPMENT": {
+          "correct": 4,
+          "total": 4
+        },
+        "NEIGHBOURS_DOWNSTREAM": {
+          "correct": 4,
+          "total": 4
+        },
+        "NO_PATH": {
+          "correct": 4,
+          "total": 4
+        },
+        "ROUTE_AVOIDING": {
+          "correct": 4,
+          "total": 4
+        },
+        "SAME_UNIT": {
+          "correct": 4,
+          "total": 4
+        },
+        "UNANSWERABLE_TAG": {
+          "correct": 4,
+          "total": 4
+        },
+        "UNITS_REACHED": {
+          "correct": 4,
+          "total": 4
+        },
+        "UPSTREAM_ISOLATION": {
+          "correct": 0,
+          "total": 4
+        },
+        "UPSTREAM_SOURCES": {
+          "correct": 4,
+          "total": 4
+        },
+        "VALVES_ON_PATH": {
+          "correct": 0,
+          "total": 4
+        }
+      },
+      "correct_ids": [
+        "H3g2:CONNECTED:TK-104|P-101B",
+        "H3g2:LOOPS_NEAR_ITEM:TK-103",
+        "H3g2:UNITS_REACHED:P-201A",
+        "H3g2:UPSTREAM_SOURCES:TK-104",
+        "H3g2:LOOP_MEASURED_EQUIPMENT:LI-1031",
+        "H3g2:ROUTE_AVOIDING:TK-101|P-101A|PGV-1011",
+        "H3g2:SAME_UNIT:V-201|P-201A",
+        "H3g2:LOOPS_NEAR_ITEM:TK-104",
+        "H3g2:ROUTE_AVOIDING:P-201A|V-201|CHV-2002",
+        "H3g2:SAME_UNIT:TK-101|P-201B",
+        "H3g2:UNITS_REACHED:P-201B",
+        "H3g2:CONNECTED:V-201|TK-104",
+        "H3g2:COUNT_IN_UNIT:2|CentrifugalPump",
+        "H3g2:DOWNSTREAM_IN_UNIT:TK-104|1",
+        "H3g2:INSTRUMENTS_OF_ITEM:TK-104",
+        "H3g2:LOOKUP_UNIT:LT-1026",
+        "H3g2:LOOP_MEASURED_EQUIPMENT:LALL-1028",
+        "H3g2:INSTRUMENTS_OF_ITEM:TK-101",
+        "H3g2:LOOP_MEASURED_EQUIPMENT:LSHH-2009",
+        "H3g2:LOOP_ACTUATED_VALVE:HS-1003",
+        "H3g2:INSTRUMENTS_OF_ITEM:TK-103",
+        "H3g2:COUNT_IN_UNIT:2|GlobeCheckValve",
+        "H3g2:INSTRUMENTS_OF_ITEM:P-201A",
+        "H3g2:LOOP_MEASURED_EQUIPMENT:LI-1023",
+        "H3g2:NEIGHBOURS_DOWNSTREAM:GTV-2008",
+        "H3g2:LOOP_ACTUATED_VALVE:HS-1007",
+        "H3g2:SAME_UNIT:P-201B|V-201",
+        "H3g2:SAME_UNIT:TK-103|P-201B",
+        "H3g2:NEIGHBOURS_DOWNSTREAM:P-101B",
+        "H3g2:LOOKUP_TYPE:PGV-1011",
+        "H3g2:FLOW_PATH:GV-1001|GTV-1003",
+        "H3g2:LOOKUP_TYPE:PIC-2014",
+        "H3g2:LOOKUP_TYPE:LT-1031",
+        "H3g2:LOOKUP_UNIT:LSHH-1002",
+        "H3g2:LOOKUP_TYPE:LSHH-1004",
+        "H3g2:LOOKUP_UNIT:PGV-1010",
+        "H3g2:LOOKUP_UNIT:PIC-2014",
+        "H3g2:CROSS_UNIT:1",
+        "H3g2:DOWNSTREAM_IN_UNIT:TK-102|1",
+        "H3g2:FEEDING_UNITS:2",
+        "H3g2:LOOP_ACTUATED_VALVE:LSHH-1004",
+        "H3g2:DOWNSTREAM_IN_UNIT:TK-101|1",
+        "H3g2:LOOP_ACTUATED_VALVE:LSHH-1002",
+        "H3g2:NEIGHBOURS_DOWNSTREAM:PGV-1012",
+        "H3g2:ROUTE_AVOIDING:TK-104|P-101B|GTV-1006",
+        "H3g2:UNITS_REACHED:TK-104",
+        "H3g2:UPSTREAM_SOURCES:TK-101",
+        "H3g2:CONNECTED:TK-103|P-201B",
+        "H3g2:NEIGHBOURS_DOWNSTREAM:XV-1002",
+        "H3g2:FLOW_PATH:PGV-1012|P-101B",
+        "H3g2:LOOPS_NEAR_ITEM:TK-101",
+        "H3g2:ROUTE_AVOIDING:TK-101|P-201A|GTV-1004",
+        "H3g2:UNITS_REACHED:TK-101",
+        "H3g2:COUNT_IN_UNIT:1|SwingCheckValve",
+        "H3g2:LOOPS_NEAR_ITEM:TK-102",
+        "H3g2:CONNECTED:TK-101|V-201",
+        "H3g2:COUNT_IN_UNIT:1|RotaryPump",
+        "H3g2:FLOW_PATH:PGV-1006|P-101A",
+        "H3g2:UPSTREAM_SOURCES:P-101A",
+        "H3g2:FLOW_PATH:PGV-1002|PV-2014",
+        "H3g2:UPSTREAM_SOURCES:P-201A",
+        "H3g2:NO_PATH:FLOW_PATH:P-201B|V-201",
+        "H3g2:NO_PATH:FLOW_PATH:TK-102|TK-104",
+        "H3g2:NO_PATH:FLOW_PATH:TK-103|TK-102",
+        "H3g2:NO_PATH:FLOW_PATH:P-201B|TK-103",
+        "H3g2:UNANSWERABLE_TAG:LOOKUP_TYPE:LV-2002",
+        "H3g2:UNANSWERABLE_TAG:LOOKUP_TYPE:GTV-1008",
+        "H3g2:UNANSWERABLE_TAG:NEIGHBOURS_DOWNSTREAM:BFV-2003",
+        "H3g2:UNANSWERABLE_TAG:NEIGHBOURS_DOWNSTREAM:CHV-1003"
+      ]
+    },
+    "cascade_v4_iso": {
+      "policy": "cascade_v4_iso",
+      "n_questions": 82,
+      "n_correct_uncut": 73,
+      "n_correct_in_limit": 73,
+      "n_beyond_limit": 0,
+      "n_correct_within": {
+        "120": 73,
+        "300": 73
+      },
+      "latency_median_s": 7.340439800085733,
+      "latency_p90_s": 30.800209599896334,
+      "cost_per_question_usd": 0.0008216292073170731,
+      "tier_shares": {
+        "cypher-v2t": 0.7073170731707317,
+        "agent-v2t": 0.2926829268292683
+      },
+      "by_family": {
+        "CONNECTED": {
+          "correct": 4,
+          "total": 4
+        },
+        "COUNT_IN_UNIT": {
+          "correct": 4,
+          "total": 4
+        },
+        "CROSS_UNIT": {
+          "correct": 1,
+          "total": 1
+        },
+        "DOWNSTREAM_IN_UNIT": {
+          "correct": 3,
+          "total": 4
+        },
+        "DOWNSTREAM_ISOLATION": {
+          "correct": 0,
+          "total": 4
+        },
+        "FEEDING_UNITS": {
+          "correct": 1,
+          "total": 1
+        },
+        "FLOW_PATH": {
+          "correct": 4,
+          "total": 4
+        },
+        "INSTRUMENTS_OF_ITEM": {
+          "correct": 4,
+          "total": 4
+        },
+        "LOOKUP_TYPE": {
+          "correct": 4,
+          "total": 4
+        },
+        "LOOKUP_UNIT": {
+          "correct": 4,
+          "total": 4
+        },
+        "LOOPS_NEAR_ITEM": {
+          "correct": 4,
+          "total": 4
+        },
+        "LOOP_ACTUATED_VALVE": {
+          "correct": 4,
+          "total": 4
+        },
+        "LOOP_MEASURED_EQUIPMENT": {
+          "correct": 4,
+          "total": 4
+        },
+        "NEIGHBOURS_DOWNSTREAM": {
+          "correct": 4,
+          "total": 4
+        },
+        "NO_PATH": {
+          "correct": 4,
+          "total": 4
+        },
+        "ROUTE_AVOIDING": {
+          "correct": 4,
+          "total": 4
+        },
+        "SAME_UNIT": {
+          "correct": 4,
+          "total": 4
+        },
+        "UNANSWERABLE_TAG": {
+          "correct": 4,
+          "total": 4
+        },
+        "UNITS_REACHED": {
+          "correct": 4,
+          "total": 4
+        },
+        "UPSTREAM_ISOLATION": {
+          "correct": 4,
+          "total": 4
+        },
+        "UPSTREAM_SOURCES": {
+          "correct": 4,
+          "total": 4
+        },
+        "VALVES_ON_PATH": {
+          "correct": 0,
+          "total": 4
+        }
+      },
+      "correct_ids": [
+        "H3g2:CONNECTED:TK-104|P-101B",
+        "H3g2:LOOPS_NEAR_ITEM:TK-103",
+        "H3g2:UNITS_REACHED:P-201A",
+        "H3g2:UPSTREAM_SOURCES:TK-104",
+        "H3g2:LOOP_MEASURED_EQUIPMENT:LI-1031",
+        "H3g2:ROUTE_AVOIDING:TK-101|P-101A|PGV-1011",
+        "H3g2:SAME_UNIT:V-201|P-201A",
+        "H3g2:UPSTREAM_ISOLATION:TK-104",
+        "H3g2:LOOPS_NEAR_ITEM:TK-104",
+        "H3g2:ROUTE_AVOIDING:P-201A|V-201|CHV-2002",
+        "H3g2:SAME_UNIT:TK-101|P-201B",
+        "H3g2:UNITS_REACHED:P-201B",
+        "H3g2:CONNECTED:V-201|TK-104",
+        "H3g2:COUNT_IN_UNIT:2|CentrifugalPump",
+        "H3g2:DOWNSTREAM_IN_UNIT:TK-104|1",
+        "H3g2:INSTRUMENTS_OF_ITEM:TK-104",
+        "H3g2:LOOKUP_UNIT:LT-1026",
+        "H3g2:LOOP_MEASURED_EQUIPMENT:LALL-1028",
+        "H3g2:INSTRUMENTS_OF_ITEM:TK-101",
+        "H3g2:LOOP_MEASURED_EQUIPMENT:LSHH-2009",
+        "H3g2:UPSTREAM_ISOLATION:TK-103",
+        "H3g2:LOOP_ACTUATED_VALVE:HS-1003",
+        "H3g2:INSTRUMENTS_OF_ITEM:TK-103",
+        "H3g2:COUNT_IN_UNIT:2|GlobeCheckValve",
+        "H3g2:INSTRUMENTS_OF_ITEM:P-201A",
+        "H3g2:LOOP_MEASURED_EQUIPMENT:LI-1023",
+        "H3g2:NEIGHBOURS_DOWNSTREAM:GTV-2008",
+        "H3g2:LOOP_ACTUATED_VALVE:HS-1007",
+        "H3g2:SAME_UNIT:P-201B|V-201",
+        "H3g2:SAME_UNIT:TK-103|P-201B",
+        "H3g2:NEIGHBOURS_DOWNSTREAM:P-101B",
+        "H3g2:LOOKUP_TYPE:PGV-1011",
+        "H3g2:FLOW_PATH:GV-1001|GTV-1003",
+        "H3g2:LOOKUP_TYPE:PIC-2014",
+        "H3g2:LOOKUP_TYPE:LT-1031",
+        "H3g2:LOOKUP_UNIT:LSHH-1002",
+        "H3g2:LOOKUP_TYPE:LSHH-1004",
+        "H3g2:LOOKUP_UNIT:PGV-1010",
+        "H3g2:LOOKUP_UNIT:PIC-2014",
+        "H3g2:CROSS_UNIT:1",
+        "H3g2:DOWNSTREAM_IN_UNIT:TK-102|1",
+        "H3g2:FEEDING_UNITS:2",
+        "H3g2:LOOP_ACTUATED_VALVE:LSHH-1004",
+        "H3g2:UPSTREAM_ISOLATION:TK-101",
+        "H3g2:DOWNSTREAM_IN_UNIT:TK-101|1",
+        "H3g2:LOOP_ACTUATED_VALVE:LSHH-1002",
+        "H3g2:NEIGHBOURS_DOWNSTREAM:PGV-1012",
+        "H3g2:ROUTE_AVOIDING:TK-104|P-101B|GTV-1006",
+        "H3g2:UNITS_REACHED:TK-104",
+        "H3g2:UPSTREAM_ISOLATION:TK-102",
+        "H3g2:UPSTREAM_SOURCES:TK-101",
+        "H3g2:CONNECTED:TK-103|P-201B",
+        "H3g2:NEIGHBOURS_DOWNSTREAM:XV-1002",
+        "H3g2:FLOW_PATH:PGV-1012|P-101B",
+        "H3g2:LOOPS_NEAR_ITEM:TK-101",
+        "H3g2:ROUTE_AVOIDING:TK-101|P-201A|GTV-1004",
+        "H3g2:UNITS_REACHED:TK-101",
+        "H3g2:COUNT_IN_UNIT:1|SwingCheckValve",
+        "H3g2:LOOPS_NEAR_ITEM:TK-102",
+        "H3g2:CONNECTED:TK-101|V-201",
+        "H3g2:COUNT_IN_UNIT:1|RotaryPump",
+        "H3g2:FLOW_PATH:PGV-1006|P-101A",
+        "H3g2:UPSTREAM_SOURCES:P-101A",
+        "H3g2:FLOW_PATH:PGV-1002|PV-2014",
+        "H3g2:UPSTREAM_SOURCES:P-201A",
+        "H3g2:NO_PATH:FLOW_PATH:P-201B|V-201",
+        "H3g2:NO_PATH:FLOW_PATH:TK-102|TK-104",
+        "H3g2:NO_PATH:FLOW_PATH:TK-103|TK-102",
+        "H3g2:NO_PATH:FLOW_PATH:P-201B|TK-103",
+        "H3g2:UNANSWERABLE_TAG:LOOKUP_TYPE:LV-2002",
+        "H3g2:UNANSWERABLE_TAG:LOOKUP_TYPE:GTV-1008",
+        "H3g2:UNANSWERABLE_TAG:NEIGHBOURS_DOWNSTREAM:BFV-2003",
+        "H3g2:UNANSWERABLE_TAG:NEIGHBOURS_DOWNSTREAM:CHV-1003"
+      ]
+    }
+  },
+  "cypher": {
+    "n_tried": 82,
+    "n_accepted": 62,
+    "n_accepted_correct": 49,
+    "rejected_by": {
+      "rows": 17,
+      "not_abstained": 1,
+      "answered": 2
+    },
+    "n_cut_but_correct": 0
+  },
+  "choice": null
+}

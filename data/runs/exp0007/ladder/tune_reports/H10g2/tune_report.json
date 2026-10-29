@@ -1,0 +1,417 @@
+{
+  "corpus_id": "H10g2",
+  "setting": {
+    "name": "A",
+    "cypher_timeout_s": 30.0,
+    "question_deadline_s": 120.0,
+    "hang_guard_s": null
+  },
+  "n_questions": 92,
+  "oracle_correct": 88,
+  "results": {
+    "cascade_v4": {
+      "policy": "cascade_v4",
+      "n_questions": 92,
+      "n_correct_uncut": 80,
+      "n_correct_in_limit": 80,
+      "n_beyond_limit": 0,
+      "n_correct_within": {
+        "120": 80,
+        "300": 80
+      },
+      "latency_median_s": 7.4574723500118125,
+      "latency_p90_s": 28.174140300019644,
+      "cost_per_question_usd": 0.0009419930434782608,
+      "tier_shares": {
+        "agent-v2t": 0.18478260869565216,
+        "cypher-v2t": 0.8152173913043478
+      },
+      "by_family": {
+        "CONNECTED": {
+          "correct": 4,
+          "total": 4
+        },
+        "COUNT_IN_UNIT": {
+          "correct": 4,
+          "total": 4
+        },
+        "CROSS_UNIT": {
+          "correct": 4,
+          "total": 4
+        },
+        "DOWNSTREAM_IN_UNIT": {
+          "correct": 3,
+          "total": 4
+        },
+        "DOWNSTREAM_ISOLATION": {
+          "correct": 0,
+          "total": 4
+        },
+        "FEEDING_UNITS": {
+          "correct": 4,
+          "total": 4
+        },
+        "FLOW_PATH": {
+          "correct": 4,
+          "total": 4
+        },
+        "INSTRUMENTS_OF_ITEM": {
+          "correct": 4,
+          "total": 4
+        },
+        "LOOKUP_TYPE": {
+          "correct": 4,
+          "total": 4
+        },
+        "LOOKUP_UNIT": {
+          "correct": 4,
+          "total": 4
+        },
+        "LOOPS_NEAR_ITEM": {
+          "correct": 3,
+          "total": 4
+        },
+        "LOOP_ACTUATED_VALVE": {
+          "correct": 4,
+          "total": 4
+        },
+        "LOOP_MEASURED_EQUIPMENT": {
+          "correct": 4,
+          "total": 4
+        },
+        "NEIGHBOURS_DOWNSTREAM": {
+          "correct": 4,
+          "total": 4
+        },
+        "NO_PATH": {
+          "correct": 4,
+          "total": 4
+        },
+        "ROUTE_AVOIDING": {
+          "correct": 4,
+          "total": 4
+        },
+        "SAME_UNIT": {
+          "correct": 4,
+          "total": 4
+        },
+        "SHEETS_OF_TAG": {
+          "correct": 4,
+          "total": 4
+        },
+        "UNANSWERABLE_TAG": {
+          "correct": 4,
+          "total": 4
+        },
+        "UNITS_REACHED": {
+          "correct": 4,
+          "total": 4
+        },
+        "UPSTREAM_ISOLATION": {
+          "correct": 0,
+          "total": 4
+        },
+        "UPSTREAM_SOURCES": {
+          "correct": 4,
+          "total": 4
+        },
+        "VALVES_ON_PATH": {
+          "correct": 2,
+          "total": 4
+        }
+      },
+      "correct_ids": [
+        "H10g2:LOOPS_NEAR_ITEM:TK-103",
+        "H10g2:SHEETS_OF_TAG:TK-102",
+        "H10g2:UNITS_REACHED:P-601A",
+        "H10g2:UPSTREAM_SOURCES:TK-104",
+        "H10g2:INSTRUMENTS_OF_ITEM:P-302B",
+        "H10g2:SHEETS_OF_TAG:P-601A",
+        "H10g2:DOWNSTREAM_IN_UNIT:P-201B|2",
+        "H10g2:LOOKUP_TYPE:TI-3024",
+        "H10g2:LOOKUP_TYPE:LSL-1025",
+        "H10g2:CONNECTED:T-501|E-501",
+        "H10g2:INSTRUMENTS_OF_ITEM:TK-101",
+        "H10g2:LOOKUP_TYPE:LV-2001",
+        "H10g2:LOOP_MEASURED_EQUIPMENT:PI-5051",
+        "H10g2:LOOKUP_UNIT:TI-3010",
+        "H10g2:LOOP_MEASURED_EQUIPMENT:TI-5024",
+        "H10g2:SAME_UNIT:TK-103|P-101B",
+        "H10g2:VALVES_ON_PATH:V-201|P-201A",
+        "H10g2:COUNT_IN_UNIT:4|BallValve",
+        "H10g2:LOOP_ACTUATED_VALVE:LSHH-4012",
+        "H10g2:LOOP_ACTUATED_VALVE:HS-6005",
+        "H10g2:ROUTE_AVOIDING:P-101A|T-301|BFV-1002",
+        "H10g2:INSTRUMENTS_OF_ITEM:P-301B",
+        "H10g2:LOOKUP_TYPE:STR-2006",
+        "H10g2:INSTRUMENTS_OF_ITEM:P-601B",
+        "H10g2:LOOKUP_UNIT:TI-5018",
+        "H10g2:SAME_UNIT:P-502|E-501",
+        "H10g2:COUNT_IN_UNIT:4|SwingCheckValve",
+        "H10g2:LOOKUP_UNIT:PI-3068",
+        "H10g2:LOOP_MEASURED_EQUIPMENT:LSHH-6002",
+        "H10g2:FLOW_PATH:GTV-5020|BFV-5008",
+        "H10g2:LOOP_MEASURED_EQUIPMENT:TIAH-3037",
+        "H10g2:NEIGHBOURS_DOWNSTREAM:P-301B",
+        "H10g2:SAME_UNIT:TK-104|P-201A",
+        "H10g2:SAME_UNIT:P-401B|P-401A",
+        "H10g2:NEIGHBOURS_DOWNSTREAM:XV-1001",
+        "H10g2:LOOKUP_UNIT:LSHH-6006",
+        "H10g2:FEEDING_UNITS:3",
+        "H10g2:LOOPS_NEAR_ITEM:T-301",
+        "H10g2:LOOP_ACTUATED_VALVE:LSHH-6002",
+        "H10g2:NEIGHBOURS_DOWNSTREAM:GTV-4002",
+        "H10g2:SHEETS_OF_TAG:P-301B",
+        "H10g2:CROSS_UNIT:5",
+        "H10g2:DOWNSTREAM_IN_UNIT:TK-102|1",
+        "H10g2:FEEDING_UNITS:5",
+        "H10g2:LOOP_ACTUATED_VALVE:LSHH-6004",
+        "H10g2:SHEETS_OF_TAG:P-302B",
+        "H10g2:UNITS_REACHED:TK-602",
+        "H10g2:UPSTREAM_SOURCES:TK-102",
+        "H10g2:CROSS_UNIT:4",
+        "H10g2:FEEDING_UNITS:6",
+        "H10g2:CROSS_UNIT:2",
+        "H10g2:FEEDING_UNITS:4",
+        "H10g2:CROSS_UNIT:3",
+        "H10g2:COUNT_IN_UNIT:3|BallValve",
+        "H10g2:NEIGHBOURS_DOWNSTREAM:GTV-3011",
+        "H10g2:ROUTE_AVOIDING:TK-103|T-301|GTV-2001",
+        "H10g2:CONNECTED:T-501|K-501",
+        "H10g2:FLOW_PATH:P-501|CHV-5003",
+        "H10g2:LOOPS_NEAR_ITEM:TK-101",
+        "H10g2:DOWNSTREAM_IN_UNIT:T-501|5",
+        "H10g2:ROUTE_AVOIDING:TK-104|T-301|GV-1001",
+        "H10g2:COUNT_IN_UNIT:6|BreatherValve",
+        "H10g2:CONNECTED:T-301|P-401B",
+        "H10g2:FLOW_PATH:BFV-5003|TK-602",
+        "H10g2:VALVES_ON_PATH:TK-102|P-302A",
+        "H10g2:UPSTREAM_SOURCES:P-101B",
+        "H10g2:CONNECTED:P-101A|P-302A",
+        "H10g2:ROUTE_AVOIDING:EA-301|P-401A|BFV-3006",
+        "H10g2:FLOW_PATH:P-401B|TK-601",
+        "H10g2:UPSTREAM_SOURCES:P-201B",
+        "H10g2:UNITS_REACHED:T-501",
+        "H10g2:UNITS_REACHED:P-301B",
+        "H10g2:NO_PATH:FLOW_PATH:T-301|TK-101",
+        "H10g2:UNANSWERABLE_TAG:NEIGHBOURS_DOWNSTREAM:FV-4003",
+        "H10g2:NO_PATH:FLOW_PATH:TK-103|TK-104",
+        "H10g2:NO_PATH:FLOW_PATH:P-301B|P-201B",
+        "H10g2:UNANSWERABLE_TAG:LOOKUP_TYPE:FV-3041",
+        "H10g2:UNANSWERABLE_TAG:LOOKUP_TYPE:D-502",
+        "H10g2:NO_PATH:FLOW_PATH:P-201A|P-101A",
+        "H10g2:UNANSWERABLE_TAG:LOOKUP_TYPE:PV-2015"
+      ]
+    },
+    "cascade_v4_iso": {
+      "policy": "cascade_v4_iso",
+      "n_questions": 92,
+      "n_correct_uncut": 84,
+      "n_correct_in_limit": 84,
+      "n_beyond_limit": 0,
+      "n_correct_within": {
+        "120": 84,
+        "300": 84
+      },
+      "latency_median_s": 7.4574723500118125,
+      "latency_p90_s": 31.91578360006679,
+      "cost_per_question_usd": 0.0009859552717391305,
+      "tier_shares": {
+        "agent-v2t": 0.22826086956521738,
+        "cypher-v2t": 0.7717391304347826
+      },
+      "by_family": {
+        "CONNECTED": {
+          "correct": 4,
+          "total": 4
+        },
+        "COUNT_IN_UNIT": {
+          "correct": 4,
+          "total": 4
+        },
+        "CROSS_UNIT": {
+          "correct": 4,
+          "total": 4
+        },
+        "DOWNSTREAM_IN_UNIT": {
+          "correct": 3,
+          "total": 4
+        },
+        "DOWNSTREAM_ISOLATION": {
+          "correct": 0,
+          "total": 4
+        },
+        "FEEDING_UNITS": {
+          "correct": 4,
+          "total": 4
+        },
+        "FLOW_PATH": {
+          "correct": 4,
+          "total": 4
+        },
+        "INSTRUMENTS_OF_ITEM": {
+          "correct": 4,
+          "total": 4
+        },
+        "LOOKUP_TYPE": {
+          "correct": 4,
+          "total": 4
+        },
+        "LOOKUP_UNIT": {
+          "correct": 4,
+          "total": 4
+        },
+        "LOOPS_NEAR_ITEM": {
+          "correct": 3,
+          "total": 4
+        },
+        "LOOP_ACTUATED_VALVE": {
+          "correct": 4,
+          "total": 4
+        },
+        "LOOP_MEASURED_EQUIPMENT": {
+          "correct": 4,
+          "total": 4
+        },
+        "NEIGHBOURS_DOWNSTREAM": {
+          "correct": 4,
+          "total": 4
+        },
+        "NO_PATH": {
+          "correct": 4,
+          "total": 4
+        },
+        "ROUTE_AVOIDING": {
+          "correct": 4,
+          "total": 4
+        },
+        "SAME_UNIT": {
+          "correct": 4,
+          "total": 4
+        },
+        "SHEETS_OF_TAG": {
+          "correct": 4,
+          "total": 4
+        },
+        "UNANSWERABLE_TAG": {
+          "correct": 4,
+          "total": 4
+        },
+        "UNITS_REACHED": {
+          "correct": 4,
+          "total": 4
+        },
+        "UPSTREAM_ISOLATION": {
+          "correct": 4,
+          "total": 4
+        },
+        "UPSTREAM_SOURCES": {
+          "correct": 4,
+          "total": 4
+        },
+        "VALVES_ON_PATH": {
+          "correct": 2,
+          "total": 4
+        }
+      },
+      "correct_ids": [
+        "H10g2:LOOPS_NEAR_ITEM:TK-103",
+        "H10g2:SHEETS_OF_TAG:TK-102",
+        "H10g2:UNITS_REACHED:P-601A",
+        "H10g2:UPSTREAM_SOURCES:TK-104",
+        "H10g2:INSTRUMENTS_OF_ITEM:P-302B",
+        "H10g2:SHEETS_OF_TAG:P-601A",
+        "H10g2:DOWNSTREAM_IN_UNIT:P-201B|2",
+        "H10g2:LOOKUP_TYPE:TI-3024",
+        "H10g2:UPSTREAM_ISOLATION:P-601B",
+        "H10g2:LOOKUP_TYPE:LSL-1025",
+        "H10g2:CONNECTED:T-501|E-501",
+        "H10g2:INSTRUMENTS_OF_ITEM:TK-101",
+        "H10g2:LOOKUP_TYPE:LV-2001",
+        "H10g2:LOOP_MEASURED_EQUIPMENT:PI-5051",
+        "H10g2:LOOKUP_UNIT:TI-3010",
+        "H10g2:LOOP_MEASURED_EQUIPMENT:TI-5024",
+        "H10g2:SAME_UNIT:TK-103|P-101B",
+        "H10g2:VALVES_ON_PATH:V-201|P-201A",
+        "H10g2:COUNT_IN_UNIT:4|BallValve",
+        "H10g2:LOOP_ACTUATED_VALVE:LSHH-4012",
+        "H10g2:LOOP_ACTUATED_VALVE:HS-6005",
+        "H10g2:UPSTREAM_ISOLATION:P-101B",
+        "H10g2:ROUTE_AVOIDING:P-101A|T-301|BFV-1002",
+        "H10g2:INSTRUMENTS_OF_ITEM:P-301B",
+        "H10g2:LOOKUP_TYPE:STR-2006",
+        "H10g2:INSTRUMENTS_OF_ITEM:P-601B",
+        "H10g2:LOOKUP_UNIT:TI-5018",
+        "H10g2:SAME_UNIT:P-502|E-501",
+        "H10g2:COUNT_IN_UNIT:4|SwingCheckValve",
+        "H10g2:LOOKUP_UNIT:PI-3068",
+        "H10g2:LOOP_MEASURED_EQUIPMENT:LSHH-6002",
+        "H10g2:FLOW_PATH:GTV-5020|BFV-5008",
+        "H10g2:LOOP_MEASURED_EQUIPMENT:TIAH-3037",
+        "H10g2:NEIGHBOURS_DOWNSTREAM:P-301B",
+        "H10g2:SAME_UNIT:TK-104|P-201A",
+        "H10g2:SAME_UNIT:P-401B|P-401A",
+        "H10g2:NEIGHBOURS_DOWNSTREAM:XV-1001",
+        "H10g2:LOOKUP_UNIT:LSHH-6006",
+        "H10g2:FEEDING_UNITS:3",
+        "H10g2:LOOPS_NEAR_ITEM:T-301",
+        "H10g2:LOOP_ACTUATED_VALVE:LSHH-6002",
+        "H10g2:NEIGHBOURS_DOWNSTREAM:GTV-4002",
+        "H10g2:SHEETS_OF_TAG:P-301B",
+        "H10g2:CROSS_UNIT:5",
+        "H10g2:DOWNSTREAM_IN_UNIT:TK-102|1",
+        "H10g2:FEEDING_UNITS:5",
+        "H10g2:LOOP_ACTUATED_VALVE:LSHH-6004",
+        "H10g2:SHEETS_OF_TAG:P-302B",
+        "H10g2:UNITS_REACHED:TK-602",
+        "H10g2:UPSTREAM_SOURCES:TK-102",
+        "H10g2:CROSS_UNIT:4",
+        "H10g2:FEEDING_UNITS:6",
+        "H10g2:CROSS_UNIT:2",
+        "H10g2:FEEDING_UNITS:4",
+        "H10g2:CROSS_UNIT:3",
+        "H10g2:UPSTREAM_ISOLATION:P-301B",
+        "H10g2:COUNT_IN_UNIT:3|BallValve",
+        "H10g2:NEIGHBOURS_DOWNSTREAM:GTV-3011",
+        "H10g2:ROUTE_AVOIDING:TK-103|T-301|GTV-2001",
+        "H10g2:CONNECTED:T-501|K-501",
+        "H10g2:FLOW_PATH:P-501|CHV-5003",
+        "H10g2:UPSTREAM_ISOLATION:T-301",
+        "H10g2:LOOPS_NEAR_ITEM:TK-101",
+        "H10g2:DOWNSTREAM_IN_UNIT:T-501|5",
+        "H10g2:ROUTE_AVOIDING:TK-104|T-301|GV-1001",
+        "H10g2:COUNT_IN_UNIT:6|BreatherValve",
+        "H10g2:CONNECTED:T-301|P-401B",
+        "H10g2:FLOW_PATH:BFV-5003|TK-602",
+        "H10g2:VALVES_ON_PATH:TK-102|P-302A",
+        "H10g2:UPSTREAM_SOURCES:P-101B",
+        "H10g2:CONNECTED:P-101A|P-302A",
+        "H10g2:ROUTE_AVOIDING:EA-301|P-401A|BFV-3006",
+        "H10g2:FLOW_PATH:P-401B|TK-601",
+        "H10g2:UPSTREAM_SOURCES:P-201B",
+        "H10g2:UNITS_REACHED:T-501",
+        "H10g2:UNITS_REACHED:P-301B",
+        "H10g2:NO_PATH:FLOW_PATH:T-301|TK-101",
+        "H10g2:UNANSWERABLE_TAG:NEIGHBOURS_DOWNSTREAM:FV-4003",
+        "H10g2:NO_PATH:FLOW_PATH:TK-103|TK-104",
+        "H10g2:NO_PATH:FLOW_PATH:P-301B|P-201B",
+        "H10g2:UNANSWERABLE_TAG:LOOKUP_TYPE:FV-3041",
+        "H10g2:UNANSWERABLE_TAG:LOOKUP_TYPE:D-502",
+        "H10g2:NO_PATH:FLOW_PATH:P-201A|P-101A",
+        "H10g2:UNANSWERABLE_TAG:LOOKUP_TYPE:PV-2015"
+      ]
+    }
+  },
+  "cypher": {
+    "n_tried": 92,
+    "n_accepted": 75,
+    "n_accepted_correct": 66,
+    "rejected_by": {
+      "rows": 11,
+      "not_abstained": 2,
+      "answered": 4
+    },
+    "n_cut_but_correct": 0
+  },
+  "choice": null
+}

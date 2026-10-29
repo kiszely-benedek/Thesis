@@ -1,0 +1,10 @@
+wrote data\runs\exp0007\ladder\report\report.md
+wrote data\runs\exp0007\ladder\report\report.json
+wrote data\runs\exp0007\ladder\report\figure.csv
+wrote data\runs\exp0007\ladder\report\figure_marks.csv
+X1 FAIL: slope -0.071 per log10(sheets), 95% CI [-0.218, +0.074] over H1g2, H3g2, H10g2 (common families)
+X2 FAIL: H1g2 common: delta -0.271 [-0.386, -0.157], n=70; all families: delta -0.271 [-0.386, -0.157], n=70; margin -0.05
+X3 REPORTED: s_acc = H1g2, the smallest measured size
+X4 REPORTED: s_cost = H1g2; s_lat = H1g2; $/q ratio ctx-high/cascade_v4_iso: H1g2 3.79, H3g2 7.13, H10g2 21.57; median-latency ratio: H1g2 1.39, H3g2 1.46, H10g2 2.10
+X5 REPORTED: r = 2.56 chars/token over 248 calls; c = 37,935 chars/sheet; W = 62 sheets (window 922,000 prompt tokens)
+X6 NOT_RUN: not run on v2 (ADR-0060), see EXP-0001

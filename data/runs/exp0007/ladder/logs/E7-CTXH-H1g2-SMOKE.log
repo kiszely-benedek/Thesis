@@ -1,0 +1,30 @@
+run E7-CTXH-H1g2-SMOKE: 2 rows to answer, 0 already on disk
+concurrency 4: up to that many questions in flight
+paid mode: up to 2 model calls; hard spend cap 0.05 USD
+estimated cost: 0.0048 USD
+{
+  "run_id": "E7-CTXH-H1g2-SMOKE",
+  "n_rows": 2,
+  "n_new_rows": 2,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "context_rag": {
+      "0": {
+        "ANSWERED": 2
+      }
+    }
+  },
+  "routing_recall": {},
+  "relaxed_routing_recall": {},
+  "evidence_node_recall": {},
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {},
+    "relaxed_routing_recall": {},
+    "evidence_node_recall": {}
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "context_rag": 0.0034309875000000005
+  },
+  "stopped_by_spend_cap": false
+}

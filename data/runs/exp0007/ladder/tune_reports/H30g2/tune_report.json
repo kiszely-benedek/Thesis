@@ -1,0 +1,435 @@
+{
+  "corpus_id": "H30g2",
+  "setting": {
+    "name": "A",
+    "cypher_timeout_s": 30.0,
+    "question_deadline_s": 120.0,
+    "hang_guard_s": null
+  },
+  "n_questions": 96,
+  "oracle_correct": 92,
+  "results": {
+    "cascade_v4": {
+      "policy": "cascade_v4",
+      "n_questions": 96,
+      "n_correct_uncut": 85,
+      "n_correct_in_limit": 85,
+      "n_beyond_limit": 0,
+      "n_correct_within": {
+        "120": 85,
+        "300": 85
+      },
+      "latency_median_s": 7.2956183499481995,
+      "latency_p90_s": 39.63131339993561,
+      "cost_per_question_usd": 0.0009764182291666667,
+      "tier_shares": {
+        "cypher-v2t": 0.8020833333333334,
+        "agent-v2t": 0.19791666666666666
+      },
+      "by_family": {
+        "CONNECTED": {
+          "correct": 4,
+          "total": 4
+        },
+        "COUNT_IN_UNIT": {
+          "correct": 4,
+          "total": 4
+        },
+        "CROSS_UNIT": {
+          "correct": 4,
+          "total": 4
+        },
+        "DOWNSTREAM_IN_UNIT": {
+          "correct": 3,
+          "total": 4
+        },
+        "DOWNSTREAM_ISOLATION": {
+          "correct": 0,
+          "total": 4
+        },
+        "FEEDING_UNITS": {
+          "correct": 4,
+          "total": 4
+        },
+        "FIRST_MEETING_POINT": {
+          "correct": 4,
+          "total": 4
+        },
+        "FLOW_PATH": {
+          "correct": 3,
+          "total": 4
+        },
+        "INSTRUMENTS_OF_ITEM": {
+          "correct": 4,
+          "total": 4
+        },
+        "LOOKUP_TYPE": {
+          "correct": 4,
+          "total": 4
+        },
+        "LOOKUP_UNIT": {
+          "correct": 4,
+          "total": 4
+        },
+        "LOOPS_NEAR_ITEM": {
+          "correct": 3,
+          "total": 4
+        },
+        "LOOP_ACTUATED_VALVE": {
+          "correct": 4,
+          "total": 4
+        },
+        "LOOP_MEASURED_EQUIPMENT": {
+          "correct": 4,
+          "total": 4
+        },
+        "NEIGHBOURS_DOWNSTREAM": {
+          "correct": 4,
+          "total": 4
+        },
+        "NO_PATH": {
+          "correct": 4,
+          "total": 4
+        },
+        "ROUTE_AVOIDING": {
+          "correct": 4,
+          "total": 4
+        },
+        "SAME_UNIT": {
+          "correct": 4,
+          "total": 4
+        },
+        "SHEETS_OF_TAG": {
+          "correct": 4,
+          "total": 4
+        },
+        "UNANSWERABLE_TAG": {
+          "correct": 4,
+          "total": 4
+        },
+        "UNITS_REACHED": {
+          "correct": 4,
+          "total": 4
+        },
+        "UPSTREAM_ISOLATION": {
+          "correct": 0,
+          "total": 4
+        },
+        "UPSTREAM_SOURCES": {
+          "correct": 4,
+          "total": 4
+        },
+        "VALVES_ON_PATH": {
+          "correct": 4,
+          "total": 4
+        }
+      },
+      "correct_ids": [
+        "H30g2:INSTRUMENTS_OF_ITEM:P-101A",
+        "H30g2:LOOP_ACTUATED_VALVE:LSHH-19013",
+        "H30g2:LOOP_MEASURED_EQUIPMENT:SI-12032",
+        "H30g2:UPSTREAM_SOURCES:TK-104",
+        "H30g2:SHEETS_OF_TAG:EA-301",
+        "H30g2:CONNECTED:P-1901A|P-1301A",
+        "H30g2:LOOPS_NEAR_ITEM:TK-104",
+        "H30g2:SHEETS_OF_TAG:K-1201",
+        "H30g2:UNITS_REACHED:K-501",
+        "H30g2:FLOW_PATH:PSV-1014|GTV-1005",
+        "H30g2:LOOP_ACTUATED_VALVE:HS-6003",
+        "H30g2:NEIGHBOURS_DOWNSTREAM:PGV-1001",
+        "H30g2:LOOKUP_TYPE:LSHH-1002",
+        "H30g2:SAME_UNIT:T-301|EA-301",
+        "H30g2:VALVES_ON_PATH:V-1101|E-1101",
+        "H30g2:LOOKUP_TYPE:PI-7044",
+        "H30g2:LOOKUP_UNIT:LT-2009",
+        "H30g2:LOOP_MEASURED_EQUIPMENT:LIC-9003",
+        "H30g2:LOOKUP_UNIT:LIC-12015",
+        "H30g2:COUNT_IN_UNIT:5|BallValve",
+        "H30g2:NEIGHBOURS_DOWNSTREAM:GTV-18001",
+        "H30g2:COUNT_IN_UNIT:2|ButterflyValve",
+        "H30g2:LOOKUP_UNIT:HS-11028",
+        "H30g2:LOOP_MEASURED_EQUIPMENT:PI-12047",
+        "H30g2:LOOKUP_TYPE:GV-13001",
+        "H30g2:INSTRUMENTS_OF_ITEM:T-1301",
+        "H30g2:ROUTE_AVOIDING:H-1101|E-1101|V-1101",
+        "H30g2:LOOP_MEASURED_EQUIPMENT:PIC-12034",
+        "H30g2:SAME_UNIT:P-1302B|P-1401A",
+        "H30g2:INSTRUMENTS_OF_ITEM:P-1302C",
+        "H30g2:INSTRUMENTS_OF_ITEM:P-302A",
+        "H30g2:SAME_UNIT:TK-1602|V-1501",
+        "H30g2:LOOKUP_TYPE:PIC-13029",
+        "H30g2:SAME_UNIT:P-1901A|P-1901B",
+        "H30g2:LOOKUP_UNIT:PT-15010",
+        "H30g2:COUNT_IN_UNIT:3|SwingCheckValve",
+        "H30g2:LOOPS_NEAR_ITEM:T-301",
+        "H30g2:SHEETS_OF_TAG:P-902",
+        "H30g2:UPSTREAM_SOURCES:TK-102",
+        "H30g2:FIRST_MEETING_POINT:F-1701B|TK-1801",
+        "H30g2:LOOP_ACTUATED_VALVE:LIC-3041",
+        "H30g2:UNITS_REACHED:P-1801",
+        "H30g2:FEEDING_UNITS:9",
+        "H30g2:LOOP_ACTUATED_VALVE:LSHH-6004",
+        "H30g2:CROSS_UNIT:17",
+        "H30g2:DOWNSTREAM_IN_UNIT:TK-102|1",
+        "H30g2:SHEETS_OF_TAG:T-501",
+        "H30g2:CROSS_UNIT:2",
+        "H30g2:FEEDING_UNITS:18",
+        "H30g2:FEEDING_UNITS:17",
+        "H30g2:FEEDING_UNITS:5",
+        "H30g2:NEIGHBOURS_DOWNSTREAM:GTV-11004",
+        "H30g2:CONNECTED:P-1801|P-1901A",
+        "H30g2:NEIGHBOURS_DOWNSTREAM:GTV-9005",
+        "H30g2:ROUTE_AVOIDING:V-1102|EJ-1301A|P-1101",
+        "H30g2:VALVES_ON_PATH:P-1301B|P-1302A",
+        "H30g2:FLOW_PATH:XV-1005|PSV-2013",
+        "H30g2:CROSS_UNIT:7",
+        "H30g2:FIRST_MEETING_POINT:P-1601B|P-1801",
+        "H30g2:UNITS_REACHED:F-1701B",
+        "H30g2:CROSS_UNIT:11",
+        "H30g2:LOOPS_NEAR_ITEM:TK-602",
+        "H30g2:DOWNSTREAM_IN_UNIT:P-501|5",
+        "H30g2:COUNT_IN_UNIT:1|AnglePlugValve",
+        "H30g2:CONNECTED:TK-1601|TK-1603",
+        "H30g2:VALVES_ON_PATH:V-1102|EJ-1302B",
+        "H30g2:ROUTE_AVOIDING:P-902|H-1101|GV-10001",
+        "H30g2:FLOW_PATH:GTV-13005|CHV-14003",
+        "H30g2:FIRST_MEETING_POINT:P-1801|V-1501",
+        "H30g2:UNITS_REACHED:P-1601A",
+        "H30g2:UPSTREAM_SOURCES:P-101A",
+        "H30g2:DOWNSTREAM_IN_UNIT:P-1601B|16",
+        "H30g2:CONNECTED:P-1501B|M-1801",
+        "H30g2:ROUTE_AVOIDING:H-701|TK-1002|GTV-9003",
+        "H30g2:VALVES_ON_PATH:P-302A|K-501",
+        "H30g2:UPSTREAM_SOURCES:P-201A",
+        "H30g2:FIRST_MEETING_POINT:P-1301A|TK-1801",
+        "H30g2:NO_PATH:FLOW_PATH:T-301|TK-104",
+        "H30g2:UNANSWERABLE_TAG:LOOKUP_TYPE:TK-105",
+        "H30g2:UNANSWERABLE_TAG:NEIGHBOURS_DOWNSTREAM:BV-3009",
+        "H30g2:NO_PATH:FLOW_PATH:P-1001|EA-701",
+        "H30g2:UNANSWERABLE_TAG:LOOKUP_TYPE:F-802",
+        "H30g2:UNANSWERABLE_TAG:LOOKUP_TYPE:GV-4002",
+        "H30g2:NO_PATH:FLOW_PATH:K-801|EJ-1301B",
+        "H30g2:NO_PATH:FLOW_PATH:P-201B|M-1101"
+      ]
+    },
+    "cascade_v4_iso": {
+      "policy": "cascade_v4_iso",
+      "n_questions": 96,
+      "n_correct_uncut": 89,
+      "n_correct_in_limit": 89,
+      "n_beyond_limit": 0,
+      "n_correct_within": {
+        "120": 89,
+        "300": 89
+      },
+      "latency_median_s": 7.2956183499481995,
+      "latency_p90_s": 39.63131339993561,
+      "cost_per_question_usd": 0.0010181428645833332,
+      "tier_shares": {
+        "cypher-v2t": 0.7604166666666666,
+        "agent-v2t": 0.23958333333333334
+      },
+      "by_family": {
+        "CONNECTED": {
+          "correct": 4,
+          "total": 4
+        },
+        "COUNT_IN_UNIT": {
+          "correct": 4,
+          "total": 4
+        },
+        "CROSS_UNIT": {
+          "correct": 4,
+          "total": 4
+        },
+        "DOWNSTREAM_IN_UNIT": {
+          "correct": 3,
+          "total": 4
+        },
+        "DOWNSTREAM_ISOLATION": {
+          "correct": 0,
+          "total": 4
+        },
+        "FEEDING_UNITS": {
+          "correct": 4,
+          "total": 4
+        },
+        "FIRST_MEETING_POINT": {
+          "correct": 4,
+          "total": 4
+        },
+        "FLOW_PATH": {
+          "correct": 3,
+          "total": 4
+        },
+        "INSTRUMENTS_OF_ITEM": {
+          "correct": 4,
+          "total": 4
+        },
+        "LOOKUP_TYPE": {
+          "correct": 4,
+          "total": 4
+        },
+        "LOOKUP_UNIT": {
+          "correct": 4,
+          "total": 4
+        },
+        "LOOPS_NEAR_ITEM": {
+          "correct": 3,
+          "total": 4
+        },
+        "LOOP_ACTUATED_VALVE": {
+          "correct": 4,
+          "total": 4
+        },
+        "LOOP_MEASURED_EQUIPMENT": {
+          "correct": 4,
+          "total": 4
+        },
+        "NEIGHBOURS_DOWNSTREAM": {
+          "correct": 4,
+          "total": 4
+        },
+        "NO_PATH": {
+          "correct": 4,
+          "total": 4
+        },
+        "ROUTE_AVOIDING": {
+          "correct": 4,
+          "total": 4
+        },
+        "SAME_UNIT": {
+          "correct": 4,
+          "total": 4
+        },
+        "SHEETS_OF_TAG": {
+          "correct": 4,
+          "total": 4
+        },
+        "UNANSWERABLE_TAG": {
+          "correct": 4,
+          "total": 4
+        },
+        "UNITS_REACHED": {
+          "correct": 4,
+          "total": 4
+        },
+        "UPSTREAM_ISOLATION": {
+          "correct": 4,
+          "total": 4
+        },
+        "UPSTREAM_SOURCES": {
+          "correct": 4,
+          "total": 4
+        },
+        "VALVES_ON_PATH": {
+          "correct": 4,
+          "total": 4
+        }
+      },
+      "correct_ids": [
+        "H30g2:INSTRUMENTS_OF_ITEM:P-101A",
+        "H30g2:LOOP_ACTUATED_VALVE:LSHH-19013",
+        "H30g2:LOOP_MEASURED_EQUIPMENT:SI-12032",
+        "H30g2:UPSTREAM_SOURCES:TK-104",
+        "H30g2:SHEETS_OF_TAG:EA-301",
+        "H30g2:CONNECTED:P-1901A|P-1301A",
+        "H30g2:LOOPS_NEAR_ITEM:TK-104",
+        "H30g2:SHEETS_OF_TAG:K-1201",
+        "H30g2:UNITS_REACHED:K-501",
+        "H30g2:FLOW_PATH:PSV-1014|GTV-1005",
+        "H30g2:LOOP_ACTUATED_VALVE:HS-6003",
+        "H30g2:NEIGHBOURS_DOWNSTREAM:PGV-1001",
+        "H30g2:LOOKUP_TYPE:LSHH-1002",
+        "H30g2:SAME_UNIT:T-301|EA-301",
+        "H30g2:VALVES_ON_PATH:V-1101|E-1101",
+        "H30g2:LOOKUP_TYPE:PI-7044",
+        "H30g2:LOOKUP_UNIT:LT-2009",
+        "H30g2:LOOP_MEASURED_EQUIPMENT:LIC-9003",
+        "H30g2:LOOKUP_UNIT:LIC-12015",
+        "H30g2:UPSTREAM_ISOLATION:TK-104",
+        "H30g2:COUNT_IN_UNIT:5|BallValve",
+        "H30g2:NEIGHBOURS_DOWNSTREAM:GTV-18001",
+        "H30g2:COUNT_IN_UNIT:2|ButterflyValve",
+        "H30g2:LOOKUP_UNIT:HS-11028",
+        "H30g2:LOOP_MEASURED_EQUIPMENT:PI-12047",
+        "H30g2:LOOKUP_TYPE:GV-13001",
+        "H30g2:INSTRUMENTS_OF_ITEM:T-1301",
+        "H30g2:ROUTE_AVOIDING:H-1101|E-1101|V-1101",
+        "H30g2:LOOP_MEASURED_EQUIPMENT:PIC-12034",
+        "H30g2:SAME_UNIT:P-1302B|P-1401A",
+        "H30g2:INSTRUMENTS_OF_ITEM:P-1302C",
+        "H30g2:INSTRUMENTS_OF_ITEM:P-302A",
+        "H30g2:SAME_UNIT:TK-1602|V-1501",
+        "H30g2:UPSTREAM_ISOLATION:V-1401",
+        "H30g2:LOOKUP_TYPE:PIC-13029",
+        "H30g2:SAME_UNIT:P-1901A|P-1901B",
+        "H30g2:LOOKUP_UNIT:PT-15010",
+        "H30g2:COUNT_IN_UNIT:3|SwingCheckValve",
+        "H30g2:LOOPS_NEAR_ITEM:T-301",
+        "H30g2:SHEETS_OF_TAG:P-902",
+        "H30g2:UPSTREAM_SOURCES:TK-102",
+        "H30g2:FIRST_MEETING_POINT:F-1701B|TK-1801",
+        "H30g2:LOOP_ACTUATED_VALVE:LIC-3041",
+        "H30g2:UNITS_REACHED:P-1801",
+        "H30g2:FEEDING_UNITS:9",
+        "H30g2:LOOP_ACTUATED_VALVE:LSHH-6004",
+        "H30g2:CROSS_UNIT:17",
+        "H30g2:DOWNSTREAM_IN_UNIT:TK-102|1",
+        "H30g2:SHEETS_OF_TAG:T-501",
+        "H30g2:CROSS_UNIT:2",
+        "H30g2:FEEDING_UNITS:18",
+        "H30g2:FEEDING_UNITS:17",
+        "H30g2:FEEDING_UNITS:5",
+        "H30g2:UPSTREAM_ISOLATION:TK-101",
+        "H30g2:NEIGHBOURS_DOWNSTREAM:GTV-11004",
+        "H30g2:CONNECTED:P-1801|P-1901A",
+        "H30g2:NEIGHBOURS_DOWNSTREAM:GTV-9005",
+        "H30g2:ROUTE_AVOIDING:V-1102|EJ-1301A|P-1101",
+        "H30g2:VALVES_ON_PATH:P-1301B|P-1302A",
+        "H30g2:FLOW_PATH:XV-1005|PSV-2013",
+        "H30g2:CROSS_UNIT:7",
+        "H30g2:FIRST_MEETING_POINT:P-1601B|P-1801",
+        "H30g2:UNITS_REACHED:F-1701B",
+        "H30g2:UPSTREAM_ISOLATION:V-901",
+        "H30g2:CROSS_UNIT:11",
+        "H30g2:LOOPS_NEAR_ITEM:TK-602",
+        "H30g2:DOWNSTREAM_IN_UNIT:P-501|5",
+        "H30g2:COUNT_IN_UNIT:1|AnglePlugValve",
+        "H30g2:CONNECTED:TK-1601|TK-1603",
+        "H30g2:VALVES_ON_PATH:V-1102|EJ-1302B",
+        "H30g2:ROUTE_AVOIDING:P-902|H-1101|GV-10001",
+        "H30g2:FLOW_PATH:GTV-13005|CHV-14003",
+        "H30g2:FIRST_MEETING_POINT:P-1801|V-1501",
+        "H30g2:UNITS_REACHED:P-1601A",
+        "H30g2:UPSTREAM_SOURCES:P-101A",
+        "H30g2:DOWNSTREAM_IN_UNIT:P-1601B|16",
+        "H30g2:CONNECTED:P-1501B|M-1801",
+        "H30g2:ROUTE_AVOIDING:H-701|TK-1002|GTV-9003",
+        "H30g2:VALVES_ON_PATH:P-302A|K-501",
+        "H30g2:UPSTREAM_SOURCES:P-201A",
+        "H30g2:FIRST_MEETING_POINT:P-1301A|TK-1801",
+        "H30g2:NO_PATH:FLOW_PATH:T-301|TK-104",
+        "H30g2:UNANSWERABLE_TAG:LOOKUP_TYPE:TK-105",
+        "H30g2:UNANSWERABLE_TAG:NEIGHBOURS_DOWNSTREAM:BV-3009",
+        "H30g2:NO_PATH:FLOW_PATH:P-1001|EA-701",
+        "H30g2:UNANSWERABLE_TAG:LOOKUP_TYPE:F-802",
+        "H30g2:UNANSWERABLE_TAG:LOOKUP_TYPE:GV-4002",
+        "H30g2:NO_PATH:FLOW_PATH:K-801|EJ-1301B",
+        "H30g2:NO_PATH:FLOW_PATH:P-201B|M-1101"
+      ]
+    }
+  },
+  "cypher": {
+    "n_tried": 96,
+    "n_accepted": 77,
+    "n_accepted_correct": 67,
+    "rejected_by": {
+      "rows": 11,
+      "not_abstained": 3,
+      "answered": 5
+    },
+    "n_cut_but_correct": 0
+  },
+  "choice": null
+}

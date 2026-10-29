@@ -1,0 +1,49 @@
+{
+  "run_id": "INF-E7-CTXH-H10g2",
+  "experiment": "EXP-0007-REPLAY",
+  "reported": false,
+  "corpora": [
+    "H10g2"
+  ],
+  "strategies": {
+    "context_rag": {}
+  },
+  "answer_pin": {
+    "backend": "openrouter",
+    "model_id": "openai/gpt-6-luna",
+    "route_provider": "openai",
+    "temperature": null,
+    "seed": 0,
+    "max_output_tokens": 16384,
+    "extra": {
+      "reasoning": {
+        "effort": "high"
+      }
+    }
+  },
+  "judge_pins": [],
+  "prompt_hashes": {
+    "agent_graph_system.txt": "59a6a950480421eacffc6c536ea57c871a09716e3c76998b1ebddccc206aa3ad",
+    "agent_graph_system_v2t.txt": "32a063f68b42ef810473c4c7182db525903fe425becc59d4ed74e24fc18b6c91",
+    "agent_seed_rule.txt": "6422064a4956c502a8c56fb22ae0ad1aeb4fceed9180ac4da2778fb5635eff23",
+    "cypher_query.txt": "117d36cd98a326c4ed3b4505f7f6df9c8d68e998fda105271cbd95e40c14a830",
+    "cypher_query_v2t.txt": "5267193523535c63859f0d57984e72009959d71f04f2dadf671437d92c7502f8",
+    "cypher_repair_v2t.txt": "110ca32298e0aa2924c4bed440d44903f885b9295b3f839eec8bef8b907ff59e",
+    "final_answer.txt": "f9e22b901e45f7a38dfd85f307bf742dc6f3e4f9303ef48db77841ddf4912baf",
+    "final_answer_v2t.txt": "18972a0b0c8b49d197185fb15fe16e21959d51f5b450bd2a993bf9c7b4280577",
+    "legend_occurrence.txt": "48e48407317c96e5edc53eca64fc408fae65f62b67a652442a65e57b27ec2da6",
+    "legend_plant.txt": "3d6bf111495d7bfaa2b8371ed3e0a205e624ce7636aa8a0755d0db68ac6c2ae4",
+    "primer_pid_v1.txt": "198e62bdf4e6e6921013eae921db728ba7f6992d79d6c562fda84ae65c69a9d0",
+    "unit_router.txt": "05735b707145a84921902e06ce11711b4de1055ac6e6dec5b9582d2074df4e5a"
+  },
+  "question_set_sha256": "c6daa3f77998d91e06f4f3c52a50bc3cb2331745474d40c1df06def7a2742fb5",
+  "primer": true,
+  "context_wall": null,
+  "git_commit": "14505b4d2b81e8c1c290eb5572ffc2e2392ab4c3",
+  "git_dirty": true,
+  "created_at": "2026-10-29T13:34:18.284727Z",
+  "repeats": 1,
+  "allow_paid_calls": false,
+  "max_spend_usd": null,
+  "question_deadline_s": 300.0
+}

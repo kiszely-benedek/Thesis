@@ -1,0 +1,547 @@
+# Method-and-effort cascade report
+
+Latency counts every model call of a question (final answer, retrieval and agent steps) plus local compute where recorded, summed over the tiers tried. LB-1: median <= 10 s; LB-2: p90 <= 60 s; LB-3: an answer later than C = 120 s counts as no answer (TIMED_OUT, wrong) for every arm alike, so acc@120 is the cutoff-scored accuracy. A run made under a live deadline cannot show raw accuracy beyond C.
+
+## Pre-registered rules (S1-S3: cascade v1 record; V2-V3: cascade v2)
+
+- **S1: INCOMPLETE** - no need-default run joined for H1g2, H3g2, H10g2, H30g2
+- **S2: INCOMPLETE** - cascade_v1 or always_n is not evaluated on D1000
+- **S3 cascade_v1_iso: INCOMPLETE** - cascade_v1_iso or cascade_v1 is not evaluated on D1000
+- **S3 label_router_dev: INCOMPLETE** - label_router_dev or cascade_v1 is not evaluated on D1000
+- **V2: INCOMPLETE** - not evaluated on D100: cascade_v1, cascade_v1_iso, cascade_v2, cascade_v2_iso
+- **V3: INCOMPLETE** - not evaluated on D1000: cascade_v1, cascade_v1_iso, cascade_v2, cascade_v2_iso
+
+## Corpus H1g2 (74 questions)
+
+### Policies
+
+| policy | correct | acc@120 | total $ | $/question | latency s median / mean / p90 / p95 / max | answered by | tier-1 accept precision | tier-1 accept recall |
+|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 71/74 | 71/74 | 0.0527 | 0.00071 | 5.7 / 10.3 / 22.5 / 28.3 / 67.3 | cypher-v2t 74%, agent-v2t 26% | - | - |
+| cascade_v4 | 68/74 | 68/74 | 0.0525 | 0.00071 | 5.7 / 10.0 / 22.3 / 28.3 / 67.3 | cypher-v2t 80%, agent-v2t 20% | 0.898 (53/59) | 0.828 (53/64) |
+| always_g_v2t | 70/74 | 70/74 | 0.0395 | 0.00053 | 8.2 / 10.8 / 17.9 / 23.4 / 55.9 | agent-v2t 100% | - | - |
+| always_c_v2t | 64/74 | 64/74 | 0.0415 | 0.00056 | 5.2 / 6.9 / 11.4 / 15.6 / 25.7 | cypher-v2t 100% | - | - |
+
+### Latency bound
+
+| policy | over C = 120 s | correct lost to C | latency without local compute | median <= 10 s | p90 <= 60 s |
+|---|---|---|---|---|---|
+| cascade_v4_iso | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| cascade_v4 | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| always_g_v2t | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| always_c_v2t | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+
+### Paired bootstrap vs always_n (policy minus always_n, mean [95% CI])
+
+| policy | accuracy | acc@120 | $/question | latency s/question |
+|---|---|---|---|---|
+
+### References (never deployable)
+
+| policy | correct / acc@120 | oracle cascade | random escalation, same share |
+|---|---|---|---|
+| cascade_v4 | 68 / 68 | 72 / 72 ($0.0518) | 65.2 [63, 68] / 65.2 [63, 68] ($0.0495, 15 escalated) |
+
+
+### Paired bootstrap vs random escalation
+
+| policy | accuracy | acc@120 | $/question | latency s/question |
+|---|---|---|---|---|
+| cascade_v4 | +0.037 [-0.002, +0.083] | +0.037 [-0.002, +0.083] | +0.00004 [-0.00004, +0.00013] | +0.9 [-0.6, +2.7] |
+
+### Agent tier: stop reasons
+
+| policy | tier | questions tried | done | deadline | runaway | prompt_budget | errors | max_steps | overflow | timed_out | unrecorded |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | agent-v2t | 19 | 19 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| cascade_v4 | agent-v2t | 15 | 15 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| always_g_v2t | agent-v2t | 74 | 73 | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
+
+### Agent tier: answers without evidence gathered
+
+| policy | no tool call | no plant item touched |
+|---|---|---|
+| cascade_v4_iso | 0 (0 correct) | 5 (5 correct) |
+| cascade_v4 | 0 (0 correct) | 5 (5 correct) |
+| always_g_v2t | 0 (0 correct) | 7 (5 correct) |
+
+### Agent tier: a tag named in the question was never touched
+
+| policy | questions naming a tag | never touched |
+|---|---|---|
+| cascade_v4_iso | 15 | 1 (1 correct) |
+| cascade_v4 | 11 | 1 (1 correct) |
+| always_g_v2t | 66 | 3 (1 correct) |
+
+### UPSTREAM_ISOLATION: secondary score, control valves do not isolate
+
+Secondary only (offline re-score); the primary score is the gold key as built. Secondary reference = gold minus control valves.
+
+| policy | primary correct | secondary correct |
+|---|---|---|
+| cascade_v4_iso | 3/4 | 1/3 |
+| cascade_v4 | 0/4 | 0/3 |
+| always_g_v2t | 3/4 | 1/3 |
+| always_c_v2t | 0/4 | 0/3 |
+
+### Made-up yes (BOOLEAN questions whose gold is no)
+
+| policy | gold-no questions | answered yes |
+|---|---|---|
+| cascade_v4_iso | 4 | 0 |
+| cascade_v4 | 4 | 0 |
+| always_g_v2t | 4 | 0 |
+| always_c_v2t | 4 | 0 |
+
+### Breakdowns (correct / questions)
+
+#### By need label
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| DOWNSTREAM_ALL | 5/6 | 5/6 | 5/6 | 4/6 |
+| GENERIC | 11/12 | 11/12 | 12/12 | 9/12 |
+| ITEM | 15/15 | 15/15 | 15/15 | 15/15 |
+| NEIGHBOURS_DOWNSTREAM | 5/5 | 5/5 | 5/5 | 5/5 |
+| PATH | 12/12 | 12/12 | 11/12 | 12/12 |
+| SIGNAL_CHAIN | 12/12 | 12/12 | 11/12 | 11/12 |
+| UNIT_SCOPE | 4/4 | 4/4 | 4/4 | 4/4 |
+| UPSTREAM_ALL | 4/4 | 4/4 | 4/4 | 4/4 |
+| UPSTREAM_TO_FIRST_VALVE | 3/4 | 0/4 | 3/4 | 0/4 |
+
+#### By family
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| CONNECTED | 4/4 | 4/4 | 3/4 | 4/4 |
+| COUNT_IN_UNIT | 4/4 | 4/4 | 4/4 | 4/4 |
+| DOWNSTREAM_IN_UNIT | 4/4 | 4/4 | 4/4 | 4/4 |
+| DOWNSTREAM_ISOLATION | 1/2 | 1/2 | 1/2 | 0/2 |
+| FLOW_PATH | 4/4 | 4/4 | 4/4 | 4/4 |
+| INSTRUMENTS_OF_ITEM | 4/4 | 4/4 | 4/4 | 4/4 |
+| LOOKUP_TYPE | 4/4 | 4/4 | 4/4 | 4/4 |
+| LOOKUP_UNIT | 4/4 | 4/4 | 4/4 | 4/4 |
+| LOOPS_NEAR_ITEM | 2/2 | 2/2 | 2/2 | 0/2 |
+| LOOP_ACTUATED_VALVE | 4/4 | 4/4 | 3/4 | 4/4 |
+| LOOP_MEASURED_EQUIPMENT | 4/4 | 4/4 | 4/4 | 3/4 |
+| NEIGHBOURS_DOWNSTREAM | 4/4 | 4/4 | 4/4 | 4/4 |
+| NO_PATH | 4/4 | 4/4 | 4/4 | 4/4 |
+| ROUTE_AVOIDING | 3/3 | 3/3 | 3/3 | 3/3 |
+| SAME_UNIT | 4/4 | 4/4 | 4/4 | 4/4 |
+| UNANSWERABLE_TAG | 4/4 | 4/4 | 4/4 | 4/4 |
+| UNITS_REACHED | 4/4 | 4/4 | 4/4 | 4/4 |
+| UPSTREAM_ISOLATION | 3/4 | 0/4 | 3/4 | 0/4 |
+| UPSTREAM_SOURCES | 4/4 | 4/4 | 4/4 | 4/4 |
+| VALVES_ON_PATH | 2/3 | 2/3 | 3/3 | 2/3 |
+
+#### By k bin
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| k=0 | 63/66 | 60/66 | 62/66 | 56/66 |
+| unanswerable | 8/8 | 8/8 | 8/8 | 8/8 |
+
+## Corpus H3g2 (82 questions)
+
+### Policies
+
+| policy | correct | acc@120 | total $ | $/question | latency s median / mean / p90 / p95 / max | answered by | tier-1 accept precision | tier-1 accept recall |
+|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 73/82 | 73/82 | 0.0674 | 0.00082 | 7.3 / 12.2 / 30.8 / 35.8 / 51.0 | cypher-v2t 71%, agent-v2t 29% | - | - |
+| cascade_v4 | 69/82 | 69/82 | 0.0663 | 0.00081 | 7.3 / 11.7 / 30.8 / 35.8 / 51.0 | cypher-v2t 76%, agent-v2t 24% | 0.790 (49/62) | 0.831 (49/59) |
+| always_g_v2t | 77/82 | 77/82 | 0.0613 | 0.00075 | 10.0 / 13.3 / 27.8 / 32.1 / 57.9 | agent-v2t 100% | - | - |
+| always_c_v2t | 59/82 | 59/82 | 0.0474 | 0.00058 | 6.4 / 7.2 / 11.5 / 14.3 / 21.5 | cypher-v2t 98%, none 2% | - | - |
+
+### Latency bound
+
+| policy | over C = 120 s | correct lost to C | latency without local compute | median <= 10 s | p90 <= 60 s |
+|---|---|---|---|---|---|
+| cascade_v4_iso | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| cascade_v4 | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| always_g_v2t | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| always_c_v2t | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+
+### Paired bootstrap vs always_n (policy minus always_n, mean [95% CI])
+
+| policy | accuracy | acc@120 | $/question | latency s/question |
+|---|---|---|---|---|
+
+### References (never deployable)
+
+| policy | correct / acc@120 | oracle cascade | random escalation, same share |
+|---|---|---|---|
+| cascade_v4 | 69 / 69 | 78 / 78 ($0.0711) | 63.4 [60, 67] / 63.4 [60, 67] ($0.0624, 20 escalated) |
+
+
+### Paired bootstrap vs random escalation
+
+| policy | accuracy | acc@120 | $/question | latency s/question |
+|---|---|---|---|---|
+| cascade_v4 | +0.068 [+0.013, +0.128] | +0.068 [+0.013, +0.128] | +0.00005 [-0.00005, +0.00016] | +1.2 [-0.6, +3.1] |
+
+### Agent tier: stop reasons
+
+| policy | tier | questions tried | done | deadline | runaway | prompt_budget | errors | max_steps | overflow | timed_out | unrecorded |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | agent-v2t | 24 | 24 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| cascade_v4 | agent-v2t | 20 | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| always_g_v2t | agent-v2t | 82 | 82 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+### Agent tier: answers without evidence gathered
+
+| policy | no tool call | no plant item touched |
+|---|---|---|
+| cascade_v4_iso | 0 (0 correct) | 4 (4 correct) |
+| cascade_v4 | 0 (0 correct) | 4 (4 correct) |
+| always_g_v2t | 0 (0 correct) | 5 (4 correct) |
+
+### Agent tier: a tag named in the question was never touched
+
+| policy | questions naming a tag | never touched |
+|---|---|---|
+| cascade_v4_iso | 19 | 0 (0 correct) |
+| cascade_v4 | 15 | 0 (0 correct) |
+| always_g_v2t | 72 | 1 (0 correct) |
+
+### UPSTREAM_ISOLATION: secondary score, control valves do not isolate
+
+Secondary only (offline re-score); the primary score is the gold key as built. Secondary reference = gold minus control valves.
+
+| policy | primary correct | secondary correct |
+|---|---|---|
+| cascade_v4_iso | 4/4 | 0/0 |
+| cascade_v4 | 0/4 | 0/0 |
+| always_g_v2t | 4/4 | 0/0 |
+| always_c_v2t | 0/4 | 0/0 |
+
+### Made-up yes (BOOLEAN questions whose gold is no)
+
+| policy | gold-no questions | answered yes |
+|---|---|---|
+| cascade_v4_iso | 6 | 0 |
+| cascade_v4 | 6 | 0 |
+| always_g_v2t | 6 | 0 |
+| always_c_v2t | 6 | 0 |
+
+### Breakdowns (correct / questions)
+
+#### By need label
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| DOWNSTREAM_ALL | 3/8 | 3/8 | 4/8 | 3/8 |
+| GENERIC | 12/16 | 12/16 | 16/16 | 6/16 |
+| ITEM | 14/14 | 14/14 | 14/14 | 13/14 |
+| NEIGHBOURS_DOWNSTREAM | 6/6 | 6/6 | 6/6 | 6/6 |
+| PATH | 12/12 | 12/12 | 11/12 | 12/12 |
+| SIGNAL_CHAIN | 12/12 | 12/12 | 12/12 | 10/12 |
+| UNIT_SCOPE | 6/6 | 6/6 | 6/6 | 5/6 |
+| UPSTREAM_ALL | 4/4 | 4/4 | 4/4 | 4/4 |
+| UPSTREAM_TO_FIRST_VALVE | 4/4 | 0/4 | 4/4 | 0/4 |
+
+#### By family
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| CONNECTED | 4/4 | 4/4 | 3/4 | 4/4 |
+| COUNT_IN_UNIT | 4/4 | 4/4 | 4/4 | 4/4 |
+| CROSS_UNIT | 1/1 | 1/1 | 1/1 | 1/1 |
+| DOWNSTREAM_IN_UNIT | 3/4 | 3/4 | 4/4 | 3/4 |
+| DOWNSTREAM_ISOLATION | 0/4 | 0/4 | 0/4 | 0/4 |
+| FEEDING_UNITS | 1/1 | 1/1 | 1/1 | 0/1 |
+| FLOW_PATH | 4/4 | 4/4 | 4/4 | 4/4 |
+| INSTRUMENTS_OF_ITEM | 4/4 | 4/4 | 4/4 | 4/4 |
+| LOOKUP_TYPE | 4/4 | 4/4 | 4/4 | 4/4 |
+| LOOKUP_UNIT | 4/4 | 4/4 | 4/4 | 4/4 |
+| LOOPS_NEAR_ITEM | 4/4 | 4/4 | 4/4 | 0/4 |
+| LOOP_ACTUATED_VALVE | 4/4 | 4/4 | 4/4 | 4/4 |
+| LOOP_MEASURED_EQUIPMENT | 4/4 | 4/4 | 4/4 | 2/4 |
+| NEIGHBOURS_DOWNSTREAM | 4/4 | 4/4 | 4/4 | 4/4 |
+| NO_PATH | 4/4 | 4/4 | 4/4 | 4/4 |
+| ROUTE_AVOIDING | 4/4 | 4/4 | 4/4 | 3/4 |
+| SAME_UNIT | 4/4 | 4/4 | 4/4 | 3/4 |
+| UNANSWERABLE_TAG | 4/4 | 4/4 | 4/4 | 4/4 |
+| UNITS_REACHED | 4/4 | 4/4 | 4/4 | 3/4 |
+| UPSTREAM_ISOLATION | 4/4 | 0/4 | 4/4 | 0/4 |
+| UPSTREAM_SOURCES | 4/4 | 4/4 | 4/4 | 4/4 |
+| VALVES_ON_PATH | 0/4 | 0/4 | 4/4 | 0/4 |
+
+#### By k bin
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| k=0 | 39/46 | 37/46 | 41/46 | 32/46 |
+| k=1-2 | 23/25 | 21/25 | 25/25 | 16/25 |
+| k>=3 | 3/3 | 3/3 | 3/3 | 3/3 |
+| unanswerable | 8/8 | 8/8 | 8/8 | 8/8 |
+
+## Corpus H10g2 (92 questions)
+
+### Policies
+
+| policy | correct | acc@120 | total $ | $/question | latency s median / mean / p90 / p95 / max | answered by | tier-1 accept precision | tier-1 accept recall |
+|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 84/92 | 84/92 | 0.0907 | 0.00099 | 7.5 / 12.7 / 31.9 / 44.6 / 51.1 | cypher-v2t 77%, agent-v2t 23% | - | - |
+| cascade_v4 | 80/92 | 80/92 | 0.0867 | 0.00094 | 7.5 / 12.2 / 28.2 / 46.0 / 55.1 | cypher-v2t 82%, agent-v2t 18% | 0.880 (66/75) | 0.892 (66/74) |
+| always_g_v2t | 87/92 | 87/92 | 0.1183 | 0.00129 | 10.5 / 13.5 / 25.8 / 33.9 / 53.9 | agent-v2t 100% | - | - |
+| always_c_v2t | 74/92 | 74/92 | 0.0566 | 0.00062 | 6.2 / 9.0 / 13.6 / 26.8 / 55.1 | cypher-v2t 96%, none 4% | - | - |
+
+### Latency bound
+
+| policy | over C = 120 s | correct lost to C | latency without local compute | median <= 10 s | p90 <= 60 s |
+|---|---|---|---|---|---|
+| cascade_v4_iso | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| cascade_v4 | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| always_g_v2t | 0 | 0 | 0 | LB-1 FAIL | LB-2 PASS |
+| always_c_v2t | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+
+### Paired bootstrap vs always_n (policy minus always_n, mean [95% CI])
+
+| policy | accuracy | acc@120 | $/question | latency s/question |
+|---|---|---|---|---|
+
+### References (never deployable)
+
+| policy | correct / acc@120 | oracle cascade | random escalation, same share |
+|---|---|---|---|
+| cascade_v4 | 80 / 80 | 88 / 88 ($0.0881) | 76.4 [74, 79] / 76.4 [74, 79] ($0.0789, 17 escalated) |
+
+
+### Paired bootstrap vs random escalation
+
+| policy | accuracy | acc@120 | $/question | latency s/question |
+|---|---|---|---|---|
+| cascade_v4 | +0.039 [-0.001, +0.087] | +0.039 [-0.001, +0.087] | +0.00008 [-0.00008, +0.00027] | +0.8 [-0.7, +2.4] |
+
+### Agent tier: stop reasons
+
+| policy | tier | questions tried | done | deadline | runaway | prompt_budget | errors | max_steps | overflow | timed_out | unrecorded |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | agent-v2t | 21 | 21 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| cascade_v4 | agent-v2t | 17 | 17 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| always_g_v2t | agent-v2t | 92 | 92 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+### Agent tier: answers without evidence gathered
+
+| policy | no tool call | no plant item touched |
+|---|---|---|
+| cascade_v4_iso | 0 (0 correct) | 4 (4 correct) |
+| cascade_v4 | 0 (0 correct) | 4 (4 correct) |
+| always_g_v2t | 0 (0 correct) | 4 (4 correct) |
+
+### Agent tier: a tag named in the question was never touched
+
+| policy | questions naming a tag | never touched |
+|---|---|---|
+| cascade_v4_iso | 17 | 0 (0 correct) |
+| cascade_v4 | 13 | 0 (0 correct) |
+| always_g_v2t | 76 | 0 (0 correct) |
+
+### UPSTREAM_ISOLATION: secondary score, control valves do not isolate
+
+Secondary only (offline re-score); the primary score is the gold key as built. Secondary reference = gold minus control valves.
+
+| policy | primary correct | secondary correct |
+|---|---|---|
+| cascade_v4_iso | 4/4 | 3/4 |
+| cascade_v4 | 0/4 | 0/4 |
+| always_g_v2t | 4/4 | 3/4 |
+| always_c_v2t | 0/4 | 0/4 |
+
+### Made-up yes (BOOLEAN questions whose gold is no)
+
+| policy | gold-no questions | answered yes |
+|---|---|---|
+| cascade_v4_iso | 3 | 0 |
+| cascade_v4 | 3 | 0 |
+| always_g_v2t | 3 | 0 |
+| always_c_v2t | 3 | 0 |
+
+### Breakdowns (correct / questions)
+
+#### By need label
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| DOWNSTREAM_ALL | 3/8 | 3/8 | 4/8 | 2/8 |
+| GENERIC | 13/16 | 13/16 | 16/16 | 11/16 |
+| ITEM | 19/19 | 19/19 | 19/19 | 19/19 |
+| NEIGHBOURS_DOWNSTREAM | 5/5 | 5/5 | 5/5 | 5/5 |
+| PATH | 12/12 | 12/12 | 12/12 | 11/12 |
+| SIGNAL_CHAIN | 12/12 | 12/12 | 12/12 | 10/12 |
+| UNIT_SCOPE | 12/12 | 12/12 | 11/12 | 12/12 |
+| UPSTREAM_ALL | 4/4 | 4/4 | 4/4 | 4/4 |
+| UPSTREAM_TO_FIRST_VALVE | 4/4 | 0/4 | 4/4 | 0/4 |
+
+#### By family
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| CONNECTED | 4/4 | 4/4 | 4/4 | 4/4 |
+| COUNT_IN_UNIT | 4/4 | 4/4 | 4/4 | 4/4 |
+| CROSS_UNIT | 4/4 | 4/4 | 3/4 | 4/4 |
+| DOWNSTREAM_IN_UNIT | 3/4 | 3/4 | 4/4 | 2/4 |
+| DOWNSTREAM_ISOLATION | 0/4 | 0/4 | 0/4 | 0/4 |
+| FEEDING_UNITS | 4/4 | 4/4 | 4/4 | 4/4 |
+| FLOW_PATH | 4/4 | 4/4 | 4/4 | 3/4 |
+| INSTRUMENTS_OF_ITEM | 4/4 | 4/4 | 4/4 | 4/4 |
+| LOOKUP_TYPE | 4/4 | 4/4 | 4/4 | 4/4 |
+| LOOKUP_UNIT | 4/4 | 4/4 | 4/4 | 4/4 |
+| LOOPS_NEAR_ITEM | 3/4 | 3/4 | 4/4 | 1/4 |
+| LOOP_ACTUATED_VALVE | 4/4 | 4/4 | 4/4 | 4/4 |
+| LOOP_MEASURED_EQUIPMENT | 4/4 | 4/4 | 4/4 | 2/4 |
+| NEIGHBOURS_DOWNSTREAM | 4/4 | 4/4 | 4/4 | 4/4 |
+| NO_PATH | 4/4 | 4/4 | 4/4 | 4/4 |
+| ROUTE_AVOIDING | 4/4 | 4/4 | 4/4 | 4/4 |
+| SAME_UNIT | 4/4 | 4/4 | 4/4 | 4/4 |
+| SHEETS_OF_TAG | 4/4 | 4/4 | 4/4 | 4/4 |
+| UNANSWERABLE_TAG | 4/4 | 4/4 | 4/4 | 4/4 |
+| UNITS_REACHED | 4/4 | 4/4 | 4/4 | 4/4 |
+| UPSTREAM_ISOLATION | 4/4 | 0/4 | 4/4 | 0/4 |
+| UPSTREAM_SOURCES | 4/4 | 4/4 | 4/4 | 4/4 |
+| VALVES_ON_PATH | 2/4 | 2/4 | 4/4 | 2/4 |
+
+#### By k bin
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| k=0 | 38/43 | 36/43 | 39/43 | 32/43 |
+| k=1-2 | 30/32 | 28/32 | 31/32 | 26/32 |
+| k>=3 | 8/9 | 8/9 | 9/9 | 8/9 |
+| unanswerable | 8/8 | 8/8 | 8/8 | 8/8 |
+
+## Corpus H30g2 (96 questions)
+
+### Policies
+
+| policy | correct | acc@120 | total $ | $/question | latency s median / mean / p90 / p95 / max | answered by | tier-1 accept precision | tier-1 accept recall |
+|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 89/96 | 89/96 | 0.0977 | 0.00102 | 7.3 / 14.1 / 39.6 / 49.1 / 100.5 | cypher-v2t 76%, agent-v2t 24% | - | - |
+| cascade_v4 | 85/96 | 85/96 | 0.0937 | 0.00098 | 7.3 / 14.0 / 39.6 / 49.1 / 100.5 | cypher-v2t 80%, agent-v2t 20% | 0.870 (67/77) | 0.905 (67/74) |
+| always_g_v2t | 90/96 | 90/96 | 0.1275 | 0.00133 | 11.3 / 14.1 / 27.1 / 32.5 / 72.3 | agent-v2t 99%, none 1% | - | - |
+| always_c_v2t | 74/96 | 74/96 | 0.0642 | 0.00067 | 6.1 / 10.8 / 18.6 / 44.3 / 72.9 | cypher-v2t 95%, none 5% | - | - |
+
+### Latency bound
+
+| policy | over C = 120 s | correct lost to C | latency without local compute | median <= 10 s | p90 <= 60 s |
+|---|---|---|---|---|---|
+| cascade_v4_iso | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| cascade_v4 | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| always_g_v2t | 0 | 0 | 0 | LB-1 FAIL | LB-2 PASS |
+| always_c_v2t | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+
+### Paired bootstrap vs always_n (policy minus always_n, mean [95% CI])
+
+| policy | accuracy | acc@120 | $/question | latency s/question |
+|---|---|---|---|---|
+
+### References (never deployable)
+
+| policy | correct / acc@120 | oracle cascade | random escalation, same share |
+|---|---|---|---|
+| cascade_v4 | 85 / 85 | 92 / 92 ($0.1017) | 77.4 [74, 81] / 77.4 [74, 81] ($0.0893, 19 escalated) |
+
+
+### Paired bootstrap vs random escalation
+
+| policy | accuracy | acc@120 | $/question | latency s/question |
+|---|---|---|---|---|
+| cascade_v4 | +0.079 [+0.030, +0.136] | +0.079 [+0.030, +0.136] | +0.00005 [-0.00013, +0.00027] | +0.4 [-1.0, +2.0] |
+
+### Agent tier: stop reasons
+
+| policy | tier | questions tried | done | deadline | runaway | prompt_budget | errors | max_steps | overflow | timed_out | unrecorded |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | agent-v2t | 23 | 23 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| cascade_v4 | agent-v2t | 19 | 19 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| always_g_v2t | agent-v2t | 96 | 96 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+### Agent tier: answers without evidence gathered
+
+| policy | no tool call | no plant item touched |
+|---|---|---|
+| cascade_v4_iso | 0 (0 correct) | 5 (5 correct) |
+| cascade_v4 | 0 (0 correct) | 5 (5 correct) |
+| always_g_v2t | 0 (0 correct) | 6 (5 correct) |
+
+### Agent tier: a tag named in the question was never touched
+
+| policy | questions naming a tag | never touched |
+|---|---|---|
+| cascade_v4_iso | 17 | 1 (1 correct) |
+| cascade_v4 | 13 | 1 (1 correct) |
+| always_g_v2t | 80 | 2 (1 correct) |
+
+### UPSTREAM_ISOLATION: secondary score, control valves do not isolate
+
+Secondary only (offline re-score); the primary score is the gold key as built. Secondary reference = gold minus control valves.
+
+| policy | primary correct | secondary correct |
+|---|---|---|
+| cascade_v4_iso | 4/4 | 0/2 |
+| cascade_v4 | 0/4 | 0/2 |
+| always_g_v2t | 4/4 | 0/2 |
+| always_c_v2t | 0/4 | 0/2 |
+
+### Made-up yes (BOOLEAN questions whose gold is no)
+
+| policy | gold-no questions | answered yes |
+|---|---|---|
+| cascade_v4_iso | 5 | 0 |
+| cascade_v4 | 5 | 0 |
+| always_g_v2t | 5 | 0 |
+| always_c_v2t | 5 | 0 |
+
+### Breakdowns (correct / questions)
+
+#### By need label
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| DOWNSTREAM_ALL | 3/8 | 3/8 | 4/8 | 3/8 |
+| GENERIC | 19/20 | 19/20 | 20/20 | 12/20 |
+| ITEM | 19/19 | 19/19 | 19/19 | 19/19 |
+| NEIGHBOURS_DOWNSTREAM | 5/5 | 5/5 | 5/5 | 5/5 |
+| PATH | 11/12 | 11/12 | 11/12 | 10/12 |
+| SIGNAL_CHAIN | 12/12 | 12/12 | 12/12 | 11/12 |
+| UNIT_SCOPE | 12/12 | 12/12 | 11/12 | 10/12 |
+| UPSTREAM_ALL | 4/4 | 4/4 | 4/4 | 4/4 |
+| UPSTREAM_TO_FIRST_VALVE | 4/4 | 0/4 | 4/4 | 0/4 |
+
+#### By family
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| CONNECTED | 4/4 | 4/4 | 3/4 | 4/4 |
+| COUNT_IN_UNIT | 4/4 | 4/4 | 4/4 | 4/4 |
+| CROSS_UNIT | 4/4 | 4/4 | 3/4 | 4/4 |
+| DOWNSTREAM_IN_UNIT | 3/4 | 3/4 | 4/4 | 3/4 |
+| DOWNSTREAM_ISOLATION | 0/4 | 0/4 | 0/4 | 0/4 |
+| FEEDING_UNITS | 4/4 | 4/4 | 4/4 | 2/4 |
+| FIRST_MEETING_POINT | 4/4 | 4/4 | 4/4 | 3/4 |
+| FLOW_PATH | 3/4 | 3/4 | 4/4 | 3/4 |
+| INSTRUMENTS_OF_ITEM | 4/4 | 4/4 | 4/4 | 4/4 |
+| LOOKUP_TYPE | 4/4 | 4/4 | 4/4 | 4/4 |
+| LOOKUP_UNIT | 4/4 | 4/4 | 4/4 | 4/4 |
+| LOOPS_NEAR_ITEM | 3/4 | 3/4 | 4/4 | 1/4 |
+| LOOP_ACTUATED_VALVE | 4/4 | 4/4 | 4/4 | 4/4 |
+| LOOP_MEASURED_EQUIPMENT | 4/4 | 4/4 | 4/4 | 3/4 |
+| NEIGHBOURS_DOWNSTREAM | 4/4 | 4/4 | 4/4 | 4/4 |
+| NO_PATH | 4/4 | 4/4 | 4/4 | 3/4 |
+| ROUTE_AVOIDING | 4/4 | 4/4 | 4/4 | 3/4 |
+| SAME_UNIT | 4/4 | 4/4 | 4/4 | 4/4 |
+| SHEETS_OF_TAG | 4/4 | 4/4 | 4/4 | 4/4 |
+| UNANSWERABLE_TAG | 4/4 | 4/4 | 4/4 | 4/4 |
+| UNITS_REACHED | 4/4 | 4/4 | 4/4 | 4/4 |
+| UPSTREAM_ISOLATION | 4/4 | 0/4 | 4/4 | 0/4 |
+| UPSTREAM_SOURCES | 4/4 | 4/4 | 4/4 | 4/4 |
+| VALVES_ON_PATH | 4/4 | 4/4 | 4/4 | 1/4 |
+
+#### By k bin
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| k=0 | 37/43 | 35/43 | 38/43 | 32/43 |
+| k=1-2 | 35/35 | 33/35 | 34/35 | 28/35 |
+| k>=3 | 9/10 | 9/10 | 10/10 | 7/10 |
+| unanswerable | 8/8 | 8/8 | 8/8 | 7/8 |
