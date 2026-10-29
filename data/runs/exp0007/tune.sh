@@ -155,8 +155,11 @@ require_final_start() {
   last=$(ls -d $X/tune/rounds/r* | sort | tail -1)
   [ -f $last/DONE ] || die "the last round ($last) is not done"
   # frozen: the V2T system-side files are exactly the last round's (a benchmark-side change does not count)
-  v2t_system_changed_since "$(cat $last/commit)" \
-    && die "a V2T system file (tune_lib.sh V2T_FROZEN_FILES) or inputs/ changed since the last round's commit $(cat $last/commit): V2T is not frozen"
+  # an `if`, not `cmd && die`: under `set -e` a false `cmd` as the function's last command would end the
+  # script silently with status 1 exactly when the check passes
+  if v2t_system_changed_since "$(cat $last/commit)"; then
+    die "a V2T system file (tune_lib.sh V2T_FROZEN_FILES) or inputs/ changed since the last round's commit $(cat $last/commit): V2T is not frozen"
+  fi
 }
 
 final_plant() {  # final_plant <corpus> <sheets> <seed>
