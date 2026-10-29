@@ -7,6 +7,7 @@ None of this reads an equipment attribute (ADR-0021, ADR-0018 A1) — only
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
 
 import networkx as nx
@@ -49,13 +50,29 @@ def next_path_items(plant: nx.DiGraph[str], node_id: str) -> list[ItemHop]:
     successors in node-id order), so the result is deterministic. On a v1 plant this equals
     `send_to_successors`, hop for hop.
     """
+    return _walk_to_items(plant, node_id, send_to_successors)
+
+
+def previous_path_items(plant: nx.DiGraph[str], node_id: str) -> list[ItemHop]:
+    """The items that send material to `node_id` directly: the mirror of `next_path_items`.
+
+    Each hop's `via` is in flow order (from the returned item towards `node_id`).
+    """
+    hops = _walk_to_items(plant, node_id, send_to_predecessors)
+    return [ItemHop(hop.item_id, tuple(reversed(hop.via))) for hop in hops]
+
+
+def _walk_to_items(
+    plant: nx.DiGraph[str], node_id: str, step: Callable[[nx.DiGraph[str], str], list[str]]
+) -> list[ItemHop]:
+    """Breadth-first from `node_id` along `step`, passing fittings and stopping at items."""
     found: dict[str, ItemHop] = {}
     seen = {node_id}
     frontier: list[tuple[str, tuple[str, ...]]] = [(node_id, ())]
     while frontier:
         next_frontier: list[tuple[str, tuple[str, ...]]] = []
         for current, via in frontier:
-            for successor in send_to_successors(plant, current):
+            for successor in step(plant, current):
                 if successor in seen:
                     continue
                 if is_path_item(plant, successor):

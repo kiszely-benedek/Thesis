@@ -17,11 +17,11 @@ from plantgraph.graph.schema import EQUIPMENT_CLASSES, VALVE_CLASSES, Relation
 from plantgraph.qa.models import AnswerType, Question, QuestionFamily
 from plantgraph.qa.questions.common import (
     build_question,
+    next_path_items,
     nodes_of_classes,
+    previous_path_items,
     relation_predecessors,
     relation_successors,
-    send_to_predecessors,
-    send_to_successors,
     unit_of,
 )
 from plantgraph.qa.questions.evidence import Evidence, SheetIndex
@@ -190,8 +190,8 @@ def loops_near_item_candidates(
 ) -> list[Question]:
     """One candidate per item next to at least one valve that a control loop actuates.
 
-    Reference path: item `-send_to-` valve (either direction) `<-control-` actuator
-    `<-send_signal_to-` controller; the answer is the controllers' tags.
+    Reference path: item `-send_to-` valve (either direction, through untagged fittings)
+    `<-control-` actuator `<-send_signal_to-` controller; the answer is the controllers' tags.
     """
     index = SheetIndex.from_sheets(sheets, manifest)
     questions = []
@@ -226,10 +226,10 @@ def _loops_around(
     nodes = {item_id}
     edges: set[tuple[str, str]] = set()
     loop_tags: set[str] = set()
-    for valve_id, edge in _adjacent_valves(plant, item_id):
+    for valve_id, line_edges in _adjacent_valves(plant, item_id):
         for actuator_id, controller_id in _loop_chains(plant, valve_id):
-            nodes |= {valve_id, actuator_id, controller_id}
-            edges |= {edge, (actuator_id, valve_id), (controller_id, actuator_id)}
+            nodes |= {valve_id, actuator_id, controller_id, *(n for e in line_edges for n in e)}
+            edges |= {*line_edges, (actuator_id, valve_id), (controller_id, actuator_id)}
             loop_tags.add(str(plant.nodes[controller_id]["tag"]))
     return nodes, edges, loop_tags
 
@@ -243,8 +243,24 @@ def _loop_chains(plant: nx.DiGraph[str], valve_id: str) -> list[tuple[str, str]]
     ]
 
 
-def _adjacent_valves(plant: nx.DiGraph[str], item_id: str) -> list[tuple[str, tuple[str, str]]]:
-    """Valves one `send_to` edge from `item_id`, either direction, with that edge."""
-    found = [(v, (item_id, v)) for v in send_to_successors(plant, item_id)]
-    found += [(v, (v, item_id)) for v in send_to_predecessors(plant, item_id)]
-    return [(v, edge) for v, edge in found if plant.nodes[v]["node_class"] in VALVE_CLASSES]
+def _adjacent_valves(
+    plant: nx.DiGraph[str], item_id: str
+) -> list[tuple[str, list[tuple[str, str]]]]:
+    """Valves directly connected to `item_id`, either direction, with the edges joining them.
+
+    "Directly" looks through untagged fittings (a tee), as NEIGHBOURS_DOWNSTREAM does, so the
+    edges run through the fittings. On a v1 plant, which has none, this is the one `send_to` edge.
+    """
+    found = [
+        (hop.item_id, _chain_edges([item_id, *hop.via, hop.item_id]))
+        for hop in next_path_items(plant, item_id)
+    ]
+    found += [
+        (hop.item_id, _chain_edges([hop.item_id, *hop.via, item_id]))
+        for hop in previous_path_items(plant, item_id)
+    ]
+    return [(v, edges) for v, edges in found if plant.nodes[v]["node_class"] in VALVE_CLASSES]
+
+
+def _chain_edges(chain: list[str]) -> list[tuple[str, str]]:
+    return list(zip(chain, chain[1:], strict=False))

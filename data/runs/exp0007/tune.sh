@@ -15,8 +15,8 @@
 #       FREE prepare of the final step: builds V (X100g2s212, X1000g2s213), draws their questions, writes
 #       + prints the caps. Seeds of V are refused without --final-v; test seeds 5000-5999 never.
 #   sh data/runs/exp0007/tune.sh --final-v --allow-paid-calls --cap-file data/runs/exp0007/tune/final/caps_final.json --cap-sha256 <hash>
-#       PAID, ONCE: the frozen V2T (both settings) and F1 on V; refuses to run again. src/ and inputs/
-#       must equal the last round's commit.
+#       PAID, ONCE: the frozen V2T (both settings) and F1 on V; refuses to run again. The V2T system files
+#       (tune_lib.sh V2T_FROZEN_FILES) and inputs/ must equal the last round's commit.
 # Never touches the user's `neo4j` database. Question files are never reworded or hand-edited.
 set -eu
 cd "$(git rev-parse --show-toplevel)"
@@ -154,9 +154,9 @@ require_final_start() {
   [ "$CAP_FILE" = $S/caps_final.json ] || die "expected --cap-file $S/caps_final.json, found $CAP_FILE"
   last=$(ls -d $X/tune/rounds/r* | sort | tail -1)
   [ -f $last/DONE ] || die "the last round ($last) is not done"
-  # frozen: the system's code and inputs are exactly the last round's
-  git diff --quiet "$(cat $last/commit)" -- src data/runs/exp0007/inputs \
-    || die "src/ or inputs/ changed since the last round's commit $(cat $last/commit): V2T is not frozen"
+  # frozen: the V2T system-side files are exactly the last round's (a benchmark-side change does not count)
+  v2t_system_changed_since "$(cat $last/commit)" \
+    && die "a V2T system file (tune_lib.sh V2T_FROZEN_FILES) or inputs/ changed since the last round's commit $(cat $last/commit): V2T is not frozen"
 }
 
 final_plant() {  # final_plant <corpus> <sheets> <seed>

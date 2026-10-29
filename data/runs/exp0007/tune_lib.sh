@@ -94,3 +94,34 @@ free_plant_checks() {
     --ingest-json "$AG_CORPORA/$fc_corpus/ingest.json" --questions "$QROOT/$fc_corpus/questions.jsonl" \
     --min-share 1.0 || echo "WARNING: API-02 below 1.0 on $fc_corpus (reported, not a gate here): read the table above"
 }
+
+# The V2T system side: everything a V2T run executes (pipeline, plant API, agent, strategies, prompts, cascade,
+# store) and nothing on the benchmark side (src/plantgraph/qa/questions/, the gold-side harness files: gold.py,
+# canonical_programs.py, need_gold.py, routing_gold.py, oracle_need.py, *_fidelity.py, api_*.py, family_meta.py).
+# A change to a gold or question file may land after the last round; a change to any file below may not.
+V2T_FROZEN_FILES=${V2T_FROZEN_FILES:-"
+  src/plantgraph/adapters src/plantgraph/benchmark src/plantgraph/graph src/plantgraph/ingest
+  src/plantgraph/llm src/plantgraph/resolution src/plantgraph/store
+  src/plantgraph/qa/agent src/plantgraph/qa/cascade src/plantgraph/qa/plant_api
+  src/plantgraph/qa/prompts src/plantgraph/qa/strategies
+  src/plantgraph/qa/class_vocabulary.py src/plantgraph/qa/context_budget.py src/plantgraph/qa/context_render.py
+  src/plantgraph/qa/corpus.py src/plantgraph/qa/cypher.py src/plantgraph/qa/cypher_guard.py
+  src/plantgraph/qa/final_answer.py src/plantgraph/qa/final_answer_variants.py src/plantgraph/qa/fit.py
+  src/plantgraph/qa/graph_view.py src/plantgraph/qa/models.py src/plantgraph/qa/neo4j_view.py
+  src/plantgraph/qa/primer.py src/plantgraph/qa/schema_text.py src/plantgraph/qa/schema_text_lines.py
+  src/plantgraph/qa/scoring.py src/plantgraph/qa/serialize.py src/plantgraph/qa/tag_check.py
+  src/plantgraph/qa/unit_router.py
+  src/plantgraph/qa/harness/attempt.py src/plantgraph/qa/harness/attempt_models.py
+  src/plantgraph/qa/harness/clients.py src/plantgraph/qa/harness/corpus_record.py
+  src/plantgraph/qa/harness/cypher_setup.py src/plantgraph/qa/harness/fill.py
+  src/plantgraph/qa/harness/freeze.py src/plantgraph/qa/harness/pool.py
+  src/plantgraph/qa/harness/question_set.py src/plantgraph/qa/harness/registry.py
+  src/plantgraph/qa/harness/run_dir.py src/plantgraph/qa/harness/runner.py
+  src/plantgraph/qa/harness/spend_cap.py src/plantgraph/qa/harness/usage_meter.py
+"}
+
+# v2t_system_changed_since <commit>: succeeds (status 0) when a V2T system file or the run inputs differ from <commit>.
+v2t_system_changed_since() {
+  # shellcheck disable=SC2086
+  ! git diff --quiet "$1" -- $V2T_FROZEN_FILES ${IN:-data/runs/exp0007/inputs}
+}

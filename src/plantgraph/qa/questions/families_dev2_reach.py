@@ -27,6 +27,7 @@ from plantgraph.qa.questions.evidence import Evidence, SheetIndex
 from plantgraph.qa.questions.families_aggregate import COUNTED_CLASSES
 from plantgraph.qa.questions.families_flow import (
     Reached,
+    layer_sort_tags,
     one_target_per_bin,
     path_to,
     reach_from,
@@ -60,9 +61,10 @@ def connected_candidates(
     index = SheetIndex.from_sheets(sheets, manifest)
     successors = {node_id: send_to_successors(plant, node_id) for node_id in plant.nodes}
     items = nodes_of_classes(plant, EQUIPMENT_CLASSES)
+    tags = layer_sort_tags(plant)
     questions: list[Question] = []
     for source_id in items:
-        reached = reach_from(plant, successors, source_id, index)
+        reached = reach_from(plant, successors, source_id, index, tags=tags)
         rng = random.Random(f"{seed}:CONNECTED:{source_id}")
         yes = _yes_questions(reached, source_id, items, rng)
         no = _no_questions(reached, source_id, items, rng)

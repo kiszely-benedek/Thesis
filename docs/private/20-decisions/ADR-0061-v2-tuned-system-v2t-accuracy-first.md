@@ -166,3 +166,15 @@ The agent tier and every other V2T change are shared; only the Cypher tier's tim
 differ, so each tuning round runs the Cypher tier twice (≈ $0.08 extra per 163 questions at the measured
 $0.000475/q) and the agent tier once. Both settings are tuned on T and measured once on V; which one is frozen at
 E7 for R4/R5 (or both, as two labelled systems) is decided by the user after V, not by the results on test data.
+
+**After tuning (user, 2026-10-29, "1A, 2 gyorsítás"):**
+
+- Tuning ended after round 3 (stop rule 1): cascade_v4_iso 159/163 within 120 s (A), 158/163 uncut (B) on T;
+  spend about $1.30 over three rounds.
+- **LOOPS_NEAR_ITEM definition (G, decided before any V or test question is drawn):** on v2 a valve is "directly
+  connected" to an item when they are adjacent in the line view, i.e. through untagged fittings, the same rule
+  NEIGHBOURS_DOWNSTREAM already uses (T12). v1 plants have no such fittings, so every v1 question set stays
+  byte-identical (pinned by `tests/test_v1_question_goldens.py`). The change is in the gold, not in the system;
+  it is reported as a definition correction, and T's round-3 runs are re-scored under it for the record only.
+- Question generation at ~1,000 sheets is made fast enough before the V and R5 draws (it took 16,440 s of build
+  time at D1000g2 in R0).

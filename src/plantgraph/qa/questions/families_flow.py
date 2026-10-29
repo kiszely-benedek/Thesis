@@ -99,13 +99,15 @@ def flow_path_candidates(
     """
     index = SheetIndex.from_sheets(sheets, manifest)
     successors = {node_id: send_to_successors(plant, node_id) for node_id in plant.nodes}
+    path_items = {node_id for node_id in plant.nodes if is_path_item(plant, node_id)}
+    tags = layer_sort_tags(plant)
     questions = []
     for source_id, source_tag in tagged_nodes_by_tag(plant):
-        if not is_path_item(plant, source_id):
+        if source_id not in path_items:
             continue
-        reached = reach_from(plant, successors, source_id, index)
+        reached = reach_from(plant, successors, source_id, index, tags=tags)
         del reached[source_id]  # a path from a node to itself is not a question
-        items_reached = {n: r for n, r in reached.items() if is_path_item(plant, n)}
+        items_reached = {n: r for n, r in reached.items() if n in path_items}
         rng = random.Random(f"{seed}:{source_id}")  # one stream per source: draws stay independent
         for target_id in one_target_per_bin(items_reached, rng):
             path = path_to(reached, source_id, target_id)
@@ -179,11 +181,22 @@ def path_to(reached: dict[str, Reached], source_id: str, target_id: str) -> list
     return path[::-1]
 
 
+def layer_sort_tags(plant: nx.DiGraph[str]) -> dict[str, str]:
+    """Node id -> the string `reach_from` ranks it by: its tag, or its id for an untagged fitting.
+
+    Built once per plant and passed to every `reach_from` call, which would otherwise look each
+    tag up through the graph on every ranked layer (the slowest step at 1,000 sheets).
+    """
+    return {node_id: str(data.get("tag", node_id)) for node_id, data in plant.nodes(data=True)}
+
+
 def reach_from(
     plant: nx.DiGraph[str],
     successors: dict[str, list[str]],
     source_id: str,
     index: SheetIndex,
+    *,
+    tags: dict[str, str] | None = None,
 ) -> dict[str, Reached]:
     """Every node reachable from `source_id` over `send_to`, by a shortest path.
 
@@ -196,7 +209,8 @@ def reach_from(
 
     Comparing two parents' tag sequences would cost a path rebuild per tie, and a v2 plant has
     many ties (parallel branches between two tees). Instead each layer is ranked once, so a
-    comparison is one integer test: see `_rank_layer`.
+    comparison is one integer test: see `_rank_layer`. `tags` (`layer_sort_tags`) only speeds up
+    the ranking; without it each tag is read from `plant`, with the same result.
     """
     reached = {source_id: Reached(parent=None, k=0)}
     rank = {source_id: 0}
@@ -206,7 +220,7 @@ def reach_from(
         for node_id in frontier:
             _offer_successors(successors, node_id, reached, found, index, rank)
         reached.update(found)
-        rank = _rank_layer(plant, found, rank)
+        rank = _rank_layer(plant, found, rank, tags)
         frontier = sorted(found)
     return reached
 
@@ -226,8 +240,16 @@ def _offer_successors(
         current = found.get(successor_id)
         if current is not None and not _outranks(rank, node_id, current):
             continue
-        k = reached[node_id].k + index.crosses(node_id, successor_id)
+        k = reached[node_id].k + _crosses(index, node_id, successor_id)
         found[successor_id] = Reached(parent=node_id, k=k)
+
+
+def _crosses(index: SheetIndex, source_id: str, target_id: str) -> bool:
+    """`index.crosses`, with the dict lookups inline: this runs once per offered edge."""
+    home = index.home
+    if source_id in home and target_id in home:
+        return home[source_id] != home[target_id]
+    return index.crosses(source_id, target_id)  # a node on no sheet: raises the descriptive error
 
 
 def _outranks(rank: dict[str, int], new_parent: str, current: Reached) -> bool:
@@ -238,7 +260,10 @@ def _outranks(rank: dict[str, int], new_parent: str, current: Reached) -> bool:
 
 
 def _rank_layer(
-    plant: nx.DiGraph[str], layer: dict[str, Reached], parent_rank: dict[str, int]
+    plant: nx.DiGraph[str],
+    layer: dict[str, Reached],
+    parent_rank: dict[str, int],
+    tags: dict[str, str] | None,
 ) -> dict[str, int]:
     """Rank one BFS layer by the tag sequence of its paths (0 = smallest; equal sequences tie).
 
@@ -251,7 +276,8 @@ def _rank_layer(
         parent = layer[node_id].parent
         if parent is None:
             raise ValueError(f"expected a parent for {node_id!r} in a layer past the source")
-        return parent_rank[parent], str(plant.nodes[node_id].get("tag", node_id))
+        tag = tags[node_id] if tags is not None else str(plant.nodes[node_id].get("tag", node_id))
+        return parent_rank[parent], tag
 
     if len(layer) == 1:  # most layers of a long chain: nothing to compare
         return dict.fromkeys(layer, 0)

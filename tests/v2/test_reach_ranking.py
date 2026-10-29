@@ -13,7 +13,7 @@ from corpus_v2 import corpus
 from plantgraph.graph.schema import EQUIPMENT_CLASSES
 from plantgraph.qa.questions.common import nodes_of_classes, send_to_successors
 from plantgraph.qa.questions.evidence import SheetIndex
-from plantgraph.qa.questions.families_flow import reach_from
+from plantgraph.qa.questions.families_flow import layer_sort_tags, reach_from
 
 
 def _smallest_tag_sequence_parents(
@@ -50,7 +50,10 @@ def test_ranked_layers_choose_the_same_parents_as_comparing_tag_sequences() -> N
     successors = {node_id: send_to_successors(plant, node_id) for node_id in plant.nodes}
     sources = nodes_of_classes(plant, EQUIPMENT_CLASSES)[:12]
     assert sources
+    tags = layer_sort_tags(plant)
     for source in sources:
         reached = reach_from(plant, successors, source, index)
         expected = _smallest_tag_sequence_parents(plant, successors, source)
         assert {n: r.parent for n, r in reached.items()} == expected, source
+        # the prebuilt tag table is only a speed-up: same parents, same k
+        assert reach_from(plant, successors, source, index, tags=tags) == reached, source
