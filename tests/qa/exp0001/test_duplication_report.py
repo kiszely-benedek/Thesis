@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import pytest
 
+from plantgraph.qa.cascade.policy import load_policies
 from plantgraph.qa.exp0001.duplication_report import (
+    SYSTEM_POLICIES,
     build_duplication_report,
     pair_by_stem,
     parse_points,
@@ -73,3 +75,13 @@ def test_points_are_parsed_and_malformed_ones_refused() -> None:
     assert parse_points("A=0,B=25") == [("A", 0), ("B", 25)]
     with pytest.raises(ValueError, match="H100g2d0=0"):
         parse_points("A")
+
+
+def test_the_report_names_its_policy_and_the_systems_pick_theirs() -> None:
+    scored = [("H100g2", 25, _corpus("H100g2", {"a": True})), ("A", 0, _corpus("A", {"a": True}))]
+    text = render_duplication_markdown(build_duplication_report(scored, "cascade_v4_iso"))
+
+    assert text.startswith("# cascade_v4_iso at three duplication rates")
+    assert render_duplication_markdown(build_duplication_report(scored)).startswith("# cascade_v3")
+    for name, directory in SYSTEM_POLICIES.values():
+        assert name in load_policies(directory)

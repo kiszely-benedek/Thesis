@@ -19,11 +19,15 @@ from report_toy import (
     write_run,
 )
 
+from plantgraph.qa.anchors import Anchors
+from plantgraph.qa.cascade import join
 from plantgraph.qa.cascade.models import AcceptRule, CascadePolicy, TierSpec
+from plantgraph.qa.exp0001 import report_load
 from plantgraph.qa.exp0001.ex01_cli import main
 from plantgraph.qa.exp0001.report import build_ladder_report
-from plantgraph.qa.exp0001.report_load import CorpusInputs, score_corpus
+from plantgraph.qa.exp0001.report_load import RUN_ARM_OF_STRATEGY, CorpusInputs, score_corpus
 from plantgraph.qa.exp0001.report_models import AG, CASCADE, CTX_HIGH, CTX_LOW, CYP
+from plantgraph.qa.need.labels import NeedLabel
 
 FAMILIES = {"1": "CONNECTED", "2": "CONNECTED", "3": "FLOW_PATH", "4": "FLOW_PATH"}
 
@@ -203,3 +207,32 @@ def test_report_command_end_to_end(tmp_path: Path, capsys: pytest.CaptureFixture
     assert figure[0].startswith("corpus_id,n_sheets,log10_sheets,arm,scope")
     assert any(line.startswith("H3,3,") and ",cascade_v3," in line for line in figure)
     assert "X3 REPORTED" in capsys.readouterr().out
+
+
+def test_a_policy_routed_by_need_label_reads_the_labels_from_the_question_text(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """cascade_v4_iso starts some questions at the agent: the join needs a label per question."""
+    seen: list[str] = []
+    monkeypatch.setattr(report_load, "load_corpus_view", lambda root, cid: seen.append(cid) or None)
+    monkeypatch.setattr(report_load, "anchor_finder", lambda view: lambda text: Anchors())
+    monkeypatch.setattr(join, "classify_need", lambda text, finder: NeedLabel.GENERIC)
+    dirs = _write_size(tmp_path, "H1", {CYP, AG})
+    cascade = policies()["cascade_v3"]
+    routed = cascade.model_copy(
+        update={"name": "routed", "start_tier_by_label": {NeedLabel.UPSTREAM_TO_FIRST_VALVE: 1}}
+    )
+
+    unrouted_scores = score_corpus(_inputs(tmp_path, "H1", dirs), {CASCADE: cascade}, 120.0)
+    assert seen == []  # an unrouted policy never reads the corpus graph
+    routed_scores = score_corpus(_inputs(tmp_path, "H1", dirs), {CASCADE: routed}, 120.0)
+
+    assert seen == ["H1"]
+    assert [s.correct for s in routed_scores.scores[CASCADE]] == [
+        s.correct for s in unrouted_scores.scores[CASCADE]
+    ]  # no question carries the first-valve label, so the routing changes nothing here
+
+
+def test_v2t_strategies_map_to_the_same_run_arms_as_f1s() -> None:
+    assert RUN_ARM_OF_STRATEGY["cypher_rag_lines"] == RUN_ARM_OF_STRATEGY["cypher_rag_plant"]
+    assert RUN_ARM_OF_STRATEGY["graph_agent_lines"] == RUN_ARM_OF_STRATEGY["graph_agent_low_steps"]

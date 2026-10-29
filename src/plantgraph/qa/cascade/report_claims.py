@@ -10,17 +10,48 @@ from __future__ import annotations
 
 import math
 
+from pydantic import BaseModel, ConfigDict
+
 from plantgraph.qa.cascade.evaluate import LatencyBound
 from plantgraph.qa.cascade.report_models import Verdict
 from plantgraph.qa.cascade.stats import Interval
 from plantgraph.qa.models import QuestionFamily
 
-#: The policy under test: the single primary claim (Q4) is about this one.
-PRIMARY_POLICY = "cascade_v3"
-#: K1's comparator (always send the question to the agent tier) and Q5's typed-API arm.
-TIER2_COMPARATOR = "always_g_luna"
-#: Q5's free-form-Cypher arm ("Cypher alone").
-CYPHER_COMPARATOR = "always_c_luna"
+
+class ClaimPolicies(BaseModel):
+    """Which policy each sealed claim is about (names as in the policy files)."""
+
+    model_config = ConfigDict(frozen=True)
+
+    #: The policy under test: the single primary claim (Q4) is about this one.
+    primary: str
+    #: K1's comparator (always send the question to the agent tier) and Q5's typed-API arm.
+    tier2_comparator: str
+    #: Q5's free-form-Cypher arm ("Cypher alone").
+    cypher_comparator: str
+    #: K2's policy: the one whose random-escalation reference is used. A policy routed by need
+    #: label has no such reference (`report_references._has_references`), so V2T names its
+    #: unrouted sibling here.
+    random_reference: str
+
+
+#: The frozen F1 system (sealed on v1, ADR-0053).
+F1_CLAIMS = ClaimPolicies(
+    primary="cascade_v3",
+    tier2_comparator="always_g_luna",
+    cypher_comparator="always_c_luna",
+    random_reference="cascade_v3",
+)
+#: The tuned V2T system (ADR-0061); its reference policies are in `policies_v2t/references/`.
+V2T_CLAIMS = ClaimPolicies(
+    primary="cascade_v4_iso",
+    tier2_comparator="always_g_v2t",
+    cypher_comparator="always_c_v2t",
+    random_reference="cascade_v4",
+)
+CLAIM_PRESETS = {"f1": F1_CLAIMS, "v2t": V2T_CLAIMS}
+#: Kept for callers that mean the F1 system.
+PRIMARY_POLICY = F1_CLAIMS.primary
 
 #: ADR-0044 U2: this family is left out of every headline figure.
 HEADLINE_EXCLUDED_FAMILY = QuestionFamily.LOOP_ACTUATED_VALVE
@@ -93,10 +124,14 @@ def _verdict(
 
 
 def judge_scale_claim(
-    policy: str, scope: str, accuracy_diff: Interval, elasticity: Interval
+    policy: str,
+    scope: str,
+    accuracy_diff: Interval,
+    elasticity: Interval,
+    primary: str = PRIMARY_POLICY,
 ) -> Verdict:
-    """Q4 (primary for `PRIMARY_POLICY`) and Q4': accuracy and cost hold from small to large."""
-    rule = "Q4 (primary)" if policy == PRIMARY_POLICY else "Q4'"
+    """Q4 (primary for the `primary` policy) and Q4': accuracy and cost hold from small to large."""
+    rule = "Q4 (primary)" if policy == primary else "Q4'"
     accuracy_ok = _no_loss(accuracy_diff)
     cost_ok = elasticity.estimate < MAX_COST_ELASTICITY
     failures = []

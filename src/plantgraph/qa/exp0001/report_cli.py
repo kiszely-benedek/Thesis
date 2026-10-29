@@ -13,7 +13,13 @@ from pathlib import Path
 
 from plantgraph.qa.cascade.evaluate import DEFAULT_CUTOFF_S
 from plantgraph.qa.cascade.models import CascadePolicy
-from plantgraph.qa.cascade.policy import POLICIES_DIR, load_policies, load_policy
+from plantgraph.qa.cascade.policy import (
+    POLICIES_DIR,
+    V2T_POLICIES_DIR,
+    V2T_REFERENCES_DIR,
+    load_policies,
+    load_policy,
+)
 from plantgraph.qa.exp0001.report import LADDER_IDS, LADDER_IDS_V2, build_ladder_report
 from plantgraph.qa.exp0001.report_claims import (
     V1_BIG_PROMPTS,
@@ -54,6 +60,13 @@ def add_report_arguments(parser: argparse.ArgumentParser) -> None:
         "--h1000-sheets", type=int, default=1001, help="sheets of the figure's 'does not fit' mark"
     )
     parser.add_argument("--cutoff-s", type=float, default=DEFAULT_CUTOFF_S)
+    parser.add_argument(
+        "--system",
+        choices=["f1", "v2t"],
+        default="f1",
+        help="what the cyp / ag / cascade arms stand for (v2t: V2T-A tiers, cascade_v4_iso)",
+    )
+    parser.add_argument("--footnote", help="text appended to report.md (what was not run, and why)")
     parser.add_argument("--max-prompt-tokens", type=int, default=WallSettings().max_prompt_tokens)
     parser.add_argument("--ctx-high-policy", type=Path)
     parser.add_argument("--ctx-low-policy", type=Path)
@@ -65,16 +78,44 @@ def add_report_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--h100-tier-questions-root", type=Path, default=_SEALED / "questions")
 
 
+#: `--system` -> (cyp policy, ag policy, cascade policy) names, each with its directory.
+_SYSTEMS = {
+    "f1": (
+        (POLICIES_DIR, "always_c_luna"),
+        (POLICIES_DIR, "always_g_luna"),
+        (POLICIES_DIR, "cascade_v3"),
+    ),
+    "v2t": (
+        (V2T_REFERENCES_DIR, "always_c_v2t"),
+        (V2T_REFERENCES_DIR, "always_g_v2t"),
+        (V2T_POLICIES_DIR, "cascade_v4_iso"),
+    ),
+}
+
+
 def _policies(args: argparse.Namespace) -> dict[str, CascadePolicy]:
     inputs = args.root / "inputs"
-    shipped = load_policies(POLICIES_DIR)
+    (c_dir, c_name), (g_dir, g_name), (v_dir, v_name) = _SYSTEMS[args.system]
     return {
         CTX_HIGH: load_policy(args.ctx_high_policy or inputs / "always_ctx_high.json"),
         CTX_LOW: load_policy(args.ctx_low_policy or inputs / "always_ctx_low.json"),
-        CYP: shipped["always_c_luna"],
-        AG: shipped["always_g_luna"],
-        CASCADE: shipped["cascade_v3"],
+        CYP: load_policies(c_dir)[c_name],
+        AG: load_policies(g_dir)[g_name],
+        # the arm key stays `cascade_v3` inside the report; `_relabel` renames it in the files
+        CASCADE: load_policies(v_dir)[v_name],
     }
+
+
+def _relabel(paths: list[Path], system: str, footnote: str | None) -> None:
+    """Name the cascade arm after the system's real policy, and append the footnote to report.md."""
+    name = _SYSTEMS[system][2][1]
+    for path in paths:
+        text = path.read_text(encoding="utf-8")
+        if name != CASCADE:
+            text = text.replace(CASCADE, name)
+        if footnote and path.name == "report.md":
+            text = text.rstrip("\n") + "\n\n" + footnote + "\n"
+        path.write_text(text, encoding="utf-8")
 
 
 def _existing_runs(runs_root: Path, prefix: str, corpus_id: str) -> dict[str, Path]:
@@ -155,5 +196,9 @@ def report_command(args: argparse.Namespace) -> None:
     )
     out = args.out or args.root / "report"
     paths = write_report(report, out, args.h1000_sheets, title)
+    _relabel(paths, args.system, args.footnote)
+    shown = _SYSTEMS[args.system][2][1]
     print("\n".join(f"wrote {path}" for path in paths))
-    print("\n".join(f"{c.id} {c.verdict}: {c.value}" for c in report.claims))
+    print(
+        "\n".join(f"{c.id} {c.verdict}: {c.value}".replace(CASCADE, shown) for c in report.claims)
+    )

@@ -1,10 +1,11 @@
-"""`python -m plantgraph.qa.exp0001 duplication-report`: cascade_v3 at three duplication rates.
+"""`python -m plantgraph.qa.exp0001 duplication-report`: a cascade at three duplication rates.
 
 *Duplication* is the share of equipment that a second sheet draws again as a reference (ADR-0028).
 The same plant (same seed) is built at 0 %, 25 % (the preset) and 50 %, and the sealed run's two
 tiers answer each plant's questions. A question's **stem** is its id without the corpus prefix
 (`<family>:<anchors>`), so a question asked on two plants can be compared on the same item. The
-differences are descriptive: ADR-0028 sets no claim on them (ADR-0060).
+differences are descriptive: ADR-0028 sets no claim on them (ADR-0060). The policy is
+cascade_v3 (F1) or, with `--system v2t`, cascade_v4_iso.
 """
 
 from __future__ import annotations
@@ -17,7 +18,8 @@ from pathlib import Path
 from pydantic import BaseModel, ConfigDict
 
 from plantgraph.qa.cascade.checks import load_questions_file
-from plantgraph.qa.cascade.policy import POLICIES_DIR, load_policies
+from plantgraph.qa.cascade.models import CascadePolicy
+from plantgraph.qa.cascade.policy import POLICIES_DIR, V2T_POLICIES_DIR, load_policies
 from plantgraph.qa.cascade.report_scopes import SCOPE_HEADLINE, load_splits, scope_ids
 from plantgraph.qa.cascade.stats import Interval, interval_of, paired_bootstrap, wilson_interval
 from plantgraph.qa.exp0001.report_cells import N_BOOT, SEED
@@ -27,13 +29,18 @@ from plantgraph.qa.exp0001.report_models import AG, CASCADE, CYP, QuestionScore
 #: Run-id prefix of the sealed v2 runs (`S7-CYP-<corpus>`, `S7-AG-<corpus>`).
 RUN_PREFIX = "S7"
 DEFAULT_POINTS = "H100g2d0=0,H100g2=25,H100g2d50=50"
+#: `--system` -> (policy name, directory holding it).
+SYSTEM_POLICIES = {
+    "f1": ("cascade_v3", POLICIES_DIR),
+    "v2t": ("cascade_v4_iso", V2T_POLICIES_DIR),
+}
 
 #: A corpus's scores: (corpus id, duplication percent, headline scores).
 ScoredPoint = tuple[str, int, list[QuestionScore]]
 
 
 class RatePoint(BaseModel):
-    """cascade_v3's accuracy on the headline questions of one plant."""
+    """The policy's accuracy on the headline questions of one plant."""
 
     model_config = ConfigDict(frozen=True)
 
@@ -65,6 +72,8 @@ class DuplicationReport(BaseModel):
 
     points: list[RatePoint]
     pairs: list[StemPair]
+    #: The scored policy; the earlier reports (F1) had no field and were cascade_v3.
+    policy: str = "cascade_v3"
 
 
 def stem_of(question_id: str, corpus_id: str) -> str:
@@ -118,12 +127,14 @@ def pair_by_stem(
     )
 
 
-def build_duplication_report(scored: Sequence[ScoredPoint]) -> DuplicationReport:
+def build_duplication_report(
+    scored: Sequence[ScoredPoint], policy: str = "cascade_v3"
+) -> DuplicationReport:
     """Points and every pair of rates (higher minus lower), from the scored corpora."""
     ordered = sorted(scored, key=lambda item: item[1])
     points = [rate_point(corpus_id, percent, s) for corpus_id, percent, s in ordered]
     pairs = [pair_by_stem((b[0], b[2]), (a[0], a[2])) for a, b in combinations(ordered, 2)]
-    return DuplicationReport(points=points, pairs=pairs)
+    return DuplicationReport(points=points, pairs=pairs, policy=policy)
 
 
 def render_duplication_markdown(report: DuplicationReport) -> str:
@@ -144,7 +155,7 @@ def render_duplication_markdown(report: DuplicationReport) -> str:
             f"| {q.high} - {q.low} | {q.n_common} | {q.n_only_high} / {q.n_only_low} | "
             f"{q.delta:+.3f} [{q.ci.ci_low:+.3f}, {q.ci.ci_high:+.3f}] |"
         )
-    title = "# cascade_v3 at three duplication rates (descriptive)"
+    title = f"# {report.policy} at three duplication rates (descriptive)"
     return "\n".join([title, "", *rates, "", *pairs, ""])
 
 
@@ -168,11 +179,13 @@ def add_duplication_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--root", type=Path, required=True, help="holds questions/ corpora/ runs/")
     parser.add_argument("--points", default=DEFAULT_POINTS, help="ID=PERCENT,...")
     parser.add_argument("--cutoff-s", type=float, default=120.0)
+    parser.add_argument("--system", choices=sorted(SYSTEM_POLICIES), default="f1")
     parser.add_argument("--out", type=Path, required=True)
 
 
-def _headline_scores(inputs: CorpusInputs, cutoff_s: float) -> list[QuestionScore]:
-    policy = load_policies(POLICIES_DIR)["cascade_v3"]
+def _headline_scores(
+    inputs: CorpusInputs, policy: CascadePolicy, cutoff_s: float
+) -> list[QuestionScore]:
     scored = score_corpus(inputs, {CASCADE: policy}, cutoff_s)
     _, questions = load_questions_file(inputs.questions_root, inputs.corpus_id)
     splits = load_splits(inputs.questions_root, inputs.corpus_id, questions)
@@ -186,12 +199,14 @@ def _inputs(root: Path, corpus_id: str) -> CorpusInputs:
 
 
 def duplication_command(args: argparse.Namespace) -> None:
-    """Score cascade_v3 on every point's headline questions, write the files and print them."""
+    """Score the system's cascade on every point's headline questions, write and print."""
+    name, directory = SYSTEM_POLICIES[args.system]
+    policy = load_policies(directory)[name]
     scored = [
-        (corpus_id, percent, _headline_scores(_inputs(args.root, corpus_id), args.cutoff_s))
+        (corpus_id, percent, _headline_scores(_inputs(args.root, corpus_id), policy, args.cutoff_s))
         for corpus_id, percent in parse_points(args.points)
     ]
-    report = build_duplication_report(scored)
+    report = build_duplication_report(scored, name)
     args.out.mkdir(parents=True, exist_ok=True)
     json_text = report.model_dump_json(indent=2) + "\n"
     (args.out / "duplication.json").write_text(json_text, encoding="utf-8")

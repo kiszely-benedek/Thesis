@@ -26,6 +26,7 @@ from plantgraph.qa.cascade.labels import AnchorFinder, anchor_finder, labels_fro
 from plantgraph.qa.cascade.late_charges import late_charge_check
 from plantgraph.qa.cascade.models import CascadePolicy
 from plantgraph.qa.cascade.policy import POLICIES_DIR, load_policies
+from plantgraph.qa.cascade.report_claims import F1_CLAIMS, ClaimPolicies
 from plantgraph.qa.cascade.report_groups import breakdown, question_groups
 from plantgraph.qa.cascade.report_models import (
     CorpusReport,
@@ -249,6 +250,8 @@ def build_report(
     bound: LatencyBound | None = None,
     corpora_root: Path | None = None,
     sealed_claims: bool = False,
+    claims: ClaimPolicies = F1_CLAIMS,
+    with_baselines: bool = True,
 ) -> Report:
     """Evaluate `policies` (default: every policy file, plus the baselines) on each corpus.
 
@@ -256,7 +259,10 @@ def build_report(
     `corpora_root` (holding `<corpus>/ingest.json`) lets the report read each corpus's graph: for
     the isolation score, the named-tag diagnostic, and the rules labels of label-routed policies.
     `sealed_claims` swaps the dev rules S1-V3 for the sealed test's tables and claims (design
-    `sealed-test-run.md` section 9); it needs explicit `policies` and a `corpora_root`.
+    `sealed-test-run.md` section 9); it needs explicit `policies` and a `corpora_root`, and
+    `claims` names the policies those claims are about (F1's by default).
+    `with_baselines=False` leaves F1's always-N/C/G reference policies out (a V2T report has
+    its own always-C/G policies and would list F1's as "not evaluated").
 
     Raises:
         ValueError: `sealed_claims` without policies or without a corpora root.
@@ -266,7 +272,10 @@ def build_report(
         raise ValueError(
             "expected --policy and --corpora-root with --sealed-claims, found one missing"
         )
-    chosen = list(policies) if sealed_claims and policies else _with_baselines(policies)
+    if (sealed_claims or not with_baselines) and not policies:
+        raise ValueError("expected --policy with --sealed-claims or --no-baselines, found none")
+    own_policies = sealed_claims or not with_baselines
+    chosen = list(policies or []) if own_policies else _with_baselines(policies)
     reports: list[CorpusReport] = []
     all_joins: dict[str, dict[str, JoinedCorpus]] = {}
     sealed_corpora: list[SealedCorpus] = []
@@ -307,7 +316,7 @@ def build_report(
             corpora=reports,
             tier3=[],
             verdicts=[],
-            sealed=build_sealed(sealed_corpora, bound),
+            sealed=build_sealed(sealed_corpora, bound, claims),
         )
     s1, tallies = _tier3_verdict(all_joins)
     verdicts = [s1, *_confirmation_verdicts(reports), *_scale_verdicts(reports, bound)]

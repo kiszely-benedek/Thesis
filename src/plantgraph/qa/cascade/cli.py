@@ -18,6 +18,7 @@ from plantgraph.qa.cascade.join import (
     find_gaps,
     join_corpus,
 )
+from plantgraph.qa.cascade.limits import SETTINGS
 from plantgraph.qa.cascade.live_ask import (
     OpenCascade,
     add_ask_arguments,
@@ -28,6 +29,7 @@ from plantgraph.qa.cascade.models import CascadePolicy
 from plantgraph.qa.cascade.needed import write_needed
 from plantgraph.qa.cascade.policy import load_policy
 from plantgraph.qa.cascade.report import build_report
+from plantgraph.qa.cascade.report_claims import CLAIM_PRESETS
 from plantgraph.qa.cascade.report_render import write_report
 from plantgraph.qa.cascade.tune_cli import add_tune_arguments, tune_command
 
@@ -66,8 +68,24 @@ def _add_report_arguments(command: argparse.ArgumentParser) -> None:
     command.add_argument(
         "--cutoff-s",
         type=float,
-        default=DEFAULT_CUTOFF_S,
-        help="LB-3: answers later than this many seconds count as wrong, for every arm alike",
+        help=f"LB-3: answers later than this many seconds count as wrong, for every arm alike "
+        f"(default {DEFAULT_CUTOFF_S:g}, or the limit of --setting)",
+    )
+    command.add_argument(
+        "--setting",
+        choices=sorted(SETTINGS),
+        help="a V2T limit setting (limits.py): its limit is the cutoff",
+    )
+    command.add_argument(
+        "--claims",
+        choices=sorted(CLAIM_PRESETS),
+        default="f1",
+        help="the policies the sealed claims are about: f1 (cascade_v3) or v2t (cascade_v4_iso)",
+    )
+    command.add_argument(
+        "--no-baselines",
+        action="store_true",
+        help="do not add F1's always-N/C/G reference policies (the report holds only --policy)",
     )
     command.add_argument(
         "--corpora-root",
@@ -98,6 +116,19 @@ def _parse_corpus_run(value: str) -> tuple[str, str, TierSource]:
     return corpus, tier, source
 
 
+def _cutoff_s(args: argparse.Namespace) -> float:
+    """The setting's limit, else `--cutoff-s`, else the default; two that differ are refused."""
+    if args.setting is None:
+        return DEFAULT_CUTOFF_S if args.cutoff_s is None else float(args.cutoff_s)
+    limit = SETTINGS[args.setting].cutoff_s
+    if args.cutoff_s is not None and args.cutoff_s != limit:
+        raise SystemExit(
+            f"error: expected --cutoff-s {limit:g} for setting {args.setting}, "
+            f"found {args.cutoff_s:g}"
+        )
+    return limit
+
+
 def _run_report(args: argparse.Namespace) -> None:
     sources: dict[str, dict[str, TierSource]] = {}
     for value in args.run:
@@ -111,9 +142,11 @@ def _run_report(args: argparse.Namespace) -> None:
         sources,
         args.questions_root,
         policies,
-        LatencyBound(cutoff_s=args.cutoff_s),
+        LatencyBound(cutoff_s=_cutoff_s(args)),
         args.corpora_root,
         sealed_claims=args.sealed_claims,
+        claims=CLAIM_PRESETS[args.claims],
+        with_baselines=not args.no_baselines,
     )
     markdown, json_path = write_report(report, args.out)
     print(markdown.read_text(encoding="utf-8"))

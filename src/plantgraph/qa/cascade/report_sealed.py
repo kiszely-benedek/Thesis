@@ -13,8 +13,10 @@ from statistics import fmean
 from plantgraph.qa.cascade.evaluate import LatencyBound
 from plantgraph.qa.cascade.report_claims import (
     DEV_SPLITS,
+    F1_CLAIMS,
     SPLIT_HELD_OUT,
     SPLIT_ORDER,
+    ClaimPolicies,
 )
 from plantgraph.qa.cascade.report_models import Cell
 from plantgraph.qa.cascade.report_references import acceptance_result
@@ -124,8 +126,12 @@ def _split_tables(corpus: SealedCorpus, cutoff_s: float) -> tuple[list[SplitRow]
     return rows, gaps
 
 
-def build_sealed(corpora: Sequence[SealedCorpus], bound: LatencyBound) -> SealedReport:
+def build_sealed(
+    corpora: Sequence[SealedCorpus], bound: LatencyBound, claims: ClaimPolicies = F1_CLAIMS
+) -> SealedReport:
     """Tables T1-T4 for the corpora given; the last is the claims corpus, the first the small end.
+
+    `claims` names the policies the claims are about (default: F1's).
 
     Raises:
         ValueError: fewer than two corpora (the scale tables need a small and a large one).
@@ -149,8 +155,8 @@ def build_sealed(corpora: Sequence[SealedCorpus], bound: LatencyBound) -> Sealed
         gap_rows += gaps
     small, large = corpora[0], corpora[-1]
     scales = scale_rows(views[small.corpus_id], views[large.corpus_id], small, large)
-    pairs = paired_rows(views, bound.cutoff_s)
-    claims = claims_for(large.corpus_id, scope_rows, scales, pairs, bound)
+    pairs = paired_rows(views, bound.cutoff_s, claims)
+    verdicts = claims_for(large.corpus_id, scope_rows, scales, pairs, bound, claims)
     return SealedReport(
         claims_corpus=large.corpus_id,
         small_corpus=small.corpus_id,
@@ -165,7 +171,7 @@ def build_sealed(corpora: Sequence[SealedCorpus], bound: LatencyBound) -> Sealed
         scale_rows=scales,
         k_bin_rows=k_bin_rows(corpora, views),
         paired_rows=pairs,
-        claims=claims,
+        claims=verdicts,
         notes=_notes(corpora),
     )
 

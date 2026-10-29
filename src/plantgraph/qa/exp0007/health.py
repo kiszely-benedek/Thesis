@@ -45,6 +45,24 @@ def health_fault(counts: Counter[str]) -> str | None:
     return None
 
 
+#: ContextRAG's rule (plan section 8, stop rule 5): provider errors above 10 % stop it, and so do
+#: parse failures above 50 %; TIMED_OUT and DID_NOT_FIT are results, not faults.
+CTX_PROVIDER_ERROR_SHARE = 0.1
+CTX_PARSE_FAILURE_SHARE = 0.5
+
+
+def ctx_health_fault(counts: Counter[str]) -> str | None:
+    """Like `health_fault`, for ContextRAG (one big prompt: parse failures are tolerated more)."""
+    total = sum(counts.values())
+    if total == 0:
+        return "expected at least one row, found none"
+    if counts.get("PROVIDER_ERROR", 0) > CTX_PROVIDER_ERROR_SHARE * total:
+        return f"PROVIDER_ERROR is {counts['PROVIDER_ERROR']} of {total} rows (limit 10 %)"
+    if counts.get("PARSE_FAILURE", 0) > CTX_PARSE_FAILURE_SHARE * total:
+        return f"PARSE_FAILURE is {counts['PARSE_FAILURE']} of {total} rows (limit 50 %)"
+    return None
+
+
 def fetch_listing() -> dict[str, object]:
     """Luna's `openai` endpoint, reduced to what price and fit depend on (a free HTTP read).
 

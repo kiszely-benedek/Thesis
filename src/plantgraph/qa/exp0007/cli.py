@@ -17,6 +17,7 @@ from plantgraph.qa.exp0007 import caps as caps_module
 from plantgraph.qa.exp0007.dev_report import load_dev_report, write_dev_report
 from plantgraph.qa.exp0007.freeze_checks import files_equal, ingest_problems, pins_match_policy
 from plantgraph.qa.exp0007.health import (
+    ctx_health_fault,
     fetch_listing,
     health_fault,
     outcome_counts,
@@ -96,7 +97,7 @@ def _cmd_check_listing(args: argparse.Namespace) -> int:
 def _cmd_health(args: argparse.Namespace) -> int:
     counts = outcome_counts(args.run_dir)
     print(f"    {sum(counts.values())} rows: {dict(counts)}")
-    fault = health_fault(counts)
+    fault = ctx_health_fault(counts) if args.kind == "ctx" else health_fault(counts)
     return _fail(f"technical fault in {args.run_dir}: {fault}") if fault else 0
 
 
@@ -241,6 +242,7 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--write-if-absent", action="store_true")
     p = add("health", _cmd_health)
     p.add_argument("--run-dir", type=Path, required=True)
+    p.add_argument("--kind", choices=["tier", "ctx"], default="tier")
     p = add("filter-families", _cmd_filter_families)
     p.add_argument("--source", type=Path, required=True)
     p.add_argument("--out", type=Path, required=True)

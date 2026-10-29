@@ -1,10 +1,13 @@
 # Shared helpers of the EXP-0007 scripts (ADR-0060): sourced, never run on its own.
 # Callers cd to the repository root first. Adapted from data/runs/exp0001/lib.sh and sealed/run_sealed.sh.
 #
+# F1 helpers only: the pilot, the dev check and the guards run F1 through `tier_options`. R4 and R5 run the
+# tuned system V2T-A through v2t_lib.sh (arms, freeze, loaders); tune_lib.sh holds the V2T arm definitions.
+#
 # Each stage script sets, before calling the helpers:  S (its data directory), CACHE (its response
 # cache), EXPERIMENT (the name recorded in run_config.json), and the roots it reads
 # (CYP_CORPORA, AG_CORPORA, QROOT). Paid helpers need ALLOW_PAID=yes and a verified cap file.
-P=.venv/Scripts/python; EX="$P -m plantgraph.qa.exp0007"
+P=${E7_PYTHON:-.venv/Scripts/python}; EX="$P -m plantgraph.qa.exp0007"   # E7_PYTHON: only the script tests
 X=${E7_ROOT:-data/runs/exp0007}; IN=$X/inputs   # E7_ROOT: only to try the scripts on a scratch copy
 E1=data/runs/exp0001; SEALED=data/runs/sealed; CV1=data/runs/cv1
 die() { echo "ERROR: $*" >&2; exit 1; }
@@ -60,7 +63,7 @@ step() {  # step <name> <command...>: run once; a rerun of the script skips the 
 
 init_stage() { mkdir -p "$S/logs/steps" "$S/runs" "$S/replays"; }
 
-health() { $EX health --run-dir "$S/runs/$1" || die "$1: technical fault; read $S/logs/$1.log before anything else"; }
+health() { $EX health --run-dir "$S/runs/$1" --kind "${HEALTH_KIND:-tier}" || die "$1: technical fault; read $S/logs/$1.log before anything else"; }
 
 finish() {  # finish <run-id> <exit-code> <stage>: a smoke ends at its cap (3); a full stage must not
   case "$2:$3" in
@@ -160,13 +163,6 @@ require_guards_passed() {  # the S0 gates (with the Cypher replay) passed at thi
   [ -f $X/guards/PASSED ] || die "run guards.sh --with-neo4j first: $X/guards/PASSED is missing"
   [ "$(sed -n 1p $X/guards/PASSED)" = "$(git rev-parse HEAD)" ] || die "guards.sh passed at another commit: run it again at $(git rev-parse HEAD)"
   [ "$(sed -n 2p $X/guards/PASSED)" = "with_cypher_replay=yes" ] || die "guards.sh was run without --with-neo4j: the Cypher replay (S0-d) is required"
-}
-
-require_freeze() {  # R4 / R5: the system's identity is the explicit freeze file E7, written once by make_set.sh
-  [ -f $X/E7.commit ] && [ -f $X/E7.sha256 ] || die "no E7 freeze file: run make_set.sh on the frozen system first"
-  [ "$(git rev-parse HEAD)" = "$(cat $X/E7.commit)" ] || die "HEAD is not the frozen system's commit $(cat $X/E7.commit) (system: $(cat $X/E7.system))"
-  sha256sum -c --quiet $X/E7.sha256 || die "an input, question set or cap file changed since E7"
-  echo "frozen system: $(cat $X/E7.system) at $(cat $X/E7.commit)"
 }
 
 # the registered listing: E7's once it exists, else EXP-0001's (equal on 2026-10-27)

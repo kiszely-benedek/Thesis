@@ -16,13 +16,20 @@ from pathlib import Path
 from pydantic import BaseModel
 
 from plantgraph.qa.cascade.checks import load_questions_file
+from plantgraph.qa.cascade.corpus_checks import load_corpus_view
 from plantgraph.qa.cascade.evaluate import ScoredDecision, evaluate_policy
 from plantgraph.qa.cascade.join import JoinedCorpus, TierSource, join_corpus, require_complete
+from plantgraph.qa.cascade.labels import anchor_finder
 from plantgraph.qa.cascade.models import CascadePolicy
 from plantgraph.qa.exp0001.report_models import CTX_HIGH, CTX_LOW, QuestionScore, SizePoint
 
 #: Strategy of a tier -> the run arm whose directory holds its rows (ContextRAG: the arm itself).
-RUN_ARM_OF_STRATEGY = {"cypher_rag_plant": "cyp", "graph_agent_low_steps": "ag"}
+RUN_ARM_OF_STRATEGY = {
+    "cypher_rag_plant": "cyp",
+    "graph_agent_low_steps": "ag",
+    "cypher_rag_lines": "cyp",  # V2T (ADR-0061)
+    "graph_agent_lines": "ag",
+}
 CONTEXT_STRATEGY = "context_rag"
 
 
@@ -144,8 +151,17 @@ def _join(
     """Join with the questions root the policy's first tier was started from; require every row."""
     is_context_arm = arm in (CTX_HIGH, CTX_LOW)
     root = inputs.tier_questions_root or inputs.questions_root
+    # a policy routed by need label (cascade_v4_iso) reads each question's label from its text
+    routed = bool(policy.start_tier_by_label or policy.last_tier_by_label)
+    finder = (
+        anchor_finder(load_corpus_view(inputs.corpora_root, inputs.corpus_id)) if routed else None
+    )
     joined = join_corpus(
-        policy, sources, inputs.corpus_id, inputs.questions_root if is_context_arm else root
+        policy,
+        sources,
+        inputs.corpus_id,
+        inputs.questions_root if is_context_arm else root,
+        find_anchors=finder,
     )
     require_complete(joined)
     return joined
