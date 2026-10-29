@@ -157,31 +157,31 @@
   "counts": {
     "n_sheets": 1001,
     "n_nodes": 92056,
-    "n_relationships": 309141,
+    "n_relationships": 278664,
     "n_connector_pairs_predicted": 1715,
     "n_unresolved": 0
   },
-  "store_profile": "plant_lines",
+  "store_profile": "plant",
   "layer_counts": {
     "n_occurrences": 0,
     "n_plant_items": 90443,
     "n_structure_nodes": 1613,
     "n_drawn_as": 0,
-    "n_invariants": 5
+    "n_invariants": 2
   },
   "stage_seconds": {
-    "generate": 363.361364100012,
-    "split": 3.530537499987986,
-    "localize": 0.8864305000170134,
-    "resolve": 1.0813231999636628,
-    "plan": 4.242431199993007,
-    "load_recreate": 1.1070501999929547,
-    "load_wipe": 0.07428359996993095,
-    "load_schema": 0.19022679998306558,
-    "load_nodes": 9.7269691999536,
-    "load_relationships": 18.405596899974626,
-    "load_verify": 1.9814740999718197,
-    "load_total": 30.378566499974113
+    "generate": 806.8787094000145,
+    "split": 5.750190299993847,
+    "localize": 2.1812474000034854,
+    "resolve": 2.3157769999816082,
+    "plan": 6.22175419999985,
+    "load_recreate": 2.52874849998625,
+    "load_wipe": 0.26057660003425553,
+    "load_schema": 0.3694950999924913,
+    "load_nodes": 23.361107999982778,
+    "load_relationships": 40.65985790005652,
+    "load_verify": 2.2394782999763265,
+    "load_total": 66.89054439996835
   },
   "resolution": {
     "n_sheets": 1001,
@@ -200,23 +200,23 @@
   "load_report": {
     "corpus_id": "X1000g2s213",
     "nodes_written": 92056,
-    "relationships_written": 309141,
+    "relationships_written": 278664,
     "batch_size": 5000,
-    "wipe_s": 0.07428359996993095,
-    "schema_s": 0.19022679998306558,
-    "nodes_s": 9.7269691999536,
-    "relationships_s": 18.405596899974626,
-    "verify_s": 1.9814740999718197,
-    "total_s": 30.378566499974113,
+    "wipe_s": 0.26057660003425553,
+    "schema_s": 0.3694950999924913,
+    "nodes_s": 23.361107999982778,
+    "relationships_s": 40.65985790005652,
+    "verify_s": 2.2394782999763265,
+    "total_s": 66.89054439996835,
     "neo4j_version": "Neo4j Kernel 2026.09.0 (enterprise)",
-    "invariants_checked": 5
+    "invariants_checked": 2
   },
   "gate_equal": null,
   "gate_differences": [],
   "resolution_score": null,
   "neo4j_version": "Neo4j Kernel 2026.09.0 (enterprise)",
   "environment": {
-    "git_commit": "a11425c065615b35a6be05b8fd2722a1a08d5ec1",
+    "git_commit": "860981ee96abbf1b2f03a6f80f1726293735e748",
     "git_dirty": true,
     "machine": {
       "cpu_name": "AMD Ryzen 9 5900HX with Radeon Graphics",
@@ -225,7 +225,7 @@
       "ram_bytes": 16542019584,
       "os": "Windows-11-10.0.26200-SP0",
       "python_version": "3.12.10",
-      "power_plugged": true
+      "power_plugged": false
     },
     "clock": "perf_counter",
     "clock_resolution_s": 1e-7,
@@ -244,7 +244,7 @@
       "server.memory.query_cache.shared_cache_num_entries": "1000",
       "server.memory.query_cache.sharing_enabled": "false"
     },
-    "recorded_at": "2026-10-29T07:56:18.513212Z"
+    "recorded_at": "2026-10-29T09:28:52.838098Z"
   },
   "store_footprint": null
 }

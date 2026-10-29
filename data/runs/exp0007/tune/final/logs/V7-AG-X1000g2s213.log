@@ -1,0 +1,93 @@
+run V7-AG-X1000g2s213: 163 rows to answer, 0 already on disk
+concurrency 4: up to that many questions in flight
+paid mode: up to 163 model calls; hard spend cap 0.6 USD
+estimated cost: 0.4483 USD
+{
+  "run_id": "V7-AG-X1000g2s213",
+  "n_rows": 163,
+  "n_new_rows": 163,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "graph_agent_lines": {
+      "0": {
+        "ANSWERED": 64
+      },
+      "1": {
+        "ANSWERED": 31
+      },
+      "2": {
+        "ANSWERED": 24
+      },
+      "3-4": {
+        "ANSWERED": 10
+      },
+      "5-8": {
+        "ANSWERED": 4
+      },
+      "9-16": {
+        "ANSWERED": 4
+      },
+      "17-32": {
+        "ANSWERED": 3
+      },
+      "33+": {
+        "ANSWERED": 3
+      },
+      "unanswerable": {
+        "ANSWERED": 20
+      }
+    }
+  },
+  "routing_recall": {
+    "graph_agent_lines": 0.8811188811188811
+  },
+  "relaxed_routing_recall": {
+    "graph_agent_lines": 0.9020979020979021
+  },
+  "evidence_node_recall": {
+    "graph_agent_lines": 0.847009528023661
+  },
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {
+      "graph_agent_lines": {
+        "0": 0.96875,
+        "1": 1.0,
+        "2": 0.8333333333333334,
+        "3-4": 0.6,
+        "5-8": 0.75,
+        "9-16": 0.75,
+        "17-32": 0.3333333333333333,
+        "33+": 0.0
+      }
+    },
+    "relaxed_routing_recall": {
+      "graph_agent_lines": {
+        "0": 0.96875,
+        "1": 1.0,
+        "2": 0.8333333333333334,
+        "3-4": 0.7,
+        "5-8": 0.75,
+        "9-16": 0.75,
+        "17-32": 0.6666666666666666,
+        "33+": 0.3333333333333333
+      }
+    },
+    "evidence_node_recall": {
+      "graph_agent_lines": {
+        "0": 0.9206318517425016,
+        "1": 0.8542895617588051,
+        "2": 0.8860727728223244,
+        "3-4": 0.6060612313358309,
+        "5-8": 0.6606328320802005,
+        "9-16": 0.8435062180008271,
+        "17-32": 0.5062174087444845,
+        "33+": 0.2906467870530313
+      }
+    }
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "graph_agent_lines": 0.0013058641717791412
+  },
+  "stopped_by_spend_cap": false
+}

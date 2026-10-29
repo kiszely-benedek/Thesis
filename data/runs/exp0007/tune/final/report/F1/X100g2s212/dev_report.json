@@ -1,0 +1,350 @@
+{
+  "corpus_id": "X100g2s212",
+  "n": 163,
+  "rows": [
+    {
+      "family": "CONNECTED",
+      "n": 10,
+      "cypher_correct": 7,
+      "agent_correct": 10,
+      "cascade_correct": 10,
+      "answered_by_cypher": 6,
+      "answered_by_agent": 4
+    },
+    {
+      "family": "COUNT_IN_UNIT",
+      "n": 10,
+      "cypher_correct": 9,
+      "agent_correct": 10,
+      "cascade_correct": 10,
+      "answered_by_cypher": 9,
+      "answered_by_agent": 1
+    },
+    {
+      "family": "CROSS_UNIT",
+      "n": 10,
+      "cypher_correct": 8,
+      "agent_correct": 9,
+      "cascade_correct": 10,
+      "answered_by_cypher": 8,
+      "answered_by_agent": 2
+    },
+    {
+      "family": "DOWNSTREAM_IN_UNIT",
+      "n": 10,
+      "cypher_correct": 7,
+      "agent_correct": 5,
+      "cascade_correct": 8,
+      "answered_by_cypher": 9,
+      "answered_by_agent": 1
+    },
+    {
+      "family": "FLOW_PATH",
+      "n": 10,
+      "cypher_correct": 10,
+      "agent_correct": 3,
+      "cascade_correct": 10,
+      "answered_by_cypher": 10,
+      "answered_by_agent": 0
+    },
+    {
+      "family": "INSTRUMENTS_OF_ITEM",
+      "n": 7,
+      "cypher_correct": 3,
+      "agent_correct": 7,
+      "cascade_correct": 7,
+      "answered_by_cypher": 3,
+      "answered_by_agent": 4
+    },
+    {
+      "family": "LOOKUP_TYPE",
+      "n": 7,
+      "cypher_correct": 6,
+      "agent_correct": 7,
+      "cascade_correct": 7,
+      "answered_by_cypher": 6,
+      "answered_by_agent": 1
+    },
+    {
+      "family": "LOOKUP_UNIT",
+      "n": 7,
+      "cypher_correct": 5,
+      "agent_correct": 7,
+      "cascade_correct": 7,
+      "answered_by_cypher": 5,
+      "answered_by_agent": 2
+    },
+    {
+      "family": "LOOPS_NEAR_ITEM",
+      "n": 10,
+      "cypher_correct": 1,
+      "agent_correct": 6,
+      "cascade_correct": 6,
+      "answered_by_cypher": 1,
+      "answered_by_agent": 9
+    },
+    {
+      "family": "LOOP_ACTUATED_VALVE",
+      "n": 10,
+      "cypher_correct": 5,
+      "agent_correct": 10,
+      "cascade_correct": 10,
+      "answered_by_cypher": 5,
+      "answered_by_agent": 5
+    },
+    {
+      "family": "LOOP_MEASURED_EQUIPMENT",
+      "n": 6,
+      "cypher_correct": 1,
+      "agent_correct": 6,
+      "cascade_correct": 6,
+      "answered_by_cypher": 1,
+      "answered_by_agent": 5
+    },
+    {
+      "family": "NEIGHBOURS_DOWNSTREAM",
+      "n": 10,
+      "cypher_correct": 4,
+      "agent_correct": 5,
+      "cascade_correct": 5,
+      "answered_by_cypher": 4,
+      "answered_by_agent": 6
+    },
+    {
+      "family": "NO_PATH",
+      "n": 10,
+      "cypher_correct": 6,
+      "agent_correct": 10,
+      "cascade_correct": 10,
+      "answered_by_cypher": 0,
+      "answered_by_agent": 10
+    },
+    {
+      "family": "SAME_UNIT",
+      "n": 6,
+      "cypher_correct": 5,
+      "agent_correct": 6,
+      "cascade_correct": 6,
+      "answered_by_cypher": 5,
+      "answered_by_agent": 1
+    },
+    {
+      "family": "SHEETS_OF_TAG",
+      "n": 10,
+      "cypher_correct": 10,
+      "agent_correct": 10,
+      "cascade_correct": 10,
+      "answered_by_cypher": 10,
+      "answered_by_agent": 0
+    },
+    {
+      "family": "UNANSWERABLE_TAG",
+      "n": 10,
+      "cypher_correct": 4,
+      "agent_correct": 10,
+      "cascade_correct": 10,
+      "answered_by_cypher": 0,
+      "answered_by_agent": 10
+    },
+    {
+      "family": "UPSTREAM_ISOLATION",
+      "n": 10,
+      "cypher_correct": 0,
+      "agent_correct": 7,
+      "cascade_correct": 6,
+      "answered_by_cypher": 1,
+      "answered_by_agent": 9
+    },
+    {
+      "family": "UPSTREAM_SOURCES",
+      "n": 10,
+      "cypher_correct": 5,
+      "agent_correct": 5,
+      "cascade_correct": 7,
+      "answered_by_cypher": 5,
+      "answered_by_agent": 5
+    }
+  ],
+  "failures": [
+    {
+      "question_id": "X100g2s212:NEIGHBOURS_DOWNSTREAM:GTV-5004",
+      "family": "NEIGHBOURS_DOWNSTREAM",
+      "expected": "['GTV-5001', 'GV-5001']",
+      "got": "[]",
+      "answered_by": "agent-luna",
+      "cypher_correct": false,
+      "agent_correct": false,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X100g2s212:LOOPS_NEAR_ITEM:TK-5502",
+      "family": "LOOPS_NEAR_ITEM",
+      "expected": "['LSHH-55004']",
+      "got": "['LT-55004', 'LSHH-55004']",
+      "answered_by": "agent-luna",
+      "cypher_correct": false,
+      "agent_correct": false,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X100g2s212:NEIGHBOURS_DOWNSTREAM:GTV-22003",
+      "family": "NEIGHBOURS_DOWNSTREAM",
+      "expected": "['GTV-22002', 'GV-22001']",
+      "got": "[]",
+      "answered_by": "agent-luna",
+      "cypher_correct": false,
+      "agent_correct": false,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X100g2s212:LOOPS_NEAR_ITEM:V-4701",
+      "family": "LOOPS_NEAR_ITEM",
+      "expected": "['PIC-46008']",
+      "got": "not_present",
+      "answered_by": "agent-luna",
+      "cypher_correct": false,
+      "agent_correct": false,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X100g2s212:LOOPS_NEAR_ITEM:T-6001",
+      "family": "LOOPS_NEAR_ITEM",
+      "expected": "['LIC-59001']",
+      "got": "[]",
+      "answered_by": "agent-luna",
+      "cypher_correct": false,
+      "agent_correct": false,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X100g2s212:NEIGHBOURS_DOWNSTREAM:GTV-27002",
+      "family": "NEIGHBOURS_DOWNSTREAM",
+      "expected": "['YV-28012']",
+      "got": "[]",
+      "answered_by": "agent-luna",
+      "cypher_correct": false,
+      "agent_correct": false,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X100g2s212:LOOPS_NEAR_ITEM:EJ-3901",
+      "family": "LOOPS_NEAR_ITEM",
+      "expected": "['FIC-38006']",
+      "got": "not_present",
+      "answered_by": "agent-luna",
+      "cypher_correct": false,
+      "agent_correct": false,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X100g2s212:NEIGHBOURS_DOWNSTREAM:PSV-3010",
+      "family": "NEIGHBOURS_DOWNSTREAM",
+      "expected": "['P-301B']",
+      "got": "[]",
+      "answered_by": "agent-luna",
+      "cypher_correct": false,
+      "agent_correct": false,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X100g2s212:NEIGHBOURS_DOWNSTREAM:PSV-3014",
+      "family": "NEIGHBOURS_DOWNSTREAM",
+      "expected": "['P-301C']",
+      "got": "[]",
+      "answered_by": "agent-luna",
+      "cypher_correct": false,
+      "agent_correct": false,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X100g2s212:UPSTREAM_ISOLATION:EJ-301",
+      "family": "UPSTREAM_ISOLATION",
+      "expected": "['LV-2019', 'SWV-3001']",
+      "got": "['BFV-1001', 'BFV-1002', 'BFV-2001', 'BFV-2002', 'BFV-2003', 'BFV-3001', 'BFV-3002', 'BFV-3003', 'FV-1010', 'GTV-1001', 'GTV-1002', 'GTV-1003', 'GTV-1004', 'GTV-1005', 'GTV-1006', 'GTV-1007', 'GTV-1008', 'GTV-1009', 'GTV-1013', 'GTV-1017', 'GTV-1018', 'GTV-1019', 'GTV-2001', 'GTV-2002', 'GTV-2003', 'GTV-2004', 'GTV-2007', 'GTV-2008', 'GTV-2012', 'GTV-3001', 'GTV-3002', 'GTV-3005', 'GTV-3007', 'GTV-3008', 'GTV-3011', 'GV-1001', 'LV-2019', 'XV-1001', 'XV-1002', 'XV-1003', 'XV-1004', 'XV-1005', 'XV-1006', 'XV-1007', 'XV-1008']",
+      "answered_by": "cypher-luna",
+      "cypher_correct": false,
+      "agent_correct": true,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X100g2s212:UPSTREAM_ISOLATION:E-3702",
+      "family": "UPSTREAM_ISOLATION",
+      "expected": "['BFV-37004', 'BFV-37009', 'GTV-37003', 'GTV-37005', 'GV-37002', 'GV-37004', 'TV-37001']",
+      "got": "not_present",
+      "answered_by": "agent-luna",
+      "cypher_correct": false,
+      "agent_correct": false,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X100g2s212:DOWNSTREAM_IN_UNIT:V-1201|12",
+      "family": "DOWNSTREAM_IN_UNIT",
+      "expected": "['BFV-12001', 'BFV-12002', 'BV-12001', 'BV-12002', 'BV-12003', 'BV-12004', 'BV-12005', 'BV-12006', 'BV-12007', 'CHV-12001', 'CHV-12002', 'CHV-12003', 'E-1201', 'EA-1201', 'FV-12009', 'GTV-12001', 'GTV-12002', 'GTV-12003', 'GTV-12004', 'GTV-12005', 'GTV-12006', 'GTV-12007', 'GTV-12008', 'GTV-12009', 'GTV-12010', 'GTV-12011', 'GTV-12012', 'GTV-12013', 'GTV-12014', 'GTV-12016', 'GTV-12017', 'GTV-12018', 'GV-12001', 'H-1201', 'NV-12001', 'P-1201', 'P-1202', 'PSE-12025', 'PSV-12006', 'PSV-12024', 'PV-12007', 'V-1202', 'XV-12027']",
+      "got": "['BFV-12001', 'BFV-12002', 'BV-12001', 'BV-12002', 'BV-12003', 'BV-12004', 'BV-12005', 'BV-12006', 'BV-12007', 'CHV-12001', 'CHV-12002', 'CHV-12003', 'E-1201', 'EA-1201', 'FV-12009', 'GTV-12001', 'GTV-12002', 'GTV-12003', 'GTV-12004', 'GTV-12005', 'GTV-12006', 'GTV-12007', 'GTV-12008', 'GTV-12009', 'GTV-12010', 'GTV-12011', 'GTV-12012', 'GTV-12013', 'GTV-12014', 'GTV-12016', 'GTV-12017', 'GTV-12018', 'GV-12001', 'H-1201', 'NV-12001', 'P-1201', 'P-1202', 'PSE-12025', 'PSV-12006', 'PSV-12024', 'PV-12007', 'V-1201', 'V-1202', 'XV-12027']",
+      "answered_by": "cypher-luna",
+      "cypher_correct": false,
+      "agent_correct": false,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X100g2s212:UPSTREAM_ISOLATION:D-5801",
+      "family": "UPSTREAM_ISOLATION",
+      "expected": "['BFV-58002', 'GTV-58003', 'GTV-58019', 'GTV-58023', 'GTV-58028', 'GV-58001', 'GV-58003', 'LV-57001', 'TV-58001']",
+      "got": "not_present",
+      "answered_by": "agent-luna",
+      "cypher_correct": false,
+      "agent_correct": false,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X100g2s212:UPSTREAM_ISOLATION:E-5802",
+      "family": "UPSTREAM_ISOLATION",
+      "expected": "['BFV-58002', 'GTV-58003', 'GTV-58019', 'GTV-58023', 'GTV-58028', 'GV-58001', 'GV-58003', 'LV-57001', 'TV-58001']",
+      "got": "not_present",
+      "answered_by": "agent-luna",
+      "cypher_correct": false,
+      "agent_correct": false,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X100g2s212:UPSTREAM_SOURCES:P-301B",
+      "family": "UPSTREAM_SOURCES",
+      "expected": "['GTV-3011']",
+      "got": "['TK-301']",
+      "answered_by": "agent-luna",
+      "cypher_correct": false,
+      "agent_correct": false,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X100g2s212:DOWNSTREAM_IN_UNIT:P-5401B|54",
+      "family": "DOWNSTREAM_IN_UNIT",
+      "expected": "['BFV-54002', 'BFV-54003', 'BFV-54004', 'BFV-54005', 'BFV-54008', 'BFV-54009', 'BFV-54010', 'BFV-54011', 'BV-54001', 'BV-54002', 'BV-54003', 'BV-54008', 'BV-54009', 'BV-54010', 'CHV-54001', 'CHV-54002', 'CHV-54003', 'CHV-54004', 'CHV-54005', 'D-5401', 'E-5401', 'E-5402', 'EA-5401', 'EJ-5401A', 'EJ-5401B', 'EJ-5402A', 'EJ-5402B', 'FV-54045', 'FV-54054', 'GTV-54004', 'GTV-54006', 'GTV-54007', 'GTV-54008', 'GTV-54009', 'GTV-54011', 'GTV-54012', 'GTV-54013', 'GTV-54014', 'GTV-54015', 'GTV-54016', 'GTV-54017', 'GTV-54020', 'GTV-54021', 'GTV-54022', 'GTV-54023', 'GTV-54024', 'GTV-54025', 'GTV-54026', 'GTV-54027', 'GTV-54028', 'GTV-54029', 'GTV-54030', 'GTV-54031', 'GTV-54032', 'GTV-54033', 'GTV-54034', 'GTV-54035', 'GTV-54036', 'GTV-54037', 'GV-54002', 'GV-54003', 'GV-54004', 'LV-54056', 'NV-54002', 'NV-54003', 'NV-54004', 'P-5401A', 'P-5402A', 'P-5402B', 'PSV-54021', 'PSV-54026', 'PSV-54028', 'PV-54027', 'T-5401']",
+      "got": "['D-5401', 'E-5401', 'E-5402', 'EA-5401', 'EJ-5401A', 'EJ-5401B', 'EJ-5402A', 'EJ-5402B', 'P-5401A', 'P-5401B', 'P-5402A', 'P-5402B', 'T-5401', 'BFV-54002', 'BFV-54003', 'BFV-54004', 'BFV-54005', 'BFV-54008', 'BFV-54009', 'BFV-54010', 'BFV-54011', 'BV-54001', 'BV-54002', 'BV-54003', 'BV-54008', 'BV-54009', 'BV-54010', 'CHV-54001', 'CHV-54002', 'CHV-54003', 'CHV-54004', 'CHV-54005', 'FV-54045', 'FV-54054', 'GTV-54004', 'GTV-54006', 'GTV-54007', 'GTV-54008', 'GTV-54009', 'GTV-54011', 'GTV-54012', 'GTV-54013', 'GTV-54014', 'GTV-54015', 'GTV-54016', 'GTV-54017', 'GTV-54020', 'GTV-54021', 'GTV-54022', 'GTV-54023', 'GTV-54024', 'GTV-54025', 'GTV-54026', 'GTV-54027', 'GTV-54028', 'GTV-54029', 'GTV-54030', 'GTV-54031', 'GTV-54032', 'GTV-54033', 'GTV-54034', 'GTV-54035', 'GTV-54036', 'GTV-54037', 'GV-54002', 'GV-54003', 'GV-54004', 'LV-54056', 'NV-54002', 'NV-54003', 'NV-54004', 'PSV-54021', 'PSV-54026', 'PSV-54028', 'PV-54027']",
+      "answered_by": "cypher-luna",
+      "cypher_correct": false,
+      "agent_correct": true,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X100g2s212:UPSTREAM_SOURCES:P-901A",
+      "family": "UPSTREAM_SOURCES",
+      "expected": "['BFV-2002', 'BFV-4004', 'GTV-1005', 'GTV-1006', 'GTV-3011', 'GTV-4017', 'GTV-6004']",
+      "got": "[]",
+      "answered_by": "agent-luna",
+      "cypher_correct": false,
+      "agent_correct": false,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X100g2s212:UPSTREAM_SOURCES:P-5501C",
+      "family": "UPSTREAM_SOURCES",
+      "expected": "['BFV-12003', 'BFV-14001', 'BFV-15003', 'BFV-2002', 'BFV-22004', 'BFV-29002', 'BFV-32001', 'BFV-35001', 'BFV-37003', 'BFV-4004', 'BFV-45004', 'BFV-46004', 'BFV-51002', 'BFV-53001', 'BFV-54001', 'GTV-1005', 'GTV-1006', 'GTV-12015', 'GTV-14004', 'GTV-15001', 'GTV-15005', 'GTV-19001', 'GTV-19003', 'GTV-26005', 'GTV-29002', 'GTV-3011', 'GTV-35006', 'GTV-35009', 'GTV-36003', 'GTV-37001', 'GTV-37003', 'GTV-38004', 'GTV-39010', 'GTV-4017', 'GTV-44007', 'GTV-46016', 'GTV-51001', 'GTV-53002', 'GTV-55005', 'GTV-6004', 'PGV-11005', 'PGV-21004']",
+      "got": "['GTV-55001', 'GTV-55002', 'GTV-55005']",
+      "answered_by": "agent-luna",
+      "cypher_correct": false,
+      "agent_correct": false,
+      "outcome": "ANSWERED"
+    }
+  ]
+}

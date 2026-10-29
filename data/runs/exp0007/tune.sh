@@ -173,6 +173,7 @@ final_plant() {  # final_plant <corpus> <sheets> <seed>
 }
 
 report_final() {
+  mkdir -p $S/report   # tune-report and dev-report write into it; it did not exist on the first run
   for fin_corpus in $V1 $V2; do
     for fin_setting in A B; do
       $P -m plantgraph.qa.cascade tune-report --corpus $fin_corpus --setting $fin_setting --questions-root $QROOT \

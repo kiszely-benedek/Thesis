@@ -1,0 +1,360 @@
+{
+  "corpus_id": "X1000g2s213",
+  "n": 163,
+  "rows": [
+    {
+      "family": "CONNECTED",
+      "n": 10,
+      "cypher_correct": 6,
+      "agent_correct": 10,
+      "cascade_correct": 10,
+      "answered_by_cypher": 5,
+      "answered_by_agent": 5
+    },
+    {
+      "family": "COUNT_IN_UNIT",
+      "n": 10,
+      "cypher_correct": 7,
+      "agent_correct": 10,
+      "cascade_correct": 10,
+      "answered_by_cypher": 7,
+      "answered_by_agent": 3
+    },
+    {
+      "family": "CROSS_UNIT",
+      "n": 10,
+      "cypher_correct": 7,
+      "agent_correct": 10,
+      "cascade_correct": 10,
+      "answered_by_cypher": 7,
+      "answered_by_agent": 3
+    },
+    {
+      "family": "DOWNSTREAM_IN_UNIT",
+      "n": 10,
+      "cypher_correct": 7,
+      "agent_correct": 4,
+      "cascade_correct": 7,
+      "answered_by_cypher": 9,
+      "answered_by_agent": 1
+    },
+    {
+      "family": "FLOW_PATH",
+      "n": 10,
+      "cypher_correct": 6,
+      "agent_correct": 4,
+      "cascade_correct": 8,
+      "answered_by_cypher": 6,
+      "answered_by_agent": 4
+    },
+    {
+      "family": "INSTRUMENTS_OF_ITEM",
+      "n": 7,
+      "cypher_correct": 2,
+      "agent_correct": 7,
+      "cascade_correct": 7,
+      "answered_by_cypher": 2,
+      "answered_by_agent": 5
+    },
+    {
+      "family": "LOOKUP_TYPE",
+      "n": 7,
+      "cypher_correct": 6,
+      "agent_correct": 7,
+      "cascade_correct": 7,
+      "answered_by_cypher": 6,
+      "answered_by_agent": 1
+    },
+    {
+      "family": "LOOKUP_UNIT",
+      "n": 7,
+      "cypher_correct": 5,
+      "agent_correct": 7,
+      "cascade_correct": 7,
+      "answered_by_cypher": 5,
+      "answered_by_agent": 2
+    },
+    {
+      "family": "LOOPS_NEAR_ITEM",
+      "n": 10,
+      "cypher_correct": 3,
+      "agent_correct": 7,
+      "cascade_correct": 7,
+      "answered_by_cypher": 3,
+      "answered_by_agent": 7
+    },
+    {
+      "family": "LOOP_ACTUATED_VALVE",
+      "n": 10,
+      "cypher_correct": 5,
+      "agent_correct": 10,
+      "cascade_correct": 10,
+      "answered_by_cypher": 5,
+      "answered_by_agent": 5
+    },
+    {
+      "family": "LOOP_MEASURED_EQUIPMENT",
+      "n": 6,
+      "cypher_correct": 2,
+      "agent_correct": 6,
+      "cascade_correct": 6,
+      "answered_by_cypher": 2,
+      "answered_by_agent": 4
+    },
+    {
+      "family": "NEIGHBOURS_DOWNSTREAM",
+      "n": 10,
+      "cypher_correct": 2,
+      "agent_correct": 4,
+      "cascade_correct": 4,
+      "answered_by_cypher": 2,
+      "answered_by_agent": 8
+    },
+    {
+      "family": "NO_PATH",
+      "n": 10,
+      "cypher_correct": 7,
+      "agent_correct": 10,
+      "cascade_correct": 10,
+      "answered_by_cypher": 0,
+      "answered_by_agent": 10
+    },
+    {
+      "family": "SAME_UNIT",
+      "n": 6,
+      "cypher_correct": 4,
+      "agent_correct": 6,
+      "cascade_correct": 6,
+      "answered_by_cypher": 4,
+      "answered_by_agent": 2
+    },
+    {
+      "family": "SHEETS_OF_TAG",
+      "n": 10,
+      "cypher_correct": 9,
+      "agent_correct": 10,
+      "cascade_correct": 10,
+      "answered_by_cypher": 9,
+      "answered_by_agent": 1
+    },
+    {
+      "family": "UNANSWERABLE_TAG",
+      "n": 10,
+      "cypher_correct": 6,
+      "agent_correct": 10,
+      "cascade_correct": 10,
+      "answered_by_cypher": 0,
+      "answered_by_agent": 10
+    },
+    {
+      "family": "UPSTREAM_ISOLATION",
+      "n": 10,
+      "cypher_correct": 0,
+      "agent_correct": 8,
+      "cascade_correct": 8,
+      "answered_by_cypher": 0,
+      "answered_by_agent": 10
+    },
+    {
+      "family": "UPSTREAM_SOURCES",
+      "n": 10,
+      "cypher_correct": 4,
+      "agent_correct": 5,
+      "cascade_correct": 7,
+      "answered_by_cypher": 4,
+      "answered_by_agent": 6
+    }
+  ],
+  "failures": [
+    {
+      "question_id": "X1000g2s213:NEIGHBOURS_DOWNSTREAM:BFV-23008",
+      "family": "NEIGHBOURS_DOWNSTREAM",
+      "expected": "['FV-23055']",
+      "got": "[]",
+      "answered_by": "agent-luna",
+      "cypher_correct": false,
+      "agent_correct": false,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X1000g2s213:NEIGHBOURS_DOWNSTREAM:GTV-502006",
+      "family": "NEIGHBOURS_DOWNSTREAM",
+      "expected": "['P-50202']",
+      "got": "['STR-502011']",
+      "answered_by": "agent-luna",
+      "cypher_correct": false,
+      "agent_correct": false,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X1000g2s213:NEIGHBOURS_DOWNSTREAM:GTV-564023",
+      "family": "NEIGHBOURS_DOWNSTREAM",
+      "expected": "['P-56401']",
+      "got": "not_present",
+      "answered_by": "agent-luna",
+      "cypher_correct": false,
+      "agent_correct": false,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X1000g2s213:LOOPS_NEAR_ITEM:EA-16301",
+      "family": "LOOPS_NEAR_ITEM",
+      "expected": "['PSHH-163028']",
+      "got": "[]",
+      "answered_by": "agent-luna",
+      "cypher_correct": false,
+      "agent_correct": false,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X1000g2s213:NEIGHBOURS_DOWNSTREAM:GV-313005",
+      "family": "NEIGHBOURS_DOWNSTREAM",
+      "expected": "['T-31301']",
+      "got": "[]",
+      "answered_by": "agent-luna",
+      "cypher_correct": false,
+      "agent_correct": false,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X1000g2s213:LOOPS_NEAR_ITEM:M-57601",
+      "family": "LOOPS_NEAR_ITEM",
+      "expected": "['LSHH-577007']",
+      "got": "not_present",
+      "answered_by": "agent-luna",
+      "cypher_correct": false,
+      "agent_correct": false,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X1000g2s213:LOOPS_NEAR_ITEM:V-42501",
+      "family": "LOOPS_NEAR_ITEM",
+      "expected": "['PIC-424008']",
+      "got": "[]",
+      "answered_by": "agent-luna",
+      "cypher_correct": false,
+      "agent_correct": false,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X1000g2s213:NEIGHBOURS_DOWNSTREAM:GTV-500007",
+      "family": "NEIGHBOURS_DOWNSTREAM",
+      "expected": "['GTV-501008']",
+      "got": "not_present",
+      "answered_by": "agent-luna",
+      "cypher_correct": false,
+      "agent_correct": false,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X1000g2s213:UPSTREAM_ISOLATION:EA-57301",
+      "family": "UPSTREAM_ISOLATION",
+      "expected": "['BFV-572001', 'BFV-572002', 'GTV-572004', 'GTV-573021', 'TV-572023', 'TV-573003', 'YV-573037']",
+      "got": "['BFV-571001', 'BFV-572001', 'BFV-572002', 'BFV-573006', 'BFV-573007', 'GTV-571003', 'GTV-571008', 'GTV-571013', 'GTV-572004', 'GTV-573021', 'GTV-573022', 'GTV-573023', 'GTV-573024', 'GV-573003', 'GV-573004', 'PV-573034', 'TV-571019', 'TV-572023', 'TV-573003', 'TV-573035', 'YV-573036', 'YV-573037']",
+      "answered_by": "agent-luna",
+      "cypher_correct": false,
+      "agent_correct": false,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X1000g2s213:NEIGHBOURS_DOWNSTREAM:PSV-579014",
+      "family": "NEIGHBOURS_DOWNSTREAM",
+      "expected": "['P-57902']",
+      "got": "[]",
+      "answered_by": "agent-luna",
+      "cypher_correct": false,
+      "agent_correct": false,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X1000g2s213:DOWNSTREAM_IN_UNIT:P-47601|476",
+      "family": "DOWNSTREAM_IN_UNIT",
+      "expected": "['BFV-476002', 'BFV-476003', 'BFV-476004', 'BFV-476005', 'BFV-476006', 'BFV-476007', 'BV-476001', 'BV-476002', 'BV-476003', 'BV-476004', 'BV-476005', 'BV-476006', 'CHV-476001', 'CHV-476002', 'CHV-476003', 'CHV-476004', 'CHV-476005', 'D-47601', 'E-47601', 'EA-47601', 'FV-476041', 'FV-476049', 'GTV-476001', 'GTV-476002', 'GTV-476003', 'GTV-476005', 'GTV-476006', 'GTV-476007', 'GTV-476008', 'GTV-476009', 'GTV-476010', 'GTV-476011', 'GTV-476012', 'GTV-476013', 'GTV-476014', 'GTV-476015', 'GTV-476016', 'GTV-476017', 'GTV-476018', 'GTV-476019', 'GTV-476020', 'GTV-476021', 'GTV-476022', 'GTV-476023', 'GV-476001', 'GV-476002', 'K-47601', 'LV-476003', 'LV-476050', 'NV-476002', 'NV-476003', 'P-47602', 'P-47603', 'PSV-476023', 'PSV-476028', 'PSV-476031', 'PV-476029', 'T-47601', 'V-47601', 'XV-476004']",
+      "got": "['BFV-476002', 'BFV-476003', 'BFV-476004', 'BFV-476005', 'BFV-476006', 'BFV-476007', 'BV-476001', 'BV-476002', 'BV-476003', 'BV-476004', 'BV-476005', 'BV-476006', 'CHV-476001', 'CHV-476002', 'CHV-476003', 'CHV-476004', 'CHV-476005', 'D-47601', 'E-47601', 'EA-47601', 'FV-476041', 'FV-476049', 'GTV-476001', 'GTV-476002', 'GTV-476003', 'GTV-476005', 'GTV-476006', 'GTV-476007', 'GTV-476008', 'GTV-476009', 'GTV-476010', 'GTV-476011', 'GTV-476012', 'GTV-476013', 'GTV-476014', 'GTV-476015', 'GTV-476016', 'GTV-476017', 'GTV-476018', 'GTV-476019', 'GTV-476020', 'GTV-476021', 'GTV-476022', 'GTV-476023', 'GV-476001', 'GV-476002', 'K-47601', 'LV-476003', 'LV-476050', 'NV-476002', 'NV-476003', 'P-47601', 'P-47602', 'P-47603', 'PSV-476023', 'PSV-476028', 'PSV-476031', 'PV-476029', 'T-47601', 'V-47601', 'XV-476004']",
+      "answered_by": "cypher-luna",
+      "cypher_correct": false,
+      "agent_correct": true,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X1000g2s213:FLOW_PATH:TK-9601|PSV-97007",
+      "family": "FLOW_PATH",
+      "expected": "['TK-9601', 'BFV-96001', 'P-9601', 'CHV-96001', 'GTV-96002', 'GTV-96001', 'M-9601', 'V-9601', 'LV-96012', 'BFV-96002', 'E-9701', 'EA-9701', 'XV-97025', 'V-9702', 'GTV-97005', 'PSV-97007']",
+      "got": "['TK-9601', 'BFV-96001', 'STR-96004', 'P-9601', 'CHV-96001', 'GTV-96002', 'GTV-96001', 'MX-96003', 'M-9601', 'V-9601', 'LV-96012', 'BFV-96002', 'E-9701', 'EA-9701', 'XV-97025', 'V-9702', 'GTV-97005', 'PSV-97007']",
+      "answered_by": "agent-luna",
+      "cypher_correct": false,
+      "agent_correct": false,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X1000g2s213:DOWNSTREAM_IN_UNIT:T-30001|300",
+      "family": "DOWNSTREAM_IN_UNIT",
+      "expected": "['BFV-300005', 'BFV-300006', 'BFV-300007', 'BFV-300008', 'BV-300004', 'BV-300005', 'BV-300006', 'BV-300007', 'BV-300008', 'BV-300009', 'BV-300010', 'CHV-300001', 'CHV-300002', 'CHV-300003', 'CHV-300004', 'D-30001', 'E-30001', 'E-30002', 'FV-300042', 'FV-300051', 'GTV-300004', 'GTV-300006', 'GTV-300009', 'GTV-300010', 'GTV-300011', 'GTV-300012', 'GTV-300013', 'GTV-300014', 'GTV-300015', 'GTV-300016', 'GTV-300017', 'GTV-300018', 'GTV-300019', 'GTV-300020', 'GTV-300021', 'GTV-300022', 'GTV-300023', 'GTV-300024', 'GTV-300025', 'GTV-300026', 'GTV-300027', 'GTV-300028', 'GTV-300029', 'GTV-300030', 'GV-300003', 'GV-300004', 'GV-300005', 'LV-300052', 'NV-300001', 'NV-300002', 'NV-300003', 'NV-300004', 'P-30001A', 'P-30001B', 'P-30002A', 'P-30002B', 'PSV-300014', 'PSV-300033', 'PSV-300038', 'PV-300040']",
+      "got": "['BFV-300005', 'BFV-300006', 'BFV-300007', 'BFV-300008', 'BV-300004', 'BV-300005', 'BV-300006', 'BV-300007', 'BV-300008', 'BV-300009', 'BV-300010', 'CHV-300001', 'CHV-300002', 'CHV-300003', 'CHV-300004', 'D-30001', 'E-30001', 'E-30002', 'FV-300042', 'FV-300051', 'GTV-300004', 'GTV-300006', 'GTV-300009', 'GTV-300010', 'GTV-300011', 'GTV-300012', 'GTV-300013', 'GTV-300014', 'GTV-300015', 'GTV-300016', 'GTV-300017', 'GTV-300018', 'GTV-300019', 'GTV-300020', 'GTV-300021', 'GTV-300022', 'GTV-300023', 'GTV-300024', 'GTV-300025', 'GTV-300026', 'GTV-300027', 'GTV-300028', 'GTV-300029', 'GTV-300030', 'GV-300003', 'GV-300004', 'GV-300005', 'LV-300052', 'NV-300001', 'NV-300002', 'NV-300003', 'NV-300004', 'P-30001A', 'P-30001B', 'P-30002A', 'P-30002B', 'PSV-300014', 'PSV-300033', 'PSV-300038', 'PV-300040', 'T-30001']",
+      "answered_by": "cypher-luna",
+      "cypher_correct": false,
+      "agent_correct": false,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X1000g2s213:UPSTREAM_ISOLATION:D-7101",
+      "family": "UPSTREAM_ISOLATION",
+      "expected": "['BFV-71001', 'FV-71038', 'GTV-71004', 'GTV-71018', 'GV-71001']",
+      "got": "not_present",
+      "answered_by": "agent-luna",
+      "cypher_correct": false,
+      "agent_correct": false,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X1000g2s213:UPSTREAM_SOURCES:E-201",
+      "family": "UPSTREAM_SOURCES",
+      "expected": "['GTV-1001', 'GTV-2001', 'PGV-1006']",
+      "got": "['GTV-2001', 'CHV-1002', 'CHV-1004', 'PGV-1003', 'YV-1002', 'YV-1003', 'YV-1007']",
+      "answered_by": "agent-luna",
+      "cypher_correct": false,
+      "agent_correct": false,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X1000g2s213:DOWNSTREAM_IN_UNIT:P-39401C|394",
+      "family": "DOWNSTREAM_IN_UNIT",
+      "expected": "['BFV-394002', 'BFV-394003', 'BFV-394004', 'BFV-394005', 'BFV-394006', 'BV-394002', 'BV-394003', 'BV-394004', 'BV-394005', 'BV-394006', 'BV-394007', 'BV-394008', 'BV-394009', 'CHV-394001', 'CHV-394002', 'CHV-394003', 'CHV-394004', 'CHV-394005', 'CHV-394006', 'CHV-394007', 'D-39401', 'E-39401', 'EA-39401', 'FV-394029', 'FV-394041', 'GTV-394001', 'GTV-394002', 'GTV-394003', 'GTV-394004', 'GTV-394006', 'GTV-394007', 'GTV-394008', 'GTV-394009', 'GTV-394010', 'GTV-394011', 'GTV-394012', 'GTV-394013', 'GTV-394014', 'GTV-394015', 'GTV-394016', 'GTV-394017', 'GTV-394018', 'GTV-394019', 'GTV-394020', 'GTV-394021', 'GTV-394022', 'GTV-394023', 'GTV-394024', 'GTV-394025', 'GTV-394026', 'GTV-394027', 'GTV-394028', 'GTV-394029', 'GTV-394030', 'GTV-394031', 'GV-394001', 'LV-394043', 'NV-394001', 'NV-394002', 'NV-394003', 'P-39401A', 'P-39401B', 'P-39402A', 'P-39402B', 'PSV-394021', 'PSV-394026', 'PV-394027', 'T-39401']",
+      "got": "['D-39401', 'E-39401', 'EA-39401', 'P-39401A', 'P-39401B', 'P-39402A', 'P-39402B', 'T-39401', 'BFV-394002', 'BFV-394003', 'BFV-394004', 'BFV-394005', 'BFV-394006', 'BV-394002', 'BV-394003', 'BV-394004', 'BV-394005', 'BV-394006', 'BV-394007', 'BV-394008', 'BV-394009', 'CHV-394003', 'CHV-394004', 'FV-394029', 'FV-394041', 'GTV-394001', 'GTV-394002', 'GTV-394003', 'GTV-394004', 'GTV-394006', 'GTV-394007', 'GTV-394008', 'GTV-394009', 'GTV-394010', 'GTV-394011', 'GTV-394012', 'GTV-394013', 'GTV-394014', 'GTV-394015', 'GTV-394016', 'GTV-394017', 'GTV-394018', 'GTV-394019', 'GTV-394020', 'GTV-394021', 'GTV-394022', 'GTV-394023', 'GTV-394024', 'GTV-394025', 'GTV-394026', 'GTV-394027', 'GTV-394028', 'GTV-394029', 'GTV-394030', 'GTV-394031', 'GV-394001', 'LV-394043', 'NV-394001', 'NV-394002', 'NV-394003', 'PSV-394026', 'PV-394027']",
+      "answered_by": "agent-luna",
+      "cypher_correct": false,
+      "agent_correct": false,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X1000g2s213:FLOW_PATH:GTV-396003|BV-406003",
+      "family": "FLOW_PATH",
+      "expected": "['GTV-396003', 'GTV-396001', 'M-39601', 'V-39601', 'GV-396001', 'GTV-396015', 'E-39701', 'E-39702', 'GTV-397009', 'BFV-398001', 'E-39801', 'EA-39801', 'YV-398022', 'V-39802', 'GTV-398005', 'P-39801', 'CHV-398001', 'GTV-398006', 'GV-398002', 'BFV-398003', 'BFV-399003', 'YV-399011', 'V-39901', 'BFV-399002', 'P-39901', 'CHV-399001', 'GTV-399003', 'GV-399001', 'GTV-400010', 'YV-400012', 'V-40001', 'BFV-400001', 'P-40001', 'CHV-400001', 'GTV-400004', 'GV-400001', 'GTV-400003', 'GTV-401001', 'PGV-401003', 'PGV-401002', 'YV-401003', 'YV-401004', 'TK-40102', 'BFV-401002', 'P-40101', 'CHV-401001', 'GTV-401004', 'GV-401001', 'M-40201', 'BFV-402002', 'E-40301', 'E-40302', 'E-40303', 'E-40304', 'EH-40301', 'GTV-403012', 'GTV-404010', 'YV-404016', 'V-40401', 'GTV-404007', 'P-40403', 'CHV-404004', 'BFV-404003', 'FV-404002', 'E-40502', 'T-40501', 'GTV-405039', 'P-40505', 'CHV-405006', 'BFV-405012', 'GV-405003', 'T-40601', 'E-40601', 'BV-406003']",
+      "got": "['GTV-396003', 'GTV-396001', 'MX-396003', 'M-39601', 'V-39601', 'GV-396001', 'GTV-396015', 'E-39701', 'E-39702', 'GTV-397009', 'BFV-398001', 'E-39801', 'EA-39801', 'YV-398022', 'V-39802', 'GTV-398005', 'STR-398009', 'P-39801', 'CHV-398001', 'GTV-398006', 'GV-398002', 'BFV-398003', 'BFV-399003', 'YV-399011', 'V-39901', 'BFV-399002', 'STR-399004', 'P-39901', 'CHV-399001', 'GTV-399003', 'GV-399001', 'GTV-400010', 'YV-400012', 'V-40001', 'BFV-400001', 'STR-400004', 'P-40001', 'CHV-400001', 'GTV-400004', 'GV-400001', 'GTV-400003', 'GTV-401001', 'PGV-401003', 'PGV-401002', 'YV-401003', 'YV-401004', 'TK-40102', 'BFV-401002', 'STR-401007', 'P-40101', 'CHV-401001', 'GTV-401004', 'GV-401001', 'M-40201', 'BFV-402002', 'E-40301', 'E-40302', 'E-40303', 'E-40304', 'EH-40301', 'GTV-403012', 'GTV-404010', 'YV-404016', 'V-40401', 'GTV-404007', 'STR-404012', 'P-40403', 'CHV-404004', 'BFV-404003', 'FV-404002', 'E-40502', 'T-40501', 'GTV-405039', 'STR-405077', 'P-40505', 'CHV-405006', 'BFV-405012', 'GV-405003', 'T-40601', 'E-40601', 'BV-406003']",
+      "answered_by": "agent-luna",
+      "cypher_correct": false,
+      "agent_correct": false,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X1000g2s213:UPSTREAM_SOURCES:P-1201A",
+      "family": "UPSTREAM_SOURCES",
+      "expected": "['GTV-1001', 'GTV-2001', 'GTV-2003', 'GTV-2008', 'GTV-7011', 'GTV-9004', 'GTV-9007', 'PGV-1006']",
+      "got": "['TK-1001', 'TK-1002']",
+      "answered_by": "agent-luna",
+      "cypher_correct": false,
+      "agent_correct": false,
+      "outcome": "ANSWERED"
+    },
+    {
+      "question_id": "X1000g2s213:UPSTREAM_SOURCES:F-51201",
+      "family": "UPSTREAM_SOURCES",
+      "expected": "['BFV-105003', 'BFV-106003', 'BFV-107002', 'BFV-112001', 'BFV-112002', 'BFV-113005', 'BFV-114006', 'BFV-116001', 'BFV-119001', 'BFV-119004', 'BFV-120004', 'BFV-131001', 'BFV-131002', 'BFV-14001', 'BFV-145002', 'BFV-151003', 'BFV-153001', 'BFV-153002', 'BFV-155001', 'BFV-157002', 'BFV-158002', 'BFV-163004', 'BFV-163005', 'BFV-167005', 'BFV-169001', 'BFV-171001', 'BFV-174005', 'BFV-175002', 'BFV-178001', 'BFV-182001', 'BFV-182002', 'BFV-188003', 'BFV-190001', 'BFV-192001', 'BFV-194002', 'BFV-204002', 'BFV-207004', 'BFV-208005', 'BFV-217005', 'BFV-220001', 'BFV-228002', 'BFV-23004', 'BFV-231002', 'BFV-238004', 'BFV-242002', 'BFV-243002', 'BFV-244004', 'BFV-25004', 'BFV-254002', 'BFV-255004', 'BFV-262005', 'BFV-264001', 'BFV-264002', 'BFV-27003', 'BFV-274002', 'BFV-274003', 'BFV-275003', 'BFV-284003', 'BFV-284004', 'BFV-293001', 'BFV-295003', 'BFV-300001', 'BFV-303005', 'BFV-305001', 'BFV-305003', 'BFV-311005', 'BFV-313002', 'BFV-320001', 'BFV-32001', 'BFV-321004', 'BFV-323003', 'BFV-324002', 'BFV-325003', 'BFV-327005', 'BFV-328001', 'BFV-329001', 'BFV-345001', 'BFV-349004', 'BFV-351001', 'BFV-352001', 'BFV-354003', 'BFV-360001', 'BFV-364001', 'BFV-364002', 'BFV-365003', 'BFV-367002', 'BFV-369004', 'BFV-37001', 'BFV-375001', 'BFV-375002', 'BFV-376002', 'BFV-379002', 'BFV-380001', 'BFV-389002', 'BFV-39002', 'BFV-392002', 'BFV-394001', 'BFV-398004', 'BFV-40003', 'BFV-40004', 'BFV-402003', 'BFV-403001', 'BFV-403004', 'BFV-406001', 'BFV-409002', 'BFV-418001', 'BFV-418002', 'BFV-419003', 'BFV-420005', 'BFV-424005', 'BFV-428002', 'BFV-430001', 'BFV-433002', 'BFV-434001', 'BFV-434002', 'BFV-439002', 'BFV-440001', 'BFV-443001', 'BFV-445001', 'BFV-446001', 'BFV-446002', 'BFV-464001', 'BFV-465001', 'BFV-466003', 'BFV-469002', 'BFV-471003', 'BFV-474003', 'BFV-476001', 'BFV-48001', 'BFV-483001', 'BFV-483002', 'BFV-485002', 'BFV-487001', 'BFV-490001', 'BFV-490002', 'BFV-491003', 'BFV-491004', 'BFV-493003', 'BFV-495004', 'BFV-497001', 'BFV-497002', 'BFV-499002', 'BFV-508001', 'BFV-508003', 'BFV-51004', 'BFV-54001', 'BFV-55003', 'BFV-56005', 'BFV-57002', 'BFV-63001', 'BFV-63002', 'BFV-69003', 'BFV-70001', 'BFV-74004', 'BFV-77001', 'BFV-84002', 'BFV-85005', 'BFV-92001', 'BFV-97005', 'BFV-98001', 'GTV-100008', 'GTV-1001', 'GTV-106014', 'GTV-107003', 'GTV-108005', 'GTV-112001', 'GTV-112010', 'GTV-114016', 'GTV-115001', 'GTV-115006', 'GTV-116007', 'GTV-119003', 'GTV-119006', 'GTV-120019', 'GTV-123004', 'GTV-123006', 'GTV-124006', 'GTV-125008', 'GTV-130001', 'GTV-130004', 'GTV-131001', 'GTV-132018', 'GTV-132019', 'GTV-137007', 'GTV-14006', 'GTV-148001', 'GTV-148004', 'GTV-148006', 'GTV-150011', 'GTV-15003', 'GTV-15007', 'GTV-155003', 'GTV-157002', 'GTV-158007', 'GTV-164002', 'GTV-164007', 'GTV-166010', 'GTV-167014', 'GTV-169003', 'GTV-171005', 'GTV-173015', 'GTV-174017', 'GTV-175004', 'GTV-175006', 'GTV-177007', 'GTV-178001', 'GTV-178006', 'GTV-181005', 'GTV-182001', 'GTV-182007', 'GTV-185003', 'GTV-188019', 'GTV-190003', 'GTV-190005', 'GTV-19006', 'GTV-192002', 'GTV-195010', 'GTV-196015', 'GTV-196016', 'GTV-199005', 'GTV-20001', 'GTV-20006', 'GTV-2001', 'GTV-2003', 'GTV-2008', 'GTV-201006', 'GTV-203003', 'GTV-203004', 'GTV-203009', 'GTV-204001', 'GTV-205005', 'GTV-206001', 'GTV-206004', 'GTV-206006', 'GTV-208021', 'GTV-210003', 'GTV-216009', 'GTV-217016', 'GTV-218002', 'GTV-218004', 'GTV-218005', 'GTV-220004', 'GTV-224001', 'GTV-224003', 'GTV-225006', 'GTV-228001', 'GTV-229007', 'GTV-23003', 'GTV-23005', 'GTV-231001', 'GTV-231006', 'GTV-231011', 'GTV-232018', 'GTV-232019', 'GTV-234002', 'GTV-234005', 'GTV-236018', 'GTV-237013', 'GTV-238014', 'GTV-24005', 'GTV-242001', 'GTV-242009', 'GTV-243001', 'GTV-244016', 'GTV-245001', 'GTV-245005', 'GTV-248004', 'GTV-249017', 'GTV-249018', 'GTV-25010', 'GTV-251001', 'GTV-251003', 'GTV-253011', 'GTV-254001', 'GTV-254005', 'GTV-254011', 'GTV-255013', 'GTV-261001', 'GTV-261002', 'GTV-261006', 'GTV-261009', 'GTV-262019', 'GTV-264004', 'GTV-265001', 'GTV-265002', 'GTV-270010', 'GTV-27002', 'GTV-274001', 'GTV-275016', 'GTV-282017', 'GTV-284002', 'GTV-290005', 'GTV-29009', 'GTV-292001', 'GTV-293001', 'GTV-296001', 'GTV-296004', 'GTV-297015', 'GTV-297016', 'GTV-300005', 'GTV-300007', 'GTV-303020', 'GTV-305001', 'GTV-306001', 'GTV-307004', 'GTV-308014', 'GTV-308015', 'GTV-309002', 'GTV-309005', 'GTV-311016', 'GTV-312003', 'GTV-312007', 'GTV-313002', 'GTV-313004', 'GTV-316002', 'GTV-320002', 'GTV-32004', 'GTV-321016', 'GTV-323001', 'GTV-323004', 'GTV-324005', 'GTV-325002', 'GTV-325004', 'GTV-327019', 'GTV-328001', 'GTV-329004', 'GTV-33001', 'GTV-33004', 'GTV-33007', 'GTV-331006', 'GTV-337006', 'GTV-339002', 'GTV-339004', 'GTV-343006', 'GTV-344023', 'GTV-344024', 'GTV-345003', 'GTV-345008', 'GTV-349014', 'GTV-353007', 'GTV-356014', 'GTV-356015', 'GTV-359004', 'GTV-360003', 'GTV-360005', 'GTV-364003', 'GTV-365002', 'GTV-367001', 'GTV-367005', 'GTV-367011', 'GTV-369013', 'GTV-37003', 'GTV-371003', 'GTV-371005', 'GTV-374006', 'GTV-375008', 'GTV-375011', 'GTV-379001', 'GTV-379007', 'GTV-380002', 'GTV-38006', 'GTV-383001', 'GTV-383004', 'GTV-383006', 'GTV-384016', 'GTV-384017', 'GTV-387002', 'GTV-387004', 'GTV-387007', 'GTV-388004', 'GTV-39001', 'GTV-39005', 'GTV-39007', 'GTV-392004', 'GTV-396017', 'GTV-397001', 'GTV-397003', 'GTV-398012', 'GTV-403001', 'GTV-403004', 'GTV-405002', 'GTV-405006', 'GTV-406006', 'GTV-408006', 'GTV-410017', 'GTV-412001', 'GTV-412006', 'GTV-412008', 'GTV-413006', 'GTV-414014', 'GTV-414015', 'GTV-418008', 'GTV-420016', 'GTV-424013', 'GTV-428002', 'GTV-429006', 'GTV-430001', 'GTV-433003', 'GTV-437011', 'GTV-439001', 'GTV-439005', 'GTV-44001', 'GTV-442004', 'GTV-445001', 'GTV-445006', 'GTV-446004', 'GTV-45006', 'GTV-452001', 'GTV-452003', 'GTV-455013', 'GTV-457002', 'GTV-458003', 'GTV-458004', 'GTV-460004', 'GTV-462013', 'GTV-464002', 'GTV-464006', 'GTV-465003', 'GTV-466003', 'GTV-467005', 'GTV-469003', 'GTV-469004', 'GTV-471003', 'GTV-473001', 'GTV-473002', 'GTV-473004', 'GTV-474013', 'GTV-477005', 'GTV-478009', 'GTV-48006', 'GTV-48007', 'GTV-483001', 'GTV-483004', 'GTV-485003', 'GTV-485009', 'GTV-486004', 'GTV-487001', 'GTV-488011', 'GTV-488012', 'GTV-49006', 'GTV-491003', 'GTV-492006', 'GTV-495015', 'GTV-499001', 'GTV-501009', 'GTV-502018', 'GTV-503018', 'GTV-503019', 'GTV-507001', 'GTV-507003', 'GTV-507007', 'GTV-510002', 'GTV-510003', 'GTV-51018', 'GTV-52001', 'GTV-52003', 'GTV-54001', 'GTV-56017', 'GTV-57003', 'GTV-64003', 'GTV-64008', 'GTV-66005', 'GTV-67017', 'GTV-67018', 'GTV-69002', 'GTV-69006', 'GTV-70005', 'GTV-7011', 'GTV-71002', 'GTV-72005', 'GTV-74013', 'GTV-76001', 'GTV-76004', 'GTV-76006', 'GTV-77005', 'GTV-77007', 'GTV-81003', 'GTV-83005', 'GTV-85023', 'GTV-90001', 'GTV-90003', 'GTV-90004', 'GTV-9004', 'GTV-9007', 'GTV-92001', 'GTV-92005', 'GTV-94006', 'GTV-96006', 'GTV-97017', 'GTV-98005', 'PGV-1006', 'PGV-111006', 'PGV-129004', 'PGV-144004', 'PGV-165005', 'PGV-193004', 'PGV-215005', 'PGV-241004', 'PGV-28004', 'PGV-285006', 'PGV-340005', 'PGV-366005', 'PGV-401004', 'PGV-472006', 'PGV-511005', 'PGV-53004', 'PGV-88006']",
+      "got": "not_present",
+      "answered_by": "agent-luna",
+      "cypher_correct": false,
+      "agent_correct": false,
+      "outcome": "ANSWERED"
+    }
+  ]
+}
