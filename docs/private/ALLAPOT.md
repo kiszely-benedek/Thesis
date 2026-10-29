@@ -8,7 +8,7 @@ Ezt az oldalt a `/log-progress` frissíti minden munkamenet végén. A részlete
 
 A valósághű generátor (v2) kész; a régi rendszer v2-n gyengébb volt, ezért egy külön megnevezett, hangolt rendszer
 (V2T) készült, amely a félretett ellenőrző üzemeken 94,5% / 95,7%-ot ért el a régi 89,0% / 88,3%-ával szemben;
-most a lezárt v2-mérések (R4/R5) előkészítése fut.
+a lezárt v2-mérésekből az R4 (létra) fut, a befagyasztás (E7) kész.
 
 ## Fázisok
 
@@ -19,7 +19,7 @@ most a lezárt v2-mérések (R4/R5) előkészítése fut.
 | v2 | Valósághű generátor (ADR-0057/0058/0059) | ✔ kész: T0 `0ba680a` … T16 `917b4c3` (10-25 → 10-27) |
 | v2-mérés | EXP-0007 (ADR-0060): R0–R3, próba, minőségellenőrzés | ✔ kész (`3f91905`, `133b7f7`, `02af1df`) |
 | V2T | Hangolt rendszer (ADR-0061): építés, 3 hangolási kör, ellenőrzés | ✔ kész (`c51c83e`, 10-29) |
-| R4/R5 | Lezárt v2-mérések a hangolt rendszerrel (V2T-A) | 🟡 a futtatószkriptek átállítása folyik |
+| R4/R5 | Lezárt v2-mérések a hangolt rendszerrel (V2T-A) | 🟡 E7 kész (`fdad31f`, `d72e3b5`); R4 fut; R5 utána |
 | 7 | Dolgozat írása | 🟡 folyamatban |
 
 ## Feladatok (a legutóbbiak)
@@ -32,8 +32,10 @@ most a lezárt v2-mérések (R4/R5) előkészítése fut.
 | QT-0…QT-7 | Hangolt rendszer (V2T) megépítése | ✔ | `6eccf2e` … `c6260dc` | 10-28 |
 | — | 3 hangolási kör (X100g2s211) | ✔ | `785316e`, `e478c24`, `59c7eb9` | 10-28 |
 | — | Ellenőrző mérés (X100g2s212, X1000g2s213) | ✔ | `c51c83e` | 10-29 |
-| RM-T5 | R4/R5 szkriptek a V2T-A-ra (+ régi rendszer összevetésül, + ContextRAG 1–10 lapon) | 🟡 folyamatban | | 10-29 |
-| — | E7 befagyasztás → R4 → R5 | ⬜ következő | | |
+| RM-T5 | R4/R5 szkriptek a V2T-A-ra (+ régi rendszer összevetésül, + ContextRAG 1–10 lapon) | ✔ | `fdad31f` | 10-29 |
+| — | E7 befagyasztás + R4 tesztkészlet | ✔ | `d72e3b5` | 10-29 |
+| — | R4 (létra) | 🟡 fut | | 10-29 |
+| — | R5 (lezárt teszt + régi rendszer összevetésül) | ⬜ következő | | |
 
 ## Ellenőrzőpontok a naptárhoz képest
 
@@ -43,7 +45,7 @@ most a lezárt v2-mérések (R4/R5) előkészítése fut.
 
 ## Mi vár rád
 
-1. **Az R4/R5 plafonjának jóváhagyása**, ha a szkriptek elkészültek (becslés ≈ $5,6 + $1,5 + $2–3).
+1. **Az R5 plafonja** megmutatásra kerül indulás előtt (becslés: hangolt ≈ $6,44, régi ≈ $2,05).
 2. **A T0–T16 és a V2T átnézése** (a „Generátor v2 – átnézendő változások” dokumentum).
 3. **A TDK-ról szóló döntés**; addig a `plantkg` összevonása parkol.
 
