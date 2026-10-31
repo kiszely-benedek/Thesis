@@ -37,7 +37,10 @@ system, V2T, was built and frozen (E7 `fdad31f`).
 | Validation, unseen plants, 163 questions | V2T 154 / 156 correct at ~100 / ~1,000 sheets; F1 145 / 144 |
 | Ladder (R4), test seeds, 1 / 3 / 11 / 30 sheets | V2T cascade **0.957 / 0.885 / 0.909 / 0.924**; ContextRAG 0.686 / 0.654 / 0.614 at 1 / 3 / 11 sheets |
 | ContextRAG cost per question vs the cascade | ×3.79 at 1 sheet → ×21.57 at 11 sheets; prompt stops fitting at ≈62 sheets |
-| Sealed test (R5) at ~100 and ~1,000 sheets | running |
+| Sealed test (R5), test seeds, n = 440 headline questions | V2T cascade **0.911** at ~100 sheets, **0.891** at ~1,000 sheets; agent only 0.909 / 0.870, Cypher only 0.809 / 0.795 |
+| R5 scale effect (primary claim) | accuracy change 100 → 1,000 sheets −0.020 [−0.059, +0.018], cost elasticity 0.033: **holds at scale** |
+| R5 cost / median latency per question | $0.00137 / 7.1 s (~100 sheets), $0.00148 / 7.5 s (~1,000 sheets) |
+| R5 families never seen in tuning (100 of the 440) | 0.770 / 0.740; the gap sits in DOWNSTREAM_ISOLATION (2/20 at both sizes) |
 
 **Generator v1, the first benchmark.** These results stand as measured on v1 plants.
 

@@ -1,0 +1,4538 @@
+{
+  "bound": {
+    "median_max_s": 10.0,
+    "p90_max_s": 60.0,
+    "cutoff_s": 120.0
+  },
+  "corpora": [
+    {
+      "corpus_id": "H100g2",
+      "n_questions": 560,
+      "policies": [
+        {
+          "summary": {
+            "policy": "cascade_v4_iso",
+            "corpus_id": "H100g2",
+            "n_questions": 560,
+            "n_correct": 510,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 510,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.731097565,
+            "cost_per_question_usd": 0.0013055313660714286,
+            "latency_median_s": 6.484308150003926,
+            "latency_mean_s": 13.337339111071833,
+            "latency_p90_s": 36.66969290000998,
+            "latency_p95_s": 45.45659080000041,
+            "latency_max_s": 88.30634789999021,
+            "tier_shares": {
+              "cypher-v2t": 0.7714285714285715,
+              "agent-v2t": 0.22857142857142856
+            },
+            "tier_calls": {
+              "cypher-v2t": 540,
+              "agent-v2t": 129
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "cascade_v4_iso on H100g2: median 6.5 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "cascade_v4_iso on H100g2: p90 36.7 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": null,
+          "vs_always_n": null,
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "cascade_v4",
+            "corpus_id": "H100g2",
+            "n_questions": 560,
+            "n_correct": 508,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 508,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.743569285,
+            "cost_per_question_usd": 0.001327802294642857,
+            "latency_median_s": 6.484308150003926,
+            "latency_mean_s": 13.543324064107596,
+            "latency_p90_s": 36.66969290000998,
+            "latency_p95_s": 47.01928689998749,
+            "latency_max_s": 88.30634789999021,
+            "tier_shares": {
+              "cypher-v2t": 0.7821428571428571,
+              "agent-v2t": 0.21785714285714286
+            },
+            "tier_calls": {
+              "cypher-v2t": 560,
+              "agent-v2t": 123
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "cascade_v4 on H100g2: median 6.5 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "cascade_v4 on H100g2: p90 36.7 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": {
+            "n_accepted": 437,
+            "n_accepted_correct": 408,
+            "n_first_tier_correct": 454,
+            "precision": 0.9336384439359268,
+            "recall": 0.8986784140969163
+          },
+          "vs_always_n": null,
+          "oracle": {
+            "policy": "oracle(cascade_v4)",
+            "corpus_id": "H100g2",
+            "n_questions": 560,
+            "n_correct": 528,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 528,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.72077884,
+            "cost_per_question_usd": 0.0012871050714285716,
+            "latency_median_s": 5.757384299999103,
+            "latency_mean_s": 13.590595526786014,
+            "latency_p90_s": 37.98594909998792,
+            "latency_p95_s": 53.9297729999962,
+            "latency_max_s": 88.30634789999021,
+            "tier_shares": {
+              "cypher-v2t": 0.8107142857142857,
+              "agent-v2t": 0.18928571428571428
+            },
+            "tier_calls": {
+              "cypher-v2t": 560,
+              "agent-v2t": 106
+            }
+          },
+          "random": {
+            "n_draws": 1000,
+            "n_escalated": 123,
+            "correct_mean": 467.99,
+            "correct_low": 460.0,
+            "correct_high": 475.0,
+            "correct_at_cutoff_mean": 467.99,
+            "correct_at_cutoff_low": 460.0,
+            "correct_at_cutoff_high": 475.0,
+            "cost_total_mean_usd": 0.6151543109550002,
+            "latency_mean_s": 12.345029279118249
+          },
+          "vs_random": {
+            "accuracy": {
+              "mean": 0.07144642857142856,
+              "ci_low": 0.05233928571428572,
+              "ci_high": 0.09079821428571429
+            },
+            "accuracy_at_cutoff": {
+              "mean": 0.07144642857142856,
+              "ci_low": 0.05233928571428572,
+              "ci_high": 0.09079821428571429
+            },
+            "cost_usd": {
+              "mean": 0.00022931245365178556,
+              "ci_low": 0.0001199922259017864,
+              "ci_high": 0.00034418464343750004
+            },
+            "latency_s": {
+              "mean": 1.1982947849893462,
+              "ci_low": 0.5330138880140781,
+              "ci_high": 1.8780885041799191
+            }
+          },
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "always_g_v2t",
+            "corpus_id": "H100g2",
+            "n_questions": 560,
+            "n_correct": 517,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 517,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.87076435,
+            "cost_per_question_usd": 0.0015549363392857141,
+            "latency_median_s": 9.034736200002953,
+            "latency_mean_s": 12.285785131786113,
+            "latency_p90_s": 24.120571599982213,
+            "latency_p95_s": 30.274233299991465,
+            "latency_max_s": 61.75182029999269,
+            "tier_shares": {
+              "agent-v2t": 0.9982142857142857,
+              "none": 0.0017857142857142857
+            },
+            "tier_calls": {
+              "agent-v2t": 560
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "always_g_v2t on H100g2: median 9.0 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "always_g_v2t on H100g2: p90 24.1 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": null,
+          "vs_always_n": null,
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "always_c_v2t",
+            "corpus_id": "H100g2",
+            "n_questions": 560,
+            "n_correct": 454,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 454,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.42383845,
+            "cost_per_question_usd": 0.000756854375,
+            "latency_median_s": 5.739983949992165,
+            "latency_mean_s": 9.650250936071384,
+            "latency_p90_s": 16.519541400004528,
+            "latency_p95_s": 37.93587180000759,
+            "latency_max_s": 76.7073166999835,
+            "tier_shares": {
+              "cypher-v2t": 0.9375,
+              "none": 0.0625
+            },
+            "tier_calls": {
+              "cypher-v2t": 560
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "always_c_v2t on H100g2: median 5.7 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "always_c_v2t on H100g2: p90 16.5 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": null,
+          "vs_always_n": null,
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        }
+      ],
+      "not_evaluated": [],
+      "breakdowns": {
+        "need label": {
+          "DOWNSTREAM_ALL": {
+            "cascade_v4_iso": {
+              "correct": 20,
+              "total": 40
+            },
+            "cascade_v4": {
+              "correct": 20,
+              "total": 40
+            },
+            "always_g_v2t": {
+              "correct": 21,
+              "total": 40
+            },
+            "always_c_v2t": {
+              "correct": 17,
+              "total": 40
+            }
+          },
+          "GENERIC": {
+            "cascade_v4_iso": {
+              "correct": 129,
+              "total": 140
+            },
+            "cascade_v4": {
+              "correct": 129,
+              "total": 140
+            },
+            "always_g_v2t": {
+              "correct": 132,
+              "total": 140
+            },
+            "always_c_v2t": {
+              "correct": 102,
+              "total": 140
+            }
+          },
+          "ITEM": {
+            "cascade_v4_iso": {
+              "correct": 88,
+              "total": 88
+            },
+            "cascade_v4": {
+              "correct": 88,
+              "total": 88
+            },
+            "always_g_v2t": {
+              "correct": 88,
+              "total": 88
+            },
+            "always_c_v2t": {
+              "correct": 86,
+              "total": 88
+            }
+          },
+          "NEIGHBOURS_DOWNSTREAM": {
+            "cascade_v4_iso": {
+              "correct": 29,
+              "total": 29
+            },
+            "cascade_v4": {
+              "correct": 29,
+              "total": 29
+            },
+            "always_g_v2t": {
+              "correct": 29,
+              "total": 29
+            },
+            "always_c_v2t": {
+              "correct": 29,
+              "total": 29
+            }
+          },
+          "PATH": {
+            "cascade_v4_iso": {
+              "correct": 69,
+              "total": 73
+            },
+            "cascade_v4": {
+              "correct": 69,
+              "total": 73
+            },
+            "always_g_v2t": {
+              "correct": 70,
+              "total": 73
+            },
+            "always_c_v2t": {
+              "correct": 67,
+              "total": 73
+            }
+          },
+          "SIGNAL_CHAIN": {
+            "cascade_v4_iso": {
+              "correct": 70,
+              "total": 70
+            },
+            "cascade_v4": {
+              "correct": 70,
+              "total": 70
+            },
+            "always_g_v2t": {
+              "correct": 69,
+              "total": 70
+            },
+            "always_c_v2t": {
+              "correct": 70,
+              "total": 70
+            }
+          },
+          "UNIT_SCOPE": {
+            "cascade_v4_iso": {
+              "correct": 75,
+              "total": 80
+            },
+            "cascade_v4": {
+              "correct": 75,
+              "total": 80
+            },
+            "always_g_v2t": {
+              "correct": 80,
+              "total": 80
+            },
+            "always_c_v2t": {
+              "correct": 63,
+              "total": 80
+            }
+          },
+          "UPSTREAM_ALL": {
+            "cascade_v4_iso": {
+              "correct": 20,
+              "total": 20
+            },
+            "cascade_v4": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_v2t": {
+              "correct": 18,
+              "total": 20
+            },
+            "always_c_v2t": {
+              "correct": 20,
+              "total": 20
+            }
+          },
+          "UPSTREAM_TO_FIRST_VALVE": {
+            "cascade_v4_iso": {
+              "correct": 10,
+              "total": 20
+            },
+            "cascade_v4": {
+              "correct": 8,
+              "total": 20
+            },
+            "always_g_v2t": {
+              "correct": 10,
+              "total": 20
+            },
+            "always_c_v2t": {
+              "correct": 0,
+              "total": 20
+            }
+          }
+        },
+        "family": {
+          "CONNECTED": {
+            "cascade_v4_iso": {
+              "correct": 19,
+              "total": 20
+            },
+            "cascade_v4": {
+              "correct": 19,
+              "total": 20
+            },
+            "always_g_v2t": {
+              "correct": 18,
+              "total": 20
+            },
+            "always_c_v2t": {
+              "correct": 17,
+              "total": 20
+            }
+          },
+          "COUNT_IN_UNIT": {
+            "cascade_v4_iso": {
+              "correct": 30,
+              "total": 30
+            },
+            "cascade_v4": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_g_v2t": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_c_v2t": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "CROSS_UNIT": {
+            "cascade_v4_iso": {
+              "correct": 25,
+              "total": 30
+            },
+            "cascade_v4": {
+              "correct": 25,
+              "total": 30
+            },
+            "always_g_v2t": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_c_v2t": {
+              "correct": 19,
+              "total": 30
+            }
+          },
+          "DOWNSTREAM_IN_UNIT": {
+            "cascade_v4_iso": {
+              "correct": 18,
+              "total": 20
+            },
+            "cascade_v4": {
+              "correct": 18,
+              "total": 20
+            },
+            "always_g_v2t": {
+              "correct": 18,
+              "total": 20
+            },
+            "always_c_v2t": {
+              "correct": 16,
+              "total": 20
+            }
+          },
+          "DOWNSTREAM_ISOLATION": {
+            "cascade_v4_iso": {
+              "correct": 2,
+              "total": 20
+            },
+            "cascade_v4": {
+              "correct": 2,
+              "total": 20
+            },
+            "always_g_v2t": {
+              "correct": 3,
+              "total": 20
+            },
+            "always_c_v2t": {
+              "correct": 1,
+              "total": 20
+            }
+          },
+          "FEEDING_UNITS": {
+            "cascade_v4_iso": {
+              "correct": 20,
+              "total": 20
+            },
+            "cascade_v4": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_v2t": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_c_v2t": {
+              "correct": 14,
+              "total": 20
+            }
+          },
+          "FLOW_PATH": {
+            "cascade_v4_iso": {
+              "correct": 27,
+              "total": 30
+            },
+            "cascade_v4": {
+              "correct": 27,
+              "total": 30
+            },
+            "always_g_v2t": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_c_v2t": {
+              "correct": 27,
+              "total": 30
+            }
+          },
+          "INSTRUMENTS_OF_ITEM": {
+            "cascade_v4_iso": {
+              "correct": 20,
+              "total": 20
+            },
+            "cascade_v4": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_v2t": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_c_v2t": {
+              "correct": 20,
+              "total": 20
+            }
+          },
+          "LOOKUP_TYPE": {
+            "cascade_v4_iso": {
+              "correct": 30,
+              "total": 30
+            },
+            "cascade_v4": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_g_v2t": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_c_v2t": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "LOOKUP_UNIT": {
+            "cascade_v4_iso": {
+              "correct": 30,
+              "total": 30
+            },
+            "cascade_v4": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_g_v2t": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_c_v2t": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "LOOPS_NEAR_ITEM": {
+            "cascade_v4_iso": {
+              "correct": 20,
+              "total": 20
+            },
+            "cascade_v4": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_v2t": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_c_v2t": {
+              "correct": 7,
+              "total": 20
+            }
+          },
+          "LOOP_ACTUATED_VALVE": {
+            "cascade_v4_iso": {
+              "correct": 30,
+              "total": 30
+            },
+            "cascade_v4": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_g_v2t": {
+              "correct": 29,
+              "total": 30
+            },
+            "always_c_v2t": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "LOOP_MEASURED_EQUIPMENT": {
+            "cascade_v4_iso": {
+              "correct": 30,
+              "total": 30
+            },
+            "cascade_v4": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_g_v2t": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_c_v2t": {
+              "correct": 27,
+              "total": 30
+            }
+          },
+          "NEIGHBOURS_DOWNSTREAM": {
+            "cascade_v4_iso": {
+              "correct": 29,
+              "total": 30
+            },
+            "cascade_v4": {
+              "correct": 29,
+              "total": 30
+            },
+            "always_g_v2t": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_c_v2t": {
+              "correct": 29,
+              "total": 30
+            }
+          },
+          "NO_PATH": {
+            "cascade_v4_iso": {
+              "correct": 20,
+              "total": 20
+            },
+            "cascade_v4": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_v2t": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_c_v2t": {
+              "correct": 20,
+              "total": 20
+            }
+          },
+          "ROUTE_AVOIDING": {
+            "cascade_v4_iso": {
+              "correct": 20,
+              "total": 20
+            },
+            "cascade_v4": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_v2t": {
+              "correct": 18,
+              "total": 20
+            },
+            "always_c_v2t": {
+              "correct": 20,
+              "total": 20
+            }
+          },
+          "SAME_UNIT": {
+            "cascade_v4_iso": {
+              "correct": 20,
+              "total": 20
+            },
+            "cascade_v4": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_v2t": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_c_v2t": {
+              "correct": 20,
+              "total": 20
+            }
+          },
+          "SHEETS_OF_TAG": {
+            "cascade_v4_iso": {
+              "correct": 30,
+              "total": 30
+            },
+            "cascade_v4": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_g_v2t": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_c_v2t": {
+              "correct": 28,
+              "total": 30
+            }
+          },
+          "UNANSWERABLE_TAG": {
+            "cascade_v4_iso": {
+              "correct": 20,
+              "total": 20
+            },
+            "cascade_v4": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_v2t": {
+              "correct": 19,
+              "total": 20
+            },
+            "always_c_v2t": {
+              "correct": 20,
+              "total": 20
+            }
+          },
+          "UNITS_REACHED": {
+            "cascade_v4_iso": {
+              "correct": 20,
+              "total": 20
+            },
+            "cascade_v4": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_v2t": {
+              "correct": 19,
+              "total": 20
+            },
+            "always_c_v2t": {
+              "correct": 20,
+              "total": 20
+            }
+          },
+          "UPSTREAM_ISOLATION": {
+            "cascade_v4_iso": {
+              "correct": 15,
+              "total": 30
+            },
+            "cascade_v4": {
+              "correct": 13,
+              "total": 30
+            },
+            "always_g_v2t": {
+              "correct": 18,
+              "total": 30
+            },
+            "always_c_v2t": {
+              "correct": 0,
+              "total": 30
+            }
+          },
+          "UPSTREAM_SOURCES": {
+            "cascade_v4_iso": {
+              "correct": 20,
+              "total": 20
+            },
+            "cascade_v4": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_v2t": {
+              "correct": 18,
+              "total": 20
+            },
+            "always_c_v2t": {
+              "correct": 20,
+              "total": 20
+            }
+          },
+          "VALVES_ON_PATH": {
+            "cascade_v4_iso": {
+              "correct": 15,
+              "total": 20
+            },
+            "cascade_v4": {
+              "correct": 15,
+              "total": 20
+            },
+            "always_g_v2t": {
+              "correct": 17,
+              "total": 20
+            },
+            "always_c_v2t": {
+              "correct": 9,
+              "total": 20
+            }
+          }
+        },
+        "k bin": {
+          "k=0": {
+            "cascade_v4_iso": {
+              "correct": 218,
+              "total": 233
+            },
+            "cascade_v4": {
+              "correct": 218,
+              "total": 233
+            },
+            "always_g_v2t": {
+              "correct": 220,
+              "total": 233
+            },
+            "always_c_v2t": {
+              "correct": 200,
+              "total": 233
+            }
+          },
+          "k=1-2": {
+            "cascade_v4_iso": {
+              "correct": 167,
+              "total": 188
+            },
+            "cascade_v4": {
+              "correct": 166,
+              "total": 188
+            },
+            "always_g_v2t": {
+              "correct": 173,
+              "total": 188
+            },
+            "always_c_v2t": {
+              "correct": 136,
+              "total": 188
+            }
+          },
+          "k>=3": {
+            "cascade_v4_iso": {
+              "correct": 85,
+              "total": 99
+            },
+            "cascade_v4": {
+              "correct": 84,
+              "total": 99
+            },
+            "always_g_v2t": {
+              "correct": 85,
+              "total": 99
+            },
+            "always_c_v2t": {
+              "correct": 78,
+              "total": 99
+            }
+          },
+          "unanswerable": {
+            "cascade_v4_iso": {
+              "correct": 40,
+              "total": 40
+            },
+            "cascade_v4": {
+              "correct": 40,
+              "total": 40
+            },
+            "always_g_v2t": {
+              "correct": 39,
+              "total": 40
+            },
+            "always_c_v2t": {
+              "correct": 40,
+              "total": 40
+            }
+          }
+        }
+      },
+      "diagnostics": [
+        {
+          "policy": "cascade_v4_iso",
+          "boolean_no_questions": 25,
+          "boolean_no_answered_yes": 0,
+          "agent": {
+            "tier": "agent-v2t",
+            "n_tried": 129,
+            "stop_reasons": {
+              "done": 129
+            },
+            "answered_without_tool_call": {
+              "correct": 0,
+              "total": 0
+            },
+            "answered_touching_no_item": {
+              "correct": 21,
+              "total": 22
+            },
+            "named_tag_never_touched": {
+              "correct": 7,
+              "total": 9
+            },
+            "n_with_named_tags": 100
+          },
+          "isolation": {
+            "primary": {
+              "correct": 15,
+              "total": 30
+            },
+            "control_valves_excluded": {
+              "correct": 12,
+              "total": 30
+            }
+          }
+        },
+        {
+          "policy": "cascade_v4",
+          "boolean_no_questions": 25,
+          "boolean_no_answered_yes": 0,
+          "agent": {
+            "tier": "agent-v2t",
+            "n_tried": 123,
+            "stop_reasons": {
+              "done": 123
+            },
+            "answered_without_tool_call": {
+              "correct": 0,
+              "total": 0
+            },
+            "answered_touching_no_item": {
+              "correct": 21,
+              "total": 22
+            },
+            "named_tag_never_touched": {
+              "correct": 7,
+              "total": 9
+            },
+            "n_with_named_tags": 94
+          },
+          "isolation": {
+            "primary": {
+              "correct": 13,
+              "total": 30
+            },
+            "control_valves_excluded": {
+              "correct": 11,
+              "total": 30
+            }
+          }
+        },
+        {
+          "policy": "always_g_v2t",
+          "boolean_no_questions": 25,
+          "boolean_no_answered_yes": 0,
+          "agent": {
+            "tier": "agent-v2t",
+            "n_tried": 560,
+            "stop_reasons": {
+              "done": 559,
+              "errors": 1
+            },
+            "answered_without_tool_call": {
+              "correct": 0,
+              "total": 0
+            },
+            "answered_touching_no_item": {
+              "correct": 22,
+              "total": 25
+            },
+            "named_tag_never_touched": {
+              "correct": 9,
+              "total": 13
+            },
+            "n_with_named_tags": 463
+          },
+          "isolation": {
+            "primary": {
+              "correct": 18,
+              "total": 30
+            },
+            "control_valves_excluded": {
+              "correct": 13,
+              "total": 30
+            }
+          }
+        },
+        {
+          "policy": "always_c_v2t",
+          "boolean_no_questions": 25,
+          "boolean_no_answered_yes": 0,
+          "agent": null,
+          "isolation": {
+            "primary": {
+              "correct": 0,
+              "total": 30
+            },
+            "control_valves_excluded": {
+              "correct": 0,
+              "total": 30
+            }
+          }
+        }
+      ],
+      "late_charges": []
+    },
+    {
+      "corpus_id": "H1000g2",
+      "n_questions": 560,
+      "policies": [
+        {
+          "summary": {
+            "policy": "cascade_v4_iso",
+            "corpus_id": "H1000g2",
+            "n_questions": 560,
+            "n_correct": 505,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 502,
+            "n_timed_out": 8,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.781114475,
+            "cost_per_question_usd": 0.0013948472767857142,
+            "latency_median_s": 6.834757249991526,
+            "latency_mean_s": 17.84153928089354,
+            "latency_p90_s": 41.958531900003436,
+            "latency_p95_s": 94.50191700002324,
+            "latency_max_s": 172.83647230000497,
+            "tier_shares": {
+              "cypher-v2t": 0.7642857142857142,
+              "agent-v2t": 0.2357142857142857
+            },
+            "tier_calls": {
+              "cypher-v2t": 540,
+              "agent-v2t": 132
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "cascade_v4_iso on H1000g2: median 6.8 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "cascade_v4_iso on H1000g2: p90 42.0 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": null,
+          "vs_always_n": null,
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "cascade_v4",
+            "corpus_id": "H1000g2",
+            "n_questions": 560,
+            "n_correct": 505,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 502,
+            "n_timed_out": 11,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.800155075,
+            "cost_per_question_usd": 0.0014288483482142859,
+            "latency_median_s": 6.834757249991526,
+            "latency_mean_s": 20.34712096267923,
+            "latency_p90_s": 50.98763870000403,
+            "latency_p95_s": 103.11627410002984,
+            "latency_max_s": 172.83647230000497,
+            "tier_shares": {
+              "cypher-v2t": 0.7642857142857142,
+              "agent-v2t": 0.2357142857142857
+            },
+            "tier_calls": {
+              "cypher-v2t": 560,
+              "agent-v2t": 132
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "cascade_v4 on H1000g2: median 6.8 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "cascade_v4 on H1000g2: p90 51.0 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": {
+            "n_accepted": 428,
+            "n_accepted_correct": 409,
+            "n_first_tier_correct": 451,
+            "precision": 0.955607476635514,
+            "recall": 0.9068736141906873
+          },
+          "vs_always_n": null,
+          "oracle": {
+            "policy": "oracle(cascade_v4)",
+            "corpus_id": "H1000g2",
+            "n_questions": 560,
+            "n_correct": 518,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 514,
+            "n_timed_out": 12,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.76277171,
+            "cost_per_question_usd": 0.0013620923392857142,
+            "latency_median_s": 6.340806050004176,
+            "latency_mean_s": 19.936261481607797,
+            "latency_p90_s": 58.50579459997243,
+            "latency_p95_s": 104.32459440000093,
+            "latency_max_s": 172.83647230000497,
+            "tier_shares": {
+              "cypher-v2t": 0.8053571428571429,
+              "agent-v2t": 0.19464285714285715
+            },
+            "tier_calls": {
+              "cypher-v2t": 560,
+              "agent-v2t": 109
+            }
+          },
+          "random": {
+            "n_draws": 1000,
+            "n_escalated": 132,
+            "correct_mean": 462.134,
+            "correct_low": 455.0,
+            "correct_high": 470.0,
+            "correct_at_cutoff_mean": 460.944,
+            "correct_at_cutoff_low": 453.0,
+            "correct_at_cutoff_high": 468.0,
+            "cost_total_mean_usd": 0.6449264680700005,
+            "latency_mean_s": 18.21339594332204
+          },
+          "vs_random": {
+            "accuracy": {
+              "mean": 0.07654642857142857,
+              "ci_low": 0.05796428571428572,
+              "ci_high": 0.09606428571428571
+            },
+            "accuracy_at_cutoff": {
+              "mean": 0.0733142857142857,
+              "ci_low": 0.0552,
+              "ci_high": 0.09219285714285715
+            },
+            "cost_usd": {
+              "mean": 0.0002771939409464278,
+              "ci_low": 0.000162463288937499,
+              "ci_high": 0.00039581647112499986
+            },
+            "latency_s": {
+              "mean": 2.1337250193571933,
+              "ci_low": 1.2796488928402514,
+              "ci_high": 3.038921744820591
+            }
+          },
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "always_g_v2t",
+            "corpus_id": "H1000g2",
+            "n_questions": 560,
+            "n_correct": 497,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 497,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.95371126,
+            "cost_per_question_usd": 0.0017030558214285714,
+            "latency_median_s": 9.766870799998287,
+            "latency_mean_s": 14.287355931965404,
+            "latency_p90_s": 26.79991319999681,
+            "latency_p95_s": 37.395424299975275,
+            "latency_max_s": 119.43139979998523,
+            "tier_shares": {
+              "agent-v2t": 0.9982142857142857,
+              "none": 0.0017857142857142857
+            },
+            "tier_calls": {
+              "agent-v2t": 560
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "always_g_v2t on H1000g2: median 9.8 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "always_g_v2t on H1000g2: p90 26.8 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": null,
+          "vs_always_n": null,
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        },
+        {
+          "summary": {
+            "policy": "always_c_v2t",
+            "corpus_id": "H1000g2",
+            "n_questions": 560,
+            "n_correct": 451,
+            "cutoff_s": 120.0,
+            "n_correct_at_cutoff": 451,
+            "n_timed_out": 0,
+            "n_latency_incomplete": 0,
+            "total_cost_usd": 0.421420325,
+            "cost_per_question_usd": 0.0007525362946428571,
+            "latency_median_s": 6.241711949995079,
+            "latency_mean_s": 14.853428250892817,
+            "latency_p90_s": 46.28361259998928,
+            "latency_p95_s": 75.78855820000172,
+            "latency_max_s": 84.00043669999286,
+            "tier_shares": {
+              "cypher-v2t": 0.8946428571428572,
+              "none": 0.10535714285714286
+            },
+            "tier_calls": {
+              "cypher-v2t": 560
+            }
+          },
+          "latency_verdicts": [
+            {
+              "rule": "LB-1",
+              "status": "PASS",
+              "headline": "always_c_v2t on H1000g2: median 6.2 s (limit 10 s)",
+              "details": []
+            },
+            {
+              "rule": "LB-2",
+              "status": "PASS",
+              "headline": "always_c_v2t on H1000g2: p90 46.3 s (limit 60 s)",
+              "details": []
+            }
+          ],
+          "acceptance": null,
+          "vs_always_n": null,
+          "oracle": null,
+          "random": null,
+          "vs_random": null,
+          "references_skipped": null
+        }
+      ],
+      "not_evaluated": [],
+      "breakdowns": {
+        "need label": {
+          "DOWNSTREAM_ALL": {
+            "cascade_v4_iso": {
+              "correct": 19,
+              "total": 40
+            },
+            "cascade_v4": {
+              "correct": 19,
+              "total": 40
+            },
+            "always_g_v2t": {
+              "correct": 17,
+              "total": 40
+            },
+            "always_c_v2t": {
+              "correct": 15,
+              "total": 40
+            }
+          },
+          "GENERIC": {
+            "cascade_v4_iso": {
+              "correct": 126,
+              "total": 140
+            },
+            "cascade_v4": {
+              "correct": 126,
+              "total": 140
+            },
+            "always_g_v2t": {
+              "correct": 123,
+              "total": 140
+            },
+            "always_c_v2t": {
+              "correct": 108,
+              "total": 140
+            }
+          },
+          "ITEM": {
+            "cascade_v4_iso": {
+              "correct": 90,
+              "total": 90
+            },
+            "cascade_v4": {
+              "correct": 90,
+              "total": 90
+            },
+            "always_g_v2t": {
+              "correct": 88,
+              "total": 90
+            },
+            "always_c_v2t": {
+              "correct": 90,
+              "total": 90
+            }
+          },
+          "NEIGHBOURS_DOWNSTREAM": {
+            "cascade_v4_iso": {
+              "correct": 27,
+              "total": 27
+            },
+            "cascade_v4": {
+              "correct": 27,
+              "total": 27
+            },
+            "always_g_v2t": {
+              "correct": 27,
+              "total": 27
+            },
+            "always_c_v2t": {
+              "correct": 27,
+              "total": 27
+            }
+          },
+          "PATH": {
+            "cascade_v4_iso": {
+              "correct": 65,
+              "total": 73
+            },
+            "cascade_v4": {
+              "correct": 65,
+              "total": 73
+            },
+            "always_g_v2t": {
+              "correct": 65,
+              "total": 73
+            },
+            "always_c_v2t": {
+              "correct": 63,
+              "total": 73
+            }
+          },
+          "SIGNAL_CHAIN": {
+            "cascade_v4_iso": {
+              "correct": 70,
+              "total": 70
+            },
+            "cascade_v4": {
+              "correct": 70,
+              "total": 70
+            },
+            "always_g_v2t": {
+              "correct": 69,
+              "total": 70
+            },
+            "always_c_v2t": {
+              "correct": 67,
+              "total": 70
+            }
+          },
+          "UNIT_SCOPE": {
+            "cascade_v4_iso": {
+              "correct": 78,
+              "total": 80
+            },
+            "cascade_v4": {
+              "correct": 78,
+              "total": 80
+            },
+            "always_g_v2t": {
+              "correct": 80,
+              "total": 80
+            },
+            "always_c_v2t": {
+              "correct": 61,
+              "total": 80
+            }
+          },
+          "UPSTREAM_ALL": {
+            "cascade_v4_iso": {
+              "correct": 20,
+              "total": 20
+            },
+            "cascade_v4": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_v2t": {
+              "correct": 18,
+              "total": 20
+            },
+            "always_c_v2t": {
+              "correct": 20,
+              "total": 20
+            }
+          },
+          "UPSTREAM_TO_FIRST_VALVE": {
+            "cascade_v4_iso": {
+              "correct": 10,
+              "total": 20
+            },
+            "cascade_v4": {
+              "correct": 10,
+              "total": 20
+            },
+            "always_g_v2t": {
+              "correct": 10,
+              "total": 20
+            },
+            "always_c_v2t": {
+              "correct": 0,
+              "total": 20
+            }
+          }
+        },
+        "family": {
+          "CONNECTED": {
+            "cascade_v4_iso": {
+              "correct": 19,
+              "total": 20
+            },
+            "cascade_v4": {
+              "correct": 19,
+              "total": 20
+            },
+            "always_g_v2t": {
+              "correct": 17,
+              "total": 20
+            },
+            "always_c_v2t": {
+              "correct": 18,
+              "total": 20
+            }
+          },
+          "COUNT_IN_UNIT": {
+            "cascade_v4_iso": {
+              "correct": 30,
+              "total": 30
+            },
+            "cascade_v4": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_g_v2t": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_c_v2t": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "CROSS_UNIT": {
+            "cascade_v4_iso": {
+              "correct": 28,
+              "total": 30
+            },
+            "cascade_v4": {
+              "correct": 28,
+              "total": 30
+            },
+            "always_g_v2t": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_c_v2t": {
+              "correct": 19,
+              "total": 30
+            }
+          },
+          "DOWNSTREAM_IN_UNIT": {
+            "cascade_v4_iso": {
+              "correct": 17,
+              "total": 20
+            },
+            "cascade_v4": {
+              "correct": 17,
+              "total": 20
+            },
+            "always_g_v2t": {
+              "correct": 15,
+              "total": 20
+            },
+            "always_c_v2t": {
+              "correct": 15,
+              "total": 20
+            }
+          },
+          "DOWNSTREAM_ISOLATION": {
+            "cascade_v4_iso": {
+              "correct": 2,
+              "total": 20
+            },
+            "cascade_v4": {
+              "correct": 2,
+              "total": 20
+            },
+            "always_g_v2t": {
+              "correct": 2,
+              "total": 20
+            },
+            "always_c_v2t": {
+              "correct": 0,
+              "total": 20
+            }
+          },
+          "FEEDING_UNITS": {
+            "cascade_v4_iso": {
+              "correct": 20,
+              "total": 20
+            },
+            "cascade_v4": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_v2t": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_c_v2t": {
+              "correct": 12,
+              "total": 20
+            }
+          },
+          "FLOW_PATH": {
+            "cascade_v4_iso": {
+              "correct": 23,
+              "total": 30
+            },
+            "cascade_v4": {
+              "correct": 23,
+              "total": 30
+            },
+            "always_g_v2t": {
+              "correct": 25,
+              "total": 30
+            },
+            "always_c_v2t": {
+              "correct": 23,
+              "total": 30
+            }
+          },
+          "INSTRUMENTS_OF_ITEM": {
+            "cascade_v4_iso": {
+              "correct": 20,
+              "total": 20
+            },
+            "cascade_v4": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_v2t": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_c_v2t": {
+              "correct": 20,
+              "total": 20
+            }
+          },
+          "LOOKUP_TYPE": {
+            "cascade_v4_iso": {
+              "correct": 30,
+              "total": 30
+            },
+            "cascade_v4": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_g_v2t": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_c_v2t": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "LOOKUP_UNIT": {
+            "cascade_v4_iso": {
+              "correct": 30,
+              "total": 30
+            },
+            "cascade_v4": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_g_v2t": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_c_v2t": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "LOOPS_NEAR_ITEM": {
+            "cascade_v4_iso": {
+              "correct": 18,
+              "total": 20
+            },
+            "cascade_v4": {
+              "correct": 18,
+              "total": 20
+            },
+            "always_g_v2t": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_c_v2t": {
+              "correct": 11,
+              "total": 20
+            }
+          },
+          "LOOP_ACTUATED_VALVE": {
+            "cascade_v4_iso": {
+              "correct": 30,
+              "total": 30
+            },
+            "cascade_v4": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_g_v2t": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_c_v2t": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "LOOP_MEASURED_EQUIPMENT": {
+            "cascade_v4_iso": {
+              "correct": 30,
+              "total": 30
+            },
+            "cascade_v4": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_g_v2t": {
+              "correct": 29,
+              "total": 30
+            },
+            "always_c_v2t": {
+              "correct": 26,
+              "total": 30
+            }
+          },
+          "NEIGHBOURS_DOWNSTREAM": {
+            "cascade_v4_iso": {
+              "correct": 30,
+              "total": 30
+            },
+            "cascade_v4": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_g_v2t": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_c_v2t": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "NO_PATH": {
+            "cascade_v4_iso": {
+              "correct": 20,
+              "total": 20
+            },
+            "cascade_v4": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_v2t": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_c_v2t": {
+              "correct": 19,
+              "total": 20
+            }
+          },
+          "ROUTE_AVOIDING": {
+            "cascade_v4_iso": {
+              "correct": 19,
+              "total": 20
+            },
+            "cascade_v4": {
+              "correct": 19,
+              "total": 20
+            },
+            "always_g_v2t": {
+              "correct": 16,
+              "total": 20
+            },
+            "always_c_v2t": {
+              "correct": 19,
+              "total": 20
+            }
+          },
+          "SAME_UNIT": {
+            "cascade_v4_iso": {
+              "correct": 20,
+              "total": 20
+            },
+            "cascade_v4": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_v2t": {
+              "correct": 19,
+              "total": 20
+            },
+            "always_c_v2t": {
+              "correct": 20,
+              "total": 20
+            }
+          },
+          "SHEETS_OF_TAG": {
+            "cascade_v4_iso": {
+              "correct": 30,
+              "total": 30
+            },
+            "cascade_v4": {
+              "correct": 30,
+              "total": 30
+            },
+            "always_g_v2t": {
+              "correct": 29,
+              "total": 30
+            },
+            "always_c_v2t": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "UNANSWERABLE_TAG": {
+            "cascade_v4_iso": {
+              "correct": 20,
+              "total": 20
+            },
+            "cascade_v4": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_v2t": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_c_v2t": {
+              "correct": 20,
+              "total": 20
+            }
+          },
+          "UNITS_REACHED": {
+            "cascade_v4_iso": {
+              "correct": 20,
+              "total": 20
+            },
+            "cascade_v4": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_v2t": {
+              "correct": 17,
+              "total": 20
+            },
+            "always_c_v2t": {
+              "correct": 20,
+              "total": 20
+            }
+          },
+          "UPSTREAM_ISOLATION": {
+            "cascade_v4_iso": {
+              "correct": 16,
+              "total": 30
+            },
+            "cascade_v4": {
+              "correct": 16,
+              "total": 30
+            },
+            "always_g_v2t": {
+              "correct": 16,
+              "total": 30
+            },
+            "always_c_v2t": {
+              "correct": 0,
+              "total": 30
+            }
+          },
+          "UPSTREAM_SOURCES": {
+            "cascade_v4_iso": {
+              "correct": 20,
+              "total": 20
+            },
+            "cascade_v4": {
+              "correct": 20,
+              "total": 20
+            },
+            "always_g_v2t": {
+              "correct": 18,
+              "total": 20
+            },
+            "always_c_v2t": {
+              "correct": 20,
+              "total": 20
+            }
+          },
+          "VALVES_ON_PATH": {
+            "cascade_v4_iso": {
+              "correct": 13,
+              "total": 20
+            },
+            "cascade_v4": {
+              "correct": 13,
+              "total": 20
+            },
+            "always_g_v2t": {
+              "correct": 14,
+              "total": 20
+            },
+            "always_c_v2t": {
+              "correct": 9,
+              "total": 20
+            }
+          }
+        },
+        "k bin": {
+          "k=0": {
+            "cascade_v4_iso": {
+              "correct": 214,
+              "total": 225
+            },
+            "cascade_v4": {
+              "correct": 214,
+              "total": 225
+            },
+            "always_g_v2t": {
+              "correct": 212,
+              "total": 225
+            },
+            "always_c_v2t": {
+              "correct": 201,
+              "total": 225
+            }
+          },
+          "k=1-2": {
+            "cascade_v4_iso": {
+              "correct": 172,
+              "total": 192
+            },
+            "cascade_v4": {
+              "correct": 172,
+              "total": 192
+            },
+            "always_g_v2t": {
+              "correct": 169,
+              "total": 192
+            },
+            "always_c_v2t": {
+              "correct": 139,
+              "total": 192
+            }
+          },
+          "k>=3": {
+            "cascade_v4_iso": {
+              "correct": 79,
+              "total": 103
+            },
+            "cascade_v4": {
+              "correct": 79,
+              "total": 103
+            },
+            "always_g_v2t": {
+              "correct": 76,
+              "total": 103
+            },
+            "always_c_v2t": {
+              "correct": 72,
+              "total": 103
+            }
+          },
+          "unanswerable": {
+            "cascade_v4_iso": {
+              "correct": 40,
+              "total": 40
+            },
+            "cascade_v4": {
+              "correct": 40,
+              "total": 40
+            },
+            "always_g_v2t": {
+              "correct": 40,
+              "total": 40
+            },
+            "always_c_v2t": {
+              "correct": 39,
+              "total": 40
+            }
+          }
+        }
+      },
+      "diagnostics": [
+        {
+          "policy": "cascade_v4_iso",
+          "boolean_no_questions": 24,
+          "boolean_no_answered_yes": 1,
+          "agent": {
+            "tier": "agent-v2t",
+            "n_tried": 132,
+            "stop_reasons": {
+              "done": 131,
+              "errors": 1
+            },
+            "answered_without_tool_call": {
+              "correct": 0,
+              "total": 0
+            },
+            "answered_touching_no_item": {
+              "correct": 22,
+              "total": 23
+            },
+            "named_tag_never_touched": {
+              "correct": 12,
+              "total": 13
+            },
+            "n_with_named_tags": 98
+          },
+          "isolation": {
+            "primary": {
+              "correct": 16,
+              "total": 30
+            },
+            "control_valves_excluded": {
+              "correct": 11,
+              "total": 30
+            }
+          }
+        },
+        {
+          "policy": "cascade_v4",
+          "boolean_no_questions": 24,
+          "boolean_no_answered_yes": 1,
+          "agent": {
+            "tier": "agent-v2t",
+            "n_tried": 132,
+            "stop_reasons": {
+              "done": 131,
+              "errors": 1
+            },
+            "answered_without_tool_call": {
+              "correct": 0,
+              "total": 0
+            },
+            "answered_touching_no_item": {
+              "correct": 22,
+              "total": 23
+            },
+            "named_tag_never_touched": {
+              "correct": 12,
+              "total": 13
+            },
+            "n_with_named_tags": 98
+          },
+          "isolation": {
+            "primary": {
+              "correct": 16,
+              "total": 30
+            },
+            "control_valves_excluded": {
+              "correct": 11,
+              "total": 30
+            }
+          }
+        },
+        {
+          "policy": "always_g_v2t",
+          "boolean_no_questions": 24,
+          "boolean_no_answered_yes": 1,
+          "agent": {
+            "tier": "agent-v2t",
+            "n_tried": 560,
+            "stop_reasons": {
+              "done": 558,
+              "errors": 2
+            },
+            "answered_without_tool_call": {
+              "correct": 0,
+              "total": 0
+            },
+            "answered_touching_no_item": {
+              "correct": 22,
+              "total": 26
+            },
+            "named_tag_never_touched": {
+              "correct": 13,
+              "total": 17
+            },
+            "n_with_named_tags": 463
+          },
+          "isolation": {
+            "primary": {
+              "correct": 16,
+              "total": 30
+            },
+            "control_valves_excluded": {
+              "correct": 11,
+              "total": 30
+            }
+          }
+        },
+        {
+          "policy": "always_c_v2t",
+          "boolean_no_questions": 24,
+          "boolean_no_answered_yes": 0,
+          "agent": null,
+          "isolation": {
+            "primary": {
+              "correct": 0,
+              "total": 30
+            },
+            "control_valves_excluded": {
+              "correct": 0,
+              "total": 30
+            }
+          }
+        }
+      ],
+      "late_charges": []
+    }
+  ],
+  "tier3": [],
+  "verdicts": [],
+  "sealed": {
+    "claims_corpus": "H1000g2",
+    "small_corpus": "H100g2",
+    "sheets": {
+      "H100g2": 100,
+      "H1000g2": 1000
+    },
+    "scope_sizes": {
+      "H100g2": {
+        "headline": 440,
+        "held-out": 100
+      },
+      "H1000g2": {
+        "headline": 440,
+        "held-out": 100
+      }
+    },
+    "scope_rows": [
+      {
+        "corpus_id": "H100g2",
+        "scope": "headline",
+        "policy": "cascade_v4_iso",
+        "summary": {
+          "policy": "cascade_v4_iso",
+          "corpus_id": "H100g2",
+          "n_questions": 440,
+          "n_correct": 401,
+          "cutoff_s": 120.0,
+          "n_correct_at_cutoff": 401,
+          "n_timed_out": 0,
+          "n_latency_incomplete": 0,
+          "total_cost_usd": 0.60283051,
+          "cost_per_question_usd": 0.001370069340909091,
+          "latency_median_s": 7.133627250001155,
+          "latency_mean_s": 14.311648493864562,
+          "latency_p90_s": 37.98594909998792,
+          "latency_p95_s": 47.35810520000814,
+          "latency_max_s": 88.30634789999021,
+          "tier_shares": {
+            "cypher-v2t": 0.7363636363636363,
+            "agent-v2t": 0.2636363636363636
+          },
+          "tier_calls": {
+            "cypher-v2t": 420,
+            "agent-v2t": 117
+          }
+        },
+        "accuracy": {
+          "estimate": 0.9113636363636364,
+          "ci_low": 0.8811225309901145,
+          "ci_high": 0.93448375737943
+        },
+        "n_all_questions": 560,
+        "n_all_correct_at_cutoff": 510,
+        "latency_verdicts": [
+          {
+            "rule": "LB-1",
+            "status": "PASS",
+            "headline": "cascade_v4_iso on H100g2: median 7.1 s (limit 10 s)",
+            "details": []
+          },
+          {
+            "rule": "LB-2",
+            "status": "PASS",
+            "headline": "cascade_v4_iso on H100g2: p90 38.0 s (limit 60 s)",
+            "details": []
+          }
+        ],
+        "acceptance": null,
+        "latency_median": {
+          "estimate": 7.133627250001155,
+          "ci_low": 6.414749149997078,
+          "ci_high": 7.662309349998395
+        },
+        "latency_p90": {
+          "estimate": 37.98594909998792,
+          "ci_low": 30.831611499976134,
+          "ci_high": 42.78186309999728
+        }
+      },
+      {
+        "corpus_id": "H100g2",
+        "scope": "headline",
+        "policy": "cascade_v4",
+        "summary": {
+          "policy": "cascade_v4",
+          "corpus_id": "H100g2",
+          "n_questions": 440,
+          "n_correct": 399,
+          "cutoff_s": 120.0,
+          "n_correct_at_cutoff": 399,
+          "n_timed_out": 0,
+          "n_latency_incomplete": 0,
+          "total_cost_usd": 0.61530223,
+          "cost_per_question_usd": 0.001398414159090909,
+          "latency_median_s": 7.133627250001155,
+          "latency_mean_s": 14.573811161364624,
+          "latency_p90_s": 38.44625650001399,
+          "latency_p95_s": 47.68641210000351,
+          "latency_max_s": 88.30634789999021,
+          "tier_shares": {
+            "cypher-v2t": 0.75,
+            "agent-v2t": 0.25
+          },
+          "tier_calls": {
+            "cypher-v2t": 440,
+            "agent-v2t": 111
+          }
+        },
+        "accuracy": {
+          "estimate": 0.9068181818181819,
+          "ci_low": 0.8760249622674764,
+          "ci_high": 0.9305691019211891
+        },
+        "n_all_questions": 560,
+        "n_all_correct_at_cutoff": 508,
+        "latency_verdicts": [
+          {
+            "rule": "LB-1",
+            "status": "PASS",
+            "headline": "cascade_v4 on H100g2: median 7.1 s (limit 10 s)",
+            "details": []
+          },
+          {
+            "rule": "LB-2",
+            "status": "PASS",
+            "headline": "cascade_v4 on H100g2: p90 38.4 s (limit 60 s)",
+            "details": []
+          }
+        ],
+        "acceptance": {
+          "n_accepted": 329,
+          "n_accepted_correct": 310,
+          "n_first_tier_correct": 454,
+          "precision": 0.9422492401215805,
+          "recall": 0.6828193832599119
+        },
+        "latency_median": {
+          "estimate": 7.133627250001155,
+          "ci_low": 6.414749149997078,
+          "ci_high": 7.662309349998395
+        },
+        "latency_p90": {
+          "estimate": 38.44625650001399,
+          "ci_low": 30.591213199979393,
+          "ci_high": 43.540468899998814
+        }
+      },
+      {
+        "corpus_id": "H100g2",
+        "scope": "headline",
+        "policy": "always_g_v2t",
+        "summary": {
+          "policy": "always_g_v2t",
+          "corpus_id": "H100g2",
+          "n_questions": 440,
+          "n_correct": 400,
+          "cutoff_s": 120.0,
+          "n_correct_at_cutoff": 400,
+          "n_timed_out": 0,
+          "n_latency_incomplete": 0,
+          "total_cost_usd": 0.75185444,
+          "cost_per_question_usd": 0.001708760090909091,
+          "latency_median_s": 9.378813750008703,
+          "latency_mean_s": 12.577256710909866,
+          "latency_p90_s": 25.25320120001561,
+          "latency_p95_s": 32.03196279999975,
+          "latency_max_s": 61.36526840002625,
+          "tier_shares": {
+            "agent-v2t": 0.9977272727272727,
+            "none": 0.0022727272727272726
+          },
+          "tier_calls": {
+            "agent-v2t": 440
+          }
+        },
+        "accuracy": {
+          "estimate": 0.9090909090909091,
+          "ci_low": 0.878571304310032,
+          "ci_high": 0.9325288719690727
+        },
+        "n_all_questions": 560,
+        "n_all_correct_at_cutoff": 517,
+        "latency_verdicts": [
+          {
+            "rule": "LB-1",
+            "status": "PASS",
+            "headline": "always_g_v2t on H100g2: median 9.4 s (limit 10 s)",
+            "details": []
+          },
+          {
+            "rule": "LB-2",
+            "status": "PASS",
+            "headline": "always_g_v2t on H100g2: p90 25.3 s (limit 60 s)",
+            "details": []
+          }
+        ],
+        "acceptance": null,
+        "latency_median": {
+          "estimate": 9.378813750008703,
+          "ci_low": 8.543937750004261,
+          "ci_high": 10.513326200005395
+        },
+        "latency_p90": {
+          "estimate": 25.25320120001561,
+          "ci_low": 21.502856000013708,
+          "ci_high": 29.03172810000251
+        }
+      },
+      {
+        "corpus_id": "H100g2",
+        "scope": "headline",
+        "policy": "always_c_v2t",
+        "summary": {
+          "policy": "always_c_v2t",
+          "corpus_id": "H100g2",
+          "n_questions": 440,
+          "n_correct": 356,
+          "cutoff_s": 120.0,
+          "n_correct_at_cutoff": 356,
+          "n_timed_out": 0,
+          "n_latency_incomplete": 0,
+          "total_cost_usd": 0.32570625,
+          "cost_per_question_usd": 0.0007402414772727272,
+          "latency_median_s": 5.893044100001134,
+          "latency_mean_s": 10.16065134159114,
+          "latency_p90_s": 17.69932540001173,
+          "latency_p95_s": 39.09943079999357,
+          "latency_max_s": 76.7073166999835,
+          "tier_shares": {
+            "cypher-v2t": 0.9318181818181818,
+            "none": 0.06818181818181818
+          },
+          "tier_calls": {
+            "cypher-v2t": 440
+          }
+        },
+        "accuracy": {
+          "estimate": 0.8090909090909091,
+          "ci_low": 0.7697538530522886,
+          "ci_high": 0.8430773912474795
+        },
+        "n_all_questions": 560,
+        "n_all_correct_at_cutoff": 454,
+        "latency_verdicts": [
+          {
+            "rule": "LB-1",
+            "status": "PASS",
+            "headline": "always_c_v2t on H100g2: median 5.9 s (limit 10 s)",
+            "details": []
+          },
+          {
+            "rule": "LB-2",
+            "status": "PASS",
+            "headline": "always_c_v2t on H100g2: p90 17.7 s (limit 60 s)",
+            "details": []
+          }
+        ],
+        "acceptance": null,
+        "latency_median": {
+          "estimate": 5.893044100001134,
+          "ci_low": 5.476789150005061,
+          "ci_high": 6.60736645000361
+        },
+        "latency_p90": {
+          "estimate": 17.69932540001173,
+          "ci_low": 14.668356800008041,
+          "ci_high": 27.62949910000316
+        }
+      },
+      {
+        "corpus_id": "H100g2",
+        "scope": "held-out",
+        "policy": "cascade_v4_iso",
+        "summary": {
+          "policy": "cascade_v4_iso",
+          "corpus_id": "H100g2",
+          "n_questions": 100,
+          "n_correct": 77,
+          "cutoff_s": 120.0,
+          "n_correct_at_cutoff": 77,
+          "n_timed_out": 0,
+          "n_latency_incomplete": 0,
+          "total_cost_usd": 0.22500137,
+          "cost_per_question_usd": 0.0022500137,
+          "latency_median_s": 14.913994350001303,
+          "latency_mean_s": 28.371775947001588,
+          "latency_p90_s": 72.50070670004061,
+          "latency_p95_s": 82.45658750001166,
+          "latency_max_s": 88.30634789999021,
+          "tier_shares": {
+            "cypher-v2t": 0.66,
+            "agent-v2t": 0.34
+          },
+          "tier_calls": {
+            "cypher-v2t": 100,
+            "agent-v2t": 34
+          }
+        },
+        "accuracy": {
+          "estimate": 0.77,
+          "ci_low": 0.6784543514317231,
+          "ci_high": 0.841568452531236
+        },
+        "n_all_questions": 560,
+        "n_all_correct_at_cutoff": 510,
+        "latency_verdicts": [
+          {
+            "rule": "LB-1",
+            "status": "FAIL",
+            "headline": "cascade_v4_iso on H100g2: median 14.9 s (limit 10 s)",
+            "details": []
+          },
+          {
+            "rule": "LB-2",
+            "status": "FAIL",
+            "headline": "cascade_v4_iso on H100g2: p90 72.5 s (limit 60 s)",
+            "details": []
+          }
+        ],
+        "acceptance": null,
+        "latency_median": {
+          "estimate": 14.913994350001303,
+          "ci_low": 12.647011799999746,
+          "ci_high": 29.232806100029848
+        },
+        "latency_p90": {
+          "estimate": 72.50070670004061,
+          "ci_low": 47.373774899991986,
+          "ci_high": 82.45658750001166
+        }
+      },
+      {
+        "corpus_id": "H100g2",
+        "scope": "held-out",
+        "policy": "cascade_v4",
+        "summary": {
+          "policy": "cascade_v4",
+          "corpus_id": "H100g2",
+          "n_questions": 100,
+          "n_correct": 77,
+          "cutoff_s": 120.0,
+          "n_correct_at_cutoff": 77,
+          "n_timed_out": 0,
+          "n_latency_incomplete": 0,
+          "total_cost_usd": 0.22500137,
+          "cost_per_question_usd": 0.0022500137,
+          "latency_median_s": 14.913994350001303,
+          "latency_mean_s": 28.371775947001588,
+          "latency_p90_s": 72.50070670004061,
+          "latency_p95_s": 82.45658750001166,
+          "latency_max_s": 88.30634789999021,
+          "tier_shares": {
+            "cypher-v2t": 0.66,
+            "agent-v2t": 0.34
+          },
+          "tier_calls": {
+            "cypher-v2t": 100,
+            "agent-v2t": 34
+          }
+        },
+        "accuracy": {
+          "estimate": 0.77,
+          "ci_low": 0.6784543514317231,
+          "ci_high": 0.841568452531236
+        },
+        "n_all_questions": 560,
+        "n_all_correct_at_cutoff": 508,
+        "latency_verdicts": [
+          {
+            "rule": "LB-1",
+            "status": "FAIL",
+            "headline": "cascade_v4 on H100g2: median 14.9 s (limit 10 s)",
+            "details": []
+          },
+          {
+            "rule": "LB-2",
+            "status": "FAIL",
+            "headline": "cascade_v4 on H100g2: p90 72.5 s (limit 60 s)",
+            "details": []
+          }
+        ],
+        "acceptance": {
+          "n_accepted": 66,
+          "n_accepted_correct": 58,
+          "n_first_tier_correct": 454,
+          "precision": 0.8787878787878788,
+          "recall": 0.1277533039647577
+        },
+        "latency_median": {
+          "estimate": 14.913994350001303,
+          "ci_low": 12.647011799999746,
+          "ci_high": 29.232806100029848
+        },
+        "latency_p90": {
+          "estimate": 72.50070670004061,
+          "ci_low": 47.373774899991986,
+          "ci_high": 82.45658750001166
+        }
+      },
+      {
+        "corpus_id": "H100g2",
+        "scope": "held-out",
+        "policy": "always_g_v2t",
+        "summary": {
+          "policy": "always_g_v2t",
+          "corpus_id": "H100g2",
+          "n_questions": 100,
+          "n_correct": 77,
+          "cutoff_s": 120.0,
+          "n_correct_at_cutoff": 77,
+          "n_timed_out": 0,
+          "n_latency_incomplete": 0,
+          "total_cost_usd": 0.29901059,
+          "cost_per_question_usd": 0.0029901059,
+          "latency_median_s": 16.613349599992944,
+          "latency_mean_s": 18.23673989100178,
+          "latency_p90_s": 29.825904699988314,
+          "latency_p95_s": 32.4548447000052,
+          "latency_max_s": 61.36526840002625,
+          "tier_shares": {
+            "agent-v2t": 1.0
+          },
+          "tier_calls": {
+            "agent-v2t": 100
+          }
+        },
+        "accuracy": {
+          "estimate": 0.77,
+          "ci_low": 0.6784543514317231,
+          "ci_high": 0.841568452531236
+        },
+        "n_all_questions": 560,
+        "n_all_correct_at_cutoff": 517,
+        "latency_verdicts": [
+          {
+            "rule": "LB-1",
+            "status": "FAIL",
+            "headline": "always_g_v2t on H100g2: median 16.6 s (limit 10 s)",
+            "details": []
+          },
+          {
+            "rule": "LB-2",
+            "status": "PASS",
+            "headline": "always_g_v2t on H100g2: p90 29.8 s (limit 60 s)",
+            "details": []
+          }
+        ],
+        "acceptance": null,
+        "latency_median": {
+          "estimate": 16.613349599992944,
+          "ci_low": 14.679636599998048,
+          "ci_high": 18.37393680000241
+        },
+        "latency_p90": {
+          "estimate": 29.825904699988314,
+          "ci_low": 26.442202300000645,
+          "ci_high": 32.4548447000052
+        }
+      },
+      {
+        "corpus_id": "H100g2",
+        "scope": "held-out",
+        "policy": "always_c_v2t",
+        "summary": {
+          "policy": "always_c_v2t",
+          "corpus_id": "H100g2",
+          "n_questions": 100,
+          "n_correct": 64,
+          "cutoff_s": 120.0,
+          "n_correct_at_cutoff": 64,
+          "n_timed_out": 0,
+          "n_latency_incomplete": 0,
+          "total_cost_usd": 0.105421325,
+          "cost_per_question_usd": 0.00105421325,
+          "latency_median_s": 12.425354749997496,
+          "latency_mean_s": 20.489803257999302,
+          "latency_p90_s": 48.63993749999645,
+          "latency_p95_s": 69.97909189999336,
+          "latency_max_s": 76.7073166999835,
+          "tier_shares": {
+            "cypher-v2t": 0.84,
+            "none": 0.16
+          },
+          "tier_calls": {
+            "cypher-v2t": 100
+          }
+        },
+        "accuracy": {
+          "estimate": 0.64,
+          "ci_low": 0.542352199811621,
+          "ci_high": 0.7272892540950986
+        },
+        "n_all_questions": 560,
+        "n_all_correct_at_cutoff": 454,
+        "latency_verdicts": [
+          {
+            "rule": "LB-1",
+            "status": "FAIL",
+            "headline": "always_c_v2t on H100g2: median 12.4 s (limit 10 s)",
+            "details": []
+          },
+          {
+            "rule": "LB-2",
+            "status": "PASS",
+            "headline": "always_c_v2t on H100g2: p90 48.6 s (limit 60 s)",
+            "details": []
+          }
+        ],
+        "acceptance": null,
+        "latency_median": {
+          "estimate": 12.425354749997496,
+          "ci_low": 10.44066799999564,
+          "ci_high": 13.915312000004633
+        },
+        "latency_p90": {
+          "estimate": 48.63993749999645,
+          "ci_low": 43.78609899999719,
+          "ci_high": 69.97909189999336
+        }
+      },
+      {
+        "corpus_id": "H1000g2",
+        "scope": "headline",
+        "policy": "cascade_v4_iso",
+        "summary": {
+          "policy": "cascade_v4_iso",
+          "corpus_id": "H1000g2",
+          "n_questions": 440,
+          "n_correct": 392,
+          "cutoff_s": 120.0,
+          "n_correct_at_cutoff": 392,
+          "n_timed_out": 3,
+          "n_latency_incomplete": 0,
+          "total_cost_usd": 0.65053953,
+          "cost_per_question_usd": 0.0014784989318181818,
+          "latency_median_s": 7.4955048999945575,
+          "latency_mean_s": 17.667463433636858,
+          "latency_p90_s": 40.79079639998963,
+          "latency_p95_s": 78.83698400000867,
+          "latency_max_s": 132.0425100000066,
+          "tier_shares": {
+            "cypher-v2t": 0.7363636363636363,
+            "agent-v2t": 0.2636363636363636
+          },
+          "tier_calls": {
+            "cypher-v2t": 420,
+            "agent-v2t": 116
+          }
+        },
+        "accuracy": {
+          "estimate": 0.8909090909090909,
+          "ci_low": 0.858325280849923,
+          "ci_high": 0.9167259987056661
+        },
+        "n_all_questions": 560,
+        "n_all_correct_at_cutoff": 502,
+        "latency_verdicts": [
+          {
+            "rule": "LB-1",
+            "status": "PASS",
+            "headline": "cascade_v4_iso on H1000g2: median 7.5 s (limit 10 s)",
+            "details": []
+          },
+          {
+            "rule": "LB-2",
+            "status": "PASS",
+            "headline": "cascade_v4_iso on H1000g2: p90 40.8 s (limit 60 s)",
+            "details": []
+          }
+        ],
+        "acceptance": null,
+        "latency_median": {
+          "estimate": 7.4955048999945575,
+          "ci_low": 6.8215366000004,
+          "ci_high": 8.600711999999476
+        },
+        "latency_p90": {
+          "estimate": 40.79079639998963,
+          "ci_low": 37.00522330001695,
+          "ci_high": 46.28361259998928
+        }
+      },
+      {
+        "corpus_id": "H1000g2",
+        "scope": "headline",
+        "policy": "cascade_v4",
+        "summary": {
+          "policy": "cascade_v4",
+          "corpus_id": "H1000g2",
+          "n_questions": 440,
+          "n_correct": 392,
+          "cutoff_s": 120.0,
+          "n_correct_at_cutoff": 392,
+          "n_timed_out": 6,
+          "n_latency_incomplete": 0,
+          "total_cost_usd": 0.66958013,
+          "cost_per_question_usd": 0.0015217730227272729,
+          "latency_median_s": 7.4955048999945575,
+          "latency_mean_s": 20.856385574091373,
+          "latency_p90_s": 55.11010239998723,
+          "latency_p95_s": 103.04059669998969,
+          "latency_max_s": 138.99778019998485,
+          "tier_shares": {
+            "cypher-v2t": 0.7363636363636363,
+            "agent-v2t": 0.2636363636363636
+          },
+          "tier_calls": {
+            "cypher-v2t": 440,
+            "agent-v2t": 116
+          }
+        },
+        "accuracy": {
+          "estimate": 0.8909090909090909,
+          "ci_low": 0.858325280849923,
+          "ci_high": 0.9167259987056661
+        },
+        "n_all_questions": 560,
+        "n_all_correct_at_cutoff": 502,
+        "latency_verdicts": [
+          {
+            "rule": "LB-1",
+            "status": "PASS",
+            "headline": "cascade_v4 on H1000g2: median 7.5 s (limit 10 s)",
+            "details": []
+          },
+          {
+            "rule": "LB-2",
+            "status": "PASS",
+            "headline": "cascade_v4 on H1000g2: p90 55.1 s (limit 60 s)",
+            "details": []
+          }
+        ],
+        "acceptance": {
+          "n_accepted": 324,
+          "n_accepted_correct": 308,
+          "n_first_tier_correct": 451,
+          "precision": 0.9506172839506173,
+          "recall": 0.6829268292682927
+        },
+        "latency_median": {
+          "estimate": 7.4955048999945575,
+          "ci_low": 6.8215366000004,
+          "ci_high": 8.606735399989702
+        },
+        "latency_p90": {
+          "estimate": 55.11010239998723,
+          "ci_low": 41.136617500000284,
+          "ci_high": 95.07382210002106
+        }
+      },
+      {
+        "corpus_id": "H1000g2",
+        "scope": "headline",
+        "policy": "always_g_v2t",
+        "summary": {
+          "policy": "always_g_v2t",
+          "corpus_id": "H1000g2",
+          "n_questions": 440,
+          "n_correct": 383,
+          "cutoff_s": 120.0,
+          "n_correct_at_cutoff": 383,
+          "n_timed_out": 0,
+          "n_latency_incomplete": 0,
+          "total_cost_usd": 0.83310783,
+          "cost_per_question_usd": 0.0018934268863636363,
+          "latency_median_s": 10.43436759999895,
+          "latency_mean_s": 14.460519827500585,
+          "latency_p90_s": 27.10575770000287,
+          "latency_p95_s": 37.395424299975275,
+          "latency_max_s": 119.43139979998523,
+          "tier_shares": {
+            "agent-v2t": 0.9977272727272727,
+            "none": 0.0022727272727272726
+          },
+          "tier_calls": {
+            "agent-v2t": 440
+          }
+        },
+        "accuracy": {
+          "estimate": 0.8704545454545455,
+          "ci_low": 0.8358429303667804,
+          "ci_high": 0.8986533403748537
+        },
+        "n_all_questions": 560,
+        "n_all_correct_at_cutoff": 497,
+        "latency_verdicts": [
+          {
+            "rule": "LB-1",
+            "status": "FAIL",
+            "headline": "always_g_v2t on H1000g2: median 10.4 s (limit 10 s)",
+            "details": []
+          },
+          {
+            "rule": "LB-2",
+            "status": "PASS",
+            "headline": "always_g_v2t on H1000g2: p90 27.1 s (limit 60 s)",
+            "details": []
+          }
+        ],
+        "acceptance": null,
+        "latency_median": {
+          "estimate": 10.43436759999895,
+          "ci_low": 9.017297399987001,
+          "ci_high": 11.973523199994816
+        },
+        "latency_p90": {
+          "estimate": 27.10575770000287,
+          "ci_low": 25.309958299971186,
+          "ci_high": 31.067554299996118
+        }
+      },
+      {
+        "corpus_id": "H1000g2",
+        "scope": "headline",
+        "policy": "always_c_v2t",
+        "summary": {
+          "policy": "always_c_v2t",
+          "corpus_id": "H1000g2",
+          "n_questions": 440,
+          "n_correct": 350,
+          "cutoff_s": 120.0,
+          "n_correct_at_cutoff": 350,
+          "n_timed_out": 0,
+          "n_latency_incomplete": 0,
+          "total_cost_usd": 0.330347175,
+          "cost_per_question_usd": 0.0007507890340909091,
+          "latency_median_s": 6.537517950004258,
+          "latency_mean_s": 15.161109830908753,
+          "latency_p90_s": 46.747552299988456,
+          "latency_p95_s": 74.69413919999351,
+          "latency_max_s": 81.52610850000929,
+          "tier_shares": {
+            "cypher-v2t": 0.8886363636363637,
+            "none": 0.11136363636363636
+          },
+          "tier_calls": {
+            "cypher-v2t": 440
+          }
+        },
+        "accuracy": {
+          "estimate": 0.7954545454545454,
+          "ci_low": 0.7552831843109675,
+          "ci_high": 0.8305113874461638
+        },
+        "n_all_questions": 560,
+        "n_all_correct_at_cutoff": 451,
+        "latency_verdicts": [
+          {
+            "rule": "LB-1",
+            "status": "PASS",
+            "headline": "always_c_v2t on H1000g2: median 6.5 s (limit 10 s)",
+            "details": []
+          },
+          {
+            "rule": "LB-2",
+            "status": "PASS",
+            "headline": "always_c_v2t on H1000g2: p90 46.7 s (limit 60 s)",
+            "details": []
+          }
+        ],
+        "acceptance": null,
+        "latency_median": {
+          "estimate": 6.537517950004258,
+          "ci_low": 5.796709600006579,
+          "ci_high": 6.849875150004664
+        },
+        "latency_p90": {
+          "estimate": 46.747552299988456,
+          "ci_low": 38.917649300004996,
+          "ci_high": 72.00562920000812
+        }
+      },
+      {
+        "corpus_id": "H1000g2",
+        "scope": "held-out",
+        "policy": "cascade_v4_iso",
+        "summary": {
+          "policy": "cascade_v4_iso",
+          "corpus_id": "H1000g2",
+          "n_questions": 100,
+          "n_correct": 74,
+          "cutoff_s": 120.0,
+          "n_correct_at_cutoff": 74,
+          "n_timed_out": 3,
+          "n_latency_incomplete": 0,
+          "total_cost_usd": 0.24803228,
+          "cost_per_question_usd": 0.0024803228,
+          "latency_median_s": 19.083053149999614,
+          "latency_mean_s": 38.9677743640016,
+          "latency_p90_s": 104.64829939998162,
+          "latency_p95_s": 116.80531009998958,
+          "latency_max_s": 132.0425100000066,
+          "tier_shares": {
+            "agent-v2t": 0.37,
+            "cypher-v2t": 0.63
+          },
+          "tier_calls": {
+            "cypher-v2t": 100,
+            "agent-v2t": 37
+          }
+        },
+        "accuracy": {
+          "estimate": 0.74,
+          "ci_low": 0.6462882736813838,
+          "ci_high": 0.8159542187301354
+        },
+        "n_all_questions": 560,
+        "n_all_correct_at_cutoff": 502,
+        "latency_verdicts": [
+          {
+            "rule": "LB-1",
+            "status": "FAIL",
+            "headline": "cascade_v4_iso on H1000g2: median 19.1 s (limit 10 s)",
+            "details": []
+          },
+          {
+            "rule": "LB-2",
+            "status": "FAIL",
+            "headline": "cascade_v4_iso on H1000g2: p90 104.6 s (limit 60 s)",
+            "details": []
+          }
+        ],
+        "acceptance": null,
+        "latency_median": {
+          "estimate": 19.083053149999614,
+          "ci_low": 11.800189450001199,
+          "ci_high": 28.955422799997905
+        },
+        "latency_p90": {
+          "estimate": 104.64829939998162,
+          "ci_low": 100.29396170002292,
+          "ci_high": 116.80531009998958
+        }
+      },
+      {
+        "corpus_id": "H1000g2",
+        "scope": "held-out",
+        "policy": "cascade_v4",
+        "summary": {
+          "policy": "cascade_v4",
+          "corpus_id": "H1000g2",
+          "n_questions": 100,
+          "n_correct": 74,
+          "cutoff_s": 120.0,
+          "n_correct_at_cutoff": 74,
+          "n_timed_out": 3,
+          "n_latency_incomplete": 0,
+          "total_cost_usd": 0.24803228,
+          "cost_per_question_usd": 0.0024803228,
+          "latency_median_s": 19.083053149999614,
+          "latency_mean_s": 38.9677743640016,
+          "latency_p90_s": 104.64829939998162,
+          "latency_p95_s": 116.80531009998958,
+          "latency_max_s": 132.0425100000066,
+          "tier_shares": {
+            "agent-v2t": 0.37,
+            "cypher-v2t": 0.63
+          },
+          "tier_calls": {
+            "cypher-v2t": 100,
+            "agent-v2t": 37
+          }
+        },
+        "accuracy": {
+          "estimate": 0.74,
+          "ci_low": 0.6462882736813838,
+          "ci_high": 0.8159542187301354
+        },
+        "n_all_questions": 560,
+        "n_all_correct_at_cutoff": 502,
+        "latency_verdicts": [
+          {
+            "rule": "LB-1",
+            "status": "FAIL",
+            "headline": "cascade_v4 on H1000g2: median 19.1 s (limit 10 s)",
+            "details": []
+          },
+          {
+            "rule": "LB-2",
+            "status": "FAIL",
+            "headline": "cascade_v4 on H1000g2: p90 104.6 s (limit 60 s)",
+            "details": []
+          }
+        ],
+        "acceptance": {
+          "n_accepted": 63,
+          "n_accepted_correct": 57,
+          "n_first_tier_correct": 451,
+          "precision": 0.9047619047619048,
+          "recall": 0.12638580931263857
+        },
+        "latency_median": {
+          "estimate": 19.083053149999614,
+          "ci_low": 11.800189450001199,
+          "ci_high": 28.955422799997905
+        },
+        "latency_p90": {
+          "estimate": 104.64829939998162,
+          "ci_low": 100.29396170002292,
+          "ci_high": 116.80531009998958
+        }
+      },
+      {
+        "corpus_id": "H1000g2",
+        "scope": "held-out",
+        "policy": "always_g_v2t",
+        "summary": {
+          "policy": "always_g_v2t",
+          "corpus_id": "H1000g2",
+          "n_questions": 100,
+          "n_correct": 69,
+          "cutoff_s": 120.0,
+          "n_correct_at_cutoff": 69,
+          "n_timed_out": 0,
+          "n_latency_incomplete": 0,
+          "total_cost_usd": 0.33233538,
+          "cost_per_question_usd": 0.0033233538,
+          "latency_median_s": 19.969912150008895,
+          "latency_mean_s": 21.397745966999647,
+          "latency_p90_s": 37.78697700003977,
+          "latency_p95_s": 43.068550900017726,
+          "latency_max_s": 53.23333880001155,
+          "tier_shares": {
+            "agent-v2t": 1.0
+          },
+          "tier_calls": {
+            "agent-v2t": 100
+          }
+        },
+        "accuracy": {
+          "estimate": 0.69,
+          "ci_low": 0.5937376052204429,
+          "ci_high": 0.7722043679386762
+        },
+        "n_all_questions": 560,
+        "n_all_correct_at_cutoff": 497,
+        "latency_verdicts": [
+          {
+            "rule": "LB-1",
+            "status": "FAIL",
+            "headline": "always_g_v2t on H1000g2: median 20.0 s (limit 10 s)",
+            "details": []
+          },
+          {
+            "rule": "LB-2",
+            "status": "PASS",
+            "headline": "always_g_v2t on H1000g2: p90 37.8 s (limit 60 s)",
+            "details": []
+          }
+        ],
+        "acceptance": null,
+        "latency_median": {
+          "estimate": 19.969912150008895,
+          "ci_low": 17.298470699985046,
+          "ci_high": 22.109636950015556
+        },
+        "latency_p90": {
+          "estimate": 37.78697700003977,
+          "ci_low": 29.42939449995174,
+          "ci_high": 43.068550900017726
+        }
+      },
+      {
+        "corpus_id": "H1000g2",
+        "scope": "held-out",
+        "policy": "always_c_v2t",
+        "summary": {
+          "policy": "always_c_v2t",
+          "corpus_id": "H1000g2",
+          "n_questions": 100,
+          "n_correct": 60,
+          "cutoff_s": 120.0,
+          "n_correct_at_cutoff": 60,
+          "n_timed_out": 0,
+          "n_latency_incomplete": 0,
+          "total_cost_usd": 0.113626725,
+          "cost_per_question_usd": 0.00113626725,
+          "latency_median_s": 12.567680749994906,
+          "latency_mean_s": 29.122515181000125,
+          "latency_p90_s": 77.99091939999198,
+          "latency_p95_s": 78.83233560000372,
+          "latency_max_s": 81.52610850000929,
+          "tier_shares": {
+            "none": 0.27,
+            "cypher-v2t": 0.73
+          },
+          "tier_calls": {
+            "cypher-v2t": 100
+          }
+        },
+        "accuracy": {
+          "estimate": 0.6,
+          "ci_low": 0.5020007846184025,
+          "ci_high": 0.6906002538863971
+        },
+        "n_all_questions": 560,
+        "n_all_correct_at_cutoff": 451,
+        "latency_verdicts": [
+          {
+            "rule": "LB-1",
+            "status": "FAIL",
+            "headline": "always_c_v2t on H1000g2: median 12.6 s (limit 10 s)",
+            "details": []
+          },
+          {
+            "rule": "LB-2",
+            "status": "FAIL",
+            "headline": "always_c_v2t on H1000g2: p90 78.0 s (limit 60 s)",
+            "details": []
+          }
+        ],
+        "acceptance": null,
+        "latency_median": {
+          "estimate": 12.567680749994906,
+          "ci_low": 9.941033300005074,
+          "ci_high": 17.525164299993776
+        },
+        "latency_p90": {
+          "estimate": 77.99091939999198,
+          "ci_low": 75.78855820000172,
+          "ci_high": 78.83233560000372
+        }
+      }
+    ],
+    "split_rows": [
+      {
+        "corpus_id": "H100g2",
+        "policy": "cascade_v4_iso",
+        "split": "dev-old",
+        "cell": {
+          "correct": 207,
+          "total": 220
+        },
+        "accuracy": {
+          "estimate": 0.9409090909090909,
+          "ci_low": 0.9015387028777413,
+          "ci_high": 0.9651455953045447
+        }
+      },
+      {
+        "corpus_id": "H100g2",
+        "policy": "cascade_v4",
+        "split": "dev-old",
+        "cell": {
+          "correct": 205,
+          "total": 220
+        },
+        "accuracy": {
+          "estimate": 0.9318181818181818,
+          "ci_low": 0.8905652034037633,
+          "ci_high": 0.9582493154345578
+        }
+      },
+      {
+        "corpus_id": "H100g2",
+        "policy": "always_g_v2t",
+        "split": "dev-old",
+        "cell": {
+          "correct": 209,
+          "total": 220
+        },
+        "accuracy": {
+          "estimate": 0.95,
+          "ci_low": 0.9126992498978536,
+          "ci_high": 0.971854827628397
+        }
+      },
+      {
+        "corpus_id": "H100g2",
+        "policy": "always_c_v2t",
+        "split": "dev-old",
+        "cell": {
+          "correct": 192,
+          "total": 220
+        },
+        "accuracy": {
+          "estimate": 0.8727272727272727,
+          "ci_low": 0.8222034708865865,
+          "ci_high": 0.9104574822159645
+        }
+      },
+      {
+        "corpus_id": "H100g2",
+        "policy": "cascade_v4_iso",
+        "split": "dev-new",
+        "cell": {
+          "correct": 117,
+          "total": 120
+        },
+        "accuracy": {
+          "estimate": 0.975,
+          "ci_low": 0.9290687625956524,
+          "ci_high": 0.9914619799012145
+        }
+      },
+      {
+        "corpus_id": "H100g2",
+        "policy": "cascade_v4",
+        "split": "dev-new",
+        "cell": {
+          "correct": 117,
+          "total": 120
+        },
+        "accuracy": {
+          "estimate": 0.975,
+          "ci_low": 0.9290687625956524,
+          "ci_high": 0.9914619799012145
+        }
+      },
+      {
+        "corpus_id": "H100g2",
+        "policy": "always_g_v2t",
+        "split": "dev-new",
+        "cell": {
+          "correct": 114,
+          "total": 120
+        },
+        "accuracy": {
+          "estimate": 0.95,
+          "ci_low": 0.8951958053541377,
+          "ci_high": 0.9768859506955258
+        }
+      },
+      {
+        "corpus_id": "H100g2",
+        "policy": "always_c_v2t",
+        "split": "dev-new",
+        "cell": {
+          "correct": 100,
+          "total": 120
+        },
+        "accuracy": {
+          "estimate": 0.8333333333333334,
+          "ci_low": 0.756545606089762,
+          "ci_high": 0.8894408798729518
+        }
+      },
+      {
+        "corpus_id": "H100g2",
+        "policy": "cascade_v4_iso",
+        "split": "held-out",
+        "cell": {
+          "correct": 77,
+          "total": 100
+        },
+        "accuracy": {
+          "estimate": 0.77,
+          "ci_low": 0.6784543514317231,
+          "ci_high": 0.841568452531236
+        }
+      },
+      {
+        "corpus_id": "H100g2",
+        "policy": "cascade_v4",
+        "split": "held-out",
+        "cell": {
+          "correct": 77,
+          "total": 100
+        },
+        "accuracy": {
+          "estimate": 0.77,
+          "ci_low": 0.6784543514317231,
+          "ci_high": 0.841568452531236
+        }
+      },
+      {
+        "corpus_id": "H100g2",
+        "policy": "always_g_v2t",
+        "split": "held-out",
+        "cell": {
+          "correct": 77,
+          "total": 100
+        },
+        "accuracy": {
+          "estimate": 0.77,
+          "ci_low": 0.6784543514317231,
+          "ci_high": 0.841568452531236
+        }
+      },
+      {
+        "corpus_id": "H100g2",
+        "policy": "always_c_v2t",
+        "split": "held-out",
+        "cell": {
+          "correct": 64,
+          "total": 100
+        },
+        "accuracy": {
+          "estimate": 0.64,
+          "ci_low": 0.542352199811621,
+          "ci_high": 0.7272892540950986
+        }
+      },
+      {
+        "corpus_id": "H100g2",
+        "policy": "cascade_v4_iso",
+        "split": "held-out-wording",
+        "cell": {
+          "correct": 79,
+          "total": 90
+        },
+        "accuracy": {
+          "estimate": 0.8777777777777778,
+          "ci_low": 0.7942607696004786,
+          "ci_high": 0.930364556480918
+        }
+      },
+      {
+        "corpus_id": "H100g2",
+        "policy": "cascade_v4",
+        "split": "held-out-wording",
+        "cell": {
+          "correct": 79,
+          "total": 90
+        },
+        "accuracy": {
+          "estimate": 0.8777777777777778,
+          "ci_low": 0.7942607696004786,
+          "ci_high": 0.930364556480918
+        }
+      },
+      {
+        "corpus_id": "H100g2",
+        "policy": "always_g_v2t",
+        "split": "held-out-wording",
+        "cell": {
+          "correct": 88,
+          "total": 90
+        },
+        "accuracy": {
+          "estimate": 0.9777777777777777,
+          "ci_low": 0.9225532261919241,
+          "ci_high": 0.9938846862051364
+        }
+      },
+      {
+        "corpus_id": "H100g2",
+        "policy": "always_c_v2t",
+        "split": "held-out-wording",
+        "cell": {
+          "correct": 68,
+          "total": 90
+        },
+        "accuracy": {
+          "estimate": 0.7555555555555555,
+          "ci_low": 0.6575143545381369,
+          "ci_high": 0.8326733660463373
+        }
+      },
+      {
+        "corpus_id": "H1000g2",
+        "policy": "cascade_v4_iso",
+        "split": "dev-old",
+        "cell": {
+          "correct": 204,
+          "total": 220
+        },
+        "accuracy": {
+          "estimate": 0.9272727272727272,
+          "ci_low": 0.8851382050617915,
+          "ci_high": 0.9547414241045473
+        }
+      },
+      {
+        "corpus_id": "H1000g2",
+        "policy": "cascade_v4",
+        "split": "dev-old",
+        "cell": {
+          "correct": 204,
+          "total": 220
+        },
+        "accuracy": {
+          "estimate": 0.9272727272727272,
+          "ci_low": 0.8851382050617915,
+          "ci_high": 0.9547414241045473
+        }
+      },
+      {
+        "corpus_id": "H1000g2",
+        "policy": "always_g_v2t",
+        "split": "dev-old",
+        "cell": {
+          "correct": 205,
+          "total": 220
+        },
+        "accuracy": {
+          "estimate": 0.9318181818181818,
+          "ci_low": 0.8905652034037633,
+          "ci_high": 0.9582493154345578
+        }
+      },
+      {
+        "corpus_id": "H1000g2",
+        "policy": "always_c_v2t",
+        "split": "dev-old",
+        "cell": {
+          "correct": 186,
+          "total": 220
+        },
+        "accuracy": {
+          "estimate": 0.8454545454545455,
+          "ci_low": 0.7918018670987041,
+          "ci_high": 0.887249747971953
+        }
+      },
+      {
+        "corpus_id": "H1000g2",
+        "policy": "cascade_v4_iso",
+        "split": "dev-new",
+        "cell": {
+          "correct": 114,
+          "total": 120
+        },
+        "accuracy": {
+          "estimate": 0.95,
+          "ci_low": 0.8951958053541377,
+          "ci_high": 0.9768859506955258
+        }
+      },
+      {
+        "corpus_id": "H1000g2",
+        "policy": "cascade_v4",
+        "split": "dev-new",
+        "cell": {
+          "correct": 114,
+          "total": 120
+        },
+        "accuracy": {
+          "estimate": 0.95,
+          "ci_low": 0.8951958053541377,
+          "ci_high": 0.9768859506955258
+        }
+      },
+      {
+        "corpus_id": "H1000g2",
+        "policy": "always_g_v2t",
+        "split": "dev-new",
+        "cell": {
+          "correct": 109,
+          "total": 120
+        },
+        "accuracy": {
+          "estimate": 0.9083333333333333,
+          "ci_low": 0.843290092093749,
+          "ci_high": 0.9480433532105753
+        }
+      },
+      {
+        "corpus_id": "H1000g2",
+        "policy": "always_c_v2t",
+        "split": "dev-new",
+        "cell": {
+          "correct": 104,
+          "total": 120
+        },
+        "accuracy": {
+          "estimate": 0.8666666666666667,
+          "ci_low": 0.7943505063345165,
+          "ci_high": 0.9162346282244686
+        }
+      },
+      {
+        "corpus_id": "H1000g2",
+        "policy": "cascade_v4_iso",
+        "split": "held-out",
+        "cell": {
+          "correct": 74,
+          "total": 100
+        },
+        "accuracy": {
+          "estimate": 0.74,
+          "ci_low": 0.6462882736813838,
+          "ci_high": 0.8159542187301354
+        }
+      },
+      {
+        "corpus_id": "H1000g2",
+        "policy": "cascade_v4",
+        "split": "held-out",
+        "cell": {
+          "correct": 74,
+          "total": 100
+        },
+        "accuracy": {
+          "estimate": 0.74,
+          "ci_low": 0.6462882736813838,
+          "ci_high": 0.8159542187301354
+        }
+      },
+      {
+        "corpus_id": "H1000g2",
+        "policy": "always_g_v2t",
+        "split": "held-out",
+        "cell": {
+          "correct": 69,
+          "total": 100
+        },
+        "accuracy": {
+          "estimate": 0.69,
+          "ci_low": 0.5937376052204429,
+          "ci_high": 0.7722043679386762
+        }
+      },
+      {
+        "corpus_id": "H1000g2",
+        "policy": "always_c_v2t",
+        "split": "held-out",
+        "cell": {
+          "correct": 60,
+          "total": 100
+        },
+        "accuracy": {
+          "estimate": 0.6,
+          "ci_low": 0.5020007846184025,
+          "ci_high": 0.6906002538863971
+        }
+      },
+      {
+        "corpus_id": "H1000g2",
+        "policy": "cascade_v4_iso",
+        "split": "held-out-wording",
+        "cell": {
+          "correct": 80,
+          "total": 90
+        },
+        "accuracy": {
+          "estimate": 0.8888888888888888,
+          "ci_low": 0.8074203653741283,
+          "ci_high": 0.9385174702978976
+        }
+      },
+      {
+        "corpus_id": "H1000g2",
+        "policy": "cascade_v4",
+        "split": "held-out-wording",
+        "cell": {
+          "correct": 80,
+          "total": 90
+        },
+        "accuracy": {
+          "estimate": 0.8888888888888888,
+          "ci_low": 0.8074203653741283,
+          "ci_high": 0.9385174702978976
+        }
+      },
+      {
+        "corpus_id": "H1000g2",
+        "policy": "always_g_v2t",
+        "split": "held-out-wording",
+        "cell": {
+          "correct": 84,
+          "total": 90
+        },
+        "accuracy": {
+          "estimate": 0.9333333333333333,
+          "ci_low": 0.8620973805849326,
+          "ci_high": 0.9690904934496107
+        }
+      },
+      {
+        "corpus_id": "H1000g2",
+        "policy": "always_c_v2t",
+        "split": "held-out-wording",
+        "cell": {
+          "correct": 71,
+          "total": 90
+        },
+        "accuracy": {
+          "estimate": 0.7888888888888889,
+          "ci_low": 0.6936500878323096,
+          "ci_high": 0.8604751615240526
+        }
+      }
+    ],
+    "gap_rows": [
+      {
+        "corpus_id": "H100g2",
+        "policy": "cascade_v4_iso",
+        "dev": {
+          "correct": 324,
+          "total": 340
+        },
+        "held_out": {
+          "correct": 77,
+          "total": 100
+        },
+        "gap": {
+          "estimate": 0.18294117647058816,
+          "ci_low": 0.10117647058823531,
+          "ci_high": 0.27294117647058813
+        }
+      },
+      {
+        "corpus_id": "H100g2",
+        "policy": "cascade_v4",
+        "dev": {
+          "correct": 322,
+          "total": 340
+        },
+        "held_out": {
+          "correct": 77,
+          "total": 100
+        },
+        "gap": {
+          "estimate": 0.1770588235294117,
+          "ci_low": 0.09411764705882353,
+          "ci_high": 0.26588235294117657
+        }
+      },
+      {
+        "corpus_id": "H100g2",
+        "policy": "always_g_v2t",
+        "dev": {
+          "correct": 323,
+          "total": 340
+        },
+        "held_out": {
+          "correct": 77,
+          "total": 100
+        },
+        "gap": {
+          "estimate": 0.17999999999999994,
+          "ci_low": 0.09705882352941175,
+          "ci_high": 0.26764705882352946
+        }
+      },
+      {
+        "corpus_id": "H100g2",
+        "policy": "always_c_v2t",
+        "dev": {
+          "correct": 292,
+          "total": 340
+        },
+        "held_out": {
+          "correct": 64,
+          "total": 100
+        },
+        "gap": {
+          "estimate": 0.21882352941176464,
+          "ci_low": 0.118235294117647,
+          "ci_high": 0.3188235294117646
+        }
+      },
+      {
+        "corpus_id": "H1000g2",
+        "policy": "cascade_v4_iso",
+        "dev": {
+          "correct": 318,
+          "total": 340
+        },
+        "held_out": {
+          "correct": 74,
+          "total": 100
+        },
+        "gap": {
+          "estimate": 0.19529411764705884,
+          "ci_low": 0.1082352941176471,
+          "ci_high": 0.28823529411764703
+        }
+      },
+      {
+        "corpus_id": "H1000g2",
+        "policy": "cascade_v4",
+        "dev": {
+          "correct": 318,
+          "total": 340
+        },
+        "held_out": {
+          "correct": 74,
+          "total": 100
+        },
+        "gap": {
+          "estimate": 0.19529411764705884,
+          "ci_low": 0.1082352941176471,
+          "ci_high": 0.28823529411764703
+        }
+      },
+      {
+        "corpus_id": "H1000g2",
+        "policy": "always_g_v2t",
+        "dev": {
+          "correct": 314,
+          "total": 340
+        },
+        "held_out": {
+          "correct": 69,
+          "total": 100
+        },
+        "gap": {
+          "estimate": 0.23352941176470599,
+          "ci_low": 0.1417647058823529,
+          "ci_high": 0.3347058823529412
+        }
+      },
+      {
+        "corpus_id": "H1000g2",
+        "policy": "always_c_v2t",
+        "dev": {
+          "correct": 290,
+          "total": 340
+        },
+        "held_out": {
+          "correct": 60,
+          "total": 100
+        },
+        "gap": {
+          "estimate": 0.2529411764705882,
+          "ci_low": 0.15000000000000002,
+          "ci_high": 0.35764705882352943
+        }
+      }
+    ],
+    "scale_rows": [
+      {
+        "scope": "headline",
+        "policy": "cascade_v4_iso",
+        "small_corpus": "H100g2",
+        "large_corpus": "H1000g2",
+        "sheets_small": 100,
+        "sheets_large": 1000,
+        "accuracy_small": {
+          "estimate": 0.9113636363636364,
+          "ci_low": 0.8811225309901145,
+          "ci_high": 0.93448375737943
+        },
+        "accuracy_large": {
+          "estimate": 0.8909090909090909,
+          "ci_low": 0.858325280849923,
+          "ci_high": 0.9167259987056661
+        },
+        "accuracy_diff": {
+          "estimate": -0.020454545454545503,
+          "ci_low": -0.05909090909090908,
+          "ci_high": 0.018181818181818188
+        },
+        "cost_per_question_small_usd": 0.001370069340909091,
+        "cost_per_question_large_usd": 0.0014784989318181818,
+        "elasticity": {
+          "estimate": 0.03307846719919883,
+          "ci_low": -0.04474269329284076,
+          "ci_high": 0.10544890288950533
+        },
+        "latency_median_ratio": 1.05072842150441,
+        "latency_p90_ratio": 1.0738390738275012
+      },
+      {
+        "scope": "headline",
+        "policy": "cascade_v4",
+        "small_corpus": "H100g2",
+        "large_corpus": "H1000g2",
+        "sheets_small": 100,
+        "sheets_large": 1000,
+        "accuracy_small": {
+          "estimate": 0.9068181818181819,
+          "ci_low": 0.8760249622674764,
+          "ci_high": 0.9305691019211891
+        },
+        "accuracy_large": {
+          "estimate": 0.8909090909090909,
+          "ci_low": 0.858325280849923,
+          "ci_high": 0.9167259987056661
+        },
+        "accuracy_diff": {
+          "estimate": -0.015909090909090984,
+          "ci_low": -0.054545454545454564,
+          "ci_high": 0.02499999999999991
+        },
+        "cost_per_question_small_usd": 0.001398414159090909,
+        "cost_per_question_large_usd": 0.0015217730227272729,
+        "elasticity": {
+          "estimate": 0.03671406827546997,
+          "ci_low": -0.04250295854740335,
+          "ci_high": 0.1101162392265829
+        },
+        "latency_median_ratio": 1.05072842150441,
+        "latency_p90_ratio": 1.4334322094523606
+      },
+      {
+        "scope": "headline",
+        "policy": "always_g_v2t",
+        "small_corpus": "H100g2",
+        "large_corpus": "H1000g2",
+        "sheets_small": 100,
+        "sheets_large": 1000,
+        "accuracy_small": {
+          "estimate": 0.9090909090909091,
+          "ci_low": 0.878571304310032,
+          "ci_high": 0.9325288719690727
+        },
+        "accuracy_large": {
+          "estimate": 0.8704545454545455,
+          "ci_low": 0.8358429303667804,
+          "ci_high": 0.8986533403748537
+        },
+        "accuracy_diff": {
+          "estimate": -0.03863636363636358,
+          "ci_low": -0.08181818181818179,
+          "ci_high": 0.002272727272727204
+        },
+        "cost_per_question_small_usd": 0.001708760090909091,
+        "cost_per_question_large_usd": 0.0018934268863636363,
+        "elasticity": {
+          "estimate": 0.044567447473013784,
+          "ci_low": -0.026206817805199224,
+          "ci_high": 0.11376209088213107
+        },
+        "latency_median_ratio": 1.1125466266977813,
+        "latency_p90_ratio": 1.0733592737536226
+      },
+      {
+        "scope": "headline",
+        "policy": "always_c_v2t",
+        "small_corpus": "H100g2",
+        "large_corpus": "H1000g2",
+        "sheets_small": 100,
+        "sheets_large": 1000,
+        "accuracy_small": {
+          "estimate": 0.8090909090909091,
+          "ci_low": 0.7697538530522886,
+          "ci_high": 0.8430773912474795
+        },
+        "accuracy_large": {
+          "estimate": 0.7954545454545454,
+          "ci_low": 0.7552831843109675,
+          "ci_high": 0.8305113874461638
+        },
+        "accuracy_diff": {
+          "estimate": -0.013636363636363669,
+          "ci_low": -0.06590909090909092,
+          "ci_high": 0.03863636363636369
+        },
+        "cost_per_question_small_usd": 0.0007402414772727272,
+        "cost_per_question_large_usd": 0.0007507890340909091,
+        "elasticity": {
+          "estimate": 0.006144504891446878,
+          "ci_low": -0.03652402559602177,
+          "ci_high": 0.055155807719291454
+        },
+        "latency_median_ratio": 1.109361789775678,
+        "latency_p90_ratio": 2.6412053139583205
+      },
+      {
+        "scope": "held-out",
+        "policy": "cascade_v4_iso",
+        "small_corpus": "H100g2",
+        "large_corpus": "H1000g2",
+        "sheets_small": 100,
+        "sheets_large": 1000,
+        "accuracy_small": {
+          "estimate": 0.77,
+          "ci_low": 0.6784543514317231,
+          "ci_high": 0.841568452531236
+        },
+        "accuracy_large": {
+          "estimate": 0.74,
+          "ci_low": 0.6462882736813838,
+          "ci_high": 0.8159542187301354
+        },
+        "accuracy_diff": {
+          "estimate": -0.030000000000000027,
+          "ci_low": -0.15000000000000002,
+          "ci_high": 0.08999999999999997
+        },
+        "cost_per_question_small_usd": 0.0022500137,
+        "cost_per_question_large_usd": 0.0024803228,
+        "elasticity": {
+          "estimate": 0.042323043003622475,
+          "ci_low": -0.08851646982202294,
+          "ci_high": 0.17022076868322042
+        },
+        "latency_median_ratio": 1.2795400549416158,
+        "latency_p90_ratio": 1.4434107495385697
+      },
+      {
+        "scope": "held-out",
+        "policy": "cascade_v4",
+        "small_corpus": "H100g2",
+        "large_corpus": "H1000g2",
+        "sheets_small": 100,
+        "sheets_large": 1000,
+        "accuracy_small": {
+          "estimate": 0.77,
+          "ci_low": 0.6784543514317231,
+          "ci_high": 0.841568452531236
+        },
+        "accuracy_large": {
+          "estimate": 0.74,
+          "ci_low": 0.6462882736813838,
+          "ci_high": 0.8159542187301354
+        },
+        "accuracy_diff": {
+          "estimate": -0.030000000000000027,
+          "ci_low": -0.15000000000000002,
+          "ci_high": 0.08999999999999997
+        },
+        "cost_per_question_small_usd": 0.0022500137,
+        "cost_per_question_large_usd": 0.0024803228,
+        "elasticity": {
+          "estimate": 0.042323043003622475,
+          "ci_low": -0.08851646982202294,
+          "ci_high": 0.17022076868322042
+        },
+        "latency_median_ratio": 1.2795400549416158,
+        "latency_p90_ratio": 1.4434107495385697
+      },
+      {
+        "scope": "held-out",
+        "policy": "always_g_v2t",
+        "small_corpus": "H100g2",
+        "large_corpus": "H1000g2",
+        "sheets_small": 100,
+        "sheets_large": 1000,
+        "accuracy_small": {
+          "estimate": 0.77,
+          "ci_low": 0.6784543514317231,
+          "ci_high": 0.841568452531236
+        },
+        "accuracy_large": {
+          "estimate": 0.69,
+          "ci_low": 0.5937376052204429,
+          "ci_high": 0.7722043679386762
+        },
+        "accuracy_diff": {
+          "estimate": -0.08000000000000007,
+          "ci_low": -0.20999999999999996,
+          "ci_high": 0.04999999999999993
+        },
+        "cost_per_question_small_usd": 0.0029901059,
+        "cost_per_question_large_usd": 0.0033233538,
+        "elasticity": {
+          "estimate": 0.045890008255509214,
+          "ci_low": -0.04581612258127089,
+          "ci_high": 0.13244325054198722
+        },
+        "latency_median_ratio": 1.2020400840789733,
+        "latency_p90_ratio": 1.2669180492638863
+      },
+      {
+        "scope": "held-out",
+        "policy": "always_c_v2t",
+        "small_corpus": "H100g2",
+        "large_corpus": "H1000g2",
+        "sheets_small": 100,
+        "sheets_large": 1000,
+        "accuracy_small": {
+          "estimate": 0.64,
+          "ci_low": 0.542352199811621,
+          "ci_high": 0.7272892540950986
+        },
+        "accuracy_large": {
+          "estimate": 0.6,
+          "ci_low": 0.5020007846184025,
+          "ci_high": 0.6906002538863971
+        },
+        "accuracy_diff": {
+          "estimate": -0.040000000000000036,
+          "ci_low": -0.17999999999999994,
+          "ci_high": 0.09999999999999998
+        },
+        "cost_per_question_small_usd": 0.00105421325,
+        "cost_per_question_large_usd": 0.00113626725,
+        "elasticity": {
+          "estimate": 0.032552019036348016,
+          "ci_low": -0.0635005485781077,
+          "ci_high": 0.1369323386939866
+        },
+        "latency_median_ratio": 1.0114544818124762,
+        "latency_p90_ratio": 1.6034337914187837
+      }
+    ],
+    "k_bin_rows": [
+      {
+        "corpus_id": "H100g2",
+        "policy": "cascade_v4",
+        "k_bin": "k=0",
+        "n_questions": 171,
+        "n_accepted": 147,
+        "n_accepted_correct": 143
+      },
+      {
+        "corpus_id": "H100g2",
+        "policy": "cascade_v4",
+        "k_bin": "k=1-2",
+        "n_questions": 139,
+        "n_accepted": 105,
+        "n_accepted_correct": 100
+      },
+      {
+        "corpus_id": "H100g2",
+        "policy": "cascade_v4",
+        "k_bin": "k>=3",
+        "n_questions": 90,
+        "n_accepted": 77,
+        "n_accepted_correct": 67
+      },
+      {
+        "corpus_id": "H100g2",
+        "policy": "cascade_v4",
+        "k_bin": "unanswerable",
+        "n_questions": 40,
+        "n_accepted": 0,
+        "n_accepted_correct": 0
+      },
+      {
+        "corpus_id": "H1000g2",
+        "policy": "cascade_v4",
+        "k_bin": "k=0",
+        "n_questions": 165,
+        "n_accepted": 146,
+        "n_accepted_correct": 144
+      },
+      {
+        "corpus_id": "H1000g2",
+        "policy": "cascade_v4",
+        "k_bin": "k=1-2",
+        "n_questions": 143,
+        "n_accepted": 101,
+        "n_accepted_correct": 99
+      },
+      {
+        "corpus_id": "H1000g2",
+        "policy": "cascade_v4",
+        "k_bin": "k>=3",
+        "n_questions": 92,
+        "n_accepted": 77,
+        "n_accepted_correct": 65
+      },
+      {
+        "corpus_id": "H1000g2",
+        "policy": "cascade_v4",
+        "k_bin": "unanswerable",
+        "n_questions": 40,
+        "n_accepted": 0,
+        "n_accepted_correct": 0
+      }
+    ],
+    "paired_rows": [
+      {
+        "claim": "K1",
+        "corpus_id": "H100g2",
+        "scope": "headline",
+        "policy": "cascade_v4_iso",
+        "reference": "always_g_v2t",
+        "comparison": {
+          "accuracy": {
+            "mean": 0.0022727272727272726,
+            "ci_low": -0.01818181818181818,
+            "ci_high": 0.022727272727272728
+          },
+          "accuracy_at_cutoff": {
+            "mean": 0.0022727272727272726,
+            "ci_low": -0.01818181818181818,
+            "ci_high": 0.022727272727272728
+          },
+          "cost_usd": {
+            "mean": -0.00033869075,
+            "ci_low": -0.0004921398636363636,
+            "ci_high": -0.00019282557954545455
+          },
+          "latency_s": {
+            "mean": 1.7343917829546958,
+            "ci_low": 0.3742372188638745,
+            "ci_high": 3.158442882954908
+          }
+        }
+      },
+      {
+        "claim": "K2",
+        "corpus_id": "H100g2",
+        "scope": "headline",
+        "policy": "cascade_v4",
+        "reference": "random escalation",
+        "comparison": {
+          "accuracy": {
+            "mean": 0.0716840909090909,
+            "ci_low": 0.05136363636363637,
+            "ci_high": 0.09377727272727272
+          },
+          "accuracy_at_cutoff": {
+            "mean": 0.0716840909090909,
+            "ci_low": 0.05136363636363637,
+            "ci_high": 0.09377727272727272
+          },
+          "cost_usd": {
+            "mean": 0.00022622199148863588,
+            "ci_low": 0.00009750098444318176,
+            "ci_high": 0.00035959039536363535
+          },
+          "latency_s": {
+            "mean": 1.2366950534864696,
+            "ci_low": 0.4689355383762512,
+            "ci_high": 2.0321524648841502
+          }
+        }
+      },
+      {
+        "claim": "Q5",
+        "corpus_id": "H100g2",
+        "scope": "headline",
+        "policy": "always_g_v2t",
+        "reference": "always_c_v2t",
+        "comparison": {
+          "accuracy": {
+            "mean": 0.1,
+            "ci_low": 0.0659090909090909,
+            "ci_high": 0.1340909090909091
+          },
+          "accuracy_at_cutoff": {
+            "mean": 0.1,
+            "ci_low": 0.0659090909090909,
+            "ci_high": 0.1340909090909091
+          },
+          "cost_usd": {
+            "mean": 0.0009685186136363636,
+            "ci_low": 0.0007990833977272728,
+            "ci_high": 0.001143429068181818
+          },
+          "latency_s": {
+            "mean": 2.4166053693187264,
+            "ci_low": 1.0652085788646384,
+            "ci_high": 3.6933091493180736
+          }
+        }
+      },
+      {
+        "claim": "K1",
+        "corpus_id": "H100g2",
+        "scope": "held-out",
+        "policy": "cascade_v4_iso",
+        "reference": "always_g_v2t",
+        "comparison": {
+          "accuracy": {
+            "mean": 0.0,
+            "ci_low": -0.06,
+            "ci_high": 0.05
+          },
+          "accuracy_at_cutoff": {
+            "mean": 0.0,
+            "ci_low": -0.06,
+            "ci_high": 0.05
+          },
+          "cost_usd": {
+            "mean": -0.0007400922,
+            "ci_low": -0.0011886995999999999,
+            "ci_high": -0.00031505885
+          },
+          "latency_s": {
+            "mean": 10.135036055999809,
+            "ci_low": 5.64756717700162,
+            "ci_high": 14.905130610001143
+          }
+        }
+      },
+      {
+        "claim": "K2",
+        "corpus_id": "H100g2",
+        "scope": "held-out",
+        "policy": "cascade_v4",
+        "reference": "random escalation",
+        "comparison": {
+          "accuracy": {
+            "mean": 0.08547,
+            "ci_low": 0.039670000000000004,
+            "ci_high": 0.13470000000000001
+          },
+          "accuracy_at_cutoff": {
+            "mean": 0.08547,
+            "ci_low": 0.039670000000000004,
+            "ci_high": 0.13470000000000001
+          },
+          "cost_usd": {
+            "mean": 0.00018057973644999712,
+            "ci_low": -0.00017900157650000098,
+            "ci_high": 0.0005453753337499974
+          },
+          "latency_s": {
+            "mean": 1.6865212210376683,
+            "ci_low": -0.4676036425121047,
+            "ci_high": 3.8403215592068336
+          }
+        }
+      },
+      {
+        "claim": "Q5",
+        "corpus_id": "H100g2",
+        "scope": "held-out",
+        "policy": "always_g_v2t",
+        "reference": "always_c_v2t",
+        "comparison": {
+          "accuracy": {
+            "mean": 0.13,
+            "ci_low": 0.05,
+            "ci_high": 0.22
+          },
+          "accuracy_at_cutoff": {
+            "mean": 0.13,
+            "ci_low": 0.05,
+            "ci_high": 0.22
+          },
+          "cost_usd": {
+            "mean": 0.00193589265,
+            "ci_low": 0.0015385803,
+            "ci_high": 0.0023361945
+          },
+          "latency_s": {
+            "mean": -2.2530633669975213,
+            "ci_low": -6.769379523996322,
+            "ci_high": 1.9288821160006773
+          }
+        }
+      },
+      {
+        "claim": "K1",
+        "corpus_id": "H1000g2",
+        "scope": "headline",
+        "policy": "cascade_v4_iso",
+        "reference": "always_g_v2t",
+        "comparison": {
+          "accuracy": {
+            "mean": 0.020454545454545454,
+            "ci_low": -0.0022727272727272726,
+            "ci_high": 0.04318181818181818
+          },
+          "accuracy_at_cutoff": {
+            "mean": 0.020454545454545454,
+            "ci_low": -0.0022727272727272726,
+            "ci_high": 0.04318181818181818
+          },
+          "cost_usd": {
+            "mean": -0.0004149279545454546,
+            "ci_low": -0.0006015690340909092,
+            "ci_high": -0.00023732556818181817
+          },
+          "latency_s": {
+            "mean": 3.2069436061362713,
+            "ci_low": 1.3345510579556172,
+            "ci_high": 5.247047986590885
+          }
+        }
+      },
+      {
+        "claim": "K2",
+        "corpus_id": "H1000g2",
+        "scope": "headline",
+        "policy": "cascade_v4",
+        "reference": "random escalation",
+        "comparison": {
+          "accuracy": {
+            "mean": 0.07531818181818183,
+            "ci_low": 0.054525,
+            "ci_high": 0.09787499999999999
+          },
+          "accuracy_at_cutoff": {
+            "mean": 0.0758681818181818,
+            "ci_low": 0.05522954545454545,
+            "ci_high": 0.098425
+          },
+          "cost_usd": {
+            "mean": 0.00027254674590909017,
+            "ci_low": 0.00012985965073863525,
+            "ci_high": 0.0004156424790113629
+          },
+          "latency_s": {
+            "mean": 1.883756707106546,
+            "ci_low": 0.9532369763710675,
+            "ci_high": 2.8627859691177364
+          }
+        }
+      },
+      {
+        "claim": "Q5",
+        "corpus_id": "H1000g2",
+        "scope": "headline",
+        "policy": "always_g_v2t",
+        "reference": "always_c_v2t",
+        "comparison": {
+          "accuracy": {
+            "mean": 0.075,
+            "ci_low": 0.038636363636363635,
+            "ci_high": 0.11136363636363636
+          },
+          "accuracy_at_cutoff": {
+            "mean": 0.075,
+            "ci_low": 0.038636363636363635,
+            "ci_high": 0.11136363636363636
+          },
+          "cost_usd": {
+            "mean": 0.0011426378522727272,
+            "ci_low": 0.0009337456590909091,
+            "ci_high": 0.0013516424431818182
+          },
+          "latency_s": {
+            "mean": -0.7005900034081688,
+            "ci_low": -2.4423155606813785,
+            "ci_high": 0.963114409546258
+          }
+        }
+      },
+      {
+        "claim": "K1",
+        "corpus_id": "H1000g2",
+        "scope": "held-out",
+        "policy": "cascade_v4_iso",
+        "reference": "always_g_v2t",
+        "comparison": {
+          "accuracy": {
+            "mean": 0.05,
+            "ci_low": 0.0,
+            "ci_high": 0.1
+          },
+          "accuracy_at_cutoff": {
+            "mean": 0.05,
+            "ci_low": 0.0,
+            "ci_high": 0.1
+          },
+          "cost_usd": {
+            "mean": -0.000843031,
+            "ci_low": -0.0013702542,
+            "ci_high": -0.00035391995
+          },
+          "latency_s": {
+            "mean": 17.570028397001952,
+            "ci_low": 10.716774783004658,
+            "ci_high": 24.58519109900015
+          }
+        }
+      },
+      {
+        "claim": "K2",
+        "corpus_id": "H1000g2",
+        "scope": "held-out",
+        "policy": "cascade_v4",
+        "reference": "random escalation",
+        "comparison": {
+          "accuracy": {
+            "mean": 0.10728,
+            "ci_low": 0.059519999999999997,
+            "ci_high": 0.15725
+          },
+          "accuracy_at_cutoff": {
+            "mean": 0.10728,
+            "ci_low": 0.059519999999999997,
+            "ci_high": 0.15725
+          },
+          "cost_usd": {
+            "mean": 0.00011328907304999859,
+            "ci_low": -0.0002727247210000031,
+            "ci_high": 0.0005118937003499972
+          },
+          "latency_s": {
+            "mean": 1.9528282023486188,
+            "ci_low": -0.4441137213101451,
+            "ci_high": 4.447461456760682
+          }
+        }
+      },
+      {
+        "claim": "Q5",
+        "corpus_id": "H1000g2",
+        "scope": "held-out",
+        "policy": "always_g_v2t",
+        "reference": "always_c_v2t",
+        "comparison": {
+          "accuracy": {
+            "mean": 0.09,
+            "ci_low": -0.01,
+            "ci_high": 0.18
+          },
+          "accuracy_at_cutoff": {
+            "mean": 0.09,
+            "ci_low": -0.01,
+            "ci_high": 0.18
+          },
+          "cost_usd": {
+            "mean": 0.00218708655,
+            "ci_low": 0.0017242216,
+            "ci_high": 0.0026977026
+          },
+          "latency_s": {
+            "mean": -7.72476921400048,
+            "ci_low": -12.84367258100021,
+            "ci_high": -2.722839428997977
+          }
+        }
+      }
+    ],
+    "claims": [
+      {
+        "rule": "Q4 (primary) cascade_v4_iso",
+        "status": "PASS",
+        "headline": "Q4 (primary) cascade_v4_iso [headline]: supported",
+        "details": [
+          "acc@C large minus small -0.020 [-0.059, +0.018] (needs the interval to contain 0 or lie above): ok",
+          "cost elasticity 0.033 [-0.045, 0.105] (needs < 0.5): ok"
+        ]
+      },
+      {
+        "rule": "K1",
+        "status": "FAIL",
+        "headline": "K1 [headline]: the cascade saves nothing",
+        "details": [
+          "acc@C +0.020 [-0.002, +0.043]: ok",
+          "$/question -0.00041 [-0.00060, -0.00024] (needs CI below 0): ok",
+          "latency s/question +3.21 [+1.33, +5.25] (needs CI below 0): not met"
+        ]
+      },
+      {
+        "rule": "K2",
+        "status": "PASS",
+        "headline": "K2 [headline]: supported",
+        "details": [
+          "acc@C +0.076 [+0.055, +0.098] (needs CI above 0)"
+        ]
+      },
+      {
+        "rule": "K3",
+        "status": "PASS",
+        "headline": "K3 [headline]: supported",
+        "details": [
+          "median 7.5 [6.8, 8.6] s (limit 10): ok",
+          "p90 40.8 [37.0, 46.3] s (limit 60): ok"
+        ]
+      },
+      {
+        "rule": "Q5",
+        "status": "PASS",
+        "headline": "Q5 [headline]: supported",
+        "details": [
+          "acc@C +0.075 [+0.039, +0.111] (needs CI above 0)"
+        ]
+      },
+      {
+        "rule": "Q4' cascade_v4",
+        "status": "PASS",
+        "headline": "Q4' cascade_v4 [headline]: supported",
+        "details": [
+          "acc@C large minus small -0.016 [-0.055, +0.025] (needs the interval to contain 0 or lie above): ok",
+          "cost elasticity 0.037 [-0.043, 0.110] (needs < 0.5): ok"
+        ]
+      },
+      {
+        "rule": "Q4' always_g_v2t",
+        "status": "PASS",
+        "headline": "Q4' always_g_v2t [headline]: supported",
+        "details": [
+          "acc@C large minus small -0.039 [-0.082, +0.002] (needs the interval to contain 0 or lie above): ok",
+          "cost elasticity 0.045 [-0.026, 0.114] (needs < 0.5): ok"
+        ]
+      },
+      {
+        "rule": "Q4' always_c_v2t",
+        "status": "PASS",
+        "headline": "Q4' always_c_v2t [headline]: supported",
+        "details": [
+          "acc@C large minus small -0.014 [-0.066, +0.039] (needs the interval to contain 0 or lie above): ok",
+          "cost elasticity 0.006 [-0.037, 0.055] (needs < 0.5): ok"
+        ]
+      },
+      {
+        "rule": "Q4 (primary) cascade_v4_iso",
+        "status": "PASS",
+        "headline": "Q4 (primary) cascade_v4_iso [held-out]: supported",
+        "details": [
+          "acc@C large minus small -0.030 [-0.150, +0.090] (needs the interval to contain 0 or lie above): ok",
+          "cost elasticity 0.042 [-0.089, 0.170] (needs < 0.5): ok"
+        ]
+      },
+      {
+        "rule": "K1",
+        "status": "FAIL",
+        "headline": "K1 [held-out]: the cascade saves nothing",
+        "details": [
+          "acc@C +0.050 [+0.000, +0.100]: ok",
+          "$/question -0.00084 [-0.00137, -0.00035] (needs CI below 0): ok",
+          "latency s/question +17.57 [+10.72, +24.59] (needs CI below 0): not met"
+        ]
+      },
+      {
+        "rule": "K2",
+        "status": "PASS",
+        "headline": "K2 [held-out]: supported",
+        "details": [
+          "acc@C +0.107 [+0.060, +0.157] (needs CI above 0)"
+        ]
+      },
+      {
+        "rule": "K3",
+        "status": "FAIL",
+        "headline": "K3 [held-out]: the cascade is not fast enough at plant scale",
+        "details": [
+          "median 19.1 [11.8, 29.0] s (limit 10): not met",
+          "p90 104.6 [100.3, 116.8] s (limit 60): not met"
+        ]
+      },
+      {
+        "rule": "Q5",
+        "status": "FAIL",
+        "headline": "Q5 [held-out]: free-form Cypher matches the typed API",
+        "details": [
+          "acc@C +0.090 [-0.010, +0.180] (needs CI above 0)"
+        ]
+      },
+      {
+        "rule": "Q4' cascade_v4",
+        "status": "PASS",
+        "headline": "Q4' cascade_v4 [held-out]: supported",
+        "details": [
+          "acc@C large minus small -0.030 [-0.150, +0.090] (needs the interval to contain 0 or lie above): ok",
+          "cost elasticity 0.042 [-0.089, 0.170] (needs < 0.5): ok"
+        ]
+      },
+      {
+        "rule": "Q4' always_g_v2t",
+        "status": "PASS",
+        "headline": "Q4' always_g_v2t [held-out]: supported",
+        "details": [
+          "acc@C large minus small -0.080 [-0.210, +0.050] (needs the interval to contain 0 or lie above): ok",
+          "cost elasticity 0.046 [-0.046, 0.132] (needs < 0.5): ok"
+        ]
+      },
+      {
+        "rule": "Q4' always_c_v2t",
+        "status": "PASS",
+        "headline": "Q4' always_c_v2t [held-out]: supported",
+        "details": [
+          "acc@C large minus small -0.040 [-0.180, +0.100] (needs the interval to contain 0 or lie above): ok",
+          "cost elasticity 0.033 [-0.064, 0.137] (needs < 0.5): ok"
+        ]
+      },
+      {
+        "rule": "Q1",
+        "status": "NOT_RUN",
+        "headline": "Q1: not run - need-aware Hierarchical was dropped (ADR-0047, ADR-0048)",
+        "details": []
+      },
+      {
+        "rule": "Q2",
+        "status": "NOT_RUN",
+        "headline": "Q2: not run - need-aware Hierarchical was dropped (ADR-0047, ADR-0048)",
+        "details": []
+      },
+      {
+        "rule": "Q3",
+        "status": "NOT_RUN",
+        "headline": "Q3: not run - hier_agent was dropped (ADR-0047)",
+        "details": []
+      }
+    ],
+    "notes": [
+      "scope `headline` leaves out the family LOOP_ACTUATED_VALVE (ADR-0044 U2)"
+    ]
+  }
+}
