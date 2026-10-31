@@ -30,13 +30,18 @@ from pydantic import BaseModel, ConfigDict
 
 from plantgraph.benchmark.models import SplitManifest
 from plantgraph.benchmark.sheet_graph import SheetGraph
+from plantgraph.benchmark.v2.config import GeneratorConfigV2
 from plantgraph.qa.corpus import CorpusArtifacts, load_corpus_artifacts
 from plantgraph.qa.harness.family_meta import FAMILY_META
 from plantgraph.qa.models import FinalAnswer, Outcome, Question, QuestionFamily
 from plantgraph.qa.questions.availability import AvailabilityReport, BinTargets
 from plantgraph.qa.questions.cli import AVAILABILITY_FILENAME, write_question_set
 from plantgraph.qa.questions.families import all_candidates
-from plantgraph.qa.questions.families_heldout import HELDOUT_GENERATORS, heldout_candidates
+from plantgraph.qa.questions.families_heldout import (
+    HELDOUT_GENERATORS,
+    V2_EXCLUDED,
+    heldout_candidates,
+)
 from plantgraph.qa.questions.per_family import (
     QUESTIONS_FILENAME,
     sample_family,
@@ -111,7 +116,13 @@ def build_pool(
             "has none (a Proteus import has no answer key)"
         )
     return build_pool_from_plant(
-        plant, manifest, artifacts.gold.sheets, targets, corpus_id=artifacts.corpus_id, seed=seed
+        plant,
+        manifest,
+        artifacts.gold.sheets,
+        targets,
+        corpus_id=artifacts.corpus_id,
+        seed=seed,
+        v2=isinstance(artifacts.generator_config, GeneratorConfigV2),
     )
 
 
@@ -123,11 +134,14 @@ def build_pool_from_plant(
     *,
     corpus_id: str,
     seed: int,
+    v2: bool = False,
 ) -> tuple[list[Question], AvailabilityReport]:
     """Enumerate dev and held-out candidates, then draw the pool (`sample.draw_sample`)."""
     started = time.perf_counter()
     candidates = all_candidates(plant, manifest, sheets, corpus_id=corpus_id, seed=seed)
-    candidates.update(heldout_candidates(plant, manifest, sheets, corpus_id=corpus_id, seed=seed))
+    candidates.update(
+        heldout_candidates(plant, manifest, sheets, corpus_id=corpus_id, seed=seed, v2=v2)
+    )
     build_seconds = time.perf_counter() - started
     pool, report = draw_sample(candidates, targets, corpus_id=corpus_id, seed=seed)
     return pool, report.model_copy(update={"build_seconds": build_seconds})
@@ -142,13 +156,20 @@ def _own_reference_scores_correct(question: Question) -> bool:
         return False
 
 
-def find_dropped_families(pool: list[Question]) -> dict[QuestionFamily, str]:
-    """Families with no question in the pool, or a held-out one whose reference does not score."""
+def find_dropped_families(pool: list[Question], v2: bool = False) -> dict[QuestionFamily, str]:
+    """Families with no question in the pool, or a held-out one whose reference does not score.
+
+    On v2 the families excluded by pre-registration say so as their reason.
+    """
     dropped: dict[QuestionFamily, str] = {}
     for family in FAMILY_META:
         members = [q for q in pool if q.family is family]
         if not members:
-            dropped[family] = "no candidate question in the pool"
+            dropped[family] = (
+                V2_EXCLUDED[family]
+                if v2 and family in V2_EXCLUDED
+                else "no candidate question in the pool"
+            )
         elif family in HELDOUT_GENERATORS:
             unscorable = [q.question_id for q in members if not _own_reference_scores_correct(q)]
             if unscorable:
@@ -157,7 +178,11 @@ def find_dropped_families(pool: list[Question]) -> dict[QuestionFamily, str]:
 
 
 def sample_sealed_set(
-    pool: list[Question], n_per_family: int, n_per_wording: int, sample_seed: int
+    pool: list[Question],
+    n_per_family: int,
+    n_per_wording: int,
+    sample_seed: int,
+    v2: bool = False,
 ) -> SealedSet:
     """Steps 2 and 3: `n_per_family` per family, then the held-out wordings.
 
@@ -168,7 +193,7 @@ def sample_sealed_set(
         raise ValueError(
             f"expected a positive number of questions per wording, found {n_per_wording}"
         )
-    dropped = find_dropped_families(pool)
+    dropped = find_dropped_families(pool, v2)
     usable = [q for q in pool if q.family not in dropped]
     drawn = sample_per_family(usable, n_per_family, sample_seed)
     wordings = _draw_wordings(usable, n_per_wording, sample_seed)
@@ -260,7 +285,10 @@ def main(argv: list[str] | None = None) -> None:
     targets = BinTargets(per_bin=args.n_per_bin, unanswerable=args.n_unanswerable)
     pool, report = build_pool(artifacts, targets, args.seed)
     write_question_set(args.pool_out, pool, report)
-    sealed = sample_sealed_set(pool, args.n_per_family, args.n_per_wording, args.sample_seed)
+    is_v2 = isinstance(artifacts.generator_config, GeneratorConfigV2)
+    sealed = sample_sealed_set(
+        pool, args.n_per_family, args.n_per_wording, args.sample_seed, v2=is_v2
+    )
     availability = build_availability(
         sealed,
         report,

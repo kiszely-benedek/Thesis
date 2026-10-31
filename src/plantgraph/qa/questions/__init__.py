@@ -19,9 +19,10 @@ retrieval strategy under test later answers it.
   `question-aware-retrieval.md` §8.2), including the two yes/no ones.
 - `families.py`: collects every family under one name per `QuestionFamily`, split into the
   12 dev-old and the 6 dev-new generators.
-- `families_heldout.py`, `families_heldout_paths.py`, `families_heldout_reach.py`,
-  `templates_heldout.py`, `wordings_heldout.py`: the six held-out families and the ten held-out
-  wordings of the sealed test (EXP-0006). Not in the default set; only `sealed_set.py` asks.
+- `families_heldout.py`, `families_heldout_paths.py`, `families_heldout_route.py`,
+  `families_heldout_reach.py`, `templates_heldout.py`, `wordings_heldout.py`: the six
+  held-out families and the ten held-out wordings of the sealed test (EXP-0006). Not in the
+  default set; only `sealed_set.py` asks.
 - `per_family.py`, `sealed_set.py`: the per-family draw, and the command that builds the sealed
   test's question set (`python -m plantgraph.qa.questions.sealed_set`).
 - `availability.py`, `sample.py`: k-bins, the seeded stratified draw, and the

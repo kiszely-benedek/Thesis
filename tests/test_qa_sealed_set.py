@@ -233,6 +233,17 @@ def test_families_without_candidates_are_dropped_with_a_reason() -> None:
     assert not set(dropped) & set(HELDOUT_GENERATORS)
 
 
+def test_v2_drops_first_meeting_point_with_the_pre_registered_reason() -> None:
+    pool, _ = _pool()
+    pool = [q for q in pool if q.family is not F.FIRST_MEETING_POINT]  # a v2 pool never holds it
+
+    on_v2 = find_dropped_families(pool, v2=True)
+    on_v1 = find_dropped_families(pool)
+
+    assert on_v2[F.FIRST_MEETING_POINT] == "excluded on v2 by pre-registration"
+    assert "no candidate" in on_v1[F.FIRST_MEETING_POINT]
+
+
 def test_a_heldout_reference_that_does_not_score_drops_its_family() -> None:
     pool, _ = _pool()
     broken = next(q for q in pool if q.family is F.UNITS_REACHED).model_copy(
@@ -298,7 +309,9 @@ def test_the_command_writes_pool_and_set_and_refuses_a_dev_corpus(
     monkeypatch.setattr(
         sealed_set,
         "load_corpus_artifacts",
-        lambda corpus_id, _path: SimpleNamespace(corpus_id=corpus_id, gold=gold),
+        lambda corpus_id, _path: SimpleNamespace(
+            corpus_id=corpus_id, gold=gold, generator_config=None
+        ),
     )
     out, pool_out = str(tmp_path / "set"), str(tmp_path / "pool")
     args = ["--ingest-json", "unused.json", "--seed", "31", "--n-per-bin", "50"]

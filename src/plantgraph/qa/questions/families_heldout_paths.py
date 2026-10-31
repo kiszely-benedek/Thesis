@@ -6,12 +6,11 @@ the same shortest path as `FLOW_PATH`: fewest hops, ties broken by the smallest 
 - `FIRST_MEETING_POINT`: where the flows leaving two items first come together.
 - `VALVES_ON_PATH`: how many valves lie between two items.
 - `ROUTE_AVOIDING`: can flow still get from A to B if one item on the way is removed?
+  (lives in `families_heldout_route.py`, to keep this file short)
 
 Choices where the design left room (each is a one-line rule, kept in the code too):
-- A and B are always equipment items; the item removed in `ROUTE_AVOIDING` may be any item.
+- A and B are always equipment items.
 - `FIRST_MEETING_POINT` is symmetric in A and B, so only the pair with `tag(A) < tag(B)` is asked.
-- The "yes" evidence of `ROUTE_AVOIDING` is the breadth-first path (first parent in sorted
-  node-id order), since the design names no tie-break for the detour.
 """
 
 from __future__ import annotations
@@ -27,7 +26,6 @@ from plantgraph.qa.models import AnswerType, Question, QuestionFamily
 from plantgraph.qa.questions.availability import KBin, k_bin_of_k
 from plantgraph.qa.questions.common import (
     build_question,
-    is_path_item,
     nodes_of_classes,
     send_to_predecessors,
     send_to_successors,
@@ -42,14 +40,13 @@ from plantgraph.qa.questions.families_flow import (
 )
 from plantgraph.qa.questions.templates_heldout import (
     first_meeting_point_text,
-    route_avoiding_text,
     valves_on_path_text,
 )
 
 _TEMPLATE_VERSION = "1"
 
 
-def _path_evidence(*paths: list[str]) -> Evidence:
+def path_evidence(*paths: list[str]) -> Evidence:
     """The nodes and consecutive-pair edges of one or more node-id paths."""
     return Evidence(
         nodes=frozenset(n for path in paths for n in path),
@@ -57,12 +54,18 @@ def _path_evidence(*paths: list[str]) -> Evidence:
     )
 
 
-def _tag(plant: nx.DiGraph[str], node_id: str) -> str:
+def tag_of(plant: nx.DiGraph[str], node_id: str) -> str:
+    """The tag of a node: its printed equipment or valve name."""
     return str(plant.nodes[node_id]["tag"])
 
 
 class _ReachCache:
-    """`reach_from` per node, computed on first use and kept (descendant sets are small)."""
+    """`reach_from` per node, computed on first use and kept for the pairwise walk.
+
+    Only `FIRST_MEETING_POINT` needs this: it asks about many pairs of nodes. The other two
+    families use each source once and call `reach_from` directly, so they never hold more than
+    one source's reach.
+    """
 
     def __init__(self, plant: nx.DiGraph[str], index: SheetIndex) -> None:
         self._plant = plant
@@ -136,15 +139,15 @@ def _equipment_sharing_a_descendant(
         found = {p for n in frontier for p in send_to_predecessors(plant, n) if p not in seen}
         seen |= found
         frontier = sorted(found)
-    own_tag = _tag(plant, source_id)
+    own_tag = tag_of(plant, source_id)
     partners = [
         n
         for n in seen
         if n not in reached
         and plant.nodes[n]["node_class"] in EQUIPMENT_CLASSES
-        and _tag(plant, n) > own_tag
+        and tag_of(plant, n) > own_tag
     ]
-    return sorted(partners, key=lambda n: _tag(plant, n))
+    return sorted(partners, key=lambda n: tag_of(plant, n))
 
 
 def _meeting_point(
@@ -185,11 +188,11 @@ def _meeting_question(
         family=QuestionFamily.FIRST_MEETING_POINT,
         template_id="FIRST_MEETING_POINT",
         template_version=_TEMPLATE_VERSION,
-        text=first_meeting_point_text(_tag(plant, source_id), _tag(plant, partner_id)),
+        text=first_meeting_point_text(tag_of(plant, source_id), tag_of(plant, partner_id)),
         answer_type=AnswerType.TAG,
-        reference=_tag(plant, meeting_id),
-        evidence=_path_evidence(path_a, path_b),
-        anchors=[_tag(plant, source_id), _tag(plant, partner_id)],
+        reference=tag_of(plant, meeting_id),
+        evidence=path_evidence(path_a, path_b),
+        anchors=[tag_of(plant, source_id), tag_of(plant, partner_id)],
         plant=plant,
         index=index,
         seed=seed,
@@ -235,157 +238,36 @@ def valves_on_path_candidates(
 ) -> list[Question]:
     """At most one candidate per `(source, k-bin)`; every shortest path must hold the same count."""
     index = SheetIndex.from_sheets(sheets, manifest)
-    cache = _ReachCache(plant, index)
+    successors = {node_id: send_to_successors(plant, node_id) for node_id in plant.nodes}
     equipment = set(nodes_of_classes(plant, EQUIPMENT_CLASSES))
     questions = []
     for source_id in sorted(equipment):
-        ranges = _valve_count_ranges(plant, cache.successors, source_id)
+        reach = reach_from(plant, successors, source_id, index)  # dropped after this source
+        ranges = _valve_count_ranges(plant, successors, source_id)
         targets = {
             target_id: reached
-            for target_id, reached in cache.of(source_id).items()
+            for target_id, reached in reach.items()
             if target_id in equipment
             and target_id != source_id
             and ranges[target_id][0] == ranges[target_id][1]
         }
         rng = random.Random(f"{seed}:VALVES_ON_PATH:{source_id}")
         for target_id in one_target_per_bin(targets, rng):
-            path = path_to(cache.of(source_id), source_id, target_id)
+            path = path_to(reach, source_id, target_id)
             questions.append(
                 build_question(
                     corpus_id=corpus_id,
                     family=QuestionFamily.VALVES_ON_PATH,
                     template_id="VALVES_ON_PATH",
                     template_version=_TEMPLATE_VERSION,
-                    text=valves_on_path_text(_tag(plant, source_id), _tag(plant, target_id)),
+                    text=valves_on_path_text(tag_of(plant, source_id), tag_of(plant, target_id)),
                     answer_type=AnswerType.COUNT,
                     reference=ranges[target_id][0],
-                    evidence=_path_evidence(path),
-                    anchors=[_tag(plant, source_id), _tag(plant, target_id)],
+                    evidence=path_evidence(path),
+                    anchors=[tag_of(plant, source_id), tag_of(plant, target_id)],
                     plant=plant,
                     index=index,
                     seed=seed,
                 )
             )
     return questions
-
-
-# --- ROUTE_AVOIDING --------------------------------------------------------------------------
-
-
-def _tree_without(
-    successors: dict[str, list[str]], source_id: str, removed_id: str
-) -> dict[str, str]:
-    """Breadth-first tree from `source_id` with `removed_id` taken out: node -> first parent."""
-    parent_of: dict[str, str] = {}
-    frontier = [source_id]
-    while frontier:
-        found: dict[str, str] = {}
-        for current in frontier:
-            for successor in successors[current]:
-                if successor not in (source_id, removed_id) and successor not in parent_of:
-                    found.setdefault(successor, current)
-        parent_of.update(found)
-        frontier = sorted(found)
-    return parent_of
-
-
-def _route_in_tree(parent_of: dict[str, str], source_id: str, target_id: str) -> list[str]:
-    """The path from the tree's root `source_id` down to `target_id`."""
-    path = [target_id]
-    while path[-1] != source_id:
-        path.append(parent_of[path[-1]])
-    return path[::-1]
-
-
-def route_avoiding_candidates(
-    plant: nx.DiGraph[str],
-    manifest: SplitManifest,
-    sheets: list[SheetGraph],
-    *,
-    corpus_id: str,
-    seed: int,
-) -> list[Question]:
-    """Per source A and shortest-path k-bin: one target B, one removed item V on the way.
-
-    The answer ("yes" or "no") is asked for alternately, starting from a seeded side, so that
-    neither dominates; when a target offers only one of the two, that one is used.
-    """
-    index = SheetIndex.from_sheets(sheets, manifest)
-    cache = _ReachCache(plant, index)
-    equipment = set(nodes_of_classes(plant, EQUIPMENT_CLASSES))
-    questions = []
-    for source_id in sorted(equipment):
-        rng = random.Random(f"{seed}:ROUTE_AVOIDING:{source_id}")
-        wants_yes = rng.random() < 0.5
-        # a target needs an item strictly inside its path to avoid (a tee does not count)
-        targets = {
-            t: r
-            for t, r in cache.of(source_id).items()
-            if t in equipment
-            and t != source_id
-            and _items_inside(plant, path_to(cache.of(source_id), source_id, t))
-        }
-        for target_id in one_target_per_bin(targets, rng):
-            path = path_to(cache.of(source_id), source_id, target_id)
-            removed = _removed_item(plant, cache.successors, path, wants_yes, rng)
-            wants_yes = not wants_yes
-            questions.append(_route_question(plant, index, corpus_id, seed, path, *removed))
-    return questions
-
-
-def _items_inside(plant: nx.DiGraph[str], path: list[str]) -> list[str]:
-    """The equipment items and valves strictly between a path's two ends, in path order."""
-    return [node_id for node_id in path[1:-1] if is_path_item(plant, node_id)]
-
-
-def _removed_item(
-    plant: nx.DiGraph[str],
-    successors: dict[str, list[str]],
-    path: list[str],
-    wants_yes: bool,
-    rng: random.Random,
-) -> tuple[str, dict[str, str]]:
-    """Pick the item V strictly inside `path` whose removal gives the wanted answer.
-
-    Returns `(V, tree of the plant without V)`. If no V gives the wanted answer, one with the
-    other answer is used.
-    """
-    source_id, target_id = path[0], path[-1]
-    trees = {v: _tree_without(successors, source_id, v) for v in _items_inside(plant, path)}
-    if not trees:
-        raise ValueError(f"expected a path with an item inside, found {path}")
-    wanted = [v for v, tree in trees.items() if (target_id in tree) == wants_yes]
-    removed_id = rng.choice(wanted or sorted(trees))
-    return removed_id, trees[removed_id]
-
-
-def _route_question(
-    plant: nx.DiGraph[str],
-    index: SheetIndex,
-    corpus_id: str,
-    seed: int,
-    path: list[str],
-    removed_id: str,
-    parent_of: dict[str, str],
-) -> Question:
-    source_id, target_id = path[0], path[-1]
-    if target_id in parent_of:
-        evidence = _path_evidence(_route_in_tree(parent_of, source_id, target_id))
-    else:  # proving "no" means seeing everything A still reaches
-        tree_edges = frozenset((parent, child) for child, parent in parent_of.items())
-        evidence = Evidence(nodes=frozenset({source_id, *parent_of}), edges=tree_edges)
-    tags = [_tag(plant, source_id), _tag(plant, target_id), _tag(plant, removed_id)]
-    return build_question(
-        corpus_id=corpus_id,
-        family=QuestionFamily.ROUTE_AVOIDING,
-        template_id="ROUTE_AVOIDING",
-        template_version=_TEMPLATE_VERSION,
-        text=route_avoiding_text(*tags),
-        answer_type=AnswerType.BOOLEAN,
-        reference="yes" if target_id in parent_of else "no",
-        evidence=evidence,
-        anchors=tags,
-        plant=plant,
-        index=index,
-        seed=seed,
-    )

@@ -361,8 +361,11 @@ harness then writes each into `run_config.json` before its first call.
      them, before any harness call.
    - The run scripts check `sha256sum -c` in preflight.
 4. **Pre-registered here.**
-   - FIRST_MEETING_POINT is unavailable on v2, because streams join at tees, not items (ADR-0059 point 6). It is not
-     redefined or replaced.
+   - FIRST_MEETING_POINT is excluded from every sealed v2 corpus. It is not redefined or replaced. It sees only joins
+     that happen directly at an item, not at a tee, so it covers a partial subset of v2's joins.
+     **Corrected 2026-10-30 (ADR-0062):** this line used to say the family is unavailable (ADR-0059 point 6). Measured
+     candidates are 0 at H1g2–H10g2, 71 at H30g2 and 481 at H100g2. The v2 draw skips its enumeration (its pairwise
+     walk ran out of memory at 1,000 sheets), and H100g2's questions were redrawn so that all four corpora match.
    - The held-out comparison runs over the other five held-out families.
    - The headline scope also excludes LOOP_ACTUATED_VALVE.
 5. **Who may look at what.**
@@ -371,7 +374,10 @@ harness then writes each into `run_config.json` before its first call.
      counts (health) and `availability.json` counts, never answers or correctness.
    - The composition CLI's `--allow-test-seed` is used only after R5's report exists, labelled descriptive.
    - No LLM call on a test question outside the registered runs; the demo stays on dev corpora.
-   - No `src` change between E7 and the end of R5.
+   - No `src` change between E7 and the end of R5. **Deviation, ADR-0062:** the question generators in
+     `qa/questions/` (outside `V2T_FROZEN_FILES`) changed after E7: FIRST_MEETING_POINT is skipped on v2, and
+     VALVES_ON_PATH and ROUTE_AVOIDING compute their unchanged output with less memory and time (byte-identity
+     checked on dev corpora).
 6. **No system change between R4 and R5,** whatever R4 shows (F1; ADR-0057 Q2). A v2 legend is a separately labelled
    system after R5.
 

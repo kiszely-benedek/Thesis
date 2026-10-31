@@ -240,3 +240,34 @@ def test_a_v2_corpus_has_absent_tags_none_of_which_is_a_real_tag() -> None:
     real = {a["tag"] for _, a in built.plant.nodes(data=True) if "tag" in a}
     generated = absent_tags(built.plant)
     assert generated and not set(generated) & real
+
+
+# --- FIRST_MEETING_POINT is excluded on v2 (ADR-0059 point 6) --------------------------------
+
+
+def _count_enumeration_calls(monkeypatch: pytest.MonkeyPatch, v2: bool) -> list[int]:
+    """Run `heldout_candidates` on a small plant; count FIRST_MEETING_POINT generator calls."""
+    from plantgraph.qa.questions import families_heldout
+
+    calls: list[int] = []
+
+    def fake(*_args: object, **_kwargs: object) -> list[Question]:
+        calls.append(1)
+        return []
+
+    patched = {**HELDOUT_GENERATORS, QuestionFamily.FIRST_MEETING_POINT: fake}
+    monkeypatch.setattr(families_heldout, "HELDOUT_GENERATORS", patched)
+    built = corpus(12)
+    result = families_heldout.heldout_candidates(
+        built.plant, built.manifest, built.sheets, corpus_id="T", seed=1, v2=v2
+    )
+    assert result[QuestionFamily.FIRST_MEETING_POINT] == []
+    return calls
+
+
+def test_first_meeting_point_is_not_enumerated_on_v2(monkeypatch: pytest.MonkeyPatch) -> None:
+    assert _count_enumeration_calls(monkeypatch, v2=True) == []
+
+
+def test_first_meeting_point_is_still_enumerated_on_v1(monkeypatch: pytest.MonkeyPatch) -> None:
+    assert _count_enumeration_calls(monkeypatch, v2=False) == [1]

@@ -15,6 +15,7 @@ from plantgraph.qa.models import AnswerType, Question, QuestionFamily
 from plantgraph.qa.questions.common import send_to_successors
 from plantgraph.qa.questions.families_heldout import HELDOUT_GENERATORS, heldout_candidates
 from plantgraph.qa.questions.families_heldout_paths import _valve_count_ranges
+from plantgraph.qa.questions.families_heldout_route import _dominators_of
 from qa_toy_plant_heldout import NODES, build_manifest, build_plant, build_sheets
 
 _PLANT = build_plant()
@@ -206,6 +207,16 @@ def test_route_avoiding_agrees_with_an_independent_oracle(seed: int) -> None:
         reachable = nx.has_path(cut_plant, source, target)
         assert question.reference == ("yes" if reachable else "no"), question.anchors
         assert removed in nx.shortest_path(_PLANT, source, target)[1:-1]
+
+
+def test_the_cutting_items_are_the_dominators_between_source_and_target() -> None:
+    # a reaches d by b or c (neither is on every route), and e only through d
+    flow = nx.DiGraph([("a", "b"), ("a", "c"), ("b", "d"), ("c", "d"), ("d", "e"), ("a", "e2")])
+    dominator_of = nx.immediate_dominators(flow, "a")
+
+    assert _dominators_of(dominator_of, "a", "e") == {"d"}
+    assert _dominators_of(dominator_of, "a", "d") == set()
+    assert _dominators_of(dominator_of, "a", "e2") == set()
 
 
 # --- all six ---------------------------------------------------------------------------------
