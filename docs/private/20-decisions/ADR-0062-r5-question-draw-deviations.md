@@ -59,6 +59,12 @@ supersedes: none. Corrects the reason given in ADR-0059 point 6 and in EXP-0007 
 - 2C changes no question. `src/plantgraph/qa/questions/` is outside `V2T_FROZEN_FILES`, so the system under test is
   unchanged and E7 stands. It is still a change to `src` after E7, so it is recorded here rather than passed over.
 
+**Run order (added 2026-10-31).** Plan §7 ran the Cypher tier on all four corpora first, then the agent. A Cypher
+replay turned out to take as long as its run (about 23 minutes per 560 questions at concurrency 1), which would
+have delayed the headline numbers by about five hours. After H100g2's Cypher run and replay, `run_sealed.sh` was
+stopped between two steps and reordered: H1000g2 Cypher, the agent on both headline corpora, the claims report,
+then the descriptive arms and F1. Steps, ids, caps, seeds and questions are unchanged; only the order moved.
+
 ## Consequences
 
 - Plan §9 point 4 is corrected. ADR-0059 stays as written; this ADR holds the correction.

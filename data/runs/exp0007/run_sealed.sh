@@ -47,30 +47,31 @@ load_sealed() {  # load_sealed <corpus> <plant_lines|plant>: this corpus alone i
   load_corpus "$ls_c" "$ls_n" "$($EX test-seed --sheets "$ls_n")" "$2" $(sealed_dup_args "$ls_c")
 }
 
-is_f1_corpus() { case " $F1_CORPORA " in *" $1 "*) return 0 ;; *) return 1 ;; esac; }
+# The order puts the two headline corpora first, so the claims exist before the descriptive arms
+# (ADR-0062). Every step keeps its name, so a stopped run resumes where it was.
+HEADLINE_IDS="H100g2 H1000g2"; DESCRIPTIVE_IDS="H100g2d0 H100g2d50"
 
-cypher_tier() {  # per corpus: V2T-A on plant_lines; then, with the baseline flag, F1 on the plain plant
-  for sc_c in $SEALED_IDS; do
-    step load_$sc_c load_sealed $sc_c plant_lines
-    if [ "$sc_c" = H100g2 ]; then
-      step cypher_H100g2_smoke v2t_run CYP-A S7-CYP-H100g2-SMOKE H100g2 smoke $DEADLINE_S $S/questions_smoke
-    fi
-    step cypher_$sc_c v2t_run CYP-A S7-CYP-$sc_c $sc_c full $DEADLINE_S
-    step replay_cyp_$sc_c v2t_replay CYP-A S7-CYP-$sc_c $sc_c $DEADLINE_S
-    if [ "$WITH_F1" = yes ] && is_f1_corpus $sc_c; then
-      step load_plain_$sc_c load_sealed $sc_c plant
-      step cypher_f1_$sc_c v2t_run F1-CYP S7F1-CYP-$sc_c $sc_c full 120
-      step replay_cyp_f1_$sc_c v2t_replay F1-CYP S7F1-CYP-$sc_c $sc_c 120
-    fi
-  done
+cypher_v2t() {  # V2T-A on plant_lines, one corpus
+  step load_$1 load_sealed $1 plant_lines
+  if [ "$1" = H100g2 ]; then
+    step cypher_H100g2_smoke v2t_run CYP-A S7-CYP-H100g2-SMOKE H100g2 smoke $DEADLINE_S $S/questions_smoke
+  fi
+  step cypher_$1 v2t_run CYP-A S7-CYP-$1 $1 full $DEADLINE_S
+  step replay_cyp_$1 v2t_replay CYP-A S7-CYP-$1 $1 $DEADLINE_S
 }
 
-agent_tier() {  # H1000g2-C1 is the concurrency-1 control; its own cache stops it reusing the main run's answers
-  step agent_H100g2_smoke v2t_run AG S7-AG-H100g2-SMOKE H100g2 smoke $DEADLINE_S $S/questions_smoke
-  for sa_c in $SEALED_IDS; do
-    step agent_$sa_c v2t_run AG S7-AG-$sa_c $sa_c full $DEADLINE_S
-    step replay_ag_$sa_c v2t_replay AG S7-AG-$sa_c $sa_c $DEADLINE_S
-  done
+cypher_f1() {  # the frozen F1 tier on the plain plant profile, one corpus
+  step load_plain_$1 load_sealed $1 plant
+  step cypher_f1_$1 v2t_run F1-CYP S7F1-CYP-$1 $1 full 120
+  step replay_cyp_f1_$1 v2t_replay F1-CYP S7F1-CYP-$1 $1 120
+}
+
+agent_v2t() {  # V2T-A's agent, one corpus
+  step agent_$1 v2t_run AG S7-AG-$1 $1 full $DEADLINE_S
+  step replay_ag_$1 v2t_replay AG S7-AG-$1 $1 $DEADLINE_S
+}
+
+agent_control_and_f1() {  # H1000g2-C1 is the concurrency-1 control; its own cache stops it reusing the main run's answers
   step agent_C1 v2t_run AG S7-AG-H1000g2-C1 H1000g2 full $DEADLINE_S $S/questions_c1 1 $S/cache_s7_c1.sqlite
   step replay_agent_C1 v2t_replay AG S7-AG-H1000g2-C1 H1000g2 $DEADLINE_S $S/questions_c1 $S/cache_s7_c1.sqlite
   if [ "$WITH_F1" = yes ]; then
@@ -85,7 +86,7 @@ agent_tier() {  # H1000g2-C1 is the concurrency-1 control; its own cache stops i
 # cascade_v4 alongside (also K2's reference: a policy routed by need label has no random-escalation
 # arm); setting A (limits.SETTING_A) sets the cutoff. The duplication points are a descriptive table.
 # `tune-report` per corpus adds the per-family counts and refuses runs that do not match the setting.
-report() {
+report_claims() {
   POL=src/plantgraph/qa/cascade/policies_v2t
   $P -m plantgraph.qa.cascade report --sealed-claims --claims v2t --setting A \
     --policy $POL/cascade_v4_iso.json --policy $POL/cascade_v4.json \
@@ -94,6 +95,10 @@ report() {
     --run H100g2:cypher-v2t=$S/runs/S7-CYP-H100g2 --run H100g2:agent-v2t=$S/runs/S7-AG-H100g2 \
     --run H1000g2:cypher-v2t=$S/runs/S7-CYP-H1000g2 --run H1000g2:agent-v2t=$S/runs/S7-AG-H1000g2 \
     > $S/logs/report.stdout.txt || die "the sealed report failed, see $S/logs/report.stdout.txt"
+}
+
+report() {
+  report_claims
   $P -m plantgraph.qa.exp0001 duplication-report --system v2t --root $S --out $S/report_duplication \
     > $S/logs/report_duplication.stdout.txt || die "the duplication report failed"
   for rp_c in $SEALED_IDS; do
@@ -116,9 +121,17 @@ report_f1_baseline() {  # F1's own sealed claims (ADR-0053, cascade_v3) on the s
 }
 
 step make_smoke $EX head-questions --source $QROOT/H100g2/questions.jsonl --out $S/questions_smoke/H100g2/questions.jsonl
-cypher_tier
+for r_c in $HEADLINE_IDS; do cypher_v2t $r_c; done
+step agent_H100g2_smoke v2t_run AG S7-AG-H100g2-SMOKE H100g2 smoke $DEADLINE_S $S/questions_smoke
+for r_c in $HEADLINE_IDS; do agent_v2t $r_c; done
+require_identical_replays
+# a failed report costs no money and is free to redo, so it must not stop the arms that are still paid for
+if ! ( step report_headline report_claims ); then echo "ERROR: the headline report failed, the run goes on"; fi
+for r_c in $DESCRIPTIVE_IDS; do cypher_v2t $r_c; done
+if [ "$WITH_F1" = yes ]; then for r_c in $F1_CORPORA; do cypher_f1 $r_c; done; fi
 step restore_d1000_a restore_d1000
-agent_tier
+for r_c in $DESCRIPTIVE_IDS; do agent_v2t $r_c; done
+agent_control_and_f1
 require_identical_replays
 step report report
 if [ "$WITH_F1" = yes ]; then step report_f1_baseline report_f1_baseline; fi
