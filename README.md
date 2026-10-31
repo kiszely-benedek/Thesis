@@ -24,10 +24,22 @@ prompt. This project asks what happens at **plant scale** (~100 and ~1,000 sheet
 4. **Evaluation** — accuracy, token cost, infrastructure cost and latency at 1 → 1,000 sheets, with a sealed
    test on plants never used in development.
 
-## Where it stands (2026-10-23)
+## Where it stands (2026-10-31)
 
-All experiments are done and the demo is finished. Every number below is a
-measured run (model: GPT-6 Luna via OpenRouter).
+Every number below is a measured run (model: GPT-6 Luna via OpenRouter). Full table:
+[`docs/private/30-experiments/_results.md`](docs/private/30-experiments/_results.md).
+
+**Generator v2, the realistic plants.** The frozen v1 system (F1) is weaker on them, so a separately labelled tuned
+system, V2T, was built and frozen (E7 `fdad31f`).
+
+| Result on v2 plants | Value |
+|---|---|
+| Validation, unseen plants, 163 questions | V2T 154 / 156 correct at ~100 / ~1,000 sheets; F1 145 / 144 |
+| Ladder (R4), test seeds, 1 / 3 / 11 / 30 sheets | V2T cascade **0.957 / 0.885 / 0.909 / 0.924**; ContextRAG 0.686 / 0.654 / 0.614 at 1 / 3 / 11 sheets |
+| ContextRAG cost per question vs the cascade | ×3.79 at 1 sheet → ×21.57 at 11 sheets; prompt stops fitting at ≈62 sheets |
+| Sealed test (R5) at ~100 and ~1,000 sheets | running |
+
+**Generator v1, the first benchmark.** These results stand as measured on v1 plants.
 
 | Result | Value |
 |---|---|
@@ -41,7 +53,7 @@ What the measurements changed: the cascade leads **from a single sheet on**, so 
 "crossover" on our question families — the scale effect is the growing gap in accuracy and cost. ChatP&ID's
 0.91 could not be reproduced on its own example (EX01) because of tag naming in the import.
 Not done: a separate evaluation of the cross-sheet resolver on real OPEN100 drawings (EXP-0004).
-Tests: 2,048 pass (`uv run pytest`), ruff and mypy clean.
+Tests: 3,666 pass, 2 skipped (`uv run pytest`), ruff and mypy clean.
 
 ## Layout
 

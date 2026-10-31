@@ -44,6 +44,8 @@ Note also that the title does **not** mention the retrieval-inversion claim. Tha
 
 **2026-10-29: generator v2 done (ADR-0057/0058/0059, T0–T16 `0ba680a`…`917b4c3`); re-measurement EXP-0007 (ADR-0060) found F1 weaker on v2 (D100g2 cascade_v3 0.896); the separately labelled tuned system V2T (ADR-0061) was tuned on X100g2s211 (3 rounds) and validated once on held-back X100g2s212 / X1000g2s213: cascade_v4_iso 154 / 156 of 163 vs F1 145 / 144 (`c51c83e`, `30-experiments/EXP-0007-V2T-validation.md`). Next: E7 freeze of V2T-A, then R4 (ladder, tiers + ContextRAG H1g2–H10g2) and R5 (sealed, + F1 baseline). Progress: `50-progress/2026-W44.md`.**
 
+**2026-10-31: R4 done (`87eb79e`, `30-experiments/EXP-0007-R4-ladder.md`): cascade_v4_iso 0.957 / 0.885 / 0.909 / 0.924 at 1 / 3 / 11 / 30 sheets. R5's question draw crashed in FIRST_MEETING_POINT; fixed under ADR-0062 (`28ba910`, proposed: family excluded from all sealed v2 corpora, two generators rewritten with byte-identical output). R5 test set building, then the paid R5.**
+
 **2026-10-16: demo polish ADR-0055: DP-T1…T4 committed, DP-T5 uncommitted, DP-T6…T10 next.**
 
 **2026-10-11: sealed test run done (EXP-0002, ADR-0053): frozen cascade_v3 (GPT-6 Luna, ADR-0050/0052) on held-out H100/H1000 — headline acc@120 0.937 / 0.917, $0.00065 / $0.00071 per question, primary claim Q4 PASS, K1 FAIL on headline; infra cost measured (INFRA-1, ADR-0051). EXP-0001 done (ladder 1–30 sheets: ContextRAG 0.824 → 0.658 vs cascade 0.941 → 0.947, X1 PASS, X2 FAIL — no single-sheet crossing; EX01 0–1/5). Next: the clickable results UI.**
