@@ -6,10 +6,9 @@ Ezt az oldalt a `/log-progress` frissíti minden munkamenet végén. A részlete
 
 ## Egy mondatban
 
-A valósághű generátor (v2) kész; a régi rendszer v2-n gyengébb volt, ezért egy külön megnevezett, hangolt rendszer
-(V2T) készült, amely a félretett ellenőrző üzemeken 94,5% / 95,7%-ot ért el a régi 89,0% / 88,3%-ával szemben;
-a lezárt v2-mérésekből az R4 (létra) kész: 0,957 / 0,885 / 0,909 / 0,924 az 1 / 3 / 11 / 30 lapos üzemeken, a
-ContextRAG 0,686 / 0,654 / 0,614-ével szemben; az R5 tesztkészlete épül (ADR-0062), utána fut az R5.
+Az R5 (lezárt v2-teszt a hangolt V2T-A rendszerrel) fő része kész: a fő rendszer 0,911 (100 lap) és 0,891
+(1 000 lap), a fő állítás (Q4: a pontosság nem romlik a méretezéssel) teljesül; a gyenge pont az elzárási kérdések
+(a hangoláskor nem látott típusokon 0,740); a leíró mérések és a régi rendszerrel való összevetés még futnak.
 
 ## Fázisok
 
@@ -20,7 +19,7 @@ ContextRAG 0,686 / 0,654 / 0,614-ével szemben; az R5 tesztkészlete épül (ADR
 | v2 | Valósághű generátor (ADR-0057/0058/0059) | ✔ kész: T0 `0ba680a` … T16 `917b4c3` (10-25 → 10-27) |
 | v2-mérés | EXP-0007 (ADR-0060): R0–R3, próba, minőségellenőrzés | ✔ kész (`3f91905`, `133b7f7`, `02af1df`) |
 | V2T | Hangolt rendszer (ADR-0061): építés, 3 hangolási kör, ellenőrzés | ✔ kész (`c51c83e`, 10-29) |
-| R4/R5 | Lezárt v2-mérések a hangolt rendszerrel (V2T-A) | 🟡 E7 és R4 kész (`fdad31f`, `87eb79e`); R5 tesztkészlete épül |
+| R4/R5 | Lezárt v2-mérések a hangolt rendszerrel (V2T-A) | 🟡 E7, R4 kész (`fdad31f`, `87eb79e`); R5 fő része kész, a többi fut |
 | 7 | Dolgozat írása | 🟡 folyamatban |
 
 ## Feladatok (a legutóbbiak)
@@ -37,19 +36,22 @@ ContextRAG 0,686 / 0,654 / 0,614-ével szemben; az R5 tesztkészlete épül (ADR
 | — | E7 befagyasztás + R4 tesztkészlet | ✔ | `d72e3b5` | 10-29 |
 | — | R4 (létra) | ✔ | `87eb79e` | 10-29 |
 | — | R5 kérdésgenerálás javítása (ADR-0062) | ✔ | `28ba910` | 10-31 |
-| — | R5 (lezárt teszt + régi rendszer összevetésül) | 🟡 tesztkészlet épül | | 10-31 |
+| — | R5 tesztkészlet, futási sorrend, költségkorlát-emelés | ✔ | `f3c0c00`, `aeb2801`, `c77441d`, `59b084d` | 10-31 |
+| — | R5 fő mérés (H100g2, H1000g2) | ✔ mérve, a futás adatai még nincsenek commitolva | | 10-31 |
+| — | R5 leíró mérések (d0, d50, C1) + régi rendszer (F1) | 🟡 fut | | 10-31 |
 
-## Ellenőrzőpontok a naptárhoz képest
+## Ellenőrzőpontok
 
-| Pont | Dátum | Mi kell hozzá | Hol tartunk |
-|---|---|---|---|
-| Leadás | okt. 31. | dolgozat | 🟡 a v2-mérések még futnak; a v1-es eredmények készen állnak |
+| Pont | Mi kell hozzá | Hol tartunk |
+|---|---|---|
+| R5 lezárva | minden lépés lefut, jelentések, futási jegyzet | 🟡 a fő rész kész, a többi néhány óra |
 
 ## Mi vár rád
 
-1. **Az R5 plafonja** a chatben jelenik meg indulás előtt (becslés: hangolt ≈ $6,44, régi ≈ $2,05).
-2. **A T0–T16 és a V2T átnézése** (a „Generátor v2 – átnézendő változások” dokumentum).
+1. **Az R5 tanulási jegyzetének átolvasása** (`docs/Notes/lezart-teszt-eredmenyek-olvasasa.md`), a lényege a chatben.
+2. **A commitok** a chatben megadott parancsokkal (jegyzet, napló, állapotoldal; az R5 adatai a futás végén).
+3. **A T0–T16 és a V2T átnézése** (a „Generátor v2 – átnézendő változások” dokumentum).
 
 ## Mit olvass el legközelebb
 
-Semmit — a következő chat mindent a beszélgetésbe ír le (a chat az egyetlen forrás).
+Semmit külön — a chat mindent leír (a chat az egyetlen forrás).
