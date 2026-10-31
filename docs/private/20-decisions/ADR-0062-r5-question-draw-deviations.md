@@ -72,6 +72,11 @@ cannot always finish, because timeouts depend on machine load. `run_sealed.sh` a
 `identical` only if a written `timing_note.md` stands beside it. The alternatives were to raise the limit, which
 changes the frozen system, or to patch the harness to skip misses, which it is frozen against.
 
+**Cap raise (added 2026-10-31).** `S7-AG-H1000g2` stopped at its $1.00 cap after 535 of 560 questions ($0.93 spent):
+the agent cost $0.00174 per question against the $0.00133 the cap assumed. Stop rule 3 applied, and the user approved
+raises of at most $1 in all. `run_sealed.sh` adds $0.90 per run on top of the hashed `caps_r5.json`, which is unchanged:
+S7-AG-H1000g2 +$0.15, S7-AG-H100g2d0 and d50 +$0.05 each, S7F1-CYP +$0.10 each, S7F1-AG +$0.20 and +$0.25.
+
 **Hygiene note (2026-10-31).** While diagnosing the replay, the main session printed the trace of one test question
 (`H1000g2:FEEDING_UNITS:111`): its Cypher query and its raw reply, against plan §9 point 5. Nothing was changed
 because of it: the system stayed frozen and no question or run was altered. The query was also run directly on the

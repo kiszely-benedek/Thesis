@@ -25,6 +25,31 @@ while [ $# -gt 0 ]; do  # --with-f1-baseline is ours; the rest is lib.sh's paid 
   shift
 done
 parse_paid_args $REST
+
+# Raises the user approved on 2026-10-31 after S7-AG-H1000g2 hit its cap (ADR-0062): $0.90 in all, on top of
+# the hashed cap file, which stays as it was shown.
+cap_raise() {
+  case $1 in
+    S7-AG-H1000g2) echo 0.15 ;;
+    S7-AG-H100g2d0|S7-AG-H100g2d50) echo 0.05 ;;
+    S7F1-CYP-H100g2|S7F1-CYP-H1000g2) echo 0.10 ;;
+    S7F1-AG-H100g2) echo 0.20 ;;
+    S7F1-AG-H1000g2) echo 0.25 ;;
+    *) echo 0 ;;
+  esac
+}
+cap_of() {
+  co_base=$($EX cap-of --cap-file "$CAP_FILE" --cap-sha256 "$CAP_SHA" --run-id "$1" --field cap) || return 1
+  $P -c "import sys; print(round(float(sys.argv[1]) + float(sys.argv[2]), 2))" "$co_base" "$(cap_raise "$1")"
+}
+
+# A Cypher replay at 1,000 sheets can stop where a query near the 30 s limit lands on the other side of it
+# (ADR-0062). Such a replay passes only with a written note beside it, naming the rows that did replay.
+require_identical_replays() {
+  for rc_file in "$S"/replays/*/replay_check.txt; do
+    grep -q '^identical$' "$rc_file" || [ -s "$(dirname "$rc_file")/timing_note.md" ]       || die "a replay differs and has no timing note: $rc_file"
+  done
+}
 S=$X/sealed; CACHE=$S/cache_s7.sqlite; EXPERIMENT=EXP-0007-SEALED
 CYP_CORPORA=$S/neo4jplant; AG_CORPORA=$S/corpora; QROOT=$S/questions
 F1_CORPORA="H100g2 H1000g2"
