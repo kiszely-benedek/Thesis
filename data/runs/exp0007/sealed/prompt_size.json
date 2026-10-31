@@ -1,0 +1,54 @@
+[
+ {
+  "corpus_id": "H100g2",
+  "sheets": 100,
+  "occurrence_nodes": 9011,
+  "context_chars": 3670715,
+  "prompt_chars": 3672802,
+  "chars_per_sheet": 36728,
+  "chars_per_node": 407.4,
+  "est_prompt_tokens": 1447413,
+  "above_price_step": true,
+  "fits_window": false,
+  "seconds": 17.3
+ },
+ {
+  "corpus_id": "H1000g2",
+  "sheets": 1000,
+  "occurrence_nodes": 93818,
+  "context_chars": 38828168,
+  "prompt_chars": 38830255,
+  "chars_per_sheet": 38830,
+  "chars_per_node": 413.9,
+  "est_prompt_tokens": 15304372,
+  "above_price_step": true,
+  "fits_window": false,
+  "seconds": 968.9
+ },
+ {
+  "corpus_id": "H100g2d0",
+  "sheets": 100,
+  "occurrence_nodes": 9032,
+  "context_chars": 3683075,
+  "prompt_chars": 3685162,
+  "chars_per_sheet": 36852,
+  "chars_per_node": 407.8,
+  "est_prompt_tokens": 1452285,
+  "above_price_step": true,
+  "fits_window": false,
+  "seconds": 20.5
+ },
+ {
+  "corpus_id": "H100g2d50",
+  "sheets": 100,
+  "occurrence_nodes": 8988,
+  "context_chars": 3657431,
+  "prompt_chars": 3659518,
+  "chars_per_sheet": 36595,
+  "chars_per_node": 406.9,
+  "est_prompt_tokens": 1442177,
+  "above_price_step": true,
+  "fits_window": false,
+  "seconds": 15.0
+ }
+]
