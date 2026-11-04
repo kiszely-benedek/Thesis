@@ -1,0 +1,28 @@
+{
+ "corpus": "H1000g2d100V",
+ "seed": 5003,
+ "duplication_rate": 1.0,
+ "families": [
+  "format",
+  "naming"
+ ],
+ "n_units": 612,
+ "n_sheets": 1000,
+ "generate_s": 536.5,
+ "n_identity_groups": 843,
+ "n_variant_draws": 854,
+ "blocking": {
+  "n_candidates": 1923,
+  "n_all_pairs": 8243830,
+  "n_gold_links": 854,
+  "n_gold_links_found": 854,
+  "pair_completeness": 1.0,
+  "reduction_ratio": 0.999766734636692
+ },
+ "n_candidates_true": 863,
+ "n_candidates_false": 1060,
+ "units_agree_true": 863,
+ "units_agree_false": 372,
+ "n_ambiguous_occurrences": 0,
+ "n_without_digits": 0
+}

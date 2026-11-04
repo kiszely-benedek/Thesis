@@ -7,10 +7,12 @@ Free and offline (no model, no Neo4j). Design `docs/private/40-design/exp0004-v2
 - D0, D1 and D2 scored pair-level on the candidate set after grouping (§5.3), and group-level with
   `score_identity_groups`; a candidate pair is a true link when both occurrences are in the same gold group;
 - tuning (§5.5, only with --tune): tau = the observed score that maximises pair-level F1, ties to the
-  higher tau; otherwise the taus are read from --taus-json and only scored (the 1,000-sheet transfer check).
+  higher tau; otherwise the taus are read from --taus-json and only scored (the 1,000-sheet transfer check);
+- --counts-only (test corpora, design §9): corpus counts and the blocking gate only, no decider is run.
 
     .venv/Scripts/python data/runs/exp0004/idblock01.py --target-sheets 100 --tune --out <dir>
     .venv/Scripts/python data/runs/exp0004/idblock01.py --target-sheets 1000 --taus-json <dir>/taus.json --out <dir2>
+    .venv/Scripts/python data/runs/exp0004/idblock01.py --target-sheets 1000 --seed 5003 --families format naming         --duplication-rate 1.0 --counts-only --corpus-id H1000g2d100V --out <dir3>
 """
 
 from __future__ import annotations
@@ -50,21 +52,20 @@ from plantgraph.resolution.localize import OccurrenceMap, localize
 from plantgraph.resolution.pairing import pair_connectors
 
 DEV_SEED = 1
-DUPLICATION_RATE = 1.0
-FAMILIES = ("format",)
 
 
 class Corpus:
     """One localized variant corpus with its candidates and its gold groups."""
 
-    def __init__(self, target_sheets: int) -> None:
+    def __init__(self, target_sheets: int, seed: int, duplication_rate: float, families: tuple[str, ...]) -> None:
         started = time.perf_counter()
-        preset = HeadlinePresetV2(duplication_rate=DUPLICATION_RATE)
-        search = smallest_n_units_v2(target_sheets, preset, DEV_SEED)
-        plant = generate_plant_graph(preset.generator_config(search.n_units, DEV_SEED))
+        self.seed, self.duplication_rate, self.families = seed, duplication_rate, families
+        preset = HeadlinePresetV2(duplication_rate=duplication_rate)
+        search = smallest_n_units_v2(target_sheets, preset, seed)
+        plant = generate_plant_graph(preset.generator_config(search.n_units, seed))
         self.generate_s = time.perf_counter() - started
-        sheets, manifest = split(plant, preset.split_config(DEV_SEED))
-        config = VariantConfig(profile="exp0004", families=FAMILIES, rate=1.0, seed=DEV_SEED)
+        sheets, manifest = split(plant, preset.split_config(seed))
+        config = VariantConfig(profile="exp0004", families=families, rate=1.0, seed=seed)  # type: ignore[arg-type]
         varied, self.manifest, self.draws = apply_tag_variants(sheets, manifest, config)
         self.sheets, self.occurrence_map = localize(varied)
         self.n_units, self.n_sheets = search.n_units, len(self.sheets)
@@ -183,7 +184,7 @@ def describe(corpus: Corpus) -> dict[str, object]:
     pairs = corpus.candidates.pairs
     gold_pairs = [p for p in pairs if _same(corpus.gold_group_of, p)]
     return {
-        "seed": DEV_SEED, "duplication_rate": DUPLICATION_RATE, "families": list(FAMILIES),
+        "seed": corpus.seed, "duplication_rate": corpus.duplication_rate, "families": list(corpus.families),
         "n_units": corpus.n_units, "n_sheets": corpus.n_sheets, "generate_s": round(corpus.generate_s, 1),
         "n_identity_groups": len(corpus.manifest.identity_groups), "n_variant_draws": len(corpus.draws),
         "blocking": score_blocking(corpus.candidates, gold_links).model_dump(),
@@ -199,14 +200,27 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--target-sheets", type=int, required=True)
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--seed", type=int, default=DEV_SEED)
+    parser.add_argument("--duplication-rate", type=float, default=1.0)
+    parser.add_argument("--families", nargs="+", choices=("format", "naming"), default=["format"])
+    parser.add_argument("--corpus-id", help="default D<n>g2d100Vf (the dev corpus)")
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--tune", action="store_true")
     mode.add_argument("--taus-json", type=Path)
+    mode.add_argument("--counts-only", action="store_true")
     args = parser.parse_args()
     if args.out.exists():
         raise SystemExit(f"{args.out} exists; refusing to overwrite a measurement")
-    corpus = Corpus(args.target_sheets)
-    result: dict[str, object] = {"corpus": f"D{args.target_sheets}g2d100Vf", **describe(corpus)}
+    if args.seed != DEV_SEED and not args.counts_only:
+        raise SystemExit("a test seed takes --counts-only: no decider runs on a test corpus here (design §5.5)")
+    corpus = Corpus(args.target_sheets, args.seed, args.duplication_rate, tuple(args.families))
+    corpus_id = args.corpus_id or f"D{args.target_sheets}g2d100Vf"
+    result: dict[str, object] = {"corpus": corpus_id, **describe(corpus)}
+    if args.counts_only:
+        args.out.mkdir(parents=True)
+        (args.out / "result.json").write_text(json.dumps(result, indent=1, default=str), encoding="utf-8")
+        print(json.dumps(result, indent=1, default=str))
+        return
     if args.tune:
         tau1, trace1 = tune(corpus, StringSimilarityDecider)
         tau2, trace2 = tune(corpus, UnitAwareDecider)
