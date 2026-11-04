@@ -246,6 +246,8 @@ At ≈16,730 characters per full sheet (PROMPT-04 arithmetic), a 17-sheet route 
 
 ## 4. Part B1 — EXP-0004: tag-variant identity with interchangeable deciders
 
+> v1 design, never built. The v2 revision (corpora, operators, deciders, end-to-end arm) is `40-design/exp0004-v2.md` with ADR-0063 (proposed 2026-11-04).
+
 ### 4.1 Question
 
 At H100-V and H1000-V, with every reference occurrence's tag written as a variant, what identity P/R/F1 does each

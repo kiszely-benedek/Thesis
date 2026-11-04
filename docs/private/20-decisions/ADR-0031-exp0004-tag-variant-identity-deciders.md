@@ -75,3 +75,5 @@ The OPEN100 strings are used as a qualitative check only (design note §4.8), ne
   H1000-V makes the paid deciders unaffordable (then sample candidates, stratified by family, and say so).
 
 **Accepted 2026-10-02 (user, in chat).** As written, with `variant_rate = 1.0` and the optional 0.5 run.
+
+Amended for generator v2 by ADR-0063 (proposed 2026-11-04).
