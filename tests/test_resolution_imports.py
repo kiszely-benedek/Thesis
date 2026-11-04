@@ -57,6 +57,15 @@ def _imported_modules_and_names(tree: ast.Module) -> tuple[set[str], set[str]]:
     return modules, names
 
 
+@pytest.mark.parametrize("path", sorted(_RESOLUTION_DIR.glob("*.py")), ids=lambda path: path.name)
+def test_resolution_module_never_imports_the_llm_package(path: Path) -> None:
+    """The model-based identity decider (D4) lives outside `resolution/`, which stays model-free."""
+    tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+    modules, _ = _imported_modules_and_names(tree)
+    llm_imports = {m for m in modules if m == "plantgraph.llm" or m.startswith("plantgraph.llm.")}
+    assert not llm_imports, f"{path.name} imports the llm package: {llm_imports}"
+
+
 @pytest.mark.parametrize("path", _module_files(), ids=lambda path: path.name)
 def test_resolution_module_never_imports_the_answer_key(path: Path) -> None:
     tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))

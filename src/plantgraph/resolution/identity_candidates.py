@@ -57,6 +57,12 @@ class CandidatePair(BaseModel):
     second: ContentKey
     blocking_key: BlockingKey
     card: str
+    # the card's unit facts in structured form (same source), for context rules like D2;
+    # a unit is None when the symbol prints none (a reference), the sheet units are sorted
+    first_unit: str | None = None
+    first_sheet_units: tuple[str, ...] = ()
+    second_unit: str | None = None
+    second_sheet_units: tuple[str, ...] = ()
 
     def unordered(self) -> frozenset[ContentKey]:
         """The pair without an order, to compare with gold links."""
@@ -196,6 +202,10 @@ def _candidate_pair(
         second=key_on_sheet[second.sheet_id],
         blocking_key=key,
         card=render_pair_card(first, second, n_joining),
+        first_unit=first.unit,
+        first_sheet_units=first.units_on_sheet,
+        second_unit=second.unit,
+        second_sheet_units=second.units_on_sheet,
     )
 
 
