@@ -1,0 +1,40 @@
+{
+ "corpus_id": "D100g2d100Vf",
+ "seed": 0,
+ "pair_indices": [
+  10,
+  24,
+  35,
+  55,
+  64,
+  66,
+  72,
+  77,
+  91,
+  98,
+  103,
+  107,
+  122,
+  124,
+  129,
+  130,
+  149,
+  158,
+  193,
+  194
+ ],
+ "stats": {
+  "pin_hash": "acf24178d47dd4873fc2a36e7f67efbf2dc7ab5de694711f3b934e6ef4f4c21d",
+  "prompt_sha256": "8a4095d56d8036dad66a5cc8039a60f6ddf2ea3110a75250fb67c593bb994a98",
+  "n_calls": 20,
+  "n_cache_hits": 0,
+  "n_parse_failures": 0,
+  "parse_failure_rate": 0.0,
+  "cost_usd_spent": 0.0020796,
+  "cost_usd_recorded": 0.0020796,
+  "n_live_calls_without_cost": 0,
+  "latency_p50_s": 3.514999999999418,
+  "latency_p95_s": 6.5
+ },
+ "parse_failures_over_limit": false
+}

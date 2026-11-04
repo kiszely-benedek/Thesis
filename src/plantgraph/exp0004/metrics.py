@@ -35,11 +35,15 @@ class Prf(BaseModel):
 
 
 def prf_of(counts: Counts) -> Prf:
-    """Precision, recall and F1 of `counts`; F1 is None when either is zero or missing."""
+    """Precision, recall and F1 of `counts`, F1 defined exactly as the bootstrap defines it.
+
+    A decider that accepts nothing has no precision but an F1 of 0.0 (tp = 0, fn > 0), so a point
+    estimate and its resampled interval always describe the same quantity.
+    """
     predicted, actual = counts.tp + counts.fp, counts.tp + counts.fn
     precision = counts.tp / predicted if predicted else None
     recall = counts.tp / actual if actual else None
-    f1 = 2 * precision * recall / (precision + recall) if precision and recall else None
+    f1 = f1_of_counts(counts)
     return Prf(tp=counts.tp, fp=counts.fp, fn=counts.fn, precision=precision, recall=recall, f1=f1)
 
 

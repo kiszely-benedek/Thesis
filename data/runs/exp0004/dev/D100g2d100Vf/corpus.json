@@ -1,0 +1,32 @@
+{
+ "spec": {
+  "corpus_id": "D100g2d100Vf",
+  "target_sheets": 100,
+  "seed": 1,
+  "duplication_rate": 1.0,
+  "families": [
+   "format"
+  ]
+ },
+ "description": {
+  "n_units": 59,
+  "n_sheets": 100,
+  "generate_s": 7.8,
+  "n_identity_groups": 93,
+  "n_variant_draws": 93,
+  "blocking": {
+   "n_candidates": 200,
+   "n_all_pairs": 92665,
+   "n_gold_links": 93,
+   "n_gold_links_found": 93,
+   "pair_completeness": 1.0,
+   "reduction_ratio": 0.9978416878001403
+  },
+  "n_candidates_true": 93,
+  "n_candidates_false": 107,
+  "units_agree_true": 93,
+  "units_agree_false": 51,
+  "n_ambiguous_occurrences": 0,
+  "n_without_digits": 0
+ }
+}

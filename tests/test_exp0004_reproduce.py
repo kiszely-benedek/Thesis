@@ -74,12 +74,23 @@ def test_pair_level_and_group_level_scores_match(
 ) -> None:
     for run, expected in zip(runs, committed["scores"], strict=True):
         assert run.decider == expected["decider"]
-        assert run.pair_level.model_dump() == expected["pair_level"]
+        assert run.pair_level.model_dump() == _with_zero_f1(expected["pair_level"])
         assert run.group_level.model_dump() == expected["group_level"]
         assert run.n_dropped_one_to_one == expected["n_dropped_one_to_one"]
         assert run.n_identity_conflicts == expected["n_identity_conflicts"]
     assert runs[1].pair_level.f1 == 0.9058823529411765
     assert runs[2].pair_level.f1 == 0.983957219251337
+
+
+def _with_zero_f1(pair_level: dict[str, Any]) -> dict[str, Any]:
+    """The prototype wrote F1 None for a decider that accepts nothing; the package writes 0.0.
+
+    The package defines F1 as 2tp / (2tp + fp + fn), the bootstrap's definition, so the point
+    estimate and its interval agree. Only that one case differs; every count must still match.
+    """
+    if pair_level["f1"] is None and pair_level["tp"] == 0 and pair_level["fn"] > 0:
+        return {**pair_level, "f1": 0.0}
+    return pair_level
 
 
 def test_per_operator_recovery_matches(

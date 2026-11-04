@@ -1,0 +1,3405 @@
+{
+ "corpus_id": "D100g2d100Vf",
+ "pairs": [
+  {
+   "index": 0,
+   "first": [
+    "22",
+    "EA-1501",
+    "AirCoolingSystem"
+   ],
+   "second": [
+    "21",
+    "EA-15-01",
+    "AirCoolingSystem"
+   ],
+   "block": "AirCoolingSystem:151",
+   "is_true": true,
+   "family": "format",
+   "operator": "split_number"
+  },
+  {
+   "index": 1,
+   "first": [
+    "27",
+    "EA-1701",
+    "AirCoolingSystem"
+   ],
+   "second": [
+    "26",
+    "EA-17-01",
+    "AirCoolingSystem"
+   ],
+   "block": "AirCoolingSystem:171",
+   "is_true": true,
+   "family": "format",
+   "operator": "split_number"
+  },
+  {
+   "index": 2,
+   "first": [
+    "49",
+    "EA-3001",
+    "AirCoolingSystem"
+   ],
+   "second": [
+    "48",
+    "EA-301",
+    "AirCoolingSystem"
+   ],
+   "block": "AirCoolingSystem:31",
+   "is_true": true,
+   "family": "format",
+   "operator": "unpad_sequence"
+  },
+  {
+   "index": 3,
+   "first": [
+    "61",
+    "EA-3701",
+    "AirCoolingSystem"
+   ],
+   "second": [
+    "60",
+    "EA-37-01",
+    "AirCoolingSystem"
+   ],
+   "block": "AirCoolingSystem:371",
+   "is_true": true,
+   "family": "format",
+   "operator": "split_number"
+  },
+  {
+   "index": 4,
+   "first": [
+    "74",
+    "EA-4301",
+    "AirCoolingSystem"
+   ],
+   "second": [
+    "73",
+    "EA 4301",
+    "AirCoolingSystem"
+   ],
+   "block": "AirCoolingSystem:431",
+   "is_true": true,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 5,
+   "first": [
+    "76",
+    "EA-4401",
+    "AirCoolingSystem"
+   ],
+   "second": [
+    "75",
+    "EA.4401",
+    "AirCoolingSystem"
+   ],
+   "block": "AirCoolingSystem:441",
+   "is_true": true,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 6,
+   "first": [
+    "7",
+    "EA-501",
+    "AirCoolingSystem"
+   ],
+   "second": [
+    "6",
+    "EA.501",
+    "AirCoolingSystem"
+   ],
+   "block": "AirCoolingSystem:51",
+   "is_true": true,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 7,
+   "first": [
+    "11",
+    "EA-701",
+    "AirCoolingSystem"
+   ],
+   "second": [
+    "10",
+    "EA-71",
+    "AirCoolingSystem"
+   ],
+   "block": "AirCoolingSystem:71",
+   "is_true": true,
+   "family": "format",
+   "operator": "unpad_sequence"
+  },
+  {
+   "index": 8,
+   "first": [
+    "51",
+    "EJ-3101A",
+    "AirEjector"
+   ],
+   "second": [
+    "50",
+    "ej-3101a",
+    "AirEjector"
+   ],
+   "block": "AirEjector:311",
+   "is_true": true,
+   "family": "format",
+   "operator": "case"
+  },
+  {
+   "index": 9,
+   "first": [
+    "51",
+    "EJ-3101A",
+    "AirEjector"
+   ],
+   "second": [
+    "50",
+    "ej-3101b",
+    "AirEjector"
+   ],
+   "block": "AirEjector:311",
+   "is_true": false,
+   "family": "format",
+   "operator": "case"
+  },
+  {
+   "index": 10,
+   "first": [
+    "51",
+    "EJ-3101B",
+    "AirEjector"
+   ],
+   "second": [
+    "50",
+    "ej-3101a",
+    "AirEjector"
+   ],
+   "block": "AirEjector:311",
+   "is_true": false,
+   "family": "format",
+   "operator": "case"
+  },
+  {
+   "index": 11,
+   "first": [
+    "51",
+    "EJ-3101B",
+    "AirEjector"
+   ],
+   "second": [
+    "50",
+    "ej-3101b",
+    "AirEjector"
+   ],
+   "block": "AirEjector:311",
+   "is_true": true,
+   "family": "format",
+   "operator": "case"
+  },
+  {
+   "index": 12,
+   "first": [
+    "3",
+    "EJ-401-A",
+    "AirEjector"
+   ],
+   "second": [
+    "67",
+    "EJ 4001",
+    "AirEjector"
+   ],
+   "block": "AirEjector:41",
+   "is_true": false,
+   "family": "format",
+   "operator": "spare_separator"
+  },
+  {
+   "index": 13,
+   "first": [
+    "3",
+    "EJ401B",
+    "AirEjector"
+   ],
+   "second": [
+    "67",
+    "EJ 4001",
+    "AirEjector"
+   ],
+   "block": "AirEjector:41",
+   "is_true": false,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 14,
+   "first": [
+    "4",
+    "EJ-401A",
+    "AirEjector"
+   ],
+   "second": [
+    "3",
+    "EJ-401-A",
+    "AirEjector"
+   ],
+   "block": "AirEjector:41",
+   "is_true": true,
+   "family": "format",
+   "operator": "spare_separator"
+  },
+  {
+   "index": 15,
+   "first": [
+    "4",
+    "EJ-401A",
+    "AirEjector"
+   ],
+   "second": [
+    "3",
+    "EJ401B",
+    "AirEjector"
+   ],
+   "block": "AirEjector:41",
+   "is_true": false,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 16,
+   "first": [
+    "4",
+    "EJ-401A",
+    "AirEjector"
+   ],
+   "second": [
+    "67",
+    "EJ 4001",
+    "AirEjector"
+   ],
+   "block": "AirEjector:41",
+   "is_true": false,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 17,
+   "first": [
+    "4",
+    "EJ-401A",
+    "AirEjector"
+   ],
+   "second": [
+    "68",
+    "EJ-4001",
+    "AirEjector"
+   ],
+   "block": "AirEjector:41",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 18,
+   "first": [
+    "4",
+    "EJ-401B",
+    "AirEjector"
+   ],
+   "second": [
+    "3",
+    "EJ-401-A",
+    "AirEjector"
+   ],
+   "block": "AirEjector:41",
+   "is_true": false,
+   "family": "format",
+   "operator": "spare_separator"
+  },
+  {
+   "index": 19,
+   "first": [
+    "4",
+    "EJ-401B",
+    "AirEjector"
+   ],
+   "second": [
+    "3",
+    "EJ401B",
+    "AirEjector"
+   ],
+   "block": "AirEjector:41",
+   "is_true": true,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 20,
+   "first": [
+    "4",
+    "EJ-401B",
+    "AirEjector"
+   ],
+   "second": [
+    "67",
+    "EJ 4001",
+    "AirEjector"
+   ],
+   "block": "AirEjector:41",
+   "is_true": false,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 21,
+   "first": [
+    "4",
+    "EJ-401B",
+    "AirEjector"
+   ],
+   "second": [
+    "68",
+    "EJ-4001",
+    "AirEjector"
+   ],
+   "block": "AirEjector:41",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 22,
+   "first": [
+    "68",
+    "EJ-4001",
+    "AirEjector"
+   ],
+   "second": [
+    "3",
+    "EJ-401-A",
+    "AirEjector"
+   ],
+   "block": "AirEjector:41",
+   "is_true": false,
+   "family": "format",
+   "operator": "spare_separator"
+  },
+  {
+   "index": 23,
+   "first": [
+    "68",
+    "EJ-4001",
+    "AirEjector"
+   ],
+   "second": [
+    "3",
+    "EJ401B",
+    "AirEjector"
+   ],
+   "block": "AirEjector:41",
+   "is_true": false,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 24,
+   "first": [
+    "68",
+    "EJ-4001",
+    "AirEjector"
+   ],
+   "second": [
+    "67",
+    "EJ 4001",
+    "AirEjector"
+   ],
+   "block": "AirEjector:41",
+   "is_true": true,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 25,
+   "first": [
+    "4",
+    "EJ-402A",
+    "AirEjector"
+   ],
+   "second": [
+    "67",
+    "EJ 4002",
+    "AirEjector"
+   ],
+   "block": "AirEjector:42",
+   "is_true": false,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 26,
+   "first": [
+    "4",
+    "EJ-402A",
+    "AirEjector"
+   ],
+   "second": [
+    "68",
+    "EJ-4002",
+    "AirEjector"
+   ],
+   "block": "AirEjector:42",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 27,
+   "first": [
+    "4",
+    "EJ-402B",
+    "AirEjector"
+   ],
+   "second": [
+    "67",
+    "EJ 4002",
+    "AirEjector"
+   ],
+   "block": "AirEjector:42",
+   "is_true": false,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 28,
+   "first": [
+    "4",
+    "EJ-402B",
+    "AirEjector"
+   ],
+   "second": [
+    "68",
+    "EJ-4002",
+    "AirEjector"
+   ],
+   "block": "AirEjector:42",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 29,
+   "first": [
+    "68",
+    "EJ-4002",
+    "AirEjector"
+   ],
+   "second": [
+    "67",
+    "EJ 4002",
+    "AirEjector"
+   ],
+   "block": "AirEjector:42",
+   "is_true": true,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 30,
+   "first": [
+    "87",
+    "EJ-5101A",
+    "AirEjector"
+   ],
+   "second": [
+    "86",
+    "EJ.5101B",
+    "AirEjector"
+   ],
+   "block": "AirEjector:511",
+   "is_true": false,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 31,
+   "first": [
+    "87",
+    "EJ-5101A",
+    "AirEjector"
+   ],
+   "second": [
+    "86",
+    "ej-5101a",
+    "AirEjector"
+   ],
+   "block": "AirEjector:511",
+   "is_true": true,
+   "family": "format",
+   "operator": "case"
+  },
+  {
+   "index": 32,
+   "first": [
+    "87",
+    "EJ-5101B",
+    "AirEjector"
+   ],
+   "second": [
+    "86",
+    "EJ.5101B",
+    "AirEjector"
+   ],
+   "block": "AirEjector:511",
+   "is_true": true,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 33,
+   "first": [
+    "87",
+    "EJ-5101B",
+    "AirEjector"
+   ],
+   "second": [
+    "86",
+    "ej-5101a",
+    "AirEjector"
+   ],
+   "block": "AirEjector:511",
+   "is_true": false,
+   "family": "format",
+   "operator": "case"
+  },
+  {
+   "index": 34,
+   "first": [
+    "0",
+    "P-101",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "14",
+    "P1001",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:11",
+   "is_true": false,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 35,
+   "first": [
+    "0",
+    "P-101",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "15",
+    "P-1001",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:11",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 36,
+   "first": [
+    "15",
+    "P-1001",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "14",
+    "P1001",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:11",
+   "is_true": true,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 37,
+   "first": [
+    "15",
+    "P-1002",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "14",
+    "P1002",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:12",
+   "is_true": true,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 38,
+   "first": [
+    "18",
+    "P-1201",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "17",
+    "P-12-01",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:121",
+   "is_true": true,
+   "family": "format",
+   "operator": "split_number"
+  },
+  {
+   "index": 39,
+   "first": [
+    "18",
+    "P-1202",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "17",
+    "P.1202",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:122",
+   "is_true": true,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 40,
+   "first": [
+    "18",
+    "P-1203",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "17",
+    "p-1203",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:123",
+   "is_true": true,
+   "family": "format",
+   "operator": "case"
+  },
+  {
+   "index": 41,
+   "first": [
+    "25",
+    "P-1601",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "24",
+    "P 1601",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:161",
+   "is_true": true,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 42,
+   "first": [
+    "25",
+    "P-1602",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "24",
+    "P-162",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:162",
+   "is_true": true,
+   "family": "format",
+   "operator": "unpad_sequence"
+  },
+  {
+   "index": 43,
+   "first": [
+    "30",
+    "P-1901",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "29",
+    "P-19-01",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:191",
+   "is_true": true,
+   "family": "format",
+   "operator": "split_number"
+  },
+  {
+   "index": 44,
+   "first": [
+    "30",
+    "P-1902",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "29",
+    "P 1902",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:192",
+   "is_true": true,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 45,
+   "first": [
+    "32",
+    "P-2001A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "31",
+    "p-2001a",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:21",
+   "is_true": true,
+   "family": "format",
+   "operator": "case"
+  },
+  {
+   "index": 46,
+   "first": [
+    "32",
+    "P-2001A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "31",
+    "p-2001b",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:21",
+   "is_true": false,
+   "family": "format",
+   "operator": "case"
+  },
+  {
+   "index": 47,
+   "first": [
+    "32",
+    "P-2001B",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "31",
+    "p-2001a",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:21",
+   "is_true": false,
+   "family": "format",
+   "operator": "case"
+  },
+  {
+   "index": 48,
+   "first": [
+    "32",
+    "P-2001B",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "31",
+    "p-2001b",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:21",
+   "is_true": true,
+   "family": "format",
+   "operator": "case"
+  },
+  {
+   "index": 49,
+   "first": [
+    "44",
+    "P-2801A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "43",
+    "P2801A",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:281",
+   "is_true": true,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 50,
+   "first": [
+    "44",
+    "P-2801A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "43",
+    "P2801B",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:281",
+   "is_true": false,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 51,
+   "first": [
+    "44",
+    "P-2801B",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "43",
+    "P2801A",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:281",
+   "is_true": false,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 52,
+   "first": [
+    "44",
+    "P-2801B",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "43",
+    "P2801B",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:281",
+   "is_true": true,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 53,
+   "first": [
+    "2",
+    "P-301A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "49",
+    "P-3001A",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:31",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 54,
+   "first": [
+    "2",
+    "P-301A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "49",
+    "P-3001B",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:31",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 55,
+   "first": [
+    "2",
+    "P-301A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "49",
+    "P-3001C",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:31",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 56,
+   "first": [
+    "2",
+    "P-301B",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "49",
+    "P-3001A",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:31",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 57,
+   "first": [
+    "2",
+    "P-301B",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "49",
+    "P-3001B",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:31",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 58,
+   "first": [
+    "2",
+    "P-301B",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "49",
+    "P-3001C",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:31",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 59,
+   "first": [
+    "2",
+    "P-301C",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "49",
+    "P-3001A",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:31",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 60,
+   "first": [
+    "2",
+    "P-301C",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "49",
+    "P-3001B",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:31",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 61,
+   "first": [
+    "2",
+    "P-301C",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "49",
+    "P-3001C",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:31",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 62,
+   "first": [
+    "53",
+    "P-3201A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "52",
+    "P-321A",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:321",
+   "is_true": true,
+   "family": "format",
+   "operator": "unpad_sequence"
+  },
+  {
+   "index": 63,
+   "first": [
+    "53",
+    "P-3201A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "52",
+    "p-3201b",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:321",
+   "is_true": false,
+   "family": "format",
+   "operator": "case"
+  },
+  {
+   "index": 64,
+   "first": [
+    "53",
+    "P-3201B",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "52",
+    "P-321A",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:321",
+   "is_true": false,
+   "family": "format",
+   "operator": "unpad_sequence"
+  },
+  {
+   "index": 65,
+   "first": [
+    "53",
+    "P-3201B",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "52",
+    "p-3201b",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:321",
+   "is_true": true,
+   "family": "format",
+   "operator": "case"
+  },
+  {
+   "index": 66,
+   "first": [
+    "65",
+    "P-3901",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "64",
+    "P-39-01",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:391",
+   "is_true": true,
+   "family": "format",
+   "operator": "split_number"
+  },
+  {
+   "index": 67,
+   "first": [
+    "65",
+    "P-3902",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "64",
+    "P3902",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:392",
+   "is_true": true,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 68,
+   "first": [
+    "65",
+    "P-3903",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "64",
+    "P-39-03",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:393",
+   "is_true": true,
+   "family": "format",
+   "operator": "split_number"
+  },
+  {
+   "index": 69,
+   "first": [
+    "5",
+    "P-401A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "3",
+    "P 401C",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:41",
+   "is_true": false,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 70,
+   "first": [
+    "5",
+    "P-401A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "3",
+    "P-4-01B",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:41",
+   "is_true": false,
+   "family": "format",
+   "operator": "split_number"
+  },
+  {
+   "index": 71,
+   "first": [
+    "5",
+    "P-401A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "3",
+    "P-41A",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:41",
+   "is_true": true,
+   "family": "format",
+   "operator": "unpad_sequence"
+  },
+  {
+   "index": 72,
+   "first": [
+    "5",
+    "P-401A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "67",
+    "P-4001",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:41",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 73,
+   "first": [
+    "5",
+    "P-401B",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "3",
+    "P 401C",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:41",
+   "is_true": false,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 74,
+   "first": [
+    "5",
+    "P-401B",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "3",
+    "P-4-01B",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:41",
+   "is_true": true,
+   "family": "format",
+   "operator": "split_number"
+  },
+  {
+   "index": 75,
+   "first": [
+    "5",
+    "P-401B",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "3",
+    "P-41A",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:41",
+   "is_true": false,
+   "family": "format",
+   "operator": "unpad_sequence"
+  },
+  {
+   "index": 76,
+   "first": [
+    "5",
+    "P-401B",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "67",
+    "P-4001",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:41",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 77,
+   "first": [
+    "5",
+    "P-401C",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "3",
+    "P 401C",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:41",
+   "is_true": true,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 78,
+   "first": [
+    "5",
+    "P-401C",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "3",
+    "P-4-01B",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:41",
+   "is_true": false,
+   "family": "format",
+   "operator": "split_number"
+  },
+  {
+   "index": 79,
+   "first": [
+    "5",
+    "P-401C",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "3",
+    "P-41A",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:41",
+   "is_true": false,
+   "family": "format",
+   "operator": "unpad_sequence"
+  },
+  {
+   "index": 80,
+   "first": [
+    "5",
+    "P-401C",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "67",
+    "P-4001",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:41",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 81,
+   "first": [
+    "67",
+    "P-4001",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "3",
+    "P 401C",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:41",
+   "is_true": false,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 82,
+   "first": [
+    "67",
+    "P-4001",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "3",
+    "P-4-01B",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:41",
+   "is_true": false,
+   "family": "format",
+   "operator": "split_number"
+  },
+  {
+   "index": 83,
+   "first": [
+    "67",
+    "P-4001",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "3",
+    "P-41A",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:41",
+   "is_true": false,
+   "family": "format",
+   "operator": "unpad_sequence"
+  },
+  {
+   "index": 84,
+   "first": [
+    "3",
+    "P-402A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "67",
+    "P-4002",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:42",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 85,
+   "first": [
+    "3",
+    "P-402B",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "67",
+    "P-4002",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:42",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 86,
+   "first": [
+    "81",
+    "P-4801A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "80",
+    "P-481B",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:481",
+   "is_true": false,
+   "family": "format",
+   "operator": "unpad_sequence"
+  },
+  {
+   "index": 87,
+   "first": [
+    "81",
+    "P-4801A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "80",
+    "P4801C",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:481",
+   "is_true": false,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 88,
+   "first": [
+    "81",
+    "P-4801A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "80",
+    "p-4801a",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:481",
+   "is_true": true,
+   "family": "format",
+   "operator": "case"
+  },
+  {
+   "index": 89,
+   "first": [
+    "81",
+    "P-4801B",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "80",
+    "P-481B",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:481",
+   "is_true": true,
+   "family": "format",
+   "operator": "unpad_sequence"
+  },
+  {
+   "index": 90,
+   "first": [
+    "81",
+    "P-4801B",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "80",
+    "P4801C",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:481",
+   "is_true": false,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 91,
+   "first": [
+    "81",
+    "P-4801B",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "80",
+    "p-4801a",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:481",
+   "is_true": false,
+   "family": "format",
+   "operator": "case"
+  },
+  {
+   "index": 92,
+   "first": [
+    "81",
+    "P-4801C",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "80",
+    "P-481B",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:481",
+   "is_true": false,
+   "family": "format",
+   "operator": "unpad_sequence"
+  },
+  {
+   "index": 93,
+   "first": [
+    "81",
+    "P-4801C",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "80",
+    "P4801C",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:481",
+   "is_true": true,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 94,
+   "first": [
+    "81",
+    "P-4801C",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "80",
+    "p-4801a",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:481",
+   "is_true": false,
+   "family": "format",
+   "operator": "case"
+  },
+  {
+   "index": 95,
+   "first": [
+    "7",
+    "P-501A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "83",
+    "P.5001C",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:51",
+   "is_true": false,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 96,
+   "first": [
+    "7",
+    "P-501A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "83",
+    "P5001A",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:51",
+   "is_true": false,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 97,
+   "first": [
+    "7",
+    "P-501A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "83",
+    "P5001B",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:51",
+   "is_true": false,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 98,
+   "first": [
+    "7",
+    "P-501A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "84",
+    "P-5001A",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:51",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 99,
+   "first": [
+    "7",
+    "P-501A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "84",
+    "P-5001B",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:51",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 100,
+   "first": [
+    "7",
+    "P-501A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "84",
+    "P-5001C",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:51",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 101,
+   "first": [
+    "7",
+    "P-501B",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "83",
+    "P.5001C",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:51",
+   "is_true": false,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 102,
+   "first": [
+    "7",
+    "P-501B",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "83",
+    "P5001A",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:51",
+   "is_true": false,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 103,
+   "first": [
+    "7",
+    "P-501B",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "83",
+    "P5001B",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:51",
+   "is_true": false,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 104,
+   "first": [
+    "7",
+    "P-501B",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "84",
+    "P-5001A",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:51",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 105,
+   "first": [
+    "7",
+    "P-501B",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "84",
+    "P-5001B",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:51",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 106,
+   "first": [
+    "7",
+    "P-501B",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "84",
+    "P-5001C",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:51",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 107,
+   "first": [
+    "84",
+    "P-5001A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "83",
+    "P.5001C",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:51",
+   "is_true": false,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 108,
+   "first": [
+    "84",
+    "P-5001A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "83",
+    "P5001A",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:51",
+   "is_true": true,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 109,
+   "first": [
+    "84",
+    "P-5001A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "83",
+    "P5001B",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:51",
+   "is_true": false,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 110,
+   "first": [
+    "84",
+    "P-5001B",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "83",
+    "P.5001C",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:51",
+   "is_true": false,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 111,
+   "first": [
+    "84",
+    "P-5001B",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "83",
+    "P5001A",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:51",
+   "is_true": false,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 112,
+   "first": [
+    "84",
+    "P-5001B",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "83",
+    "P5001B",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:51",
+   "is_true": true,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 113,
+   "first": [
+    "84",
+    "P-5001C",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "83",
+    "P.5001C",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:51",
+   "is_true": true,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 114,
+   "first": [
+    "84",
+    "P-5001C",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "83",
+    "P5001A",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:51",
+   "is_true": false,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 115,
+   "first": [
+    "84",
+    "P-5001C",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "83",
+    "P5001B",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:51",
+   "is_true": false,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 116,
+   "first": [
+    "97",
+    "P-5801A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "96",
+    "P 5801C",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:581",
+   "is_true": false,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 117,
+   "first": [
+    "97",
+    "P-5801A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "96",
+    "P-58-01A",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:581",
+   "is_true": true,
+   "family": "format",
+   "operator": "split_number"
+  },
+  {
+   "index": 118,
+   "first": [
+    "97",
+    "P-5801A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "96",
+    "P-58-01B",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:581",
+   "is_true": false,
+   "family": "format",
+   "operator": "split_number"
+  },
+  {
+   "index": 119,
+   "first": [
+    "97",
+    "P-5801B",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "96",
+    "P 5801C",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:581",
+   "is_true": false,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 120,
+   "first": [
+    "97",
+    "P-5801B",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "96",
+    "P-58-01A",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:581",
+   "is_true": false,
+   "family": "format",
+   "operator": "split_number"
+  },
+  {
+   "index": 121,
+   "first": [
+    "97",
+    "P-5801B",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "96",
+    "P-58-01B",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:581",
+   "is_true": true,
+   "family": "format",
+   "operator": "split_number"
+  },
+  {
+   "index": 122,
+   "first": [
+    "97",
+    "P-5801C",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "96",
+    "P 5801C",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:581",
+   "is_true": true,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 123,
+   "first": [
+    "97",
+    "P-5801C",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "96",
+    "P-58-01A",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:581",
+   "is_true": false,
+   "family": "format",
+   "operator": "split_number"
+  },
+  {
+   "index": 124,
+   "first": [
+    "97",
+    "P-5801C",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "96",
+    "P-58-01B",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:581",
+   "is_true": false,
+   "family": "format",
+   "operator": "split_number"
+  },
+  {
+   "index": 125,
+   "first": [
+    "47",
+    "H-3001",
+    "Furnace"
+   ],
+   "second": [
+    "48",
+    "H.3001",
+    "Furnace"
+   ],
+   "block": "Furnace:31",
+   "is_true": true,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 126,
+   "first": [
+    "17",
+    "V-1201",
+    "GravitationalSeparator"
+   ],
+   "second": [
+    "18",
+    "V-12-01",
+    "GravitationalSeparator"
+   ],
+   "block": "GravitationalSeparator:121",
+   "is_true": true,
+   "family": "format",
+   "operator": "split_number"
+  },
+  {
+   "index": 127,
+   "first": [
+    "23",
+    "V-1601",
+    "PressureVessel"
+   ],
+   "second": [
+    "24",
+    "D-1601",
+    "PressureVessel"
+   ],
+   "block": "PressureVessel:161",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 128,
+   "first": [
+    "33",
+    "V-2101",
+    "PressureVessel"
+   ],
+   "second": [
+    "34",
+    "D-2101",
+    "PressureVessel"
+   ],
+   "block": "PressureVessel:211",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 129,
+   "first": [
+    "2",
+    "V-301",
+    "PressureVessel"
+   ],
+   "second": [
+    "47",
+    "v-3001",
+    "PressureVessel"
+   ],
+   "block": "PressureVessel:31",
+   "is_true": false,
+   "family": "format",
+   "operator": "case"
+  },
+  {
+   "index": 130,
+   "first": [
+    "2",
+    "V-301",
+    "PressureVessel"
+   ],
+   "second": [
+    "48",
+    "V-3001",
+    "PressureVessel"
+   ],
+   "block": "PressureVessel:31",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 131,
+   "first": [
+    "48",
+    "V-3001",
+    "PressureVessel"
+   ],
+   "second": [
+    "47",
+    "v-3001",
+    "PressureVessel"
+   ],
+   "block": "PressureVessel:31",
+   "is_true": true,
+   "family": "format",
+   "operator": "case"
+  },
+  {
+   "index": 132,
+   "first": [
+    "52",
+    "V-3201",
+    "PressureVessel"
+   ],
+   "second": [
+    "53",
+    "V-32-01",
+    "PressureVessel"
+   ],
+   "block": "PressureVessel:321",
+   "is_true": true,
+   "family": "format",
+   "operator": "split_number"
+  },
+  {
+   "index": 133,
+   "first": [
+    "63",
+    "V-3901",
+    "PressureVessel"
+   ],
+   "second": [
+    "64",
+    "D-3901",
+    "PressureVessel"
+   ],
+   "block": "PressureVessel:391",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 134,
+   "first": [
+    "3",
+    "D-401",
+    "PressureVessel"
+   ],
+   "second": [
+    "67",
+    "D-4001",
+    "PressureVessel"
+   ],
+   "block": "PressureVessel:41",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 135,
+   "first": [
+    "75",
+    "V-4401",
+    "PressureVessel"
+   ],
+   "second": [
+    "76",
+    "D-4401",
+    "PressureVessel"
+   ],
+   "block": "PressureVessel:441",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 136,
+   "first": [
+    "80",
+    "V-4801",
+    "PressureVessel"
+   ],
+   "second": [
+    "81",
+    "V.4801",
+    "PressureVessel"
+   ],
+   "block": "PressureVessel:481",
+   "is_true": true,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 137,
+   "first": [
+    "6",
+    "V-501",
+    "PressureVessel"
+   ],
+   "second": [
+    "7",
+    "D-501",
+    "PressureVessel"
+   ],
+   "block": "PressureVessel:51",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 138,
+   "first": [
+    "6",
+    "V-501",
+    "PressureVessel"
+   ],
+   "second": [
+    "83",
+    "V-5001",
+    "PressureVessel"
+   ],
+   "block": "PressureVessel:51",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 139,
+   "first": [
+    "7",
+    "D-501",
+    "PressureVessel"
+   ],
+   "second": [
+    "83",
+    "V-5001",
+    "PressureVessel"
+   ],
+   "block": "PressureVessel:51",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 140,
+   "first": [
+    "23",
+    "T-1601",
+    "ProcessColumn"
+   ],
+   "second": [
+    "25",
+    "T1601",
+    "ProcessColumn"
+   ],
+   "block": "ProcessColumn:161",
+   "is_true": true,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 141,
+   "first": [
+    "26",
+    "T-1701",
+    "ProcessColumn"
+   ],
+   "second": [
+    "27",
+    "t-1701",
+    "ProcessColumn"
+   ],
+   "block": "ProcessColumn:171",
+   "is_true": true,
+   "family": "format",
+   "operator": "case"
+  },
+  {
+   "index": 142,
+   "first": [
+    "33",
+    "T-2101",
+    "ProcessColumn"
+   ],
+   "second": [
+    "34",
+    "T-21-01",
+    "ProcessColumn"
+   ],
+   "block": "ProcessColumn:211",
+   "is_true": true,
+   "family": "format",
+   "operator": "split_number"
+  },
+  {
+   "index": 143,
+   "first": [
+    "54",
+    "T-3301",
+    "ProcessColumn"
+   ],
+   "second": [
+    "55",
+    "T-331",
+    "ProcessColumn"
+   ],
+   "block": "ProcessColumn:331",
+   "is_true": true,
+   "family": "format",
+   "operator": "unpad_sequence"
+  },
+  {
+   "index": 144,
+   "first": [
+    "63",
+    "T-3901",
+    "ProcessColumn"
+   ],
+   "second": [
+    "65",
+    "T-391",
+    "ProcessColumn"
+   ],
+   "block": "ProcessColumn:391",
+   "is_true": true,
+   "family": "format",
+   "operator": "unpad_sequence"
+  },
+  {
+   "index": 145,
+   "first": [
+    "3",
+    "T-401",
+    "ProcessColumn"
+   ],
+   "second": [
+    "5",
+    "T-41",
+    "ProcessColumn"
+   ],
+   "block": "ProcessColumn:41",
+   "is_true": true,
+   "family": "format",
+   "operator": "unpad_sequence"
+  },
+  {
+   "index": 146,
+   "first": [
+    "3",
+    "T-401",
+    "ProcessColumn"
+   ],
+   "second": [
+    "66",
+    "T-4001",
+    "ProcessColumn"
+   ],
+   "block": "ProcessColumn:41",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 147,
+   "first": [
+    "5",
+    "T-41",
+    "ProcessColumn"
+   ],
+   "second": [
+    "67",
+    "T-401",
+    "ProcessColumn"
+   ],
+   "block": "ProcessColumn:41",
+   "is_true": false,
+   "family": "format",
+   "operator": "unpad_sequence"
+  },
+  {
+   "index": 148,
+   "first": [
+    "66",
+    "T-4001",
+    "ProcessColumn"
+   ],
+   "second": [
+    "5",
+    "T-41",
+    "ProcessColumn"
+   ],
+   "block": "ProcessColumn:41",
+   "is_true": false,
+   "family": "format",
+   "operator": "unpad_sequence"
+  },
+  {
+   "index": 149,
+   "first": [
+    "66",
+    "T-4001",
+    "ProcessColumn"
+   ],
+   "second": [
+    "67",
+    "T-401",
+    "ProcessColumn"
+   ],
+   "block": "ProcessColumn:41",
+   "is_true": true,
+   "family": "format",
+   "operator": "unpad_sequence"
+  },
+  {
+   "index": 150,
+   "first": [
+    "75",
+    "T-4401",
+    "ProcessColumn"
+   ],
+   "second": [
+    "76",
+    "T-441",
+    "ProcessColumn"
+   ],
+   "block": "ProcessColumn:441",
+   "is_true": true,
+   "family": "format",
+   "operator": "unpad_sequence"
+  },
+  {
+   "index": 151,
+   "first": [
+    "6",
+    "T-501",
+    "ProcessColumn"
+   ],
+   "second": [
+    "7",
+    "T501",
+    "ProcessColumn"
+   ],
+   "block": "ProcessColumn:51",
+   "is_true": true,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 152,
+   "first": [
+    "85",
+    "T-5101",
+    "ProcessColumn"
+   ],
+   "second": [
+    "86",
+    "t-5101",
+    "ProcessColumn"
+   ],
+   "block": "ProcessColumn:511",
+   "is_true": true,
+   "family": "format",
+   "operator": "case"
+  },
+  {
+   "index": 153,
+   "first": [
+    "40",
+    "P-2501A",
+    "ReciprocatingPump"
+   ],
+   "second": [
+    "39",
+    "P.2501A",
+    "ReciprocatingPump"
+   ],
+   "block": "ReciprocatingPump:251",
+   "is_true": true,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 154,
+   "first": [
+    "40",
+    "P-2501A",
+    "ReciprocatingPump"
+   ],
+   "second": [
+    "39",
+    "p-2501b",
+    "ReciprocatingPump"
+   ],
+   "block": "ReciprocatingPump:251",
+   "is_true": false,
+   "family": "format",
+   "operator": "case"
+  },
+  {
+   "index": 155,
+   "first": [
+    "40",
+    "P-2501B",
+    "ReciprocatingPump"
+   ],
+   "second": [
+    "39",
+    "P.2501A",
+    "ReciprocatingPump"
+   ],
+   "block": "ReciprocatingPump:251",
+   "is_true": false,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 156,
+   "first": [
+    "40",
+    "P-2501B",
+    "ReciprocatingPump"
+   ],
+   "second": [
+    "39",
+    "p-2501b",
+    "ReciprocatingPump"
+   ],
+   "block": "ReciprocatingPump:251",
+   "is_true": true,
+   "family": "format",
+   "operator": "case"
+  },
+  {
+   "index": 157,
+   "first": [
+    "46",
+    "P-2901A",
+    "ReciprocatingPump"
+   ],
+   "second": [
+    "45",
+    "P-291B",
+    "ReciprocatingPump"
+   ],
+   "block": "ReciprocatingPump:291",
+   "is_true": false,
+   "family": "format",
+   "operator": "unpad_sequence"
+  },
+  {
+   "index": 158,
+   "first": [
+    "46",
+    "P-2901A",
+    "ReciprocatingPump"
+   ],
+   "second": [
+    "45",
+    "p-2901a",
+    "ReciprocatingPump"
+   ],
+   "block": "ReciprocatingPump:291",
+   "is_true": true,
+   "family": "format",
+   "operator": "case"
+  },
+  {
+   "index": 159,
+   "first": [
+    "46",
+    "P-2901B",
+    "ReciprocatingPump"
+   ],
+   "second": [
+    "45",
+    "P-291B",
+    "ReciprocatingPump"
+   ],
+   "block": "ReciprocatingPump:291",
+   "is_true": true,
+   "family": "format",
+   "operator": "unpad_sequence"
+  },
+  {
+   "index": 160,
+   "first": [
+    "46",
+    "P-2901B",
+    "ReciprocatingPump"
+   ],
+   "second": [
+    "45",
+    "p-2901a",
+    "ReciprocatingPump"
+   ],
+   "block": "ReciprocatingPump:291",
+   "is_true": false,
+   "family": "format",
+   "operator": "case"
+  },
+  {
+   "index": 161,
+   "first": [
+    "72",
+    "P-4201A",
+    "ReciprocatingPump"
+   ],
+   "second": [
+    "71",
+    "P-4201-B",
+    "ReciprocatingPump"
+   ],
+   "block": "ReciprocatingPump:421",
+   "is_true": false,
+   "family": "format",
+   "operator": "spare_separator"
+  },
+  {
+   "index": 162,
+   "first": [
+    "72",
+    "P-4201A",
+    "ReciprocatingPump"
+   ],
+   "second": [
+    "71",
+    "P4201A",
+    "ReciprocatingPump"
+   ],
+   "block": "ReciprocatingPump:421",
+   "is_true": true,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 163,
+   "first": [
+    "72",
+    "P-4201B",
+    "ReciprocatingPump"
+   ],
+   "second": [
+    "71",
+    "P-4201-B",
+    "ReciprocatingPump"
+   ],
+   "block": "ReciprocatingPump:421",
+   "is_true": true,
+   "family": "format",
+   "operator": "spare_separator"
+  },
+  {
+   "index": 164,
+   "first": [
+    "72",
+    "P-4201B",
+    "ReciprocatingPump"
+   ],
+   "second": [
+    "71",
+    "P4201A",
+    "ReciprocatingPump"
+   ],
+   "block": "ReciprocatingPump:421",
+   "is_true": false,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 165,
+   "first": [
+    "39",
+    "M-2501",
+    "RotaryMixer"
+   ],
+   "second": [
+    "40",
+    "M-25-01",
+    "RotaryMixer"
+   ],
+   "block": "RotaryMixer:251",
+   "is_true": true,
+   "family": "format",
+   "operator": "split_number"
+  },
+  {
+   "index": 166,
+   "first": [
+    "70",
+    "P-4101",
+    "RotaryPump"
+   ],
+   "second": [
+    "69",
+    "P4101",
+    "RotaryPump"
+   ],
+   "block": "RotaryPump:411",
+   "is_true": true,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 167,
+   "first": [
+    "70",
+    "P-4102",
+    "RotaryPump"
+   ],
+   "second": [
+    "69",
+    "P.4102",
+    "RotaryPump"
+   ],
+   "block": "RotaryPump:412",
+   "is_true": true,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 168,
+   "first": [
+    "89",
+    "P-5201A",
+    "RotaryPump"
+   ],
+   "second": [
+    "88",
+    "P-521A",
+    "RotaryPump"
+   ],
+   "block": "RotaryPump:521",
+   "is_true": true,
+   "family": "format",
+   "operator": "unpad_sequence"
+  },
+  {
+   "index": 169,
+   "first": [
+    "89",
+    "P-5201A",
+    "RotaryPump"
+   ],
+   "second": [
+    "88",
+    "P5201B",
+    "RotaryPump"
+   ],
+   "block": "RotaryPump:521",
+   "is_true": false,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 170,
+   "first": [
+    "89",
+    "P-5201B",
+    "RotaryPump"
+   ],
+   "second": [
+    "88",
+    "P-521A",
+    "RotaryPump"
+   ],
+   "block": "RotaryPump:521",
+   "is_true": false,
+   "family": "format",
+   "operator": "unpad_sequence"
+  },
+  {
+   "index": 171,
+   "first": [
+    "89",
+    "P-5201B",
+    "RotaryPump"
+   ],
+   "second": [
+    "88",
+    "P5201B",
+    "RotaryPump"
+   ],
+   "block": "RotaryPump:521",
+   "is_true": true,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 172,
+   "first": [
+    "9",
+    "P-601A",
+    "RotaryPump"
+   ],
+   "second": [
+    "8",
+    "P-6-01B",
+    "RotaryPump"
+   ],
+   "block": "RotaryPump:61",
+   "is_true": false,
+   "family": "format",
+   "operator": "split_number"
+  },
+  {
+   "index": 173,
+   "first": [
+    "9",
+    "P-601A",
+    "RotaryPump"
+   ],
+   "second": [
+    "8",
+    "P-601-A",
+    "RotaryPump"
+   ],
+   "block": "RotaryPump:61",
+   "is_true": true,
+   "family": "format",
+   "operator": "spare_separator"
+  },
+  {
+   "index": 174,
+   "first": [
+    "9",
+    "P-601B",
+    "RotaryPump"
+   ],
+   "second": [
+    "8",
+    "P-6-01B",
+    "RotaryPump"
+   ],
+   "block": "RotaryPump:61",
+   "is_true": true,
+   "family": "format",
+   "operator": "split_number"
+  },
+  {
+   "index": 175,
+   "first": [
+    "9",
+    "P-601B",
+    "RotaryPump"
+   ],
+   "second": [
+    "8",
+    "P-601-A",
+    "RotaryPump"
+   ],
+   "block": "RotaryPump:61",
+   "is_true": false,
+   "family": "format",
+   "operator": "spare_separator"
+  },
+  {
+   "index": 176,
+   "first": [
+    "45",
+    "M-2901",
+    "StaticMixer"
+   ],
+   "second": [
+    "46",
+    "M 2901",
+    "StaticMixer"
+   ],
+   "block": "StaticMixer:291",
+   "is_true": true,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 177,
+   "first": [
+    "71",
+    "M-4201",
+    "StaticMixer"
+   ],
+   "second": [
+    "72",
+    "M-42-01",
+    "StaticMixer"
+   ],
+   "block": "StaticMixer:421",
+   "is_true": true,
+   "family": "format",
+   "operator": "split_number"
+  },
+  {
+   "index": 178,
+   "first": [
+    "0",
+    "TK-101",
+    "Tank"
+   ],
+   "second": [
+    "14",
+    "TK-1001",
+    "Tank"
+   ],
+   "block": "Tank:11",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 179,
+   "first": [
+    "0",
+    "TK-102",
+    "Tank"
+   ],
+   "second": [
+    "14",
+    "TK-1002",
+    "Tank"
+   ],
+   "block": "Tank:12",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 180,
+   "first": [
+    "36",
+    "TK-2301",
+    "Tank"
+   ],
+   "second": [
+    "37",
+    "tk-2301",
+    "Tank"
+   ],
+   "block": "Tank:231",
+   "is_true": true,
+   "family": "format",
+   "operator": "case"
+  },
+  {
+   "index": 181,
+   "first": [
+    "36",
+    "TK-2302",
+    "Tank"
+   ],
+   "second": [
+    "37",
+    "tk-2302",
+    "Tank"
+   ],
+   "block": "Tank:232",
+   "is_true": true,
+   "family": "format",
+   "operator": "case"
+  },
+  {
+   "index": 182,
+   "first": [
+    "39",
+    "TK-2501",
+    "Tank"
+   ],
+   "second": [
+    "40",
+    "TK 2501",
+    "Tank"
+   ],
+   "block": "Tank:251",
+   "is_true": true,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 183,
+   "first": [
+    "43",
+    "TK-2802",
+    "Tank"
+   ],
+   "second": [
+    "44",
+    "tk-2802",
+    "Tank"
+   ],
+   "block": "Tank:282",
+   "is_true": true,
+   "family": "format",
+   "operator": "case"
+  },
+  {
+   "index": 184,
+   "first": [
+    "56",
+    "TK-3401",
+    "Tank"
+   ],
+   "second": [
+    "57",
+    "TK3401",
+    "Tank"
+   ],
+   "block": "Tank:341",
+   "is_true": true,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 185,
+   "first": [
+    "56",
+    "TK-3402",
+    "Tank"
+   ],
+   "second": [
+    "57",
+    "TK-34-02",
+    "Tank"
+   ],
+   "block": "Tank:342",
+   "is_true": true,
+   "family": "format",
+   "operator": "split_number"
+  },
+  {
+   "index": 186,
+   "first": [
+    "88",
+    "TK-5203",
+    "Tank"
+   ],
+   "second": [
+    "89",
+    "TK-523",
+    "Tank"
+   ],
+   "block": "Tank:523",
+   "is_true": true,
+   "family": "format",
+   "operator": "unpad_sequence"
+  },
+  {
+   "index": 187,
+   "first": [
+    "98",
+    "TK-5901",
+    "Tank"
+   ],
+   "second": [
+    "99",
+    "TK-59-01",
+    "Tank"
+   ],
+   "block": "Tank:591",
+   "is_true": true,
+   "family": "format",
+   "operator": "split_number"
+  },
+  {
+   "index": 188,
+   "first": [
+    "98",
+    "TK-5902",
+    "Tank"
+   ],
+   "second": [
+    "99",
+    "TK-59-02",
+    "Tank"
+   ],
+   "block": "Tank:592",
+   "is_true": true,
+   "family": "format",
+   "operator": "split_number"
+  },
+  {
+   "index": 189,
+   "first": [
+    "8",
+    "TK-603",
+    "Tank"
+   ],
+   "second": [
+    "9",
+    "TK.603",
+    "Tank"
+   ],
+   "block": "Tank:63",
+   "is_true": true,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 190,
+   "first": [
+    "24",
+    "E-1602",
+    "TubularHeatExchanger"
+   ],
+   "second": [
+    "23",
+    "E-162",
+    "TubularHeatExchanger"
+   ],
+   "block": "TubularHeatExchanger:162",
+   "is_true": true,
+   "family": "format",
+   "operator": "unpad_sequence"
+  },
+  {
+   "index": 191,
+   "first": [
+    "34",
+    "E-2102",
+    "TubularHeatExchanger"
+   ],
+   "second": [
+    "33",
+    "e-2102",
+    "TubularHeatExchanger"
+   ],
+   "block": "TubularHeatExchanger:212",
+   "is_true": true,
+   "family": "format",
+   "operator": "case"
+  },
+  {
+   "index": 192,
+   "first": [
+    "55",
+    "E-3302",
+    "TubularHeatExchanger"
+   ],
+   "second": [
+    "54",
+    "E 3302",
+    "TubularHeatExchanger"
+   ],
+   "block": "TubularHeatExchanger:332",
+   "is_true": true,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 193,
+   "first": [
+    "64",
+    "E-3902",
+    "TubularHeatExchanger"
+   ],
+   "second": [
+    "63",
+    "E.3902",
+    "TubularHeatExchanger"
+   ],
+   "block": "TubularHeatExchanger:392",
+   "is_true": true,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 194,
+   "first": [
+    "3",
+    "E-401",
+    "TubularHeatExchanger"
+   ],
+   "second": [
+    "66",
+    "E-4001",
+    "TubularHeatExchanger"
+   ],
+   "block": "TubularHeatExchanger:41",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 195,
+   "first": [
+    "3",
+    "E-402",
+    "TubularHeatExchanger"
+   ],
+   "second": [
+    "67",
+    "E-4002",
+    "TubularHeatExchanger"
+   ],
+   "block": "TubularHeatExchanger:42",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 196,
+   "first": [
+    "67",
+    "E-4002",
+    "TubularHeatExchanger"
+   ],
+   "second": [
+    "66",
+    "E-402",
+    "TubularHeatExchanger"
+   ],
+   "block": "TubularHeatExchanger:42",
+   "is_true": true,
+   "family": "format",
+   "operator": "unpad_sequence"
+  },
+  {
+   "index": 197,
+   "first": [
+    "4",
+    "E-403",
+    "TubularHeatExchanger"
+   ],
+   "second": [
+    "66",
+    "E-4003",
+    "TubularHeatExchanger"
+   ],
+   "block": "TubularHeatExchanger:43",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 198,
+   "first": [
+    "86",
+    "E-5102",
+    "TubularHeatExchanger"
+   ],
+   "second": [
+    "85",
+    "E5102",
+    "TubularHeatExchanger"
+   ],
+   "block": "TubularHeatExchanger:512",
+   "is_true": true,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 199,
+   "first": [
+    "91",
+    "E-5303",
+    "TubularHeatExchanger"
+   ],
+   "second": [
+    "90",
+    "e-5303",
+    "TubularHeatExchanger"
+   ],
+   "block": "TubularHeatExchanger:533",
+   "is_true": true,
+   "family": "format",
+   "operator": "case"
+  }
+ ]
+}
