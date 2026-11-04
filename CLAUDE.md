@@ -28,14 +28,19 @@ Scope: from one ~100-page scanned factory document, to a whole plant region of ~
 
 ### Hard rules — no exceptions
 
-- **Never commit, never push. Ever.** Not `git commit`, not `git push`, not `git merge`, not
-  `git rebase`, not `git tag`, not a PR, not `--amend`, not "just this once", not when the user
-  says "commit this" — in that case you still stop and hand them the command. Staging
-  (`git add`) counts as commit preparation and is also the user's. When work is ready, print the
-  exact command and the full commit message in the chat, in a copyable block, and stop there.
-  The user runs it. Read-only git (`status`, `log`, `diff`, `show`, `grep`) is always fine.
-  **Rationale:** the user reviews every change before it enters history, and the published
-  history must stay under their control (see the 2026-09-19 history rewrite).
+- **Commit and push only on the user's explicit order, never on your own initiative** (rule changed by
+  the user, 2026-11-04: "Kérem a szabály módosítását! és commitolj és pusholj"). Default: when work is
+  ready, print the exact `git add` (files listed explicitly) and the one-line commit message in the chat
+  and stop. Only when the user orders it in the chat for that work ("commitolj", "pusholj") do you run
+  `git add` with the files listed explicitly, `git commit` and, if ordered, `git push` — and an order
+  covers the work it names, not later work. Even with an order: never `--amend`, `rebase`, `reset`,
+  `merge`, `tag`, force-push or a PR, never rewrite history, never stage files you did not name in the
+  chat. Report the resulting hashes in the chat. Read-only git (`status`, `log`, `diff`, `show`, `grep`)
+  is always fine. **Rationale:** the user reviews every change before it enters history and the
+  published history stays under their control (see the 2026-09-19 history rewrite); the order is how
+  they keep that control while working remotely.
+- **Commit messages are one line**, no body (user, 2026-10-04), and the files are listed explicitly in
+  `git add`.
 - **Commit messages carry no attribution trailer** and no mention of the tooling used to write
   the code. No `Co-Authored-By`, no "Generated with", no model names.
 - **Use the repo's own skills when they apply.** `/catchup` starts every session, `/log-progress`
