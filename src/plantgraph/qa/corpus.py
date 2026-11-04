@@ -39,12 +39,12 @@ from plantgraph.benchmark.generator_dispatch import AnyGeneratorConfig, generato
 from plantgraph.benchmark.models import SplitManifest
 from plantgraph.benchmark.sheet_graph import SheetGraph
 from plantgraph.benchmark.split_models import SplitConfig
+from plantgraph.benchmark.tag_variants import VariantConfig
+from plantgraph.ingest.counts import compute_ingest_counts
+from plantgraph.ingest.identity_file import IdentityFileRecord, read_recorded_identity_links
 from plantgraph.ingest.models import IngestCounts, IngestResult
-from plantgraph.ingest.pipeline import (
-    build_proteus_corpus,
-    build_synthetic_corpus,
-    compute_ingest_counts,
-)
+from plantgraph.ingest.pipeline import build_proteus_corpus, build_synthetic_corpus
+from plantgraph.resolution.identity_links import IdentityLinkSet
 from plantgraph.resolution.localize import OccurrenceMap
 from plantgraph.resolution.models import Resolution
 from plantgraph.store.neo4j_plan import LoadPlan, build_load_plan
@@ -145,7 +145,9 @@ def _rebuild_artifacts(result: IngestResult) -> CorpusArtifacts:
 def _rebuild_synthetic_artifacts(result: IngestResult) -> CorpusArtifacts:
     generator_config = generator_config_from_json(result.config["generator"])
     split_config = SplitConfig.model_validate(result.config["split"])
-    corpus = build_synthetic_corpus(generator_config, split_config)
+    variants = _recorded_variants(result)
+    identity_links = _recorded_identity_links(result)
+    corpus = build_synthetic_corpus(generator_config, split_config, variants, identity_links)
     load_plan = build_load_plan(
         result.corpus_id,
         corpus.localized_sheets,
@@ -170,6 +172,22 @@ def _rebuild_synthetic_artifacts(result: IngestResult) -> CorpusArtifacts:
             occurrence_map=corpus.occurrence_map,
         ),
         stage_seconds=dict(corpus.stage_seconds),
+    )
+
+
+def _recorded_variants(result: IngestResult) -> VariantConfig | None:
+    """The tag-variant setting the run recorded (EXP-0004); None for an ordinary corpus."""
+    if "variants" not in result.config:
+        return None
+    return VariantConfig.model_validate(result.config["variants"])
+
+
+def _recorded_identity_links(result: IngestResult) -> IdentityLinkSet | None:
+    """The identity links the run recorded; refuses a file whose sha256 changed since."""
+    if "identity" not in result.config:
+        return None
+    return read_recorded_identity_links(
+        IdentityFileRecord.model_validate(result.config["identity"])
     )
 
 

@@ -10,18 +10,24 @@ from __future__ import annotations
 from collections import Counter
 from collections.abc import Sequence
 
-from plantgraph.benchmark.models import UnresolvedConnector
+from plantgraph.benchmark.models import IdentityGroup, UnresolvedConnector
 from plantgraph.benchmark.sheet_graph import SheetGraph
 from plantgraph.resolution.connector_labels import ConnectorLabel, read_connector_labels
 from plantgraph.resolution.contract import check_contract
 from plantgraph.resolution.identity import group_identities
+from plantgraph.resolution.identity_links import IdentityLinkSet, group_with_links
 from plantgraph.resolution.merge import build_plant_graph
 from plantgraph.resolution.models import Resolution, ResolutionReport
 from plantgraph.resolution.pairing import pair_connectors
 
 
-def resolve(sheets: Sequence[SheetGraph]) -> Resolution:
+def resolve(
+    sheets: Sequence[SheetGraph], identity_links: IdentityLinkSet | None = None
+) -> Resolution:
     """Build a plant graph from sheets: contract -> labels -> pairing -> identity -> merge.
+
+    `identity_links` (EXP-0004) adds decided "same item, written differently" links to the
+    exact-tag groups; without it the identity step is exactly what it always was.
 
     Raises:
         ValueError: if the input violates the resolver-boundary contract
@@ -33,7 +39,7 @@ def resolve(sheets: Sequence[SheetGraph]) -> Resolution:
     sheet_ids = {sheet.sheet_id for sheet in sheets}
     pairs, pairing_unresolved = pair_connectors(labels, sheet_ids)
     unresolved = no_label_unresolved + pairing_unresolved
-    groups, ambiguous_tag_keys = group_identities(sheets)
+    groups, ambiguous_tag_keys = _identity_groups(sheets, identity_links)
     plant, edge_attribute_conflicts = build_plant_graph(sheets, pairs, groups)
 
     report = ResolutionReport(
@@ -53,6 +59,16 @@ def resolve(sheets: Sequence[SheetGraph]) -> Resolution:
         unresolved=unresolved,
         report=report,
     )
+
+
+def _identity_groups(
+    sheets: Sequence[SheetGraph], identity_links: IdentityLinkSet | None
+) -> tuple[list[IdentityGroup], int]:
+    """Exact-tag groups, extended by `identity_links` when given."""
+    if identity_links is None:
+        return group_identities(sheets)
+    grouping = group_with_links(sheets, identity_links)
+    return grouping.groups, grouping.n_ambiguous_tag_keys
 
 
 def _read_all_connector_labels(

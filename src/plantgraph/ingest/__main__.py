@@ -25,6 +25,7 @@ from typing import get_args
 
 from plantgraph.adapters.pydexpi_proteus_import import VocabularyName
 from plantgraph.benchmark.split_models import ConnectorLabelDetail
+from plantgraph.benchmark.tag_variants import Family, VariantConfig
 from plantgraph.ingest.headline import SizeSearchResult, check_realized_sheets
 from plantgraph.ingest.load_step import StoreMeasurement
 from plantgraph.ingest.models import IngestResult
@@ -102,6 +103,8 @@ def _run_synthetic(
         settings=settings,
         store_profile=args.store_profile,
         measurement=_measurement_from_flags(args),
+        variants=_variant_config_from_flags(args),
+        identity_links_path=args.identity_links,
     )
     return result, setup.search
 
@@ -115,6 +118,20 @@ def _run_proteus(args: argparse.Namespace, settings: Neo4jSettings | None) -> In
         store_profile=args.store_profile,
         measurement=_measurement_from_flags(args),
         vocabulary=args.vocabulary,
+    )
+
+
+def _variant_config_from_flags(args: argparse.Namespace) -> VariantConfig | None:
+    """`--tag-variants` and its two options (EXP-0004); None when variants were not asked for."""
+    if not args.tag_variants:
+        if args.variant_families is not None or args.variant_rate is not None:
+            raise SystemExit("error: --variant-families/--variant-rate need --tag-variants")
+        return None
+    return VariantConfig(
+        profile="exp0004",
+        families=tuple(args.variant_families or get_args(Family)),
+        rate=1.0 if args.variant_rate is None else args.variant_rate,
+        seed=args.seed,  # the corpus seed, as the design's VariantConfig says
     )
 
 
@@ -182,6 +199,34 @@ def _add_store_profile_argument(parser: argparse.ArgumentParser) -> None:
             "'plant' = one node per physical item, 'both' = both, linked by drawn_as, "
             "'plant_lines' = plant plus the line_to line view (V2T Cypher arm)"
         ),
+    )
+
+
+def _add_identity_arguments(parser: argparse.ArgumentParser) -> None:
+    """EXP-0004 flags; all off by default, and then the run is exactly what it was without them."""
+    parser.add_argument(
+        "--tag-variants",
+        action="store_true",
+        help="re-write the tags of re-drawn equipment after the split (v2 tags; needs exact tags)",
+    )
+    parser.add_argument(
+        "--variant-families",
+        nargs="+",
+        choices=list(get_args(Family)),
+        default=None,
+        help="operator families for --tag-variants (default: format naming)",
+    )
+    parser.add_argument(
+        "--variant-rate",
+        type=float,
+        default=None,
+        help="share of re-drawn equipment that gets a variant tag, in [0, 1] (default 1.0)",
+    )
+    parser.add_argument(
+        "--identity-links",
+        type=Path,
+        default=None,
+        help="IdentityLinkSet JSON from a pair decider (path and sha256 are recorded)",
     )
 
 
@@ -262,6 +307,7 @@ def _add_synthetic_subparser(
         help="re-drawn equipment carries a slightly altered tag (only matters with duplication)",
     )
     parser.add_argument("--corpus-id", default=None, help="defaults to syn-u{N}-b{B}-s{S}")
+    _add_identity_arguments(parser)
     parser.add_argument(
         "--check", action="store_true", help="run gate G1: does resolve(split(plant)) == plant?"
     )

@@ -28,9 +28,10 @@ just an absent argument.
 from __future__ import annotations
 
 import time
-from collections.abc import Callable, Sequence
-from dataclasses import dataclass
+from collections.abc import Callable
+from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
 import networkx as nx
 
@@ -44,15 +45,18 @@ from plantgraph.benchmark.models import SplitManifest
 from plantgraph.benchmark.sheet_graph import SheetGraph
 from plantgraph.benchmark.split_models import SplitConfig
 from plantgraph.benchmark.splitter import split
+from plantgraph.benchmark.tag_variants import VariantConfig, VariantDraw, apply_tag_variants
 from plantgraph.eval.graph_equality import graph_differences, to_original_ids, visible_view
 from plantgraph.eval.resolution_scoring import ResolutionScore, score_resolution
-from plantgraph.graph import schema
+from plantgraph.ingest.counts import compute_ingest_counts, compute_layer_counts
+from plantgraph.ingest.identity_file import read_identity_links
 from plantgraph.ingest.load_step import NO_MEASUREMENT, StoreMeasurement, load_if_requested
-from plantgraph.ingest.models import IngestCounts, IngestResult, LayerCounts
+from plantgraph.ingest.models import IngestResult
+from plantgraph.resolution.identity_links import IdentityLinkSet
 from plantgraph.resolution.localize import OccurrenceMap, localize
 from plantgraph.resolution.models import Resolution
 from plantgraph.resolution.resolver import resolve
-from plantgraph.store.neo4j_plan import CypherStatement, LoadPlan, build_load_plan
+from plantgraph.store.neo4j_plan import build_load_plan
 from plantgraph.store.neo4j_settings import Neo4jSettings
 from plantgraph.store.plant_rows import StoreProfile
 
@@ -78,6 +82,8 @@ class SyntheticCorpus:
     occurrence_map: OccurrenceMap
     resolution: Resolution
     stage_seconds: dict[str, float]
+    #: gold side: what `apply_tag_variants` drew (empty without variants)
+    variant_draws: list[VariantDraw] = field(default_factory=list)
 
 
 @dataclass
@@ -96,7 +102,10 @@ class ProteusCorpus:
 
 
 def build_synthetic_corpus(
-    generator_config: AnyGeneratorConfig, split_config: SplitConfig
+    generator_config: AnyGeneratorConfig,
+    split_config: SplitConfig,
+    variants: VariantConfig | None = None,
+    identity_links: IdentityLinkSet | None = None,
 ) -> SyntheticCorpus:
     """Generate a plant, split it into sheets, and resolve it — the one shared synthetic path.
 
@@ -105,13 +114,22 @@ def build_synthetic_corpus(
     `ingest.json` (design `qa-system.md` §18.1 item 1). Neither the gate
     check nor the Neo4j load happen here: they need a `corpus_id` and are
     each optional, so they stay in `run_synthetic`.
+
+    EXP-0004, both off by default: `variants` re-writes reference tags after the split
+    (so the split is unchanged), and `identity_links` lets `resolve` merge them again.
     """
     stage_seconds: dict[str, float] = {}
 
     plant, stage_seconds["generate"] = _timed(lambda: generate_plant_graph(generator_config))
     (sheets, manifest), stage_seconds["split"] = _timed(lambda: split(plant, split_config))
+    draws: list[VariantDraw] = []
+    if variants is not None:
+        # a "variants" stage key exists only for variant corpora, so default timings keep their keys
+        (sheets, manifest, draws), stage_seconds["variants"] = _timed(
+            lambda: apply_tag_variants(sheets, manifest, variants)
+        )
     (localized_sheets, occurrence_map), stage_seconds["localize"] = _timed(lambda: localize(sheets))
-    resolution, stage_seconds["resolve"] = _timed(lambda: resolve(localized_sheets))
+    resolution, stage_seconds["resolve"] = _timed(lambda: resolve(localized_sheets, identity_links))
 
     return SyntheticCorpus(
         plant=plant,
@@ -121,6 +139,7 @@ def build_synthetic_corpus(
         occurrence_map=occurrence_map,
         resolution=resolution,
         stage_seconds=stage_seconds,
+        variant_draws=draws,
     )
 
 
@@ -159,6 +178,8 @@ def run_synthetic(
     settings: Neo4jSettings | None,
     store_profile: StoreProfile = "occurrence",
     measurement: StoreMeasurement = NO_MEASUREMENT,
+    variants: VariantConfig | None = None,
+    identity_links_path: Path | None = None,
 ) -> IngestResult:
     """Generate a synthetic plant, split it into sheets, resolve, and (optionally) load it.
 
@@ -166,8 +187,21 @@ def run_synthetic(
     it was built from? This is only possible here, because only the generator
     hands back the original plant graph and the `SplitManifest` to compare
     against — a `proteus` import has no such answer key (design §1).
+
+    `variants` and `identity_links_path` (EXP-0004) default to off; when set they are recorded
+    in `config` under `variants` / `identity`, and only then, so a default record is unchanged.
     """
-    corpus = build_synthetic_corpus(generator_config, split_config)
+    config: dict[str, Any] = {
+        "generator": generator_config.model_dump(mode="json"),
+        "split": split_config.model_dump(mode="json"),
+    }
+    if variants is not None:
+        config["variants"] = variants.model_dump(mode="json")
+    identity_links = None
+    if identity_links_path is not None:
+        identity_links, record = read_identity_links(identity_links_path)
+        config["identity"] = record.model_dump(mode="json")
+    corpus = build_synthetic_corpus(generator_config, split_config, variants, identity_links)
     stage_seconds = dict(corpus.stage_seconds)
 
     gate_equal: bool | None = None
@@ -191,10 +225,7 @@ def run_synthetic(
 
     return IngestResult(
         corpus_id=corpus_id,
-        config={
-            "generator": generator_config.model_dump(mode="json"),
-            "split": split_config.model_dump(mode="json"),
-        },
+        config=config,
         counts=compute_ingest_counts(corpus.localized_sheets, corpus.resolution, plan),
         store_profile=store_profile,
         layer_counts=compute_layer_counts(plan),
@@ -320,56 +351,6 @@ def _unmerged_identity_differences(
         f"map to several resolved nodes"
     )
     return [header, *examples[:limit]]
-
-
-def compute_ingest_counts(
-    sheets: Sequence[SheetGraph], resolution: Resolution, plan: LoadPlan
-) -> IngestCounts:
-    """Corpus sizes, tallied from a `LoadPlan` (design §7.4, R6).
-
-    Public so `qa/corpus.py` can recompute the same numbers from a rebuilt
-    corpus and compare them against a saved `ingest.json`'s `counts`
-    (§18.1 item 1: the rebuilt corpus must match the one that was loaded).
-    """
-    return IngestCounts(
-        n_sheets=len(sheets),
-        n_nodes=_row_count(plan.node_statements),
-        n_relationships=_row_count(plan.relationship_statements),
-        n_connector_pairs_predicted=len(resolution.connector_pairs),
-        n_unresolved=len(resolution.unresolved),
-    )
-
-
-def compute_layer_counts(plan: LoadPlan) -> LayerCounts:
-    """Split a plan's nodes into occurrences, plant items and structure (design §A.5)."""
-    labels = plan.expected_node_labels
-    n_items = labels.get(schema.PLANT_ITEM_LABEL, 0)
-    structure_labels = (
-        schema.NodeClass.DRAWING_SET,
-        schema.NodeClass.SHEET,
-        schema.NodeClass.PROCESS_PLANT,
-        schema.NodeClass.PLANT_SECTION,
-    )
-    n_structure = sum(labels.get(label.value, 0) for label in structure_labels)
-    n_nodes = labels["CorpusNode"]  # every node carries it, so it is the node total
-    return LayerCounts(
-        n_occurrences=n_nodes - n_items - n_structure,
-        n_plant_items=n_items,
-        n_structure_nodes=n_structure,
-        n_drawn_as=plan.expected_relationship_types.get(schema.Relation.DRAWN_AS.value, 0),
-        n_invariants=len(plan.invariant_statements),
-    )
-
-
-def _row_count(statements: Sequence[CypherStatement]) -> int:
-    """Every row across every batch of `statements` — the same tally `LoadReport` reports."""
-    total = 0
-    for statement in statements:
-        rows = statement.parameters["rows"]
-        if not isinstance(rows, list):
-            raise TypeError(f"expected a list of rows in statement parameters, got {type(rows)!r}")
-        total += len(rows)
-    return total
 
 
 def _timed[T](action: Callable[[], T]) -> tuple[T, float]:
