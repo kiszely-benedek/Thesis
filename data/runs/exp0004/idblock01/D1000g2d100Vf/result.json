@@ -1,0 +1,176 @@
+{
+ "corpus": "D1000g2d100Vf",
+ "seed": 1,
+ "duplication_rate": 1.0,
+ "families": [
+  "format"
+ ],
+ "n_units": 602,
+ "n_sheets": 1000,
+ "generate_s": 578.2,
+ "n_identity_groups": 856,
+ "n_variant_draws": 864,
+ "blocking": {
+  "n_candidates": 1893,
+  "n_all_pairs": 8518128,
+  "n_gold_links": 864,
+  "n_gold_links_found": 864,
+  "pair_completeness": 1.0,
+  "reduction_ratio": 0.999777768072985
+ },
+ "n_candidates_true": 869,
+ "n_candidates_false": 1024,
+ "units_agree_true": 869,
+ "units_agree_false": 357,
+ "n_ambiguous_occurrences": 0,
+ "n_without_digits": 0,
+ "taus": {
+  "tau1": 1.0,
+  "tau2": 0.857142857143
+ },
+ "scores": [
+  {
+   "decider": "d0",
+   "pair_level": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 869,
+    "precision": null,
+    "recall": 0.0,
+    "f1": null
+   },
+   "group_level": {
+    "true_positives": 3,
+    "false_positives": 10,
+    "false_negatives": 869,
+    "precision": 0.23076923076923078,
+    "recall": 0.0034403669724770644,
+    "f1": 0.006779661016949152
+   },
+   "n_dropped_one_to_one": 0,
+   "n_identity_conflicts": 0
+  },
+  {
+   "decider": "d1",
+   "pair_level": {
+    "tp": 710,
+    "fp": 3,
+    "fn": 159,
+    "precision": 0.9957924263674615,
+    "recall": 0.8170310701956272,
+    "f1": 0.8975979772439949
+   },
+   "group_level": {
+    "true_positives": 713,
+    "false_positives": 13,
+    "false_negatives": 159,
+    "precision": 0.9820936639118457,
+    "recall": 0.8176605504587156,
+    "f1": 0.8923654568210262
+   },
+   "n_dropped_one_to_one": 0,
+   "n_identity_conflicts": 0
+  },
+  {
+   "decider": "d2",
+   "pair_level": {
+    "tp": 868,
+    "fp": 16,
+    "fn": 1,
+    "precision": 0.9819004524886877,
+    "recall": 0.998849252013809,
+    "f1": 0.9903023388476898
+   },
+   "group_level": {
+    "true_positives": 871,
+    "false_positives": 26,
+    "false_negatives": 1,
+    "precision": 0.9710144927536232,
+    "recall": 0.9988532110091743,
+    "f1": 0.9847371396269079
+   },
+   "n_dropped_one_to_one": 20,
+   "n_identity_conflicts": 0
+  }
+ ],
+ "per_operator": {
+  "d0": {
+   "case": {
+    "gold": 164,
+    "recovered": 0
+   },
+   "drop_separator": {
+    "gold": 174,
+    "recovered": 0
+   },
+   "spare_separator": {
+    "gold": 38,
+    "recovered": 0
+   },
+   "split_number": {
+    "gold": 170,
+    "recovered": 0
+   },
+   "swap_separator": {
+    "gold": 163,
+    "recovered": 0
+   },
+   "unpad_sequence": {
+    "gold": 160,
+    "recovered": 0
+   }
+  },
+  "d1": {
+   "case": {
+    "gold": 164,
+    "recovered": 164
+   },
+   "drop_separator": {
+    "gold": 174,
+    "recovered": 174
+   },
+   "spare_separator": {
+    "gold": 38,
+    "recovered": 38
+   },
+   "split_number": {
+    "gold": 170,
+    "recovered": 169
+   },
+   "swap_separator": {
+    "gold": 163,
+    "recovered": 162
+   },
+   "unpad_sequence": {
+    "gold": 160,
+    "recovered": 3
+   }
+  },
+  "d2": {
+   "case": {
+    "gold": 164,
+    "recovered": 164
+   },
+   "drop_separator": {
+    "gold": 174,
+    "recovered": 174
+   },
+   "spare_separator": {
+    "gold": 38,
+    "recovered": 38
+   },
+   "split_number": {
+    "gold": 170,
+    "recovered": 170
+   },
+   "swap_separator": {
+    "gold": 163,
+    "recovered": 163
+   },
+   "unpad_sequence": {
+    "gold": 160,
+    "recovered": 159
+   }
+  }
+ }
+}
