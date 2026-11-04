@@ -1,0 +1,578 @@
+{
+ "corpus": "D100g2d100Vf",
+ "seed": 1,
+ "duplication_rate": 1.0,
+ "families": [
+  "format"
+ ],
+ "n_units": 59,
+ "n_sheets": 100,
+ "generate_s": 7.9,
+ "n_identity_groups": 93,
+ "n_variant_draws": 93,
+ "blocking": {
+  "n_candidates": 200,
+  "n_all_pairs": 92665,
+  "n_gold_links": 93,
+  "n_gold_links_found": 93,
+  "pair_completeness": 1.0,
+  "reduction_ratio": 0.9978416878001403
+ },
+ "n_candidates_true": 93,
+ "n_candidates_false": 107,
+ "units_agree_true": 93,
+ "units_agree_false": 51,
+ "n_ambiguous_occurrences": 0,
+ "n_without_digits": 0,
+ "tuning_trace": {
+  "d1": [
+   {
+    "tau": 0.666666666667,
+    "decider": "d1",
+    "pair_level": {
+     "tp": 93,
+     "fp": 36,
+     "fn": 0,
+     "precision": 0.7209302325581395,
+     "recall": 1.0,
+     "f1": 0.8378378378378378
+    },
+    "group_level": {
+     "true_positives": 93,
+     "false_positives": 38,
+     "false_negatives": 0,
+     "precision": 0.7099236641221374,
+     "recall": 1.0,
+     "f1": 0.8303571428571428
+    },
+    "n_dropped_one_to_one": 68,
+    "n_identity_conflicts": 1
+   },
+   {
+    "tau": 0.727272727273,
+    "decider": "d1",
+    "pair_level": {
+     "tp": 93,
+     "fp": 36,
+     "fn": 0,
+     "precision": 0.7209302325581395,
+     "recall": 1.0,
+     "f1": 0.8378378378378378
+    },
+    "group_level": {
+     "true_positives": 93,
+     "false_positives": 38,
+     "false_negatives": 0,
+     "precision": 0.7099236641221374,
+     "recall": 1.0,
+     "f1": 0.8303571428571428
+    },
+    "n_dropped_one_to_one": 49,
+    "n_identity_conflicts": 1
+   },
+   {
+    "tau": 0.75,
+    "decider": "d1",
+    "pair_level": {
+     "tp": 93,
+     "fp": 36,
+     "fn": 0,
+     "precision": 0.7209302325581395,
+     "recall": 1.0,
+     "f1": 0.8378378378378378
+    },
+    "group_level": {
+     "true_positives": 93,
+     "false_positives": 38,
+     "false_negatives": 0,
+     "precision": 0.7099236641221374,
+     "recall": 1.0,
+     "f1": 0.8303571428571428
+    },
+    "n_dropped_one_to_one": 49,
+    "n_identity_conflicts": 1
+   },
+   {
+    "tau": 0.8,
+    "decider": "d1",
+    "pair_level": {
+     "tp": 93,
+     "fp": 34,
+     "fn": 0,
+     "precision": 0.7322834645669292,
+     "recall": 1.0,
+     "f1": 0.8454545454545455
+    },
+    "group_level": {
+     "true_positives": 93,
+     "false_positives": 36,
+     "false_negatives": 0,
+     "precision": 0.7209302325581395,
+     "recall": 1.0,
+     "f1": 0.8378378378378378
+    },
+    "n_dropped_one_to_one": 49,
+    "n_identity_conflicts": 1
+   },
+   {
+    "tau": 0.833333333333,
+    "decider": "d1",
+    "pair_level": {
+     "tp": 93,
+     "fp": 27,
+     "fn": 0,
+     "precision": 0.775,
+     "recall": 1.0,
+     "f1": 0.8732394366197184
+    },
+    "group_level": {
+     "true_positives": 93,
+     "false_positives": 29,
+     "false_negatives": 0,
+     "precision": 0.7622950819672131,
+     "recall": 1.0,
+     "f1": 0.8651162790697675
+    },
+    "n_dropped_one_to_one": 39,
+    "n_identity_conflicts": 0
+   },
+   {
+    "tau": 0.857142857143,
+    "decider": "d1",
+    "pair_level": {
+     "tp": 92,
+     "fp": 19,
+     "fn": 1,
+     "precision": 0.8288288288288288,
+     "recall": 0.989247311827957,
+     "f1": 0.9019607843137254
+    },
+    "group_level": {
+     "true_positives": 92,
+     "false_positives": 21,
+     "false_negatives": 1,
+     "precision": 0.8141592920353983,
+     "recall": 0.989247311827957,
+     "f1": 0.8932038834951458
+    },
+    "n_dropped_one_to_one": 0,
+    "n_identity_conflicts": 0
+   },
+   {
+    "tau": 0.888888888889,
+    "decider": "d1",
+    "pair_level": {
+     "tp": 83,
+     "fp": 9,
+     "fn": 10,
+     "precision": 0.9021739130434783,
+     "recall": 0.8924731182795699,
+     "f1": 0.8972972972972973
+    },
+    "group_level": {
+     "true_positives": 83,
+     "false_positives": 11,
+     "false_negatives": 10,
+     "precision": 0.8829787234042553,
+     "recall": 0.8924731182795699,
+     "f1": 0.8877005347593583
+    },
+    "n_dropped_one_to_one": 0,
+    "n_identity_conflicts": 0
+   },
+   {
+    "tau": 0.909090909091,
+    "decider": "d1",
+    "pair_level": {
+     "tp": 77,
+     "fp": 0,
+     "fn": 16,
+     "precision": 1.0,
+     "recall": 0.8279569892473119,
+     "f1": 0.9058823529411765
+    },
+    "group_level": {
+     "true_positives": 77,
+     "false_positives": 2,
+     "false_negatives": 16,
+     "precision": 0.9746835443037974,
+     "recall": 0.8279569892473119,
+     "f1": 0.8953488372093023
+    },
+    "n_dropped_one_to_one": 0,
+    "n_identity_conflicts": 0
+   },
+   {
+    "tau": 1.0,
+    "decider": "d1",
+    "pair_level": {
+     "tp": 77,
+     "fp": 0,
+     "fn": 16,
+     "precision": 1.0,
+     "recall": 0.8279569892473119,
+     "f1": 0.9058823529411765
+    },
+    "group_level": {
+     "true_positives": 77,
+     "false_positives": 2,
+     "false_negatives": 16,
+     "precision": 0.9746835443037974,
+     "recall": 0.8279569892473119,
+     "f1": 0.8953488372093023
+    },
+    "n_dropped_one_to_one": 0,
+    "n_identity_conflicts": 0
+   }
+  ],
+  "d2": [
+   {
+    "tau": 0.666666666667,
+    "decider": "d2",
+    "pair_level": {
+     "tp": 93,
+     "fp": 9,
+     "fn": 0,
+     "precision": 0.9117647058823529,
+     "recall": 1.0,
+     "f1": 0.9538461538461539
+    },
+    "group_level": {
+     "true_positives": 93,
+     "false_positives": 11,
+     "false_negatives": 0,
+     "precision": 0.8942307692307693,
+     "recall": 1.0,
+     "f1": 0.9441624365482234
+    },
+    "n_dropped_one_to_one": 44,
+    "n_identity_conflicts": 0
+   },
+   {
+    "tau": 0.727272727273,
+    "decider": "d2",
+    "pair_level": {
+     "tp": 93,
+     "fp": 9,
+     "fn": 0,
+     "precision": 0.9117647058823529,
+     "recall": 1.0,
+     "f1": 0.9538461538461539
+    },
+    "group_level": {
+     "true_positives": 93,
+     "false_positives": 11,
+     "false_negatives": 0,
+     "precision": 0.8942307692307693,
+     "recall": 1.0,
+     "f1": 0.9441624365482234
+    },
+    "n_dropped_one_to_one": 39,
+    "n_identity_conflicts": 0
+   },
+   {
+    "tau": 0.75,
+    "decider": "d2",
+    "pair_level": {
+     "tp": 93,
+     "fp": 9,
+     "fn": 0,
+     "precision": 0.9117647058823529,
+     "recall": 1.0,
+     "f1": 0.9538461538461539
+    },
+    "group_level": {
+     "true_positives": 93,
+     "false_positives": 11,
+     "false_negatives": 0,
+     "precision": 0.8942307692307693,
+     "recall": 1.0,
+     "f1": 0.9441624365482234
+    },
+    "n_dropped_one_to_one": 39,
+    "n_identity_conflicts": 0
+   },
+   {
+    "tau": 0.8,
+    "decider": "d2",
+    "pair_level": {
+     "tp": 93,
+     "fp": 8,
+     "fn": 0,
+     "precision": 0.9207920792079208,
+     "recall": 1.0,
+     "f1": 0.9587628865979382
+    },
+    "group_level": {
+     "true_positives": 93,
+     "false_positives": 10,
+     "false_negatives": 0,
+     "precision": 0.9029126213592233,
+     "recall": 1.0,
+     "f1": 0.9489795918367347
+    },
+    "n_dropped_one_to_one": 39,
+    "n_identity_conflicts": 0
+   },
+   {
+    "tau": 0.833333333333,
+    "decider": "d2",
+    "pair_level": {
+     "tp": 93,
+     "fp": 4,
+     "fn": 0,
+     "precision": 0.9587628865979382,
+     "recall": 1.0,
+     "f1": 0.9789473684210526
+    },
+    "group_level": {
+     "true_positives": 93,
+     "false_positives": 6,
+     "false_negatives": 0,
+     "precision": 0.9393939393939394,
+     "recall": 1.0,
+     "f1": 0.96875
+    },
+    "n_dropped_one_to_one": 33,
+    "n_identity_conflicts": 0
+   },
+   {
+    "tau": 0.857142857143,
+    "decider": "d2",
+    "pair_level": {
+     "tp": 92,
+     "fp": 2,
+     "fn": 1,
+     "precision": 0.9787234042553191,
+     "recall": 0.989247311827957,
+     "f1": 0.983957219251337
+    },
+    "group_level": {
+     "true_positives": 92,
+     "false_positives": 4,
+     "false_negatives": 1,
+     "precision": 0.9583333333333334,
+     "recall": 0.989247311827957,
+     "f1": 0.9735449735449735
+    },
+    "n_dropped_one_to_one": 0,
+    "n_identity_conflicts": 0
+   },
+   {
+    "tau": 0.888888888889,
+    "decider": "d2",
+    "pair_level": {
+     "tp": 83,
+     "fp": 0,
+     "fn": 10,
+     "precision": 1.0,
+     "recall": 0.8924731182795699,
+     "f1": 0.9431818181818181
+    },
+    "group_level": {
+     "true_positives": 83,
+     "false_positives": 2,
+     "false_negatives": 10,
+     "precision": 0.9764705882352941,
+     "recall": 0.8924731182795699,
+     "f1": 0.9325842696629214
+    },
+    "n_dropped_one_to_one": 0,
+    "n_identity_conflicts": 0
+   },
+   {
+    "tau": 0.909090909091,
+    "decider": "d2",
+    "pair_level": {
+     "tp": 77,
+     "fp": 0,
+     "fn": 16,
+     "precision": 1.0,
+     "recall": 0.8279569892473119,
+     "f1": 0.9058823529411765
+    },
+    "group_level": {
+     "true_positives": 77,
+     "false_positives": 2,
+     "false_negatives": 16,
+     "precision": 0.9746835443037974,
+     "recall": 0.8279569892473119,
+     "f1": 0.8953488372093023
+    },
+    "n_dropped_one_to_one": 0,
+    "n_identity_conflicts": 0
+   },
+   {
+    "tau": 1.0,
+    "decider": "d2",
+    "pair_level": {
+     "tp": 77,
+     "fp": 0,
+     "fn": 16,
+     "precision": 1.0,
+     "recall": 0.8279569892473119,
+     "f1": 0.9058823529411765
+    },
+    "group_level": {
+     "true_positives": 77,
+     "false_positives": 2,
+     "false_negatives": 16,
+     "precision": 0.9746835443037974,
+     "recall": 0.8279569892473119,
+     "f1": 0.8953488372093023
+    },
+    "n_dropped_one_to_one": 0,
+    "n_identity_conflicts": 0
+   }
+  ]
+ },
+ "taus": {
+  "tau1": 1.0,
+  "tau2": 0.857142857143
+ },
+ "scores": [
+  {
+   "decider": "d0",
+   "pair_level": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 93,
+    "precision": null,
+    "recall": 0.0,
+    "f1": null
+   },
+   "group_level": {
+    "true_positives": 0,
+    "false_positives": 2,
+    "false_negatives": 93,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": null
+   },
+   "n_dropped_one_to_one": 0,
+   "n_identity_conflicts": 0
+  },
+  {
+   "decider": "d1",
+   "pair_level": {
+    "tp": 77,
+    "fp": 0,
+    "fn": 16,
+    "precision": 1.0,
+    "recall": 0.8279569892473119,
+    "f1": 0.9058823529411765
+   },
+   "group_level": {
+    "true_positives": 77,
+    "false_positives": 2,
+    "false_negatives": 16,
+    "precision": 0.9746835443037974,
+    "recall": 0.8279569892473119,
+    "f1": 0.8953488372093023
+   },
+   "n_dropped_one_to_one": 0,
+   "n_identity_conflicts": 0
+  },
+  {
+   "decider": "d2",
+   "pair_level": {
+    "tp": 92,
+    "fp": 2,
+    "fn": 1,
+    "precision": 0.9787234042553191,
+    "recall": 0.989247311827957,
+    "f1": 0.983957219251337
+   },
+   "group_level": {
+    "true_positives": 92,
+    "false_positives": 4,
+    "false_negatives": 1,
+    "precision": 0.9583333333333334,
+    "recall": 0.989247311827957,
+    "f1": 0.9735449735449735
+   },
+   "n_dropped_one_to_one": 0,
+   "n_identity_conflicts": 0
+  }
+ ],
+ "per_operator": {
+  "d0": {
+   "case": {
+    "gold": 18,
+    "recovered": 0
+   },
+   "drop_separator": {
+    "gold": 16,
+    "recovered": 0
+   },
+   "spare_separator": {
+    "gold": 3,
+    "recovered": 0
+   },
+   "split_number": {
+    "gold": 19,
+    "recovered": 0
+   },
+   "swap_separator": {
+    "gold": 21,
+    "recovered": 0
+   },
+   "unpad_sequence": {
+    "gold": 16,
+    "recovered": 0
+   }
+  },
+  "d1": {
+   "case": {
+    "gold": 18,
+    "recovered": 18
+   },
+   "drop_separator": {
+    "gold": 16,
+    "recovered": 16
+   },
+   "spare_separator": {
+    "gold": 3,
+    "recovered": 3
+   },
+   "split_number": {
+    "gold": 19,
+    "recovered": 19
+   },
+   "swap_separator": {
+    "gold": 21,
+    "recovered": 21
+   },
+   "unpad_sequence": {
+    "gold": 16,
+    "recovered": 0
+   }
+  },
+  "d2": {
+   "case": {
+    "gold": 18,
+    "recovered": 18
+   },
+   "drop_separator": {
+    "gold": 16,
+    "recovered": 16
+   },
+   "spare_separator": {
+    "gold": 3,
+    "recovered": 3
+   },
+   "split_number": {
+    "gold": 19,
+    "recovered": 19
+   },
+   "swap_separator": {
+    "gold": 21,
+    "recovered": 21
+   },
+   "unpad_sequence": {
+    "gold": 16,
+    "recovered": 15
+   }
+  }
+ }
+}
