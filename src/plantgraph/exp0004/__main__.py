@@ -1,0 +1,89 @@
+"""Command line of the free path.
+
+python -m plantgraph.exp0004 build --target-sheets 100 --out DIR
+python -m plantgraph.exp0004 tune DIR
+python -m plantgraph.exp0004 decide DIR --decider d1 --taus-json DIR/taus.json
+python -m plantgraph.exp0004 score DIR
+python -m plantgraph.exp0004 links DIR --decider d2 [--out links.json]
+python -m plantgraph.exp0004 report DIR --out report.md
+"""
+
+from __future__ import annotations
+
+import argparse
+from pathlib import Path
+
+from plantgraph.exp0004 import commands
+from plantgraph.exp0004.bootstrap import N_RESAMPLES
+from plantgraph.exp0004.corpus import ALL_FAMILIES, DEV_SEED, CorpusSpec, corpus_id_for
+from plantgraph.exp0004.deciders import DECIDER_IDS
+
+
+def main(argv: list[str] | None = None) -> None:
+    """Parse the command line and run one step."""
+    args = _parser().parse_args(argv)
+    if args.command == "build":
+        commands.build(_spec(args), args.out)
+    elif args.command == "tune":
+        print(commands.tune_thresholds(args.directory).model_dump_json())
+    elif args.command == "decide":
+        run = commands.decide(args.directory, args.decider, args.taus_json)
+        print(run.pair_level.model_dump_json())
+    elif args.command == "score":
+        print(commands.score(args.directory, args.resamples).model_dump_json(indent=1))
+    elif args.command == "links":
+        print(commands.write_links(args.directory, args.decider, args.out))
+    else:
+        commands.report(args.directories, args.out)
+
+
+def _spec(args: argparse.Namespace) -> CorpusSpec:
+    corpus_id = args.corpus_id or corpus_id_for(
+        args.target_sheets, args.seed, args.duplication_rate, args.families
+    )
+    return CorpusSpec(
+        corpus_id=corpus_id,
+        target_sheets=args.target_sheets,
+        seed=args.seed,
+        duplication_rate=args.duplication_rate,
+        families=tuple(args.families),
+    )
+
+
+def _parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(prog="plantgraph.exp0004", description="EXP-0004 free path")
+    steps = parser.add_subparsers(dest="command", required=True)
+
+    build = steps.add_parser("build", help="build a corpus and label its candidate pairs")
+    build.add_argument("--target-sheets", type=int, required=True)
+    build.add_argument("--out", type=Path, required=True)
+    build.add_argument("--seed", type=int, default=DEV_SEED)
+    build.add_argument("--duplication-rate", type=float, default=1.0)
+    build.add_argument("--families", nargs="+", choices=ALL_FAMILIES, default=["format"])
+    build.add_argument("--corpus-id", help="default: composed from the options (design section 4)")
+
+    tune = steps.add_parser("tune", help="choose tau1 and tau2 (dev corpus only)")
+    tune.add_argument("directory", type=Path)
+
+    decide = steps.add_parser("decide", help="run one decider on a built corpus")
+    decide.add_argument("directory", type=Path)
+    decide.add_argument("--decider", choices=DECIDER_IDS, required=True)
+    decide.add_argument("--taus-json", type=Path, help="needed for d1 and d2")
+
+    score = steps.add_parser("score", help="score all decisions with bootstrap intervals")
+    score.add_argument("directory", type=Path)
+    score.add_argument("--resamples", type=int, default=N_RESAMPLES)
+
+    links = steps.add_parser("links", help="write a decider's links for ingest --identity-links")
+    links.add_argument("directory", type=Path)
+    links.add_argument("--decider", choices=DECIDER_IDS, required=True)
+    links.add_argument("--out", type=Path)
+
+    report = steps.add_parser("report", help="Markdown report over scored corpora")
+    report.add_argument("directories", type=Path, nargs="+")
+    report.add_argument("--out", type=Path, required=True)
+    return parser
+
+
+if __name__ == "__main__":
+    main()
