@@ -1,0 +1,126 @@
+# Infrastructure cost report
+
+Machine: AMD Ryzen 9 5900HX with Radeon Graphics (8 cores / 16 threads), 15.4 GiB RAM, Windows-11-10.0.26200-SP0, Python 3.12.10, plugged in
+Code: commit e91abb546ccf2fb2adc5d8ec2f6f75238c3edb37 (uncommitted changes)
+
+## Self-checks
+
+| Check | Result | Detail |
+|---|---|---|
+| M1 replay answers byte-identical to the source run | PASS | 2 of 2 replays identical |
+| M2 clock resolution | PASS | every record has a clock step of at most 1e-06 s and every replay row was timed with perf_counter |
+| M3 parts add up (db + graph API <= local; server <= client) | PASS | 0 violations in 2240 rows (tolerance 1 ms) |
+| M4 repeat spread (max/min within x1.5) | FLAG | repeats disagree by more than x1.5: H100g2 ingest.localize (x1.54), H100g2 ingest.plan (x1.87), H100g2 ingest.load_schema (x2.71), H100g2 ingest.load_nodes (x2.16), H100g2 ingest.load_relationships (x2.10), H100g2 ingest.load_verify (x2.86), H100g2 ingest.build_total (x1.66), H100g2 startup.tier_runs (x12.20), H1000g2 startup.tier_runs (x1.63), H1000g2 startup.neo4j_open_check (x2.95) |
+| M5 right corpus, right size | PASS | database counts equal the load plan and the load report in every repeat |
+| M6 two size sources | FLAG | H100g2: the server's store.size.database metric is present in 1 of 3 repeats only | H100g2: the server's store.size.database metric differs from the bytes on disk by more than 10% in 1 of 1 repeats: it lags, so the bytes on disk are the figure and the metric is secondary | H1000g2: the server's store.size.database metric is present in 2 of 3 repeats only | H1000g2: the server's store.size.database metric differs from the bytes on disk by more than 10% in 2 of 2 repeats: it lags, so the bytes on disk are the figure and the metric is secondary |
+| M7 zero spend | PASS | no replay allowed paid calls, total spend $0 |
+| Old-run rows | FLAG | the replay missed the cache or differed from its source, so the original run's timings are shown instead: cypher on H100g2, cypher on H1000g2 (coarse monotonic clock, concurrency 4, no split) |
+| Database-only rows | FLAG | local compute of these rows is database time only (the stored query run again plus the row formatting; no query-writing model call, no answer-prompt build, no answer parsing): cypher_db_only on H100g2, cypher_db_only on H1000g2. The model latency and token cost in the same row come from the source run. |
+
+## I1 - corpus footprint (median, then min to max over the repeats)
+
+| Quantity | H100g2 | H1000g2 |
+|---|---|---|
+| size: sheets | 100 | 1,000 |
+| size: nodes | 8,787 | 91,789 |
+| size: relationships | 29,560 | 308,283 |
+| size: properties | 96,392 | 1,005,457 |
+| ingest: generate | 5.18 s (5.10 s to 6.03 s) | 421.61 s (374.18 s to 451.16 s) |
+| ingest: split | 0.1266 s (0.1252 s to 0.1846 s) | 3.32 s (3.18 s to 4.01 s) |
+| ingest: localize | 0.2549 s (0.2447 s to 0.3759 s) ! | 0.6265 s (0.6070 s to 0.8734 s) |
+| ingest: resolve | 0.0795 s (0.0784 s to 0.1139 s) | 1.16 s (1.16 s to 1.54 s) |
+| ingest: plan | 0.4277 s (0.4234 s to 0.7925 s) ! | 4.28 s (4.26 s to 5.61 s) |
+| ingest: load_schema | 0.1598 s (0.1249 s to 0.3383 s) ! | 0.1484 s (0.1415 s to 0.1660 s) |
+| ingest: load_nodes | 2.91 s (2.50 s to 5.41 s) ! | 7.93 s (6.54 s to 8.66 s) |
+| ingest: load_relationships | 1.67 s (1.46 s to 3.07 s) ! | 16.80 s (16.12 s to 22.27 s) |
+| ingest: load_verify | 0.5750 s (0.4717 s to 1.35 s) ! | 1.88 s (1.66 s to 1.96 s) |
+| ingest total (stages above) | 11.30 s (10.63 s to 17.68 s) ! | 456.19 s (409.43 s to 496.22 s) |
+| store on disk (data + indexes) | 6.3 MiB (6.3 MiB to 6.3 MiB) | 55.4 MiB (55.4 MiB to 55.5 MiB) |
+| transaction logs on disk (follow retention, not the corpus) | 3.0 MiB (3.0 MiB to 3.0 MiB) | 33.6 MiB (33.6 MiB to 33.6 MiB) |
+| page cache needed (derived: disk x 1.2, Neo4j manual) | 7.5 MiB (7.5 MiB to 7.5 MiB) | 66.5 MiB (66.5 MiB to 66.5 MiB) |
+| store size per server metric (secondary, may lag) | 0.0 MiB | 0.0 MiB (0.0 MiB to 0.0 MiB) |
+| startup: rebuild | 5.62 s (5.58 s to 5.66 s) | 402.56 s (386.23 s to 419.28 s) |
+| startup: graph_view | 0.0434 s (0.0414 s to 0.0438 s) | 0.4978 s (0.4798 s to 0.4999 s) |
+| startup: tier_runs | 0.0008 s (0.0008 s to 0.0095 s) ! | 0.0028 s (0.0018 s to 0.0030 s) ! |
+| startup: schema_text | 0.0001 s (0.0001 s to 0.0001 s) | 0.0001 s (0.0001 s to 0.0002 s) |
+| startup: neo4j_open_check | 0.0418 s (0.0414 s to 0.0491 s) | 0.1989 s (0.1220 s to 0.3598 s) ! |
+| startup: item_graph | 0.3657 s (0.3488 s to 0.3712 s) | 4.69 s (4.53 s to 4.92 s) |
+| startup total | 6.07 s (6.04 s to 6.11 s) | 408.34 s (391.54 s to 424.49 s) |
+| startup without rebuild (total - rebuild) | 0.4518 s (0.4490 s to 0.4573 s) | 5.31 s (5.21 s to 5.78 s) |
+| ContextRAG prompt build | 0.7875 s (0.7793 s to 0.8162 s) | 8.54 s (8.44 s to 8.54 s) |
+| app process peak after imports | 173.9 MiB (173.9 MiB to 174.4 MiB) | 173.8 MiB (173.8 MiB to 173.9 MiB) |
+| app process peak at end of probe | 330.4 MiB (329.6 MiB to 330.9 MiB) | 1,719.7 MiB (1,719.6 MiB to 1,723.5 MiB) |
+| Neo4j process resident memory | 1,269.6 MiB (1,268.3 MiB to 1,270.5 MiB) | 1,369.9 MiB (1,356.5 MiB to 1,372.3 MiB) |
+| page cache in use (usage ratio x size) | 83.8 MiB (83.8 MiB to 83.8 MiB) | 133.4 MiB (133.4 MiB to 133.4 MiB) |
+| graph view in memory (tracemalloc net) | 8.5 MiB | 94.0 MiB |
+| plant graph in memory (tracemalloc net) | 25.0 MiB | 265.6 MiB |
+| traced peak during both builds | 40.9 MiB | 435.4 MiB |
+
+- H100g2: the server's store.size.database metric is present in 1 of 3 repeats only
+- H100g2: the server's store.size.database metric differs from the bytes on disk by more than 10% in 1 of 1 repeats: it lags, so the bytes on disk are the figure and the metric is secondary
+- H1000g2: the server's store.size.database metric is present in 2 of 3 repeats only
+- H1000g2: the server's store.size.database metric differs from the bytes on disk by more than 10% in 2 of 2 repeats: it lags, so the bytes on disk are the figure and the metric is secondary
+
+## I2 - local compute per strategy and corpus
+
+| Strategy | Corpus | Basis | DB server | Graph in memory | Questions | Median | p90 | Max | Sum | DB client | DB server time | Graph API | Other | Local share of latency | Token $/question |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| cypher_db_only (cypher_rag_lines) | H100g2 | db_replay | yes | no | 560 | 0.0391 s | 0.6122 s | 31.24 s | 401.06 s | 400.82 s | 93.42 s | 0.0000 s | 0.2406 s | 8.9% | $0.00076 |
+| cypher_db_only (cypher_rag_lines) | H1000g2 | db_replay | yes | no | 560 | 0.0699 s | 7.54 s | 31.61 s | 1,785.79 s | 1,785.62 s | 151.03 s | 0.0000 s | 0.1741 s | 29.8% | $0.00075 |
+| cypher (cypher_rag_lines) | H100g2 | old_run | yes | no | 560 | 0.0643 s | 0.9878 s | 62.82 s | 1,308.67 s | - | - | - | - | 24.2% | $0.00076 |
+| agent (graph_agent_lines) | H100g2 | replay | no | yes | 560 | 0.0011 s | 0.0396 s | 0.1845 s | 7.39 s | 0.0000 s | 0.0000 s | 6.05 s | 1.34 s | 0.1% | $0.00155 |
+| cypher (cypher_rag_lines) | H1000g2 | old_run | yes | no | 560 | 0.1775 s | 31.80 s | 63.48 s | 4,116.58 s | - | - | - | - | 49.5% | $0.00075 |
+| agent (graph_agent_lines) | H1000g2 | replay | no | yes | 560 | 0.0013 s | 0.5026 s | 2.58 s | 89.55 s | 0.0000 s | 0.0000 s | 87.09 s | 2.46 s | 1.1% | $0.00170 |
+
+## I3 - growth
+
+| Quantity | Corpora | From | To | Ratio |
+|---|---|---|---|---|
+| size: sheets | H100g2 to H1000g2 | 100 | 1,000 | x10.00 |
+| size: nodes | H100g2 to H1000g2 | 8,787 | 91,789 | x10.45 |
+| size: relationships | H100g2 to H1000g2 | 29,560 | 308,283 | x10.43 |
+| size: properties | H100g2 to H1000g2 | 96,392 | 1,005,457 | x10.43 |
+| ingest: generate | H100g2 to H1000g2 | 5.18 s | 421.61 s | x81.35 |
+| ingest: split | H100g2 to H1000g2 | 0.1266 s | 3.32 s | x26.19 |
+| ingest: localize | H100g2 to H1000g2 | 0.2549 s | 0.6265 s | x2.46 |
+| ingest: resolve | H100g2 to H1000g2 | 0.0795 s | 1.16 s | x14.65 |
+| ingest: plan | H100g2 to H1000g2 | 0.4277 s | 4.28 s | x10.00 |
+| ingest: load_schema | H100g2 to H1000g2 | 0.1598 s | 0.1484 s | x0.93 |
+| ingest: load_nodes | H100g2 to H1000g2 | 2.91 s | 7.93 s | x2.72 |
+| ingest: load_relationships | H100g2 to H1000g2 | 1.67 s | 16.80 s | x10.03 |
+| ingest: load_verify | H100g2 to H1000g2 | 0.5750 s | 1.88 s | x3.28 |
+| ingest total (stages above) | H100g2 to H1000g2 | 11.30 s | 456.19 s | x40.38 |
+| store on disk (data + indexes) | H100g2 to H1000g2 | 6.3 MiB | 55.4 MiB | x8.86 |
+| transaction logs on disk (follow retention, not the corpus) | H100g2 to H1000g2 | 3.0 MiB | 33.6 MiB | x11.09 |
+| page cache needed (derived: disk x 1.2, Neo4j manual) | H100g2 to H1000g2 | 7.5 MiB | 66.5 MiB | x8.86 |
+| store size per server metric (secondary, may lag) | H100g2 to H1000g2 | 0.0 MiB | 0.0 MiB | x1.00 |
+| startup: rebuild | H100g2 to H1000g2 | 5.62 s | 402.56 s | x71.67 |
+| startup: graph_view | H100g2 to H1000g2 | 0.0434 s | 0.4978 s | x11.47 |
+| startup: tier_runs | H100g2 to H1000g2 | 0.0008 s | 0.0028 s | x3.40 |
+| startup: schema_text | H100g2 to H1000g2 | 0.0001 s | 0.0001 s | x1.10 |
+| startup: neo4j_open_check | H100g2 to H1000g2 | 0.0418 s | 0.1989 s | x4.76 |
+| startup: item_graph | H100g2 to H1000g2 | 0.3657 s | 4.69 s | x12.81 |
+| startup total | H100g2 to H1000g2 | 6.07 s | 408.34 s | x67.23 |
+| startup without rebuild (total - rebuild) | H100g2 to H1000g2 | 0.4518 s | 5.31 s | x11.75 |
+| ContextRAG prompt build | H100g2 to H1000g2 | 0.7875 s | 8.54 s | x10.84 |
+| app process peak after imports | H100g2 to H1000g2 | 173.9 MiB | 173.8 MiB | x1.00 |
+| app process peak at end of probe | H100g2 to H1000g2 | 330.4 MiB | 1,719.7 MiB | x5.21 |
+| Neo4j process resident memory | H100g2 to H1000g2 | 1,269.6 MiB | 1,369.9 MiB | x1.08 |
+| page cache in use (usage ratio x size) | H100g2 to H1000g2 | 83.8 MiB | 133.4 MiB | x1.59 |
+| graph view in memory (tracemalloc net) | H100g2 to H1000g2 | 8.5 MiB | 94.0 MiB | x10.99 |
+| plant graph in memory (tracemalloc net) | H100g2 to H1000g2 | 25.0 MiB | 265.6 MiB | x10.62 |
+| traced peak during both builds | H100g2 to H1000g2 | 40.9 MiB | 435.4 MiB | x10.64 |
+| agent.local_median_s | H100g2 to H1000g2 | 0.0011 s | 0.0013 s | x1.15 |
+| agent.local_p90_s | H100g2 to H1000g2 | 0.0396 s | 0.5026 s | x12.70 |
+| agent.local_sum_s | H100g2 to H1000g2 | 7.39 s | 89.55 s | x12.12 |
+| agent.token_usd_per_question | H100g2 to H1000g2 | $0.00155 | $0.00170 | x1.10 |
+| cypher.local_median_s | H100g2 to H1000g2 | 0.0643 s | 0.1775 s | x2.76 |
+| cypher.local_p90_s | H100g2 to H1000g2 | 0.9878 s | 31.80 s | x32.19 |
+| cypher.local_sum_s | H100g2 to H1000g2 | 1,308.67 s | 4,116.58 s | x3.15 |
+| cypher.token_usd_per_question | H100g2 to H1000g2 | $0.00076 | $0.00075 | x0.99 |
+| cypher_db_only.local_median_s | H100g2 to H1000g2 | 0.0391 s | 0.0699 s | x1.79 |
+| cypher_db_only.local_p90_s | H100g2 to H1000g2 | 0.6122 s | 7.54 s | x12.32 |
+| cypher_db_only.local_sum_s | H100g2 to H1000g2 | 401.06 s | 1,785.79 s | x4.45 |
+| cypher_db_only.token_usd_per_question | H100g2 to H1000g2 | $0.00076 | $0.00075 | x0.99 |
+
+wrote data\runs\exp0007\infra\report.md and data\runs\exp0007\infra\report.json

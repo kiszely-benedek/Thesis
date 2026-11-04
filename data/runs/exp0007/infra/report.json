@@ -1,0 +1,892 @@
+{
+  "machine_summary": "AMD Ryzen 9 5900HX with Radeon Graphics (8 cores / 16 threads), 15.4 GiB RAM, Windows-11-10.0.26200-SP0, Python 3.12.10, plugged in",
+  "git_commit": "e91abb546ccf2fb2adc5d8ec2f6f75238c3edb37",
+  "git_dirty": true,
+  "checks": [
+    {
+      "name": "M1 replay answers byte-identical to the source run",
+      "status": "pass",
+      "detail": "2 of 2 replays identical"
+    },
+    {
+      "name": "M2 clock resolution",
+      "status": "pass",
+      "detail": "every record has a clock step of at most 1e-06 s and every replay row was timed with perf_counter"
+    },
+    {
+      "name": "M3 parts add up (db + graph API <= local; server <= client)",
+      "status": "pass",
+      "detail": "0 violations in 2240 rows (tolerance 1 ms)"
+    },
+    {
+      "name": "M4 repeat spread (max/min within x1.5)",
+      "status": "flag",
+      "detail": "repeats disagree by more than x1.5: H100g2 ingest.localize (x1.54), H100g2 ingest.plan (x1.87), H100g2 ingest.load_schema (x2.71), H100g2 ingest.load_nodes (x2.16), H100g2 ingest.load_relationships (x2.10), H100g2 ingest.load_verify (x2.86), H100g2 ingest.build_total (x1.66), H100g2 startup.tier_runs (x12.20), H1000g2 startup.tier_runs (x1.63), H1000g2 startup.neo4j_open_check (x2.95)"
+    },
+    {
+      "name": "M5 right corpus, right size",
+      "status": "pass",
+      "detail": "database counts equal the load plan and the load report in every repeat"
+    },
+    {
+      "name": "M6 two size sources",
+      "status": "flag",
+      "detail": "H100g2: the server's store.size.database metric is present in 1 of 3 repeats only | H100g2: the server's store.size.database metric differs from the bytes on disk by more than 10% in 1 of 1 repeats: it lags, so the bytes on disk are the figure and the metric is secondary | H1000g2: the server's store.size.database metric is present in 2 of 3 repeats only | H1000g2: the server's store.size.database metric differs from the bytes on disk by more than 10% in 2 of 2 repeats: it lags, so the bytes on disk are the figure and the metric is secondary"
+    },
+    {
+      "name": "M7 zero spend",
+      "status": "pass",
+      "detail": "no replay allowed paid calls, total spend $0"
+    },
+    {
+      "name": "Old-run rows",
+      "status": "flag",
+      "detail": "the replay missed the cache or differed from its source, so the original run's timings are shown instead: cypher on H100g2, cypher on H1000g2 (coarse monotonic clock, concurrency 4, no split)"
+    },
+    {
+      "name": "Database-only rows",
+      "status": "flag",
+      "detail": "local compute of these rows is database time only (the stored query run again plus the row formatting; no query-writing model call, no answer-prompt build, no answer parsing): cypher_db_only on H100g2, cypher_db_only on H1000g2. The model latency and token cost in the same row come from the source run."
+    }
+  ],
+  "footprints": [
+    {
+      "corpus_id": "H100g2",
+      "sizes": {
+        "sheets": 100,
+        "nodes": 8787,
+        "relationships": 29560,
+        "properties": 96392
+      },
+      "quantities": {
+        "ingest.generate": {
+          "median": 5.1824532000000545,
+          "minimum": 5.104108099999962,
+          "maximum": 6.034052200000019,
+          "n_repeats": 3
+        },
+        "ingest.split": {
+          "median": 0.12664990000007492,
+          "minimum": 0.12515929999995024,
+          "maximum": 0.1846454999999878,
+          "n_repeats": 3
+        },
+        "ingest.localize": {
+          "median": 0.2549138000000539,
+          "minimum": 0.24470550000000912,
+          "maximum": 0.3758806999999251,
+          "n_repeats": 3
+        },
+        "ingest.resolve": {
+          "median": 0.0794612000000825,
+          "minimum": 0.07835420000003523,
+          "maximum": 0.11389040000005934,
+          "n_repeats": 3
+        },
+        "ingest.plan": {
+          "median": 0.4276710000000321,
+          "minimum": 0.4234185999999909,
+          "maximum": 0.7924964999999702,
+          "n_repeats": 3
+        },
+        "ingest.load_schema": {
+          "median": 0.15983810000000176,
+          "minimum": 0.12491620000002968,
+          "maximum": 0.33834999999999127,
+          "n_repeats": 3
+        },
+        "ingest.load_nodes": {
+          "median": 2.913060200000018,
+          "minimum": 2.5042305000000624,
+          "maximum": 5.413975200000095,
+          "n_repeats": 3
+        },
+        "ingest.load_relationships": {
+          "median": 1.6739164000000528,
+          "minimum": 1.46215820000009,
+          "maximum": 3.0749187999999776,
+          "n_repeats": 3
+        },
+        "ingest.load_verify": {
+          "median": 0.5749974000000293,
+          "minimum": 0.4717220999999654,
+          "maximum": 1.3476066999999148,
+          "n_repeats": 3
+        },
+        "ingest.build_total": {
+          "median": 11.29755780000005,
+          "minimum": 10.634176100000445,
+          "maximum": 17.67581599999994,
+          "n_repeats": 3
+        },
+        "store.data_bytes": {
+          "median": 6555316.0,
+          "minimum": 6555316.0,
+          "maximum": 6555316.0,
+          "n_repeats": 3
+        },
+        "store.tx_log_bytes": {
+          "median": 3178389.0,
+          "minimum": 3178389.0,
+          "maximum": 3178389.0,
+          "n_repeats": 3
+        },
+        "store.page_cache_needed_bytes": {
+          "median": 7866379.199999999,
+          "minimum": 7866379.199999999,
+          "maximum": 7866379.199999999,
+          "n_repeats": 3
+        },
+        "store.metrics_bytes": {
+          "median": 41960.0,
+          "minimum": 41960.0,
+          "maximum": 41960.0,
+          "n_repeats": 1
+        },
+        "startup.rebuild": {
+          "median": 5.6165825000000495,
+          "minimum": 5.584451599999966,
+          "maximum": 5.661162999999988,
+          "n_repeats": 3
+        },
+        "startup.graph_view": {
+          "median": 0.0433947999999873,
+          "minimum": 0.04138599999987491,
+          "maximum": 0.04375310000000354,
+          "n_repeats": 3
+        },
+        "startup.tier_runs": {
+          "median": 0.0008103000000119209,
+          "minimum": 0.0007821000001513312,
+          "maximum": 0.009539000000131637,
+          "n_repeats": 3
+        },
+        "startup.schema_text": {
+          "median": 0.00011160000008203497,
+          "minimum": 0.00010569999994913815,
+          "maximum": 0.00011410000001887965,
+          "n_repeats": 3
+        },
+        "startup.neo4j_open_check": {
+          "median": 0.041798900000003414,
+          "minimum": 0.04139570000006643,
+          "maximum": 0.049144899999873815,
+          "n_repeats": 3
+        },
+        "startup.item_graph": {
+          "median": 0.36572879999994257,
+          "minimum": 0.34881970000014917,
+          "maximum": 0.371203499999865,
+          "n_repeats": 3
+        },
+        "startup.total": {
+          "median": 6.073873400000139,
+          "minimum": 6.036245199999939,
+          "maximum": 6.110166700000036,
+          "n_repeats": 3
+        },
+        "startup.without_rebuild": {
+          "median": 0.4517935999999736,
+          "minimum": 0.4490037000000484,
+          "maximum": 0.4572909000000891,
+          "n_repeats": 3
+        },
+        "startup.context_rag_build": {
+          "median": 0.7875070000000051,
+          "minimum": 0.7792534999998679,
+          "maximum": 0.8161872000000585,
+          "n_repeats": 3
+        },
+        "process.baseline_bytes": {
+          "median": 182378496.0,
+          "minimum": 182370304.0,
+          "maximum": 182857728.0,
+          "n_repeats": 3
+        },
+        "process.peak_bytes": {
+          "median": 346423296.0,
+          "minimum": 345649152.0,
+          "maximum": 346963968.0,
+          "n_repeats": 3
+        },
+        "neo4j.rss_bytes": {
+          "median": 1331228672.0,
+          "minimum": 1329889280.0,
+          "maximum": 1332166656.0,
+          "n_repeats": 3
+        },
+        "neo4j.page_cache_used_bytes": {
+          "median": 87878731.0,
+          "minimum": 87878731.0,
+          "maximum": 87878731.0,
+          "n_repeats": 3
+        },
+        "memory.view_bytes": {
+          "median": 8962850.0,
+          "minimum": 8962850.0,
+          "maximum": 8962850.0,
+          "n_repeats": 1
+        },
+        "memory.item_graph_bytes": {
+          "median": 26235475.0,
+          "minimum": 26235475.0,
+          "maximum": 26235475.0,
+          "n_repeats": 1
+        },
+        "memory.traced_peak_bytes": {
+          "median": 42909445.0,
+          "minimum": 42909445.0,
+          "maximum": 42909445.0,
+          "n_repeats": 1
+        }
+      },
+      "notes": [
+        "the server's store.size.database metric is present in 1 of 3 repeats only",
+        "the server's store.size.database metric differs from the bytes on disk by more than 10% in 1 of 1 repeats: it lags, so the bytes on disk are the figure and the metric is secondary"
+      ]
+    },
+    {
+      "corpus_id": "H1000g2",
+      "sizes": {
+        "sheets": 1000,
+        "nodes": 91789,
+        "relationships": 308283,
+        "properties": 1005457
+      },
+      "quantities": {
+        "ingest.generate": {
+          "median": 421.6119764,
+          "minimum": 374.1776291000001,
+          "maximum": 451.15649619999976,
+          "n_repeats": 3
+        },
+        "ingest.split": {
+          "median": 3.317017699999951,
+          "minimum": 3.178922600000078,
+          "maximum": 4.0055318999998235,
+          "n_repeats": 3
+        },
+        "ingest.localize": {
+          "median": 0.626476700000012,
+          "minimum": 0.6069632000003367,
+          "maximum": 0.8733932999998615,
+          "n_repeats": 3
+        },
+        "ingest.resolve": {
+          "median": 1.164377400000376,
+          "minimum": 1.160374400000137,
+          "maximum": 1.5419135000001916,
+          "n_repeats": 3
+        },
+        "ingest.plan": {
+          "median": 4.2754717000000255,
+          "minimum": 4.2579759000000195,
+          "maximum": 5.606691700000283,
+          "n_repeats": 3
+        },
+        "ingest.load_schema": {
+          "median": 0.14838129999998273,
+          "minimum": 0.14146980000032272,
+          "maximum": 0.16601939999986826,
+          "n_repeats": 3
+        },
+        "ingest.load_nodes": {
+          "median": 7.930678000000171,
+          "minimum": 6.542049499999848,
+          "maximum": 8.656971100000192,
+          "n_repeats": 3
+        },
+        "ingest.load_relationships": {
+          "median": 16.79727670000011,
+          "minimum": 16.121277700000064,
+          "maximum": 22.27465540000003,
+          "n_repeats": 3
+        },
+        "ingest.load_verify": {
+          "median": 1.883606399999735,
+          "minimum": 1.6585712000000967,
+          "maximum": 1.9616604000002553,
+          "n_repeats": 3
+        },
+        "ingest.build_total": {
+          "median": 456.1915294000005,
+          "minimum": 409.43351590000043,
+          "maximum": 496.2187833000007,
+          "n_repeats": 3
+        },
+        "store.data_bytes": {
+          "median": 58066741.0,
+          "minimum": 58066519.0,
+          "maximum": 58148402.0,
+          "n_repeats": 3
+        },
+        "store.tx_log_bytes": {
+          "median": 35249117.0,
+          "minimum": 35249113.0,
+          "maximum": 35249691.0,
+          "n_repeats": 3
+        },
+        "store.page_cache_needed_bytes": {
+          "median": 69680089.2,
+          "minimum": 69679822.8,
+          "maximum": 69778082.39999999,
+          "n_repeats": 3
+        },
+        "store.metrics_bytes": {
+          "median": 41960.0,
+          "minimum": 41960.0,
+          "maximum": 41960.0,
+          "n_repeats": 2
+        },
+        "startup.rebuild": {
+          "median": 402.56357620000017,
+          "minimum": 386.23083869999937,
+          "maximum": 419.2791279000003,
+          "n_repeats": 3
+        },
+        "startup.graph_view": {
+          "median": 0.4977703999993537,
+          "minimum": 0.47984769999948185,
+          "maximum": 0.49989169999935257,
+          "n_repeats": 3
+        },
+        "startup.tier_runs": {
+          "median": 0.0027549999995244434,
+          "minimum": 0.001845599999796832,
+          "maximum": 0.003001600000061444,
+          "n_repeats": 3
+        },
+        "startup.schema_text": {
+          "median": 0.00012309999874560162,
+          "minimum": 0.00010599999950500205,
+          "maximum": 0.00015250000069499947,
+          "n_repeats": 3
+        },
+        "startup.neo4j_open_check": {
+          "median": 0.19889060000059544,
+          "minimum": 0.12195919999976468,
+          "maximum": 0.3598309999997582,
+          "n_repeats": 3
+        },
+        "startup.item_graph": {
+          "median": 4.685266800001045,
+          "minimum": 4.532833199999914,
+          "maximum": 4.918386999999711,
+          "n_repeats": 3
+        },
+        "startup.total": {
+          "median": 408.3426892999978,
+          "minimum": 391.53990799999883,
+          "maximum": 424.4936069000005,
+          "n_repeats": 3
+        },
+        "startup.without_rebuild": {
+          "median": 5.309069299999464,
+          "minimum": 5.21447900000021,
+          "maximum": 5.77911309999763,
+          "n_repeats": 3
+        },
+        "startup.context_rag_build": {
+          "median": 8.538676399999531,
+          "minimum": 8.440394400000514,
+          "maximum": 8.543014299999413,
+          "n_repeats": 3
+        },
+        "process.baseline_bytes": {
+          "median": 182276096.0,
+          "minimum": 182218752.0,
+          "maximum": 182370304.0,
+          "n_repeats": 3
+        },
+        "process.peak_bytes": {
+          "median": 1803264000.0,
+          "minimum": 1803149312.0,
+          "maximum": 1807212544.0,
+          "n_repeats": 3
+        },
+        "neo4j.rss_bytes": {
+          "median": 1436479488.0,
+          "minimum": 1422417920.0,
+          "maximum": 1438953472.0,
+          "n_repeats": 3
+        },
+        "neo4j.page_cache_used_bytes": {
+          "median": 139899756.0,
+          "minimum": 139899756.0,
+          "maximum": 139899756.0,
+          "n_repeats": 3
+        },
+        "memory.view_bytes": {
+          "median": 98539214.0,
+          "minimum": 98539214.0,
+          "maximum": 98539214.0,
+          "n_repeats": 1
+        },
+        "memory.item_graph_bytes": {
+          "median": 278498078.0,
+          "minimum": 278498078.0,
+          "maximum": 278498078.0,
+          "n_repeats": 1
+        },
+        "memory.traced_peak_bytes": {
+          "median": 456583148.0,
+          "minimum": 456583148.0,
+          "maximum": 456583148.0,
+          "n_repeats": 1
+        }
+      },
+      "notes": [
+        "the server's store.size.database metric is present in 2 of 3 repeats only",
+        "the server's store.size.database metric differs from the bytes on disk by more than 10% in 2 of 2 repeats: it lags, so the bytes on disk are the figure and the metric is secondary"
+      ]
+    }
+  ],
+  "compute": [
+    {
+      "role": "cypher_db_only",
+      "strategy": "cypher_rag_lines",
+      "corpus_id": "H100g2",
+      "basis": "db_replay",
+      "needs_database": true,
+      "needs_memory_graph": false,
+      "n_questions": 560,
+      "local_median_s": 0.03914975000003551,
+      "local_p90_s": 0.61215799999992,
+      "local_max_s": 31.24219519999997,
+      "local_sum_s": 401.06007639999723,
+      "db_client_sum_s": 400.819507399999,
+      "db_server_sum_s": 93.415,
+      "graph_api_sum_s": 0.0,
+      "other_sum_s": 0.24056899999823145,
+      "local_share_of_latency": 0.08919329731271272,
+      "token_usd_per_question": 0.000756854375,
+      "n_cost_missing": 0
+    },
+    {
+      "role": "cypher_db_only",
+      "strategy": "cypher_rag_lines",
+      "corpus_id": "H1000g2",
+      "basis": "db_replay",
+      "needs_database": true,
+      "needs_memory_graph": false,
+      "n_questions": 560,
+      "local_median_s": 0.06992255000022851,
+      "local_p90_s": 7.539003129999628,
+      "local_max_s": 31.60840889999963,
+      "local_sum_s": 1785.7921261000056,
+      "db_client_sum_s": 1785.6179987999963,
+      "db_server_sum_s": 151.026,
+      "graph_api_sum_s": 0.0,
+      "other_sum_s": 0.17412730000933152,
+      "local_share_of_latency": 0.2982715088630001,
+      "token_usd_per_question": 0.0007525362946428571,
+      "n_cost_missing": 0
+    },
+    {
+      "role": "cypher",
+      "strategy": "cypher_rag_lines",
+      "corpus_id": "H100g2",
+      "basis": "old_run",
+      "needs_database": true,
+      "needs_memory_graph": false,
+      "n_questions": 560,
+      "local_median_s": 0.06433710000055726,
+      "local_p90_s": 0.9877751800064289,
+      "local_max_s": 62.81631669998751,
+      "local_sum_s": 1308.673524200094,
+      "db_client_sum_s": null,
+      "db_server_sum_s": null,
+      "graph_api_sum_s": null,
+      "other_sum_s": null,
+      "local_share_of_latency": 0.2421612684458884,
+      "token_usd_per_question": 0.000756854375,
+      "n_cost_missing": 0
+    },
+    {
+      "role": "agent",
+      "strategy": "graph_agent_lines",
+      "corpus_id": "H100g2",
+      "basis": "replay",
+      "needs_database": false,
+      "needs_memory_graph": true,
+      "n_questions": 560,
+      "local_median_s": 0.0010965499998292216,
+      "local_p90_s": 0.039564710000127,
+      "local_max_s": 0.18447219999961817,
+      "local_sum_s": 7.3860653999950046,
+      "db_client_sum_s": 0.0,
+      "db_server_sum_s": 0.0,
+      "graph_api_sum_s": 6.046296400002575,
+      "other_sum_s": 1.3397689999924296,
+      "local_share_of_latency": 0.0010758703795421762,
+      "token_usd_per_question": 0.0015549363392857141,
+      "n_cost_missing": 0
+    },
+    {
+      "role": "cypher",
+      "strategy": "cypher_rag_lines",
+      "corpus_id": "H1000g2",
+      "basis": "old_run",
+      "needs_database": true,
+      "needs_memory_graph": false,
+      "n_questions": 560,
+      "local_median_s": 0.17748179999762215,
+      "local_p90_s": 31.80139064000323,
+      "local_max_s": 63.476564000004146,
+      "local_sum_s": 4116.575820500046,
+      "db_client_sum_s": null,
+      "db_server_sum_s": null,
+      "graph_api_sum_s": null,
+      "other_sum_s": null,
+      "local_share_of_latency": 0.4949044844546968,
+      "token_usd_per_question": 0.0007525362946428571,
+      "n_cost_missing": 0
+    },
+    {
+      "role": "agent",
+      "strategy": "graph_agent_lines",
+      "corpus_id": "H1000g2",
+      "basis": "replay",
+      "needs_database": false,
+      "needs_memory_graph": true,
+      "n_questions": 560,
+      "local_median_s": 0.0012620000006791088,
+      "local_p90_s": 0.5025921600000404,
+      "local_max_s": 2.5810036000002583,
+      "local_sum_s": 89.5497410999933,
+      "db_client_sum_s": 0.0,
+      "db_server_sum_s": 0.0,
+      "graph_api_sum_s": 87.09451939997416,
+      "other_sum_s": 2.4552217000191376,
+      "local_share_of_latency": 0.01136780167834114,
+      "token_usd_per_question": 0.0017030558214285714,
+      "n_cost_missing": 0
+    }
+  ],
+  "growth": [
+    {
+      "name": "size.sheets",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 100.0,
+      "to_value": 1000.0
+    },
+    {
+      "name": "size.nodes",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 8787.0,
+      "to_value": 91789.0
+    },
+    {
+      "name": "size.relationships",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 29560.0,
+      "to_value": 308283.0
+    },
+    {
+      "name": "size.properties",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 96392.0,
+      "to_value": 1005457.0
+    },
+    {
+      "name": "ingest.generate",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 5.1824532000000545,
+      "to_value": 421.6119764
+    },
+    {
+      "name": "ingest.split",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 0.12664990000007492,
+      "to_value": 3.317017699999951
+    },
+    {
+      "name": "ingest.localize",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 0.2549138000000539,
+      "to_value": 0.626476700000012
+    },
+    {
+      "name": "ingest.resolve",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 0.0794612000000825,
+      "to_value": 1.164377400000376
+    },
+    {
+      "name": "ingest.plan",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 0.4276710000000321,
+      "to_value": 4.2754717000000255
+    },
+    {
+      "name": "ingest.load_schema",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 0.15983810000000176,
+      "to_value": 0.14838129999998273
+    },
+    {
+      "name": "ingest.load_nodes",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 2.913060200000018,
+      "to_value": 7.930678000000171
+    },
+    {
+      "name": "ingest.load_relationships",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 1.6739164000000528,
+      "to_value": 16.79727670000011
+    },
+    {
+      "name": "ingest.load_verify",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 0.5749974000000293,
+      "to_value": 1.883606399999735
+    },
+    {
+      "name": "ingest.build_total",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 11.29755780000005,
+      "to_value": 456.1915294000005
+    },
+    {
+      "name": "store.data_bytes",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 6555316.0,
+      "to_value": 58066741.0
+    },
+    {
+      "name": "store.tx_log_bytes",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 3178389.0,
+      "to_value": 35249117.0
+    },
+    {
+      "name": "store.page_cache_needed_bytes",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 7866379.199999999,
+      "to_value": 69680089.2
+    },
+    {
+      "name": "store.metrics_bytes",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 41960.0,
+      "to_value": 41960.0
+    },
+    {
+      "name": "startup.rebuild",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 5.6165825000000495,
+      "to_value": 402.56357620000017
+    },
+    {
+      "name": "startup.graph_view",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 0.0433947999999873,
+      "to_value": 0.4977703999993537
+    },
+    {
+      "name": "startup.tier_runs",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 0.0008103000000119209,
+      "to_value": 0.0027549999995244434
+    },
+    {
+      "name": "startup.schema_text",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 0.00011160000008203497,
+      "to_value": 0.00012309999874560162
+    },
+    {
+      "name": "startup.neo4j_open_check",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 0.041798900000003414,
+      "to_value": 0.19889060000059544
+    },
+    {
+      "name": "startup.item_graph",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 0.36572879999994257,
+      "to_value": 4.685266800001045
+    },
+    {
+      "name": "startup.total",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 6.073873400000139,
+      "to_value": 408.3426892999978
+    },
+    {
+      "name": "startup.without_rebuild",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 0.4517935999999736,
+      "to_value": 5.309069299999464
+    },
+    {
+      "name": "startup.context_rag_build",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 0.7875070000000051,
+      "to_value": 8.538676399999531
+    },
+    {
+      "name": "process.baseline_bytes",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 182378496.0,
+      "to_value": 182276096.0
+    },
+    {
+      "name": "process.peak_bytes",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 346423296.0,
+      "to_value": 1803264000.0
+    },
+    {
+      "name": "neo4j.rss_bytes",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 1331228672.0,
+      "to_value": 1436479488.0
+    },
+    {
+      "name": "neo4j.page_cache_used_bytes",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 87878731.0,
+      "to_value": 139899756.0
+    },
+    {
+      "name": "memory.view_bytes",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 8962850.0,
+      "to_value": 98539214.0
+    },
+    {
+      "name": "memory.item_graph_bytes",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 26235475.0,
+      "to_value": 278498078.0
+    },
+    {
+      "name": "memory.traced_peak_bytes",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 42909445.0,
+      "to_value": 456583148.0
+    },
+    {
+      "name": "agent.local_median_s",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 0.0010965499998292216,
+      "to_value": 0.0012620000006791088
+    },
+    {
+      "name": "agent.local_p90_s",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 0.039564710000127,
+      "to_value": 0.5025921600000404
+    },
+    {
+      "name": "agent.local_sum_s",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 7.3860653999950046,
+      "to_value": 89.5497410999933
+    },
+    {
+      "name": "agent.token_usd_per_question",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 0.0015549363392857141,
+      "to_value": 0.0017030558214285714
+    },
+    {
+      "name": "cypher.local_median_s",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 0.06433710000055726,
+      "to_value": 0.17748179999762215
+    },
+    {
+      "name": "cypher.local_p90_s",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 0.9877751800064289,
+      "to_value": 31.80139064000323
+    },
+    {
+      "name": "cypher.local_sum_s",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 1308.673524200094,
+      "to_value": 4116.575820500046
+    },
+    {
+      "name": "cypher.token_usd_per_question",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 0.000756854375,
+      "to_value": 0.0007525362946428571
+    },
+    {
+      "name": "cypher_db_only.local_median_s",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 0.03914975000003551,
+      "to_value": 0.06992255000022851
+    },
+    {
+      "name": "cypher_db_only.local_p90_s",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 0.61215799999992,
+      "to_value": 7.539003129999628
+    },
+    {
+      "name": "cypher_db_only.local_sum_s",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 401.06007639999723,
+      "to_value": 1785.7921261000056
+    },
+    {
+      "name": "cypher_db_only.token_usd_per_question",
+      "from_corpus": "H100g2",
+      "to_corpus": "H1000g2",
+      "from_value": 0.000756854375,
+      "to_value": 0.0007525362946428571
+    }
+  ],
+  "reference_price": null,
+  "money": []
+}

@@ -307,3 +307,31 @@ change, not a measurement (§12 Q3). Re-measuring runs older than the adopted po
 All five accepted as recommended: (1) keep the money column, AWS EC2 on-demand Frankfurt, hand-filled with URL and
 access date; (2) D4000 for corpus-level quantities; (3) startup without regeneration by subtracting the measured
 stage, no saved-graph path; (4) one memory probe per corpus; (5) INF-T1 lands before the sealed H100/H1000 run.
+
+## v2 addendum (INFRA-2)
+
+The same measurement for the tuned system V2T-A (ADR-0061, frozen at E7 `fdad31f`) on the sealed v2 corpora.
+Script: `data/runs/exp0007/run_infra_v2.sh` (`--check` validates the inputs and touches nothing). Choices, decided:
+
+- **Corpora H100g2 and H1000g2**, built exactly as R5 builds them (`load_corpus`, `sealed_sheets`, `sealed_dup_args`
+  and the registered `test-seed`), so the measured store is the one R5's answers came from. Store profile
+  `plant_lines`, which is what V2T-A's Cypher tier reads. An optional `H4000g2` only when `CORPORA` is overridden
+  (it needs `INFRA_H4000G2_SEED`, no test seed is registered for it, and it gets ingest and probes only): default off.
+- **REPS=3 fresh-database ingests per corpus**, the last stays loaded: same repeat count as INFRA-1, so the spread is
+  comparable.
+- **Cache-only replays at concurrency 1** of `S7-CYP-<c>` and `S7-AG-<c>` with the R5 setting A parameters, new run
+  ids `INF2-CYP-<c>` and `INF2-AG-<c>` under a new runs root `data/runs/exp0007/infra/runs`: no existing run is
+  overwritten. `replay_check.txt` reads identical / different / cache_miss. A cache miss at 1,000 sheets is expected
+  near the 30 s Cypher limit (`sealed/replays/INF-S7-CYP-H1000g2/timing_note.md`): it is recorded and the report
+  falls back to the original run for that row; it is not a failure.
+- **`infra-cypher-replay`** (database time only, no model) for `S7-CYP-<c>`, as `INF2-CYPDB-<c>`: a lower bound
+  that does not depend on the cache.
+- **`infra-probe`** timing REPS times plus one memory probe per corpus, with the V2T tier runs. The policy is
+  `cascade_v4`, not `cascade_v4_iso`: the probe refuses label-routed policies (a free-text question has no need
+  label) and the two differ only by that routing, so startup is the same. The probe files are frozen at E7, so this
+  was solved in the script, not in the code.
+- **`infra-report`** into `data/runs/exp0007/infra/report.md`. `STRATEGY_NEEDS` (not an E7 file) gained
+  `cypher_rag_lines` (database, no in-memory graph) and `graph_agent_lines` (in-memory graph, no database).
+- **At the end Neo4j is restored** with `restore_d1000` from `lib.sh`, the step `run_sealed.sh` calls as
+  `restore_d1000_a`: D1000 alone, when the target is the plant database (`E7_TARGET_IS_PLANT_DB=yes`), because the
+  demo expects that one corpus.

@@ -120,6 +120,17 @@ def test_compute_row_splits_db_graph_api_and_other() -> None:
     assert row.token_usd_per_question == pytest.approx(0.01)
 
 
+@pytest.mark.parametrize(
+    ("strategy", "needs_database", "needs_memory_graph"),
+    [("cypher_rag_lines", True, False), ("graph_agent_lines", False, True)],
+)
+def test_compute_row_knows_the_v2t_strategies(
+    strategy: str, needs_database: bool, needs_memory_graph: bool
+) -> None:
+    row = compute_row(run("tier", "H100g2", [timing(1.0)], strategy=strategy))
+    assert (row.needs_database, row.needs_memory_graph) == (needs_database, needs_memory_graph)
+
+
 def test_parts_exceeding_the_whole_are_counted_as_violations() -> None:
     bad = run("cypher", "D100", [timing(0.1, db=0.2), timing(0.1)])
     check = _check(build_infra_report(_inputs(runs=[bad])).checks, "M3")

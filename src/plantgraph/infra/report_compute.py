@@ -13,6 +13,9 @@ STRATEGY_NEEDS: dict[str, tuple[bool, bool]] = {
     "cypher_rag_plant": (True, False),
     "graph_agent_low_steps": (False, True),
     "hierarchical_need_rules_plant": (False, True),
+    # the tuned system V2T-A (ADR-0061): same needs as its F1 counterparts
+    "cypher_rag_lines": (True, False),
+    "graph_agent_lines": (False, True),
 }
 
 
