@@ -6,6 +6,11 @@ python -m plantgraph.exp0004 decide DIR --decider d1 --taus-json DIR/taus.json
 python -m plantgraph.exp0004 score DIR
 python -m plantgraph.exp0004 links DIR --decider d2 [--out links.json]
 python -m plantgraph.exp0004 report DIR --out report.md
+
+The model-calling commands are cache-only unless --allow-paid-calls (needs --max-spend-usd):
+python -m plantgraph.exp0004 decide DIR --decider d4 [--allow-paid-calls --max-spend-usd 0.1]
+python -m plantgraph.exp0004 pilot DIR --n 20 [--allow-paid-calls --max-spend-usd 0.05]
+python -m plantgraph.exp0004 open100 --out FILE [--allow-paid-calls --max-spend-usd 0.01]
 """
 
 from __future__ import annotations
@@ -13,7 +18,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from plantgraph.exp0004 import commands
+from plantgraph.exp0004 import commands, d4_cli
 from plantgraph.exp0004.bootstrap import N_RESAMPLES
 from plantgraph.exp0004.corpus import ALL_FAMILIES, DEV_SEED, CorpusSpec, corpus_id_for
 from plantgraph.exp0004.deciders import DECIDER_IDS
@@ -22,7 +27,9 @@ from plantgraph.exp0004.deciders import DECIDER_IDS
 def main(argv: list[str] | None = None) -> None:
     """Parse the command line and run one step."""
     args = _parser().parse_args(argv)
-    if args.command == "build":
+    if d4_cli.is_llm_command(args):
+        d4_cli.run_llm_command(args)
+    elif args.command == "build":
         commands.build(_spec(args), args.out)
     elif args.command == "tune":
         print(commands.tune_thresholds(args.directory).model_dump_json())
@@ -69,6 +76,7 @@ def _parser() -> argparse.ArgumentParser:
     decide.add_argument("directory", type=Path)
     decide.add_argument("--decider", choices=DECIDER_IDS, required=True)
     decide.add_argument("--taus-json", type=Path, help="needed for d1 and d2")
+    d4_cli.add_llm_arguments(decide)  # only read for --decider d4
 
     score = steps.add_parser("score", help="score all decisions with bootstrap intervals")
     score.add_argument("directory", type=Path)
@@ -78,6 +86,15 @@ def _parser() -> argparse.ArgumentParser:
     links.add_argument("directory", type=Path)
     links.add_argument("--decider", choices=DECIDER_IDS, required=True)
     links.add_argument("--out", type=Path)
+
+    pilot = steps.add_parser("pilot", help="D4 on a sample of a dev corpus: parse-failure rate")
+    pilot.add_argument("directory", type=Path)
+    pilot.add_argument("--n", type=int, default=20, help="number of pairs (default 20)")
+    d4_cli.add_llm_arguments(pilot)
+
+    open100 = steps.add_parser("open100", help="D4 on the OPEN100 text-only cards (qualitative)")
+    open100.add_argument("--out", type=Path, required=True)
+    d4_cli.add_llm_arguments(open100)
 
     report = steps.add_parser("report", help="Markdown report over scored corpora")
     report.add_argument("directories", type=Path, nargs="+")

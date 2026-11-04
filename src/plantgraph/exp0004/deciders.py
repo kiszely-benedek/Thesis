@@ -14,6 +14,7 @@ from pydantic import BaseModel, ConfigDict
 from plantgraph.benchmark.models import IdentityGroup
 from plantgraph.eval.resolution_scoring import PairScore, score_identity_groups
 from plantgraph.exp0004.corpus import Corpus, content_keys
+from plantgraph.exp0004.d4_stats import LlmStats
 from plantgraph.exp0004.metrics import Counts, Prf, prf_of
 from plantgraph.exp0004.pairs import is_true_pair
 from plantgraph.resolution.identity_candidates import CandidatePair, ContentKey
@@ -25,7 +26,7 @@ from plantgraph.resolution.identity_deciders import (
 )
 from plantgraph.resolution.identity_links import IdentityLinkSet, decide_links, group_with_links
 
-DECIDER_IDS = ("d0", "d1", "d2")
+DECIDER_IDS = ("d0", "d1", "d2", "d4")  # d4 is the chat model: built in `d4_session`
 
 
 class DeciderRun(BaseModel):
@@ -41,16 +42,19 @@ class DeciderRun(BaseModel):
     group_level: PairScore
     n_dropped_one_to_one: int
     n_identity_conflicts: int
+    llm: LlmStats | None = None  # D4 only: calls, parse failures, cost, latency
 
 
 def make_decider(decider_id: str, tau: float | None) -> PairDecider:
-    """D0 takes no threshold; D1 and D2 need one.
+    """D0 takes no threshold; D1 and D2 need one; D4 is not built here.
 
     Raises:
-        ValueError: unknown id, or a missing threshold for D1 or D2.
+        ValueError: unknown id, D4 (it needs a model client), or a missing threshold.
     """
     if decider_id == "d0":
         return ExactTagDecider()
+    if decider_id == "d4":
+        raise ValueError("expected d4 to be built with a chat client (d4_session), not here")
     if decider_id not in DECIDER_IDS:
         raise ValueError(f"expected a decider id in {DECIDER_IDS}, got {decider_id!r}")
     if tau is None:

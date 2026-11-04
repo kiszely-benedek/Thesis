@@ -22,6 +22,7 @@ from plantgraph.exp0004.bootstrap import (
     paired_difference,
     resample_f1,
 )
+from plantgraph.exp0004.d4_stats import LlmStats
 from plantgraph.exp0004.deciders import DeciderRun, count_outcomes
 from plantgraph.exp0004.metrics import Counts, Prf, prf_of
 from plantgraph.exp0004.pairs import NONE, PairRecord
@@ -60,6 +61,7 @@ class DeciderScore(BaseModel):
     n_dropped_one_to_one: int
     n_identity_conflicts: int
     per_operator: dict[str, Recovery]
+    llm: LlmStats | None = None
 
 
 class Contrast(BaseModel):
@@ -175,6 +177,7 @@ def _decider_score(
         n_dropped_one_to_one=run.n_dropped_one_to_one,
         n_identity_conflicts=run.n_identity_conflicts,
         per_operator=_per_operator(run, pairs),
+        llm=run.llm,
     )
 
 

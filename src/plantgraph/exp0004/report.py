@@ -28,6 +28,7 @@ def _corpus_section(score: ScoreFile) -> list[str]:
         "",
         *_operator_table(score.deciders),
         "",
+        *_llm_table(score.deciders),
         *_contrast_table(score.contrasts),
         "",
     ]
@@ -79,6 +80,25 @@ def _operator_table(deciders: Sequence[DeciderScore]) -> list[str]:
                 f"| {decider.decider} | {operator} | {recovery.gold} | {recovery.recovered} |"
             )
     return lines
+
+
+def _llm_table(deciders: Sequence[DeciderScore]) -> list[str]:
+    """Calls, parse failures, spend and latency of the model-based deciders (empty if none)."""
+    with_llm = [(d.decider, d.llm) for d in deciders if d.llm is not None]
+    if not with_llm:
+        return []
+    lines = [
+        "### Model calls",
+        "",
+        "| decider | calls | cache hits | parse failures | spent USD | latency p50 s | p95 s |",
+        "|---|---|---|---|---|---|---|",
+    ]
+    for name, llm in with_llm:
+        lines.append(
+            f"| {name} | {llm.n_calls} | {llm.n_cache_hits} | {llm.n_parse_failures} | "
+            f"{llm.cost_usd_spent:.6f} | {_num(llm.latency_p50_s)} | {_num(llm.latency_p95_s)} |"
+        )
+    return [*lines, ""]
 
 
 def _contrast_table(contrasts: Sequence[Contrast]) -> list[str]:
