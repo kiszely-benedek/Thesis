@@ -2,7 +2,7 @@
 run: EXP-0007 R5, the sealed v2 test of the frozen system V2T-A, with F1 as a baseline
 date: 2026-10-31
 commits: E7 fdad31f, test set f3c0c00, run order aeb2801, replay gate c77441d, cap raise 59b084d
-status: in progress (headline done; descriptive arms d0 / d50 / C1 and the F1 baseline running)
+status: done (all steps finished 2026-10-31 22:37, exit 0; this note completed 2026-11-04)
 design: EXP-0007-v2-remeasurement-plan.md; ADR-0053 (claims), ADR-0060, ADR-0061, ADR-0062
 ---
 
@@ -65,9 +65,56 @@ the gold definition itself is debatable.
   (`replays/INF-S7-CYP-H1000g2/timing_note.md`). The other three headline replays are identical.
 - `S7-AG-H1000g2` hit its $1.00 cap at 535/560; resumed after the user approved $0.90 in all (`59b084d`); 559
   answered, 1 parse failure.
-- Spend to S7-CYP-H100g2d0 ≈ $3.08 by the call records.
+- `INF-S7F1-CYP-H1000g2` stopped after 172 rows, all equal to the run, at `H1000g2:UPSTREAM_SOURCES:P-34403`: in the
+  run that query hit the 30 s server timeout (`RETRIEVAL_ERROR`, scored wrong), in the replay it finished inside the
+  limit and asked for an answer step the cache does not hold — the mirror of the case above
+  (`replays/INF-S7F1-CYP-H1000g2/timing_note.md`; not re-checked on the database). The other eleven replays
+  (d0, d50, C1, F1 agent, F1 Cypher H100g2) are identical.
+- The F1 tier reloads each headline corpus with the plain `plant` profile (`load_plain_<c>`), which rewrites
+  `neo4jplant/<c>/ingest.json`. The committed `ingest.json` (profile `plant_lines`) is the headline load and equals
+  `logs/load_<c>_plant_lines.json`; the F1 load is kept in `logs/load_<c>_plant.json`.
+- **Spend, from the per-call records** (`runs/*/calls.jsonl`, response `cost_usd`, cached calls excluded):
+  $6.17 in all — headline V2T $2.67 (agent $0.954 / $0.870, Cypher $0.420 / $0.423 at H1000g2 / H100g2, smokes
+  $0.002), d0 + d50 $1.78, C1 $0.055, F1 baseline $1.67.
 
-## Still to come
+## Descriptive arms and the F1 baseline (finished 2026-10-31 22:37)
 
-Descriptive arms H100g2d0 / H100g2d50 (duplication rate), the C1 subset, the F1 baseline (cascade_v3) on
-H100g2 / H1000g2, the duplication and per-corpus tune reports.
+### F1 (cascade_v3, frozen at `07d4029`) on the same questions
+
+Source: `report_f1_baseline/report.md`.
+
+| Policy, headline scope (n = 440) | H100g2 | H1000g2 | median / p90 s at H1000g2 |
+|---|---|---|---|
+| cascade_v3 (F1's primary) | 382/440 0.868 [0.833, 0.897] | 366/440 0.832 [0.794, 0.864] | 11.6 / 53.9 |
+| always_g_luna (agent only) | 357/440 0.811 [0.772, 0.845] | 344/440 0.782 [0.741, 0.818] | 10.2 / 33.2 |
+| always_c_luna (Cypher only) | 257/440 0.584 [0.538, 0.629] | 249/440 0.566 [0.519, 0.611] | 8.0 / 38.0 |
+
+F1's own claims on H1000g2: Q4 PASS (−0.036 [−0.084, +0.011], e −0.008), K1 FAIL (no saving in $ or latency),
+K2 PASS (+0.165), K3 FAIL (median 11.6 s), Q5 PASS (+0.216). Held-out: cascade_v3 0.760 (H100g2) and 72/100 (H1000g2).
+V2T-A against F1, headline scope, unpaired difference of the two proportions: +0.043 at H100g2 (401 vs 382) and
++0.059 at H1000g2 (392 vs 366). **Descriptive** — not a registered claim, no interval computed here.
+
+### Duplication rate (cascade_v4_iso, descriptive)
+
+Source: `report_duplication/duplication.md`.
+
+| Corpus | Duplication | n | acc@120 |
+|---|---|---|---|
+| H100g2d0 | 0 % | 420 | 0.919 [0.889, 0.941] |
+| H100g2 | 25 % | 440 | 0.911 [0.881, 0.934] |
+| H100g2d50 | 50 % | 440 | 0.916 [0.886, 0.938] |
+
+Paired on common question stems: +0.000 [−0.012, +0.012] (25 % − 0 %), −0.004 [−0.013, +0.000] (50 % − 0 %).
+Within this range, how often an item is drawn on several sheets does not move accuracy.
+
+### C1, the concurrency-1 control (agent tier, H1000g2, 46 questions)
+
+Computed from `runs/S7-AG-H1000g2-C1/answers.jsonl` against the same 46 questions in `runs/S7-AG-H1000g2`:
+42/46 correct in both runs, the per-question verdict agrees on 44/46; latency median 2.5 s vs 2.4 s, p90 5.2 s vs
+4.8 s. Running at concurrency 4 did not change the agent's accuracy or its latency measurably on this subset.
+
+### Per-corpus tune reports (setting A, all 560 questions)
+
+Source: `tune_reports/<corpus>/tune_report.md`. cascade_v4_iso 510/560 (H100g2) and 502/560 (H1000g2) within 120 s,
+505/560 uncut at H1000g2 (8 answers beyond the limit); oracle (either tier correct) 528 / 518; the Cypher tier is
+accepted on 437 / 428 questions, 408 / 409 of them correct.

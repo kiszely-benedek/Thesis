@@ -1,0 +1,75 @@
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `dexpi_class` does not exist in database `e7tune`. Verify that the spelling is correct.', position=<SummaryInputPosition line=2, column=88, offset=126>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 126, 'line': 2, 'column': 88}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: "MATCH (item:PlantItem {tag: 'P-1102'})\nRETURN item.tag AS tag, labels(item) AS item_type, item.node_class AS node_class, item.dexpi_class AS dexpi_class"
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `dexpi_class` does not exist in database `e7tune`. Verify that the spelling is correct.', position=<SummaryInputPosition line=2, column=57, offset=97>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 97, 'line': 2, 'column': 57}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: 'MATCH (item:PlantItem {tag: "BV-35004"})\nRETURN item.tag AS tag, labels(item) AS item_type, item.dexpi_class AS dexpi_class'
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `dexpi_class` does not exist in database `e7tune`. Verify that the spelling is correct.', position=<SummaryInputPosition line=2, column=30, offset=76>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 76, 'line': 2, 'column': 30}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: "MATCH (item:PlantItem {loop_tag: 'LIC-41017'})\nRETURN item.tag AS tag, item.dexpi_class AS component_type, labels(item) AS labels"
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `dexpi_class` does not exist in database `e7tune`. Verify that the spelling is correct.', position=<SummaryInputPosition line=2, column=75, offset=116>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 116, 'line': 2, 'column': 75}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: 'MATCH (item:PlantItem {tag: "GTV-47004"})\nRETURN item.tag AS tag, labels(item) AS equipment_or_component_type, item.dexpi_class AS dexpi_class, item.category AS category, item.piping_component_name AS piping_component_name, item.node_class AS node_class, item.dexpl_labels AS dexpi_labels'
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `category` does not exist in database `e7tune`. Verify that the spelling is correct.', position=<SummaryInputPosition line=2, column=108, offset=149>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 149, 'line': 2, 'column': 108}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: 'MATCH (item:PlantItem {tag: "GTV-47004"})\nRETURN item.tag AS tag, labels(item) AS equipment_or_component_type, item.dexpi_class AS dexpi_class, item.category AS category, item.piping_component_name AS piping_component_name, item.node_class AS node_class, item.dexpl_labels AS dexpi_labels'
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `piping_component_name` does not exist in database `e7tune`. Verify that the spelling is correct.', position=<SummaryInputPosition line=2, column=135, offset=176>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 176, 'line': 2, 'column': 135}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: 'MATCH (item:PlantItem {tag: "GTV-47004"})\nRETURN item.tag AS tag, labels(item) AS equipment_or_component_type, item.dexpi_class AS dexpi_class, item.category AS category, item.piping_component_name AS piping_component_name, item.node_class AS node_class, item.dexpl_labels AS dexpi_labels'
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `dexpl_labels` does not exist in database `e7tune`. Verify that the spelling is correct.', position=<SummaryInputPosition line=2, column=219, offset=260>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 260, 'line': 2, 'column': 219}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: 'MATCH (item:PlantItem {tag: "GTV-47004"})\nRETURN item.tag AS tag, labels(item) AS equipment_or_component_type, item.dexpi_class AS dexpi_class, item.category AS category, item.piping_component_name AS piping_component_name, item.node_class AS node_class, item.dexpl_labels AS dexpi_labels'
+Received notification from DBMS server: <GqlStatusObject gql_status='01N52', status_description='warn: property key does not exist. The property `dexpi_class` does not exist in database `e7tune`. Verify that the spelling is correct.', position=<SummaryInputPosition line=2, column=58, offset=98>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 98, 'line': 2, 'column': 58}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: 'MATCH (item:PlantItem {tag: "TI-27008"})\nRETURN item.tag AS tag, labels(item) AS item_types, item.dexpi_class AS dexpi_class'
+run S7F1-CYP-H100g2: 560 rows to answer, 0 already on disk
+concurrency 4: up to that many questions in flight
+paid mode: up to 560 model calls; hard spend cap 0.45 USD
+estimated cost: 0.2626 USD
+{
+  "run_id": "S7F1-CYP-H100g2",
+  "n_rows": 560,
+  "n_new_rows": 560,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "cypher_rag_plant": {
+      "0": {
+        "ANSWERED": 160,
+        "RETRIEVAL_ERROR": 73
+      },
+      "1": {
+        "ANSWERED": 99,
+        "RETRIEVAL_ERROR": 28
+      },
+      "2": {
+        "ANSWERED": 41,
+        "RETRIEVAL_ERROR": 20
+      },
+      "3-4": {
+        "ANSWERED": 22,
+        "RETRIEVAL_ERROR": 15
+      },
+      "5-8": {
+        "ANSWERED": 13,
+        "RETRIEVAL_ERROR": 5
+      },
+      "9-16": {
+        "ANSWERED": 10,
+        "RETRIEVAL_ERROR": 6
+      },
+      "17-32": {
+        "RETRIEVAL_ERROR": 4,
+        "ANSWERED": 11
+      },
+      "33+": {
+        "ANSWERED": 6,
+        "RETRIEVAL_ERROR": 7
+      },
+      "unanswerable": {
+        "ANSWERED": 33,
+        "RETRIEVAL_ERROR": 7
+      }
+    }
+  },
+  "routing_recall": {},
+  "relaxed_routing_recall": {},
+  "evidence_node_recall": {},
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {},
+    "relaxed_routing_recall": {},
+    "evidence_node_recall": {}
+  },
+  "trace_rates": {
+    "cypher_rag_plant": {
+      "truncated_rate": 0.007594936708860759
+    }
+  },
+  "mean_total_cost_usd": {
+    "cypher_rag_plant": 0.0004637829464285714
+  },
+  "stopped_by_spend_cap": false
+}

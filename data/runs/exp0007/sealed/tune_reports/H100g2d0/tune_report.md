@@ -1,0 +1,15 @@
+# V2T tuning: H100g2d0, setting A
+
+Cypher timeout 30 s; limit 120 s (question deadline). 530 questions. Primary number: accuracy within 120 s.
+
+| policy | uncut | acc@120 | acc@300 | in limit | beyond | oracle gap | p50 s | p90 s |
+|---|---|---|---|---|---|---|---|---|
+| cascade_v4 | 474/530 | 474/530 | 474/530 | 474/530 | 0 | 19 | 6.6 | 41.6 |
+| cascade_v4_iso | 482/530 | 482/530 | 482/530 | 482/530 | 0 | 11 | 6.6 | 41.6 |
+
+Cypher tier: 397/530 accepted (369 correct); rejected by rule: answered 46, complete 2, not_abstained 21, rows 64; correct answers rejected only for being cut at the row cap: 0.
+
+Oracle (either tier correct): 493/530.
+
+Variant choice: not defined here (the rule is fixed on the tuning set only).
+

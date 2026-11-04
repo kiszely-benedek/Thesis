@@ -1,0 +1,79 @@
+{
+  "points": [
+    {
+      "corpus_id": "H100g2d0",
+      "duplication_percent": 0,
+      "n": 420,
+      "correct_at_120": 386,
+      "acc_at_120": {
+        "estimate": 0.919047619047619,
+        "ci_low": 0.8890052004952881,
+        "ci_high": 0.9414937406185618
+      }
+    },
+    {
+      "corpus_id": "H100g2",
+      "duplication_percent": 25,
+      "n": 440,
+      "correct_at_120": 401,
+      "acc_at_120": {
+        "estimate": 0.9113636363636364,
+        "ci_low": 0.8811225309901145,
+        "ci_high": 0.93448375737943
+      }
+    },
+    {
+      "corpus_id": "H100g2d50",
+      "duplication_percent": 50,
+      "n": 440,
+      "correct_at_120": 403,
+      "acc_at_120": {
+        "estimate": 0.9159090909090909,
+        "ci_low": 0.8862403114323426,
+        "ci_high": 0.9383782011180807
+      }
+    }
+  ],
+  "pairs": [
+    {
+      "high": "H100g2",
+      "low": "H100g2d0",
+      "n_common": 254,
+      "n_only_high": 186,
+      "n_only_low": 166,
+      "delta": 0.0,
+      "ci": {
+        "estimate": 0.0,
+        "ci_low": -0.011811023622047244,
+        "ci_high": 0.011811023622047244
+      }
+    },
+    {
+      "high": "H100g2d50",
+      "low": "H100g2d0",
+      "n_common": 237,
+      "n_only_high": 203,
+      "n_only_low": 183,
+      "delta": -0.004219409282700422,
+      "ci": {
+        "estimate": -0.004219409282700422,
+        "ci_low": -0.012658227848101266,
+        "ci_high": 0.0
+      }
+    },
+    {
+      "high": "H100g2d50",
+      "low": "H100g2",
+      "n_common": 280,
+      "n_only_high": 160,
+      "n_only_low": 160,
+      "delta": -0.0035714285714285713,
+      "ci": {
+        "estimate": -0.0035714285714285713,
+        "ci_low": -0.010714285714285714,
+        "ci_high": 0.0
+      }
+    }
+  ],
+  "policy": "cascade_v4_iso"
+}

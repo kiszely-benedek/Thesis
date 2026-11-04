@@ -1,0 +1,62 @@
+run S7-AG-H1000g2-C1: 46 rows to answer, 0 already on disk
+paid mode: up to 46 model calls; hard spend cap 0.1 USD
+estimated cost: 0.0611 USD
+{
+  "run_id": "S7-AG-H1000g2-C1",
+  "n_rows": 46,
+  "n_new_rows": 46,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "graph_agent_lines": {
+      "0": {
+        "ANSWERED": 24
+      },
+      "1": {
+        "ANSWERED": 15
+      },
+      "2": {
+        "ANSWERED": 3
+      },
+      "unanswerable": {
+        "ANSWERED": 4
+      }
+    }
+  },
+  "routing_recall": {
+    "graph_agent_lines": 0.9523809523809523
+  },
+  "relaxed_routing_recall": {
+    "graph_agent_lines": 0.9523809523809523
+  },
+  "evidence_node_recall": {
+    "graph_agent_lines": 0.8903761722470916
+  },
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {
+      "graph_agent_lines": {
+        "0": 0.9583333333333334,
+        "1": 0.9333333333333333,
+        "2": 1.0
+      }
+    },
+    "relaxed_routing_recall": {
+      "graph_agent_lines": {
+        "0": 0.9583333333333334,
+        "1": 0.9333333333333333,
+        "2": 1.0
+      }
+    },
+    "evidence_node_recall": {
+      "graph_agent_lines": {
+        "0": 0.8861807878112226,
+        "1": 0.8728236909549479,
+        "2": 1.0
+      }
+    }
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "graph_agent_lines": 0.0012009576086956522
+  },
+  "stopped_by_spend_cap": false
+}

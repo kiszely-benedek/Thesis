@@ -1,0 +1,94 @@
+run S7F1-AG-H100g2: 560 rows to answer, 0 already on disk
+concurrency 4: up to that many questions in flight
+paid mode: up to 560 model calls; hard spend cap 0.85 USD
+estimated cost: 0.4718 USD
+{
+  "run_id": "S7F1-AG-H100g2",
+  "n_rows": 560,
+  "n_new_rows": 560,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "graph_agent_low_steps": {
+      "0": {
+        "ANSWERED": 233
+      },
+      "1": {
+        "ANSWERED": 124,
+        "PARSE_FAILURE": 3
+      },
+      "2": {
+        "ANSWERED": 61
+      },
+      "3-4": {
+        "ANSWERED": 37
+      },
+      "5-8": {
+        "ANSWERED": 18
+      },
+      "9-16": {
+        "ANSWERED": 16
+      },
+      "17-32": {
+        "ANSWERED": 15
+      },
+      "33+": {
+        "ANSWERED": 13
+      },
+      "unanswerable": {
+        "ANSWERED": 40
+      }
+    }
+  },
+  "routing_recall": {
+    "graph_agent_low_steps": 0.8903846153846153
+  },
+  "relaxed_routing_recall": {
+    "graph_agent_low_steps": 0.8923076923076924
+  },
+  "evidence_node_recall": {
+    "graph_agent_low_steps": 0.8341675393353226
+  },
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {
+      "graph_agent_low_steps": {
+        "0": 0.9957081545064378,
+        "1": 0.8740157480314961,
+        "2": 0.9344262295081968,
+        "3-4": 0.8918918918918919,
+        "5-8": 0.8888888888888888,
+        "9-16": 0.5625,
+        "17-32": 0.3333333333333333,
+        "33+": 0.0
+      }
+    },
+    "relaxed_routing_recall": {
+      "graph_agent_low_steps": {
+        "0": 0.9957081545064378,
+        "1": 0.8740157480314961,
+        "2": 0.9344262295081968,
+        "3-4": 0.8918918918918919,
+        "5-8": 0.8888888888888888,
+        "9-16": 0.5625,
+        "17-32": 0.4,
+        "33+": 0.0
+      }
+    },
+    "evidence_node_recall": {
+      "graph_agent_low_steps": {
+        "0": 0.9578497607419466,
+        "1": 0.7905896314887703,
+        "2": 0.8285761398448116,
+        "3-4": 0.7768616186762968,
+        "5-8": 0.7355924826681415,
+        "9-16": 0.5836669140721481,
+        "17-32": 0.374930746519828,
+        "33+": 0.18368282422766805
+      }
+    }
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "graph_agent_low_steps": 0.0010357378303571428
+  },
+  "stopped_by_spend_cap": false
+}
