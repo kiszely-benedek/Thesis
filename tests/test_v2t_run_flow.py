@@ -219,9 +219,12 @@ def test_r4_free_mode_shows_the_caps_and_calls_no_harness(repo: Path) -> None:
     assert not any("qa.harness" in line or "plantgraph.ingest" in line for line in lines)
 
 
+# The headline corpora run first, both tiers, so the claims exist before the descriptive arms
+# (ADR-0062, aeb2801).
 SEALED_RUNS = [
-    "S7-CYP-H100g2-SMOKE", "S7-CYP-H100g2", "S7-CYP-H1000g2", "S7-CYP-H100g2d0", "S7-CYP-H100g2d50",
-    "S7-AG-H100g2-SMOKE", "S7-AG-H100g2", "S7-AG-H1000g2", "S7-AG-H100g2d0", "S7-AG-H100g2d50",
+    "S7-CYP-H100g2-SMOKE", "S7-CYP-H100g2", "S7-CYP-H1000g2",
+    "S7-AG-H100g2-SMOKE", "S7-AG-H100g2", "S7-AG-H1000g2",
+    "S7-CYP-H100g2d0", "S7-CYP-H100g2d50", "S7-AG-H100g2d0", "S7-AG-H100g2d50",
     "S7-AG-H1000g2-C1",
 ]  # fmt: skip
 
