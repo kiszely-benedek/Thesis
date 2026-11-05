@@ -1,0 +1,33 @@
+{
+ "spec": {
+  "corpus_id": "H100g2d100V",
+  "target_sheets": 100,
+  "seed": 5002,
+  "duplication_rate": 1.0,
+  "families": [
+   "format",
+   "naming"
+  ]
+ },
+ "description": {
+  "n_units": 61,
+  "n_sheets": 100,
+  "generate_s": 14.8,
+  "n_identity_groups": 85,
+  "n_variant_draws": 85,
+  "blocking": {
+   "n_candidates": 128,
+   "n_all_pairs": 78606,
+   "n_gold_links": 85,
+   "n_gold_links_found": 85,
+   "pair_completeness": 1.0,
+   "reduction_ratio": 0.9983716255756558
+  },
+  "n_candidates_true": 85,
+  "n_candidates_false": 43,
+  "units_agree_true": 85,
+  "units_agree_false": 21,
+  "n_ambiguous_occurrences": 0,
+  "n_without_digits": 0
+ }
+}

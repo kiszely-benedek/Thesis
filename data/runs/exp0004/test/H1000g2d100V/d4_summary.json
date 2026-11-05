@@ -1,0 +1,23 @@
+{
+ "pair_level": {
+  "tp": 830,
+  "fp": 55,
+  "fn": 33,
+  "precision": 0.9378531073446328,
+  "recall": 0.9617612977983777,
+  "f1": 0.9496567505720824
+ },
+ "llm": {
+  "pin_hash": "acf24178d47dd4873fc2a36e7f67efbf2dc7ab5de694711f3b934e6ef4f4c21d",
+  "prompt_sha256": "8a4095d56d8036dad66a5cc8039a60f6ddf2ea3110a75250fb67c593bb994a98",
+  "n_calls": 1923,
+  "n_cache_hits": 529,
+  "n_parse_failures": 0,
+  "parse_failure_rate": 0.0,
+  "cost_usd_spent": 0.1480689,
+  "cost_usd_recorded": 0.2091762,
+  "n_live_calls_without_cost": 0,
+  "latency_p50_s": 3.813000000001921,
+  "latency_p95_s": 6.811999999999898
+ }
+}

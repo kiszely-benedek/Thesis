@@ -1,0 +1,50 @@
+pre-registration holds (34 hashes)
+H100g2V: finished in the first run, skipped
+H100g2d100V: finished in the first run, skipped
+=== 10:15:21 H1000g2V
+H1000g2V: 794 candidates, completeness 1.0 (I0 holds)
+H1000g2V: D4 on 794 pairs, cap $0.2037
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\exp0004\__main__.py", line 106, in <module>
+    main()
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\exp0004\__main__.py", line 31, in main
+    d4_cli.run_llm_command(args)
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\exp0004\d4_cli.py", line 49, in run_llm_command
+    _dispatch(args, options)
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\exp0004\d4_cli.py", line 61, in _dispatch
+    run = d4_commands.decide_d4(args.directory, options)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\exp0004\d4_commands.py", line 51, in decide_d4
+    run = run_decider(corpus, decider)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\exp0004\deciders.py", line 68, in run_decider
+    link_set = decide_links(pairs, decider)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\resolution\identity_links.py", line 66, in decide_links
+    decision = decider.decide(pair)
+               ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\exp0004\d4_decider.py", line 32, in decide
+    call = self.ask(pair.card)
+           ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\exp0004\d4_decider.py", line 39, in ask
+    response = self._client.complete(
+               ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\llm\client.py", line 209, in complete
+    return self._complete(request, origin, timeout_s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\llm\client.py", line 236, in _complete
+    response = self._live_call(request, origin, timeout_s)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\llm\client.py", line 277, in _live_call
+    return self._call_with_retries(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\llm\client.py", line 327, in _call_with_retries
+    return self._call_once(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\llm\client.py", line 358, in _call_once
+    choice = completion.choices[0]
+             ~~~~~~~~~~~~~~~~~~^^^
+TypeError: 'NoneType' object is not subscriptable
+exit=1

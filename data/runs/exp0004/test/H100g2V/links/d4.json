@@ -1,0 +1,271 @@
+{
+ "decider": "d4",
+ "links": [
+  {
+   "first": [
+    "72",
+    "EA-4601",
+    "AirCoolingSystem"
+   ],
+   "second": [
+    "71",
+    "EA-46-01",
+    "AirCoolingSystem"
+   ],
+   "score": 1.0,
+   "string_score": 1.0
+  },
+  {
+   "first": [
+    "58",
+    "EJ-3701A",
+    "AirEjector"
+   ],
+   "second": [
+    "57",
+    "EJ-371A",
+    "AirEjector"
+   ],
+   "score": 1.0,
+   "string_score": 0.9230769230769231
+  },
+  {
+   "first": [
+    "22",
+    "P-1301",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "21",
+    "13-P-01",
+    "CentrifugalPump"
+   ],
+   "score": 1.0,
+   "string_score": 0.8
+  },
+  {
+   "first": [
+    "52",
+    "P-3201",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "51",
+    "p-3201",
+    "CentrifugalPump"
+   ],
+   "score": 1.0,
+   "string_score": 1.0
+  },
+  {
+   "first": [
+    "59",
+    "P-3701A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "57",
+    "P-3701-A",
+    "CentrifugalPump"
+   ],
+   "score": 1.0,
+   "string_score": 1.0
+  },
+  {
+   "first": [
+    "61",
+    "P-3801A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "60",
+    "PU-3801A",
+    "CentrifugalPump"
+   ],
+   "score": 1.0,
+   "string_score": 0.9230769230769231
+  },
+  {
+   "first": [
+    "81",
+    "P-5101A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "80",
+    "PU-5101A",
+    "CentrifugalPump"
+   ],
+   "score": 1.0,
+   "string_score": 0.9230769230769231
+  },
+  {
+   "first": [
+    "16",
+    "P-901",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "15",
+    "P-9-01",
+    "CentrifugalPump"
+   ],
+   "score": 1.0,
+   "string_score": 1.0
+  },
+  {
+   "first": [
+    "97",
+    "V-6002",
+    "GravitationalSeparator"
+   ],
+   "second": [
+    "98",
+    "U60-V-02",
+    "GravitationalSeparator"
+   ],
+   "score": 1.0,
+   "string_score": 0.7272727272727273
+  },
+  {
+   "first": [
+    "51",
+    "V-3201",
+    "PressureVessel"
+   ],
+   "second": [
+    "52",
+    "U32-V-01",
+    "PressureVessel"
+   ],
+   "score": 1.0,
+   "string_score": 0.7272727272727273
+  },
+  {
+   "first": [
+    "89",
+    "V-5601",
+    "PressureVessel"
+   ],
+   "second": [
+    "90",
+    "D-5601",
+    "PressureVessel"
+   ],
+   "score": 1.0,
+   "string_score": 0.8
+  },
+  {
+   "first": [
+    "43",
+    "T-2701",
+    "ProcessColumn"
+   ],
+   "second": [
+    "44",
+    "T2701",
+    "ProcessColumn"
+   ],
+   "score": 1.0,
+   "string_score": 1.0
+  },
+  {
+   "first": [
+    "57",
+    "T-3701",
+    "ProcessColumn"
+   ],
+   "second": [
+    "59",
+    "37-T-01",
+    "ProcessColumn"
+   ],
+   "score": 1.0,
+   "string_score": 0.8
+  },
+  {
+   "first": [
+    "3",
+    "P-201",
+    "ReciprocatingPump"
+   ],
+   "second": [
+    "2",
+    "2-P-01",
+    "ReciprocatingPump"
+   ],
+   "score": 1.0,
+   "string_score": 0.75
+  },
+  {
+   "first": [
+    "38",
+    "P-2401B",
+    "ReciprocatingPump"
+   ],
+   "second": [
+    "37",
+    "P-24-01B",
+    "ReciprocatingPump"
+   ],
+   "score": 1.0,
+   "string_score": 1.0
+  },
+  {
+   "first": [
+    "10",
+    "P-601",
+    "RotaryPump"
+   ],
+   "second": [
+    "9",
+    "P.601",
+    "RotaryPump"
+   ],
+   "score": 1.0,
+   "string_score": 1.0
+  },
+  {
+   "first": [
+    "10",
+    "P-602",
+    "RotaryPump"
+   ],
+   "second": [
+    "9",
+    "P-6-02",
+    "RotaryPump"
+   ],
+   "score": 1.0,
+   "string_score": 1.0
+  },
+  {
+   "first": [
+    "0",
+    "TK-101",
+    "Tank"
+   ],
+   "second": [
+    "1",
+    "U1-TK-01",
+    "Tank"
+   ],
+   "score": 1.0,
+   "string_score": 0.7272727272727273
+  },
+  {
+   "first": [
+    "68",
+    "TK-4402",
+    "Tank"
+   ],
+   "second": [
+    "69",
+    "TK 4402",
+    "Tank"
+   ],
+   "score": 1.0,
+   "string_score": 1.0
+  }
+ ]
+}
