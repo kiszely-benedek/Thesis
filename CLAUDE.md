@@ -2,7 +2,7 @@
 
 ## What this is
 
-A BSc thesis (BME VIK mérnökinformatikus, TMIT szakdolgozat; **in Hungarian** (user, 2026-10-05)) testing one claim:
+A BSc thesis (BME VIK mérnökinformatikus, TMIT szakdolgozat; **in English** (user, 2026-11-05; Hungarian from 10-05 to 11-05)) testing one claim:
 
 > The optimal retrieval strategy for GraphRAG over engineering diagrams is a **function of corpus scale**. The published optimum — serializing a condensed single-sheet graph into the prompt (ChatP&ID, 0.91 accuracy) — is an artifact of single-page evaluation and inverts at plant scale.
 

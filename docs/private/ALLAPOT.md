@@ -1,56 +1,53 @@
 # Állapot — egy pillantásra
 
-**Frissítve: 2026-10-31 (szombat).**
+**Frissítve: 2026-11-05 (csütörtök).**
 Ezt az oldalt a `/log-progress` frissíti minden munkamenet végén. A részletek a heti naplóban vannak
-(`50-progress/2026-W44.md`), a mérések a `30-experiments/`-ben, a döntések a `20-decisions/`-ben.
+(`50-progress/2026-W45.md`), a mérések a `30-experiments/`-ben, a döntések a `20-decisions/`-ben.
 
 ## Egy mondatban
 
-Az R5 (lezárt v2-teszt a hangolt V2T-A rendszerrel) fő része kész: a fő rendszer 0,911 (100 lap) és 0,891
-(1 000 lap), a fő állítás (Q4: a pontosság nem romlik a méretezéssel) teljesül; a gyenge pont az elzárási kérdések
-(a hangoláskor nem látott típusokon 0,740); a leíró mérések és a régi rendszerrel való összevetés még futnak.
+Az EXP-0004 (ugyanannak a berendezésnek a lapokon eltérően írt azonosítói) fizetős P3 mérése kész, és minden előre
+rögzített állítás teljesült: a nyelvi modelles döntő a nem hangolt elnevezési variánsokon 0,983, a szabályalapú 0,347;
+most futnak az ingyenes próbafutások a végpontok közötti (kérdés-válasz) mérés költségkorlátjához.
 
 ## Fázisok
 
 | # | Fázis | Állapot |
 |---|---|---|
 | 1–4b | v1: benchmark, tudásgráf, Q&A, fő kísérlet, egylapos vég | ✔ kész (EXP-0001, EXP-0002; befagyasztva F1 `07d4029`) |
-| 6b | Alkalmazás / demó | ✔ kész; v2-rajzjelek `3181573` (10-27) |
-| v2 | Valósághű generátor (ADR-0057/0058/0059) | ✔ kész: T0 `0ba680a` … T16 `917b4c3` (10-25 → 10-27) |
-| v2-mérés | EXP-0007 (ADR-0060): R0–R3, próba, minőségellenőrzés | ✔ kész (`3f91905`, `133b7f7`, `02af1df`) |
-| V2T | Hangolt rendszer (ADR-0061): építés, 3 hangolási kör, ellenőrzés | ✔ kész (`c51c83e`, 10-29) |
-| R4/R5 | Lezárt v2-mérések a hangolt rendszerrel (V2T-A) | 🟡 E7, R4 kész (`fdad31f`, `87eb79e`); R5 fő része kész, a többi fut |
-| 7 | Dolgozat írása | 🟡 folyamatban |
+| 6b | Alkalmazás / demó | ✔ v1 kész; v2 (kérdéstípus szerinti útválasztás, H1000g2 üzem) tervezve: ADR-0064 `9bc93d5` |
+| v2 | Valósághű generátor (ADR-0057/0058/0059) | ✔ kész: T0 `0ba680a` … T16 `917b4c3` |
+| v2-mérés | EXP-0007: hangolt rendszer V2T-A, R4, R5, INFRA-2 | ✔ kész (`87eb79e`, `92ae22e`, `fe48a3e`) |
+| EXP-0004 | Tag-variánsok azonosítása lapok között (ADR-0063) | 🟡 P3 kész (`1ad5d99`); P4 próbafutás fut |
+| 7 | Dolgozat írása | ⬜ később indul |
 
 ## Feladatok (a legutóbbiak)
 
 | Feladat | Mit csinál | Állapot | Commit | Dátum |
 |---|---|---|---|---|
-| T0–T16 | Generátor v2 | ✔ | `0ba680a` … `917b4c3` | 10-25 → 10-27 |
-| RM-T1…T4 | Mérőeszközök a v2-mérésekhez | ✔ | `dc19941`, `5eb4266` | 10-27 |
-| — | Próba + minőségellenőrzés a régi rendszerrel (D100g2) | ✔ | `133b7f7`, `02af1df` | 10-27 |
-| QT-0…QT-7 | Hangolt rendszer (V2T) megépítése | ✔ | `6eccf2e` … `c6260dc` | 10-28 |
-| — | 3 hangolási kör (X100g2s211) | ✔ | `785316e`, `e478c24`, `59c7eb9` | 10-28 |
-| — | Ellenőrző mérés (X100g2s212, X1000g2s213) | ✔ | `c51c83e` | 10-29 |
-| RM-T5 | R4/R5 szkriptek a V2T-A-ra (+ régi rendszer összevetésül, + ContextRAG 1–10 lapon) | ✔ | `fdad31f` | 10-29 |
-| — | E7 befagyasztás + R4 tesztkészlet | ✔ | `d72e3b5` | 10-29 |
-| — | R4 (létra) | ✔ | `87eb79e` | 10-29 |
-| — | R5 kérdésgenerálás javítása (ADR-0062) | ✔ | `28ba910` | 10-31 |
-| — | R5 tesztkészlet, futási sorrend, költségkorlát-emelés | ✔ | `f3c0c00`, `aeb2801`, `c77441d`, `59b084d` | 10-31 |
-| — | R5 fő mérés (H100g2, H1000g2) | ✔ mérve, a futás adatai még nincsenek commitolva | | 10-31 |
-| — | R5 leíró mérések (d0, d50, C1) + régi rendszer (F1) | 🟡 fut | | 10-31 |
+| — | R5 maradéka + INFRA-2 | ✔ | `92ae22e`, `fe48a3e` | 11-04 |
+| X-T1…X-T4 | Variáns-generátor, blokkolás, döntők, bekötés | ✔ | `4a84530`, `7e5cc1c`, `aa1e25c`, `226aacd` | 11-04 |
+| — | E8 befagyasztás, előzetes regisztráció | ✔ | `8c38b16`, `c6099fc` | 11-04 |
+| X-T5, X-T6 | EXP-0004 csomag, nyelvi modelles döntő (D4) | ✔ | `a8c791c`, `67a38f9` | 11-04 |
+| P3 | Fizetős mérés a négy tesztüzemen | ✔ | `1ad5d99` | 11-05 |
+| — | ADR-0049, ADR-0062, ADR-0064 elfogadva, újdonság-ellenőrzés | ✔ | `9bc93d5` | 11-05 |
+| X-T7 | Végpontok közötti mérés futtatója | ✔ | `37bee83` | 11-05 |
+| P4 próba | Ingyenes próbafutás D0, D2, D4 karra | 🟡 fut (17:44-től, kb. 3 óra) | | 11-05 |
+| P4 | Fizetős végpontok közötti mérés | ⬜ jóváhagyásra vár | | |
+| X-T8 | E2E jelentés, futási jegyzet, eredménytábla | ⬜ | | |
+| Demó v2 | T1–T7 | ⬜ | | |
 
 ## Ellenőrzőpontok
 
 | Pont | Mi kell hozzá | Hol tartunk |
 |---|---|---|
-| R5 lezárva | minden lépés lefut, jelentések, futási jegyzet | 🟡 a fő rész kész, a többi néhány óra |
+| EXP-0004 lezárva | P4 + X-T8 | 🟡 a próbafutás megy, utána fizetős P4 |
+| „Végleges” kód | X-T8 commitolva, eredménytábla teljes, tesztek zöldek | 🟡 az EXP-0004 és a demó v2 van hátra |
 
 ## Mi vár rád
 
-1. **Az R5 tanulási jegyzetének átolvasása** (`docs/Notes/lezart-teszt-eredmenyek-olvasasa.md`), a lényege a chatben.
-2. **A commitok** a chatben megadott parancsokkal (jegyzet, napló, állapotoldal; az R5 adatai a futás végén).
-3. **A T0–T16 és a V2T átnézése** (a „Generátor v2 – átnézendő változások” dokumentum).
+1. **A P4 költségkorlátjának jóváhagyása**, amikor a próbafutások végeztek (legfeljebb $4,44).
+2. **A commitok** a chatben megadott parancsokkal (napló, index, állapotoldal).
 
 ## Mit olvass el legközelebb
 

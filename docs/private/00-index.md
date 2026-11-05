@@ -46,6 +46,8 @@ Note also that the title does **not** mention the retrieval-inversion claim. Tha
 
 **2026-10-31: R4 done (`87eb79e`, `30-experiments/EXP-0007-R4-ladder.md`): cascade_v4_iso 0.957 / 0.885 / 0.909 / 0.924 at 1 / 3 / 11 / 30 sheets. R5's question draw crashed in FIRST_MEETING_POINT; fixed under ADR-0062 (`28ba910`, proposed: family excluded from all sealed v2 corpora, two generators rewritten with byte-identical output). R5 test set building, then the paid R5.** **Later on 10-31: R5 headline done (report `data/runs/exp0007/sealed/report/report.md`, records uncommitted): cascade_v4_iso 401/440 0.911 (H100g2), 392/440 0.891 (H1000g2); Q4 PASS, K1 FAIL (latency), K2/K3/Q5 PASS; held-out 0.770 / 0.740, gap mostly DOWNSTREAM_ISOLATION. Descriptive arms + F1 baseline still running (`$TEMP/claude_r5.log`). Progress: `50-progress/2026-W44.md`.**
 
+**2026-11-05: R5 rest and INFRA-2 recorded (`92ae22e`, `fe48a3e`). EXP-0004 on v2 (ADR-0063): freeze E8 `4dfad69`, pre-registration `c6099fc`, P3 done (`1ad5d99`): on H1000g2d100V pair F1 D2 0.736 vs D4 (GPT-6 Luna on a pair card) 0.950; held-out naming family D2 0.347 vs D4 0.983; I0–I3 pass. ADR-0049, ADR-0062, ADR-0064 (demo v2; the Neo4j demo DB ends on H1000g2) accepted (`9bc93d5`). X-T7 end-to-end runner `37bee83`; P4 free dry runs running (`data/runs/exp0004/e2e_dry_*.log`), then paid P4 on approval, then X-T8. After that: code freeze for the user's review. Progress: `50-progress/2026-W45.md`.**
+
 **2026-10-16: demo polish ADR-0055: DP-T1…T4 committed, DP-T5 uncommitted, DP-T6…T10 next.**
 
 **2026-10-11: sealed test run done (EXP-0002, ADR-0053): frozen cascade_v3 (GPT-6 Luna, ADR-0050/0052) on held-out H100/H1000 — headline acc@120 0.937 / 0.917, $0.00065 / $0.00071 per question, primary claim Q4 PASS, K1 FAIL on headline; infra cost measured (INFRA-1, ADR-0051). EXP-0001 done (ladder 1–30 sheets: ContextRAG 0.824 → 0.658 vs cascade 0.941 → 0.947, X1 PASS, X2 FAIL — no single-sheet crossing; EX01 0–1/5). Next: the clickable results UI.**
@@ -67,7 +69,7 @@ Note also that the title does **not** mention the retrieval-inversion claim. Tha
 | 4 | **Headline: plant-scale Q&A** at ~100 / ~1,000 (/ ~4,000) sheets + crossover sweep (ADR-0015, accepted) | W42–W43 | |
 | 5 | Resolver evaluation (EXP-0004: OPEN100 23 pairs + label dials) | W43 | |
 | 6 | Later phases (realism, utilities, several plants, rendering, drawing reading) | — | future work (ADR-0011) |
-| 7 | Write-up — BSc, Hungarian (since 2026-10-05) | W39–W44 | |
+| 7 | Write-up — BSc, English (since 2026-11-05; Hungarian 10-05 to 11-05) | W39–W44 | |
 
 ## Layout
 
@@ -87,7 +89,7 @@ Note also that the title does **not** mention the retrieval-inversion claim. Tha
 
 - Data model: **Pydantic** · DEXPI conversion: **pyDEXPI** (AGPL-3.0, ADR-0003 accepted 2026-09-10) · Graph store: **Neo4j LPG only** (ADR-0002 accepted 2026-09-06; its RDF arm dropped by ADR-0012 K3, 2026-09-26)
 - **Title reading (ADR-0008, accepted 2026-09-25):** a DEXPI/Proteus file counts as "a drawing"; no digitization front end. Professor's answer, relayed verbally by the user; written confirmation pending.
-- **Thesis:** BSc szakdolgozat, BME VIK mérnökinformatikus, TMIT; Hungarian (since 2026-10-05, was English). Equipment datasheets: **out of scope — not part of this thesis**. **P&IDs only** (ADR-0008 item b).
+- **Thesis:** BSc szakdolgozat, BME VIK mérnökinformatikus, TMIT; English (since 2026-11-05; Hungarian 10-05 to 11-05). Equipment datasheets: **out of scope — not part of this thesis**. **P&IDs only** (ADR-0008 item b).
 - **Accepted 2026-09-26:** ADR-0009 (input contract I4), ADR-0010 (ordering O3), ADR-0011 (scope cuts as recommended), ADR-0013 (evaluation E3), ADR-0014 (LLM policy M3, via **OpenRouter**). **Also accepted 2026-09-26:** ADR-0012 (K3 — no RDF store; ADR-0002 superseded in part), ADR-0015 (headline: one sweep, H100/H1000 table, public release), ADR-0016 (unknown DEXPI classes → generic node, never dropped), ADR-0017 (splitter walks depth-first; headline corpora at 16 equipment/sheet), **ADR-0018 → A1** (no equipment attributes in generated plants). ~~ADR-0020~~ superseded by **ADR-0021 (same day): no equipment/datasheet data anywhere**, not even from real files (out of scope — not part of this thesis); ChatP&ID's datasheet questions are listed as out of scope in EXP-0001. Identifiers (part names like 66KL21) are kept.
 - Models (ADR-0006 accepted 2026-09-06): planning on **Opus**, **Fable 5.1** only on explicit request; implementation on **Sonnet**; coders run **sequentially**, the parallel skill was dropped
 - **Plant graphs (ADR-0007, accepted 2026-09-13):** DEXPI models built with pyDEXPI classes and toolkits by our own seeded builder, converted by the pyDEXPI loader, the conceptual abstraction and our adapter into the schema `DiGraph` (`40-design/plant-generator.md` revision 2). Methodology contribution; realism a later phase; OPEN100's 23 pairs held out for EXP-0004; unit = `PlantSection`.
@@ -123,7 +125,7 @@ Note also that the title does **not** mention the retrieval-inversion claim. Tha
 ## Next action
 
 **Updated 2026-10-23.** User-facing status: `ALLAPOT.md`. Latest log: `50-progress/2026-W43.md`.
-**The chat is the user's single source of truth** (CLAUDE.md). **The thesis is written in Hungarian** (2026-10-05).
+**The chat is the user's single source of truth** (CLAUDE.md). **The thesis is written in English** (2026-11-05); the chat stays Hungarian.
 
 1. The user commits the README and the tooling/`docs/` publication (commands in the 10-23 chat).
 2. Teaching lessons in Hungarian (big picture → benchmark → KG → Q&A → experiments → ADRs → code map).
