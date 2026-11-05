@@ -1,7 +1,7 @@
 ---
 adr: 0062
 title: R5 question draw — FIRST_MEETING_POINT out of every sealed v2 corpus, H100g2's questions redrawn, and an output-preserving speed-up of two held-out generators after E7
-status: proposed
+status: accepted (user, 2026-11-05: "Oké, és ezek majd mehetnek")
 date: 2026-10-30
 supersedes: none. Corrects the reason given in ADR-0059 point 6 and in EXP-0007 plan §9 point 4. Records a deviation from plan §9 point 5 ("no `src` change between E7 and the end of R5").
 ---

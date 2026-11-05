@@ -236,3 +236,38 @@ specification (search snippet only, not read in full), and the user's own public
 are for citation, not input handles; no serialization or Cypher baseline, so (b) is untouched. Author correction:
 arXiv lists the second author as "Sakhinana, Sagar Srinivas" — cite as Gadekar, Sakhinana, Runkana. ChatP&ID note
 `2603.22528.md` now carries the dated agent-loop vs single-call-evaluation correction and the §6.2 quote.
+
+## 2026-11-05 — fortnightly check (overdue since 10-24), with EXP-0004 (tag-variant resolution) in view
+
+Searches (web, extended where noted): `arxiv P&ID multi-sheet knowledge graph off-page connector 2026` (extended);
+`GraphRAG engineering diagrams P&ID question answering scale 2026` (extended); `plant-wide knowledge graph equipment
+tag entity resolution P&ID LLM` (extended); `"P&ID" multi-page OR "cross-sheet" OR "multiple sheets" graph LLM arXiv
+2026` (extended); `ChatP&ID 2603.22528 citing papers`; `DEXPI knowledge graph LLM retrieval multiple drawings plant`;
+`LLM entity resolution equipment tag variants engineering documents`; two follow-ups on the papers below.
+Results were read at abstract / search-snippet level only; nothing below has had a full-text read.
+
+| ID | Title | Date | Evaluation scale | Threat |
+|---|---|---|---|---|
+| doi 10.1002/aic.70540 | ChatP&ID, now in *AIChE Journal* (Alimin et al.) | 2026 | single page (as the arXiv version) | **no overlap; citation update:** cite the journal version alongside arXiv 2603.22528 once the page numbers are checked |
+| doi 10.3390/bdcc10070210 | Leveraging LLMs and Object Detection for Automated KG Generation from Industrial Schematics (*BDCC* 10(7) 210) | 2026 | single diagrams, image → KG (YOLO + LLM relations) | no overlap (digitization, out of scope) |
+| arXiv 2608.11220 | LLMs in Process Diagram Engineering: From Optimal PFDs to Validated P&IDs | 2026-07 | generation / modification of single diagrams | no overlap |
+| arXiv 2512.20626 | MegaRAG: multimodal KG-based RAG, cross-page multi-hop | rev. 2026-04 | general documents, not engineering | adjacent (general precedent for cross-page graph retrieval) |
+| CEUR Vol-4064 SKGi paper 5 | A Framework for Semantic Identifier Resolution and LLM Grounding in Engineering Systems (SEMANTiCS 2025 workshop; author list differs between the PDF and dblp, check before citing) | 2025 | formal framework, no P&ID benchmark found in the snippet | adjacent to EXP-0004: "resolving identifiers across systems cannot rely on lexical matching alone" |
+| doi 10.1017/pds.2026.10590 | Entity matching for recurring engineering components (*Proc. Design Society*) | 2026 | Amazon–Google benchmark + one multimodal engineering dataset | adjacent to EXP-0004: classical RF/XGBoost near state of the art, LLMs good but costly, hybrids add little |
+| arXiv 2310.11244 | Entity Matching using Large Language Models (Peeters, Steiner, Bizer; EDBT 2025) | 2023/2025 | product-matching benchmarks | adjacent to EXP-0004: zero-shot LLM matching, robust on unseen examples — the general precedent for D4 |
+| arXiv 2608.24918, 2609.11493, 2609.12360 | KG unification for digital threads; CMC process KG; critical-infrastructure dependency modelling | 2026 | other domains | no overlap (entity resolution in other industrial data) |
+| github vishal7pandey/chatpid | reimplementation of ChatP&ID on Neo4j + LangGraph | — | software, single DEXPI file | no overlap |
+
+Already filed and seen again: 2603.22528, 2502.18928, 2502.18493, 2607.19568, pid-graph-agent (deterministic tiered
+tag lookup inside one file; noted 2026-10-10).
+
+**Verdict:**
+- **(a) multi-sheet / plant-scale P&ID GraphRAG: claim still open.** No published method or evaluation across sheets
+  found; ChatP&ID's journal version still evaluates a single page.
+- **(b) strategy vs scale: unchanged, narrowed in framing** (2026-10-10 entry): first measurement on P&ID plant graphs.
+- **(c) tag-variant identity resolution across sheets (EXP-0004): still open on P&IDs.** No benchmark of rule-based
+  vs LLM matching of equipment-tag variants across drawings was found. Entity matching with LLMs (2310.11244) and on
+  engineering data (pds.2026.10590, SKGi paper 5) is the general precedent and must be cited in related work; the
+  claim is "first measurement on cross-sheet P&ID tags, with a held-out naming family and an end-to-end QA effect".
+- Nothing is `overlaps — act`; no paper-intake needed. Worth a full read before writing related work: SKGi paper 5,
+  pds.2026.10590, 2310.11244 (all three feed EXP-0004's related-work paragraph).

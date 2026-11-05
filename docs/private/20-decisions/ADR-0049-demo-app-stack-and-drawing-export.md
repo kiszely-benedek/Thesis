@@ -1,7 +1,7 @@
 ---
 adr: 0049
 title: Build the demo now; draw each sheet from the system's own input with a pure-Python layered layout and fpdf2; serve it with FastAPI and the browser's PDF viewer; answer free questions through the offline cascade walk, replay-first, with paid calls behind a CLI flag, a per-question confirmation and a session cap
-status: proposed
+status: accepted (user, 2026-11-05: "Oké, és ezek majd mehetnek")
 date: 2026-10-10
 supersedes: in part — ADR-0024 point 5 (timing: "after the headline"); ADR-0024 points 1–4 and its Must/Should/Could log carry over unchanged
 design: 40-design/demo-app.md
