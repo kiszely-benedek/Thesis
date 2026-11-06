@@ -4,7 +4,8 @@ python -m plantgraph.exp0004.e2e_caps make --arm d0 --cyp-misses F --ag-misses F
 python -m plantgraph.exp0004.e2e_caps split --caps caps.json --max-spend-usd X     # prints two caps
 
 cap of a tier = questions with a cache miss x R5's cost per question x 1.5. The user's cap for the
-arm must not exceed the sum; it is divided between the tiers in proportion to their computed caps.
+arm must not exceed the sum unless the user approved more (`--above-dry-cap`, never above the P4
+bound of $4.44); it is divided between the tiers in proportion to their computed caps.
 """
 
 from __future__ import annotations
@@ -21,6 +22,8 @@ from plantgraph.exp0004.e2e_dry_run import DryRunReport
 #: table rows always_c_v2t (Cypher tier) and always_g_v2t (agent tier), the 1,000-sheet figure).
 COST_PER_QUESTION_USD = {"cyp": 0.00075, "ag": 0.00189}
 SAFETY_FACTOR = 1.5
+#: PREREG.md section 7: the upper bound for all three P4 arms together
+P4_UPPER_BOUND_USD = 4.44
 
 
 class E2ECaps(BaseModel):
@@ -53,12 +56,16 @@ def compute_caps(arm: str, cyp: DryRunReport, ag: DryRunReport) -> E2ECaps:
     )
 
 
-def split_cap(caps: E2ECaps, max_spend_usd: float) -> dict[str, float]:
+def split_cap(caps: E2ECaps, max_spend_usd: float, above_dry_cap: bool = False) -> dict[str, float]:
     """Divide the user's cap between the tiers in proportion to their computed caps.
 
+    `above_dry_cap` is the user's explicit approval of a cap above the dry run's total (2026-11-06:
+    the agent tier cost 1.42x R5's per-question figure on H1000g2V, so 1.5x did not cover it). It
+    never lifts the pre-registered upper bound for the whole of P4.
+
     Raises:
-        ValueError: the cap is not positive, there is nothing to pay for, or the cap exceeds the
-            dry run's total (a larger cap needs a new dry run).
+        ValueError: the cap is not positive, there is nothing to pay for, the cap exceeds the
+            dry run's total without `above_dry_cap`, or it exceeds the P4 upper bound.
     """
     if max_spend_usd <= 0:
         raise ValueError(f"expected a cap above 0, found {max_spend_usd}")
@@ -66,7 +73,12 @@ def split_cap(caps: E2ECaps, max_spend_usd: float) -> dict[str, float]:
         raise ValueError(
             "expected at least one cache miss in the dry run, found none: nothing to pay"
         )
-    if max_spend_usd > caps.total_cap_usd:
+    if max_spend_usd > P4_UPPER_BOUND_USD:
+        raise ValueError(
+            f"expected a cap of at most {P4_UPPER_BOUND_USD} (the pre-registered P4 bound), "
+            f"found {max_spend_usd}"
+        )
+    if max_spend_usd > caps.total_cap_usd and not above_dry_cap:
         raise ValueError(
             f"expected a cap of at most {caps.total_cap_usd} (the dry run's total), "
             f"found {max_spend_usd}"
@@ -75,6 +87,44 @@ def split_cap(caps: E2ECaps, max_spend_usd: float) -> dict[str, float]:
         tier: round(max_spend_usd * cap / caps.total_cap_usd, 6)
         for tier, cap in caps.cap_usd.items()
     }
+
+
+def explicit_tier_caps(
+    cyp_usd: float, ag_usd: float, max_spend_usd: float, above_dry_cap: bool
+) -> dict[str, float]:
+    """The user's own cap per tier, instead of the proportional split.
+
+    Why (2026-11-06): on a resume the harness's spend guard counts the recorded cost of the rows on
+    disk, cache hits included, so a resumed tier needs a nominal cap far above what it really
+    spent. A proportional split would then lift the other tier's cap with it.
+
+    Raises:
+        ValueError: the user has not approved caps above the dry run's, a tier cap is not
+            positive, the two do not add up to the arm cap, or they exceed the P4 upper bound.
+    """
+    if not above_dry_cap:
+        raise ValueError("expected --above-dry-cap with explicit tier caps (the user's approval)")
+    if min(cyp_usd, ag_usd) <= 0:
+        raise ValueError(f"expected both tier caps above 0, found {cyp_usd} and {ag_usd}")
+    if abs(cyp_usd + ag_usd - max_spend_usd) > 1e-6:
+        raise ValueError(
+            f"expected the tier caps to add up to the arm cap {max_spend_usd}, "
+            f"found {cyp_usd} + {ag_usd}"
+        )
+    if max_spend_usd > P4_UPPER_BOUND_USD:
+        raise ValueError(
+            f"expected a cap of at most {P4_UPPER_BOUND_USD} (the pre-registered P4 bound), "
+            f"found {max_spend_usd}"
+        )
+    return {"cyp": cyp_usd, "ag": ag_usd}
+
+
+def _split_or_explicit(caps: E2ECaps, args: argparse.Namespace) -> dict[str, float]:
+    """The explicit tier caps when the user gave them, else the proportional split."""
+    if args.tier_caps_usd is None:
+        return split_cap(caps, args.max_spend_usd, args.above_dry_cap)
+    cyp_usd, ag_usd = args.tier_caps_usd
+    return explicit_tier_caps(cyp_usd, ag_usd, args.max_spend_usd, args.above_dry_cap)
 
 
 def _read_report(path: Path) -> DryRunReport:
@@ -93,6 +143,18 @@ def main(argv: list[str] | None = None) -> None:
     split = commands.add_parser("split")
     split.add_argument("--caps", type=Path, required=True)
     split.add_argument("--max-spend-usd", type=float, required=True)
+    split.add_argument(
+        "--above-dry-cap",
+        action="store_true",
+        help="the user approved a cap above the dry run's total (never above the P4 bound)",
+    )
+    split.add_argument(
+        "--tier-caps-usd",
+        type=float,
+        nargs=2,
+        metavar=("CYP", "AG"),
+        help="the user's own cap per tier, not the proportional split (needs --above-dry-cap)",
+    )
     args = parser.parse_args(argv)
     if args.command == "make":
         caps = compute_caps(args.arm, _read_report(args.cyp_misses), _read_report(args.ag_misses))
@@ -102,7 +164,7 @@ def main(argv: list[str] | None = None) -> None:
     else:
         caps = E2ECaps.model_validate_json(args.caps.read_text(encoding="utf-8"))
         try:
-            parts = split_cap(caps, args.max_spend_usd)
+            parts = _split_or_explicit(caps, args)
         except ValueError as error:
             raise SystemExit(f"error: {error}") from error
         print(parts["cyp"], parts["ag"])

@@ -134,8 +134,31 @@ def test_the_arm_cap_is_split_in_proportion_and_never_above_the_total() -> None:
         e2e_caps.split_cap(caps, 0)
 
 
+def test_an_approved_cap_may_exceed_the_dry_total_but_never_the_p4_bound() -> None:
+    caps = e2e_caps.compute_caps("d0", _report(100), _report(40))
+
+    split = e2e_caps.split_cap(caps, 0.4, above_dry_cap=True)
+    assert split["cyp"] + split["ag"] == pytest.approx(0.4, abs=1e-5)
+    assert split["cyp"] / split["ag"] == pytest.approx(0.1125 / 0.1134, rel=1e-4)
+    with pytest.raises(ValueError, match="P4 bound"):
+        e2e_caps.split_cap(caps, 4.45, above_dry_cap=True)
+
+
 def test_no_miss_means_nothing_to_pay() -> None:
     caps = e2e_caps.compute_caps("d0", _report(0), _report(0))
 
     with pytest.raises(ValueError, match="nothing to pay"):
         e2e_caps.split_cap(caps, 0.01)
+
+
+def test_explicit_tier_caps_need_approval_and_must_add_up() -> None:
+    assert e2e_caps.explicit_tier_caps(0.474, 0.65, 1.124, above_dry_cap=True) == {
+        "cyp": 0.474,
+        "ag": 0.65,
+    }
+    with pytest.raises(ValueError, match="above-dry-cap"):
+        e2e_caps.explicit_tier_caps(0.474, 0.65, 1.124, above_dry_cap=False)
+    with pytest.raises(ValueError, match="add up"):
+        e2e_caps.explicit_tier_caps(0.474, 0.65, 1.0, above_dry_cap=True)
+    with pytest.raises(ValueError, match="P4 bound"):
+        e2e_caps.explicit_tier_caps(2.0, 2.5, 4.5, above_dry_cap=True)

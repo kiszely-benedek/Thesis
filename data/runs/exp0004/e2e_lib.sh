@@ -96,11 +96,14 @@ e2e_dry_caps() {  # both tiers' miss counts -> the arm's caps file (design secti
 cap_of() { case $1 in E2E-CYP-*) echo "$E2E_CAP_CYP" ;; E2E-AG-*) echo "$E2E_CAP_AG" ;; *) die "no cap for $1" ;; esac; }
 cost_of() { case $1 in E2E-CYP-*) echo 0.00075 ;; E2E-AG-*) echo 0.00189 ;; *) die "no cost for $1" ;; esac; }
 
-e2e_split_caps() {  # e2e_split_caps <caps file> <max spend usd>: sets E2E_CAP_CYP and E2E_CAP_AG
-  ed_caps=$($P -m plantgraph.exp0004.e2e_caps split --caps "$1" --max-spend-usd "$2") \
+e2e_split_caps() {  # e2e_split_caps <caps file> <max spend usd> [yes [CYP,AG]]: sets E2E_CAP_CYP and E2E_CAP_AG
+  ed_above=; [ "${3:-no}" = yes ] && ed_above=--above-dry-cap   # the user approved a cap above the dry run's
+  ed_tiers=; [ -z "${4:-}" ] || ed_tiers="--tier-caps-usd ${4%,*} ${4#*,}"   # the user's own cap per tier
+  # shellcheck disable=SC2086
+  ed_caps=$($P -m plantgraph.exp0004.e2e_caps split --caps "$1" --max-spend-usd "$2" $ed_above $ed_tiers) \
     || die "the cap $2 is refused (see above): the dry run decides the most that may be spent"
   E2E_CAP_CYP=${ed_caps% *}; E2E_CAP_AG=${ed_caps#* }
-  echo "caps: Cypher tier \$$E2E_CAP_CYP, agent tier \$$E2E_CAP_AG (arm total \$$2)"
+  echo "caps: Cypher tier \$$E2E_CAP_CYP, agent tier \$$E2E_CAP_AG (arm total \$$2${ed_above:+, above the dry-run cap: approved by the user})"
 }
 
 e2e_check_questions() {  # the questions on disk are the copy the proof describes

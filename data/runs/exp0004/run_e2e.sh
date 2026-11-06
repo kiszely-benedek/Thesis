@@ -8,8 +8,10 @@
 #       FREE. Checks E8 and the pre-registration, loads the arm's corpus, writes the re-homed questions and
 #       their proof, then replays both tiers on a COPY of the sealed cache with a fake transport and lists
 #       every cache miss. Writes data/runs/exp0004/e2e/d0/dry/caps.json (cap = misses x R5 cost x 1.5).
-#   sh data/runs/exp0004/run_e2e.sh paid d0 --allow-paid-calls --max-spend-usd X [--resume]
-#       PAID. Needs the dry run of the same arm; X may not exceed its total cap. Reloads the corpus, runs
+#   sh data/runs/exp0004/run_e2e.sh paid d0 --allow-paid-calls --max-spend-usd X [--above-dry-cap] [--resume]
+#       PAID. Needs the dry run of the same arm; X may not exceed its total cap unless the user approved
+#       more (--above-dry-cap, never above the P4 bound of $4.44); --tier-caps CYP,AG (with --above-dry-cap)
+#       sets each tier's cap instead of the proportional split, CYP + AG = X. Reloads the corpus, runs
 #       the Cypher tier and the agent tier from a fresh copy of the sealed cache under X, then replays both
 #       from the cache. Refuses to overwrite an existing live/ folder (--resume continues a stopped one).
 #
@@ -22,17 +24,19 @@ cd "$(git rev-parse --show-toplevel)"
 E=${E2E_ROOT:-data/runs/exp0004}   # E2E_ROOT: only the script tests
 . "$E/e2e_lib.sh"
 
-usage() { die "usage: run_e2e.sh dry <d0|d2|d4>   |   run_e2e.sh paid <d0|d2|d4> --allow-paid-calls --max-spend-usd X [--resume]"; }
+usage() { die "usage: run_e2e.sh dry <d0|d2|d4>   |   run_e2e.sh paid <d0|d2|d4> --allow-paid-calls --max-spend-usd X [--above-dry-cap [--tier-caps CYP,AG]] [--resume]"; }
 
 MODE=${1:-}; ARM=${2:-}
 [ -n "$MODE" ] && [ -n "$ARM" ] || usage
 shift 2
-ALLOW_PAID=no; MAX_SPEND=; RESUME=no
+ALLOW_PAID=no; MAX_SPEND=; RESUME=no; ABOVE_DRY_CAP=no; TIER_CAPS=
 while [ $# -gt 0 ]; do
   case $1 in
     --allow-paid-calls) ALLOW_PAID=yes ;;
     --max-spend-usd) [ $# -ge 2 ] || die "--max-spend-usd needs a value"; MAX_SPEND=$2; shift ;;
     --resume) RESUME=yes ;;
+    --above-dry-cap) ABOVE_DRY_CAP=yes ;;
+    --tier-caps) [ $# -ge 2 ] || die "--tier-caps needs CYP,AG"; TIER_CAPS=$2; shift ;;
     *) die "unknown option $1" ;;
   esac
   shift
@@ -40,7 +44,7 @@ done
 LINKS=$(e2e_links_file "$ARM")
 case $MODE in
   dry)
-    [ "$ALLOW_PAID" = no ] && [ -z "$MAX_SPEND" ] && [ "$RESUME" = no ] \
+    [ "$ALLOW_PAID" = no ] && [ -z "$MAX_SPEND" ] && [ "$RESUME" = no ] && [ "$ABOVE_DRY_CAP" = no ] && [ -z "$TIER_CAPS" ] \
       || die "dry mode takes no option: it is free and never overwrites" ;;
   paid)
     [ "$ALLOW_PAID" = yes ] || die "paid mode: pass --allow-paid-calls (the free check is: run_e2e.sh dry $ARM)"
@@ -82,7 +86,7 @@ fi
 S=$A/live; CYP_CORPORA=$S/corpora; AG_CORPORA=$S/corpora; CACHE=$S/cache_e2e.sqlite
 if [ -e "$S" ] && [ "$RESUME" = no ]; then die "$S exists; refusing to overwrite (--resume continues a stopped run)"; fi
 e2e_check_questions
-e2e_split_caps "$A/dry/caps.json" "$MAX_SPEND"
+e2e_split_caps "$A/dry/caps.json" "$MAX_SPEND" "$ABOVE_DRY_CAP" "$TIER_CAPS"
 check_listing "$(listing_file)"
 mkdir -p "$S/logs/steps" "$CYP_CORPORA" "$S/runs" "$S/replays"
 [ -f "$CACHE" ] || cp "$SEALED_CACHE" "$CACHE"   # a fresh copy of the sealed cache: R5's answers replay free
