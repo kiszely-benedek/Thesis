@@ -1,14 +1,14 @@
 # Állapot — egy pillantásra
 
-**Frissítve: 2026-11-05 (csütörtök).**
+**Frissítve: 2026-11-06 (péntek).**
 Ezt az oldalt a `/log-progress` frissíti minden munkamenet végén. A részletek a heti naplóban vannak
 (`50-progress/2026-W45.md`), a mérések a `30-experiments/`-ben, a döntések a `20-decisions/`-ben.
 
 ## Egy mondatban
 
-Az EXP-0004 (ugyanannak a berendezésnek a lapokon eltérően írt azonosítói) fizetős P3 mérése kész, és minden előre
-rögzített állítás teljesült: a nyelvi modelles döntő a nem hangolt elnevezési variánsokon 0,983, a szabályalapú 0,347;
-most futnak az ingyenes próbafutások a végpontok közötti (kérdés-válasz) mérés költségkorlátjához.
+Az EXP-0004 végpontok közötti mérése (P4) lefutott ($1,94) és ki is értékeltük: a változatos tagek 12,5 ponttal
+rontják a pontosságot, a szabályalapú D2 ebből 9,3 pontot visszahoz (0,859, az eredeti 0,891 mellett), a nyelvi
+modelles D4 csak 3,2-t, mert téves összevonásaival a nem érintett kérdéseket is elrontja; a commit rád vár.
 
 ## Fázisok
 
@@ -18,7 +18,7 @@ most futnak az ingyenes próbafutások a végpontok közötti (kérdés-válasz)
 | 6b | Alkalmazás / demó | ✔ v1 kész; v2 (kérdéstípus szerinti útválasztás, H1000g2 üzem) tervezve: ADR-0064 `9bc93d5` |
 | v2 | Valósághű generátor (ADR-0057/0058/0059) | ✔ kész: T0 `0ba680a` … T16 `917b4c3` |
 | v2-mérés | EXP-0007: hangolt rendszer V2T-A, R4, R5, INFRA-2 | ✔ kész (`87eb79e`, `92ae22e`, `fe48a3e`) |
-| EXP-0004 | Tag-variánsok azonosítása lapok között (ADR-0063) | 🟡 P3 kész (`1ad5d99`); P4 próbafutás fut |
+| EXP-0004 | Tag-variánsok azonosítása lapok között (ADR-0063) | 🟡 P3 kész (`1ad5d99`); P4 és X-T8 kész, commitra vár |
 | 7 | Dolgozat írása | ⬜ később indul |
 
 ## Feladatok (a legutóbbiak)
@@ -32,22 +32,23 @@ most futnak az ingyenes próbafutások a végpontok közötti (kérdés-válasz)
 | P3 | Fizetős mérés a négy tesztüzemen | ✔ | `1ad5d99` | 11-05 |
 | — | ADR-0049, ADR-0062, ADR-0064 elfogadva, újdonság-ellenőrzés | ✔ | `9bc93d5` | 11-05 |
 | X-T7 | Végpontok közötti mérés futtatója | ✔ | `37bee83` | 11-05 |
-| P4 próba | Ingyenes próbafutás D0, D2, D4 karra | 🟡 fut (17:44-től, kb. 3 óra) | | 11-05 |
-| P4 | Fizetős végpontok közötti mérés | ⬜ jóváhagyásra vár | | |
-| X-T8 | E2E jelentés, futási jegyzet, eredménytábla | ⬜ | | |
+| P4 próba | Ingyenes próbafutás D0, D2, D4 karra | 🟡 kész, commitra vár | | 11-06 |
+| P4 | Fizetős végpontok közötti mérés ($1,94) | 🟡 kész, commitra vár | | 11-06 |
+| X-T8 | E2E jelentés, futási jegyzet, eredménytábla | 🟡 kész, commitra vár | | 11-06 |
 | Demó v2 | T1–T7 | ⬜ | | |
 
 ## Ellenőrzőpontok
 
 | Pont | Mi kell hozzá | Hol tartunk |
 |---|---|---|
-| EXP-0004 lezárva | P4 + X-T8 | 🟡 a próbafutás megy, utána fizetős P4 |
-| „Végleges” kód | X-T8 commitolva, eredménytábla teljes, tesztek zöldek | 🟡 az EXP-0004 és a demó v2 van hátra |
+| EXP-0004 lezárva | P4 + X-T8 | 🟡 a mérés és a jelentés kész, csak a commit van hátra |
+| „Végleges” kód | X-T8 commitolva, eredménytábla teljes, tesztek zöldek | 🟡 az EXP-0004 commitja és a demó v2 van hátra |
 
 ## Mi vár rád
 
-1. **A P4 költségkorlátjának jóváhagyása**, amikor a próbafutások végeztek (legfeljebb $4,44).
-2. **A commitok** a chatben megadott parancsokkal (napló, index, állapotoldal).
+1. **Commit** a P4-hez és az X-T8-hoz (a parancsok a chatben).
+2. **Push** a `96eeec7`-hez és az új commitokhoz, ha kéred.
+3. Utána: kódbefagyasztás a te átnézésedre, majd a demó v2.
 
 ## Mit olvass el legközelebb
 

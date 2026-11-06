@@ -1,0 +1,289 @@
+stopped by the spend cap; rerun with the same --run-id to resume
+run E2E-AG-H1000g2V-d2: 560 rows to answer, 0 already on disk
+concurrency 4: up to that many questions in flight
+paid mode: up to 560 model calls; hard spend cap 0.5359 USD
+estimated cost: 1.0584 USD
+STOPPED by the spend cap: the next question (expected up to 0.013996 USD, with 0.041989 USD reserved by items in flight) could reach or pass the run's cap of 0.535900 USD; 0.484409 USD spent so far. Rerun with the same --run-id to resume.
+{
+  "run_id": "E2E-AG-H1000g2V-d2",
+  "n_rows": 534,
+  "n_new_rows": 534,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "graph_agent_lines": {
+      "0": {
+        "ANSWERED": 217,
+        "PARSE_FAILURE": 1
+      },
+      "1": {
+        "ANSWERED": 104
+      },
+      "2": {
+        "ANSWERED": 71
+      },
+      "3-4": {
+        "ANSWERED": 31
+      },
+      "5-8": {
+        "ANSWERED": 25
+      },
+      "9-16": {
+        "ANSWERED": 17
+      },
+      "17-32": {
+        "ANSWERED": 14
+      },
+      "33+": {
+        "ANSWERED": 12,
+        "PARSE_FAILURE": 2
+      },
+      "unanswerable": {
+        "ANSWERED": 40
+      }
+    }
+  },
+  "routing_recall": {
+    "graph_agent_lines": 0.8663967611336032
+  },
+  "relaxed_routing_recall": {
+    "graph_agent_lines": 0.8744939271255061
+  },
+  "evidence_node_recall": {
+    "graph_agent_lines": 0.8683138960526209
+  },
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {
+      "graph_agent_lines": {
+        "0": 0.9862385321100917,
+        "1": 0.9038461538461539,
+        "2": 0.7464788732394366,
+        "3-4": 0.7419354838709677,
+        "5-8": 0.8,
+        "9-16": 0.8823529411764706,
+        "17-32": 0.5714285714285714,
+        "33+": 0.0
+      }
+    },
+    "relaxed_routing_recall": {
+      "graph_agent_lines": {
+        "0": 0.9862385321100917,
+        "1": 0.9038461538461539,
+        "2": 0.7464788732394366,
+        "3-4": 0.8064516129032258,
+        "5-8": 0.88,
+        "9-16": 0.8823529411764706,
+        "17-32": 0.5714285714285714,
+        "33+": 0.0
+      }
+    },
+    "evidence_node_recall": {
+      "graph_agent_lines": {
+        "0": 0.9588879528470964,
+        "1": 0.9031421803187908,
+        "2": 0.8425297247354193,
+        "3-4": 0.7060596920005522,
+        "5-8": 0.7862390262593371,
+        "9-16": 0.8464682793008607,
+        "17-32": 0.6008875171807478,
+        "33+": 0.1471914009054446
+      }
+    }
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "graph_agent_lines": 0.0015366343258426966
+  },
+  "stopped_by_spend_cap": true
+}
+stopped by the spend cap; rerun with the same --run-id to resume
+run E2E-AG-H1000g2V-d2: 26 rows to answer, 534 already on disk
+concurrency 4: up to that many questions in flight
+paid mode: up to 26 model calls; hard spend cap 0.650624 USD
+estimated cost: 0.0491 USD
+STOPPED by the spend cap: the next question (expected up to 0.014105 USD, with 0.000000 USD reserved by items in flight) could reach or pass the run's cap of 0.650624 USD; 0.820563 USD spent so far. Rerun with the same --run-id to resume.
+{
+  "run_id": "E2E-AG-H1000g2V-d2",
+  "n_rows": 534,
+  "n_new_rows": 0,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "graph_agent_lines": {
+      "0": {
+        "ANSWERED": 217,
+        "PARSE_FAILURE": 1
+      },
+      "1": {
+        "ANSWERED": 104
+      },
+      "2": {
+        "ANSWERED": 71
+      },
+      "3-4": {
+        "ANSWERED": 31
+      },
+      "5-8": {
+        "ANSWERED": 25
+      },
+      "9-16": {
+        "ANSWERED": 17
+      },
+      "17-32": {
+        "ANSWERED": 14
+      },
+      "33+": {
+        "ANSWERED": 12,
+        "PARSE_FAILURE": 2
+      },
+      "unanswerable": {
+        "ANSWERED": 40
+      }
+    }
+  },
+  "routing_recall": {
+    "graph_agent_lines": 0.8663967611336032
+  },
+  "relaxed_routing_recall": {
+    "graph_agent_lines": 0.8744939271255061
+  },
+  "evidence_node_recall": {
+    "graph_agent_lines": 0.8683138960526209
+  },
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {
+      "graph_agent_lines": {
+        "0": 0.9862385321100917,
+        "1": 0.9038461538461539,
+        "2": 0.7464788732394366,
+        "3-4": 0.7419354838709677,
+        "5-8": 0.8,
+        "9-16": 0.8823529411764706,
+        "17-32": 0.5714285714285714,
+        "33+": 0.0
+      }
+    },
+    "relaxed_routing_recall": {
+      "graph_agent_lines": {
+        "0": 0.9862385321100917,
+        "1": 0.9038461538461539,
+        "2": 0.7464788732394366,
+        "3-4": 0.8064516129032258,
+        "5-8": 0.88,
+        "9-16": 0.8823529411764706,
+        "17-32": 0.5714285714285714,
+        "33+": 0.0
+      }
+    },
+    "evidence_node_recall": {
+      "graph_agent_lines": {
+        "0": 0.9588879528470964,
+        "1": 0.9031421803187908,
+        "2": 0.8425297247354193,
+        "3-4": 0.7060596920005522,
+        "5-8": 0.7862390262593371,
+        "9-16": 0.8464682793008607,
+        "17-32": 0.6008875171807478,
+        "33+": 0.1471914009054446
+      }
+    }
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "graph_agent_lines": 0.0015366343258426966
+  },
+  "stopped_by_spend_cap": true
+}
+run E2E-AG-H1000g2V-d2: 26 rows to answer, 534 already on disk
+concurrency 4: up to that many questions in flight
+paid mode: up to 26 model calls; hard spend cap 0.947111 USD
+estimated cost: 0.0491 USD
+{
+  "run_id": "E2E-AG-H1000g2V-d2",
+  "n_rows": 560,
+  "n_new_rows": 26,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "graph_agent_lines": {
+      "0": {
+        "ANSWERED": 224,
+        "PARSE_FAILURE": 1
+      },
+      "1": {
+        "ANSWERED": 114
+      },
+      "2": {
+        "ANSWERED": 78
+      },
+      "3-4": {
+        "ANSWERED": 33
+      },
+      "5-8": {
+        "ANSWERED": 25
+      },
+      "9-16": {
+        "ANSWERED": 17
+      },
+      "17-32": {
+        "ANSWERED": 14
+      },
+      "33+": {
+        "ANSWERED": 12,
+        "PARSE_FAILURE": 2
+      },
+      "unanswerable": {
+        "ANSWERED": 40
+      }
+    }
+  },
+  "routing_recall": {
+    "graph_agent_lines": 0.8519230769230769
+  },
+  "relaxed_routing_recall": {
+    "graph_agent_lines": 0.8596153846153847
+  },
+  "evidence_node_recall": {
+    "graph_agent_lines": 0.8558224639858562
+  },
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {
+      "graph_agent_lines": {
+        "0": 0.9777777777777777,
+        "1": 0.868421052631579,
+        "2": 0.7435897435897436,
+        "3-4": 0.696969696969697,
+        "5-8": 0.8,
+        "9-16": 0.8823529411764706,
+        "17-32": 0.5714285714285714,
+        "33+": 0.0
+      }
+    },
+    "relaxed_routing_recall": {
+      "graph_agent_lines": {
+        "0": 0.9777777777777777,
+        "1": 0.868421052631579,
+        "2": 0.7435897435897436,
+        "3-4": 0.7575757575757576,
+        "5-8": 0.88,
+        "9-16": 0.8823529411764706,
+        "17-32": 0.5714285714285714,
+        "33+": 0.0
+      }
+    },
+    "evidence_node_recall": {
+      "graph_agent_lines": {
+        "0": 0.9472800403744901,
+        "1": 0.8837921146443952,
+        "2": 0.8317651261258149,
+        "3-4": 0.6655880978355725,
+        "5-8": 0.7862390262593371,
+        "9-16": 0.8464682793008607,
+        "17-32": 0.6008875171807478,
+        "33+": 0.1471914009054446
+      }
+    }
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "graph_agent_lines": 0.0015045902767857142
+  },
+  "stopped_by_spend_cap": false
+}

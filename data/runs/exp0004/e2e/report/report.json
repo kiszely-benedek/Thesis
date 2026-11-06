@@ -1,0 +1,739 @@
+{
+  "cutoff_s": 120.0,
+  "policy": "cascade_v4_iso",
+  "n_questions": 440,
+  "arms": [
+    {
+      "label": "R5",
+      "n": 440,
+      "n_correct": 392,
+      "accuracy": {
+        "estimate": 0.8909090909090909,
+        "ci_low": 0.858325280849923,
+        "ci_high": 0.9167259987056661
+      },
+      "spend_usd": 1.373534885
+    },
+    {
+      "label": "V-d0",
+      "n": 440,
+      "n_correct": 337,
+      "accuracy": {
+        "estimate": 0.7659090909090909,
+        "ci_low": 0.7241470280156859,
+        "ci_high": 0.8030680865657323
+      },
+      "spend_usd": 0.5730216699999999
+    },
+    {
+      "label": "V-d2",
+      "n": 440,
+      "n_correct": 378,
+      "accuracy": {
+        "estimate": 0.8590909090909091,
+        "ci_low": 0.8234648430880099,
+        "ci_high": 0.8885008672014266
+      },
+      "spend_usd": 0.53657896
+    },
+    {
+      "label": "V-d4",
+      "n": 440,
+      "n_correct": 351,
+      "accuracy": {
+        "estimate": 0.7977272727272727,
+        "ci_low": 0.7576903229960563,
+        "ci_high": 0.8326103608515145
+      },
+      "spend_usd": 0.835112375
+    }
+  ],
+  "claims": [
+    {
+      "claim": "E1",
+      "description": "acc(V,D0) - acc(R5)",
+      "rule": "CI upper < 0",
+      "difference": {
+        "mean": -0.125,
+        "ci_low": -0.1590909090909091,
+        "ci_high": -0.09090909090909091
+      },
+      "passed": true
+    },
+    {
+      "claim": "E2",
+      "description": "acc(V,D2) - acc(V,D0)",
+      "rule": "CI lower > 0",
+      "difference": {
+        "mean": 0.09318181818181819,
+        "ci_low": 0.06363636363636363,
+        "ci_high": 0.12272727272727273
+      },
+      "passed": true
+    },
+    {
+      "claim": "E3",
+      "description": "acc(V,D4) - acc(V,D0)",
+      "rule": "CI lower > 0",
+      "difference": {
+        "mean": 0.031818181818181815,
+        "ci_low": -0.004545454545454545,
+        "ci_high": 0.06818181818181818
+      },
+      "passed": false
+    },
+    {
+      "claim": "E4 (D2)",
+      "description": "acc(V,D2) - acc(R5)",
+      "rule": "CI lower > -0.03",
+      "difference": {
+        "mean": -0.031818181818181815,
+        "ci_low": -0.05454545454545454,
+        "ci_high": -0.00909090909090909
+      },
+      "passed": false
+    },
+    {
+      "claim": "E4 (D4)",
+      "description": "acc(V,D4) - acc(R5)",
+      "rule": "CI lower > -0.03",
+      "difference": {
+        "mean": -0.09318181818181819,
+        "ci_low": -0.125,
+        "ci_high": -0.06363636363636363
+      },
+      "passed": false
+    }
+  ],
+  "families": [
+    {
+      "group": "CONNECTED",
+      "arm": "R5",
+      "n": 20,
+      "n_correct": 19
+    },
+    {
+      "group": "CONNECTED",
+      "arm": "V-d0",
+      "n": 20,
+      "n_correct": 15
+    },
+    {
+      "group": "CONNECTED",
+      "arm": "V-d2",
+      "n": 20,
+      "n_correct": 18
+    },
+    {
+      "group": "CONNECTED",
+      "arm": "V-d4",
+      "n": 20,
+      "n_correct": 19
+    },
+    {
+      "group": "COUNT_IN_UNIT",
+      "arm": "R5",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "COUNT_IN_UNIT",
+      "arm": "V-d0",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "COUNT_IN_UNIT",
+      "arm": "V-d2",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "COUNT_IN_UNIT",
+      "arm": "V-d4",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "CROSS_UNIT",
+      "arm": "R5",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "CROSS_UNIT",
+      "arm": "V-d0",
+      "n": 20,
+      "n_correct": 19
+    },
+    {
+      "group": "CROSS_UNIT",
+      "arm": "V-d2",
+      "n": 20,
+      "n_correct": 19
+    },
+    {
+      "group": "CROSS_UNIT",
+      "arm": "V-d4",
+      "n": 20,
+      "n_correct": 19
+    },
+    {
+      "group": "DOWNSTREAM_IN_UNIT",
+      "arm": "R5",
+      "n": 20,
+      "n_correct": 17
+    },
+    {
+      "group": "DOWNSTREAM_IN_UNIT",
+      "arm": "V-d0",
+      "n": 20,
+      "n_correct": 9
+    },
+    {
+      "group": "DOWNSTREAM_IN_UNIT",
+      "arm": "V-d2",
+      "n": 20,
+      "n_correct": 16
+    },
+    {
+      "group": "DOWNSTREAM_IN_UNIT",
+      "arm": "V-d4",
+      "n": 20,
+      "n_correct": 6
+    },
+    {
+      "group": "DOWNSTREAM_ISOLATION",
+      "arm": "R5",
+      "n": 20,
+      "n_correct": 2
+    },
+    {
+      "group": "DOWNSTREAM_ISOLATION",
+      "arm": "V-d0",
+      "n": 20,
+      "n_correct": 1
+    },
+    {
+      "group": "DOWNSTREAM_ISOLATION",
+      "arm": "V-d2",
+      "n": 20,
+      "n_correct": 2
+    },
+    {
+      "group": "DOWNSTREAM_ISOLATION",
+      "arm": "V-d4",
+      "n": 20,
+      "n_correct": 1
+    },
+    {
+      "group": "FEEDING_UNITS",
+      "arm": "R5",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "FEEDING_UNITS",
+      "arm": "V-d0",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "FEEDING_UNITS",
+      "arm": "V-d2",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "FEEDING_UNITS",
+      "arm": "V-d4",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "FLOW_PATH",
+      "arm": "R5",
+      "n": 20,
+      "n_correct": 14
+    },
+    {
+      "group": "FLOW_PATH",
+      "arm": "V-d0",
+      "n": 20,
+      "n_correct": 13
+    },
+    {
+      "group": "FLOW_PATH",
+      "arm": "V-d2",
+      "n": 20,
+      "n_correct": 15
+    },
+    {
+      "group": "FLOW_PATH",
+      "arm": "V-d4",
+      "n": 20,
+      "n_correct": 12
+    },
+    {
+      "group": "INSTRUMENTS_OF_ITEM",
+      "arm": "R5",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "INSTRUMENTS_OF_ITEM",
+      "arm": "V-d0",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "INSTRUMENTS_OF_ITEM",
+      "arm": "V-d2",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "INSTRUMENTS_OF_ITEM",
+      "arm": "V-d4",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "LOOKUP_TYPE",
+      "arm": "R5",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "LOOKUP_TYPE",
+      "arm": "V-d0",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "LOOKUP_TYPE",
+      "arm": "V-d2",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "LOOKUP_TYPE",
+      "arm": "V-d4",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "LOOKUP_UNIT",
+      "arm": "R5",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "LOOKUP_UNIT",
+      "arm": "V-d0",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "LOOKUP_UNIT",
+      "arm": "V-d2",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "LOOKUP_UNIT",
+      "arm": "V-d4",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "LOOPS_NEAR_ITEM",
+      "arm": "R5",
+      "n": 20,
+      "n_correct": 18
+    },
+    {
+      "group": "LOOPS_NEAR_ITEM",
+      "arm": "V-d0",
+      "n": 20,
+      "n_correct": 16
+    },
+    {
+      "group": "LOOPS_NEAR_ITEM",
+      "arm": "V-d2",
+      "n": 20,
+      "n_correct": 16
+    },
+    {
+      "group": "LOOPS_NEAR_ITEM",
+      "arm": "V-d4",
+      "n": 20,
+      "n_correct": 18
+    },
+    {
+      "group": "LOOP_MEASURED_EQUIPMENT",
+      "arm": "R5",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "LOOP_MEASURED_EQUIPMENT",
+      "arm": "V-d0",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "LOOP_MEASURED_EQUIPMENT",
+      "arm": "V-d2",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "LOOP_MEASURED_EQUIPMENT",
+      "arm": "V-d4",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "NEIGHBOURS_DOWNSTREAM",
+      "arm": "R5",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "NEIGHBOURS_DOWNSTREAM",
+      "arm": "V-d0",
+      "n": 20,
+      "n_correct": 15
+    },
+    {
+      "group": "NEIGHBOURS_DOWNSTREAM",
+      "arm": "V-d2",
+      "n": 20,
+      "n_correct": 18
+    },
+    {
+      "group": "NEIGHBOURS_DOWNSTREAM",
+      "arm": "V-d4",
+      "n": 20,
+      "n_correct": 19
+    },
+    {
+      "group": "NO_PATH",
+      "arm": "R5",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "NO_PATH",
+      "arm": "V-d0",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "NO_PATH",
+      "arm": "V-d2",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "NO_PATH",
+      "arm": "V-d4",
+      "n": 20,
+      "n_correct": 7
+    },
+    {
+      "group": "ROUTE_AVOIDING",
+      "arm": "R5",
+      "n": 20,
+      "n_correct": 19
+    },
+    {
+      "group": "ROUTE_AVOIDING",
+      "arm": "V-d0",
+      "n": 20,
+      "n_correct": 16
+    },
+    {
+      "group": "ROUTE_AVOIDING",
+      "arm": "V-d2",
+      "n": 20,
+      "n_correct": 17
+    },
+    {
+      "group": "ROUTE_AVOIDING",
+      "arm": "V-d4",
+      "n": 20,
+      "n_correct": 19
+    },
+    {
+      "group": "SAME_UNIT",
+      "arm": "R5",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "SAME_UNIT",
+      "arm": "V-d0",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "SAME_UNIT",
+      "arm": "V-d2",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "SAME_UNIT",
+      "arm": "V-d4",
+      "n": 20,
+      "n_correct": 19
+    },
+    {
+      "group": "SHEETS_OF_TAG",
+      "arm": "R5",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "SHEETS_OF_TAG",
+      "arm": "V-d0",
+      "n": 20,
+      "n_correct": 9
+    },
+    {
+      "group": "SHEETS_OF_TAG",
+      "arm": "V-d2",
+      "n": 20,
+      "n_correct": 16
+    },
+    {
+      "group": "SHEETS_OF_TAG",
+      "arm": "V-d4",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "UNANSWERABLE_TAG",
+      "arm": "R5",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "UNANSWERABLE_TAG",
+      "arm": "V-d0",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "UNANSWERABLE_TAG",
+      "arm": "V-d2",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "UNANSWERABLE_TAG",
+      "arm": "V-d4",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "UNITS_REACHED",
+      "arm": "R5",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "UNITS_REACHED",
+      "arm": "V-d0",
+      "n": 20,
+      "n_correct": 11
+    },
+    {
+      "group": "UNITS_REACHED",
+      "arm": "V-d2",
+      "n": 20,
+      "n_correct": 18
+    },
+    {
+      "group": "UNITS_REACHED",
+      "arm": "V-d4",
+      "n": 20,
+      "n_correct": 16
+    },
+    {
+      "group": "UPSTREAM_ISOLATION",
+      "arm": "R5",
+      "n": 20,
+      "n_correct": 10
+    },
+    {
+      "group": "UPSTREAM_ISOLATION",
+      "arm": "V-d0",
+      "n": 20,
+      "n_correct": 10
+    },
+    {
+      "group": "UPSTREAM_ISOLATION",
+      "arm": "V-d2",
+      "n": 20,
+      "n_correct": 13
+    },
+    {
+      "group": "UPSTREAM_ISOLATION",
+      "arm": "V-d4",
+      "n": 20,
+      "n_correct": 10
+    },
+    {
+      "group": "UPSTREAM_SOURCES",
+      "arm": "R5",
+      "n": 20,
+      "n_correct": 20
+    },
+    {
+      "group": "UPSTREAM_SOURCES",
+      "arm": "V-d0",
+      "n": 20,
+      "n_correct": 12
+    },
+    {
+      "group": "UPSTREAM_SOURCES",
+      "arm": "V-d2",
+      "n": 20,
+      "n_correct": 18
+    },
+    {
+      "group": "UPSTREAM_SOURCES",
+      "arm": "V-d4",
+      "n": 20,
+      "n_correct": 14
+    },
+    {
+      "group": "VALVES_ON_PATH",
+      "arm": "R5",
+      "n": 20,
+      "n_correct": 13
+    },
+    {
+      "group": "VALVES_ON_PATH",
+      "arm": "V-d0",
+      "n": 20,
+      "n_correct": 11
+    },
+    {
+      "group": "VALVES_ON_PATH",
+      "arm": "V-d2",
+      "n": 20,
+      "n_correct": 12
+    },
+    {
+      "group": "VALVES_ON_PATH",
+      "arm": "V-d4",
+      "n": 20,
+      "n_correct": 12
+    }
+  ],
+  "exposure": [
+    {
+      "group": "exposed (k_identity > 0)",
+      "arm": "R5",
+      "n": 93,
+      "n_correct": 74
+    },
+    {
+      "group": "exposed (k_identity > 0)",
+      "arm": "V-d0",
+      "n": 93,
+      "n_correct": 21
+    },
+    {
+      "group": "exposed (k_identity > 0)",
+      "arm": "V-d2",
+      "n": 93,
+      "n_correct": 58
+    },
+    {
+      "group": "exposed (k_identity > 0)",
+      "arm": "V-d4",
+      "n": 93,
+      "n_correct": 55
+    },
+    {
+      "group": "unexposed (k_identity = 0 or None)",
+      "arm": "R5",
+      "n": 347,
+      "n_correct": 318
+    },
+    {
+      "group": "unexposed (k_identity = 0 or None)",
+      "arm": "V-d0",
+      "n": 347,
+      "n_correct": 316
+    },
+    {
+      "group": "unexposed (k_identity = 0 or None)",
+      "arm": "V-d2",
+      "n": 347,
+      "n_correct": 320
+    },
+    {
+      "group": "unexposed (k_identity = 0 or None)",
+      "arm": "V-d4",
+      "n": 347,
+      "n_correct": 296
+    }
+  ],
+  "outcomes": {
+    "R5": {
+      "cypher-v2t": {
+        "ANSWERED": 391,
+        "RETRIEVAL_ERROR": 47,
+        "PARSE_FAILURE": 2
+      },
+      "agent-v2t": {
+        "ANSWERED": 439,
+        "PARSE_FAILURE": 1
+      }
+    },
+    "V-d0": {
+      "cypher-v2t": {
+        "ANSWERED": 414,
+        "PARSE_FAILURE": 17,
+        "RETRIEVAL_ERROR": 9
+      },
+      "agent-v2t": {
+        "ANSWERED": 439,
+        "PARSE_FAILURE": 1
+      }
+    },
+    "V-d2": {
+      "cypher-v2t": {
+        "ANSWERED": 392,
+        "RETRIEVAL_ERROR": 47,
+        "PARSE_FAILURE": 1
+      },
+      "agent-v2t": {
+        "ANSWERED": 438,
+        "PARSE_FAILURE": 2
+      }
+    },
+    "V-d4": {
+      "cypher-v2t": {
+        "ANSWERED": 394,
+        "RETRIEVAL_ERROR": 42,
+        "PARSE_FAILURE": 4
+      },
+      "agent-v2t": {
+        "ANSWERED": 438,
+        "PARSE_FAILURE": 2
+      }
+    }
+  },
+  "notes": [
+    "Exposed means the question's k_identity is greater than 0; a missing (None) k_identity counts as unexposed.",
+    "Accuracy and outcome counts cover the same questions (R5's headline scope).",
+    "Spend is the sum of cost_usd over calls not served from the cache, over all questions of the run (not only the headline scope)."
+  ]
+}

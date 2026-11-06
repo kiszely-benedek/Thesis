@@ -90,7 +90,7 @@ Status updated 2026-11-04 (was the 2026-08 plan).
 | EXP-0001 | Reproduce ChatP&ID's 0.91 ContextRAG baseline on `DEXPIEX01.xml` | done (rows above; ADR-0054) |
 | EXP-0002 | At what node count does ContextRAG stop fitting / stop winning? | done on v1 (EXP-0002 rows), on v2 R3/R4/R5 |
 | EXP-0003 | How does retrieval accuracy degrade as digitization edge error rises 0% → 25%? | cut to minimal by ADR-0011 (no digitizer); not run |
-| EXP-0004 | Cross-sheet identity when a tag is written differently (ADR-0031) | **P3 done** 2026-11-05 (`1ad5d99`, ADR-0063): H1000g2d100V pair F1 D2 0.736, D4 0.950 [0.936, 0.962]; naming family D2 0.347, D4 0.983; I0–I3 pass; end-to-end arm (P4) pending |
+| EXP-0004 | Cross-sheet identity when a tag is written differently (ADR-0031) | **P3 done** 2026-11-05 (`1ad5d99`, ADR-0063): H1000g2d100V pair F1 D2 0.736, D4 0.950 [0.936, 0.962]; naming family D2 0.347, D4 0.983; I0–I3 pass. **P4 done** 2026-11-06 (`EXP-0004-E2E.md`): acc@120 on H1000g2V D0 0.766, D2 0.859, D4 0.798 vs R5 0.891; E1, E2 pass, E3, E4 fail (D2 −0.032 [−0.055, −0.009]); D4's false merges cost unexposed questions; $1.94 |
 | EXP-0005 | Abstention: does the system say "not specified" on known-unanswerable questions? | minimal by ADR-0011: one unanswerable family inside every question set (e.g. R5 UNANSWERABLE_TAG) |
 
 ## Entry template

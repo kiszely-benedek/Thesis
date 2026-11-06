@@ -1,0 +1,17 @@
+{
+ "arm": "d0",
+ "n_misses": {
+  "cyp": 148,
+  "ag": 256
+ },
+ "cost_per_question_usd": {
+  "cyp": 0.00075,
+  "ag": 0.00189
+ },
+ "cap_usd": {
+  "cyp": 0.1665,
+  "ag": 0.7258
+ },
+ "total_cap_usd": 0.8923,
+ "basis": "questions with a miss x R5 cost per question at H1000g2 x 1.5"
+}

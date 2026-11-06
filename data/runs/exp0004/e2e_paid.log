@@ -1,0 +1,128 @@
+=== 21:20:39 paid wrapper waiting for the dry runs
+=== 21:29:24 paid wrapper stopped by the user's request before any paid call
+=== 08:48:11 caps d0 $0.8923, d2 $0.6507, d4 $0.5811, total $2.1241 (budget $4.44)
+=== 08:48:11 start paid d0 (max $0.8923)
+frozen system: V2T-A at E8 4dfad69510cc58daadb5a842082af575ee25706d
+pre-registration holds (34 hashes)
+Neo4j database: e7tune
+caps: Cypher tier $0.1665, agent tier $0.7258 (arm total $0.8923)
+ok: Luna's listing equals the registered one
+=== 08:48:31 load H1000g2V (plant_lines) into e7tune
+=== 08:55:14 E2E-CYP-H1000g2V-d0 (full, cap $0.1665)
+    E2E-CYP-H1000g2V-d0: complete
+    560 rows: {'ANSWERED': 530, 'PARSE_FAILURE': 21, 'RETRIEVAL_ERROR': 9}
+=== 09:11:00 replay INF-E2E-CYP-H1000g2V-d0 (no --allow-paid-calls: cache only)
+    INF-E2E-CYP-H1000g2V-d0: identical
+=== 09:42:24 E2E-AG-H1000g2V-d0 (full, cap $0.7258)
+    E2E-AG-H1000g2V-d0: complete
+    560 rows: {'ANSWERED': 559, 'PARSE_FAILURE': 1}
+=== 10:11:48 replay INF-E2E-AG-H1000g2V-d0 (no --allow-paid-calls: cache only)
+    INF-E2E-AG-H1000g2V-d0: identical
+--- no D1000 restore: the target was the temporary database e7tune
+=== replay checks
+==> data/runs/exp0004/e2e/d0/live/replays/INF-E2E-AG-H1000g2V-d0/replay_check.txt <==
+identical
+
+==> data/runs/exp0004/e2e/d0/live/replays/INF-E2E-CYP-H1000g2V-d0/replay_check.txt <==
+identical
+=== 10:26:48 done: data/runs/exp0004/e2e/d0/live/runs (answers), data/runs/exp0004/e2e/d0/live/replays (cache-only replays)
+=== 10:26:48 done paid d0
+=== 10:26:48 start paid d2 (max $0.6507)
+frozen system: V2T-A at E8 4dfad69510cc58daadb5a842082af575ee25706d
+pre-registration holds (34 hashes)
+Neo4j database: e7tune
+caps: Cypher tier $0.1148, agent tier $0.5359 (arm total $0.6507)
+ok: Luna's listing equals the registered one
+=== 10:27:35 load H1000g2V (plant_lines) into e7tune
+=== 10:41:47 E2E-CYP-H1000g2V-d2 (full, cap $0.1148)
+    E2E-CYP-H1000g2V-d2: complete
+    560 rows: {'ANSWERED': 502, 'RETRIEVAL_ERROR': 57, 'PARSE_FAILURE': 1}
+=== 11:13:32 replay INF-E2E-CYP-H1000g2V-d2 (no --allow-paid-calls: cache only)
+    INF-E2E-CYP-H1000g2V-d2: different_or_miss rc=2
+=== 12:14:11 E2E-AG-H1000g2V-d2 (full, cap $0.5359)
+ERROR: E2E-AG-H1000g2V-d2 reached its spend cap: ask the user before resuming with a higher cap
+=== 12:32:05 FAILED paid d2 (exit 0)
+=== 12:42:03 start paid d2 (max $0.79, above the dry-run cap, approved by the user) --resume
+frozen system: V2T-A at E8 4dfad69510cc58daadb5a842082af575ee25706d
+pre-registration holds (34 hashes)
+Neo4j database: e7tune
+caps: Cypher tier $0.139376, agent tier $0.650624 (arm total $0.79, above the dry-run cap: approved by the user)
+ok: Luna's listing equals the registered one
+--- skip load (done)
+--- skip live_E2E-CYP-H1000g2V-d2 (done)
+--- skip replay_E2E-CYP-H1000g2V-d2 (done)
+=== 12:42:18 E2E-AG-H1000g2V-d2 (full, cap $0.650624)
+ERROR: E2E-AG-H1000g2V-d2 reached its spend cap: ask the user before resuming with a higher cap
+=== 12:49:06 FAILED paid d2 (exit 0)
+=== 12:49:58 start paid d2 (max $1.15, above the dry-run cap, approved by the user) --resume
+frozen system: V2T-A at E8 4dfad69510cc58daadb5a842082af575ee25706d
+pre-registration holds (34 hashes)
+Neo4j database: e7tune
+caps: Cypher tier $0.202889, agent tier $0.947111 (arm total $1.15, above the dry-run cap: approved by the user)
+ok: Luna's listing equals the registered one
+--- skip load (done)
+--- skip live_E2E-CYP-H1000g2V-d2 (done)
+--- skip replay_E2E-CYP-H1000g2V-d2 (done)
+=== 12:50:12 E2E-AG-H1000g2V-d2 (full, cap $0.947111)
+    E2E-AG-H1000g2V-d2: complete
+    560 rows: {'ANSWERED': 557, 'PARSE_FAILURE': 3}
+=== 12:57:07 replay INF-E2E-AG-H1000g2V-d2 (no --allow-paid-calls: cache only)
+    INF-E2E-AG-H1000g2V-d2: identical
+--- no D1000 restore: the target was the temporary database e7tune
+=== replay checks
+==> data/runs/exp0004/e2e/d2/live/replays/INF-E2E-AG-H1000g2V-d2/replay_check.txt <==
+identical
+
+==> data/runs/exp0004/e2e/d2/live/replays/INF-E2E-CYP-H1000g2V-d2/replay_check.txt <==
+different_or_miss rc=2
+=== 13:04:35 done: data/runs/exp0004/e2e/d2/live/runs (answers), data/runs/exp0004/e2e/d2/live/replays (cache-only replays)
+=== 13:04:35 done paid d2
+=== 13:04:35 start paid d4 (max $0.775, above the dry-run cap, approved by the user) 
+frozen system: V2T-A at E8 4dfad69510cc58daadb5a842082af575ee25706d
+pre-registration holds (34 hashes)
+Neo4j database: e7tune
+caps: Cypher tier $0.124565, agent tier $0.650435 (arm total $0.775, above the dry-run cap: approved by the user)
+ok: Luna's listing equals the registered one
+=== 13:04:52 load H1000g2V (plant_lines) into e7tune
+=== 13:11:38 E2E-CYP-H1000g2V-d4 (full, cap $0.124565)
+ERROR: E2E-CYP-H1000g2V-d4 reached its spend cap: ask the user before resuming with a higher cap
+=== 13:34:11 FAILED paid d4 (exit 0)
+=== 13:37:15 resume paid d4 (tier caps Cypher $0.474, agent $0.65, approved by the user)
+frozen system: V2T-A at E8 4dfad69510cc58daadb5a842082af575ee25706d
+pre-registration holds (34 hashes)
+Neo4j database: e7tune
+caps: Cypher tier $0.474, agent tier $0.65 (arm total $1.124, above the dry-run cap: approved by the user)
+ok: Luna's listing equals the registered one
+--- skip load (done)
+=== 13:37:28 E2E-CYP-H1000g2V-d4 (full, cap $0.474)
+    E2E-CYP-H1000g2V-d4: complete
+    560 rows: {'ANSWERED': 503, 'RETRIEVAL_ERROR': 52, 'PARSE_FAILURE': 5}
+=== 13:47:31 replay INF-E2E-CYP-H1000g2V-d4 (no --allow-paid-calls: cache only)
+    INF-E2E-CYP-H1000g2V-d4: different_or_miss rc=2
+=== 14:49:21 E2E-AG-H1000g2V-d4 (full, cap $0.65)
+ERROR: E2E-AG-H1000g2V-d4 reached its spend cap: ask the user before resuming with a higher cap
+=== 15:19:44 FAILED paid d4 (exit 0)
+=== 16:03:05 resume paid d4 agent tier (nominal $1.176 = recorded $0.9255 + at most $0.25 new, approved by the user)
+frozen system: V2T-A at E8 4dfad69510cc58daadb5a842082af575ee25706d
+pre-registration holds (34 hashes)
+Neo4j database: e7tune
+caps: Cypher tier $0.474, agent tier $1.176 (arm total $1.65, above the dry-run cap: approved by the user)
+ok: Luna's listing equals the registered one
+--- skip load (done)
+--- skip live_E2E-CYP-H1000g2V-d4 (done)
+--- skip replay_E2E-CYP-H1000g2V-d4 (done)
+=== 16:03:37 E2E-AG-H1000g2V-d4 (full, cap $1.176)
+    E2E-AG-H1000g2V-d4: complete
+    560 rows: {'ANSWERED': 558, 'PARSE_FAILURE': 2}
+=== 16:21:38 replay INF-E2E-AG-H1000g2V-d4 (no --allow-paid-calls: cache only)
+    INF-E2E-AG-H1000g2V-d4: identical
+--- no D1000 restore: the target was the temporary database e7tune
+=== replay checks
+==> data/runs/exp0004/e2e/d4/live/replays/INF-E2E-AG-H1000g2V-d4/replay_check.txt <==
+identical
+
+==> data/runs/exp0004/e2e/d4/live/replays/INF-E2E-CYP-H1000g2V-d4/replay_check.txt <==
+different_or_miss rc=2
+=== 16:40:16 done: data/runs/exp0004/e2e/d4/live/runs (answers), data/runs/exp0004/e2e/d4/live/replays (cache-only replays)
+=== 16:40:16 done paid d4
+=== 16:40:16 all three paid runs done

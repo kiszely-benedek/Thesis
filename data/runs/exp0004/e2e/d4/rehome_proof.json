@@ -1,0 +1,16 @@
+{
+ "source_path": "data/runs/exp0007/sealed/questions/H1000g2/questions.jsonl",
+ "source_sha256": "548762dcd78887fee0979401922ee4bf78eb2d113b8f7f120a8d3c5af101da43",
+ "output_path": "data/runs/exp0004/e2e/d4/questions/H1000g2V/questions.jsonl",
+ "output_sha256": "8b7fe3c289915b6023804c605e384e9db846991aa9e837e1cffeef3db953e4b8",
+ "sealed_corpus_id": "H1000g2",
+ "variant_corpus_id": "H1000g2V",
+ "n_questions": 560,
+ "other_fields_equal": true,
+ "source_graph_hash": "fd7f36f25b6a185d0a9f21238f22893f33ccae57d1d6024e763c275a8edcfbc5",
+ "source_graph_hash_equal": true,
+ "manifest_digest": "81ffd4bf9146c14f46ea71ab9e36e3e7caee6cb7dc6186a25a4dfb902631de59",
+ "manifest_equal_modulo_reference_tags": true,
+ "n_variant_references_sealed": 0,
+ "n_variant_references_variant": 213
+}

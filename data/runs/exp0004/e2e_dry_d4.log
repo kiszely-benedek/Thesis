@@ -1,0 +1,19 @@
+=== 21:19:35 start dry d4
+frozen system: V2T-A at E8 4dfad69510cc58daadb5a842082af575ee25706d
+pre-registration holds (34 hashes)
+Neo4j database: e7tune
+=== 21:19:58 load H1000g2V (plant_lines) into e7tune
+=== 21:29:24 STOPPED by the user's request during load (dry d4 not finished); partial output moved to e2e/d4_aborted_20261105_2129
+=== 06:28:34 start dry d4
+frozen system: V2T-A at E8 4dfad69510cc58daadb5a842082af575ee25706d
+pre-registration holds (34 hashes)
+Neo4j database: e7tune
+=== 06:29:16 load H1000g2V (plant_lines) into e7tune
+=== 07:12:09 dry run E2E-DRY-CYP-H1000g2V-d4 (cache copy, nothing is paid)
+E2E-DRY-CYP-H1000g2V-d4: 83 of 560 questions need a model call (83 calls not in the cache, 1132 served from it)
+=== 08:37:46 dry run E2E-DRY-AG-H1000g2V-d4 (cache copy, nothing is paid)
+E2E-DRY-AG-H1000g2V-d4: 172 of 560 questions need a model call (436 calls not in the cache, 1912 served from it)
+d4: caps {'cyp': 0.0934, 'ag': 0.4877}, total $0.5811 (questions with a miss x R5 cost per question at H1000g2 x 1.5)
+--- no D1000 restore: the target was the temporary database e7tune
+=== 08:48:10 dry run done: data/runs/exp0004/e2e/d4/dry/caps.json (show these caps to the user before any paid run)
+=== 08:48:10 done dry d4
