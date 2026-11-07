@@ -4,8 +4,9 @@ python -m plantgraph.exp0004.e2e_caps make --arm d0 --cyp-misses F --ag-misses F
 python -m plantgraph.exp0004.e2e_caps split --caps caps.json --max-spend-usd X     # prints two caps
 
 cap of a tier = questions with a cache miss x R5's cost per question x 1.5. The user's cap for the
-arm must not exceed the sum unless the user approved more (`--above-dry-cap`, never above the P4
-bound of $4.44); it is divided between the tiers in proportion to their computed caps.
+arm must not exceed the sum unless the user approved more (`--above-dry-cap`, and that single
+cap never above the P4 bound of $4.44, checked per invocation); it is divided
+between the tiers in proportion to their computed caps.
 """
 
 from __future__ import annotations
@@ -22,7 +23,8 @@ from plantgraph.exp0004.e2e_dry_run import DryRunReport
 #: table rows always_c_v2t (Cypher tier) and always_g_v2t (agent tier), the 1,000-sheet figure).
 COST_PER_QUESTION_USD = {"cyp": 0.00075, "ag": 0.00189}
 SAFETY_FACTOR = 1.5
-#: PREREG.md section 7: the upper bound for all three P4 arms together
+#: PREREG.md section 7: the upper bound for all three P4 arms together. The code checks it against
+#: one arm's cap per invocation only; the running total over the arms was tracked by hand.
 P4_UPPER_BOUND_USD = 4.44
 
 
@@ -56,12 +58,26 @@ def compute_caps(arm: str, cyp: DryRunReport, ag: DryRunReport) -> E2ECaps:
     )
 
 
+def _check_p4_bound(max_spend_usd: float) -> None:
+    """Refuse one invocation's cap above the P4 bound.
+
+    This is a per-invocation check (one arm's cap), not a check of the cumulative spend of the
+    three arms: that total was tracked by hand in `data/runs/exp0004/run_p4_rest*.sh` and came to
+    $1.9447 of real spend.
+    """
+    if max_spend_usd > P4_UPPER_BOUND_USD:
+        raise ValueError(
+            f"expected a cap of at most {P4_UPPER_BOUND_USD} (the pre-registered P4 bound), "
+            f"found {max_spend_usd}"
+        )
+
+
 def split_cap(caps: E2ECaps, max_spend_usd: float, above_dry_cap: bool = False) -> dict[str, float]:
     """Divide the user's cap between the tiers in proportion to their computed caps.
 
     `above_dry_cap` is the user's explicit approval of a cap above the dry run's total (2026-11-06:
     the agent tier cost 1.42x R5's per-question figure on H1000g2V, so 1.5x did not cover it). It
-    never lifts the pre-registered upper bound for the whole of P4.
+    never lifts the pre-registered P4 upper bound (checked on this one cap, not on the arms' total).
 
     Raises:
         ValueError: the cap is not positive, there is nothing to pay for, the cap exceeds the
@@ -73,11 +89,7 @@ def split_cap(caps: E2ECaps, max_spend_usd: float, above_dry_cap: bool = False) 
         raise ValueError(
             "expected at least one cache miss in the dry run, found none: nothing to pay"
         )
-    if max_spend_usd > P4_UPPER_BOUND_USD:
-        raise ValueError(
-            f"expected a cap of at most {P4_UPPER_BOUND_USD} (the pre-registered P4 bound), "
-            f"found {max_spend_usd}"
-        )
+    _check_p4_bound(max_spend_usd)
     if max_spend_usd > caps.total_cap_usd and not above_dry_cap:
         raise ValueError(
             f"expected a cap of at most {caps.total_cap_usd} (the dry run's total), "
@@ -111,11 +123,7 @@ def explicit_tier_caps(
             f"expected the tier caps to add up to the arm cap {max_spend_usd}, "
             f"found {cyp_usd} + {ag_usd}"
         )
-    if max_spend_usd > P4_UPPER_BOUND_USD:
-        raise ValueError(
-            f"expected a cap of at most {P4_UPPER_BOUND_USD} (the pre-registered P4 bound), "
-            f"found {max_spend_usd}"
-        )
+    _check_p4_bound(max_spend_usd)
     return {"cyp": cyp_usd, "ag": ag_usd}
 
 

@@ -8,7 +8,12 @@ from typing import Any
 
 import pytest
 
-from plantgraph.exp0004.e2e_report_load import real_spend_usd
+from plantgraph.exp0004.e2e_report_load import (
+    PREREGISTERED_HEADLINE_N,
+    real_spend_usd,
+    require_arm_size,
+    require_headline_size,
+)
 from plantgraph.exp0004.e2e_report_models import R5_ARM, ArmData, E2EReport
 from plantgraph.exp0004.e2e_report_render import render_markdown
 from plantgraph.exp0004.e2e_report_tables import (
@@ -152,3 +157,15 @@ def test_spend_sums_only_calls_not_served_from_the_cache(tmp_path: Path) -> None
 
 def test_spend_of_a_run_without_calls_is_zero(tmp_path: Path) -> None:
     assert real_spend_usd(tmp_path) == 0.0
+
+
+def test_headline_scope_of_the_wrong_size_is_refused() -> None:
+    require_headline_size([f"q{i}" for i in range(PREREGISTERED_HEADLINE_N)])  # no error
+    with pytest.raises(ValueError, match="440"):
+        require_headline_size(["q1", "q2"])
+
+
+def test_an_arm_that_lost_headline_questions_is_refused_by_name() -> None:
+    require_arm_size("V-d0", PREREGISTERED_HEADLINE_N)  # no error
+    with pytest.raises(ValueError, match=r"V-d2.*439"):
+        require_arm_size("V-d2", PREREGISTERED_HEADLINE_N - 1)

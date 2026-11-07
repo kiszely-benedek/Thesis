@@ -26,6 +26,8 @@ from plantgraph.qa.models import Question
 #: The tier names inside the frozen policy `cascade_v4_iso`.
 CYPHER_TIER = "cypher-v2t"
 AGENT_TIER = "agent-v2t"
+#: PREREG.md section 5: "R5's 440-question headline scope".
+PREREGISTERED_HEADLINE_N = 440
 
 
 @dataclass(frozen=True)
@@ -40,13 +42,43 @@ class ArmInput:
     corpora_root: Path
 
 
+def require_headline_size(ids: Collection[str]) -> None:
+    """Refuse a headline scope that is not the pre-registered size.
+
+    Raises:
+        ValueError: the scope does not hold exactly `PREREGISTERED_HEADLINE_N` questions.
+    """
+    if len(ids) != PREREGISTERED_HEADLINE_N:
+        raise ValueError(
+            f"expected the pre-registered headline scope of {PREREGISTERED_HEADLINE_N} "
+            f"questions, found {len(ids)}"
+        )
+
+
+def require_arm_size(label: str, n_questions: int) -> None:
+    """Refuse an arm whose restricted question set is not the pre-registered size.
+
+    `restrict` silently drops headline ids an arm lacks, so each arm is counted after it.
+
+    Raises:
+        ValueError: the arm does not hold exactly `PREREGISTERED_HEADLINE_N` questions.
+    """
+    if n_questions != PREREGISTERED_HEADLINE_N:
+        raise ValueError(
+            f"expected arm {label} to hold the pre-registered {PREREGISTERED_HEADLINE_N} "
+            f"headline questions after restriction, found {n_questions}"
+        )
+
+
 def headline_ids(questions_root: Path, corpus_id: str) -> tuple[list[Question], frozenset[str]]:
     """R5's questions and its headline scope: counted family, splits dev-old/dev-new/held-out."""
     _, questions = load_questions_file(questions_root, corpus_id)
     splits = load_splits(questions_root, corpus_id, questions)
     if splits is None:
         raise ValueError(f"expected a splits.json under {questions_root / corpus_id}, found none")
-    return questions, counted_ids(questions) & split_ids(splits, HEADLINE_SPLITS)
+    ids = counted_ids(questions) & split_ids(splits, HEADLINE_SPLITS)
+    require_headline_size(ids)
+    return questions, ids
 
 
 def real_spend_usd(run_dir: Path) -> float:
@@ -89,6 +121,7 @@ def load_arm(
 ) -> ArmData:
     """Score `policy` on `ids` of one arm and collect its outcome counts and real spend."""
     scoped = restrict(_join(arm, policy), ids)
+    require_arm_size(arm.label, len(scoped.question_ids))
     evaluation = evaluate_policy(scoped, cutoff_s)
     # evaluate_policy scores in `question_ids` order, so the two lists line up
     correct = {

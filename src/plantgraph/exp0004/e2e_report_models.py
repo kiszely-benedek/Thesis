@@ -39,6 +39,8 @@ class ArmRow(BaseModel):
     n: int
     n_correct: int
     accuracy: Interval
+    #: New spend only (cache misses). The V arms reused R5's cache, so this is NOT a cost per arm
+    #: and must not be compared with R5's full spend.
     spend_usd: float
 
 

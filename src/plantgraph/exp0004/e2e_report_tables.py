@@ -165,7 +165,9 @@ def build_e2e_report(
             "Exposed means the question's k_identity is greater than 0; a missing "
             "(None) k_identity counts as unexposed.",
             "Accuracy and outcome counts cover the same questions (R5's headline scope).",
-            "Spend is the sum of cost_usd over calls not served from the cache, "
-            "over all questions of the run (not only the headline scope).",
+            "New spend is the sum of cost_usd over calls not served from the cache, "
+            "over all questions of the run (not only the headline scope). The V arms reused "
+            "R5's cache, so their figure counts only the calls R5 had not already paid for: "
+            "it is not a cost per arm and must not be compared with R5's full spend.",
         ],
     )
