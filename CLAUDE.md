@@ -66,6 +66,7 @@ Pydantic (data model) · pyDEXPI (DEXPI conversion, **AGPL-3.0** — see ADR-000
 | `/explain <topic>` | teaching note into `docs/Notes/` |
 | `/log-progress` | append to the weekly log |
 | `python-comments` | write or audit comments against the 9-type taxonomy |
+| `/study-map` | build or update the user's interactive learning map of the whole project (Artifact) |
 
 **Model assignment (ADR-0006, amended 2026-09-25):** planning and ADRs on **the latest available Opus** — currently **Opus 5.5**, at **high** reasoning effort for planning; on **Fable 5.1** only when the user asks for it on that task; implementation (`coder`) always on **Sonnet**. Coders run one at a time, never in parallel. The rule names "latest Opus" rather than a fixed version so it does not go stale as models ship.
 
