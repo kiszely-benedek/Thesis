@@ -10,7 +10,7 @@ import pytest
 
 import qa_toy_plant_dev2
 import qa_toy_plant_heldout
-from plantgraph.ingest.headline_v2 import TEST_SEEDS_V2, headline_corpus_id_v2
+from plantgraph.ingest.headline_v2 import headline_corpus_id_v2
 from plantgraph.qa.models import AnswerType, Question, QuestionFamily
 from plantgraph.qa.questions import sealed_set
 from plantgraph.qa.questions.availability import AvailabilityReport, BinTargets, KBin
@@ -81,12 +81,11 @@ def test_a_test_corpus_is_accepted(corpus_id: str) -> None:
     require_test_corpus(corpus_id)
 
 
-def test_every_registered_v2_test_corpus_id_is_accepted() -> None:
-    """The ids `headline_corpus_id_v2` gives the registered test seeds all pass the check."""
-    for sheets, seed in TEST_SEEDS_V2.items():
-        require_test_corpus(headline_corpus_id_v2(sheets, seed))
-    for rate in (0.0, 0.5):
-        require_test_corpus(headline_corpus_id_v2(100, TEST_SEEDS_V2[100], rate))
+def test_the_v21_test_corpus_ids_are_accepted_and_dev_ones_are_not() -> None:
+    for corpus_id in ("H100g21p4", "H1000g21p1d0", "H100g21p1d50", "H30g21"):
+        require_test_corpus(corpus_id)
+    with pytest.raises(ValueError, match="test corpus id"):
+        require_test_corpus(headline_corpus_id_v2(100, 1))
 
 
 @pytest.mark.parametrize(

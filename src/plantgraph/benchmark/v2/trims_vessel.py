@@ -15,6 +15,8 @@ from plantgraph.benchmark.v2.plan_models import LineItemSpec
 from plantgraph.benchmark.v2.trim_context import LineStyle, TrimContext
 from plantgraph.benchmark.v2.trim_plan import TrimDraft, TrimPlan, combine
 from plantgraph.benchmark.v2.trims_extra import (
+    FLARE_SERVICE,
+    LIQUID_SERVICE,
     capped_branch,
     flush_connection,
     tee_part,
@@ -46,9 +48,9 @@ def vessel_psv(ctx: TrimContext, style: LineStyle, vessel_id: str) -> TrimPlan:
     psv = draft.dealt_part("vessel_psv", "psv")
     outlet = [draft.dealt_part("block_valve", "psv_outlet_block")] if blocks else []
     parts = [*inlet, *([drain_tee] if drain_tee else []), psv, *outlet]
-    draft.line(vessel_id, parts, None, style=style.branch(service="FL"))  # main line first
+    draft.line(vessel_id, parts, None, style=style.branch(service=FLARE_SERVICE))  # main line first
     if drain_tee is not None:
-        capped_branch(draft, drain_tee.node_id, "drain", "psv_drain")
+        capped_branch(draft, drain_tee.node_id, "drain", "psv_drain", service=FLARE_SERVICE)
     return draft.finish(psv=psv)
 
 
@@ -62,7 +64,10 @@ def vessel_vent_drain(ctx: TrimContext, style: LineStyle, vessel_id: str) -> Tri
     ports: dict[str, LineItemSpec] = {}
     for kind in ("drain", "vent"):
         if _is_drawn(ctx):
-            ports[f"{kind}_valve"] = capped_branch(draft, vessel_id, kind, f"vessel_{kind}")
+            service = LIQUID_SERVICE if kind == "drain" else None  # liquid collects at the bottom
+            ports[f"{kind}_valve"] = capped_branch(
+                draft, vessel_id, kind, f"vessel_{kind}", service=service
+            )
     return draft.finish_with_ports(ports)
 
 

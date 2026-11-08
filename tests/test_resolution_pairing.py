@@ -74,6 +74,21 @@ def test_unique_connector_number_pairs_via_the_strongest_rule() -> None:
     assert pair.match_rule is MatchRule.CONNECTOR_NUMBER
 
 
+def test_duplicate_outgoing_connector_number_is_not_paired_by_number() -> None:
+    """Two outgoing labels on one sheet with the same number both point at the one incoming label
+    that names it; neither may claim it by number. The weaker rule pairs one, reports the other.
+    """
+    out_a = _label("0:out-a", "0", Direction.OUTGOING, "OUT-1", "1", "IN-1", "PL-1", "PL")
+    out_b = _label("0:out-b", "0", Direction.OUTGOING, "OUT-1", "1", "IN-1", "PL-2", "PL")
+    incoming = _label("1:in", "1", Direction.INCOMING, "IN-1", "0", "OUT-1", "PL-1", "PL")
+    pairs, unresolved = pair_connectors([out_a, out_b, incoming], _ALL_SHEET_IDS)
+
+    (pair,) = pairs
+    assert (pair.from_key, pair.to_key) == ("0:out-a", "1:in")
+    assert pair.match_rule is MatchRule.LINE_NUMBER
+    assert [entry.from_key for entry in unresolved] == ["0:out-b"]
+
+
 def test_absent_target_sheet_is_unresolved_with_a_named_reason() -> None:
     out_label = _label("0:out", "0", Direction.OUTGOING, "OUT-1", "not-in-corpus")
     pairs, unresolved = pair_connectors([out_label], _ALL_SHEET_IDS)

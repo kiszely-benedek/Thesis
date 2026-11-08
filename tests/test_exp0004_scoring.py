@@ -18,6 +18,7 @@ from plantgraph.eval.resolution_scoring import PairScore
 from plantgraph.exp0004 import commands
 from plantgraph.exp0004.bootstrap import interval_of, paired_difference, resample_f1
 from plantgraph.exp0004.corpus import CorpusSpec, corpus_id_for
+from plantgraph.exp0004.d4_stats import PairCall, summarize
 from plantgraph.exp0004.deciders import DeciderRun, make_decider
 from plantgraph.exp0004.description import CorpusDescription, CorpusFile
 from plantgraph.exp0004.metrics import Counts, prf_of
@@ -177,11 +178,27 @@ def test_decider_ids_and_thresholds() -> None:
 
 
 def test_corpus_ids_follow_the_design() -> None:
-    assert corpus_id_for(100, 1, 1.0, ["format"]) == "D100g2d100Vf"
-    assert corpus_id_for(1000, 5003, 1.0, ["naming", "format"]) == "H1000g2d100V"
-    assert corpus_id_for(100, 5002, 0.25, ["format", "naming"]) == "H100g2V"
+    assert corpus_id_for(100, 1, 1.0, ["format"]) == "D100g21d100Vf"
+    assert corpus_id_for(100, 1, 0.25, ["format", "naming"]) == "D100g21V"
+    with pytest.raises(ValueError, match="retired"):
+        corpus_id_for(1000, 5003, 1.0, ["naming", "format"])
     with pytest.raises(ValueError, match="duplication rate"):
         corpus_id_for(100, 1, 0.5, ["format"])
+
+
+def _call(from_cache: bool, cost: float) -> PairCall:
+    return PairCall(
+        card="c", answer_text="yes", same_item=True, reason=None, parse_ok=True,
+        from_cache=from_cache, cost_usd=cost, latency_s=0.1,
+    )  # fmt: skip
+
+
+def test_report_cost_counts_calls_answered_from_the_cache_by_a_resume() -> None:
+    stats = summarize([_call(from_cache=True, cost=0.0003)], "pin", "prompt")
+    assert stats.cost_usd_spent == 0.0  # nothing was live in this invocation
+    resumed = GOOD.model_copy(update={"llm": stats})
+    text = render_report([score_corpus("toy", TOY_PAIRS, [resumed], n_resamples=10)])
+    assert "| d1 | 1 | 1 | 0 | 0.000300 |" in text
 
 
 def test_report_renders_the_scripted_toy() -> None:

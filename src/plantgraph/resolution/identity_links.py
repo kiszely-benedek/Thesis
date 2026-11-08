@@ -9,10 +9,12 @@ salt-renamed `localize()` (gate G2) maps them onto the same groups.
 
 Two rules keep a wrong link from merging two real items. Both rest on one fact: an item is drawn
 at most once per sheet.
-- **One-to-one**: an occurrence links to at most one occurrence per other sheet, best score first.
-  This is what separates the installed spares `P-1203A` and `P-1203B` when both look alike.
 - **Same-sheet split**: a link that would put two occurrences of one sheet into one group is
   refused and counted as an identity conflict.
+- **One-to-one**: an occurrence links to at most one occurrence per other sheet, best score first.
+  This is what separates the installed spares `P-1203A` and `P-1203B` when both look alike. The
+  same-sheet split is tried first: a refused link does not use up its one-to-one slot, so a
+  weaker, correct link to the same sheet can still be merged.
 """
 
 from __future__ import annotations
@@ -89,16 +91,13 @@ def group_with_links(
     exact_groups, n_ambiguous = group_identities(sheets, classes)
     nodes = _equipment_nodes(sheets, classes)
     by_content_key = _unique_by_content_key(nodes)
-    kept, n_dropped = _one_to_one(_in_priority_order(link_set.links))
 
     components = _Components(nodes)
     for group in exact_groups:
         components.merge_exact_group([group.home, *group.references])
-    n_conflicts = 0
-    for link in kept:
-        one, other = _local_key(by_content_key, link.first), _local_key(by_content_key, link.second)
-        if not components.merge(one, other):
-            n_conflicts += 1
+    n_dropped, n_conflicts = _apply_links(
+        components, by_content_key, _in_priority_order(link_set.links)
+    )
     return LinkedGrouping(
         groups=components.groups(),
         n_ambiguous_tag_keys=n_ambiguous,
@@ -152,17 +151,23 @@ def _in_priority_order(links: Sequence[IdentityLink]) -> list[IdentityLink]:
     )
 
 
-def _one_to_one(ordered: Sequence[IdentityLink]) -> tuple[list[IdentityLink], int]:
-    """Drop a link when either occurrence already has a link to the other one's sheet."""
+def _apply_links(
+    components: _Components, by_content_key: dict[ContentKey, str], ordered: Sequence[IdentityLink]
+) -> tuple[int, int]:
+    """Merge links best first; return (dropped by one-to-one, refused as same-sheet conflicts)."""
     taken: set[tuple[ContentKey, str]] = set()  # (occurrence, the other sheet it is linked to)
-    kept: list[IdentityLink] = []
+    n_dropped = n_conflicts = 0
     for link in ordered:
         slots = {(link.first, link.second.sheet_id), (link.second, link.first.sheet_id)}
         if slots & taken:
+            n_dropped += 1
             continue
-        taken |= slots
-        kept.append(link)
-    return kept, len(ordered) - len(kept)
+        one, other = _local_key(by_content_key, link.first), _local_key(by_content_key, link.second)
+        if components.merge(one, other):
+            taken |= slots  # only a link that really merged uses up its slots
+        else:
+            n_conflicts += 1
+    return n_dropped, n_conflicts
 
 
 class _Components:

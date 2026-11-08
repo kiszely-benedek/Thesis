@@ -24,6 +24,7 @@ from plantgraph.qa.harness.attempt import (
 )
 from plantgraph.qa.harness.pool import run_in_order
 from plantgraph.qa.harness.registry import CypherDeps, LlmDeps, build_strategy
+from plantgraph.qa.harness.row_order import restore_row_order
 from plantgraph.qa.harness.run_dir import RowKey, RunDir, row_key
 from plantgraph.qa.harness.spend_cap import Reservation, SpendCapReached, SpendGuard
 from plantgraph.qa.harness.usage_meter import UsageMeter
@@ -44,6 +45,16 @@ class Invocation:
 
 
 @dataclass(frozen=True)
+class FillResult:
+    """What one `fill_answers` call did."""
+
+    n_new_rows: int
+    stopped_by_spend_cap: bool
+    #: Cost of abandoned calls that answered after all during this invocation.
+    late_after_timeout_usd: float
+
+
+@dataclass(frozen=True)
 class _Job:
     """A work item with the corpus it belongs to and whether it is its strategy's first."""
 
@@ -60,16 +71,17 @@ def fill_answers(
     run_dir: RunDir,
     client: ChatClient,
     progress: ProgressSink,
-) -> tuple[int, bool]:
+) -> FillResult:
     """Answer every row not yet on disk.
 
     Returns:
-        How many rows this call wrote, and whether the spend cap stopped it early.
+        How many rows this call wrote, whether the spend cap stopped it early, and what
+        late answers of abandoned calls cost. The rows are left in canonical order.
     """
     dropped = run_dir.drop_provider_error_rows()
     rows_on_disk = run_dir.read_rows()
     done = {row_key(row) for row in rows_on_disk}
-    guard = _spend_guard(invocation, rows_on_disk)
+    guard = spend_guard_for_resume(invocation, rows_on_disk, run_dir.spent_usd())
     client.on_late_response = guard.charge_late  # money an abandoned call costs still counts
     jobs = _jobs(config, questions, corpora, done, sender_factory(client, config))
     progress(f"run {config.run_id}: {len(jobs)} rows to answer, {len(done)} already on disk")
@@ -89,13 +101,13 @@ def fill_answers(
     blocker = pass_.run(jobs, write_or_defer)
     if blocker is None:  # one more try each, then record the error
         blocker = pass_.run(retry_later, pass_.write_retry)
-    if blocker is None:
-        return pass_.written, False
-    if isinstance(blocker, SpendCapReached):
+    if blocker is not None and not isinstance(blocker, SpendCapReached):
+        raise blocker
+    restore_row_order(run_dir, config, questions)  # retried and resumed rows go back in place
+    if blocker is not None:
         # rows are appended whole and the cache keeps unwritten items' calls, so a resume is clean
         progress(f"STOPPED by the spend cap: {blocker}. Rerun with the same --run-id to resume.")
-        return pass_.written, True
-    raise blocker
+    return FillResult(pass_.written, blocker is not None, guard.late_usd)
 
 
 class _Pass:
@@ -156,12 +168,18 @@ class _Pass:
             self.write_answered(outcome)
 
 
-def _spend_guard(invocation: Invocation, rows_on_disk: list[QuestionResult]) -> SpendGuard:
-    """Seed the guard with what earlier invocations recorded as their total cost."""
+def spend_guard_for_resume(
+    invocation: Invocation, rows_on_disk: list[QuestionResult], spent_usd: float
+) -> SpendGuard:
+    """Seed the guard with the money earlier invocations really paid (`RunDir.spent_usd`).
+
+    The dearest question still comes from the rows' total costs: it only sizes the next
+    reservation, and a row answered from the cache is as dear as it was when first asked.
+    """
     totals = [row.total_cost_usd or 0.0 for row in rows_on_disk]
     return SpendGuard(
         invocation.max_spend_usd if invocation.allow_paid_calls else None,
-        recorded_usd=sum(totals),
+        recorded_usd=spent_usd,
         max_question_usd=max(totals, default=0.0),
         estimate_usd=invocation.cost_per_question_usd,
     )

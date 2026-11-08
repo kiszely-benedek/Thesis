@@ -1,10 +1,10 @@
 """The one place that tells the v1 generator from the v2 one (design generator-v2-realism 2).
 
 Every corpus ever stored (`ingest.json`) records its generator config. v1 configs have no
-`generator_version` key, v2 configs say `"v2"`; so a stored config is read back as v2 only when it
-says so, and every existing file keeps meaning v1. Callers never branch on the version themselves:
-they read a config with `generator_config_from_json` and build a plant with
-`generate_plant_graph_any`.
+`generator_version` key; v2 configs say `"v2"` (the first measurement, refused now) or `"v2.1"`. A
+stored config is read back as v2 only when it says so, and every existing file keeps meaning v1.
+Callers never branch on the version themselves: they read a config with
+`generator_config_from_json` and build a plant with `generate_plant_graph_any`.
 """
 
 from __future__ import annotations
@@ -22,19 +22,21 @@ from plantgraph.adapters.pydexpi_adapter import (
 )
 from plantgraph.adapters.pydexpi_builder import generate_plant
 from plantgraph.benchmark.generator_models import GeneratorConfig
-from plantgraph.benchmark.v2.config import GeneratorConfigV2
+from plantgraph.benchmark.v2.config import SUPERSEDED_VERSION, GeneratorConfigV2
 from plantgraph.benchmark.v2.generate import generate_plant_v2
 
 _V2 = "v2"
+#: the version strings of the v2 line: `"v2"` reaches `GeneratorConfigV2`, which refuses it by name
+_V2_VERSIONS = frozenset({SUPERSEDED_VERSION, "v2.1"})
 
 
 def _version_of(config: object) -> str:
-    """`"v2"` iff the config (a dict from JSON, or a model) says so; every other value is v1."""
+    """`"v2"` iff the config (a dict from JSON, or a model) names a v2-line version; else v1."""
     if isinstance(config, Mapping):
         version = config.get("generator_version")
     else:
         version = getattr(config, "generator_version", None)
-    return _V2 if version == _V2 else "v1"
+    return _V2 if version in _V2_VERSIONS else "v1"
 
 
 #: A v1 or v2 config as a Pydantic field type: the callable discriminator picks the class, so a v1
@@ -46,7 +48,11 @@ AnyGeneratorConfig = Annotated[
 
 
 def generator_config_from_json(data: Mapping[str, Any]) -> GeneratorConfig | GeneratorConfigV2:
-    """Read a stored generator config: v2 iff `generator_version == "v2"`, else v1."""
+    """Read a stored generator config: v2.1 iff it says so, else v1.
+
+    Raises:
+        ValueError: the config says `"v2"` (the superseded generator).
+    """
     if _version_of(data) == _V2:
         return GeneratorConfigV2.model_validate(data)
     return GeneratorConfig.model_validate(data)

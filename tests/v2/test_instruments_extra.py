@@ -14,7 +14,6 @@ from plantgraph.benchmark.v2.config import (
     InstrumentDensity,
     IntRange,
 )
-from plantgraph.benchmark.v2.instrument_draft import part_of
 from plantgraph.benchmark.v2.trim_plan import combine
 from plantgraph.graph.schema import Relation
 
@@ -62,54 +61,6 @@ def test_cascade_slave_has_one_sensor_and_one_master_and_keeps_the_valves_tag(
         graph.nodes[plan.ports["transmitter"]]["loop_tag"] == graph.nodes[slave_controller]["tag"]
     )
     assert graph.nodes[plan.ports["actuator"]]["loop_tag"] == graph.nodes[slave_controller]["tag"]
-
-
-# ---- split range (off by default) ------------------------------------------------------------
-
-
-def test_split_range_is_never_drawn_at_its_default() -> None:
-    """The default `p_split_range` is 0, so the draw never says yes (pid-vocabulary 7.1)."""
-    h = TrimHarness()
-    assert InstrumentConvention().p_split_range == 0.0
-    assert not any(
-        instruments_extra.wants_split_range(h.ctx, InstrumentConvention()) for _ in range(500)
-    )
-
-
-def test_split_range_is_drawn_when_its_chance_is_raised() -> None:
-    h = TrimHarness()
-    assert instruments_extra.wants_split_range(h.ctx, InstrumentConvention(p_split_range=1.0))
-
-
-def test_split_range_loop_is_one_controller_driving_two_valves() -> None:
-    """Template `PIC -> AF1 -> PV-A`, `-> AF2 -> PV-B`: one controller, two actuators."""
-    h = TrimHarness(config=convention(p_cv_station=0.0))
-    vessel, sink = _hosts(h)
-    first = trims_valves.control_valve(h.ctx, STYLE, "P")
-    second = trims_valves.control_valve(h.ctx, STYLE, "P")
-    loop = instruments_extra.split_range_loop(
-        h.ctx, STYLE, part_of(first, "body"), part_of(second, "body"), vessel
-    )
-    both = combine(first.with_port_prefix("a"), second.with_port_prefix("b"), loop)
-    h.write(both, vessel, sink)
-    graph = assert_round_trip(h)
-    actuators = targets(graph, loop.ports["controller"], _SIGNAL)
-    assert len(actuators) == 2
-    controlled = sorted(v for a in actuators for v in targets(graph, a, _CONTROL))
-    assert controlled == sorted([both.ports["a.body"], both.ports["b.body"]])
-    # S4 exemption: the second valve keeps its own number (tags stay unique, no suffix exists)
-    assert number_of(graph, both.ports["a.body"]) == number_of(graph, loop.ports["controller"])
-    assert number_of(graph, both.ports["b.body"]) != number_of(graph, loop.ports["controller"])
-
-
-def test_split_range_refuses_an_on_off_valve_as_the_second_valve() -> None:
-    h = TrimHarness(config=convention(p_cv_station=0.0))
-    first = trims_valves.control_valve(h.ctx, STYLE, "P")
-    xv = trims_valves.on_off_valve(h.ctx, STYLE)
-    with pytest.raises(ValueError, match="expected a control valve as the second"):
-        instruments_extra.split_range_loop(
-            h.ctx, STYLE, part_of(first, "body"), part_of(xv, "valve"), h.equipment("Tank", "TK")
-        )
 
 
 # ---- motors: start/stop, status, variable speed ----------------------------------------------

@@ -169,8 +169,24 @@ def test_old_run_rows_are_shown_with_a_notice_and_no_split() -> None:
     old = run("need", "D100", [timing(0.1, clock="monotonic")], status=None)
     report = build_infra_report(_inputs(runs=[old]))
     assert report.compute[0].other_sum_s is None
-    assert _check(report.checks, "Old-run").status == "flag"
+    notice = _check(report.checks, "Old-run")
+    assert notice.status == "flag"
+    assert "clock monotonic" in notice.detail and "coarse" not in notice.detail
     assert _check(report.checks, "M2").status == "pass"  # old rows are not judged by the clock rule
+
+
+def test_the_old_run_notice_names_the_clock_the_rows_were_timed_with() -> None:
+    old = run("need", "D100", [timing(0.1, clock="perf_counter")], status=None)
+    detail = _check(build_infra_report(_inputs(runs=[old])).checks, "Old-run").detail
+    assert "clock perf_counter" in detail and "monotonic" not in detail
+    assert "concurrency not recorded" in detail
+
+
+def test_a_replay_that_fell_back_to_an_old_run_does_not_pass_the_identity_check() -> None:
+    replayed = run("cypher", "D100", [timing(0.1)])
+    fallback = run("need", "D100", [timing(0.1)], status=None)
+    check = _check(build_infra_report(_inputs(runs=[replayed, fallback])).checks, "M1")
+    assert check.status == "flag" and "need on D100" in check.detail
 
 
 def test_no_price_file_means_no_money_table() -> None:

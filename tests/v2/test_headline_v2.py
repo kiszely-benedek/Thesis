@@ -14,7 +14,6 @@ from plantgraph.benchmark.v2.planner import plan_plant
 from plantgraph.benchmark.v2.split_by_sheet_group import by_sheet_group
 from plantgraph.ingest.headline import check_realized_sheets
 from plantgraph.ingest.headline_v2 import (
-    TEST_SEED_RANGE,
     TEST_SEEDS_V2,
     TUNING_SEEDS,
     HeadlinePresetV2,
@@ -22,6 +21,7 @@ from plantgraph.ingest.headline_v2 import (
     headline_corpus_id_v2,
     smallest_n_units_v2,
 )
+from plantgraph.ingest.seed_plan import TEST_SEED_RANGE
 
 _TARGETS = [1, 3, 10, 25, 60]
 
@@ -68,21 +68,23 @@ def test_the_size_search_rejects_a_target_below_one() -> None:
         smallest_n_units_v2(0, HeadlinePresetV2(), 1)
 
 
-def test_corpus_ids_name_the_dev_corpus_the_registered_test_corpus_and_any_other_tuning_plant() -> (
-    None
-):
-    assert headline_corpus_id_v2(100, seed=1) == "D100g2"
-    assert headline_corpus_id_v2(1000, seed=5003) == "H1000g2"
-    assert headline_corpus_id_v2(100, seed=5002) == "H100g2"
-    # a tuning plant of a registered size is never named like the test corpus
-    assert headline_corpus_id_v2(100, seed=2) == "X100g2s2"
-    assert headline_corpus_id_v2(1000, seed=0) == "X1000g2s0"
+def test_corpus_ids_name_the_dev_corpus_and_any_other_tuning_plant() -> None:
+    assert headline_corpus_id_v2(100, seed=1) == "D100g21"
+    # a tuning plant is never named like a test corpus
+    assert headline_corpus_id_v2(100, seed=2) == "X100g21s2"
+    assert headline_corpus_id_v2(1000, seed=0) == "X1000g21s0"
+
+
+def test_the_first_measurements_test_seeds_are_retired_for_corpus_ids() -> None:
+    for seed in TEST_SEEDS_V2.values():
+        with pytest.raises(ValueError, match="retired"):
+            headline_corpus_id_v2(100, seed=seed)
 
 
 def test_a_duplication_rate_other_than_the_preset_adds_a_suffix() -> None:
-    assert headline_corpus_id_v2(100, 5002, duplication_rate=0.25) == "H100g2"
-    assert headline_corpus_id_v2(100, 5002, duplication_rate=0.0) == "H100g2d0"
-    assert headline_corpus_id_v2(100, 5002, duplication_rate=0.5) == "H100g2d50"
+    assert headline_corpus_id_v2(100, 1, duplication_rate=0.25) == "D100g21"
+    assert headline_corpus_id_v2(100, 1, duplication_rate=0.0) == "D100g21d0"
+    assert headline_corpus_id_v2(100, 1, duplication_rate=0.5) == "D100g21d50"
 
 
 def test_the_test_seeds_are_inside_the_test_range_and_apart_from_every_tuning_seed() -> None:

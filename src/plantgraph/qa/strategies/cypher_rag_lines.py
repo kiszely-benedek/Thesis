@@ -15,6 +15,7 @@ The model sees only `question_text` and the schema text: retrieval sees only the
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from typing import Any, Literal
 
@@ -100,6 +101,18 @@ def render_query_prompt(*, schema_text: str, question_text: str, primer: bool = 
     return template.replace("<<SCHEMA>>", schema_text).replace("<<QUESTION>>", question_text)
 
 
+#: Numbers the database puts in a message that differ run to run: memory sizes ("716.8 MiB") and
+#: transaction ids. They are masked so the same mistake always gives the same repair prompt.
+_VOLATILE_NUMBER = re.compile(
+    r"\d+(?:\.\d+)?\s?(?:[KMGT]i?B|bytes)\b|(?<=transaction-)\d+", re.IGNORECASE
+)
+
+
+def mask_volatile_numbers(message: str) -> str:
+    """Replace memory sizes and transaction ids in a database message with `<n>`."""
+    return _VOLATILE_NUMBER.sub("<n>", message)
+
+
 def render_repair_prompt(prompt: str, failed: CypherAttempt, *, timeout_s: float) -> str:
     """The repair prompt: the first prompt, the failed query, the database's message and a hint."""
     if failed.failure not in _REPAIRABLE:
@@ -110,7 +123,7 @@ def render_repair_prompt(prompt: str, failed: CypherAttempt, *, timeout_s: float
     return (
         _REPAIR_TEMPLATE.read_text(encoding="utf-8")
         .replace("<<QUERY>>", failed.query)
-        .replace("<<ERROR>>", failed.error[:_ERROR_CHARS])
+        .replace("<<ERROR>>", mask_volatile_numbers(failed.error)[:_ERROR_CHARS])
         .replace("<<HINT>>", hint)
         .replace("<<PROMPT>>", prompt)  # last: the prompt holds the question, which is free text
     )

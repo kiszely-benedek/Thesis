@@ -102,3 +102,22 @@ def test_an_occurrence_only_store_reads_as_an_empty_layer_that_fails() -> None:
     result = toy.check(ReplaySource([], []))
 
     assert result.n_items == 0 and not result.passed
+
+
+def test_part_b_sees_a_stored_pump_in_two_pieces_and_names_untagged_items_by_place() -> None:
+    from plantgraph.qa.harness import plant_layer_fidelity as plf
+    from plantgraph.qa.harness.api_fidelity import repeated_tags
+
+    layer = rb.StoredPlantLayer()
+    for key, tag in [("t", "T-1"), ("a", "P-1"), ("b", "P-1"), ("x", None), ("y", None)]:
+        layer.graph.add_node(key, **({"tag": tag} if tag else {}))
+    layer.graph.add_edge("t", "x", relation="send_to")
+    layer.graph.add_edge("y", "b", relation="send_to")
+
+    assert repeated_tags(plf._stored_tags(layer)) == ("P-1",)
+    edges = plf._stored_tag_edges(layer)
+    # the two untagged items are not merged: each is named by its own neighbour
+    assert edges == {
+        ("T-1", "send_to", "<untagged <-send_to:T-1>"),
+        ("<untagged ->send_to:P-1>", "send_to", "P-1"),
+    }

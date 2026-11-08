@@ -7,7 +7,8 @@ feed, is cooled in an air cooler and separated into gas and liquid in the **sepa
 sends the liquid on.
 
 Control and protection (textbook practice, not taken from a source: design 7 marks them [U]):
-- heater outlet temperature `TIC` moves the fuel-gas valve; fuel-gas pressure `PIC` its own valve;
+- heater outlet temperature `TIC` (sensed on the heater outlet line) moves the fuel-gas valve;
+  fuel-gas pressure `PIC` (sensed on the fuel-gas line) its own valve;
 - a flame sensor (`BE -> BSL`) shuts the fuel gas; a **double block and bleed** (two valves and
   a vent between them) isolates the furnace;
 - the reactor inlet temperature `TIC` moves a bypass valve around the exchanger;
@@ -80,7 +81,7 @@ def build_reactor_system(ctx: PatternContext) -> PatternInstance:
         ctx, _TUBULAR, exchanger_code(_TUBULAR), "feed_effluent_exchanger"
     )
     furnace_eq = equipment_plan(ctx, NodeClass.FURNACE.value, "H", "fired_heater")
-    reactor_eq = equipment_plan(ctx, _VESSEL, "V", "reactor")
+    reactor_eq = equipment_plan(ctx, _VESSEL, "R", "reactor")
     cooler_eq = equipment_plan(ctx, _COOLER, exchanger_code(_COOLER), "effluent_cooler")
     separator_eq = equipment_plan(ctx, _SEPARATOR, "V", "separator")
     exchanger, furnace, reactor, cooler, separator = (
@@ -93,17 +94,19 @@ def build_reactor_system(ctx: PatternContext) -> PatternInstance:
     gas_out, pressure_valve = separator_gas_outlet(ctx, separator, _SEPARATOR)
     header = letdown_header(ctx, level_control_valve(ctx, separator))
     pumps = build_pump_set(ctx, separator, "CentrifugalPump", "liquid_pump", header=header)
+    # its tee hosts the fuel-gas temperature sensor, so it is planned before the fuel-gas line
+    heater_out = heater_to_reactor(ctx, furnace, reactor)
     parts = [
         *(quiet(eq) for eq in (exchanger_eq, furnace_eq, reactor_eq, cooler_eq, separator_eq)),
         *([quiet(agitator)] if agitator else []),
         feed.plan,
-        heater_to_reactor(ctx, furnace, reactor),
+        heater_out,
         reactor_to_exchanger(ctx, reactor, exchanger),
         exchanger_to_cooler(ctx, exchanger, cooler),
         cooler_to_separator(ctx, cooler, separator),
         gas_out,
         recycle_gas_line(ctx, feed.recycle_tee),
-        fuel_gas_line(ctx, furnace),
+        fuel_gas_line(ctx, furnace, heater_out.ports["outlet_tee"]),
         pumps.plan,
         exchanger_trims(ctx, exchanger, _TUBULAR, None).plan,
         exchanger_trims(ctx, cooler, _COOLER, None).plan,

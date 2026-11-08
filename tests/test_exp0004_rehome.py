@@ -99,6 +99,20 @@ def test_a_sealed_corpus_with_rewritten_tags_is_refused(source: Path, tmp_path: 
         _run(source, tmp_path, sealed=VARIANT_OF_IT)
 
 
+def test_a_copy_that_changed_another_field_is_refused_and_nothing_is_written(
+    source: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    real_to_jsonl = rehome._to_jsonl
+
+    def tampered(rows: list[dict[str, Any]]) -> bytes:
+        return real_to_jsonl([{**row, "k": 9} for row in rows])  # a bug that edits a question
+
+    monkeypatch.setattr(rehome, "_to_jsonl", tampered)
+    with pytest.raises(ValueError, match=r"only corpus_id to change.*\['k'\]"):
+        _run(source, tmp_path)
+    assert not (tmp_path / "out").exists() and not (tmp_path / "proof.json").exists()
+
+
 @pytest.mark.parametrize("which", ["out", "proof"])
 def test_an_existing_output_is_never_overwritten(source: Path, tmp_path: Path, which: str) -> None:
     existing = tmp_path / ("out/questions.jsonl" if which == "out" else "proof.json")

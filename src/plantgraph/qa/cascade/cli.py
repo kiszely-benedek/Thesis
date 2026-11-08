@@ -28,8 +28,9 @@ from plantgraph.qa.cascade.live_ask import (
 from plantgraph.qa.cascade.models import CascadePolicy
 from plantgraph.qa.cascade.needed import write_needed
 from plantgraph.qa.cascade.policy import load_policy
-from plantgraph.qa.cascade.report import build_report
+from plantgraph.qa.cascade.report import SettingMismatchError, build_report
 from plantgraph.qa.cascade.report_claims import CLAIM_PRESETS
+from plantgraph.qa.cascade.report_models import Report
 from plantgraph.qa.cascade.report_render import write_report
 from plantgraph.qa.cascade.tune_cli import add_tune_arguments, tune_command
 
@@ -98,6 +99,14 @@ def _add_report_arguments(command: argparse.ArgumentParser) -> None:
         help="the sealed test's tables and claims instead of the dev rules S1-V3 "
         "(needs --policy and --corpora-root; the last --corpus is the claims corpus)",
     )
+    command.add_argument(
+        "--scale",
+        action="append",
+        default=[],
+        metavar="LABEL=CORPUS,CORPUS,...",
+        help="with --sealed-claims: the plants of one scale, pooled under LABEL "
+        "(two-stage bootstrap); a corpus in no --scale is a scale of its own",
+    )
     command.add_argument("--out", required=True, type=Path, help="directory for report.md/.json")
     command.add_argument(
         "--run",
@@ -114,6 +123,17 @@ def _parse_corpus_run(value: str) -> tuple[str, str, TierSource]:
         raise SystemExit(f"error: expected --run CORPUS:TIER=RUN_DIR[@ROOT], found {value!r}")
     tier, source = _parse_run(rest)
     return corpus, tier, source
+
+
+def _parse_scales(values: list[str]) -> dict[str, list[str]]:
+    """`--scale S1000=H1000g21p1,H1000g21p2` as label -> corpus ids."""
+    scales: dict[str, list[str]] = {}
+    for value in values:
+        label, separator, ids = value.partition("=")
+        if not separator or not label or not ids:
+            raise SystemExit(f"error: expected --scale LABEL=CORPUS,CORPUS,..., found {value!r}")
+        scales[label] = ids.split(",")
+    return scales
 
 
 def _cutoff_s(args: argparse.Namespace) -> float:
@@ -137,7 +157,23 @@ def _run_report(args: argparse.Namespace) -> None:
     policies = [load_policy(path) for path in args.policy] if args.policy else None
     if args.sealed_claims and not (args.policy and args.corpora_root):
         raise SystemExit("error: --sealed-claims needs --policy and --corpora-root")
-    report = build_report(
+    if args.scale and not args.sealed_claims:
+        raise SystemExit("error: --scale needs --sealed-claims")
+    try:
+        report = _build_report(args, sources, policies)
+    except SettingMismatchError as error:
+        raise SystemExit(f"error: {error}") from error
+    markdown, json_path = write_report(report, args.out)
+    print(markdown.read_text(encoding="utf-8"))
+    print(f"wrote {markdown} and {json_path}")
+
+
+def _build_report(
+    args: argparse.Namespace,
+    sources: dict[str, dict[str, TierSource]],
+    policies: list[CascadePolicy] | None,
+) -> Report:
+    return build_report(
         args.corpus,
         sources,
         args.questions_root,
@@ -147,10 +183,9 @@ def _run_report(args: argparse.Namespace) -> None:
         sealed_claims=args.sealed_claims,
         claims=CLAIM_PRESETS[args.claims],
         with_baselines=not args.no_baselines,
+        setting=None if args.setting is None else SETTINGS[args.setting],
+        scales=_parse_scales(args.scale),
     )
-    markdown, json_path = write_report(report, args.out)
-    print(markdown.read_text(encoding="utf-8"))
-    print(f"wrote {markdown} and {json_path}")
 
 
 def _parse_run(value: str) -> tuple[str, TierSource]:

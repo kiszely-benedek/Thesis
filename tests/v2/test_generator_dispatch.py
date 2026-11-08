@@ -36,8 +36,13 @@ def test_every_stored_ingest_json_dispatches_to_its_version_and_dumps_back_uncha
     if not blocks:
         pytest.skip("no ingest.json under data/ (the run outputs are git-ignored)")
     for path, block in blocks:
-        # the v2 runs of EXP-0007 store v2 configs; every other stored config is v1 and must stay v1
-        expected = GeneratorConfigV2 if block.get("generator_version") == "v2" else GeneratorConfig
+        if block.get("generator_version") == "v2":  # the first measurement's plants: refused
+            with pytest.raises(ValueError, match="superseded generator"):
+                generator_config_from_json(block)
+            continue
+        expected = (
+            GeneratorConfigV2 if block.get("generator_version") == "v2.1" else GeneratorConfig
+        )
         config = generator_config_from_json(block)
         assert type(config) is expected, path
         assert config.model_dump(mode="json") == block, path
@@ -53,9 +58,20 @@ def test_a_v1_dict_without_the_version_key_is_never_read_as_v2() -> None:
 def test_a_v2_config_round_trips_through_json_and_dispatches_back_to_v2() -> None:
     original = GeneratorConfigV2(seed=5, n_units=4)
     stored = json.loads(original.model_dump_json())
-    assert stored["generator_version"] == "v2"
+    assert stored["generator_version"] == "v2.1"
     assert generator_config_from_json(stored) == original
     assert _ANY.validate_python(stored) == original
+
+
+def test_a_stored_v2_config_is_refused_by_both_readers() -> None:
+    stored = {
+        **json.loads(GeneratorConfigV2(seed=5, n_units=4).model_dump_json()),
+        "generator_version": "v2",
+    }
+    with pytest.raises(ValueError, match="check out E8.commit"):
+        generator_config_from_json(stored)
+    with pytest.raises(ValueError, match="check out E8.commit"):
+        _ANY.validate_python(stored)
 
 
 def test_the_record_of_a_v2_plant_names_its_config_as_v2() -> None:

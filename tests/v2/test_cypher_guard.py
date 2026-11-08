@@ -8,6 +8,7 @@ import pytest
 
 from plantgraph.qa.cypher import CypherExecutionError, CypherResult, WriteClauseError
 from plantgraph.qa.cypher_guard import HUNG_PREFIX, CypherHung, GuardedCypherSource
+from plantgraph.qa.local_timer import DB_CLIENT, LocalTimer, deactivate, local_timer
 
 _OK = CypherResult(rows=[{"tag": "P-1"}], truncated=False)
 
@@ -89,3 +90,20 @@ def test_the_wrapper_delegates_the_rest_of_the_source() -> None:
 def test_a_non_positive_grace_is_refused() -> None:
     with pytest.raises(ValueError, match="positive hang_grace_s"):
         GuardedCypherSource(_FakeSource(), hang_grace_s=0)
+
+
+def test_the_workers_database_time_lands_in_the_callers_local_timer() -> None:
+    class _TimedSource(_FakeSource):
+        def run_cypher(self, query: str, timeout_s: float, row_cap: int) -> CypherResult:
+            with local_timer(DB_CLIENT):  # what `Neo4jGraphView` does around its round-trip
+                return super().run_cypher(query, timeout_s, row_cap)
+
+    ticks = iter([0.0, 2.5])
+    timer = LocalTimer(clock=lambda: next(ticks))
+    token = timer.activate()
+    try:
+        GuardedCypherSource(_TimedSource(), hang_grace_s=1.0).run_cypher("q", 5.0, 1)
+    finally:
+        deactivate(token)
+
+    assert timer.seconds_of(DB_CLIENT) == 2.5 and timer.calls_of(DB_CLIENT) == 1

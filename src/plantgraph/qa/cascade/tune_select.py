@@ -17,8 +17,10 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict
 
-#: The tuning plant of the V2T protocol (design 7.1).
+#: The tuning plant of the V2T protocol (design 7.1): the first measurement's, then EXP-0008's
+#: (generator v2.1, same seed 211). The variant choice is defined on either, never on another plant.
 TUNING_CORPUS_ID = "X100g2s211"
+TUNING_CORPUS_IDS = (TUNING_CORPUS_ID, "X100g21s211")
 V4 = "cascade_v4"
 V4_ISO = "cascade_v4_iso"
 
@@ -58,9 +60,10 @@ def select_variant(
     Raises:
         ValueError: `corpus_id` is not the tuning set, or a count is outside 0..n_questions.
     """
-    if corpus_id != TUNING_CORPUS_ID:
+    if corpus_id not in TUNING_CORPUS_IDS:
         raise ValueError(
-            f"expected the choice on the tuning set {TUNING_CORPUS_ID!r}, found {corpus_id!r}"
+            f"expected the choice on the tuning set {TUNING_CORPUS_ID!r}, found {corpus_id!r} "
+            f"(EXP-0008's tuning set is {TUNING_CORPUS_IDS[1]!r})"
         )
     for count in (n_correct_v4, n_correct_v4_iso):
         if not 0 <= count <= n_questions:

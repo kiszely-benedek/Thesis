@@ -13,6 +13,8 @@ compares the two by tag: every line item and every line edge must agree (precisi
 from __future__ import annotations
 
 import argparse
+from collections import Counter
+from collections.abc import Collection
 from pathlib import Path
 
 import networkx as nx
@@ -26,6 +28,9 @@ from plantgraph.qa.questions.common import is_path_item, next_path_items
 
 #: `(from_tag, to_tag)`; both ends of a line edge are tagged line items.
 TagPair = tuple[str, str]
+#: Line items by tag, then line edges (tag pair -> passed-part count). The items are a collection,
+#: not a set, so a tag carried by two items (a split identity) stays visible as a repeat.
+LineView = tuple[Collection[str], dict[TagPair, int]]
 _SAMPLE = 5
 
 
@@ -47,6 +52,9 @@ class LineFidelity(BaseModel):
     #: Matched edges whose number of passed pipe parts differs (informational: the two sides
     #: break a tie between equally short routes with different ids).
     n_passed_count_differences: int
+    #: Tags carried by more than one system line item: one real item the resolver left in pieces.
+    #: By tag the pieces look like one item, so edges alone would not show the break.
+    split_tags: tuple[str, ...] = ()
 
     @property
     def precision(self) -> float:
@@ -62,15 +70,16 @@ class LineFidelity(BaseModel):
     def passed(self) -> bool:
         """The gate: same line items, precision = recall = 1."""
         return (
-            not self.items_only_in_system
+            not self.split_tags
+            and not self.items_only_in_system
             and not self.items_only_in_gold
             and self.precision == 1.0
             and self.recall == 1.0
         )
 
 
-def system_line_view(graph: ItemGraph) -> tuple[set[str], dict[TagPair, int]]:
-    """The system's line items (tags) and line edges (tag pair -> passed-part count).
+def system_line_view(graph: ItemGraph) -> LineView:
+    """The system's line items (one tag each, repeats kept) and line edges (tag pair -> count).
 
     Raises:
         ValueError: a line item has no tag, so it cannot be compared with the gold.
@@ -82,8 +91,15 @@ def system_line_view(graph: ItemGraph) -> tuple[set[str], dict[TagPair, int]]:
     if untagged:
         raise ValueError(f"expected every line item to have a tag, found none on {untagged[:3]}")
     flow = [(e.source, e.target) for e in graph.edges if e.relation == "send_to"]
+    return line_view_from_flow(classes, tags, flow)
+
+
+def line_view_from_flow(
+    classes: dict[str, str], tags: dict[str, str | None], flow: list[tuple[str, str]]
+) -> LineView:
+    """Fold item-id flow into a tag-level line view; each line item contributes one tag."""
     edges = fold_line_edges(classes, tags, flow)
-    line_item_tags = {str(tags[i]) for i, c in classes.items() if c in LINE_ITEM_CLASSES}
+    line_item_tags = [str(tags[i]) for i, c in classes.items() if c in LINE_ITEM_CLASSES]
     return line_item_tags, {
         (str(tags[e.source]), str(tags[e.target])): _passed_count(e) for e in edges
     }
@@ -93,7 +109,7 @@ def _passed_count(edge: LineEdge) -> int:
     return len(edge.via_tags) + edge.n_fittings
 
 
-def gold_line_view(plant: nx.DiGraph[str]) -> tuple[set[str], dict[TagPair, int]]:
+def gold_line_view(plant: nx.DiGraph[str]) -> LineView:
     """The gold's line items (tags) and line edges, from `next_path_items` on the gold plant."""
     items: set[str] = set()
     edges: dict[TagPair, int] = {}
@@ -109,16 +125,17 @@ def gold_line_view(plant: nx.DiGraph[str]) -> tuple[set[str], dict[TagPair, int]
 
 def compare_line_views(
     corpus_id: str,
-    system: tuple[set[str], dict[TagPair, int]],
-    gold: tuple[set[str], dict[TagPair, int]],
+    system: LineView,
+    gold: LineView,
 ) -> LineFidelity:
     """Compare two `(items, edges)` line views."""
-    (items_s, edges_s), (items_g, edges_g) = system, gold
+    (item_list_s, edges_s), (item_list_g, edges_g) = system, gold
+    items_s, items_g = set(item_list_s), set(item_list_g)
     matched = edges_s.keys() & edges_g.keys()
     return LineFidelity(
         corpus_id=corpus_id,
-        n_items_system=len(items_s),
-        n_items_gold=len(items_g),
+        n_items_system=len(item_list_s),
+        n_items_gold=len(item_list_g),
         items_only_in_system=tuple(sorted(items_s - items_g)[:_SAMPLE]),
         items_only_in_gold=tuple(sorted(items_g - items_s)[:_SAMPLE]),
         n_edges_system=len(edges_s),
@@ -127,7 +144,13 @@ def compare_line_views(
         missing_sample=tuple(sorted(edges_g.keys() - edges_s.keys())[:_SAMPLE]),
         extra_sample=tuple(sorted(edges_s.keys() - edges_g.keys())[:_SAMPLE]),
         n_passed_count_differences=sum(edges_s[p] != edges_g[p] for p in matched),
+        split_tags=_repeated(item_list_s),
     )
+
+
+def _repeated(tags: Collection[str]) -> tuple[str, ...]:
+    counts = Counter(tags)
+    return tuple(sorted(tag for tag, n in counts.items() if n > 1)[:_SAMPLE])
 
 
 def run_line_view_fidelity(artifacts: CorpusArtifacts) -> LineFidelity:
@@ -158,6 +181,7 @@ def render_report(result: LineFidelity) -> str:
         f"matched edges with a different number of passed parts: "
         f"{result.n_passed_count_differences}",
     ]
+    lines += [f"  split identity (several items, one tag): {t}" for t in result.split_tags]
     lines += [f"  item only in system: {t}" for t in result.items_only_in_system]
     lines += [f"  item only in gold: {t}" for t in result.items_only_in_gold]
     lines += [f"  edge missing: {pair}" for pair in result.missing_sample]

@@ -4,7 +4,8 @@ All three walk only `send_to` edges (material flow: `A -send_to-> B` means A fee
 the same shortest path as `FLOW_PATH`: fewest hops, ties broken by the smallest tag sequence.
 
 - `FIRST_MEETING_POINT`: where the flows leaving two items first come together.
-- `VALVES_ON_PATH`: how many valves lie between two items.
+- `VALVES_ON_PATH`: how many valves lie between two items, counted at item level (equipment and
+  valves are the hops; untagged fittings such as tees are passed through).
 - `ROUTE_AVOIDING`: can flow still get from A to B if one item on the way is removed?
   (lives in `families_heldout_route.py`, to keep this file short)
 
@@ -25,7 +26,10 @@ from plantgraph.graph.schema import EQUIPMENT_CLASSES, VALVE_CLASSES
 from plantgraph.qa.models import AnswerType, Question, QuestionFamily
 from plantgraph.qa.questions.availability import KBin, k_bin_of_k
 from plantgraph.qa.questions.common import (
+    ItemHop,
     build_question,
+    is_path_item,
+    next_path_items,
     nodes_of_classes,
     send_to_predecessors,
     send_to_successors,
@@ -34,6 +38,7 @@ from plantgraph.qa.questions.evidence import Evidence, SheetIndex
 from plantgraph.qa.questions.families_aggregate import COUNTED_CLASSES
 from plantgraph.qa.questions.families_flow import (
     Reached,
+    layer_sort_tags,
     one_target_per_bin,
     path_to,
     reach_from,
@@ -202,30 +207,51 @@ def _meeting_question(
 # --- VALVES_ON_PATH --------------------------------------------------------------------------
 
 
-def _valve_count_ranges(
-    plant: nx.DiGraph[str], successors: dict[str, list[str]], source_id: str
-) -> dict[str, tuple[int, int]]:
-    """For each reachable node: fewest and most valves strictly between the source and it.
+def item_hops(plant: nx.DiGraph[str]) -> dict[str, dict[str, ItemHop]]:
+    """Each path item -> the items it feeds directly, fittings folded away, keyed by item id."""
+    return {
+        node_id: {hop.item_id: hop for hop in next_path_items(plant, node_id)}
+        for node_id in plant.nodes
+        if is_path_item(plant, node_id)
+    }
 
-    Taken over *all* shortest paths: one breadth-first layer at a time, a node's range merges
-    the ranges of its predecessors in the previous layer (plus that predecessor, if a valve).
+
+def item_valve_counts(
+    plant: nx.DiGraph[str], source_id: str, hops: dict[str, dict[str, ItemHop]] | None = None
+) -> dict[str, frozenset[int]]:
+    """For each item reachable from the source: the valve counts of its item-level shortest routes.
+
+    A hop is one item to the next (fittings are passed through, as `next_path_items` does), and
+    "between" means the items strictly inside the route. One breadth-first layer at a time, an
+    item collects the counts of its predecessors in the previous layer, plus that predecessor
+    if it is a valve. More than one count in a set means the pair is ambiguous.
+
+    Args:
+        plant: the plant graph.
+        source_id: the equipment item the routes start at.
+        hops: `item_hops(plant)`, passed in when many sources are walked, to build it only once.
     """
-    ranges = {source_id: (0, 0)}
+    hops = item_hops(plant) if hops is None else hops
+    counts = {source_id: frozenset({0})}
     frontier = [source_id]
     while frontier:
-        found: dict[str, tuple[int, int]] = {}
+        found: dict[str, set[int]] = {}
         for node_id in frontier:
-            low, high = ranges[node_id]
             add = 1 if plant.nodes[node_id]["node_class"] in VALVE_CLASSES else 0
-            for successor_id in successors[node_id]:
-                if successor_id in ranges:
-                    continue
-                # the first offer sets the range; later offers (other parents) widen it
-                old_low, old_high = found.get(successor_id, (low + add, high + add))
-                found[successor_id] = (min(old_low, low + add), max(old_high, high + add))
-        ranges.update(found)
+            for next_id in hops[node_id]:
+                if next_id not in counts:
+                    found.setdefault(next_id, set()).update(c + add for c in counts[node_id])
+        counts.update({node_id: frozenset(values) for node_id, values in found.items()})
         frontier = sorted(found)
-    return ranges
+    return counts
+
+
+def _route_evidence(item_path: list[str], hops: dict[str, dict[str, ItemHop]]) -> Evidence:
+    """The item-level route as evidence, with the fittings between consecutive items put back."""
+    full_path = [item_path[0]]
+    for from_id, to_id in zip(item_path, item_path[1:], strict=False):
+        full_path.extend([*hops[from_id][to_id].via, to_id])
+    return path_evidence(full_path)
 
 
 def valves_on_path_candidates(
@@ -236,24 +262,27 @@ def valves_on_path_candidates(
     corpus_id: str,
     seed: int,
 ) -> list[Question]:
-    """At most one candidate per `(source, k-bin)`; every shortest path must hold the same count."""
+    """At most one candidate per `(source, k-bin)`; every item-level shortest route must agree."""
     index = SheetIndex.from_sheets(sheets, manifest)
-    successors = {node_id: send_to_successors(plant, node_id) for node_id in plant.nodes}
+    hops = item_hops(plant)
+    item_successors = {node_id: sorted(next_items) for node_id, next_items in hops.items()}
+    tags = layer_sort_tags(plant)
     equipment = set(nodes_of_classes(plant, EQUIPMENT_CLASSES))
     questions = []
     for source_id in sorted(equipment):
-        reach = reach_from(plant, successors, source_id, index)  # dropped after this source
-        ranges = _valve_count_ranges(plant, successors, source_id)
+        counts = item_valve_counts(plant, source_id, hops)  # dropped after this source
+        reach = reach_from(plant, item_successors, source_id, index, tags=tags)
         targets = {
             target_id: reached
             for target_id, reached in reach.items()
             if target_id in equipment
             and target_id != source_id
-            and ranges[target_id][0] == ranges[target_id][1]
+            and len(counts[target_id]) == 1  # ambiguous pairs are never asked (ADR-0065, D1)
         }
         rng = random.Random(f"{seed}:VALVES_ON_PATH:{source_id}")
         for target_id in one_target_per_bin(targets, rng):
-            path = path_to(reach, source_id, target_id)
+            item_path = path_to(reach, source_id, target_id)
+            (count,) = counts[target_id]
             questions.append(
                 build_question(
                     corpus_id=corpus_id,
@@ -262,8 +291,8 @@ def valves_on_path_candidates(
                     template_version=_TEMPLATE_VERSION,
                     text=valves_on_path_text(tag_of(plant, source_id), tag_of(plant, target_id)),
                     answer_type=AnswerType.COUNT,
-                    reference=ranges[target_id][0],
-                    evidence=path_evidence(path),
+                    reference=count,
+                    evidence=_route_evidence(item_path, hops),
                     anchors=[tag_of(plant, source_id), tag_of(plant, target_id)],
                     plant=plant,
                     index=index,

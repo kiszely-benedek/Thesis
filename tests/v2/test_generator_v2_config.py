@@ -30,7 +30,7 @@ def test_generated_equipment_is_23_classes_without_the_two_dropped() -> None:
 
 def test_defaults_carry_the_declared_values() -> None:
     config = GeneratorConfigV2(n_units=3)
-    assert config.generator_version == "v2"
+    assert config.generator_version == "v2.1"
     assert (config.sheets.min_equipment_per_sheet, config.sheets.max_equipment_per_sheet) == (1, 16)
     assert config.sheets.max_symbols_before_stubs == 100
     assert config.trims.p_cv_station == 0.6
@@ -43,15 +43,20 @@ def test_defaults_carry_the_declared_values() -> None:
     assert config.trims.pump_pressure_mode_weights == {"per_pump_pi": 3.0, "header_pt": 1.0}
     assert config.instruments.p_motor_hs == 1.0
     assert config.instruments.p_cascade == 0.5
-    assert config.instruments.p_split_range == 0.0
     assert config.patterns.p_triple_pump_set == 0.15
 
 
 def test_json_round_trip_keeps_the_discriminator() -> None:
     config = GeneratorConfigV2(n_units=5, seed=7, flowsheet={"core_weights": {"U6": 3.0}})
     data = json.loads(config.model_dump_json())
-    assert data["generator_version"] == "v2"
+    assert data["generator_version"] == "v2.1"
     assert GeneratorConfigV2.model_validate(data) == config
+
+
+def test_a_v2_config_is_refused_with_the_commit_to_check_out() -> None:
+    """The first measurement's generator cannot be rebuilt by this code (ADR-0065)."""
+    with pytest.raises(ValidationError, match="superseded generator.*check out E8.commit"):
+        GeneratorConfigV2.model_validate({"generator_version": "v2", "n_units": 1})
 
 
 def test_wrong_generator_version_is_rejected() -> None:

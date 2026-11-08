@@ -41,6 +41,7 @@ from plantgraph.adapters.pydexpi_generic import (
     prepare_generic,
 )
 from plantgraph.adapters.pydexpi_io import load_proteus
+from plantgraph.adapters.pydexpi_rules_v2 import uses_v2_rules
 from plantgraph.benchmark.sheet_graph import SheetGraph
 from plantgraph.graph import schema
 from plantgraph.graph.validation import SchemaViolation, validate_sheet_graph
@@ -119,7 +120,9 @@ def import_proteus_sheet(
         prepared, resolved_plant_id, stream_kind={}, vocabulary=known_classes
     )
     annotate_generic(plant, generic_infos, conceptual)
-    _related_to_added, related_to_collapsed = add_related_to_edges(plant, conceptual)
+    _related_to_added, related_to_collapsed = add_related_to_edges(
+        plant, conceptual, v2_rules=uses_v2_rules(known_classes)
+    )
 
     mapped_ids = set(plant.nodes)
     # the one piece of a file's own data this importer keeps — equipment/datasheet data is
@@ -223,7 +226,7 @@ def _edges_lost_to_unmapped_endpoints(
         source_label = conceptual.nodes[source].get("label")
         target_label = conceptual.nodes[target].get("label")
         lost[f"{source_label}->{target_label}"] += 1
-    return dict(lost)
+    return dict(sorted(lost.items()))  # report key order must not depend on edge order
 
 
 def _relabel_to_proteus_ids(

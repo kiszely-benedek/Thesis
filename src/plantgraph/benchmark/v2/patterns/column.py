@@ -26,7 +26,6 @@ from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict
 
-from plantgraph.benchmark.v2.config import SheetKnobs
 from plantgraph.benchmark.v2.patterns.assembly import (
     equipment_plan,
     line_containing,
@@ -189,6 +188,7 @@ def build_distillation_column(ctx: PatternContext) -> PatternInstance:
         reflux,
         bottoms,
         choices.combined,
+        ctx.sheets.max_equipment_per_sheet,
     )
     ports = _ports(plan, choices, feed_tee, vapour.valve_body_id, reflux, bottoms, side_flow)
     return PatternInstance(
@@ -233,18 +233,20 @@ def _drawing_groups(
     reflux: PumpSet,
     bottoms: PumpSet,
     combined: bool,
+    cap: int,
 ) -> tuple[DrawingGroups, str]:
     """G1 column side, G2 overhead side (one group when combined), then the air-ejector package.
 
     The ejector group is not pinned, so the merge step rejoins it to the overhead group whenever
     the caps allow; own-sheet pump sets come last, pinned. Returns the groups and the layout drawn:
     `combined`, or `two_sheets` (also the fallback when the combined sheet, without the ejectors
-    that are no longer on it, would hold more equipment than the sheet cap, pid-vocabulary 13.6).
+    that are no longer on it, would hold more equipment than `cap`, the plant's own sheet cap,
+    pid-vocabulary 13.6).
     """
     column_ids = [*column_side, *([] if bottoms.own_sheet else bottoms.pump_ids)]
     overhead_ids = [*overhead_side, *([] if reflux.own_sheet else reflux.pump_ids)]
     groups = DrawingGroups()
-    fits = len(column_ids) + len(overhead_ids) <= SheetKnobs().max_equipment_per_sheet
+    fits = len(column_ids) + len(overhead_ids) <= cap
     layout = "combined" if combined and fits else "two_sheets"
     if layout == "combined":
         groups.put([*column_ids, *overhead_ids], "G1")

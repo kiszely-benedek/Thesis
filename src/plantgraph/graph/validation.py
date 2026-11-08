@@ -148,22 +148,26 @@ def _check_node_class(
 def _check_required_properties(
     subject: str, attrs: dict[str, object], required: tuple[str, ...]
 ) -> list[SchemaViolation]:
-    """List the required properties that are missing (None or absent)."""
+    """List the required properties that are missing (absent, None, or an empty/blank string)."""
     return [
         SchemaViolation(
             kind="missing_property", subject=subject, detail=f"missing required property {name!r}"
         )
         for name in required
-        if attrs.get(name) is None
+        if _is_missing(attrs.get(name))
     ]
+
+
+def _is_missing(value: object) -> bool:
+    return value is None or (isinstance(value, str) and not value.strip())
 
 
 def _check_duplicate_tag(
     subject: str, tag: object, tags_seen: dict[str, str]
 ) -> SchemaViolation | None:
     """Flag a tag already seen — a missing tag is already reported by _check_required_properties."""
-    if not isinstance(tag, str):
-        return None
+    if not isinstance(tag, str) or _is_missing(tag):
+        return None  # a blank tag is reported as missing, not as a duplicate of other blanks
     first_seen = tags_seen.get(tag)
     if first_seen is not None:
         return SchemaViolation(

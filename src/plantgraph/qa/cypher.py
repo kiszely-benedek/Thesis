@@ -88,9 +88,17 @@ _NOT_CODE = re.compile(
 _WRITE_CLAUSE = re.compile(r"(?<![\w.:$])(" + "|".join(_WRITE_KEYWORDS) + r")(?!\w)", re.IGNORECASE)
 
 
+#: A keyword used as a name, not as a clause: an alias (`AS set`) or a map key (`{load: 1}`).
+_KEYWORD_AS_NAME = re.compile(
+    r"\bAS\s+(?:" + "|".join(_WRITE_KEYWORDS) + r")(?!\w)"
+    r"|(?<![\w.:$])(?:" + "|".join(_WRITE_KEYWORDS) + r")(?=\s*:)",
+    re.IGNORECASE,
+)
+
+
 def find_write_clause(query: str) -> str | None:
     """The first write keyword in `query` (upper-cased), or `None` if it is read-only."""
-    code = _NOT_CODE.sub(" ", query)
+    code = _KEYWORD_AS_NAME.sub(" ", _NOT_CODE.sub(" ", query))
     match = _WRITE_CLAUSE.search(code)
     return match.group(1).upper() if match else None
 

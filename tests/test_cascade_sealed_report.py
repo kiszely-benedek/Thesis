@@ -153,7 +153,7 @@ def test_report_json_round_trips(sealed: SealedClaimsReport) -> None:
 def test_one_corpus_cannot_make_scale_tables(tmp_path: Path) -> None:
     only = _toy_corpus(tmp_path, "T1", 10, None)
 
-    with pytest.raises(ValueError, match="at least two corpora"):
+    with pytest.raises(ValueError, match="at least two scales"):
         build_sealed([only], LatencyBound())
 
 

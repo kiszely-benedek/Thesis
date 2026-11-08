@@ -396,4 +396,5 @@ def test_oracle_and_latency_rows_reproduce_on_d100() -> None:
     # is 56.6 s where the note's 57.1 s is a linearly interpolated percentile
     assert cascade.latency_median_s == pytest.approx(5.7, abs=0.05)
     assert cascade.latency_p90_s == pytest.approx(56.6, abs=0.05)
-    assert cascade.n_correct_at_cutoff == 160
+    # 160 under the stricter pre-F5 rule; 5 late second-tier answers now fall back to Cypher's
+    assert cascade.n_correct_at_cutoff == 165

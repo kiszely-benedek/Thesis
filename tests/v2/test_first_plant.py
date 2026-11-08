@@ -52,7 +52,8 @@ def test_every_joined_pair_of_units_has_its_cross_unit_edge() -> None:
     ]
     kinds = plant.record.stream_kind
     cross_lines = [n for n, kind in kinds.items() if kind is StreamKindV2.CROSS_UNIT]
-    assert len(crossing) == len(cross_lines) == UNITS - 1  # a chain: one join per later unit
+    # a chain has one join per later unit; v2.1 adds the product farms' extra receipt joins
+    assert len(crossing) == len(cross_lines) >= UNITS - 1
     for _, target in crossing:  # the target is the first part of the in-port line
         assert graph.nodes[target]["unit_id"] != ""
 

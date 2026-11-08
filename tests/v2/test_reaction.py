@@ -121,10 +121,10 @@ def test_fuel_gas_enters_the_furnace_through_pressure_and_temperature_valves_in_
 ):
     _, instance, graph = reactor()
     furnace = one(instance, "fired_heater")
-    at_furnace = {
+    at_furnace = {  # the fuel-gas valves: the ones on a line coded FG
         letters(graph, v): v
         for v in nodes_with_letters(graph, "PV", "TV")
-        if sensor_location(graph, v)[1] == furnace
+        if "FG" in {d.get("fluid_code") for *_, d in graph.in_edges(v, data=True)}
     }
     assert set(at_furnace) == {"PV", "TV"}
     assert sensor_location(graph, at_furnace["PV"])[0] == "PIC"

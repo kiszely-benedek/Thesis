@@ -180,7 +180,7 @@ def _as_str(value: object) -> str | None:
 
 
 def add_related_to_edges(
-    plant: nx.DiGraph[str], conceptual: nx.MultiDiGraph[str]
+    plant: nx.DiGraph[str], conceptual: nx.MultiDiGraph[str], v2_rules: bool = False
 ) -> tuple[dict[str, int], int]:
     """Add a `related_to` edge for every edge `_map_edges` dropped due to an unknown label.
 
@@ -196,7 +196,7 @@ def add_related_to_edges(
     added: collections.Counter[str] = collections.Counter()
     collapsed = 0
     for source, target, attrs in conceptual.edges(data=True):
-        if attrs.get("attr_name") == "parentStructure" or _relation_of(attrs) is not None:
+        if attrs.get("attr_name") == "parentStructure" or _relation_of(attrs, v2_rules) is not None:
             continue  # already resolved another way, or mapped to a known schema relation
         if source not in plant.nodes or target not in plant.nodes:
             continue
@@ -208,7 +208,7 @@ def add_related_to_edges(
             source, target, relation=schema.Relation.RELATED_TO.value, dexpi_label=dexpi_label
         )
         added[dexpi_label] += 1
-    return dict(added), collapsed
+    return dict(sorted(added.items())), collapsed
 
 
 def count_nodes_per_dexpi_class(
@@ -221,4 +221,4 @@ def count_nodes_per_dexpi_class(
     minus the nodes deliberately folded into the structural layer.
     """
     labels = (str(conceptual.nodes[node_id]["label"]) for node_id in mapped_ids)
-    return dict(collections.Counter(labels))
+    return dict(sorted(collections.Counter(labels).items()))

@@ -121,6 +121,20 @@ def test_the_repair_prompt_holds_the_prompt_the_query_a_cut_error_and_the_class_
     assert "did not finish in 30 s" in text and "shortestPath" in text
 
 
+def test_two_memory_errors_with_different_numbers_give_the_same_repair_prompt() -> None:
+    def failed(limit: str, used: str, tx: int) -> CypherAttempt:
+        error = (
+            f"MemoryPoolOutOfMemoryError: The allocation of an extra 2.0 MiB would use more than "
+            f"the limit {limit} MiB. Currently using {used} MiB. neo4j-transaction-{tx}"
+        )
+        return CypherAttempt(query="Q", call=None, error=error, failure="memory")
+
+    one = render_repair_prompt("P", failed("716.8", "715.1", 41), timeout_s=30)
+    two = render_repair_prompt("P", failed("512.0", "510.3", 977), timeout_s=30)
+
+    assert one == two and "MemoryPoolOutOfMemoryError" in one and "716.8" not in one
+
+
 def test_a_failure_that_is_not_repairable_has_no_repair_prompt() -> None:
     hung = CypherAttempt(query="Q", call=None, error="hung", failure="hung")
 

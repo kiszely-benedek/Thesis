@@ -88,14 +88,31 @@ def build_montage(crops: list[tuple[str, Image.Image]], row_width: int = _ROW_WI
     return sheet
 
 
+_NODE_ID_PREFIX = "inlet/outlet"
+
+
 def montage_tag(observation: ConnectorObservation) -> str:
     """A short row identifier: the sheet number, then the node's number.
 
-    Sheet 5's 'inlet/outlet47' node becomes '5/47'. Short enough to fit the
-    margin, and unique across the whole drawing series.
+    Sheet 5's 'inlet/outlet47' node becomes '5/47'. A node id of any other shape keeps its
+    whole id, so two different nodes never share a tag by having the same digits.
     """
-    digits = "".join(ch for ch in observation.node_id if ch.isdigit())
-    return f"{observation.sheet_file}/{digits}"
+    node_part = observation.node_id.removeprefix(_NODE_ID_PREFIX)
+    return f"{observation.sheet_file}/{node_part}"
+
+
+def _tags_by_connector_key(observations: list[ConnectorObservation]) -> dict[str, str]:
+    """Row tag -> connector key; two connectors on one tag could not be told apart, so refuse."""
+    tag_to_key: dict[str, str] = {}
+    for observation in observations:
+        tag = montage_tag(observation)
+        if tag in tag_to_key:
+            raise ValueError(
+                f"duplicate montage tag {tag!r}: connectors {tag_to_key[tag]!r} and "
+                f"{observation.key!r} would share one row identifier"
+            )
+        tag_to_key[tag] = observation.key
+    return tag_to_key
 
 
 def write_montages(
@@ -117,7 +134,7 @@ def write_montages(
         label read off a montage could not be attributed to its source.
     """
     out_dir.mkdir(parents=True, exist_ok=True)
-    tag_to_key = {montage_tag(o): o.key for o in observations}
+    tag_to_key = _tags_by_connector_key(observations)
 
     batches = [
         observations[i : i + rows_per_montage]

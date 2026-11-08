@@ -16,8 +16,13 @@ from plantgraph.benchmark.models import IdentityGroup, SplitManifest
 from plantgraph.benchmark.sheet_graph import SheetGraph
 from plantgraph.benchmark.splitter import split
 from plantgraph.benchmark.tag_variants import Family, VariantConfig, VariantDraw, apply_tag_variants
-from plantgraph.ingest.headline_v2 import HeadlinePresetV2, smallest_n_units_v2
+from plantgraph.ingest.headline_v2 import (
+    HeadlinePresetV2,
+    headline_corpus_id_v2,
+    smallest_n_units_v2,
+)
 from plantgraph.ingest.pipeline import generate_plant_graph
+from plantgraph.ingest.seed_plan import SeedPlan
 from plantgraph.resolution.connector_labels import read_connector_labels
 from plantgraph.resolution.identity_candidates import (
     CandidateSet,
@@ -53,12 +58,17 @@ class CorpusSpec(BaseModel):
 
 
 def corpus_id_for(
-    target_sheets: int, seed: int, duplication_rate: float, families: Sequence[str]
+    target_sheets: int,
+    seed: int,
+    duplication_rate: float,
+    families: Sequence[str],
+    seed_plan: SeedPlan | None = None,
 ) -> str:
-    """Compose the design's id (section 4): D/H + sheets + g2, `d100` at rate 1.0, `V` or `Vf`."""
-    prefix = "D" if seed == DEV_SEED else "H"
-    rate = {1.0: "d100", 0.25: ""}.get(duplication_rate)
-    if rate is None:
+    """The plant's v2.1 id (`headline_corpus_id_v2`) plus `V` (format+naming) or `Vf` (format).
+
+    Duplication rate 1.0 adds `d100`, e.g. `H1000g21p2d100V`; the preset 0.25 adds nothing.
+    """
+    if duplication_rate not in (1.0, 0.25):
         raise ValueError(
             f"expected duplication rate 1.0 or 0.25 to compose an id, got {duplication_rate}"
         )
@@ -67,7 +77,8 @@ def corpus_id_for(
         raise ValueError(
             f"expected families format or format+naming to compose an id, got {list(families)}"
         )
-    return f"{prefix}{target_sheets}g2{rate}{suffix}"
+    plant = headline_corpus_id_v2(target_sheets, seed, duplication_rate, seed_plan)
+    return f"{plant}{suffix}"
 
 
 class Corpus:

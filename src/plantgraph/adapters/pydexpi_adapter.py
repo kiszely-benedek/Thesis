@@ -27,11 +27,12 @@ from pydexpi.loaders.graph_loader import GraphAbstractor, GraphLoader
 
 from plantgraph.adapters.pydexpi_builder import GeneratedPlant
 from plantgraph.adapters.pydexpi_loop_tags import (
-    BUBBLE_CLASSES,
+    SIGNAL_LABELS,
     assign_local_loop_tags,
     assign_loop_tags,
     find_carrier_sensors,
 )
+from plantgraph.adapters.pydexpi_node_tags import tag_of
 from plantgraph.adapters.pydexpi_rules_v2 import uses_v2_rules, v2_relation_of
 from plantgraph.adapters.pydexpi_units import assign_piping_units, assign_valve_units
 from plantgraph.graph import schema
@@ -142,11 +143,13 @@ def map_conceptual_graph(
     and `node_gold` adds hidden answer-key properties to nodes by id.
     """
     section_code = _section_codes(conceptual)
-    carriers = find_carrier_sensors(conceptual)
+    v2_rules = uses_v2_rules(vocabulary)
+    # carriers are a v2 construct: a v1 untagged bubble stays a node
+    carriers = find_carrier_sensors(conceptual) if v2_rules else {}
     mapped_nodes, nodes_dropped = _map_nodes(conceptual, plant_id, vocabulary, carriers.keys())
     parent_folds = _fold_parent_structure(conceptual, mapped_nodes, section_code)
     chosen_edges, edges_mapped, edges_dropped, collapsed = _map_edges(
-        conceptual, mapped_nodes, stream_kind, uses_v2_rules(vocabulary)
+        conceptual, mapped_nodes, stream_kind, v2_rules
     )
 
     plant: nx.DiGraph[str] = nx.DiGraph()
@@ -227,10 +230,10 @@ def _map_nodes(
             dropped[label] += 1
             continue
         mapped[node_id] = {"node_class": node_class, "plant_id": plant_id}
-        tag = _tag_of(node_class, attrs)
+        tag = tag_of(node_class, attrs)
         if tag is not None:  # an untagged node has no "tag" key, like a connector stub
             mapped[node_id]["tag"] = tag
-    return mapped, dict(dropped)
+    return mapped, dict(sorted(dropped.items()))
 
 
 def topology_node_class(
@@ -252,29 +255,6 @@ def topology_node_class(
         if ancestor.__name__ in vocabulary:
             return ancestor.__name__
     return None
-
-
-def _tag_of(node_class: str, attrs: Mapping[str, object]) -> str | None:
-    """A node's tag, from attributes the `GraphLoader` flattened onto it (§3.6 "Node rules")."""
-    if node_class in schema.EQUIPMENT_CLASSES:
-        return _as_str(attrs.get("tagName"))
-    if node_class in schema.PIPING_CLASSES:
-        # a safety device keeps its number in `positionNumber`, other parts in the component one
-        return _as_str(attrs.get("pipingComponentNumber")) or _as_str(attrs.get("positionNumber"))
-    if node_class == schema.NodeClass.PROCESS_SIGNAL_GENERATING_FUNCTION.value:
-        return _as_str(attrs.get("processSignalGeneratingFunctionNumber"))
-    if node_class == schema.NodeClass.ACTUATING_FUNCTION.value:
-        return _as_str(attrs.get("actuatingFunctionNumber"))
-    if node_class in BUBBLE_CLASSES:
-        category = _as_str(attrs.get("processInstrumentationFunctionCategory")) or ""
-        modifier = _as_str(attrs.get("processInstrumentationFunctionModifier")) or ""
-        number = _as_str(attrs.get("processInstrumentationFunctionNumber")) or ""
-        return f"{category}{modifier}-{number}"
-    return None
-
-
-def _as_str(value: object) -> str | None:
-    return value if isinstance(value, str) else None
 
 
 def _fold_parent_structure(
@@ -301,9 +281,6 @@ _EdgeCandidate = tuple[tuple[str, str], schema.Relation, dict[str, object]]
 _ChosenEdges = dict[tuple[str, str], tuple[schema.Relation, dict[str, object]]]
 
 _PIPE_LABELS = frozenset({"Pipe", "DirectPipingConnection"})
-_SIGNAL_LABELS = frozenset(
-    {"MeasuringLineFunction", "SignalLineFunction", "SignalConveyingFunction"}
-)
 #: which relation wins if two pyDEXPI edges would fall on the same ordered node pair (§6)
 _RELATION_PRIORITY = (
     schema.Relation.SEND_TO,
@@ -323,7 +300,7 @@ def _relation_of(
     label, attr_name = attrs.get("label"), attrs.get("attr_name")
     if label in _PIPE_LABELS:
         return schema.Relation.SEND_TO, False
-    if label in _SIGNAL_LABELS:
+    if label in SIGNAL_LABELS:
         return schema.Relation.SEND_SIGNAL_TO, False
     if label == "OperatedValveReference":
         return schema.Relation.CONTROL, False
@@ -379,7 +356,7 @@ def _map_edges(
 
     chosen, collapsed = _resolve_parallel_edges(candidates)
     mapped_counts = collections.Counter(relation.value for relation, _ in chosen.values())
-    return chosen, dict(mapped_counts), dict(dropped), collapsed
+    return chosen, dict(sorted(mapped_counts.items())), dict(sorted(dropped.items())), collapsed
 
 
 def _resolve_parallel_edges(candidates: list[_EdgeCandidate]) -> tuple[_ChosenEdges, int]:

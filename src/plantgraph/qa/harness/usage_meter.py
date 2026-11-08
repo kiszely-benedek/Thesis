@@ -54,6 +54,7 @@ class UsageMeter:
         self._deadline_s = deadline_s
         self._recorded_elapsed_s = 0.0
         self._n_abandoned = 0
+        self._abandoned_retrieval_s = 0.0  # budget lost to abandoned retrieval-side calls
 
     @property
     def recorded_elapsed_s(self) -> float:
@@ -75,6 +76,7 @@ class UsageMeter:
         self._responses = []
         self._recorded_elapsed_s = 0.0
         self._n_abandoned = 0
+        self._abandoned_retrieval_s = 0.0
 
     def timed_call(
         self, call: Callable[[float | None], ChatResponse], *, is_final: bool
@@ -97,6 +99,8 @@ class UsageMeter:
             self.seconds_in_calls += self._clock() - started
             self._recorded_elapsed_s += timeout.latency_s
             self._n_abandoned += 1
+            if not is_final:  # a final call's time is the row's own `latency_s`
+                self._abandoned_retrieval_s += timeout.latency_s
             raise
         self.record(response, self._clock() - started, is_final=is_final)
         return response
@@ -135,6 +139,7 @@ class UsageMeter:
             n_cost_missing=len(missing),
             llm_latency_s=sum(r.latency_s for r in responses),
             n_abandoned=self._n_abandoned,
+            abandoned_latency_s=self._abandoned_retrieval_s,
             n_cached=sum(r.from_cache for r in responses),
             spent_usd=sum(r.cost_usd or 0.0 for r in responses if not r.from_cache),
         )

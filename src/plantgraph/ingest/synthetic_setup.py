@@ -22,6 +22,7 @@ from plantgraph.ingest.headline_v2 import (
     headline_corpus_id_v2,
     smallest_n_units_v2,
 )
+from plantgraph.ingest.seed_plan import load_seed_plan, require_drawn_test_seed
 
 
 @dataclass(frozen=True)
@@ -77,6 +78,12 @@ def _headline_setup(args: argparse.Namespace) -> SyntheticSetup:
 
 def _headline_v2_setup(args: argparse.Namespace) -> SyntheticSetup:
     preset = HeadlinePresetV2(duplication_rate=args.headline_duplication_rate)
+    seed_plan = load_seed_plan()
+    # a retired or undrawn test seed stops here, before any size search or generation
+    try:
+        require_drawn_test_seed(args.seed, seed_plan)
+    except ValueError as error:
+        raise SystemExit(f"error: {error}") from error
     if args.target_sheets is None:
         return SyntheticSetup(
             args.n_units,
@@ -91,7 +98,7 @@ def _headline_v2_setup(args: argparse.Namespace) -> SyntheticSetup:
         preset.generator_config(search.n_units, args.seed),
         preset.split_config(args.seed),
         search,
-        headline_corpus_id_v2(args.target_sheets, args.seed, preset.duplication_rate),
+        headline_corpus_id_v2(args.target_sheets, args.seed, preset.duplication_rate, seed_plan),
     )
 
 

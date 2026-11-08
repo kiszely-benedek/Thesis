@@ -17,11 +17,14 @@ from plantgraph.exp0004.e2e_report_load import (
 from plantgraph.exp0004.e2e_report_models import R5_ARM, ArmData, E2EReport
 from plantgraph.exp0004.e2e_report_render import render_markdown
 from plantgraph.exp0004.e2e_report_tables import (
+    PlantArms,
     build_e2e_report,
+    build_pooled_e2e_report,
     check_same_questions,
     exposure_groups,
 )
 from plantgraph.llm.models import CallRecord, ChatResponse
+from plantgraph.qa.cascade.stats import paired_bootstrap
 from plantgraph.qa.models import Question
 
 N = 200
@@ -169,3 +172,44 @@ def test_an_arm_that_lost_headline_questions_is_refused_by_name() -> None:
     require_arm_size("V-d0", PREREGISTERED_HEADLINE_N)  # no error
     with pytest.raises(ValueError, match=r"V-d2.*439"):
         require_arm_size("V-d2", PREREGISTERED_HEADLINE_N - 1)
+
+
+def _plant(plant_id: str, d4_wrong: range) -> PlantArms:
+    return PlantArms(plant_id, _arms() | {"V-d4": _arm("V-d4", d4_wrong)}, QUESTIONS)
+
+
+def test_one_plant_claims_are_the_registered_paired_bootstrap() -> None:
+    claims = {c.claim: c for c in _report().claims}
+    arms = _arms()
+    d0 = [float(arms["V-d0"].correct[q]) for q in IDS]
+    r5 = [float(arms[R5_ARM].correct[q]) for q in IDS]
+
+    assert claims["E1"].difference == paired_bootstrap(d0, r5)
+    assert (claims["E1"].n_plants, claims["E1"].n_same_sign) == (1, None)
+
+
+def test_several_plants_are_pooled_with_per_plant_rows_and_a_sign_count() -> None:
+    plants = [_plant("P1", range(0)), _plant("P2", range(10))]
+
+    report = build_pooled_e2e_report(plants, "p", 120.0)
+    claims = {c.claim: c for c in report.claims}
+
+    assert (report.n_plants, report.n_questions) == (2, 2 * N)
+    assert [p.plant_id for p in report.plants] == ["P1", "P2"]
+    assert claims["E1"].n_plants == 2 and claims["E1"].n_same_sign == 2  # both plants lose to R5
+    assert claims["E4 (D4)"].difference.mean == pytest.approx(-0.025)  # (0 + -0.05) / 2
+    assert sum(r.n for r in report.exposure if r.arm == "V-d0") == 2 * N
+    text = render_markdown(report)
+    assert "## Accuracy per plant" in text and "Plants with the pooled sign" in text
+
+
+def test_a_plant_whose_arms_differ_in_questions_is_refused() -> None:
+    odd = PlantArms("P2", _arms() | {"V-d2": _arm("V-d2", range(0), ids=IDS[:-1])}, QUESTIONS)
+
+    with pytest.raises(ValueError, match="expected arm V-d2 to hold the same questions"):
+        build_pooled_e2e_report([_plant("P1", range(0)), odd], "p", 120.0)
+
+
+def test_no_plant_is_refused() -> None:
+    with pytest.raises(ValueError, match="at least one plant"):
+        build_pooled_e2e_report([], "p", 120.0)

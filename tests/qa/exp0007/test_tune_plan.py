@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from plantgraph.ingest.headline_v2 import TEST_SEED_RANGE
+from plantgraph.ingest.seed_plan import TEST_SEED_RANGE
 from plantgraph.qa.exp0007 import caps as caps_module
 from plantgraph.qa.exp0007 import cli
 from plantgraph.qa.exp0007.neo4j_tmp import require_droppable

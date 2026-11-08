@@ -306,7 +306,9 @@ def test_the_cap_counts_retrieval_calls_and_can_stop_inside_a_question(
 
 def test_cache_hits_never_count_against_the_cap(toy: Toy, tmp_path: Path) -> None:
     _run(toy, tmp_path, _transport(), allow_paid_calls=True, max_spend_usd=100.0)
+    # a fresh run directory over the same cache: the first run's real spend is not this run's
     (tmp_path / "runs" / "toy" / "answers.jsonl").unlink()
+    (tmp_path / "runs" / "toy" / "calls.jsonl").unlink()
 
     fake = _transport()
     summary = _run(toy, tmp_path, fake, allow_paid_calls=True, max_spend_usd=0.5 * _CALL_COST)

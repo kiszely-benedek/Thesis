@@ -5,13 +5,16 @@ from __future__ import annotations
 from plant_v2 import generated
 
 from plantgraph.benchmark.v2.config import GeneratorConfigV2
+from plantgraph.benchmark.v2.plan_models import LineItemSpec, LineSpec
 from plantgraph.benchmark.v2.planner import plan_plant
 from plantgraph.benchmark.v2.sheet_stats import (
     CLOSED_END_CLASSES,
     SheetStats,
+    open_end_stubs,
     share_at_most,
     sheet_stats,
     spread,
+    wired_out_ends,
 )
 from plantgraph.benchmark.v2.symbols import SymbolKind, is_symbol, symbol_kind
 from plantgraph.graph.schema import EQUIPMENT_CLASSES
@@ -95,3 +98,28 @@ def test_a_controller_bubble_is_an_instrument_symbol() -> None:
     """`ProcessControlFunction` (pyDEXPI: a subclass of the instrumentation function) is drawn."""
     assert symbol_kind("ProcessControlFunction") is SymbolKind.INSTRUMENT
     assert is_symbol("ProcessControlFunction")
+
+
+def test_a_wired_out_port_counts_one_stub_not_an_open_end_plus_a_crossing() -> None:
+    """Seed 1, 60 units: 80 out-ports are wired; v2 counted 697 stubs, v2.1 counts 617.
+
+    612 after F8c, which changed the plant itself (new draw order in U5, new tees in U3).
+    """
+    plan = plan_plant(GeneratorConfigV2(seed=1, n_units=60))
+    assert len(wired_out_ends(plan)) == 80
+    assert sum(s.stubs for s in sheet_stats(plan)) == 612
+
+
+def test_an_open_line_end_is_a_stub_unless_a_later_line_starts_from_it() -> None:
+    line = LineSpec(
+        line_number="6-P-10001-A1A-N",
+        fluid_code="P",
+        unit_no=1,
+        src_id="tank",
+        dst_id=None,
+        items=(LineItemSpec(node_id="valve", node_class="GateValve"),),
+    )
+    sheet_of = {"tank": "1:1", "valve": "1:1"}
+    classes = {"tank": "Tank", "valve": "GateValve"}
+    assert open_end_stubs(line, sheet_of, classes, frozenset()) == ["1:1"]
+    assert open_end_stubs(line, sheet_of, classes, frozenset({"valve"})) == []

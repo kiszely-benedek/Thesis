@@ -15,7 +15,15 @@ from pydantic import BaseModel, ConfigDict
 
 from plantgraph.benchmark.v2.config import GeneratorConfigV2
 from plantgraph.benchmark.v2.deck import VariantDecks
-from plantgraph.benchmark.v2.flowsheet import SLOT_TITLES, OpenOut, UnitSlot, draw_flowsheet, wire
+from plantgraph.benchmark.v2.flowsheet import (
+    SLOT_TITLES,
+    OpenOut,
+    Slot,
+    UnitSlot,
+    draw_flowsheet,
+    waiting_streams,
+    wire,
+)
 from plantgraph.benchmark.v2.patterns.context import PatternContext
 from plantgraph.benchmark.v2.patterns.ports import PatternInstance
 from plantgraph.benchmark.v2.patterns.registry import available_patterns, build_pattern
@@ -74,8 +82,8 @@ def plan_plant(config: GeneratorConfigV2) -> PlantPlanV2:
     units: list[PlannedUnit] = []
     open_outs: tuple[OpenOut, ...] = ()
     for slot in slots:
-        built = _build_unit(config, slot, trains, decks)
-        wired, open_outs = wire(built, slot.unit_no, open_outs)
+        built = _build_unit(config, slot, trains, decks, open_outs)
+        wired, open_outs = wire(built, slot.unit_no, open_outs, slot.train_no)
         sheets = assign_unit_sheets(slot.unit_no, wired, config.sheets)
         units.append(PlannedUnit(slot=slot, instance=wired, sheets=sheets))
     return PlantPlanV2(
@@ -88,8 +96,11 @@ def _build_unit(
     slot: UnitSlot,
     trains: tuple[TrainRecord, ...],
     decks: VariantDecks,
+    open_outs: tuple[OpenOut, ...],
 ) -> PatternInstance:
     conventions = trains[slot.train_no - 1].conventions
+    # only a product farm reads this: it needs a receipt line for every stream waiting for a tank
+    waiting = waiting_streams(open_outs, slot.train_no) if slot.slot is Slot.PRODUCT_FARM else 0
     ctx = PatternContext.from_config(
         config,
         slot.unit_no,
@@ -97,5 +108,6 @@ def _build_unit(
         conventions,
         decks,
         MAIN_LINE_STYLE,
+        waiting_streams=waiting,
     )
     return build_pattern(slot.pattern_id, ctx)

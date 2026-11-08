@@ -94,7 +94,7 @@ def _run_synthetic(
     args: argparse.Namespace, settings: Neo4jSettings | None
 ) -> tuple[IngestResult, SizeSearchResult | None]:
     setup = synthetic_setup(args)
-    corpus_id = args.corpus_id or setup.default_corpus_id
+    corpus_id = _synthetic_corpus_id(args, setup.default_corpus_id)
     result = run_synthetic(
         corpus_id=corpus_id,
         generator_config=setup.generator_config,
@@ -107,6 +107,22 @@ def _run_synthetic(
         identity_links_path=args.identity_links,
     )
     return result, setup.search
+
+
+def _synthetic_corpus_id(args: argparse.Namespace, default_corpus_id: str) -> str:
+    """`--corpus-id`, else the default; the default is refused when the plant is altered.
+
+    The default id names the plant only, so a corpus with re-written tags or merged identity links
+    would share the id (and the Neo4j content) of the plain plant.
+    """
+    if args.corpus_id:
+        return str(args.corpus_id)
+    if args.tag_variants or args.identity_links is not None:
+        raise SystemExit(
+            "error: --tag-variants/--identity-links change the corpus, so the default id "
+            f"{default_corpus_id!r} would hide it; give --corpus-id (e.g. with a V suffix)"
+        )
+    return default_corpus_id
 
 
 def _run_proteus(args: argparse.Namespace, settings: Neo4jSettings | None) -> IngestResult:
@@ -254,7 +270,9 @@ def _add_synthetic_subparser(
         "--headline-v2",
         action="store_true",
         help="the headline preset for the v2 generator (ADR-0057): the generator's own sheets, "
-        "drawing_only labels, exact tags; corpus id D<sheets>g2 (seed 1) or H<sheets>g2",
+        "drawing_only labels, exact tags; corpus id D<sheets>g21 (seed 1), "
+        "H<sheets>g21p<k> (a drawn sealed plant) or X<sheets>g21s<seed>; "
+        "retired and undrawn test seeds are refused",
     )
     parser.add_argument(
         "--headline-duplication-rate",

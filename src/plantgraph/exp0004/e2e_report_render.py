@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from plantgraph.exp0004.e2e_report_models import E2EReport, GroupRow
+from plantgraph.exp0004.e2e_report_models import ArmRow, E2EReport, GroupRow
 from plantgraph.qa.cascade.report_table import table
 
 
@@ -16,6 +16,7 @@ def _interval(estimate: float, low: float, high: float) -> str:
 
 
 def _claims_table(report: E2EReport) -> list[str]:
+    pooled = report.n_plants > 1
     rows = [
         [
             c.claim,
@@ -23,10 +24,28 @@ def _claims_table(report: E2EReport) -> list[str]:
             _interval(c.difference.mean, c.difference.ci_low, c.difference.ci_high),
             c.rule,
             "PASS" if c.passed else "FAIL",
+            *([f"{c.n_same_sign} of {c.n_plants}"] if pooled else []),
         ]
         for c in report.claims
     ]
-    return table(["Claim", "Difference", "Estimate [95% CI]", "Pass if", "Verdict"], rows)
+    header = ["Claim", "Difference", "Estimate [95% CI]", "Pass if", "Verdict"]
+    return table([*header, *(["Plants with the pooled sign"] if pooled else [])], rows)
+
+
+def _plants_table(report: E2EReport) -> list[str]:
+    """Each plant's accuracies first: a row per plant, a `correct/n (Wilson CI)` cell per arm."""
+    if not report.plants:
+        return []
+    labels = [a.label for a in report.arms]
+    rows = [
+        [p.plant_id, *(f"{a.n_correct}/{a.n} {_interval(*_wilson(a))}" for a in p.arms)]
+        for p in report.plants
+    ]
+    return ["## Accuracy per plant", "", *table(["Plant", *labels], rows)]
+
+
+def _wilson(arm: ArmRow) -> tuple[float, float, float]:
+    return arm.accuracy.estimate, arm.accuracy.ci_low, arm.accuracy.ci_high
 
 
 def _arms_table(report: E2EReport) -> list[str]:
@@ -45,7 +64,9 @@ def _arms_table(report: E2EReport) -> list[str]:
             "Arm",
             "n",
             "correct@cutoff",
-            "acc@cutoff (Wilson 95% CI)",
+            "acc@cutoff (two-stage bootstrap 95% CI)"
+            if report.n_plants > 1
+            else "acc@cutoff (Wilson 95% CI)",
             "New spend USD (cache misses)",
         ],
         rows,
@@ -87,12 +108,15 @@ def render_markdown(report: E2EReport) -> str:
         "# EXP-0004 end-to-end report",
         "",
         f"System: `{report.policy}`, accuracy at the {report.cutoff_s:g} s cutoff (acc@cutoff), "
-        f"{report.n_questions} questions per arm, paired by question id.",
+        f"{report.n_questions} questions per arm"
+        f"{f' over {report.n_plants} plants' if report.n_plants > 1 else ''}, "
+        "paired by question id.",
         "",
         "## Pre-registered claims",
         "",
         *_claims_table(report),
-        "## Accuracy per arm",
+        *_plants_table(report),
+        "## Accuracy per arm" + (" (pooled over the plants)" if report.n_plants > 1 else ""),
         "",
         *_arms_table(report),
         "## Accuracy per question family (correct/n)",

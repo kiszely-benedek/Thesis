@@ -148,9 +148,14 @@ def _replace_in_line(line: LineSpec, renamed: LineItemSpec) -> LineSpec:
     return line.model_copy(update={"items": items})
 
 
+def nodes_with_role(plan: TrimPlan, role: str) -> list[str]:
+    """The ids of the nodes planned for `role`, in id order."""
+    return sorted(node_id for node_id, node_role in plan.roles.items() if node_role == role)
+
+
 def node_with_role(plan: TrimPlan, role: str) -> str:
     """The id of the one node planned for `role`; raises when there is none or several."""
-    ids = sorted(node_id for node_id, node_role in plan.roles.items() if node_role == role)
+    ids = nodes_with_role(plan, role)
     if len(ids) != 1:
         raise ValueError(f"expected exactly one node with role {role!r}, found {ids}")
     return ids[0]

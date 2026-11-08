@@ -31,8 +31,10 @@ from plantgraph.qa.final_answer import (
     run_final_step,
     template_sha256,
     template_text,
+    to_outcome,
 )
 from plantgraph.qa.models import AnswerType, Outcome
+from plantgraph.qa.scoring import score_set
 
 
 def _pin(**overrides: object) -> ModelPin:
@@ -323,3 +325,63 @@ def test_sheet_set_parses_a_list_and_rejects_a_scalar() -> None:
     assert parsed.answer == ["1", "2"]
     with pytest.raises(FinalAnswerParseError, match="list of strings"):
         parse_final_answer('{"answer": "1", "not_present": false}', AnswerType.SHEET_SET)
+
+
+# --- JSON numbers where the answer is an identifier or a yes/no (F1, ADR-0065) -----------------
+
+
+def _reply(answer: str) -> str:
+    return f'{{"answer": {answer}, "not_present": false}}'
+
+
+def test_unit_set_accepts_integers_and_scores_like_the_string_reference() -> None:
+    final = parse_final_answer(_reply("[469]"), AnswerType.UNIT_SET)
+
+    assert final.answer == ["469"]
+
+
+def test_sheet_set_accepts_integers_and_mixed_lists() -> None:
+    final = parse_final_answer(_reply('[1, "2", 3]'), AnswerType.SHEET_SET)
+
+    assert final.answer == ["1", "2", "3"]
+
+
+def test_unit_id_accepts_a_bare_integer() -> None:
+    assert parse_final_answer(_reply("12"), AnswerType.UNIT_ID).answer == "12"
+
+
+@pytest.mark.parametrize("answer", ["[1.5]", "[true]", "[null]", "[[1]]"])
+def test_unit_set_still_refuses_floats_bools_and_nesting(answer: str) -> None:
+    with pytest.raises(FinalAnswerParseError):
+        parse_final_answer(_reply(answer), AnswerType.UNIT_SET)
+
+
+@pytest.mark.parametrize("answer", ["1.5", "true"])
+def test_unit_id_still_refuses_floats_and_bools(answer: str) -> None:
+    with pytest.raises(FinalAnswerParseError):
+        parse_final_answer(_reply(answer), AnswerType.UNIT_ID)
+
+
+def test_tag_still_refuses_a_bare_integer() -> None:
+    with pytest.raises(FinalAnswerParseError):
+        parse_final_answer(_reply("42"), AnswerType.TAG)
+
+
+@pytest.mark.parametrize(("answer", "expected"), [("1", "yes"), ("0", "no"), ("true", "yes")])
+def test_boolean_accepts_one_zero_and_json_bools(answer: str, expected: str) -> None:
+    assert parse_final_answer(_reply(answer), AnswerType.BOOLEAN).answer == expected
+
+
+@pytest.mark.parametrize("answer", ["2", "-1", "1.0", "1.5", '"maybe"'])
+def test_boolean_still_refuses_other_numbers_and_words(answer: str) -> None:
+    with pytest.raises(FinalAnswerParseError):
+        parse_final_answer(_reply(answer), AnswerType.BOOLEAN)
+
+
+def test_integer_list_reply_is_answered_and_correct_end_to_end() -> None:
+    outcome, final = to_outcome('{"answer":[469],"not_present":false}', AnswerType.UNIT_SET)
+
+    assert outcome is Outcome.ANSWERED
+    assert final is not None
+    assert isinstance(final.answer, list)
+    assert score_set(["469"], final.answer).correct

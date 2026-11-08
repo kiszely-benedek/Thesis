@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from plantgraph.qa.cascade.evaluate import Evaluation, compare, first_tier_acceptance
+from plantgraph.qa.cascade.evaluate import Evaluation, Series, compare, first_tier_acceptance
 from plantgraph.qa.cascade.join import JoinedCorpus
 from plantgraph.qa.cascade.models import CascadePolicy
 from plantgraph.qa.cascade.references import evaluate_oracle, random_escalation
@@ -57,3 +57,13 @@ def reference_fields(
         ),
         "vs_random": compare(evaluation.series(), reference.series()),
     }
+
+
+def random_reference_series(joined: JoinedCorpus, cutoff_s: float) -> Series | None:
+    """Per-question expectations under random escalation, or `None` when it is not defined here."""
+    if not _has_references(joined.policy):
+        return None
+    try:
+        return random_escalation(joined, cutoff_s=cutoff_s).series()
+    except ValueError:  # e.g. the second tier has rows only for the runaways
+        return None

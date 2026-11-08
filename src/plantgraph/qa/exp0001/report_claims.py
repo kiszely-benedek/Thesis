@@ -146,10 +146,12 @@ def claim_x2(deltas: Sequence[PairedDelta], smallest: str) -> ClaimVerdict:
 
 
 def _nominal_sheets(corpus_id: str) -> int:
-    """The sheet count in a corpus id such as `H30` or `H30g2` (the design's nominal size)."""
-    match = re.fullmatch(r"H(\d+)(?:g2)?", corpus_id)
+    """The sheet count in a corpus id such as `H30`, `H30g2` or `H30g21` (the nominal size)."""
+    match = re.fullmatch(r"H(\d+)(?:g2\d*)?", corpus_id)
     if match is None:
-        raise ValueError(f"expected a corpus id like 'H30' or 'H30g2', found {corpus_id!r}")
+        raise ValueError(
+            f"expected a corpus id like 'H30', 'H30g2' or 'H30g21', found {corpus_id!r}"
+        )
     return int(match.group(1))
 
 

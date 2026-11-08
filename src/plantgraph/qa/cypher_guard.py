@@ -11,6 +11,7 @@ No `neo4j` import here: the guard works on any `CypherSource`, so it is tested w
 
 from __future__ import annotations
 
+import contextvars
 import threading
 
 from plantgraph.qa.cypher import CypherExecutionError, CypherResult, CypherSource
@@ -65,7 +66,12 @@ class GuardedCypherSource:
         """
         limit_s = timeout_s + self._hang_grace_s
         outcome: list[CypherResult | BaseException] = []
-        worker = threading.Thread(target=self._run_into, args=(outcome, query, timeout_s, row_cap))
+        # A new thread starts with an empty context; run in a copy of ours so the question's
+        # LocalTimer (a ContextVar) is still found and the database time is counted.
+        context = contextvars.copy_context()
+        worker = threading.Thread(
+            target=context.run, args=(self._run_into, outcome, query, timeout_s, row_cap)
+        )
         worker.daemon = True  # a thread stuck on a dead server must not keep the process alive
         worker.start()
         worker.join(limit_s)

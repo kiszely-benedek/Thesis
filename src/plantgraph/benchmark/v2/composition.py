@@ -34,11 +34,11 @@ from plantgraph.benchmark.v2.coverage import coverage_report, render_coverage
 from plantgraph.benchmark.v2.planner import PlantPlanV2, plan_plant
 from plantgraph.benchmark.v2.sheet_stats import SheetStats, share_at_most, sheet_stats, spread
 from plantgraph.ingest.headline_v2 import (
-    TEST_SEED_RANGE,
     HeadlinePresetV2,
     headline_corpus_id_v2,
     smallest_n_units_v2,
 )
+from plantgraph.ingest.seed_plan import TEST_SEED_RANGE, load_seed_plan, require_drawn_test_seed
 
 #: the symbol range of the real sheets the design measured (OPEN100, 40-134); a reported share
 SYMBOL_RANGE = (40, 134)
@@ -299,11 +299,19 @@ def main(argv: Sequence[str] | None = None) -> int:
     except ValueError as error:
         raise SystemExit(f"error: {error}") from error
     preset = HeadlinePresetV2()
+    seed_plan = load_seed_plan()
+    try:
+        for seed in args.seeds:
+            require_drawn_test_seed(seed, seed_plan)
+    except ValueError as error:
+        raise SystemExit(f"error: {error}") from error
     reports = []
     for seed in args.seeds:
         n_units = smallest_n_units_v2(args.target_sheets, preset, seed).n_units
         plan = plan_plant(preset.generator_config(n_units, seed))
-        corpus_id = headline_corpus_id_v2(args.target_sheets, seed, preset.duplication_rate)
+        corpus_id = headline_corpus_id_v2(
+            args.target_sheets, seed, preset.duplication_rate, seed_plan
+        )
         report = build_report(plan, corpus_id, preset if args.corpus else None)
         print(render_report(report))
         if args.coverage:

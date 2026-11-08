@@ -4,7 +4,9 @@
 use. A pattern also reads three more groups of declared knobs, which are not part of
 `TrimConvention`: how loops are shaped (`InstrumentConvention`), how many instruments there are
 (`InstrumentDensity`) and the pattern shapes (`PatternKnobs`). The flowsheet knobs ride along for
-the one a pattern reads (`p_side_draw`).
+the one a pattern reads (`p_side_draw`). The sheet knobs ride along for the patterns that choose a
+drawing layout by the sheet cap, and `waiting_streams` tells a tank farm how many product streams
+of its train still wait for a tank.
 """
 
 from __future__ import annotations
@@ -18,6 +20,7 @@ from plantgraph.benchmark.v2.config import (
     InstrumentConvention,
     InstrumentDensity,
     PatternKnobs,
+    SheetKnobs,
 )
 from plantgraph.benchmark.v2.deck import VariantDecks
 from plantgraph.benchmark.v2.trim_context import LineStyle, TrimContext, UnitNumbering
@@ -34,6 +37,8 @@ class PatternContext:
     knobs: PatternKnobs
     style: LineStyle
     flowsheet: FlowsheetKnobs = field(default_factory=FlowsheetKnobs)  # `p_side_draw` is read here
+    sheets: SheetKnobs = field(default_factory=SheetKnobs)  # the equipment cap per sheet
+    waiting_streams: int = 0  # open liquid out-ports of the unit's train (a product farm only)
 
     @classmethod
     def from_config(
@@ -45,11 +50,19 @@ class PatternContext:
         decks: VariantDecks,
         style: LineStyle,
         numbering: UnitNumbering | None = None,
+        waiting_streams: int = 0,
     ) -> PatternContext:
         """The context of unit `unit_no`, its knobs read from `config`."""
         trim = TrimContext(unit_no, rng, config.trims, conventions, decks, numbering)
         return cls(
-            trim, config.instruments, config.density, config.patterns, style, config.flowsheet
+            trim,
+            config.instruments,
+            config.density,
+            config.patterns,
+            style,
+            config.flowsheet,
+            config.sheets,
+            waiting_streams,
         )
 
     @property

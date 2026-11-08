@@ -9,7 +9,7 @@ disappears (design §10 T3's acceptance condition).
 
 from __future__ import annotations
 
-from collections import defaultdict
+from collections import Counter, defaultdict
 from collections.abc import Collection, Sequence
 
 from plantgraph.benchmark.models import (
@@ -79,9 +79,12 @@ def _pair_by_connector_number(
         if label.referenced_connector_number is not None:
             incoming_by_key[(label.sheet_id, label.connector_number)].append(label)
 
+    outgoing_count = Counter((label.sheet_id, label.connector_number) for label in outgoing)
     pairs: list[ConnectorPair] = []
     matched: set[str] = set()
     for label in outgoing:
+        if outgoing_count[(label.sheet_id, label.connector_number)] > 1:
+            continue  # same number printed twice on this sheet: ambiguous, left to the weaker rule
         candidate = _mutual_connector_number_match(label, incoming_by_key)
         if candidate is None:
             continue

@@ -83,20 +83,26 @@ def _operator_table(deciders: Sequence[DeciderScore]) -> list[str]:
 
 
 def _llm_table(deciders: Sequence[DeciderScore]) -> list[str]:
-    """Calls, parse failures, spend and latency of the model-based deciders (empty if none)."""
+    """Calls, parse failures, cost and latency of the model-based deciders (empty if none).
+
+    The cost column sums the recorded cost of every call, cache hits at their original price.
+    A resumed run answers its earlier calls from the cache, so the live-only figure
+    (`cost_usd_spent`) would hide what the earlier invocations paid.
+    """
     with_llm = [(d.decider, d.llm) for d in deciders if d.llm is not None]
     if not with_llm:
         return []
     lines = [
         "### Model calls",
         "",
-        "| decider | calls | cache hits | parse failures | spent USD | latency p50 s | p95 s |",
+        "| decider | calls | cache hits | parse failures | cost USD (all calls) | "
+        "latency p50 s | p95 s |",
         "|---|---|---|---|---|---|---|",
     ]
     for name, llm in with_llm:
         lines.append(
             f"| {name} | {llm.n_calls} | {llm.n_cache_hits} | {llm.n_parse_failures} | "
-            f"{llm.cost_usd_spent:.6f} | {_num(llm.latency_p50_s)} | {_num(llm.latency_p95_s)} |"
+            f"{llm.cost_usd_recorded:.6f} | {_num(llm.latency_p50_s)} | {_num(llm.latency_p95_s)} |"
         )
     return [*lines, ""]
 

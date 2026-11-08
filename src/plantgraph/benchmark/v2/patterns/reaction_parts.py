@@ -108,35 +108,47 @@ def recycle_gas_line(ctx: PatternContext, recycle_tee: str) -> TrimPlan:
 
 
 def heater_to_reactor(ctx: PatternContext, furnace_id: str, reactor_id: str) -> TrimPlan:
-    """Furnace to reactor with the pressure-drop tap, and a local gauge on the heater outlet."""
-    dp_tee = tee_plan(ctx, "reactor_dp_tee")
-    run = run_of(skillet_blind(ctx.trim, ctx.style), dp_tee)
+    """Furnace to reactor with the pressure-drop tap and a local gauge on the heater outlet line.
+
+    The plan's port `outlet_tee` is the tee after the skillet blind: the heater-outlet `PI` and the
+    fuel-gas temperature loop sense there, on the pipe, not on the furnace.
+    """
+    outlet_tee, dp_tee = tee_plan(ctx, "heater_outlet_tee"), tee_plan(ctx, "reactor_dp_tee")
+    run = run_of(skillet_blind(ctx.trim, ctx.style), outlet_tee, dp_tee)
     main = close_run(ctx, run, furnace_id, reactor_id)
     dp = differential_pressure(ctx.trim, ctx.style, dp_tee.ports["tee"])
-    return combine(main, quiet(dp), local_gauge(ctx, "PI", furnace_id, "heater_outlet_pi"))
+    gauge = local_gauge(ctx, "PI", outlet_tee.ports["tee"], "heater_outlet_pi")
+    plan = combine(main, quiet(dp), gauge)
+    return plan.model_copy(update={"ports": {"outlet_tee": outlet_tee.ports["tee"]}})
 
 
-def fuel_gas_line(ctx: PatternContext, furnace_id: str) -> TrimPlan:
+def fuel_gas_line(ctx: PatternContext, furnace_id: str, outlet_tee_id: str) -> TrimPlan:
     """The fuel-gas stub to the furnace, with its two control valves and its isolation.
 
-    Order along the line: block, pressure valve (`PIC`), temperature valve (`TIC` on the heater
-    outlet), then a **double block and bleed**: two on-off valves in series and a vent between
-    them, so the furnace can be proven isolated. One valve has one driver, so the first block
-    shuts on the flame-failure trip (`BE -> BSL`), the second and the bleed are hand-operated.
+    Order along the line: block, a tee for the pressure sensor, pressure valve (`PIC`),
+    temperature valve (`TIC`, its sensor on the heater outlet line at `outlet_tee_id`), then a
+    **double block and bleed**: two on-off valves in series and a vent between them, so the
+    furnace can be proven isolated. One valve has one driver, so the first block shuts on the
+    flame-failure trip (`BE -> BSL`), the second and the bleed are hand-operated.
     """
     style = ctx.style.branch(service=FUEL_GAS_SERVICE)
     block = block_valve_plan(ctx, "fuel_gas_block")
     pressure = control_valve(ctx.trim, style, "P")
-    pressure_loop = control_loop(ctx.trim, style, part_of(pressure, "body"), furnace_id)
+    sensor_tee = tee_plan(ctx, "fuel_gas_pressure_tee")  # the pressure sensor sits on the gas line
+    pressure_loop = control_loop(
+        ctx.trim, style, part_of(pressure, "body"), sensor_tee.ports["tee"]
+    )
     temperature = control_valve(ctx.trim, style, "T")
-    temperature_loop = control_loop(ctx.trim, style, part_of(temperature, "body"), furnace_id)
+    temperature_loop = control_loop(ctx.trim, style, part_of(temperature, "body"), outlet_tee_id)
     dbb = double_block_and_bleed(ctx.trim, style)
     drivers = [
         flame_failure_trip(ctx.trim, style, part_of(dbb, "first"), furnace_id),
         hand_switch(ctx.trim, style, part_of(dbb, "second")),
         hand_switch(ctx.trim, style, part_of(dbb, "bleed")),
     ]
-    run = run_of(block, pressure, pressure_loop, temperature, temperature_loop, dbb, *drivers)
+    run = run_of(
+        block, sensor_tee, pressure, pressure_loop, temperature, temperature_loop, dbb, *drivers
+    )
     return close_run(ctx, run, None, furnace_id, StreamKindV2.UTILITY_STUB, style)
 
 

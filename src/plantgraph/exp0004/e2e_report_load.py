@@ -42,42 +42,45 @@ class ArmInput:
     corpora_root: Path
 
 
-def require_headline_size(ids: Collection[str]) -> None:
-    """Refuse a headline scope that is not the pre-registered size.
+def require_headline_size(ids: Collection[str], expected: int = PREREGISTERED_HEADLINE_N) -> None:
+    """Refuse a headline scope that is not the pre-registered size (EXP-0008: 220 per plant).
 
     Raises:
-        ValueError: the scope does not hold exactly `PREREGISTERED_HEADLINE_N` questions.
+        ValueError: the scope does not hold exactly `expected` questions.
     """
-    if len(ids) != PREREGISTERED_HEADLINE_N:
+    if len(ids) != expected:
         raise ValueError(
-            f"expected the pre-registered headline scope of {PREREGISTERED_HEADLINE_N} "
-            f"questions, found {len(ids)}"
+            f"expected the pre-registered headline scope of {expected} questions, found {len(ids)}"
         )
 
 
-def require_arm_size(label: str, n_questions: int) -> None:
+def require_arm_size(
+    label: str, n_questions: int, expected: int = PREREGISTERED_HEADLINE_N
+) -> None:
     """Refuse an arm whose restricted question set is not the pre-registered size.
 
     `restrict` silently drops headline ids an arm lacks, so each arm is counted after it.
 
     Raises:
-        ValueError: the arm does not hold exactly `PREREGISTERED_HEADLINE_N` questions.
+        ValueError: the arm does not hold exactly `expected` questions.
     """
-    if n_questions != PREREGISTERED_HEADLINE_N:
+    if n_questions != expected:
         raise ValueError(
-            f"expected arm {label} to hold the pre-registered {PREREGISTERED_HEADLINE_N} "
+            f"expected arm {label} to hold the pre-registered {expected} "
             f"headline questions after restriction, found {n_questions}"
         )
 
 
-def headline_ids(questions_root: Path, corpus_id: str) -> tuple[list[Question], frozenset[str]]:
+def headline_ids(
+    questions_root: Path, corpus_id: str, expected: int = PREREGISTERED_HEADLINE_N
+) -> tuple[list[Question], frozenset[str]]:
     """R5's questions and its headline scope: counted family, splits dev-old/dev-new/held-out."""
     _, questions = load_questions_file(questions_root, corpus_id)
     splits = load_splits(questions_root, corpus_id, questions)
     if splits is None:
         raise ValueError(f"expected a splits.json under {questions_root / corpus_id}, found none")
     ids = counted_ids(questions) & split_ids(splits, HEADLINE_SPLITS)
-    require_headline_size(ids)
+    require_headline_size(ids, expected)
     return questions, ids
 
 
@@ -117,11 +120,15 @@ def _outcome_counts(joined: JoinedCorpus, ids: Collection[str]) -> dict[str, dic
 
 
 def load_arm(
-    arm: ArmInput, policy: CascadePolicy, cutoff_s: float, ids: Collection[str]
+    arm: ArmInput,
+    policy: CascadePolicy,
+    cutoff_s: float,
+    ids: Collection[str],
+    expected: int = PREREGISTERED_HEADLINE_N,
 ) -> ArmData:
     """Score `policy` on `ids` of one arm and collect its outcome counts and real spend."""
     scoped = restrict(_join(arm, policy), ids)
-    require_arm_size(arm.label, len(scoped.question_ids))
+    require_arm_size(arm.label, len(scoped.question_ids), expected)
     evaluation = evaluate_policy(scoped, cutoff_s)
     # evaluate_policy scores in `question_ids` order, so the two lists line up
     correct = {

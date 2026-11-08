@@ -127,14 +127,17 @@ def main_line(
 ) -> LineSpec:
     """The caller's main line around a trim's `run`, with the next line number of the unit.
 
-    A `PropertyBreak` in the run is a spec change (rule L20), so the stretch after it gets a new
-    line number whose spec is the next piping class (`_style_after_break`).
+    A `PropertyBreak` in the run is a spec change (rule L20) that follows a pressure drop (the
+    generator's only break sits after a letdown valve): the stretch after it gets a new line
+    number and a lighter piping class than the stretch before (`_styles_around_break`).
     """
-    after_break = None
+    after_style: LineStyle | None = None
     if any(part.node_class == _BREAK for part in run):
-        after_break = ctx.numbering.line_number(_style_after_break(style))
+        style, after_style = _styles_around_break(style)
+    line_number = ctx.numbering.line_number(style)
+    after_break = ctx.numbering.line_number(after_style) if after_style else None
     return LineSpec(
-        line_number=ctx.numbering.line_number(style),
+        line_number=line_number,
         fluid_code=style.service,
         unit_no=ctx.unit_no,
         src_id=src_id,
@@ -144,11 +147,16 @@ def main_line(
     )
 
 
-def _style_after_break(style: LineStyle) -> LineStyle:
-    """The next piping class in rating order (the last steps back): the spec always changes."""
+def _styles_around_break(style: LineStyle) -> tuple[LineStyle, LineStyle]:
+    """(before, after) of a spec break: the rating steps down across the pressure drop.
+
+    `style.spec` is the lighter, downstream class when a heavier one exists; the stretch before
+    the break takes the next class up in rating order. The heaviest class steps down instead.
+    """
     index = LINE_SPECS.index(style.spec)
-    following = LINE_SPECS[index + 1] if index + 1 < len(LINE_SPECS) else LINE_SPECS[index - 1]
-    return style.model_copy(update={"spec": following})
+    if index + 1 < len(LINE_SPECS):
+        return style.model_copy(update={"spec": LINE_SPECS[index + 1]}), style
+    return style, style.model_copy(update={"spec": LINE_SPECS[index - 1]})
 
 
 class TrimDraft:
@@ -226,7 +234,7 @@ class TrimDraft:
             unit_no=self.ctx.unit_no,
             tag=tag,
             loop_tag=loop_tag,
-            measured_variable=loop_tag[0],
+            measured_variable=tag[0],
         )
         self._instruments.append(spec)
         self._roles[spec.node_id] = role

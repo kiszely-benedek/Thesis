@@ -35,9 +35,13 @@ class TuningRow(BaseModel):
 
 
 def observed_thresholds(corpus: Corpus) -> list[float]:
-    """Every distinct D1 score on the candidates, rounded to 12 places, zero excluded."""
+    """Every distinct D1 score on the candidates, exactly as computed, zero excluded.
+
+    Exact (never rounded) so that the deciders' rule `score >= tau` accepts the pair that gave
+    the score: a rounded-up tau would silently turn the rule into `score > 6/7`.
+    """
     scores = {
-        round(string_similarity(pair.first.tag, pair.second.tag), 12)
+        string_similarity(pair.first.tag, pair.second.tag)
         for pair in corpus.candidates.pairs
         if pair.first.tag
     }

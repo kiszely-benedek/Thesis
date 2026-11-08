@@ -131,6 +131,10 @@ CallErrorKind = Literal["context_overflow", "provider_error", "timeout", "late_a
 #: `finish_reason` of the cache entry written when a call is abandoned (a "tombstone").
 TIMEOUT_FINISH_REASON = "client_timeout"
 
+#: `finish_reason` of the cache entry written when the provider rejects a prompt as too long.
+#: The prompt will never fit, so a replay raises the same `ContextOverflow` from it.
+OVERFLOW_FINISH_REASON = "context_overflow"
+
 
 class CallRecord(BaseModel):
     """One line of a run's `calls.jsonl`: every LLM call it made, cached or not."""
@@ -147,6 +151,16 @@ class CallRecord(BaseModel):
     #: `timeout`: the call was abandoned at its deadline. `late_after_timeout`: an abandoned
     #: call answered after all; `response` holds that answer, which is billed but never cached.
     error_kind: CallErrorKind | None = None
+    #: Extra attempts the client made before this outcome (429, 5xx, an empty error reply).
+    #: Left out of the line when 0, so lines written before the field stay byte-identical.
+    n_retries: int = 0
+
+    @model_serializer(mode="wrap")
+    def _omit_zero_retries(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
+        data: dict[str, Any] = handler(self)
+        if data.get("n_retries") == 0:
+            data.pop("n_retries", None)
+        return data
 
 
 def tombstone_response(timeout_s: float) -> ChatResponse:
@@ -159,6 +173,21 @@ def tombstone_response(timeout_s: float) -> ChatResponse:
         latency_s=timeout_s,
         provider_response_id=None,
         finish_reason=TIMEOUT_FINISH_REASON,
+        from_cache=False,
+        created_at=datetime.now(UTC),
+    )
+
+
+def overflow_response(message: str) -> ChatResponse:
+    """The cache entry for a rejected prompt: the provider's message as text, free, instant."""
+    return ChatResponse(
+        text=message,
+        prompt_tokens=0,
+        completion_tokens=0,
+        cost_usd=None,
+        latency_s=0.0,
+        provider_response_id=None,
+        finish_reason=OVERFLOW_FINISH_REASON,
         from_cache=False,
         created_at=datetime.now(UTC),
     )
@@ -180,7 +209,14 @@ class ContextOverflow(Exception):
 
 
 class ProviderError(Exception):
-    """The provider returned an error other than a context overflow."""
+    """The provider returned an error other than a context overflow.
+
+    `n_retries` is how many extra attempts were made before giving up (for `calls.jsonl`).
+    """
+
+    def __init__(self, message: str, n_retries: int = 0) -> None:
+        super().__init__(message)
+        self.n_retries = n_retries
 
 
 class CacheMiss(Exception):

@@ -7,7 +7,7 @@ The scale tables are in `report_sealed_scale.py`, the paired sections and claims
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from statistics import fmean
 
 from plantgraph.qa.cascade.evaluate import LatencyBound
@@ -23,10 +23,17 @@ from plantgraph.qa.cascade.report_references import acceptance_result
 from plantgraph.qa.cascade.report_scopes import SCOPE_HEADLINE, counted_ids, split_ids
 from plantgraph.qa.cascade.report_sealed_models import GapRow, ScopeRow, SealedReport, SplitRow
 from plantgraph.qa.cascade.report_sealed_pairs import claims_for, paired_rows
+from plantgraph.qa.cascade.report_sealed_pooled import (
+    paired_robustness,
+    pooled_scope_rows,
+    scale_robustness,
+)
 from plantgraph.qa.cascade.report_sealed_scale import k_bin_rows, scale_rows
 from plantgraph.qa.cascade.report_sealed_views import (
+    ScaleGroup,
     ScopeView,
     SealedCorpus,
+    group_scales,
     make_view,
     scope_views,
 )
@@ -127,19 +134,24 @@ def _split_tables(corpus: SealedCorpus, cutoff_s: float) -> tuple[list[SplitRow]
 
 
 def build_sealed(
-    corpora: Sequence[SealedCorpus], bound: LatencyBound, claims: ClaimPolicies = F1_CLAIMS
+    corpora: Sequence[SealedCorpus],
+    bound: LatencyBound,
+    claims: ClaimPolicies = F1_CLAIMS,
+    scales: Mapping[str, Sequence[str]] | None = None,
 ) -> SealedReport:
-    """Tables T1-T4 for the corpora given; the last is the claims corpus, the first the small end.
+    """Tables T1-T4 for the corpora given; the last scale holds the claims, the first the small end.
 
-    `claims` names the policies the claims are about (default: F1's).
+    `claims` names the policies the claims are about (default: F1's). `scales` maps a scale label
+    to the corpus ids of its plants (design `review-fixes.md` section 5.2): the plants are shown
+    one by one, then pooled with the two-stage bootstrap. A corpus named in no scale is a scale
+    of its own, which is the registered single-plant computation.
 
     Raises:
-        ValueError: fewer than two corpora (the scale tables need a small and a large one).
+        ValueError: fewer than two scales (the scale tables need a small and a large one).
     """
-    if len(corpora) < 2:
-        raise ValueError(
-            f"expected at least two corpora for the scale tables, found {len(corpora)}"
-        )
+    groups = group_scales(corpora, scales)
+    if len(groups) < 2:
+        raise ValueError(f"expected at least two scales for the scale tables, found {len(groups)}")
     views = {c.corpus_id: scope_views(c, bound.cutoff_s) for c in corpora}
     scope_rows = [
         row
@@ -147,40 +159,69 @@ def build_sealed(
         for view in views[c.corpus_id].values()
         for row in _scope_rows(view, c, bound)
     ]
+    scope_rows += pooled_scope_rows(groups, views, bound)
     split_rows: list[SplitRow] = []
     gap_rows: list[GapRow] = []
     for corpus in (c for c in corpora if c.splits is not None):
         splits, gaps = _split_tables(corpus, bound.cutoff_s)
         split_rows += splits
         gap_rows += gaps
-    small, large = corpora[0], corpora[-1]
-    scales = scale_rows(views[small.corpus_id], views[large.corpus_id], small, large)
-    pairs = paired_rows(views, bound.cutoff_s, claims)
-    verdicts = claims_for(large.corpus_id, scope_rows, scales, pairs, bound, claims)
+    small, large = groups[0], groups[-1]
+    scale_table = scale_rows(small, large, views)
+    pairs = paired_rows(groups, views, bound.cutoff_s, claims)
+    verdicts = claims_for(large.label, scope_rows, scale_table, pairs, bound, claims)
     return SealedReport(
-        claims_corpus=large.corpus_id,
-        small_corpus=small.corpus_id,
-        sheets={c.corpus_id: c.n_sheets for c in corpora},
-        scope_sizes={
-            c.corpus_id: {scope: v.n_questions for scope, v in views[c.corpus_id].items()}
-            for c in corpora
-        },
+        claims_corpus=large.label,
+        small_corpus=small.label,
+        sheets={g.label: g.n_sheets for g in groups},
+        scope_sizes={g.label: _scope_sizes(g, views) for g in groups},
         scope_rows=scope_rows,
         split_rows=split_rows,
         gap_rows=gap_rows,
-        scale_rows=scales,
+        scale_rows=scale_table,
         k_bin_rows=k_bin_rows(corpora, views),
         paired_rows=pairs,
         claims=verdicts,
-        notes=_notes(corpora),
+        scales={g.label: [p.corpus_id for p in g.plants] for g in groups if g.is_pooled},
+        robustness=paired_robustness(groups, pairs) + scale_robustness(large, views, scale_table),
+        notes=_notes(corpora, groups),
     )
 
 
-def _notes(corpora: Sequence[SealedCorpus]) -> list[str]:
-    """What the tables could not show, said once instead of leaving a silent gap."""
+def _scope_sizes(group: ScaleGroup, views: Mapping[str, Mapping[str, ScopeView]]) -> dict[str, int]:
+    """Scope -> number of questions a scale counts, summed over its plants."""
+    sizes: dict[str, int] = {}
+    for plant in group.plants:
+        for scope, view in views[plant.corpus_id].items():
+            sizes[scope] = sizes.get(scope, 0) + view.n_questions
+    return sizes
+
+
+def _pooling_notes(groups: Sequence[ScaleGroup]) -> list[str]:
+    pooled = [g for g in groups if g.is_pooled]
+    if not pooled:
+        return []
+    labels = ", ".join(f"{g.label} ({len(g.plants)} plants)" for g in pooled)
     return [
-        f"{c.corpus_id}: no splits.json beside the questions, so there is no split table "
-        "and no held-out scope"
-        for c in corpora
-        if c.splits is None
-    ] + [f"scope `{SCOPE_HEADLINE}` leaves out the family LOOP_ACTUATED_VALVE (ADR-0044 U2)"]
+        f"pooled scales: {labels}; the pooled value is the equal-weight mean of the plants, "
+        "intervals are two-stage cluster bootstraps (plants, then questions) with the EXP-0007 "
+        "seed and resample count",
+        "with few plants the bootstrap understates between-plant variance (about 4/5 at five "
+        "plants); pooled latency intervals resample questions only",
+        "the plant-robustness table counts plants whose own acc@C difference has the pooled "
+        "sign; it is descriptive and judges nothing",
+    ]
+
+
+def _notes(corpora: Sequence[SealedCorpus], groups: Sequence[ScaleGroup]) -> list[str]:
+    """What the tables could not show, said once instead of leaving a silent gap."""
+    return (
+        _pooling_notes(groups)
+        + [
+            f"{c.corpus_id}: no splits.json beside the questions, so there is no split table "
+            "and no held-out scope"
+            for c in corpora
+            if c.splits is None
+        ]
+        + [f"scope `{SCOPE_HEADLINE}` leaves out the family LOOP_ACTUATED_VALVE (ADR-0044 U2)"]
+    )

@@ -126,6 +126,12 @@ def test_synthetic_default_corpus_id_encodes_units_budget_and_seed(
     assert payload["corpus_id"] == "syn-u4-b3-s7"
 
 
+@pytest.mark.parametrize("flag", [["--tag-variants"], ["--identity-links", "links.json"]])
+def test_an_altered_corpus_refuses_the_default_corpus_id(flag: list[str]) -> None:
+    with pytest.raises(SystemExit, match="give --corpus-id"):
+        ingest_main.main(["synthetic", "--n-units", "4", "--no-neo4j", *flag])
+
+
 # --- synthetic, ADR-0023 split flags: drawing-only labels, duplication, inexact tags -------
 
 

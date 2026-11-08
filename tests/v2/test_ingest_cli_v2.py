@@ -39,15 +39,15 @@ def test_the_acceptance_command_writes_a_ten_sheet_v2_corpus_without_neo4j(
 ) -> None:
     result = _run(_ACCEPTANCE, tmp_path, capsys)
 
-    assert result.corpus_id == "X10g2s0"  # seed 0 is a tuning seed, not the registered test seed
+    assert result.corpus_id == "X10g21s0"  # seed 0 is a tuning seed, not the registered test seed
     assert result.counts.n_sheets == 10
     assert result.counts.n_nodes > 0 and result.counts.n_relationships > 0
     assert result.load_report is None  # nothing was loaded
-    assert result.config["generator"]["generator_version"] == "v2"
+    assert result.config["generator"]["generator_version"] == "v2.1"
     assert result.config["split"]["duplication_rate"] == 0.25
     assert (tmp_path / "ingest.json").exists()
     assert (
-        json.loads((tmp_path / "ingest.json").read_text(encoding="utf-8"))["corpus_id"] == "X10g2s0"
+        json.loads((tmp_path / "ingest.json").read_text(encoding="utf-8"))["corpus_id"] == "X10g21s0"
     )
 
 
@@ -61,7 +61,7 @@ def test_a_stored_v2_ingest_json_rebuilds_the_same_corpus_through_the_dispatch(
 
     artifacts = load_corpus_artifacts(result.corpus_id, tmp_path / "ingest.json")  # checks counts
     assert artifacts.generator_config is not None
-    assert artifacts.generator_config.generator_version == "v2"  # type: ignore[union-attr]
+    assert artifacts.generator_config.generator_version == "v2.1"  # type: ignore[union-attr]
 
 
 def test_the_headline_duplication_rate_flag_reaches_the_split_config(
@@ -76,7 +76,7 @@ def test_a_dev_seed_names_the_corpus_d_and_the_size_search_hits_the_target(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
     result = _run([*_ACCEPTANCE, "--seed", "1"], tmp_path, capsys)
-    assert result.corpus_id == "D10g2"
+    assert result.corpus_id == "D10g21"
     assert result.counts.n_sheets >= 10
 
 

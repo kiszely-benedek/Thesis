@@ -43,6 +43,8 @@ from plantgraph.qa.exp0001.report_models import (
 LADDER_IDS = ("H1", "H3", "H10", "H30")
 #: The same ladder on v2 plants (`g2` = generator v2); there is no stage C.
 LADDER_IDS_V2 = ("H1g2", "H3g2", "H10g2", "H30g2")
+#: The EXP-0008 ladder (generator v2.1, one plant per size, ids from `ingest/headline_v2.py`).
+LADDER_IDS_V21 = ("H1g21", "H3g21", "H10g21", "H30g21")
 
 
 def build_ladder_report(

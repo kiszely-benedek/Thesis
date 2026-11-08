@@ -24,7 +24,9 @@ draws the unit sequence train by train, so the first *n* units of a larger plant
 plant. A unit's internals use their own stream and are built in `planner.py`.
 
 Wiring (`wire`): a unit's first in-port takes the latest open out-port of the same phase
-(a gas out-port never feeds a liquid in-port). Out-ports nobody takes stay open: an open stub.
+(a gas out-port never feeds a liquid in-port). A product farm also takes the liquid streams its own
+train left open (a column's distillate and side draw), through extra receipt lines (v2.1; v2
+left them as open stubs). Out-ports nobody takes stay open: an open stub.
 """
 
 from __future__ import annotations
@@ -38,8 +40,10 @@ from pydantic import BaseModel, ConfigDict, Field
 from plantgraph.benchmark.v2.config import FlowsheetKnobs
 from plantgraph.benchmark.v2.patterns.ports import (
     PatternInstance,
+    Phase,
     Port,
     PortDirection,
+    PortKind,
     with_in_port_source,
 )
 from plantgraph.benchmark.v2.streams import master_rng
@@ -157,41 +161,59 @@ class OpenOut(BaseModel):
 
     unit_no: int
     port: Port
+    train_no: int = 1  # the train of the unit that owns the port
 
 
 def wire(
-    instance: PatternInstance, unit_no: int, open_outs: tuple[OpenOut, ...]
+    instance: PatternInstance,
+    unit_no: int,
+    open_outs: tuple[OpenOut, ...],
+    train_no: int = 1,
 ) -> tuple[PatternInstance, tuple[OpenOut, ...]]:
-    """Feed the instance's first in-port from the latest open out-port of the same phase.
+    """Feed the instance's in-ports from open out-ports of the same phase.
 
-    Returns the instance with the join made and the open out-ports afterwards: the taken one is
-    gone, this unit's own out-ports are added. With nothing to take (the first unit of the plant)
-    the in-port stays open: the plant's feed enters there.
+    The first in-port takes the latest open out-port, whatever its train. Every further in-port
+    that `collects` (a tank farm's extra receipt lines) takes the latest one left by a unit of the
+    same train: that is where a column's distillate and side draw end (v2.1). Returns the instance
+    with the joins made and the open out-ports afterwards: the taken ones are gone, this unit's
+    own out-ports are added. With nothing to take (the first unit of the plant) an in-port stays
+    open: the plant's feed enters there.
     """
-    in_port = _first_in_port(instance)
-    source = _latest_of_phase(open_outs, in_port)
-    if source is None:
-        taken: tuple[OpenOut, ...] = ()
-    else:
-        instance = with_in_port_source(instance, in_port.name, source.port.node_id)
-        taken = (source,)
+    in_ports = [port for port in instance.ports if port.direction is PortDirection.IN]
+    if not in_ports:
+        raise ValueError(f"{instance.pattern} has no in-port; its ports are {instance.port_names}")
+    taken: list[OpenOut] = []
+    for position, in_port in enumerate(in_ports):
+        if position > 0 and not in_port.collects:
+            continue
+        pool = [out for out in open_outs if out not in taken]
+        source = _latest_to_take(pool, in_port, None if position == 0 else train_no)
+        if source is not None:
+            instance = with_in_port_source(instance, in_port.name, source.port.node_id)
+            taken.append(source)
     remaining = tuple(out for out in open_outs if out not in taken)
     own = tuple(
-        OpenOut(unit_no=unit_no, port=port)
+        OpenOut(unit_no=unit_no, port=port, train_no=train_no)
         for port in instance.ports
         if port.direction is PortDirection.OUT
     )
     return instance, remaining + own
 
 
-def _first_in_port(instance: PatternInstance) -> Port:
-    for port in instance.ports:
-        if port.direction is PortDirection.IN:
-            return port
-    raise ValueError(f"{instance.pattern} has no in-port; its ports are {instance.port_names}")
+def waiting_streams(open_outs: tuple[OpenOut, ...], train_no: int) -> int:
+    """How many liquid process streams of train `train_no` no unit has taken yet."""
+    return sum(
+        1
+        for out in open_outs
+        if out.train_no == train_no
+        and out.port.phase is Phase.LIQUID
+        and out.port.kind is PortKind.PROCESS
+    )
 
 
-def _latest_of_phase(open_outs: tuple[OpenOut, ...], in_port: Port) -> OpenOut | None:
-    """The most recently opened out-port with the in-port's phase, or None."""
-    matching = [out for out in open_outs if out.port.phase is in_port.phase]
+def _latest_to_take(pool: list[OpenOut], in_port: Port, train_no: int | None) -> OpenOut | None:
+    """The most recently opened out-port with the in-port's phase (of `train_no`, if given)."""
+    matching = [
+        out for out in pool if out.port.phase is in_port.phase and train_no in (None, out.train_no)
+    ]
     return matching[-1] if matching else None

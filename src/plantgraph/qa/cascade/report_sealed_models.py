@@ -74,6 +74,9 @@ class ScaleRow(BaseModel):
     cost_per_question_small_usd: float
     cost_per_question_large_usd: float
     elasticity: Interval
+    #: How many plants each side pools (1 = the registered single-plant computation).
+    n_plants_small: int = 1
+    n_plants_large: int = 1
     #: Large over small.
     latency_median_ratio: float
     latency_p90_ratio: float
@@ -105,6 +108,18 @@ class PairedRow(BaseModel):
     comparison: Comparison
 
 
+class RobustnessRow(BaseModel):
+    """Descriptive: on how many plants a claim's point estimate has the pooled sign (not judged)."""
+
+    model_config = ConfigDict(frozen=True)
+
+    claim: str
+    scope: str
+    policy: str
+    n_plants: int
+    n_same_sign: int
+
+
 class SealedReport(BaseModel):
     """Everything `--sealed-claims` adds to the report."""
 
@@ -123,6 +138,9 @@ class SealedReport(BaseModel):
     k_bin_rows: list[KBinRow]
     paired_rows: list[PairedRow]
     claims: list[Verdict]
+    #: Scale label -> the corpus ids pooled under it; empty when every scale is one plant.
+    scales: dict[str, list[str]] = Field(default_factory=dict)
+    robustness: list[RobustnessRow] = Field(default_factory=list)
     notes: list[str] = Field(default_factory=list)
 
 

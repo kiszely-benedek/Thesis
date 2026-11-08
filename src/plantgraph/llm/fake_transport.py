@@ -77,6 +77,8 @@ class FakeTransport:
             request's raw `Authorization` header value in its body — used
             only by the key-hygiene test, to prove `ChatClient` redacts it
             before the value can reach an exception, a log or `calls.jsonl`.
+        leading_replies: served first, one per request that gets past the failures above
+            (e.g. a `finish_reason: "error"` reply before the normal one).
         latency_for_prompt: if set, called with a request's message text; the handler
             sleeps that many seconds before replying. Scripts slow and out-of-order
             replies for the harness's concurrency tests.
@@ -89,6 +91,7 @@ class FakeTransport:
     context_wall_chars: int | None = None
     echo_authorization_header: bool = False
     latency_for_prompt: Callable[[str], float] | None = None
+    leading_replies: list[ScriptedReply] = field(default_factory=list)
     #: Every request this transport has handled, in order — assert on its
     #: length to prove a code path made zero (or exactly N) transport calls.
     requests: list[httpx2.Request] = field(default_factory=list, init=False)
@@ -114,6 +117,10 @@ class FakeTransport:
         if len(self.requests) <= self.fail_times:
             return self._error_response(
                 self.fail_status, "transient_error", "Scripted transport failure", request
+            )
+        if self.leading_replies:
+            return self._success_response(
+                self.leading_replies.pop(0), model=body.get("model", "fake-model")
             )
         reply = self.replies_by_message_hash.get(_hash_message_dicts(messages), self.default_reply)
         return self._success_response(reply, model=body.get("model", "fake-model"))

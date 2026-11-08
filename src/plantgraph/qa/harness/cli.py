@@ -18,7 +18,13 @@ from typing import Any
 
 from plantgraph.llm.cache import DEFAULT_CACHE_PATH
 from plantgraph.llm.models import CacheMiss, ContextWall, ModelPin
-from plantgraph.qa.harness.freeze import prompt_hashes, question_set_sha256, read_git_state
+from plantgraph.qa.harness.freeze import (
+    code_hashes,
+    corpus_ingest_hashes,
+    prompt_hashes,
+    question_set_sha256,
+    read_git_state,
+)
 from plantgraph.qa.harness.pool import MAX_CONCURRENCY
 from plantgraph.qa.harness.question_set import questions_path
 from plantgraph.qa.harness.runner import run_harness
@@ -129,6 +135,8 @@ def _build_config(args: argparse.Namespace, corpus_ids: list[str]) -> RunConfig:
         answer_pin=ModelPin.model_validate_json(args.pin_json.read_text(encoding="utf-8")),
         prompt_hashes=prompt_hashes(),
         question_set_sha256=question_set_sha256(files),
+        code_hashes=code_hashes(),
+        corpus_ingest_sha256=corpus_ingest_hashes(corpus_ids, args.corpora_root),
         primer=not args.no_primer,
         context_wall=wall,
         git_commit=commit,

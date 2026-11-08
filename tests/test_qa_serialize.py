@@ -150,8 +150,10 @@ def test_ex01_serializes_with_a_measured_character_count() -> None:
 
     assert serialized.character_count == len(serialized.text)
     assert "66KL21" in serialized.text
-    # PROMPT-03 (2026-09-27); unchanged by ADR-0044's untagged-node handling
-    assert serialized.character_count == 17_693
+    # PROMPT-03 (2026-09-27); unchanged by ADR-0044's untagged-node handling. 17,693 -> 17,731
+    # under ADR-0065 (F10): the four bubble tags (and the loop_tag of their ten members) now
+    # carry the function letters, +38 characters in all
+    assert serialized.character_count == 17_731
     assert hashlib.sha256(serialized.text.encode()).hexdigest() == (
-        "1bbec3f836fbbed046479dcd78e3e5430016ac7cf394e5b08102f2335f44eb9c"
+        "38c8ecbf4e005cd9e782339f8717585069a1190a5d6c69f6d31a917fc3fb3772"
     )

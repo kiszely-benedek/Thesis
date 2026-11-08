@@ -39,40 +39,52 @@ class E2ECaps(BaseModel):
     basis: str
 
 
-def tier_cap(n_misses: int, tier: str) -> float:
-    """Misses x R5's cost per question x the safety factor, rounded up to 0.0001 USD."""
-    return math.ceil(n_misses * COST_PER_QUESTION_USD[tier] * SAFETY_FACTOR * 1e4) / 1e4
+def tier_cap(n_misses: int, tier: str, costs: dict[str, float] | None = None) -> float:
+    """Misses x cost per question x the safety factor, rounded up to 0.0001 USD.
+
+    `costs` is the per-tier cost per question; EXP-0008 passes its own, the default is R5's.
+    """
+    cost = (costs or COST_PER_QUESTION_USD)[tier]
+    return math.ceil(n_misses * cost * SAFETY_FACTOR * 1e4) / 1e4
 
 
-def compute_caps(arm: str, cyp: DryRunReport, ag: DryRunReport) -> E2ECaps:
+def compute_caps(
+    arm: str, cyp: DryRunReport, ag: DryRunReport, costs: dict[str, float] | None = None
+) -> E2ECaps:
     """The two tier caps of one arm from its two dry-run reports."""
+    costs = costs or COST_PER_QUESTION_USD
     n_misses = {"cyp": cyp.n_questions_with_miss, "ag": ag.n_questions_with_miss}
-    caps = {tier: tier_cap(n, tier) for tier, n in n_misses.items()}
+    caps = {tier: tier_cap(n, tier, costs) for tier, n in n_misses.items()}
     return E2ECaps(
         arm=arm,
         n_misses=n_misses,
-        cost_per_question_usd=dict(COST_PER_QUESTION_USD),
+        cost_per_question_usd=dict(costs),
         cap_usd=caps,
         total_cap_usd=round(sum(caps.values()), 4),
         basis=f"questions with a miss x R5 cost per question at H1000g2 x {SAFETY_FACTOR}",
     )
 
 
-def _check_p4_bound(max_spend_usd: float) -> None:
+def _check_p4_bound(max_spend_usd: float, bound_usd: float = P4_UPPER_BOUND_USD) -> None:
     """Refuse one invocation's cap above the P4 bound.
 
     This is a per-invocation check (one arm's cap), not a check of the cumulative spend of the
     three arms: that total was tracked by hand in `data/runs/exp0004/run_p4_rest*.sh` and came to
     $1.9447 of real spend.
     """
-    if max_spend_usd > P4_UPPER_BOUND_USD:
+    if max_spend_usd > bound_usd:
         raise ValueError(
-            f"expected a cap of at most {P4_UPPER_BOUND_USD} (the pre-registered P4 bound), "
+            f"expected a cap of at most {bound_usd} (the pre-registered P4 bound), "
             f"found {max_spend_usd}"
         )
 
 
-def split_cap(caps: E2ECaps, max_spend_usd: float, above_dry_cap: bool = False) -> dict[str, float]:
+def split_cap(
+    caps: E2ECaps,
+    max_spend_usd: float,
+    above_dry_cap: bool = False,
+    bound_usd: float = P4_UPPER_BOUND_USD,
+) -> dict[str, float]:
     """Divide the user's cap between the tiers in proportion to their computed caps.
 
     `above_dry_cap` is the user's explicit approval of a cap above the dry run's total (2026-11-06:
@@ -89,7 +101,7 @@ def split_cap(caps: E2ECaps, max_spend_usd: float, above_dry_cap: bool = False) 
         raise ValueError(
             "expected at least one cache miss in the dry run, found none: nothing to pay"
         )
-    _check_p4_bound(max_spend_usd)
+    _check_p4_bound(max_spend_usd, bound_usd)
     if max_spend_usd > caps.total_cap_usd and not above_dry_cap:
         raise ValueError(
             f"expected a cap of at most {caps.total_cap_usd} (the dry run's total), "
@@ -102,7 +114,11 @@ def split_cap(caps: E2ECaps, max_spend_usd: float, above_dry_cap: bool = False) 
 
 
 def explicit_tier_caps(
-    cyp_usd: float, ag_usd: float, max_spend_usd: float, above_dry_cap: bool
+    cyp_usd: float,
+    ag_usd: float,
+    max_spend_usd: float,
+    above_dry_cap: bool,
+    bound_usd: float = P4_UPPER_BOUND_USD,
 ) -> dict[str, float]:
     """The user's own cap per tier, instead of the proportional split.
 
@@ -123,16 +139,18 @@ def explicit_tier_caps(
             f"expected the tier caps to add up to the arm cap {max_spend_usd}, "
             f"found {cyp_usd} + {ag_usd}"
         )
-    _check_p4_bound(max_spend_usd)
+    _check_p4_bound(max_spend_usd, bound_usd)
     return {"cyp": cyp_usd, "ag": ag_usd}
 
 
 def _split_or_explicit(caps: E2ECaps, args: argparse.Namespace) -> dict[str, float]:
     """The explicit tier caps when the user gave them, else the proportional split."""
     if args.tier_caps_usd is None:
-        return split_cap(caps, args.max_spend_usd, args.above_dry_cap)
+        return split_cap(caps, args.max_spend_usd, args.above_dry_cap, args.p4_bound_usd)
     cyp_usd, ag_usd = args.tier_caps_usd
-    return explicit_tier_caps(cyp_usd, ag_usd, args.max_spend_usd, args.above_dry_cap)
+    return explicit_tier_caps(
+        cyp_usd, ag_usd, args.max_spend_usd, args.above_dry_cap, args.p4_bound_usd
+    )
 
 
 def _read_report(path: Path) -> DryRunReport:
@@ -148,6 +166,13 @@ def main(argv: list[str] | None = None) -> None:
     make.add_argument("--cyp-misses", type=Path, required=True)
     make.add_argument("--ag-misses", type=Path, required=True)
     make.add_argument("--out", type=Path, required=True)
+    make.add_argument(
+        "--cost-per-question-usd",
+        type=float,
+        nargs=2,
+        metavar=("CYP", "AG"),
+        help="cost per question of each tier (default: R5's at H1000g2; EXP-0008 passes its own)",
+    )
     split = commands.add_parser("split")
     split.add_argument("--caps", type=Path, required=True)
     split.add_argument("--max-spend-usd", type=float, required=True)
@@ -163,9 +188,20 @@ def main(argv: list[str] | None = None) -> None:
         metavar=("CYP", "AG"),
         help="the user's own cap per tier, not the proportional split (needs --above-dry-cap)",
     )
+    split.add_argument(
+        "--p4-bound-usd",
+        type=float,
+        default=P4_UPPER_BOUND_USD,
+        help="upper bound of one arm's cap (default: the first measurement's P4 bound)",
+    )
     args = parser.parse_args(argv)
     if args.command == "make":
-        caps = compute_caps(args.arm, _read_report(args.cyp_misses), _read_report(args.ag_misses))
+        costs = None
+        if args.cost_per_question_usd is not None:
+            costs = dict(zip(("cyp", "ag"), args.cost_per_question_usd, strict=True))
+        caps = compute_caps(
+            args.arm, _read_report(args.cyp_misses), _read_report(args.ag_misses), costs
+        )
         with args.out.open("x", encoding="utf-8") as handle:  # "x": fails if the file exists
             handle.write(caps.model_dump_json(indent=1) + "\n")
         print(f"{args.arm}: caps {caps.cap_usd}, total ${caps.total_cap_usd} ({caps.basis})")

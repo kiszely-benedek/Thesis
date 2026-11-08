@@ -43,7 +43,8 @@ def create_equipment(spec: EquipmentSpec, section: dexpi.PlantSection) -> dexpi.
             f"expected a pump, compressor, agitator or rotary mixer for has_motor on "
             f"{spec.node_id!r}, got {spec.node_class!r}"
         )
-    prefix, _, sequence = spec.tag.partition("-")
+    prefix, _, number = spec.tag.partition("-")
+    sequence, suffix = split_spare_suffix(number)
     equipment = cast(
         dexpi.Equipment,
         dexpi_class_named(spec.node_class)(
@@ -51,12 +52,19 @@ def create_equipment(spec: EquipmentSpec, section: dexpi.PlantSection) -> dexpi.
             tagName=spec.tag,
             tagNamePrefix=prefix,
             tagNameSequenceNumber=sequence,
+            tagNameSuffix=suffix,
             parentStructure=section,
         ),
     )
     if spec.has_motor:
         _add_motor(equipment, spec)
     return equipment
+
+
+def split_spare_suffix(number: str) -> tuple[str, str | None]:
+    """`1203A` gives (`1203`, `A`): the spare letter is the tag's suffix, not its number."""
+    digits = number.rstrip("ABC")
+    return digits, (number[len(digits) :] or None)
 
 
 def motor_tag(machine_tag: str) -> str:

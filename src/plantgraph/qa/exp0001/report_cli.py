@@ -2,7 +2,8 @@
 
 Run directories follow the run script's names under `<root>/runs`: `<prefix>-CTXH-<corpus>`
 (ContextRAG high), `-CTXL-` (low), `-CYP-` and `-AG-` (the cascade's tiers); the prefix is `E1` for
-the v1 report and `E7` for `--edition v2` (the v2 re-measurement, ADR-0060). A run that is not there
+the v1 report, `E7` for `--edition v2` (ADR-0060) and `E8` for `--edition v21` (EXP-0008;
+`--run-prefix` overrides it). A run that is not there
 is listed as absent in the report, not an error.
 """
 
@@ -20,7 +21,12 @@ from plantgraph.qa.cascade.policy import (
     load_policies,
     load_policy,
 )
-from plantgraph.qa.exp0001.report import LADDER_IDS, LADDER_IDS_V2, build_ladder_report
+from plantgraph.qa.exp0001.report import (
+    LADDER_IDS,
+    LADDER_IDS_V2,
+    LADDER_IDS_V21,
+    build_ladder_report,
+)
 from plantgraph.qa.exp0001.report_claims import (
     V1_BIG_PROMPTS,
     V1_EDITION,
@@ -38,6 +44,7 @@ _RUN_INFIX = {CTX_HIGH: "CTXH", CTX_LOW: "CTXL", CYP: "CYP", AG: "AG"}
 _EDITIONS: dict[str, tuple[str, tuple[str, ...], Edition, str]] = {
     "v1": ("E1", LADDER_IDS, V1_EDITION, "EXP-0001 report"),
     "v2": ("E7", LADDER_IDS_V2, V2_EDITION, "EXP-0007 report (v2 plants)"),
+    "v21": ("E8", LADDER_IDS_V21, V2_EDITION, "EXP-0008 report (v2.1 plants)"),
 }
 _SEALED = Path("data") / "runs" / "sealed"
 
@@ -48,6 +55,9 @@ def add_report_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--root", type=Path, default=root, help="the EXP-0001 data directory")
     parser.add_argument("--out", type=Path, help="default: <root>/report")
     parser.add_argument("--edition", choices=sorted(_EDITIONS), default="v1")
+    parser.add_argument(
+        "--run-prefix", help="run-id prefix of the stored runs (default: the edition's, e.g. E7)"
+    )
     parser.add_argument(
         "--sizes", help="ladder corpus ids (default: the edition's ladder, e.g. H1,H3,H10,H30)"
     )
@@ -128,7 +138,7 @@ def _ladder_ids(args: argparse.Namespace) -> list[str]:
 
 
 def _ladder_inputs(args: argparse.Namespace) -> list[CorpusInputs]:
-    prefix = _EDITIONS[args.edition][0]
+    prefix = args.run_prefix or _EDITIONS[args.edition][0]
     return [
         CorpusInputs(
             corpus_id=corpus_id,

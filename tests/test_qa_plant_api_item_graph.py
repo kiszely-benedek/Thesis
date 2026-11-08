@@ -276,5 +276,89 @@ def test_api_01_is_exact_on_untagged_actuators_and_still_sees_an_edge_change() -
     gold.remove_edge("AF", "BV1")
     gold.add_edge("FIC", "BV1", relation="control")
     changed = compare_edges_by_tag(graph, gold)
-    assert changed.missing_sample == (("FIC", "control", "BV1"),)
-    assert changed.extra_sample == (("<untagged>", "control", "BV1"),)
+    assert ("FIC", "control", "BV1") in changed.missing_sample
+    # The actuator is named by its neighbours, and now has a different place on each side.
+    assert ("FIC", "send_signal_to", "<untagged ->control:BV1,<-send_signal_to:FIC>") in (
+        changed.extra_sample
+    )
+    assert not changed.passed
+
+
+def _chain(tags: list[str | None]) -> tuple[ItemGraph, nx.DiGraph[str]]:
+    """A flow chain of items with the given tags (None = untagged), as item graph and gold."""
+    records = [
+        ItemRecord(
+            item_id=f"id-{i}",
+            tag=tag,
+            node_class=schema.NodeClass.BALL_VALVE.value,
+            labels=schema.labels_for(schema.NodeClass.BALL_VALVE.value),
+            unit_id="1",
+            sheets=("S1",),
+            occurrence_keys=(f"S1:{i}",),
+        )
+        for i, tag in enumerate(tags)
+    ]
+    links = list(zip(range(len(tags)), range(1, len(tags)), strict=False))
+    edges = [
+        ItemEdge(source=f"id-{a}", target=f"id-{b}", relation="send_to", via=()) for a, b in links
+    ]
+    gold: nx.DiGraph[str] = nx.DiGraph()
+    for i, tag in enumerate(tags):
+        gold.add_node(str(i), **({"tag": tag} if tag else {}))
+    for a, b in links:
+        gold.add_edge(str(a), str(b), relation="send_to")
+    return ItemGraph(records, edges, {}), gold
+
+
+def test_api_01_sees_one_tag_left_in_two_items() -> None:
+    graph, gold = _chain(["T-1", "P-1", "V-1"])
+    assert compare_edges_by_tag(graph, gold).passed
+    # The same chain with the pump in two pieces: T-1 -> a, b -> V-1. By tag the edges still match.
+    split, _ = _chain(["T-1", "P-1", "P-1", "V-1"])
+    split_edges = [
+        ItemEdge(source="id-0", target="id-1", relation="send_to", via=()),
+        ItemEdge(source="id-2", target="id-3", relation="send_to", via=()),
+    ]
+    broken = ItemGraph([split.item(i) for i in split.all_ids()], split_edges, {})
+    result = compare_edges_by_tag(broken, gold)
+    assert (result.precision, result.recall) == (1.0, 1.0)
+    assert result.split_tags == ("P-1",)
+    assert not result.passed
+
+
+def test_api_01_keeps_two_different_untagged_items_apart() -> None:
+    # Gold: A -> u1 -> B and C -> u2 -> D. System: A -> u1 -> D and C -> u2 -> B (crossed).
+    # With every untagged item read as one name, both give the same four edges and pass.
+    def build(pairs: list[tuple[str, str]]) -> ItemGraph:
+        records = [_record(name, None if name.startswith("u") else name) for name in _NAMES]
+        edges = [
+            ItemEdge(source=f"id-{a}", target=f"id-{b}", relation="send_to", via=())
+            for a, b in pairs
+        ]
+        return ItemGraph(records, edges, {})
+
+    gold: nx.DiGraph[str] = nx.DiGraph()
+    for name in _NAMES:
+        gold.add_node(name, **({} if name.startswith("u") else {"tag": name}))
+    for a, b in [("A", "u1"), ("u1", "B"), ("C", "u2"), ("u2", "D")]:
+        gold.add_edge(a, b, relation="send_to")
+    right = build([("A", "u1"), ("u1", "B"), ("C", "u2"), ("u2", "D")])
+    crossed = build([("A", "u1"), ("u1", "D"), ("C", "u2"), ("u2", "B")])
+    assert compare_edges_by_tag(right, gold).passed
+    assert not compare_edges_by_tag(crossed, gold).passed
+
+
+_NAMES = ["A", "B", "C", "D", "u1", "u2"]
+
+
+def _record(name: str, tag: str | None) -> ItemRecord:
+    node_class = schema.NodeClass.BALL_VALVE.value
+    return ItemRecord(
+        item_id=f"id-{name}",
+        tag=tag,
+        node_class=node_class,
+        labels=schema.labels_for(node_class),
+        unit_id="1",
+        sheets=("S1",),
+        occurrence_keys=(f"S1:{name}",),
+    )

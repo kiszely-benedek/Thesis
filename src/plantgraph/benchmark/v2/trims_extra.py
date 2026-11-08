@@ -17,6 +17,8 @@ from plantgraph.graph.schema import NodeClass
 
 #: An optional item in a trim is present at even odds (Rule V, pid-vocabulary 13.1).
 P_OPTIONAL_ITEM = 0.5
+LIQUID_SERVICE = "P"  # process liquid line service code (`PG` is process gas)
+FLARE_SERVICE = "FL"
 
 
 # ---- groups of parts reused inside other trims ------------------------------------------------
@@ -85,8 +87,12 @@ def capped_branch(
     role: str,
     valve: LineItemSpec | None = None,
     valve_deck: str = "vent_drain_valve",
+    service: str | None = None,
 ) -> LineItemSpec:
     """A vent or drain: `src -> valve -> cap`; returns the valve.
+
+    The branch takes the service of what flows in it: `service` when given (a drain on a flare
+    line is `FL`), else the draft's own.
 
     The cap is a blind flange or, for an open drain (chance `p_open_drain`, drains only), a
     `Funnel`. The valve is `valve` when given, else the next card of `valve_deck`.
@@ -95,7 +101,7 @@ def capped_branch(
     is_open = kind == "drain" and draft.ctx.chance(draft.ctx.config.p_open_drain)
     cap_class = NodeClass.FUNNEL if is_open else NodeClass.BLIND_FLANGE
     cap = draft.part(cap_class.value, f"{role}_open_drain" if is_open else f"{role}_cap")
-    draft.line(src_id, [block, cap], None, style=draft.style.branch())
+    draft.line(src_id, [block, cap], None, style=draft.style.branch(service=service))
     return block
 
 

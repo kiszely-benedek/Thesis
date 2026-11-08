@@ -11,7 +11,8 @@ import re
 from collections.abc import Iterable
 from pathlib import Path
 
-from plantgraph.ingest.headline_v2 import TEST_SEED_RANGE, TEST_SEEDS_V2
+from plantgraph.ingest.headline_v2 import TEST_SEEDS_V2
+from plantgraph.ingest.seed_plan import TEST_SEED_RANGE
 
 #: The registered test seeds (ADR-0059, written down before any test plant was generated).
 REGISTERED_TEST_SEEDS_V2 = {1: 5100, 3: 5001, 10: 5001, 30: 5001, 100: 5002, 1000: 5003}

@@ -11,10 +11,10 @@ from collections.abc import Callable
 import networkx as nx
 import pytest
 
+from plantgraph.graph.schema import Relation
 from plantgraph.qa.models import AnswerType, Question, QuestionFamily
-from plantgraph.qa.questions.common import send_to_successors
 from plantgraph.qa.questions.families_heldout import HELDOUT_GENERATORS, heldout_candidates
-from plantgraph.qa.questions.families_heldout_paths import _valve_count_ranges
+from plantgraph.qa.questions.families_heldout_paths import item_valve_counts
 from plantgraph.qa.questions.families_heldout_route import _dominators_of
 from qa_toy_plant_heldout import NODES, build_manifest, build_plant, build_sheets
 
@@ -122,11 +122,54 @@ def test_valves_on_path_counts_match_the_hand_table_and_the_oracle() -> None:
 
 def test_valves_on_path_rejects_a_pair_whose_shortest_paths_differ() -> None:
     # D1 -> BV2 -> E1 holds one valve, D1 -> Q1 -> E1 none: no question may ask about D1 and E1
-    successors = {n: send_to_successors(_PLANT, n) for n in _PLANT.nodes}
-    ranges = _valve_count_ranges(_PLANT, successors, "D1")
-    assert ranges["E1"] == (0, 1)
+    assert item_valve_counts(_PLANT, "D1")["E1"] == frozenset({0, 1})
     for seed in range(8):
         assert ("D1", "E1") not in _anchors(_make(F.VALVES_ON_PATH, seed))
+
+
+def _piping(*chain: tuple[str, str, str]) -> nx.DiGraph[str]:
+    """A plant of `(id, node_class, tag)` nodes joined by send_to edges in the order given."""
+    plant: nx.DiGraph[str] = nx.DiGraph()
+    for node_id, node_class, tag in chain:
+        plant.add_node(node_id, node_class=node_class, tag=tag)
+    for (a, _, _), (b, _, _) in zip(chain, chain[1:], strict=False):
+        plant.add_edge(a, b, relation=Relation.SEND_TO.value)
+    return plant
+
+
+def test_item_valve_counts_fold_fittings_away() -> None:
+    # raw route A -> t1 -> V -> t2 -> B is 4 hops, 2 fittings; at item level it is A, V, B
+    plant = _piping(
+        ("a", "Tank", "A"), ("t1", "Tee", "T1"), ("v", "GlobeValve", "V"),
+        ("t2", "Tee", "T2"), ("b", "Tank", "B"),
+    )  # fmt: skip
+
+    counts = item_valve_counts(plant, "a")
+
+    assert counts["b"] == frozenset({1})
+    assert "t1" not in counts  # a fitting is never a hop
+
+
+def test_item_valve_counts_use_the_route_that_is_shortest_in_items() -> None:
+    # raw: A -> V -> B is 2 hops, A -> T1 -> T2 -> B is 3; in items the fitting route is a
+    # direct A -> B hop (1) against A -> V -> B (2), so the valve-free route is the shortest
+    plant = _piping(
+        ("a", "Tank", "A"), ("t1", "Tee", "T1"), ("t2", "Tee", "T2"), ("b", "Tank", "B")
+    )
+    plant.add_node("v", node_class="GlobeValve", tag="V")
+    plant.add_edge("a", "v", relation=Relation.SEND_TO.value)
+    plant.add_edge("v", "b", relation=Relation.SEND_TO.value)
+
+    assert item_valve_counts(plant, "a")["b"] == frozenset({0})
+
+
+def test_item_valve_counts_keep_every_count_of_equally_short_routes() -> None:
+    plant = _piping(("a", "Tank", "A"), ("v", "GlobeValve", "V"), ("b", "Tank", "B"))
+    plant.add_node("p", node_class="CentrifugalPump", tag="P")
+    plant.add_edge("a", "p", relation=Relation.SEND_TO.value)
+    plant.add_edge("p", "b", relation=Relation.SEND_TO.value)
+
+    assert item_valve_counts(plant, "a")["b"] == frozenset({0, 1})
 
 
 def test_valves_on_path_evidence_is_the_shortest_path() -> None:

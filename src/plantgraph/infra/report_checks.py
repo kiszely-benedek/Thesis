@@ -20,9 +20,10 @@ PARTS_TOLERANCE_S = 0.001
 def run_all_checks(inputs: ReportInputs, footprints: list[CorpusFootprintRow]) -> list[SelfCheck]:
     """M1..M7 in order."""
     replays = [run for run in inputs.runs if run.basis == "replay"]
+    fallbacks = [run for run in inputs.runs if run.basis == "old_run"]  # replay missed or differed
     timed = [run for run in inputs.runs if run.basis != "old_run"]  # replays and db-only replays
     return [
-        _replays_identical(replays),
+        _replays_identical(replays, fallbacks),
         _clock(inputs, timed),
         _parts_add_up(timed),
         _repeat_spread(footprints),
@@ -38,16 +39,30 @@ def _outcome(name: str, problems: list[str], ok_detail: str) -> SelfCheck:
     return SelfCheck(name=name, status="pass", detail=ok_detail)
 
 
-def _replays_identical(replays: list[RunData]) -> SelfCheck:
+def _replays_identical(replays: list[RunData], fallbacks: list[RunData]) -> SelfCheck:
+    """Fail on a differing replay; flag a role whose replay was replaced by its old run.
+
+    An `old_run` row exists only because a replay was missing or differed, so its timings were
+    never checked against the source and must not count as a passed replay.
+    """
     bad = [
         f"{run.run_id} is {run.replay_status}"
         for run in replays
         if run.replay_status != "identical"
     ]
-    return _outcome(
-        "M1 replay answers byte-identical to the source run",
-        [*bad, *(["no replay was given"] if not replays else [])],
-        f"{len(replays)} of {len(replays)} replays identical",
+    name = "M1 replay answers byte-identical to the source run"
+    if bad or not replays:
+        problems = [*bad, *(["no replay was given"] if not replays else [])]
+        return SelfCheck(name=name, status="fail", detail="; ".join(problems))
+    if fallbacks:
+        used = ", ".join(f"{run.role} on {run.corpus_id} ({run.run_id})" for run in fallbacks)
+        return SelfCheck(
+            name=name,
+            status="flag",
+            detail=f"{len(replays)} replays identical, but these fell back to the old run: {used}",
+        )
+    return SelfCheck(
+        name=name, status="pass", detail=f"{len(replays)} of {len(replays)} replays identical"
     )
 
 

@@ -15,7 +15,41 @@ from pathlib import Path
 from plantgraph.llm.models import ContextWall
 from plantgraph.qa.models import RunConfig
 
-_PROMPTS_DIR = Path(__file__).resolve().parents[1] / "prompts"
+_QA_DIR = Path(__file__).resolve().parents[1]
+_PROMPTS_DIR = _QA_DIR / "prompts"
+
+#: Python modules (paths under `qa/`) whose code decides the text a model is sent. The prompt
+#: templates are hashed already; these build the rest of the prompt around them, so an edit here
+#: changes the prompt just as a template edit does. A module that only routes, scores or
+#: logs is deliberately absent: it cannot change what the model reads.
+PROMPT_BUILDING_MODULES: tuple[str, ...] = (
+    # Cypher schema paragraphs shown to the query-writing model
+    "schema_text.py",
+    "schema_text_lines.py",
+    # plant text in the prompt: serialization, sheet rendering, and the cut when it is too long
+    "serialize.py",
+    "context_render.py",
+    "context_budget.py",
+    # the shared final-answer step and the choice between F1's and V2T's template
+    "final_answer.py",
+    "final_answer_variants.py",
+    # the optional drawing-reading primer and the unit-router prompt
+    "primer.py",
+    "unit_router.py",
+    # agent: system prompt, tool list text, first guess, and how tool results read as text
+    "agent/prompts.py",
+    "agent/tool_text.py",
+    "agent/seed.py",
+    "plant_api/results.py",
+    "plant_api/line_render.py",
+    # strategies that fill a template: the Cypher prompts (incl. the repair prompt and row
+    # rendering) and the context strategies that choose and assemble the plant text
+    "strategies/cypher_rag.py",
+    "strategies/cypher_rag_lines.py",
+    "strategies/context_rag.py",
+    "strategies/hierarchical.py",
+    "strategies/hierarchical_need.py",
+)
 
 #: `RunConfig` fields that may differ between the original run and a resume or
 #: replay of it: they say when, where and how the run was started, not what it measures.
@@ -27,6 +61,10 @@ _FIELDS_ALLOWED_TO_CHANGE = {
     "max_spend_usd",
 }
 
+#: Fields added after runs already existed. An older `run_config.json` holds them empty, and an
+#: empty frozen value means "not recorded", so a resume is not compared on them.
+_FIELDS_COMPARED_ONLY_WHEN_FROZEN = ("code_hashes", "corpus_ingest_sha256")
+
 
 def prompt_hashes() -> dict[str, str]:
     """Sha256 of every prompt template, by file name, so a prompt edit shows in the record."""
@@ -34,6 +72,38 @@ def prompt_hashes() -> dict[str, str]:
         path.name: hashlib.sha256(path.read_bytes()).hexdigest()
         for path in sorted(_PROMPTS_DIR.glob("*.txt"))
     }
+
+
+def code_hashes() -> dict[str, str]:
+    """Sha256 of every module in `PROMPT_BUILDING_MODULES`, by path under `qa/`.
+
+    Raises:
+        FileNotFoundError: a listed module is gone; the list must follow the rename.
+    """
+    hashes: dict[str, str] = {}
+    for name in PROMPT_BUILDING_MODULES:
+        path = _QA_DIR / name
+        if not path.is_file():
+            raise FileNotFoundError(f"expected prompt-building module {path} to exist; found none")
+        hashes[name] = hashlib.sha256(path.read_bytes()).hexdigest()
+    return hashes
+
+
+def corpus_ingest_hashes(corpus_ids: list[str], corpora_root: Path) -> dict[str, str]:
+    """Sha256 of each corpus's `ingest.json` (the plant every question is asked about).
+
+    Raises:
+        FileNotFoundError: a corpus has no `ingest.json` under `corpora_root`.
+    """
+    hashes: dict[str, str] = {}
+    for corpus_id in corpus_ids:
+        path = corpora_root / corpus_id / "ingest.json"
+        if not path.is_file():
+            raise FileNotFoundError(
+                f"expected {path} to exist for corpus {corpus_id!r}; found none"
+            )
+        hashes[corpus_id] = hashlib.sha256(path.read_bytes()).hexdigest()
+    return hashes
 
 
 def question_set_sha256(question_files: list[Path]) -> str:
@@ -110,6 +180,39 @@ def _wall_problems(config: RunConfig, wall: ContextWall) -> list[str]:
 
 def differing_fields(frozen: RunConfig, requested: RunConfig) -> list[str]:
     """Names of the measured fields in which a resume's config differs from the frozen one."""
-    frozen_values = frozen.model_dump(mode="json", exclude=_FIELDS_ALLOWED_TO_CHANGE)
-    requested_values = requested.model_dump(mode="json", exclude=_FIELDS_ALLOWED_TO_CHANGE)
+    skipped = _FIELDS_ALLOWED_TO_CHANGE | _fields_not_recorded(frozen)
+    frozen_values = frozen.model_dump(mode="json", exclude=skipped)
+    requested_values = requested.model_dump(mode="json", exclude=skipped)
     return [name for name in frozen_values if frozen_values[name] != requested_values[name]]
+
+
+def _fields_not_recorded(frozen: RunConfig) -> set[str]:
+    """Optional fields the frozen config holds empty: an older run, nothing to compare."""
+    return {name for name in _FIELDS_COMPARED_ONLY_WHEN_FROZEN if not getattr(frozen, name)}
+
+
+def changed_inputs(config: RunConfig, corpora_root: Path) -> list[str]:
+    """What the config recorded about code and corpora that no longer matches the disk.
+
+    Empty hash fields (an older config) are not checked. Names read `code:<module>`
+    or `corpus:<id>`.
+    """
+    return _changed_code(config) + _changed_corpora(config, corpora_root)
+
+
+def _changed_code(config: RunConfig) -> list[str]:
+    if not config.code_hashes:
+        return []
+    now = code_hashes()
+    names = sorted(set(now) | set(config.code_hashes))
+    return [f"code:{name}" for name in names if now.get(name) != config.code_hashes.get(name)]
+
+
+def _changed_corpora(config: RunConfig, corpora_root: Path) -> list[str]:
+    if not config.corpus_ingest_sha256:
+        return []
+    recorded = config.corpus_ingest_sha256
+    now = corpus_ingest_hashes(list(recorded), corpora_root)
+    return [
+        f"corpus:{corpus_id}" for corpus_id in recorded if now[corpus_id] != recorded[corpus_id]
+    ]

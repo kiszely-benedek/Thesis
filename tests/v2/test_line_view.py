@@ -18,6 +18,7 @@ from plantgraph.qa.graph_view import NetworkxGraphView
 from plantgraph.qa.harness.line_view_fidelity import (
     compare_line_views,
     gold_line_view,
+    line_view_from_flow,
     system_line_view,
 )
 from plantgraph.qa.plant_api.item_graph import build_item_graph
@@ -133,3 +134,33 @@ def test_the_system_line_view_equals_the_gold_on_a_generated_v2_corpus() -> None
     result = compare_line_views("T", system, gold_line_view(built.plant))
     assert result.passed, result
     assert result.n_edges_gold > 0
+
+
+def _chain_plant() -> nx.DiGraph[str]:
+    plant: nx.DiGraph[str] = nx.DiGraph()
+    for node_id, node_class, tag in [
+        ("t", "Tank", "T-1"),
+        ("p", "CentrifugalPump", "P-1"),
+        ("v", "GateValve", "V-1"),
+    ]:
+        plant.add_node(node_id, node_class=node_class, tag=tag)
+    plant.add_edge("t", "p", relation="send_to")
+    plant.add_edge("p", "v", relation="send_to")
+    return plant
+
+
+def test_an_identity_split_across_two_line_items_fails_the_check() -> None:
+    # Reviewer's case: P-1 left in two unmerged items; flow t->a and b->v, so no route T-1 -> V-1.
+    classes = {"t": "Tank", "a": "CentrifugalPump", "b": "CentrifugalPump", "v": "GateValve"}
+    tags: dict[str, str | None] = {"t": "T-1", "a": "P-1", "b": "P-1", "v": "V-1"}
+    system = line_view_from_flow(classes, tags, [("t", "a"), ("b", "v")])
+    result = compare_line_views("split", system, gold_line_view(_chain_plant()))
+    assert result.split_tags == ("P-1",)
+    assert not result.passed
+
+
+def test_the_unsplit_chain_passes() -> None:
+    classes = {"t": "Tank", "p": "CentrifugalPump", "v": "GateValve"}
+    tags: dict[str, str | None] = {"t": "T-1", "p": "P-1", "v": "V-1"}
+    system = line_view_from_flow(classes, tags, [("t", "p"), ("p", "v")])
+    assert compare_line_views("whole", system, gold_line_view(_chain_plant())).passed

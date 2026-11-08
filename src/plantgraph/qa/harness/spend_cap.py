@@ -55,12 +55,19 @@ class SpendGuard:
         self._estimate_usd = estimate_usd or 0.0
         self._max_call_usd = 0.0  # dearest single call made in this invocation
         self._open_reserved_usd = 0.0  # sum of the reservations of items in flight
+        self._late_usd = 0.0  # cost of abandoned calls that answered after all
 
     @property
     def spent_usd(self) -> float:
         """Recorded cost of earlier invocations plus what this one has spent."""
         with self._lock:
             return self._spent_usd
+
+    @property
+    def late_usd(self) -> float:
+        """What late answers of abandoned calls cost this invocation (already in `spent_usd`)."""
+        with self._lock:
+            return self._late_usd
 
     def add(self, response: ChatResponse) -> None:
         """Count a finished call; a cache hit costs nothing."""
@@ -80,6 +87,7 @@ class SpendGuard:
         cost = response.cost_usd or 0.0
         with self._lock:
             self._spent_usd += cost
+            self._late_usd += cost
             self._max_call_usd = max(self._max_call_usd, cost)
 
     def reserve(self) -> Reservation:

@@ -24,6 +24,7 @@ from plantgraph.qa.cascade.gaps import IncompleteJoinError
 from plantgraph.qa.cascade.join import JoinedCorpus, TierSource, join_corpus, require_complete
 from plantgraph.qa.cascade.labels import AnchorFinder, anchor_finder, labels_from_run_dirs
 from plantgraph.qa.cascade.late_charges import late_charge_check
+from plantgraph.qa.cascade.limits import LimitSetting, run_problems
 from plantgraph.qa.cascade.models import CascadePolicy
 from plantgraph.qa.cascade.policy import POLICIES_DIR, load_policies
 from plantgraph.qa.cascade.report_claims import F1_CLAIMS, ClaimPolicies
@@ -93,8 +94,13 @@ def _evaluate_all(
     questions_root: Path,
     cutoff_s: float,
     find_anchors: AnchorFinder | None = None,
+    setting: LimitSetting | None = None,
 ) -> tuple[dict[str, JoinedCorpus], dict[str, Evaluation], list[NotEvaluated]]:
-    """Join every policy; evaluate those that are complete, list the others with the reason."""
+    """Join every policy; evaluate those that are complete, list the others with the reason.
+
+    Raises:
+        ValueError: `setting` is given and the stored runs were made under other limits.
+    """
     joins: dict[str, JoinedCorpus] = {}
     evaluations: dict[str, Evaluation] = {}
     problems: list[NotEvaluated] = []
@@ -111,14 +117,33 @@ def _evaluate_all(
                 known_labels=known_labels,
             )
             joins[policy.name] = joined
+            _require_setting(setting, joined)
             require_complete(joined)
             evaluations[policy.name] = evaluate_policy(joined, cutoff_s)
         except IncompleteJoinError as error:
             gaps = {tier: len(ids) for tier, ids in error.gaps.items()}
             problems.append(NotEvaluated(policy=policy.name, reason=str(error), gaps=gaps))
+        except SettingMismatchError:
+            raise  # a wrong-limits run must stop the report, not become a "not evaluated" row
         except ValueError as error:  # refused join, or a need label the policy needs is missing
             problems.append(NotEvaluated(policy=policy.name, reason=str(error)))
     return joins, evaluations, problems
+
+
+class SettingMismatchError(Exception):
+    """The stored runs were made under limits other than the requested `--setting`."""
+
+
+def _require_setting(setting: LimitSetting | None, joined: JoinedCorpus) -> None:
+    """Refuse runs whose Cypher timeout or deadline do not fit `setting` (limits.run_problems)."""
+    if setting is None:
+        return
+    problems = run_problems(setting, joined.runs)
+    if problems:
+        raise SettingMismatchError(
+            f"expected runs that match setting {setting.name} for policy {joined.policy.name!r} "
+            f"on corpus {joined.corpus_id!r}, found:\n  " + "\n  ".join(problems)
+        )
 
 
 def _late_charges(
@@ -252,6 +277,8 @@ def build_report(
     sealed_claims: bool = False,
     claims: ClaimPolicies = F1_CLAIMS,
     with_baselines: bool = True,
+    setting: LimitSetting | None = None,
+    scales: Mapping[str, Sequence[str]] | None = None,
 ) -> Report:
     """Evaluate `policies` (default: every policy file, plus the baselines) on each corpus.
 
@@ -263,9 +290,13 @@ def build_report(
     `claims` names the policies those claims are about (F1's by default).
     `with_baselines=False` leaves F1's always-N/C/G reference policies out (a V2T report has
     its own always-C/G policies and would list F1's as "not evaluated").
+    `setting` (limits.py) makes every join check that the stored runs were made under it.
+    `scales` (sealed claims only) maps a scale label to the corpus ids of its plants: they are
+    shown one by one and pooled with a two-stage bootstrap (`stats_cluster.py`).
 
     Raises:
         ValueError: `sealed_claims` without policies or without a corpora root.
+        SettingMismatchError: `setting` is given and a run was made under other limits.
     """
     bound = bound or LatencyBound()
     if sealed_claims and (not policies or corpora_root is None):
@@ -289,6 +320,7 @@ def build_report(
             questions_root,
             bound.cutoff_s,
             None if view is None else anchor_finder(view),
+            setting,
         )
         all_joins[corpus_id] = joins
         graph = None if view is None else build_item_graph(view)
@@ -316,7 +348,7 @@ def build_report(
             corpora=reports,
             tier3=[],
             verdicts=[],
-            sealed=build_sealed(sealed_corpora, bound, claims),
+            sealed=build_sealed(sealed_corpora, bound, claims, scales),
         )
     s1, tallies = _tier3_verdict(all_joins)
     verdicts = [s1, *_confirmation_verdicts(reports), *_scale_verdicts(reports, bound)]

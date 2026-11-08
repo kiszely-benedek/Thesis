@@ -30,7 +30,13 @@ from datetime import datetime
 from enum import Enum
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    SerializerFunctionWrapHandler,
+    model_serializer,
+)
 
 from plantgraph.benchmark.generator_dispatch import AnyGeneratorConfig
 from plantgraph.benchmark.split_models import SplitConfig
@@ -215,11 +221,22 @@ class CallUsage(BaseModel):
     #: Calls abandoned at their timeout; their cost is unknown, so a cost estimate adds one
     #: per abandoned call (`cascade-v2.md` §6).
     n_abandoned: int = 0
+    #: Recorded time of the retrieval-side calls that were abandoned (the budget each ran out
+    #: of); a question that still answered spent it too. Omitted when 0, so older rows keep
+    #: their bytes.
+    abandoned_latency_s: float = 0.0
     #: The next two differ between a live run and its replay, so they are kept out of
     #: `answers.jsonl` (replay must stay byte-identical); `timings.jsonl` carries them.
     n_cached: int = Field(default=0, exclude=True)
     #: Cost of the calls not served from the cache in this invocation.
     spent_usd: float = Field(default=0.0, exclude=True)
+
+    @model_serializer(mode="wrap")
+    def _omit_zero_abandoned_time(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
+        data: dict[str, Any] = handler(self)
+        if data.get("abandoned_latency_s") == 0.0:
+            data.pop("abandoned_latency_s", None)
+        return data
 
 
 class QuestionResult(BaseModel):
@@ -275,10 +292,9 @@ class QuestionResult(BaseModel):
 
     @property
     def total_llm_latency_s(self) -> float:
-        """Recorded latency of the final call plus the retrieval-side calls."""
-        return self.latency_s + (
-            self.retrieval_usage.llm_latency_s if self.retrieval_usage else 0.0
-        )
+        """Recorded latency of the final call, the retrieval-side calls and the abandoned ones."""
+        usage = self.retrieval_usage
+        return self.latency_s + (usage.llm_latency_s + usage.abandoned_latency_s if usage else 0.0)
 
 
 class CorpusRecord(BaseModel):
@@ -337,6 +353,11 @@ class RunConfig(BaseModel):
     #: Prompt file name to its sha256, so a prompt edit is visible in the run record (§3).
     prompt_hashes: dict[str, str] = Field(default_factory=dict)
     question_set_sha256: str
+    #: Prompt-building Python module (path under `qa/`) to its sha256 (F7). Empty in a config
+    #: stored before the field existed; a resume then does not compare it.
+    code_hashes: dict[str, str] = Field(default_factory=dict)
+    #: Corpus id to the sha256 of its `ingest.json` (F7); empty in older configs, not compared.
+    corpus_ingest_sha256: dict[str, str] = Field(default_factory=dict)
     #: Whether the prompts carry the P&ID reading primer (`primer.py`). Defaults to off so a
     #: config stored before the field existed loads, and replays, as it ran.
     primer: bool = False

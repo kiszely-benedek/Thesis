@@ -22,6 +22,9 @@ from plantgraph.graph.schema_classes import NodeClass
 
 Probability = Annotated[float, Field(ge=0.0, le=1.0)]
 
+#: the first measurement's generator, which `GeneratorConfigV2` refuses to read back
+SUPERSEDED_VERSION = "v2"
+
 #: The 25 equipment leaves of the schema allowlist minus `SpiralHeatExchanger` and
 #: `ElectricalSeparator`, which stay importable but are not generated (decided 2026-10-25).
 GENERATED_EQUIPMENT_CLASSES: frozenset[str] = frozenset(
@@ -157,7 +160,6 @@ class InstrumentConvention(BaseModel):
     #: motor in the real samples has one
     p_motor_hs: Probability = 1.0
     p_cascade: Probability = 0.5  # master controller feeding a slave per eligible slot
-    p_split_range: Probability = 0.0  # one controller, two valves; off: one unconfirmed case
 
 
 #: Equipment that gets a set of monitoring points; pumps, tanks, filters, mixers, agitators and
@@ -367,9 +369,22 @@ class GeneratorConfigV2(BaseModel):
 
     There is no per-class equipment weight: which class a role gets is a variant deck (`deck.py`,
     pid-vocabulary 13.4), and a second weight would overlap it.
+
+    Version `v2.1` (ADR-0065) wires the column products and fixes the realism defects of the
+    first measurement's `v2`. A `v2` config is refused: its plants cannot be rebuilt by this code.
     """
 
-    generator_version: Literal["v2"] = "v2"
+    @field_validator("generator_version", mode="before")
+    @classmethod
+    def _refuse_superseded_version(cls, value: object) -> object:
+        if value == SUPERSEDED_VERSION:
+            raise ValueError(
+                f"generator_version {SUPERSEDED_VERSION!r} was built by the superseded generator; "
+                "check out E8.commit to rebuild it (this code builds 'v2.1')"
+            )
+        return value
+
+    generator_version: Literal["v2.1"] = "v2.1"
     plant_id: str = Field(default="plant0", pattern=r"^[a-z0-9]+$")
     seed: int = 0
     n_units: int = Field(ge=1)  # no declared default: the size search picks it

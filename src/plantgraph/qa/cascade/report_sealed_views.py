@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from collections.abc import Collection, Mapping, Sequence
 from dataclasses import dataclass
+from statistics import fmean
 
 from plantgraph.qa.cascade.evaluate import Evaluation, evaluate_policy
 from plantgraph.qa.cascade.join import JoinedCorpus
@@ -60,3 +61,70 @@ def scope_views(corpus: SealedCorpus, cutoff_s: float) -> dict[str, ScopeView]:
         for scope, ids in ids_by_scope.items()
         if ids  # a scope with no question has nothing to evaluate
     }
+
+
+@dataclass(frozen=True)
+class ScaleGroup:
+    """The plants of one scale (say the five 1,000-sheet plants) pooled under one label.
+
+    A scale with a single plant is labelled with that plant's corpus id, which keeps the
+    first measurement's single-corpus tables and claims unchanged.
+    """
+
+    label: str
+    plants: tuple[SealedCorpus, ...]
+
+    @property
+    def n_sheets(self) -> int:
+        """The scale's size: the mean realized sheet count of its plants."""
+        return round(fmean(plant.n_sheets for plant in self.plants))
+
+    @property
+    def is_pooled(self) -> bool:
+        """Whether the scale has more than one plant, so intervals need the two-stage bootstrap."""
+        return len(self.plants) > 1
+
+
+def group_scope_views(
+    group: ScaleGroup, views: Mapping[str, Mapping[str, ScopeView]]
+) -> dict[str, list[ScopeView]]:
+    """Scope name -> each plant's view, for the scopes every plant of the scale has."""
+    first = views[group.plants[0].corpus_id]
+    by_scope = {scope: [views[p.corpus_id].get(scope) for p in group.plants] for scope in first}
+    return {
+        scope: [v for v in found if v is not None]
+        for scope, found in by_scope.items()
+        if all(v is not None for v in found)
+    }
+
+
+def common_policies(plants: Sequence[ScopeView]) -> list[str]:
+    """Policies evaluated on every plant's view, in the first plant's order."""
+    return [p for p in plants[0].evaluations if all(p in v.evaluations for v in plants)]
+
+
+def group_scales(
+    corpora: Sequence[SealedCorpus], scales: Mapping[str, Sequence[str]] | None = None
+) -> list[ScaleGroup]:
+    """Corpora grouped by scale, in order of first appearance; `scales` maps label -> corpus ids.
+
+    A corpus named in no group is a scale of its own, labelled with its corpus id.
+
+    Raises:
+        ValueError: a group names an unknown corpus, or a corpus belongs to two groups.
+    """
+    by_id = {c.corpus_id: c for c in corpora}
+    label_of: dict[str, str] = {}
+    for label, ids in (scales or {}).items():
+        for corpus_id in ids:
+            if corpus_id not in by_id or corpus_id in label_of:
+                raise ValueError(
+                    f"expected each corpus of scale {label!r} to exist in {sorted(by_id)} and "
+                    f"belong to one scale, found {corpus_id!r} "
+                    f"(already in {label_of.get(corpus_id)!r})"
+                )
+            label_of[corpus_id] = label
+    members: dict[str, list[SealedCorpus]] = {}
+    for corpus in corpora:
+        members.setdefault(label_of.get(corpus.corpus_id, corpus.corpus_id), []).append(corpus)
+    return [ScaleGroup(label, tuple(plants)) for label, plants in members.items()]

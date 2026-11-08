@@ -2,14 +2,17 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
+
 import pytest
 from pattern_harness import PatternHarness, config_with
 
-from plantgraph.benchmark.v2.config import SheetKnobs
+from plantgraph.benchmark.v2.config import GeneratorConfigV2, SheetKnobs
 from plantgraph.benchmark.v2.patterns.ports import PatternInstance
 from plantgraph.benchmark.v2.patterns.separation import build_flash_drum
 from plantgraph.benchmark.v2.patterns.storage import build_tank_farm
-from plantgraph.benchmark.v2.plan_models import InstrumentSpec
+from plantgraph.benchmark.v2.plan_models import InstrumentSpec, LineSpec
+from plantgraph.benchmark.v2.planner import PlannedUnit, plan_plant
 from plantgraph.benchmark.v2.sheets import (
     GroupSize,
     assign_unit_sheets,
@@ -79,11 +82,11 @@ def test_every_node_of_a_unit_gets_a_group_and_equipment_keeps_the_patterns_grou
     assert all(groups[node] == group for node, group in drum.drawing_group_of.items())
 
 
-def test_a_lines_parts_take_the_group_of_its_source_even_when_the_pump_is_elsewhere() -> None:
-    """Own-sheet pumps: the suction trim stays on the drum's sheet, the discharge trim moves."""
+def test_a_spared_pumps_suction_trim_moves_with_the_pump_to_its_own_sheet() -> None:
+    """Own-sheet pumps (v2.1): suction and discharge trims both sit on the pump's group."""
     drum = _drum(**{"pump_set.group": ("own_sheet",)})
     assert drum.pinned_groups == frozenset({"G2"})
-    groups = rider_groups(drum.plan, drum.drawing_group_of)
+    groups = rider_groups(drum.plan, drum.drawing_group_of, drum.pinned_groups)
     pump = next(e.node_id for e in drum.plan.equipment if e.node_class == "CentrifugalPump")
     suction = next(
         line
@@ -91,8 +94,16 @@ def test_a_lines_parts_take_the_group_of_its_source_even_when_the_pump_is_elsewh
         if line.dst_id == pump and line.items  # vessel -> pump
     )
     discharge = next(line for line in drum.plan.lines if line.src_id == pump and line.items)
-    assert {groups[item.node_id] for item in suction.items} == {"G1"}
+    assert {groups[item.node_id] for item in suction.items} == {"G2"}
     assert {groups[item.node_id] for item in discharge.items} == {"G2"}
+
+
+def test_a_line_into_unpinned_equipment_still_takes_the_group_of_its_source() -> None:
+    drum = _drum(**{"pump_set.group": ("own_sheet",)})
+    groups = rider_groups(drum.plan, drum.drawing_group_of)  # nothing pinned: the v2 behaviour
+    pump = next(e.node_id for e in drum.plan.equipment if e.node_class == "CentrifugalPump")
+    suction = next(line for line in drum.plan.lines if line.dst_id == pump and line.items)
+    assert {groups[item.node_id] for item in suction.items} == {"G1"}
 
 
 def test_a_loop_lands_where_its_sensor_is_located() -> None:
@@ -189,3 +200,50 @@ def test_a_tank_farm_splits_two_tanks_per_group_and_merges_by_the_caps() -> None
     assert wide.sheet_count == 2  # G1 and G2 merge, the pinned pump group stays apart
     narrow = assign_unit_sheets(1, farm, SheetKnobs(max_symbols_before_stubs=1))
     assert narrow.sheet_count == 3 and narrow.sheet_of != wide.sheet_of
+
+
+# ---- seeded counts on a whole plant (v2.1) -------------------------------------------------------
+
+_PLANT = GeneratorConfigV2(seed=1, n_units=60)
+
+
+def _valves_off_the_sheet_of(
+    is_wanted_line: Callable[[LineSpec, PlannedUnit], bool],
+) -> tuple[int, int]:
+    """(valves on the wanted lines, those on another sheet than the line's destination)."""
+    total = off = 0
+    for unit in plan_plant(_PLANT).units:
+        sheet_of = unit.sheets.sheet_of
+        classes = plan_node_classes(unit.instance.plan)
+        for line in unit.instance.plan.lines:
+            if line.dst_id is None or not is_wanted_line(line, unit):
+                continue
+            valves = [i for i in line.items if "Valve" in classes[i.node_id]]
+            total += len(valves)
+            off += sum(sheet_of[i.node_id] != sheet_of[line.dst_id] for i in valves)
+    return total, off
+
+
+def _is_tank_inlet(line: LineSpec, unit: PlannedUnit) -> bool:
+    classes = plan_node_classes(unit.instance.plan)
+    from_open_or_tee = line.src_id is None or classes.get(line.src_id) == "PipeTee"
+    return (
+        unit.instance.pattern == "U4" and classes[str(line.dst_id)] == "Tank" and from_open_or_tee
+    )
+
+
+def _is_into_own_sheet_pump(line: LineSpec, unit: PlannedUnit) -> bool:
+    classes = plan_node_classes(unit.instance.plan)
+    pump_group = unit.sheets.group_of[str(line.dst_id)]
+    return "Pump" in classes[str(line.dst_id)] and pump_group in unit.instance.pinned_groups
+
+
+def test_no_tank_inlet_valve_is_off_its_tanks_sheet_on_the_dev_seed_plant() -> None:
+    """Seed 1, 60 units: 24 of 87 tank-inlet valves were off their tank's sheet in v2, now 0."""
+    assert _valves_off_the_sheet_of(_is_tank_inlet) == (87, 0)
+
+
+def test_no_valve_into_an_own_sheet_pump_is_off_the_pumps_sheet_on_the_dev_seed_plant() -> None:
+    """Seed 1, 60 units: in v2 every part on a line into an own-sheet pump was off its sheet."""
+    total, off = _valves_off_the_sheet_of(_is_into_own_sheet_pump)
+    assert total > 0 and off == 0

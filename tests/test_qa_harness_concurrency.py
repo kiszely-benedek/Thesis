@@ -189,7 +189,8 @@ def test_a_provider_error_is_retried_after_the_first_pass_whatever_the_pool_size
         outcomes[workers] = [row.question_id for row in _rows(root)]
 
     assert outcomes[4] == outcomes[1]
-    assert outcomes[1][-1] == "variant-000"  # the failed first item lands last, as before
+    # the failed first item is retried last but written back into its canonical place
+    assert outcomes[1][0] == "variant-000"
 
 
 def test_the_spend_cap_holds_with_calls_in_flight_and_a_resume_finishes_the_file(

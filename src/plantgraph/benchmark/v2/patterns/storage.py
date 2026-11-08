@@ -8,14 +8,16 @@ an operator can close from the control room; a flow controller sets the transfer
 
 Variants drawn here, one deck each (`variants.PATTERN_DECKS`): tank count 2-4, transfer pump class,
 metering element (or none), manifold valve class and whether the contents are flammable. Receipt
-line count is a uniform draw of 1 or 2. The pump set draws its own variants.
+line count is a uniform draw of 1 or 2, raised to the number of product streams the farm has to
+take (`PatternContext.waiting_streams`, v2.1): a column's distillate and side draw end in a tank
+farm. The pump set draws its own variants.
 """
 
 from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict
 
-from plantgraph.benchmark.v2.instrument_draft import node_with_role
+from plantgraph.benchmark.v2.instrument_draft import nodes_with_role
 from plantgraph.benchmark.v2.patterns.assembly import (
     close_run,
     equipment_plan,
@@ -48,7 +50,8 @@ from plantgraph.graph.schema import NodeClass
 PATTERN_ID = "U4"
 SYSTEM_CODE = "TKF"
 _TANKS_PER_GROUP = 2  # FB&D: "tanks 1 to 2" per drawing
-_MAX_RECEIPT_LINES = 2
+_MAX_RECEIPT_LINES = 2  # the drawn count; a farm with more product streams waiting has more
+_MERGE_ROLE = "receipt_merge_tee"
 
 
 class _Choices(BaseModel):
@@ -83,7 +86,8 @@ def _draw_choices(ctx: PatternContext) -> _Choices:
         metering=ctx.deal("U4.metering"),
         manifold_class=ctx.deal("U4.manifold"),
         flammable=ctx.deal("U4.tank_service") == "flammable",
-        receipts=ctx.trim.rng.randint(1, _MAX_RECEIPT_LINES),
+        # the draw is made first and always, so the unit's stream does not depend on the wiring
+        receipts=max(ctx.trim.rng.randint(1, _MAX_RECEIPT_LINES), ctx.waiting_streams),
     )
 
 
@@ -126,26 +130,26 @@ def build_tank_farm(ctx: PatternContext) -> PatternInstance:
 def _inlet_network(ctx: PatternContext, tanks: list[str], choices: _Choices) -> TrimPlan:
     """Receipt line(s), manifold valve(s), a tee per tank but the last, and each tank's chain.
 
-    The first receipt line runs on as the header and ends in the last tank's chain; the second
-    one joins it at a merge tee. Branch lines from the header tees lead to the other tanks.
+    The first receipt line runs on as the header and ends in the last tank's chain; every further
+    one joins it at a merge tee of its own. Branch lines from the header tees lead to the others.
     """
     chains = [tank_inlet_chain(ctx, tank, choices.manifold_class) for tank in tanks]
     first_valve = part_plan(ctx, choices.manifold_class, "receipt_manifold_valve")
-    merge = tee_plan(ctx, "receipt_merge_tee") if choices.receipts == 2 else None
+    merges = [tee_plan(ctx, _MERGE_ROLE) for _ in range(choices.receipts - 1)]
     branch_tees = [tee_plan(ctx, "tank_branch_tee") for _ in tanks[:-1]]
     header_run = combine(
         quiet(battery_limit(ctx.trim, ctx.style)),
         quiet(first_valve),
-        *([quiet(merge)] if merge else []),
+        *(quiet(merge) for merge in merges),
         *(quiet(tee) for tee in branch_tees),
         chains[-1],
     )
     parts = [close_run(ctx, header_run, None, tanks[-1])]
     for tee, chain, tank in zip(branch_tees, chains, tanks, strict=False):
         parts.append(close_run(ctx, chain, tee.ports["tee"], tank))
-    if merge is not None:
-        second_valve = part_plan(ctx, choices.manifold_class, "receipt_manifold_valve")
-        parts.append(close_run(ctx, second_valve, None, merge.ports["tee"]))
+    for merge in merges:
+        extra_valve = part_plan(ctx, choices.manifold_class, "receipt_manifold_valve")
+        parts.append(quiet(close_run(ctx, extra_valve, None, merge.ports["tee"])))
     return combine(*parts)
 
 
@@ -161,13 +165,16 @@ def _outlet_lines(
 
 
 def _receipt_ports(plan: TrimPlan, tanks: list[str], choices: _Choices) -> list[Port]:
-    """One in-port per receipt line; the second line ends at the merge tee of the first."""
+    """One in-port per receipt line; each further line ends at a merge tee of the first.
+
+    Every receipt takes a product stream of its train when the grammar finds one (`collects`).
+    """
     first = line_between(plan, None, tanks[-1])
-    ports = [open_end_port("receipt1", PortDirection.IN, Phase.LIQUID, first)]
-    if choices.receipts == 2:
-        second = line_between(plan, None, node_with_role(plan, "receipt_merge_tee"))
-        ports.append(open_end_port("receipt2", PortDirection.IN, Phase.LIQUID, second))
-    return ports
+    lines = [first, *(line_between(plan, None, tee) for tee in nodes_with_role(plan, _MERGE_ROLE))]
+    return [
+        open_end_port(f"receipt{number}", PortDirection.IN, Phase.LIQUID, line, collects=True)
+        for number, line in enumerate(lines, start=1)
+    ]
 
 
 def _drawing_groups(tanks: list[str], pump_ids: tuple[str, ...], own_sheet: bool) -> DrawingGroups:

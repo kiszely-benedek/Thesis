@@ -296,7 +296,8 @@ def _timed_out(
     usage = meter.end()
     # `latency_s` is the final call's share, like on every row, so the cascade's total
     # (final + retrieval-side latency) comes to the recorded elapsed time, not twice that
-    final_call_s = max(0.0, meter.recorded_elapsed_s - usage.llm_latency_s)
+    retrieval_s = usage.llm_latency_s + usage.abandoned_latency_s
+    final_call_s = max(0.0, meter.recorded_elapsed_s - retrieval_s)
     return UnscoredAnswer(
         strategy=strategy.name,
         outcome=Outcome.TIMED_OUT,

@@ -130,9 +130,9 @@ def rehome_questions(
     check_same_plant(sealed, variant)
     source_bytes = source.read_bytes()
     originals = _read_rows(source_bytes, sealed_corpus_id, source)
-    copies = [{**row, "corpus_id": variant_corpus_id} for row in originals]
-    _check_only_corpus_id_changed(originals, copies)
-    out_bytes = _to_jsonl(copies)
+    out_bytes = _to_jsonl([{**row, "corpus_id": variant_corpus_id} for row in originals])
+    # judge the bytes that will be written, parsed afresh, not the dicts they were built from
+    _check_only_corpus_id_changed(source_bytes, out_bytes, variant_corpus_id)
     proof = RehomeProof(
         source_path=source.as_posix(),
         source_sha256=_sha256(source_bytes),
@@ -140,12 +140,12 @@ def rehome_questions(
         output_sha256=_sha256(out_bytes),
         sealed_corpus_id=sealed_corpus_id,
         variant_corpus_id=variant_corpus_id,
-        n_questions=len(copies),
+        n_questions=len(originals),
         other_fields_equal=True,  # _check_only_corpus_id_changed raised otherwise
         source_graph_hash=variant.source_graph_hash,
-        source_graph_hash_equal=True,  # check_same_plant raised otherwise
+        source_graph_hash_equal=sealed.source_graph_hash == variant.source_graph_hash,
         manifest_digest=variant.manifest_digest,
-        manifest_equal_modulo_reference_tags=True,
+        manifest_equal_modulo_reference_tags=sealed.manifest_digest == variant.manifest_digest,
         n_variant_references_sealed=sealed.n_variant_references,
         n_variant_references_variant=variant.n_variant_references,
     )
@@ -155,7 +155,7 @@ def rehome_questions(
 
 
 def _read_rows(data: bytes, sealed_corpus_id: str, source: Path) -> list[dict[str, Any]]:
-    rows = [json.loads(line) for line in data.decode("utf-8").splitlines()]
+    rows = _parse_lines(data)
     wrong = [r.get("question_id") for r in rows if r.get("corpus_id") != sealed_corpus_id]
     if wrong:
         raise ValueError(
@@ -165,14 +165,27 @@ def _read_rows(data: bytes, sealed_corpus_id: str, source: Path) -> list[dict[st
 
 
 def _check_only_corpus_id_changed(
-    originals: list[dict[str, Any]], copies: list[dict[str, Any]]
+    source_bytes: bytes, out_bytes: bytes, variant_corpus_id: str
 ) -> None:
-    """Compare question by question, and check the harness's own model still accepts each copy."""
+    """Parse both files afresh: questions differ in `corpus_id` only, and still validate."""
+    originals = _parse_lines(source_bytes)
+    copies = _parse_lines(out_bytes)
+    if len(originals) != len(copies):
+        raise ValueError(f"expected {len(originals)} questions in the copy, found {len(copies)}")
     for original, copy in zip(originals, copies, strict=True):
-        changed = sorted(k for k in original if k != "corpus_id" and original[k] != copy[k])
+        keys = original.keys() | copy.keys()
+        changed = sorted(k for k in keys if k != "corpus_id" and original.get(k) != copy.get(k))
         if changed:
             raise ValueError(f"expected only corpus_id to change, found {changed}")
+        if copy.get("corpus_id") != variant_corpus_id:
+            raise ValueError(
+                f"expected corpus_id {variant_corpus_id!r}, found {copy.get('corpus_id')!r}"
+            )
         Question.model_validate(copy)
+
+
+def _parse_lines(data: bytes) -> list[dict[str, Any]]:
+    return [json.loads(line) for line in data.decode("utf-8").splitlines()]
 
 
 def _to_jsonl(rows: list[dict[str, Any]]) -> bytes:

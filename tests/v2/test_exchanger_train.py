@@ -21,7 +21,7 @@ from test_column import letters, sensor_location
 from trim_harness import ids_with_role
 
 from plantgraph.benchmark.v2.config import GENERATED_EQUIPMENT_CLASSES
-from plantgraph.benchmark.v2.patterns.heat import build_exchanger_train
+from plantgraph.benchmark.v2.patterns.heat import _drawing_groups, build_exchanger_train
 from plantgraph.benchmark.v2.patterns.ports import PatternInstance, Phase, PortDirection
 from plantgraph.graph.schema import EQUIPMENT_CLASSES
 
@@ -47,6 +47,12 @@ def exchangers(instance: PatternInstance) -> list[str]:
     return [
         e.node_id for e in instance.plan.equipment if instance.plan.roles[e.node_id] == "exchanger"
     ]
+
+
+def outlet_tee(instance: PatternInstance) -> str:
+    """The train's outlet gauge tee: the item the outlet temperature loop senses."""
+    (tee,) = ids_with_role(instance.plan, "outlet_gauge_tee")
+    return tee
 
 
 def services_into(graph: nx.DiGraph[str], node_id: str) -> set[str]:
@@ -145,10 +151,10 @@ def test_drain_pot_condensate_belongs_to_the_group_of_its_exchanger() -> None:
     )
     pots = ids_with_role(instance.plan, "condensate_drain_pot")
     assert len(pots) == len(exchangers(instance)) and nodes_with_letters(graph, "CSHH")
-    for pot in pots:  # four exchangers and a heater: two groups, so a wrong group would show
+    for pot in pots:  # four exchangers and a heater: one group since v2.1 (v2 cut it in two)
         owner = _steam_source(graph, pot)
         assert instance.drawing_group_of[pot] == instance.drawing_group_of[owner]
-    assert {instance.drawing_group_of[p] for p in pots} == {"G1", "G2"}
+    assert {instance.drawing_group_of[p] for p in pots} == {"G1"}
 
 
 # ---- the outlet temperature loop ----------------------------------------------------------------
@@ -159,7 +165,7 @@ def test_a_steam_train_moves_the_steam_valve_of_the_last_exchanger() -> None:
     _, instance, graph = train({**_STEAM, **_NO_HEATER})
     (valve,) = nodes_with_letters(graph, "TV")
     last = exchangers(instance)[-1]
-    assert sensor_location(graph, valve) == ("TIC", last)
+    assert sensor_location(graph, valve) == ("TIC", outlet_tee(instance))
     assert nx.has_path(flow_graph(graph), valve, last)
     assert not ids_with_role(instance.plan, "bypass_split_tee")
 
@@ -173,16 +179,20 @@ def test_a_cooling_water_train_moves_a_valve_on_a_bypass_around_the_last_exchang
     paths = list(nx.all_simple_paths(flow_graph(graph), split, merge))
     assert len(paths) == 2 and sum(valve in path for path in paths) == 1  # valve on one path only
     assert sum(last in path for path in paths) == 1  # the other goes through the exchanger
-    assert sensor_location(graph, valve) == ("TIC", last)
+    assert sensor_location(graph, valve) == ("TIC", outlet_tee(instance))
 
 
-def test_with_a_trim_heater_the_outlet_sensor_sits_on_the_heater() -> None:
+def test_with_a_trim_heater_the_outlet_sensor_sits_on_the_outlet_line_not_the_heater() -> None:
+    """F8c: the `TT` hangs on the train's outlet line; a heater is a machine, not the line."""
     _, instance, graph = train({**_WATER, "U5.trim_heater": ("ElectricHeater",)})
     (valve,) = nodes_with_letters(graph, "TV")
     (heater,) = ids_with_role(instance.plan, "trim_heater")
-    assert sensor_location(graph, valve) == ("TIC", heater)
+    location = sensor_location(graph, valve)[1]
+    assert location == outlet_tee(instance) != heater
+    assert graph.nodes[location]["node_class"] == "PipeTee"
     (split,) = ids_with_role(instance.plan, "bypass_split_tee")  # around the last *exchanger*
     assert nx.has_path(flow_graph(graph), split, exchangers(instance)[-1])
+    assert nx.has_path(flow_graph(graph), heater, location)  # the heater is upstream of the tap
 
 
 # ---- instruments and sheets ---------------------------------------------------------------------
@@ -220,19 +230,21 @@ def test_the_safety_valve_on_an_exchanger_shell_is_reachable_when_drawn() -> Non
     assert any(drawn) and not all(drawn)  # an optional item at even odds
 
 
-@pytest.mark.parametrize(
-    ("count", "heater"), [("2", "absent"), ("4", "absent"), ("4", "ElectricHeater")]
-)
-def test_a_train_of_at_most_four_is_one_group_and_a_longer_one_is_cut_at_the_midpoint(
-    count: str, heater: str
-) -> None:
-    _, instance, _ = train({"U5.exchanger_count": (count,), "U5.trim_heater": (heater,)})
-    units = int(count) + (heater != "absent")
-    names = sorted(set(instance.drawing_group_of.values()))
-    assert names == (["G1"] if units <= 4 else ["G1", "G2"])
-    if units > 4:
-        main = [n for n, r in instance.plan.roles.items() if r in {"exchanger", "trim_heater"}]
-        assert sum(instance.drawing_group_of[n] == "G1" for n in main) == units // 2
+def test_a_train_of_four_exchangers_is_one_group_with_or_without_the_trim_heater() -> None:
+    """v2.1: the trim heater is a heater, not a fifth exchanger (v2 cut such a train in two)."""
+    for count, heater in [("2", "absent"), ("4", "absent"), ("4", "ElectricHeater")]:
+        _, instance, _ = train({"U5.exchanger_count": (count,), "U5.trim_heater": (heater,)})
+        assert set(instance.drawing_group_of.values()) == {"G1"}
+
+
+def test_a_train_over_four_exchangers_is_cut_at_the_midpoint_and_the_heater_joins_the_last() -> (
+    None
+):
+    """The deck draws at most four exchangers, so the cut is exercised on the grouping directly."""
+    units = [(f"x{index}",) for index in range(5)] + [("heater",)]
+    groups = _drawing_groups(units, exchanger_count=5)
+    assert [groups.group_of[f"x{index}"] for index in range(5)] == ["G1", "G1", "G2", "G2", "G2"]
+    assert groups.group_of["heater"] == "G2"
 
 
 def test_line_numbers_are_unique_and_valid() -> None:

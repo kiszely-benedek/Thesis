@@ -102,15 +102,22 @@ def build_exchanger_train(ctx: PatternContext) -> PatternInstance:
     ids = [plan.ports["equipment"] for plan in equipment]
     controlled = choices.exchanger_count - 1  # the last exchanger that has a utility
     steam_valve = choices.steam[controlled]
+    tees = _draw_tees(ctx, len(ids), bypass=not steam_valve)
+    inlet_tee, outlet_tee = tees.inlet.ports["tee"], tees.outlet.ports["tee"]
+    # the outlet TIC senses the train's outlet line (its gauge tee), not the last machine
     trims = [
-        _trims(ctx, choices, ids, index, steam_valve and index == controlled)
+        _trims(
+            ctx, choices, ids, index, outlet_tee if steam_valve and index == controlled else None
+        )
         for index in range(len(ids))
     ]
-    lines, inlet_tee, outlet_tee = _process_lines(ctx, ids, controlled, bypass=not steam_valve)
+    lines = _process_lines(ctx, ids, controlled, tees, outlet_tee)
     parts = [*(quiet(plan) for plan in equipment), lines, *(trim.plan for trim in trims)]
     plan = with_stream_kinds(combine(*(quiet(part) for part in parts)))
     pots = [trim.pot_ids for trim in trims]
-    groups = _drawing_groups([(node, *pot) for node, pot in zip(ids, pots, strict=True)])
+    groups = _drawing_groups(
+        [(node, *pot) for node, pot in zip(ids, pots, strict=True)], choices.exchanger_count
+    )
     return PatternInstance(
         pattern=PATTERN_ID,
         system_code=SYSTEM_CODE,
@@ -132,12 +139,12 @@ def _role(node_class: str) -> str:
 
 
 def _trims(
-    ctx: PatternContext, choices: _Choices, ids: list[str], index: int, steam_loop: bool
+    ctx: PatternContext, choices: _Choices, ids: list[str], index: int, outlet_tee: str | None
 ) -> ExchangerTrims:
-    """Utility lines and the rest of exchanger `index`; a steam loop senses the train outlet."""
+    """Utility lines and the rest of exchanger `index`; a steam loop senses `outlet_tee`."""
     node_class = choices.classes[index]
     steam = index < choices.exchanger_count and choices.steam[index]
-    loop = SteamLoop(location_id=ids[-1]) if steam_loop else None
+    loop = SteamLoop(location_id=outlet_tee) if outlet_tee else None
     with_psv = node_class != _ELECTRIC and wants_safety_valve(ctx)
     return exchanger_trims(
         ctx, ids[index], node_class, utility_for(node_class, steam), loop, with_psv
@@ -176,15 +183,13 @@ def _optional(ctx: PatternContext) -> bool:
 
 
 def _process_lines(
-    ctx: PatternContext, ids: list[str], controlled: int, bypass: bool
-) -> tuple[TrimPlan, str, str]:
+    ctx: PatternContext, ids: list[str], controlled: int, tees: _Tees, outlet_tee: str
+) -> TrimPlan:
     """The segments between the exchangers, their taps and the bypass.
 
-    Segment `j` enters exchanger `j`; the last leaves the train. Returns the plan and the ids of
-    the inlet and outlet gauge tees (the ports' lines hold them).
+    Segment `j` enters exchanger `j`; the last leaves the train.
     """
     count = len(ids)
-    tees = _draw_tees(ctx, count, bypass)
     mains = []
     for j in range(count + 1):
         src = ids[j - 1] if j > 0 else None
@@ -193,9 +198,8 @@ def _process_lines(
     taps = [thermometer_tap(ctx, tee.ports["tee"], "exchanger_outlet_ti") for tee in tees.after]
     taps.append(pressure_gauge_tap(ctx, tees.inlet.ports["tee"], "inlet_pi"))
     taps.append(pressure_gauge_tap(ctx, tees.outlet.ports["tee"], "outlet_pi"))
-    bypass_line = [_bypass_line(ctx, tees, ids[-1])] if bypass else []
-    plan = combine(*mains, *taps, *bypass_line)
-    return quiet(plan), tees.inlet.ports["tee"], tees.outlet.ports["tee"]
+    bypass_line = [_bypass_line(ctx, tees, outlet_tee)] if tees.split is not None else []
+    return quiet(combine(*mains, *taps, *bypass_line))
 
 
 def _segment(
@@ -226,13 +230,17 @@ def _bypass_line(ctx: PatternContext, tees: _Tees, outlet_id: str) -> TrimPlan:
     return quiet(close_run(ctx, run, tees.split.ports["tee"], tees.merge.ports["tee"]))
 
 
-def _drawing_groups(units: list[tuple[str, ...]]) -> DrawingGroups:
-    """One group for up to four exchangers; a longer train is cut at the midpoint."""
+def _drawing_groups(units: list[tuple[str, ...]], exchanger_count: int) -> DrawingGroups:
+    """One group for up to four exchangers; a longer train is cut at the midpoint of the exchangers.
+
+    The electric trim heater (the unit after the last exchanger) is a heater, not a fifth
+    exchanger: it never makes a train two sheets long and always joins the last group.
+    """
     groups = DrawingGroups()
-    if len(units) <= _MAX_ONE_SHEET:
+    if exchanger_count <= _MAX_ONE_SHEET:
         groups.put([node for unit in units for node in unit], "G1")
         return groups
-    middle = len(units) // 2
+    middle = exchanger_count // 2
     groups.put([node for unit in units[:middle] for node in unit], "G1")
     groups.put([node for unit in units[middle:] for node in unit], "G2")
     return groups

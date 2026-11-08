@@ -48,6 +48,10 @@ def test_write_clauses_are_found(query: str, keyword: str) -> None:
         "MATCH (n:Sheet) RETURN n.sheet_id // do not CREATE anything",  # inside a comment
         "MATCH (a)-[:send_to|continues_as*1..7]->(b) RETURN DISTINCT b.tag",
         "MATCH (n) WHERE n.offset > 1 RETURN n",  # `offset` merely contains `set`
+        "MATCH (n) WHERE n.set_point > 1 RETURN n",  # a name that starts with a keyword
+        "MATCH (n {note: 'CREATE it'}) RETURN n",  # CREATE inside a string literal
+        "MATCH (n) RETURN n.tag AS set",  # a keyword as an alias
+        "MATCH (n) RETURN {load: n.load_kw, drop: 1} AS m",  # keywords as map keys
     ],
 )
 def test_read_queries_pass(query: str) -> None:

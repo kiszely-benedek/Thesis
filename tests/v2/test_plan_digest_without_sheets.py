@@ -17,11 +17,14 @@ from plantgraph.benchmark.v2.planner import PlantPlanV2, plan_plant
 
 UNITS = 60
 
-#: seed -> sha256 of the plan without sheet assignments, recorded before the round-1 edit
+#: seed -> sha256 of the plan without sheet assignments. Re-recorded for generator v2.1 (ADR-0065):
+#: the product farms take the column distillate and side draw, so lines and receipts were added.
+#: Re-recorded again for F8c: reactor code R, fuel-gas and exchanger-outlet sensors on their lines,
+#: liquid and flare codes on drains, UC input variables, lighter class after a spec break.
 RECORDED_DIGESTS = {
-    1: "f0f418750d1a281af4d4e2b728f0bad4dd7b3a2c2a026cc4e6dba35be5dc2237",
-    2: "e56bdcee52264a31caeb0e2d18ad3c1ca221990832de04b337cd89d14d60a9ed",
-    3: "23d39dbded097a1da67a52b622a0289c56f92bcca442c14cbbdd4686a78e4075",
+    1: "068c22fa74cc9c31b0320f5f242df9e8b88ffd5507db54ddbf38482a2eb72039",
+    2: "eb4000d7ec3155bf8cee7be6dd33951827c0714d30cad910f8d321afd0c05439",
+    3: "c397b03f109d475439c6171306173710951a57a5bff2a577f4ccad7957cb0c68",
 }
 
 

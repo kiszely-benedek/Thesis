@@ -12,7 +12,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict
 
-from plantgraph.ingest.headline_v2 import TEST_SEED_RANGE
+from plantgraph.ingest.seed_plan import TEST_SEED_RANGE
 from plantgraph.qa.exp0007.caps import CapEntry, CapFile, cap_usd
 
 #: Measured on D100g2 with F1 (the dev check): dollars per question, harness mean.

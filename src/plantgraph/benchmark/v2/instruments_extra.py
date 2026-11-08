@@ -6,7 +6,6 @@ to be combined with the plan of the part it instruments.
 | Template | Chain |
 |---|---|
 | `cascade_master` | master `xIC` feeding the slave controller of an existing loop |
-| `split_range_loop` | one controller, two valves (off by default: `p_split_range` is 0) |
 | `machine_start_stop` | `HS -> AEF -> machine`, plus a running-status `YI` on the machine |
 | `speed_control_loop` | `xT -> xIC -> AEF -> machine` (variable-speed drive) |
 | `ratio_speed_loop` | `FFT, FT -> FFIC -> AEF -> machine` (ratio set by pump speed) |
@@ -24,7 +23,6 @@ from plantgraph.benchmark.v2.config import InstrumentConvention, InstrumentDensi
 from plantgraph.benchmark.v2.instrument_draft import (
     InstrumentDraft,
     node_with_role,
-    parsed_tag_of,
     parts_of,
 )
 from plantgraph.benchmark.v2.instruments import (
@@ -33,10 +31,8 @@ from plantgraph.benchmark.v2.instruments import (
     process_trip,
     transmitter_with_bubble,
 )
-from plantgraph.benchmark.v2.plan_models import LineItemSpec
 from plantgraph.benchmark.v2.trim_context import LineStyle, TrimContext
 from plantgraph.benchmark.v2.trim_plan import TrimPlan, combine
-from plantgraph.benchmark.v2.vocabulary import ItemKind, item_kind
 
 Side = Literal["H", "L"]
 
@@ -61,42 +57,6 @@ def cascade_master(
     )
     draft.feed(master, slave_loop.ports["controller"])
     return draft.finish(master_controller=master)
-
-
-def wants_split_range(ctx: TrimContext, convention: InstrumentConvention) -> bool:
-    """True with chance `p_split_range`, which is 0 by default: split range is never drawn then."""
-    return ctx.chance(convention.p_split_range)
-
-
-def split_range_loop(
-    ctx: TrimContext,
-    style: LineStyle,
-    first_valve: LineItemSpec,
-    second_valve: LineItemSpec,
-    location_id: str,
-) -> TrimPlan:
-    """`xT -> xIC -> AF1 -> xV-A` and `-> AF2 -> xV-B`: one controller shares its range.
-
-    The loop number is the first valve's. The second valve keeps its own number: tags are unique
-    and the grammar has no suffix, so invariant S4 exempts it.
-    """
-    first_plan = control_loop(ctx, style, first_valve, location_id)
-    draft = InstrumentDraft(ctx, style)
-    second_kind = item_kind(
-        second_valve.node_class, parsed_tag_of(second_valve, ctx.unit_no).letters
-    )
-    if second_kind is not ItemKind.CONTROL_VALVE:
-        raise ValueError(
-            f"expected a control valve as the second split-range valve, got "
-            f"{second_valve.node_class} tagged {second_valve.tag!r}"
-        )
-    controller_id = first_plan.ports["controller"]
-    controller_tag = next(i.tag for i in first_plan.instruments if i.node_id == controller_id)
-    actuator = draft.actuator_node(controller_tag or "", "split_range_actuator")
-    draft.feed(controller_id, actuator)
-    draft.operate(actuator, second_valve.node_id)
-    second = draft.finish(second_actuator=actuator)
-    return combine(first_plan, second)
 
 
 # ---- machines --------------------------------------------------------------------------------

@@ -29,7 +29,12 @@ from plantgraph.qa.harness.cypher_setup import (
     required_cypher_profile,
 )
 from plantgraph.qa.harness.fill import Invocation, ProgressSink, fill_answers
-from plantgraph.qa.harness.freeze import check_reportable, prompt_hashes, question_set_sha256
+from plantgraph.qa.harness.freeze import (
+    changed_inputs,
+    check_reportable,
+    prompt_hashes,
+    question_set_sha256,
+)
 from plantgraph.qa.harness.gold import build_gold_scoring
 from plantgraph.qa.harness.pool import MAX_CONCURRENCY
 from plantgraph.qa.harness.question_set import load_questions, questions_path
@@ -86,7 +91,7 @@ def run_harness(
     _check_concurrency(config, concurrency, cost_per_question_usd)
     cypher_profile = required_cypher_profile(config.strategies)  # refuses two Cypher arms
     questions = _load_all_questions(config, questions_root)
-    _check_inputs_match_config(config, questions_root)
+    _check_inputs_match_config(config, questions_root, corpora_root)
     corpora = _load_corpora(
         config, corpus_roles, corpora_root, cypher_source_factory, cypher_profile
     )
@@ -107,7 +112,7 @@ def run_harness(
         http_client=http_client,
     )
     try:
-        n_new_rows, stopped_by_cap = fill_answers(
+        filled = fill_answers(
             config,
             Invocation(allow_paid_calls, max_spend_usd, cost_per_question_usd, concurrency),
             questions,
@@ -123,8 +128,9 @@ def run_harness(
         config.run_id,
         run_dir.read_rows(),
         questions,
-        n_new_rows,
-        stopped_by_spend_cap=stopped_by_cap,
+        filled.n_new_rows,
+        stopped_by_spend_cap=filled.stopped_by_spend_cap,
+        late_after_timeout_usd=filled.late_after_timeout_usd,
     )
 
 
@@ -156,7 +162,7 @@ def _load_all_questions(config: RunConfig, questions_root: Path) -> list[Questio
     return questions
 
 
-def _check_inputs_match_config(config: RunConfig, questions_root: Path) -> None:
+def _check_inputs_match_config(config: RunConfig, questions_root: Path, corpora_root: Path) -> None:
     """The frozen hashes must describe the files about to be used."""
     files = [questions_path(questions_root, corpus_id) for corpus_id in config.corpora]
     if question_set_sha256(files) != config.question_set_sha256:
@@ -166,6 +172,12 @@ def _check_inputs_match_config(config: RunConfig, questions_root: Path) -> None:
         )
     if prompt_hashes() != config.prompt_hashes:
         raise ValueError("expected the prompt templates to hash as in the config; they changed")
+    changed = changed_inputs(config, corpora_root)
+    if changed:
+        raise ValueError(
+            "expected the prompt-building code and corpora to hash as in the config; "
+            f"changed since freezing: {changed}"
+        )
 
 
 def _load_corpora(

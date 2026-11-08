@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 
-from plantgraph.qa.cascade.evaluate import Comparison, LatencyBound, compare
+from plantgraph.qa.cascade.evaluate import Comparison, LatencyBound, Series
 from plantgraph.qa.cascade.report_claims import (
     F1_CLAIMS,
     ClaimPolicies,
@@ -16,59 +16,109 @@ from plantgraph.qa.cascade.report_claims import (
     not_run_verdicts,
 )
 from plantgraph.qa.cascade.report_models import Verdict
-from plantgraph.qa.cascade.report_references import reference_fields
+from plantgraph.qa.cascade.report_references import random_reference_series
 from plantgraph.qa.cascade.report_sealed_models import PairedRow, ScaleRow, ScopeRow
-from plantgraph.qa.cascade.report_sealed_views import ScopeView
-from plantgraph.qa.cascade.stats import interval_of
+from plantgraph.qa.cascade.report_sealed_views import (
+    ScaleGroup,
+    ScopeView,
+    group_scope_views,
+)
+from plantgraph.qa.cascade.stats import PairedDifference, interval_of
+from plantgraph.qa.cascade.stats_cluster import cluster_paired_bootstrap
 
 RANDOM_ESCALATION = "random escalation"
 
 
+def compare_plants(policy: Sequence[Series], reference: Sequence[Series]) -> Comparison:
+    """`compare` over several plants: one shared two-stage draw (plants, then questions) per metric.
+
+    With one plant this is exactly `compare`, the registered single-plant computation.
+    """
+
+    def pooled(field: str) -> PairedDifference:
+        return cluster_paired_bootstrap(
+            [getattr(s, field) for s in policy], [getattr(s, field) for s in reference]
+        )
+
+    return Comparison(
+        accuracy=pooled("correct"),
+        accuracy_at_cutoff=pooled("correct_at_cutoff"),
+        cost_usd=pooled("cost_usd"),
+        latency_s=pooled("latency_s"),
+    )
+
+
 def _paired(
-    claim: str, view: ScopeView, policy: str, reference: str, versus: Comparison
+    claim: str, label: str, scope: str, policy: str, reference: str, versus: Comparison
 ) -> PairedRow:
     return PairedRow(
         claim=claim,
-        corpus_id=view.corpus_id,
-        scope=view.scope,
+        corpus_id=label,
+        scope=scope,
         policy=policy,
         reference=reference,
         comparison=versus,
     )
 
 
-def _policy_pair(claim: str, view: ScopeView, policy: str, reference: str) -> list[PairedRow]:
-    """`policy` minus `reference` on this view; nothing when either was not evaluated."""
-    evaluations = view.evaluations
-    if policy not in evaluations or reference not in evaluations:
+def _policy_pair(
+    claim: str, label: str, plants: Sequence[ScopeView], policy: str, reference: str
+) -> list[PairedRow]:
+    """`policy` minus `reference` over the plants; nothing when a plant did not evaluate either."""
+    if any(policy not in v.evaluations or reference not in v.evaluations for v in plants):
         return []
-    versus = compare(evaluations[policy].series(), evaluations[reference].series())
-    return [_paired(claim, view, policy, reference, versus)]
+    versus = compare_plants(
+        [v.evaluations[policy].series() for v in plants],
+        [v.evaluations[reference].series() for v in plants],
+    )
+    return [_paired(claim, label, plants[0].scope, policy, reference, versus)]
 
 
-def _random_pair(view: ScopeView, cutoff_s: float, policy: str) -> list[PairedRow]:
+def _random_pair(
+    label: str, plants: Sequence[ScopeView], cutoff_s: float, policy: str
+) -> list[PairedRow]:
     """`policy` minus random escalation at its own tier-2 share (K2)."""
-    if policy not in view.evaluations:
+    if any(policy not in v.evaluations for v in plants):
         return []
-    fields = reference_fields(view.joins[policy], view.evaluations[policy], cutoff_s)
-    versus = fields.get("vs_random")
-    if not isinstance(versus, Comparison):
+    references = [random_reference_series(v.joins[policy], cutoff_s) for v in plants]
+    if any(reference is None for reference in references):
         return []
-    return [_paired("K2", view, policy, RANDOM_ESCALATION, versus)]
+    versus = compare_plants(
+        [v.evaluations[policy].series() for v in plants],
+        [reference for reference in references if reference is not None],
+    )
+    return [_paired("K2", label, plants[0].scope, policy, RANDOM_ESCALATION, versus)]
+
+
+def _claim_pairs(
+    label: str, plants: Sequence[ScopeView], cutoff_s: float, claims: ClaimPolicies
+) -> list[PairedRow]:
+    return [
+        *_policy_pair("K1", label, plants, claims.primary, claims.tier2_comparator),
+        *_random_pair(label, plants, cutoff_s, claims.random_reference),
+        *_policy_pair("Q5", label, plants, claims.tier2_comparator, claims.cypher_comparator),
+    ]
 
 
 def paired_rows(
-    views_by_corpus: Mapping[str, Mapping[str, ScopeView]],
+    groups: Sequence[ScaleGroup],
+    views: Mapping[str, Mapping[str, ScopeView]],
     cutoff_s: float,
     claims: ClaimPolicies = F1_CLAIMS,
 ) -> list[PairedRow]:
-    """K1, K2 and Q5 comparisons for every corpus and scope that can form them."""
+    """K1, K2 and Q5 for every scale and scope that can form them.
+
+    A scale with several plants shows each plant's own row first (its corpus id), then the pooled
+    row (the scale's label) whose interval comes from the two-stage bootstrap. Every pair is
+    evaluated on the same plant and question draw (same seed, same sizes).
+    """
     rows: list[PairedRow] = []
-    for views in views_by_corpus.values():
-        for view in views.values():
-            rows += _policy_pair("K1", view, claims.primary, claims.tier2_comparator)
-            rows += _random_pair(view, cutoff_s, claims.random_reference)
-            rows += _policy_pair("Q5", view, claims.tier2_comparator, claims.cypher_comparator)
+    for group in groups:
+        for plants in group_scope_views(group, views).values():
+            if group.is_pooled:
+                for plant in plants:
+                    rows += _claim_pairs(plant.corpus_id, [plant], cutoff_s, claims)
+            rows += _claim_pairs(group.label, plants, cutoff_s, claims)
     return rows
 
 

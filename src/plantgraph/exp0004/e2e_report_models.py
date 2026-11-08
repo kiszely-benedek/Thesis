@@ -54,6 +54,18 @@ class ClaimRow(BaseModel):
     rule: str
     difference: PairedDifference
     passed: bool
+    #: Plants pooled in the difference, and (several plants only) how many have its sign.
+    n_plants: int = 1
+    n_same_sign: int | None = None
+
+
+class PlantRow(BaseModel):
+    """One plant's own arm accuracies, shown before the pooled table."""
+
+    model_config = ConfigDict(frozen=True)
+
+    plant_id: str
+    arms: list[ArmRow]
 
 
 class GroupRow(BaseModel):
@@ -74,7 +86,11 @@ class E2EReport(BaseModel):
 
     cutoff_s: float
     policy: str
+    #: Questions per arm over all plants.
     n_questions: int
+    n_plants: int = 1
+    #: Per-plant arm rows; empty for a single plant.
+    plants: list[PlantRow] = []
     arms: list[ArmRow]
     claims: list[ClaimRow]
     families: list[GroupRow]

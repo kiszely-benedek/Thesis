@@ -29,8 +29,10 @@ _GENERATOR = _PRESET.generator_config(_N_UNITS, _SEED)
 _SPLIT = _PRESET.split_config(_SEED)
 _VARIANTS = VariantConfig(profile="exp0004", seed=_SEED)
 
-# sha256 of the default-path IngestResult JSON (indent=2, stage_seconds emptied) before X-T4
-_DEFAULT_GOLDEN_SHA256 = "799f378e3890e244f824e582b6462e16d8139b19add024d43f896cff287ffa26"
+# sha256 of the default-path IngestResult JSON (indent=2, stage_seconds emptied), taken before X-T4.
+# Re-recorded for generator v2.1 (ADR-0065): the config says "v2.1" and the product farms differ,
+# and for F8c (reactor code R, sensors on their lines, service codes of branch lines).
+_DEFAULT_GOLDEN_SHA256 = "4da3d15ab05939e7c7a40fe7c400d3b502418401fa82f007887af870735b9f64"
 
 
 @pytest.fixture(scope="module")

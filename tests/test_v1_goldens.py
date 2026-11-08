@@ -55,8 +55,10 @@ _GOLDEN_SCHEMA_TEXT = {
     "occurrence": "8eb49a91c0ccee86d04f26ff30fef31a3464350c68654d134b906529f73ee7ff",
     "plant": "b5523639ddd13e1fa484d47d16fb15062a723dfe217950164d28200870a79022",
 }
-#: sha256 of the EX01 import: sorted (node_class, tag) pairs, sorted edges, ImportReport counts
-_GOLDEN_EX01_IMPORT = "2df71dcc496820ea3d37c637f04199cec14c1892e92f76b04b1b450d83d71e24"
+#: sha256 of the EX01 import: sorted (node_class, tag) pairs, sorted edges, ImportReport counts.
+#: Re-recorded under ADR-0065 (F10) for one reason: the four EX01 bubbles now carry their function
+#: letters (`P-4712.02` -> `PICSA-4712.02`); no node, edge or count changed.
+_GOLDEN_EX01_IMPORT = "014a730613927c1d1ba04475b54988026df51891b36353dc698579691a086907"
 
 
 def _sha256(data: bytes) -> str:

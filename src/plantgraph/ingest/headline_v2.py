@@ -6,9 +6,10 @@ while the generator is sized in **units** (process areas), so `smallest_n_units_
 into the other. Unlike v1, the sheet count comes from the planner itself (`plan_plant`, no pyDEXPI),
 not from a formula.
 
-Corpus ids carry the version: `D100g2` is the dev corpus (seed 1) of about 100 sheets, `H100g2` the
-test corpus of that size (its seed is fixed in `TEST_SEEDS_V2`), `X100g2s2` any other tuning plant;
-see `headline_corpus_id_v2`.
+Corpus ids carry the generator version `g21` (v2.1, ADR-0065): `D100g21` is the dev corpus (seed 1)
+of about 100 sheets, `H100g21p3` the third of the five drawn sealed plants of that size,
+`X100g21s211` any other tuning plant; see `headline_corpus_id_v2`. The drawn test seeds live in
+`seed_plan.py`; `TEST_SEEDS_V2` below is the superseded first measurement's table.
 
 **Seed ranges** (design vocabulary 14.5). Seeds 0-999 are dev and tuning seeds: every composition
 sweep stays inside them. Seeds 5000-5999 are test seeds, never looked at while tuning; the ones a
@@ -24,15 +25,17 @@ from plantgraph.benchmark.v2.config import GeneratorConfigV2
 from plantgraph.benchmark.v2.planner import plan_plant
 from plantgraph.graph import schema
 from plantgraph.ingest.headline import SizeSearchResult
+from plantgraph.ingest.seed_plan import TEST_SEED_RANGE, SeedPlan, require_drawn_test_seed
 
 #: the dev corpora use this seed; every other seed is a test corpus (ADR-0045's rule)
 DEV_SEED = 1
 
-#: seeds 0-999 are free to tune on; 5000-5999 are reserved for test plants
+#: seeds 0-999 are free to tune on; 5000-5999 (`TEST_SEED_RANGE`) are reserved for test plants
 TUNING_SEEDS = range(0, 1000)
-TEST_SEED_RANGE = range(5000, 6000)
 
-#: target sheets -> the one test seed of that size. 3, 10 and 30 sheets are nested prefixes of one
+#: The FIRST measurement's table (ADR-0059), kept for its records and the hygiene check; EXP-0008
+#: draws fresh seeds (`SeedPlan`). Target sheets -> the one test seed of that size. 3, 10 and 30
+#: sheets are nested prefixes of one
 #: plant (as v1's seed 3 was), so they share a seed. The 1-sheet seed is the first one in 5100-5399
 #: whose one-unit plan fits on one sheet (`first_single_sheet_seed`; the scan is re-run in a test).
 TEST_SEEDS_V2: dict[int, int] = {
@@ -139,24 +142,49 @@ def _confirmed(
 
 
 def headline_corpus_id_v2(
-    target_sheets: int, seed: int, duplication_rate: float = _PRESET_DUPLICATION_RATE
+    target_sheets: int,
+    seed: int,
+    duplication_rate: float = _PRESET_DUPLICATION_RATE,
+    seed_plan: SeedPlan | None = None,
 ) -> str:
-    """The id of a v2 headline corpus.
+    """The id of a v2.1 headline corpus, `<role letter><sheets>g21[...]`.
 
-    `D100g2` for the dev seed, `H100g2` only for the test seed registered for that size, and
-    `X100g2s2` (the seed spelled out) for every other tuning seed, so a tuning plant is never
-    mistaken for a test corpus. A duplication rate other than the preset's 0.25 adds `d0` / `d50`.
+    - `D100g21` the dev seed; `X100g21s211` any other tuning seed (seed spelled out).
+    - `H100g21p3` the third drawn sealed plant of that size; `H3g21` / `H10g21` / `H30g21` the
+      ladder plant; `H1g21` a drawn 1-sheet candidate; `VAL100g21` the re-validation plant.
+    - A duplication rate other than the preset's 0.25 adds `d0` / `d50` / `d100` (after the plant).
+
+    Raises:
+        ValueError: a test-range seed that is retired, or not in `seed_plan` (not drawn yet).
     """
-    if seed == DEV_SEED:
-        prefix, suffix = "D", ""
-    elif TEST_SEEDS_V2.get(target_sheets) == seed:
-        prefix, suffix = "H", ""
-    else:
-        prefix, suffix = "X", f"s{seed}"
     rate = (
         "" if duplication_rate == _PRESET_DUPLICATION_RATE else f"d{round(duplication_rate * 100)}"
     )
-    return f"{prefix}{target_sheets}g2{suffix}{rate}"
+    return f"{_role_stem(target_sheets, seed, seed_plan)}{rate}"
+
+
+def _role_stem(target_sheets: int, seed: int, seed_plan: SeedPlan | None) -> str:
+    if seed == DEV_SEED:
+        return f"D{target_sheets}g21"
+    if seed not in TEST_SEED_RANGE:
+        return f"X{target_sheets}g21s{seed}"
+    return _test_role_stem(target_sheets, seed, seed_plan)
+
+
+def _test_role_stem(target_sheets: int, seed: int, seed_plan: SeedPlan | None) -> str:
+    require_drawn_test_seed(seed, seed_plan)
+    assert seed_plan is not None  # require_drawn_test_seed raised otherwise
+    index = seed_plan.plant_index(target_sheets, seed)
+    if index is not None:
+        return f"H{target_sheets}g21p{index}"
+    if seed_plan.validation.get(target_sheets) == seed:
+        return f"VAL{target_sheets}g21"
+    is_ladder = target_sheets in (3, 10, 30) and seed == seed_plan.ladder_seed
+    if is_ladder or (target_sheets == 1 and seed in seed_plan.single_sheet_candidates):
+        return f"H{target_sheets}g21"
+    raise ValueError(
+        f"expected seed {seed} to be drawn for {target_sheets} sheets, found it is not"
+    )
 
 
 def first_single_sheet_seed(first: int, last: int) -> int:

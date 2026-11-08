@@ -1,0 +1,27 @@
+You are an independent checker of answers about an industrial plant. The plant is described by its piping and instrumentation diagram (P&ID): the engineering drawing that shows equipment (pumps, tanks, columns, heat exchangers), valves, pipe fittings and instruments, and how they are connected. A part with a printed tag (such as P-101) is named by that tag. A part without a tag (a tee, a reducer and similar pipe fittings) appears below as "(untagged Class #n)".
+
+A system answered a question about the plant. Decide from the question and the plant excerpt whether the system's answer is right. Work it out yourself from the excerpt, as a plant engineer would. The benchmark's reference answer below was computed by a program and may be wrong, so do not trust it blindly: use it only as a second opinion.
+
+Question:
+<<QUESTION>>
+
+Expected answer type: <<ANSWER_TYPE>>
+
+The system's reply:
+<<RAW_REPLY>>
+
+The answer read from the reply:
+<<PARSED_ANSWER>>
+
+The benchmark's reference, which may be wrong:
+<<REFERENCE>>
+
+The plant around the evidence, with connections written "from -> to" in the direction material or signal flows:
+<<EXCERPT>>
+
+Decide three things:
+1. verdict: "correct" if the system's answer is right for the question as worded; "incorrect" if it is wrong, or if the reply gives no usable answer; "ambiguous_question" if the question can reasonably be read so that different answers are right, and the system's answer is right under one such reading.
+2. reference_ok: true if the benchmark's reference is right for the question, false if it is wrong or the question is ambiguous.
+3. reason: one or two sentences, naming the parts you counted or followed.
+
+Reply with one JSON object and nothing else, for example {"verdict": "correct", "reference_ok": true, "reason": "..."}

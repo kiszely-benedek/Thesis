@@ -22,13 +22,17 @@ from plantgraph.resolution.identity_links import (
     group_with_links,
 )
 from plantgraph.resolution.localize import localize
-from test_identity_deciders import PUMP, toy_sheets
+from test_identity_deciders import PUMP, _sheet, toy_sheets
 
 PUMP_A = ContentKey("S1", "P-1203A", PUMP)
 PUMP_REF = ContentKey("S2", "P1203A", PUMP)
 SPARE_S2 = ContentKey("S2", "P-1203B", PUMP)
 SPARE_S3 = ContentKey("S3", "P-1203B", PUMP)
 UNPAD_S4 = ContentKey("S4", "P-123A", PUMP)
+
+
+def _pump(tag: str) -> dict[str, object]:
+    return {"node_class": PUMP, "tag": tag}
 
 
 def _link(first: ContentKey, second: ContentKey, score: float) -> IdentityLink:
@@ -101,6 +105,22 @@ def test_a_link_joining_two_occurrences_of_one_sheet_is_a_counted_conflict() -> 
     groups = _tag_groups(sheets, grouping)
     assert frozenset({PUMP_A, PUMP_REF}) in groups
     assert frozenset({SPARE_S2, SPARE_S3}) in groups  # the conflict refused the merge
+
+
+def test_a_refused_link_does_not_use_up_the_one_to_one_slot() -> None:
+    # B:P-102 is exact-grouped with A:P-102, so the stronger wrong link A:P-101~B:P-102 would put
+    # two occurrences of sheet A together and is refused. The weaker right link A:P-101~B:P101 must
+    # then still be merged: the refused link may not have taken A:P-101's slot towards sheet B.
+    sheets = [
+        _sheet("A", {"a1": _pump("P-101"), "a2": _pump("P-102")}),
+        _sheet("B", {"b1": _pump("P-102"), "b2": _pump("P101")}),
+    ]
+    wrong = _link(ContentKey("A", "P-101", PUMP), ContentKey("B", "P-102", PUMP), 0.9)
+    right = _link(ContentKey("A", "P-101", PUMP), ContentKey("B", "P101", PUMP), 0.8)
+    grouping = group_with_links(sheets, IdentityLinkSet(decider="d1", links=[wrong, right]))
+    assert grouping.n_identity_conflicts == 1
+    assert grouping.n_dropped_one_to_one == 0
+    assert frozenset({right.first, right.second}) in _tag_groups(sheets, grouping)
 
 
 def test_d1_end_to_end_merges_the_unpad_lookalike_and_d2_does_not() -> None:

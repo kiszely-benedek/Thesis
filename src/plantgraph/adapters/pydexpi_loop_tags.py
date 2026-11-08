@@ -2,7 +2,7 @@
 
 A **loop** is a sensor, the bubble that reads it and the actuator that acts on it; every member
 carries the bubble's tag as `loop_tag` and the tag's first letter (`F` for flow) as
-`measured_variable`.
+`measured_variable`; a tagged sensor keeps its own first letter (a `UC`'s `TT` measures T).
 
 A **local instrument** is a gauge or indicator drawn as one bubble with one tag (design convention
 I-2). pyDEXPI reaches a sensor (`ProcessSignalGeneratingFunction`) only through a bubble
@@ -32,11 +32,16 @@ _LOOP_MEMBER_CLASSES = frozenset(
         NodeClass.ACTUATING_ELECTRICAL_FUNCTION.value,  # a machine's start/stop joins its HS's loop
     }
 )
+#: pyDEXPI edge labels that carry a signal (a measurement or a command) between instruments
+SIGNAL_LABELS = frozenset(
+    {"MeasuringLineFunction", "SignalLineFunction", "SignalConveyingFunction"}
+)
 _BUBBLE_LABEL = NodeClass.PROCESS_INSTRUMENTATION_FUNCTION.value
 _TAG_FIELDS = (
     "processInstrumentationFunctionCategory",
     "processInstrumentationFunctionModifier",
     "processInstrumentationFunctionNumber",
+    "processInstrumentationFunctions",
 )
 
 
@@ -45,7 +50,7 @@ def assign_loop_tags(plant: nx.DiGraph[str]) -> None:
     for node_id in sorted(plant.nodes):
         if plant.nodes[node_id]["node_class"] not in BUBBLE_CLASSES:
             continue
-        loop_tag = plant.nodes[node_id]["tag"]
+        loop_tag = plant.nodes[node_id].get("tag")  # an untagged bubble has no tag key
         variable = loop_tag[0] if loop_tag else None
         neighbours = [*plant.predecessors(node_id), *plant.successors(node_id)]
         members = [node_id] + [
@@ -55,15 +60,32 @@ def assign_loop_tags(plant: nx.DiGraph[str]) -> None:
         ]
         for member in members:
             plant.nodes[member]["loop_tag"] = loop_tag
-            plant.nodes[member]["measured_variable"] = variable
+            plant.nodes[member]["measured_variable"] = _variable_of(plant, member, variable)
+
+
+def _variable_of(plant: nx.DiGraph[str], member: str, loop_variable: str | None) -> str | None:
+    """A sensor's own tag letter wins: the `TT` and `PT` feeding a `UC` measure T and P, not U."""
+    attrs = plant.nodes[member]
+    own_tag = attrs.get("tag")
+    is_sensor = attrs["node_class"] == NodeClass.PROCESS_SIGNAL_GENERATING_FUNCTION.value
+    return own_tag[0] if is_sensor and own_tag else loop_variable
 
 
 def find_carrier_sensors(conceptual: nx.MultiDiGraph[str]) -> dict[str, list[str]]:
-    """Carrier bubble id -> ids of the sensors it holds; a carrier is a bubble with no tag field."""
+    """Carrier bubble id -> ids of the sensors it holds.
+
+    A carrier is a bubble with no tag field that signals nowhere: a bubble that sends a signal
+    onward is a real instrument whose tag is merely missing, so it stays a node.
+    """
+    sends_signal = {
+        source
+        for source, _, attrs in conceptual.edges(data=True)
+        if attrs.get("label") in SIGNAL_LABELS
+    }
     sensors: dict[str, list[str]] = {
         node_id: []
         for node_id in sorted(conceptual.nodes)
-        if _is_carrier(conceptual.nodes[node_id])
+        if _is_carrier(conceptual.nodes[node_id]) and node_id not in sends_signal
     }
     for source, target, attrs in conceptual.edges(data=True):
         if target in sensors and attrs.get("label") == "MeasuringLineFunction":

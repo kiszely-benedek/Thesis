@@ -48,6 +48,9 @@ class RunSummary(BaseModel):
     mean_total_cost_usd: dict[str, float]
     #: True when the hard spend cap ended the run early; rerun to resume.
     stopped_by_spend_cap: bool
+    #: Cost of abandoned calls that answered after their question moved on, this invocation.
+    #: It is in no row (the row was written before the answer came), so it is reported here.
+    late_after_timeout_usd: float = 0.0
 
 
 #: Row-trace keys the harness adds, by the metric name used in the summary.
@@ -74,6 +77,7 @@ def summarize_rows(
     n_new_rows: int,
     *,
     stopped_by_spend_cap: bool = False,
+    late_after_timeout_usd: float = 0.0,
 ) -> RunSummary:
     """Count `rows` by strategy, the k-bin of their question, and outcome."""
     bin_of = {question.question_id: k_bin_of(question).value for question in questions}
@@ -100,6 +104,7 @@ def summarize_rows(
         trace_rates=_trace_rates(rows),
         mean_total_cost_usd=_mean_total_cost(rows),
         stopped_by_spend_cap=stopped_by_spend_cap,
+        late_after_timeout_usd=late_after_timeout_usd,
     )
 
 

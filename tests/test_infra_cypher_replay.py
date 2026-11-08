@@ -23,6 +23,7 @@ from plantgraph.qa.harness.run_dir import RunDir
 from plantgraph.qa.harness.runner import run_harness
 from plantgraph.qa.local_timer import DB_CLIENT, DB_SERVER, add_local_seconds, local_timer
 from plantgraph.qa.models import Outcome, QuestionResult
+from plantgraph.qa.tag_check import TAG_CHECK_TIMEOUT_S
 from qa_harness_toy import CORPUS_ID, Toy, abstaining_transport, build_toy, make_config
 
 
@@ -42,11 +43,13 @@ class _StubSource:
     def __init__(self, clock: _Clock, error: Exception | None = None) -> None:
         self._clock = clock
         self._error = error
+        self.sent: list[tuple[str, float]] = []  # (query, timeout) in the order received
 
     def label_names(self) -> frozenset[str]:
         return frozenset({"Pump", "CorpusNode"})
 
     def run_cypher(self, query: str, timeout_s: float, row_cap: int) -> CypherResult:
+        self.sent.append((query, timeout_s))
         if isinstance(self._error, WriteClauseError):
             raise self._error  # refused before the database is touched: nothing is timed
         with local_timer(DB_CLIENT):
@@ -62,7 +65,7 @@ def _time(
 ) -> CypherReplayRow:
     return time_one_query(
         _StubSource(clock, error),  # type: ignore[arg-type]
-        RecordedQuery(question_id, "MATCH (n) RETURN n", failed),
+        RecordedQuery(question_id, ("MATCH (n) RETURN n",), failed),
         strategy="cypher_rag_plant",
         timeout_s=30,
         row_cap=200,
@@ -124,6 +127,62 @@ def test_recorded_queries_keep_run_order_and_the_failure_flag(toy: Toy, tmp_path
     queries = recorded_queries(marked)
     assert [q.question_id for q in queries] == [r.question_id for r in marked]
     assert [q.original_retrieval_error for q in queries] == [False, True]
+
+
+def _row_with_trace(row: QuestionResult, retrieval: dict[str, object]) -> QuestionResult:
+    return row.model_copy(update={"trace": {"retrieval": retrieval}})
+
+
+def test_every_attempt_and_the_tag_check_are_recorded_in_order(toy: Toy, tmp_path: Path) -> None:
+    row = _source_run(toy, tmp_path, "SRC")[0]
+    retrieval = {
+        "cypher": "REPAIRED",
+        "attempts": [{"cypher": "SLOW"}, {"cypher": ""}, {"cypher": "REPAIRED"}],
+        "tags_found": ["P-1"],
+        "tags_missing": ["P-9"],
+    }
+    [recorded] = recorded_queries([_row_with_trace(row, retrieval)])
+    assert recorded.attempt_queries == ("SLOW", "REPAIRED")  # the empty reply sent nothing
+    assert recorded.tag_check_query is not None and "'P-1', 'P-9'" in recorded.tag_check_query
+    assert recorded.n_queries == 3
+
+
+def test_a_run_without_an_attempts_list_replays_its_one_query(toy: Toy, tmp_path: Path) -> None:
+    row = _source_run(toy, tmp_path, "SRC")[0]
+    [recorded] = recorded_queries([_row_with_trace(row, {"cypher": "ONLY"})])
+    assert recorded.attempt_queries == ("ONLY",) and recorded.tag_check_query is None
+
+
+def test_the_replay_sends_the_tag_check_then_every_attempt_as_one_timed_question() -> None:
+    clock = _Clock()
+    source = _StubSource(clock)
+    recorded = RecordedQuery("q1", ("SLOW", "REPAIRED"), False, tag_check_query="TAGS")
+    row = time_one_query(
+        source,  # type: ignore[arg-type]
+        recorded,
+        strategy="cypher_rag_lines",
+        timeout_s=30,
+        row_cap=200,
+        clock=clock,
+    )
+    assert [query for query, _ in source.sent] == ["TAGS", "SLOW", "REPAIRED"]
+    assert source.sent[0][1] == TAG_CHECK_TIMEOUT_S and source.sent[1][1] == 30
+    assert row.n_db_queries == 3 and row.db_client_s == 0.75 and row.replay_outcome == "ok"
+
+
+def test_a_failed_first_attempt_does_not_decide_the_outcome() -> None:
+    clock = _Clock()
+    source = _StubSource(clock, CypherExecutionError("timeout"))
+    recorded = RecordedQuery("q1", ("SLOW", "REPAIRED"), False)
+    row = time_one_query(
+        source,  # type: ignore[arg-type]
+        recorded,
+        strategy="cypher_rag_lines",
+        timeout_s=30,
+        row_cap=200,
+        clock=clock,
+    )
+    assert row.n_db_queries == 2 and row.replay_outcome == "database_error"
 
 
 def test_a_row_without_a_recorded_query_is_refused(toy: Toy, tmp_path: Path) -> None:

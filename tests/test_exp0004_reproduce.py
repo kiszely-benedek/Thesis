@@ -13,6 +13,7 @@ from typing import Any
 
 import pytest
 
+from plantgraph.benchmark.v2.config import SUPERSEDED_VERSION, GeneratorConfigV2
 from plantgraph.exp0004 import commands
 from plantgraph.exp0004.corpus import Corpus, CorpusSpec
 from plantgraph.exp0004.deciders import DeciderRun, make_decider, run_decider
@@ -24,6 +25,16 @@ from plantgraph.exp0004.tuning import Taus, TuningRow, tune
 from plantgraph.ingest.identity_file import read_identity_links
 
 COMMITTED = Path(__file__).parent.parent / "data/runs/exp0004/idblock01/D100g2d100Vf/result.json"
+# The committed result was measured on a plant of the superseded generator (ADR-0065). This code
+# builds v2.1, whose plants differ, so the check can only hold where the default version is "v2".
+pytestmark = pytest.mark.skipif(
+    GeneratorConfigV2.model_fields["generator_version"].default != SUPERSEDED_VERSION,
+    reason=(
+        "first-measurement reproduction (generator v2); runs only at E8.commit; "
+        "the v2.1 dev reference is produced in EXP-0008 M2"
+    ),
+)
+
 SPEC = CorpusSpec(
     corpus_id="D100g2d100Vf", target_sheets=100, seed=1, duplication_rate=1.0, families=("format",)
 )

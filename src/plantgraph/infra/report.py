@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from plantgraph.infra.report_checks import run_all_checks
 from plantgraph.infra.report_compute import compute_row, usable
-from plantgraph.infra.report_inputs import ReportInputs
+from plantgraph.infra.report_inputs import ReportInputs, RunData
 from plantgraph.infra.report_models import (
     CorpusFootprintRow,
     GrowthRow,
@@ -39,7 +39,7 @@ def build_infra_report(inputs: ReportInputs) -> InfraReport:
         machine_summary=_machine_summary(inputs),
         git_commit=first.git_commit if first else "unknown",
         git_dirty=first.git_dirty if first else False,
-        checks=_with_db_replay_notice(_with_old_run_notice(checks, compute), compute),
+        checks=_with_db_replay_notice(_with_old_run_notice(checks, inputs.runs), compute),
         footprints=footprints,
         compute=compute,
         growth=growth_rows(footprints, compute),
@@ -61,10 +61,8 @@ def _machine_summary(inputs: ReportInputs) -> str:
     )
 
 
-def _with_old_run_notice(
-    checks: list[SelfCheck], compute: list[StrategyComputeRow]
-) -> list[SelfCheck]:
-    old = [f"{row.role} on {row.corpus_id}" for row in compute if row.basis == "old_run"]
+def _with_old_run_notice(checks: list[SelfCheck], runs: list[RunData]) -> list[SelfCheck]:
+    old = [run for run in runs if run.basis == "old_run"]
     if not old:
         return checks
     notice = SelfCheck(
@@ -72,12 +70,21 @@ def _with_old_run_notice(
         status="flag",
         detail=(
             "the replay missed the cache or differed from its source, so the original run's "
-            "timings are shown instead: "
-            + ", ".join(old)
-            + " (coarse monotonic clock, concurrency 4, no split)"
+            "timings are shown instead: " + "; ".join(_old_run_description(run) for run in old)
         ),
     )
     return [*checks, notice]
+
+
+def _old_run_description(run: RunData) -> str:
+    """What is true of one old run: its own clock and concurrency, and that no split is shown."""
+    clocks = ", ".join(sorted({row.clock for row in run.timings})) or "no timing rows"
+    levels = sorted({str(e.concurrency) for e in run.environments if e.concurrency is not None})
+    concurrency = ", ".join(levels) or "not recorded"
+    return (
+        f"{run.role} on {run.corpus_id} (clock {clocks}; concurrency {concurrency}; "
+        "no database split shown)"
+    )
 
 
 def _with_db_replay_notice(

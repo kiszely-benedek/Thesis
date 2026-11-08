@@ -5,9 +5,10 @@ the splitter later only honours it. Three steps, per process unit (a sheet never
 
 1. **Pattern groups.** The pattern says which equipment belongs together (`drawing_group_of`).
 2. **Rider rule.** Everything else rides along: a line's inline parts take the group of the line's
-   source (or its destination when the source is open or in another unit), and a control loop
-   takes the group of the item its sensor is located on. The cut therefore falls at a nozzle or
-   between trims, never inside a control-valve station.
+   source (or its destination when the source is open or in another unit), except that a branch
+   off a tee into a machine (a tank's receipt valves, a spared pump's suction trim) stays with the
+   machine it feeds, and a control loop takes the group of the item its sensor is located on.
+   The cut therefore falls at a nozzle or between trims, never inside a control-valve station.
 3. **Merge.** Consecutive groups of the unit, in flow order, share a sheet while they stay within
    `max_equipment_per_sheet` and `max_symbols_before_stubs`. A pinned group is never merged. A
    pattern group is never split, so a single group may exceed the symbol cap.
@@ -52,7 +53,7 @@ class UnitSheets(BaseModel):
 
 def assign_unit_sheets(unit_no: int, instance: PatternInstance, knobs: SheetKnobs) -> UnitSheets:
     """Give every node of the unit's plan a pattern group and a sheet."""
-    group_of = rider_groups(instance.plan, instance.drawing_group_of)
+    group_of = rider_groups(instance.plan, instance.drawing_group_of, instance.pinned_groups)
     sizes = group_sizes(instance.plan, group_of)
     sheets = merge_groups(sizes, instance.pinned_groups, knobs)
     sheet_of_group = {
@@ -70,19 +71,41 @@ def assign_unit_sheets(unit_no: int, instance: PatternInstance, knobs: SheetKnob
 # ---- step 2: the rider rule ----------------------------------------------------------------------
 
 
-def rider_groups(plan: TrimPlan, equipment_group: Mapping[str, str]) -> dict[str, str]:
-    """The group of every equipment, inline part and instrument of the plan."""
+def rider_groups(
+    plan: TrimPlan, equipment_group: Mapping[str, str], pinned: frozenset[str] = frozenset()
+) -> dict[str, str]:
+    """The group of every equipment, inline part and instrument of the plan.
+
+    `pinned` are the groups that keep a sheet of their own (a spared pump set).
+    """
     group = dict(equipment_group)
     for line in plan.lines:  # in plan order: a branch's tee is on an earlier line
-        line_group = _line_group(line, group)
+        line_group = _line_group(line, group, equipment_group, pinned)
         for item in line.items:
             group[item.node_id] = line_group
     group.update(_loop_groups(plan, group))
     return group
 
 
-def _line_group(line: LineSpec, group: Mapping[str, str]) -> str:
-    """The group of the line's source; its destination when the source is open or another unit's."""
+def _line_group(
+    line: LineSpec,
+    group: Mapping[str, str],
+    equipment_group: Mapping[str, str],
+    pinned: frozenset[str],
+) -> str:
+    """The group of the line's source; its destination when the source is open or another unit's.
+
+    The valves are drawn next to the nozzle they serve, so the line goes to its destination's
+    group when that equipment sits on a sheet of its own, or when the line is a branch off a tee
+    (a tank's receipt valves, a spared pump's suction trim) whatever sheet the header's tee is on.
+    """
+    dst_id = line.dst_id
+    if (
+        dst_id is not None
+        and dst_id in equipment_group
+        and _serves_destination(line, dst_id, equipment_group, pinned)
+    ):
+        return equipment_group[dst_id]
     for end in (line.src_id, line.dst_id):
         if end is not None and end in group:
             return group[end]
@@ -91,6 +114,17 @@ def _line_group(line: LineSpec, group: Mapping[str, str]) -> str:
         f"(src_id={line.src_id!r}, dst_id={line.dst_id!r}); expected a line that starts at, or "
         "ends at, equipment or a part of an earlier line of its unit"
     )
+
+
+def _serves_destination(
+    line: LineSpec, dst_id: str, equipment_group: Mapping[str, str], pinned: frozenset[str]
+) -> bool:
+    """True for a branch off a tee, or a line into equipment whose group is pinned to a sheet."""
+    src_id = line.src_id
+    if src_id is None or src_id not in equipment_group:
+        return True  # open, another unit's, or a tee
+    dst_group = equipment_group[dst_id]
+    return dst_group in pinned and equipment_group[src_id] != dst_group
 
 
 def _loop_groups(plan: TrimPlan, group: Mapping[str, str]) -> dict[str, str]:

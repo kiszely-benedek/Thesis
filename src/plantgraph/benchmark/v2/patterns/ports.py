@@ -56,12 +56,19 @@ class Port(BaseModel):
     direction: PortDirection
     phase: Phase
     kind: PortKind = PortKind.PROCESS
+    #: an in-port that also takes a product stream left open by an earlier unit of its train
+    collects: bool = False
     line_number: str
     node_id: str
 
 
 def open_end_port(
-    name: str, direction: PortDirection, phase: Phase, line: LineSpec, kind: PortKind | None = None
+    name: str,
+    direction: PortDirection,
+    phase: Phase,
+    line: LineSpec,
+    kind: PortKind | None = None,
+    collects: bool = False,
 ) -> Port:
     """The port at the open end of `line`: its destination for `out`, its source for `in`."""
     is_out = direction is PortDirection.OUT
@@ -76,6 +83,7 @@ def open_end_port(
         direction=direction,
         phase=phase,
         kind=kind or PortKind.PROCESS,
+        collects=collects,
         line_number=line.line_number,
         node_id=node_id,
     )

@@ -53,11 +53,12 @@ def sheet_stats(plan: PlantPlanV2) -> list[SheetStats]:
     open_ends: Counter[str] = Counter()
     crossings: Counter[str] = Counter()
     signal_cuts: Counter[str] = Counter()
+    wired = wired_out_ends(plan)
     for unit in plan.units:
         unit_plan = unit.instance.plan
         classes.update(plan_node_classes(unit_plan))
         for line in unit_plan.lines:
-            open_ends.update(_open_end_stubs(line, sheet_of, classes))
+            open_ends.update(open_end_stubs(line, sheet_of, classes, wired))
             crossings.update(_crossing_stubs(line, sheet_of))
         signal_cuts.update(_signal_cuts(unit_plan, sheet_of))
     counts = _kind_counts(sheet_of, classes)
@@ -115,14 +116,32 @@ def _chain(line: LineSpec) -> list[str]:
     return [node for node in nodes if node is not None]
 
 
-def _open_end_stubs(
-    line: LineSpec, sheet_of: Mapping[str, str], classes: Mapping[str, str]
+def wired_out_ends(plan: PlantPlanV2) -> frozenset[str]:
+    """The last part of every line whose open end a later unit's line starts from (v2.1).
+
+    The later line crosses the sheets and `_crossing_stubs` already counts both sides, so the
+    out-port's open end must not be counted a second time.
+    """
+    sources = {line.src_id for unit in plan.units for line in unit.instance.plan.lines}
+    ends = {
+        _chain(line)[-1]
+        for unit in plan.units
+        for line in unit.instance.plan.lines
+        if line.dst_id is None
+    }
+    return frozenset(ends & {source for source in sources if source is not None})
+
+
+def open_end_stubs(
+    line: LineSpec, sheet_of: Mapping[str, str], classes: Mapping[str, str], wired: frozenset[str]
 ) -> list[str]:
+    """The sheets that get a stub from the line's open ends (a wired end is a crossing instead)."""
     chain = _chain(line)
     stubs = []
     if line.src_id is None and classes[chain[0]] not in CLOSED_END_CLASSES:
         stubs.append(sheet_of[chain[0]])
-    if line.dst_id is None and classes[chain[-1]] not in CLOSED_END_CLASSES:
+    leaves = line.dst_id is None and chain[-1] not in wired
+    if leaves and classes[chain[-1]] not in CLOSED_END_CLASSES:
         stubs.append(sheet_of[chain[-1]])
     return stubs
 

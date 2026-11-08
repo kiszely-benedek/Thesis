@@ -28,7 +28,6 @@ import time
 from collections.abc import Callable
 from concurrent.futures import Future, wait
 from dataclasses import dataclass
-from datetime import UTC, datetime
 from pathlib import Path
 from typing import Literal
 
@@ -38,8 +37,10 @@ from pydantic import SecretStr
 
 from plantgraph.llm.abandonable_call import start_daemon_call
 from plantgraph.llm.cache import SqliteCache, cache_key
+from plantgraph.llm.completion_response import response_from_completion
 from plantgraph.llm.local_settings import LocalLLMSettings
 from plantgraph.llm.models import (
+    OVERFLOW_FINISH_REASON,
     TIMEOUT_FINISH_REASON,
     CacheMiss,
     CallErrorKind,
@@ -50,13 +51,13 @@ from plantgraph.llm.models import (
     ProviderError,
     RequestTimedOut,
     canonical_hash,
+    overflow_response,
     tombstone_response,
 )
 from plantgraph.llm.openrouter_settings import OpenRouterSettings
 from plantgraph.llm.request_kwargs import build_request_kwargs
-from plantgraph.llm.served_by import served_by
+from plantgraph.llm.retry_loop import LiveResult, call_with_retries
 from plantgraph.llm.single_flight import SingleFlight
-from plantgraph.llm.status_errors import classify_status_error, redact
 
 logger = logging.getLogger(__name__)
 
@@ -215,6 +216,9 @@ class ChatClient:
         timeout_s: float | None,
     ) -> ChatResponse:
         cached = self._cache.get(request)  # raises CacheMiss itself in "replay" mode
+        if cached is not None and cached.finish_reason == OVERFLOW_FINISH_REASON:
+            self._log_call(request, origin, response=None, error_kind="context_overflow")
+            raise ContextOverflow(cached.text)  # the same prompt overflows the same way
         if cached is not None:
             self._raise_if_over_budget(cached, timeout_s, request, origin)
         if cached is not None and cached.finish_reason == TIMEOUT_FINISH_REASON:
@@ -232,17 +236,30 @@ class ChatClient:
                 "allow_network=False: refusing to make a network call without the user's "
                 "explicit --allow-paid-calls approval (qa-system.md §6)"
             )
+        live = self._live_with_error_log(request, origin, timeout_s)
+        self._cache.put(request, live.response)
+        self._log_call(request, origin, response=live.response, error_kind=None, live=live)
+        return live.response
+
+    def _live_with_error_log(
+        self, request: ChatRequest, origin: CallOrigin, timeout_s: float | None
+    ) -> LiveResult:
+        """A live call; its failures are logged here, and an overflow is cached for replay."""
         try:
-            response = self._live_call(request, origin, timeout_s)
-        except ContextOverflow:
+            return self._live_call(request, origin, timeout_s)
+        except ContextOverflow as overflow:
+            self._cache.put(request, overflow_response(str(overflow)))
             self._log_call(request, origin, response=None, error_kind="context_overflow")
             raise
-        except ProviderError:
-            self._log_call(request, origin, response=None, error_kind="provider_error")
+        except ProviderError as error:
+            self._log_call(
+                request,
+                origin,
+                response=None,
+                error_kind="provider_error",
+                n_retries=error.n_retries,
+            )
             raise
-        self._cache.put(request, response)
-        self._log_call(request, origin, response=response, error_kind=None)
-        return response
 
     def _raise_if_over_budget(
         self,
@@ -262,9 +279,9 @@ class ChatClient:
         if cached.latency_s < timeout_s or (not is_tombstone and cached.latency_s == timeout_s):
             return
         self._log_call(request, origin, response=None, error_kind="timeout")
-        spent_s = cached.latency_s if is_tombstone else timeout_s
+        # a tombstone from a bigger budget still only cost this call's own budget, as live would
         raise RequestTimedOut(
-            f"cached entry took {cached.latency_s:g} s of {timeout_s:g} s", spent_s
+            f"cached entry took {cached.latency_s:g} s of {timeout_s:g} s", timeout_s
         )
 
     def _live_call(
@@ -272,7 +289,7 @@ class ChatClient:
         request: ChatRequest,
         origin: CallOrigin,
         timeout_s: float | None,
-    ) -> ChatResponse:
+    ) -> LiveResult:
         if timeout_s is None:
             return self._call_with_retries(request)
         future = start_daemon_call(lambda: self._call_with_retries(request))
@@ -284,7 +301,7 @@ class ChatClient:
 
     def _abandon(
         self,
-        future: Future[ChatResponse],
+        future: Future[LiveResult],
         request: ChatRequest,
         origin: CallOrigin,
         timeout_s: float,
@@ -293,14 +310,14 @@ class ChatClient:
         self._cache.put(request, tombstone_response(timeout_s))
         self._log_call(request, origin, response=None, error_kind="timeout")
 
-        def on_finished(finished: Future[ChatResponse]) -> None:
+        def on_finished(finished: Future[LiveResult]) -> None:
             self._handle_late_result(finished, request, origin)
 
         future.add_done_callback(on_finished)
 
     def _handle_late_result(
         self,
-        future: Future[ChatResponse],
+        future: Future[LiveResult],
         request: ChatRequest,
         origin: CallOrigin,
     ) -> None:
@@ -309,72 +326,27 @@ class ChatClient:
         if error is not None:
             logger.warning("Abandoned %s call ended in an error: %s", request.purpose, error)
             return
-        response = future.result()
+        live = future.result()
         self._log_call(
-            request,
-            origin,
-            response=response,
-            error_kind="late_after_timeout",
+            request, origin, response=live.response, error_kind="late_after_timeout", live=live
         )
         if self.on_late_response is not None:
-            self.on_late_response(response)
+            self.on_late_response(live.response)
 
-    def _call_with_retries(self, request: ChatRequest) -> ChatResponse:
-        """Retry only on a transport-level failure (429 or 5xx); never on a content error."""
-        attempt = 0
-        while True:
-            try:
-                return self._call_once(request)
-            except openai.APIStatusError as exc:
-                outcome, message = classify_status_error(exc, self._api_key)
-                if outcome == "overflow":
-                    raise ContextOverflow(message) from exc
-                if outcome == "fatal" or attempt >= self._max_retries:
-                    raise ProviderError(message) from exc
-            except openai.APIConnectionError as exc:
-                if attempt >= self._max_retries:
-                    raise ProviderError(redact(str(exc), self._api_key)) from exc
-            attempt += 1
-            self._wait_before_retry(request.purpose, attempt)
-
-    def _wait_before_retry(self, purpose: str, attempt: int) -> None:
-        backoff = self._backoff_base_seconds * (2 ** (attempt - 1))
-        logger.warning(
-            "Retrying %s call after a transport error (attempt %d/%d, waiting %.2fs)",
-            purpose,
-            attempt,
-            self._max_retries,
-            backoff,
+    def _call_with_retries(self, request: ChatRequest) -> LiveResult:
+        return call_with_retries(
+            lambda: self._call_once(request),
+            purpose=request.purpose,
+            api_key=self._api_key,
+            max_retries=self._max_retries,
+            backoff_base_seconds=self._backoff_base_seconds,
         )
-        if backoff > 0:
-            time.sleep(backoff)
 
     def _call_once(self, request: ChatRequest) -> ChatResponse:
         kwargs = build_request_kwargs(request)
         started = time.monotonic()
         completion = self._sdk_client.chat.completions.create(**kwargs)
-        latency_s = time.monotonic() - started
-
-        choice = completion.choices[0]
-        usage = completion.usage
-        return ChatResponse(
-            # A `None` content (e.g. a provider that returns only a refusal
-            # or a tool call) is left as an empty string here; this project
-            # never sends tool definitions, so an empty answer is treated
-            # downstream as a parse failure, not masked as a client error.
-            text=choice.message.content or "",
-            prompt_tokens=usage.prompt_tokens if usage is not None else 0,
-            completion_tokens=usage.completion_tokens if usage is not None else 0,
-            # OpenRouter's `usage` block adds a `cost` field (§4); the SDK keeps
-            # unknown fields, so it is read as a plain attribute, not a typed one.
-            cost_usd=getattr(usage, "cost", None) if usage is not None else None,
-            latency_s=latency_s,
-            provider_response_id=completion.id,
-            finish_reason=choice.finish_reason,
-            from_cache=False,
-            created_at=datetime.now(UTC),
-            provider=served_by(completion),  # OpenRouter's top-level `provider` field
-        )
+        return response_from_completion(completion, time.monotonic() - started)
 
     def _log_call(
         self,
@@ -383,6 +355,8 @@ class ChatClient:
         *,
         response: ChatResponse | None,
         error_kind: CallErrorKind | None,
+        live: LiveResult | None = None,
+        n_retries: int = 0,
     ) -> None:
         record = CallRecord(
             run_id=origin.run_id,
@@ -394,6 +368,7 @@ class ChatClient:
             prompt_sha256=_prompt_sha256(request),
             response=response,
             error_kind=error_kind,
+            n_retries=live.n_retries if live is not None else n_retries,
         )
         line = record.model_dump_json() + "\n"
         with self._log_lock, self._calls_log_path.open("a", encoding="utf-8") as handle:

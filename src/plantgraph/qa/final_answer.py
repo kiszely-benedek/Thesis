@@ -236,16 +236,45 @@ def _validate_boolean_shape(answer: object) -> None:
         raise ValueError(f"BOOLEAN needs a yes/no answer, got {answer!r}")
 
 
-def _spell_json_bool(payload: dict[str, Any], answer_type: AnswerType) -> dict[str, Any]:
-    """Turn a JSON `true`/`false` answer into "yes"/"no" for a `BOOLEAN` question.
+def _is_json_integer(value: object) -> bool:
+    """True for a JSON integer; `bool` is an `int` subclass in Python but not a number here."""
+    return isinstance(value, int) and not isinstance(value, bool)
+
+
+def _spell_boolean(answer: object) -> object:
+    """JSON `true`/`false` and the integers 1/0 become "yes"/"no"; anything else is untouched."""
+    if isinstance(answer, bool):
+        return "yes" if answer else "no"
+    if _is_json_integer(answer) and answer in (0, 1):  # same words as scoring.normalize_boolean
+        return "yes" if answer == 1 else "no"
+    return answer
+
+
+def _spell_identifier_numbers(answer_type: AnswerType, answer: object) -> object:
+    """Turn JSON integers into strings where the answer is made of identifiers.
+
+    Unit and sheet ids are numerals, so a model may write `[469]` for `["469"]`. Only integers
+    are converted: floats and bools stay as they are and are refused by the shape check.
+    """
+    if answer_type is AnswerType.UNIT_ID and _is_json_integer(answer):
+        return str(answer)
+    if answer_type in (AnswerType.UNIT_SET, AnswerType.SHEET_SET) and isinstance(answer, list):
+        return [str(item) if _is_json_integer(item) else item for item in answer]
+    return answer
+
+
+def _normalize_answer_spelling(payload: dict[str, Any], answer_type: AnswerType) -> dict[str, Any]:
+    """Spell the `answer` field in the shape `answer_type` expects, before validation.
 
     `FinalAnswer.answer` has no bool member and pydantic would silently read `true` as the
-    integer 1, so the bool is spelled out before validation.
+    integer 1, and `list[str]` refuses integers, so both are spelled out here.
     """
     answer = payload.get("answer")
-    if answer_type is AnswerType.BOOLEAN and isinstance(answer, bool):
-        return {**payload, "answer": "yes" if answer else "no"}
-    return payload
+    if answer_type is AnswerType.BOOLEAN:
+        answer = _spell_boolean(answer)
+    else:
+        answer = _spell_identifier_numbers(answer_type, answer)
+    return {**payload, "answer": answer} if "answer" in payload else payload
 
 
 def parse_final_answer(raw_text: str, answer_type: AnswerType) -> FinalAnswer:
@@ -258,7 +287,7 @@ def parse_final_answer(raw_text: str, answer_type: AnswerType) -> FinalAnswer:
     if payload is None:
         raise FinalAnswerParseError(f"no JSON object found in model reply: {raw_text!r}")
     try:
-        final_answer = FinalAnswer.model_validate(_spell_json_bool(payload, answer_type))
+        final_answer = FinalAnswer.model_validate(_normalize_answer_spelling(payload, answer_type))
     except ValidationError as exc:
         raise FinalAnswerParseError(
             f"reply JSON does not match the FinalAnswer schema: {payload!r} ({exc})"

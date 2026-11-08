@@ -181,13 +181,16 @@ def test_the_command_prints_the_table_and_writes_json(
     target = tmp_path / "report.json"
     code = main(["--target-sheets", "10", "--seeds", "1", "2", "--coverage", "--json", str(target)])
     out = capsys.readouterr().out
-    assert "D10g2" in out and "X10g2s2" in out  # the dev id and a tuning id
+    assert "D10g21" in out and "X10g21s2" in out  # the dev id and a tuning id
     assert "symbols per sheet, mean" in out and "class coverage:" in out
     reports = [CompositionReport.model_validate(r) for r in json.loads(target.read_text("utf-8"))]
     assert [r.seed for r in reports] == [1, 2]
     assert code == (1 if any(r.failures for r in reports) else 0)  # the exit code mirrors the fails
 
 
-def test_a_test_seed_runs_with_the_flag(capsys: pytest.CaptureFixture[str]) -> None:
-    main(["--target-sheets", "3", "--seeds", "5001", "--allow-test-seed"])
-    assert "H3g2" in capsys.readouterr().out
+def test_a_retired_test_seed_is_refused_even_with_the_flag(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    with pytest.raises(SystemExit, match="retired"):  # 5001 was the first measurement's seed
+        main(["--target-sheets", "3", "--seeds", "5001", "--allow-test-seed"])
+    assert capsys.readouterr().out == ""

@@ -17,7 +17,7 @@ from __future__ import annotations
 import time
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict
 
@@ -26,6 +26,7 @@ from plantgraph.qa.harness.usage_meter import TimingRow
 from plantgraph.qa.local_timer import DB_CLIENT, DB_SERVER, LocalTimer, deactivate
 from plantgraph.qa.models import Outcome, QuestionResult
 from plantgraph.qa.strategies.cypher_rag import format_context
+from plantgraph.qa.tag_check import TAG_CHECK_TIMEOUT_S, tag_lookup_query
 
 #: Files the replay writes into its run folder (next to `timings.jsonl`, `environment.jsonl`).
 REPLAY_META_FILE = "db_replay.json"
@@ -66,30 +67,64 @@ class CypherReplayMeta(BaseModel):
 
 @dataclass(frozen=True)
 class RecordedQuery:
-    """The query a stored run wrote for one question, and whether that question had failed."""
+    """Everything one stored question sent to the database, in the order it was sent.
+
+    `tag_check_query` runs first (it is `None` when the question named no tag-like word),
+    then every query-writing attempt in turn: a timed-out first attempt and its repair both cost
+    database time. The last attempt is the one whose rows the answer used.
+    """
 
     question_id: str
-    query: str
+    attempt_queries: tuple[str, ...]
     original_retrieval_error: bool
+    tag_check_query: str | None = None
+
+    @property
+    def n_queries(self) -> int:
+        """How many statements the replay sends for this question."""
+        return len(self.attempt_queries) + (self.tag_check_query is not None)
 
 
 def recorded_queries(rows: Sequence[QuestionResult]) -> list[RecordedQuery]:
-    """The generated query of every row of a stored Cypher-tier run, in run order.
+    """The queries of every row of a stored Cypher-tier run, in run order.
 
     Raises:
         ValueError: a row has no recorded query, so the replay would silently skip a question.
     """
-    queries: list[RecordedQuery] = []
-    for row in rows:
-        query = row.trace.get("retrieval", {}).get("cypher")
-        if not query:
-            raise ValueError(
-                f"expected a recorded query (trace.retrieval.cypher) for {row.question_id}, "
-                "found none; the replay does not skip questions"
-            )
-        failed = row.outcome is Outcome.RETRIEVAL_ERROR
-        queries.append(RecordedQuery(row.question_id, query, failed))
-    return queries
+    return [_recorded_query(row) for row in rows]
+
+
+def _recorded_query(row: QuestionResult) -> RecordedQuery:
+    retrieval = row.trace.get("retrieval", {})
+    attempts = _attempt_queries(retrieval)
+    if not attempts:
+        raise ValueError(
+            f"expected a recorded query (trace.retrieval.cypher) for {row.question_id}, "
+            "found none; the replay does not skip questions"
+        )
+    failed = row.outcome is Outcome.RETRIEVAL_ERROR
+    return RecordedQuery(row.question_id, attempts, failed, _tag_check_query(retrieval))
+
+
+def _attempt_queries(retrieval: dict[str, Any]) -> tuple[str, ...]:
+    """The queries of all attempts; a run without an `attempts` list has only `cypher`."""
+    # An attempt whose model reply held no query has "" and sent nothing to the database.
+    listed = [a.get("cypher") for a in retrieval.get("attempts", [])]
+    queries = tuple(query for query in listed if query)
+    if queries:
+        return queries
+    last = retrieval.get("cypher")
+    return (last,) if last else ()
+
+
+def _tag_check_query(retrieval: dict[str, Any]) -> str | None:
+    """Rebuild the tag lookup from the tags the trace recorded (found first, then missing).
+
+    The tag order may differ from the question's; the statement is the same size and cost.
+    A failed lookup (`tag_check_error`) recorded no tags, so it cannot be rebuilt.
+    """
+    tags = [*retrieval.get("tags_found", []), *retrieval.get("tags_missing", [])]
+    return tag_lookup_query(tags) if tags else None
 
 
 def time_one_query(
@@ -101,12 +136,12 @@ def time_one_query(
     row_cap: int,
     clock: Callable[[], float] = time.perf_counter,
 ) -> CypherReplayRow:
-    """Run one recorded query on the database and time it as the harness times a question."""
+    """Run all of a question's recorded queries in order and time them as one question."""
     timer = LocalTimer(clock=clock)
     token = timer.activate()
     started = clock()
     try:
-        outcome, n_rows = _execute(source, recorded.query, timeout_s, row_cap)
+        outcome, n_rows = _execute_question(source, recorded, timeout_s, row_cap)
     finally:
         deactivate(token)
     wall_s = clock() - started
@@ -126,6 +161,29 @@ def time_one_query(
         original_retrieval_error=recorded.original_retrieval_error,
         n_rows=n_rows,
     )
+
+
+def _execute_question(
+    source: CypherSource, recorded: RecordedQuery, timeout_s: float, row_cap: int
+) -> tuple[ReplayOutcome, int]:
+    """Tag check, then every attempt; the last attempt's outcome is the question's."""
+    if recorded.tag_check_query is not None:
+        _run_and_ignore(source, recorded.tag_check_query, TAG_CHECK_TIMEOUT_S, row_cap)
+    *earlier, last = recorded.attempt_queries
+    for query in earlier:
+        _run_and_ignore(source, query, timeout_s, row_cap)
+    return _execute(source, last, timeout_s, row_cap)
+
+
+def _run_and_ignore(source: CypherSource, query: str, timeout_s: float, row_cap: int) -> None:
+    """Send a query whose rows the replay does not use (a tag check, a repaired attempt).
+
+    A failure here is not the question's outcome: the strategy tolerated it too.
+    """
+    try:
+        source.run_cypher(query, timeout_s, row_cap)
+    except (WriteClauseError, CypherExecutionError):
+        pass
 
 
 def _execute(

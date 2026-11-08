@@ -29,14 +29,19 @@ from pydantic import BaseModel, ConfigDict
 from plantgraph.eval.graph_equality import graph_differences, to_original_ids, visible_view
 from plantgraph.qa.corpus import CorpusArtifacts, load_corpus_artifacts
 from plantgraph.qa.graph_view import NetworkxGraphView
-from plantgraph.qa.harness.api_fidelity import EdgeFidelity, TagEdge, compare_tag_edges
+from plantgraph.qa.harness.api_fidelity import (
+    EdgeFidelity,
+    TagEdge,
+    compare_tag_edges,
+    name_nodes,
+    repeated_tags,
+)
 from plantgraph.qa.plant_api.item_graph import ItemGraph, build_item_graph
 from plantgraph.qa.plant_api.model import RELATION_GROUPS, sheet_of_key
 from plantgraph.resolution.localize import OccurrenceMap
 from plantgraph.store.neo4j_settings import from_env
 from plantgraph.store.plant_readback import Neo4jSource, StoredPlantLayer, read_plant_layer
 
-_UNTAGGED = "<untagged>"
 _SAMPLE = 5
 _FOUR_RELATIONS = RELATION_GROUPS["any"]
 
@@ -86,8 +91,7 @@ class PlantLayerFidelity(BaseModel):
         return (
             self.n_items > 0
             and not self.a_differences
-            and self.b_edges.precision == 1.0
-            and self.b_edges.recall == 1.0
+            and self.b_edges.passed
             and self.c_sheets.share == 1.0
             and self.d_units.share == 1.0
             and not self.e_item_graph.differences
@@ -107,7 +111,9 @@ def check_plant_layer(
         n_items=layer.graph.number_of_nodes(),
         n_edges=layer.graph.number_of_edges(),
         a_differences=tuple(_differences_with_gold(layer, gold_plant, occurrence_map)),
-        b_edges=compare_tag_edges(_stored_tag_edges(layer), gold_plant),
+        b_edges=compare_tag_edges(
+            _stored_tag_edges(layer), gold_plant, repeated_tags(_stored_tags(layer))
+        ),
         c_sheets=_sheets_share(layer, occurrence_map),
         d_units=_units_share(layer, gold_plant, occurrence_map),
         e_item_graph=_compare_with_item_graph(layer, item_graph),
@@ -145,17 +151,18 @@ def _present(attrs: dict[str, object]) -> dict[str, object]:
 
 
 def _stored_tag_edges(layer: StoredPlantLayer) -> set[TagEdge]:
-    """The four API relations by tag; an untagged item (an actuator, a stub) reads `<untagged>`."""
-    return {
-        (_tag(layer, source), attrs["relation"], _tag(layer, target))
+    """The four API relations by tag; an untagged item is named by its neighbours (api_fidelity)."""
+    edges = [
+        (source, attrs["relation"], target)
         for source, target, attrs in layer.graph.edges(data=True)
         if attrs["relation"] in _FOUR_RELATIONS
-    }
+    ]
+    names = name_nodes(layer.graph.nodes, edges, lambda key: layer.graph.nodes[key].get("tag"))
+    return {(names[source], relation, names[target]) for source, relation, target in edges}
 
 
-def _tag(layer: StoredPlantLayer, home_key: str) -> str:
-    tag = layer.graph.nodes[home_key].get("tag")
-    return _UNTAGGED if tag is None else str(tag)
+def _stored_tags(layer: StoredPlantLayer) -> list[str | None]:
+    return [attrs.get("tag") for _, attrs in layer.graph.nodes(data=True)]
 
 
 # --- c, d: sheets and units per item ---------------------------------------------------------
@@ -288,6 +295,7 @@ def render_report(result: PlantLayerFidelity) -> str:
         f"(related_to edges stored: {e.n_related_to_edges})",
     ]
     lines += [f"  a: {d}" for d in result.a_differences[:_SAMPLE]]
+    lines += [f"  b split identity (several items, one tag): {t}" for t in b.split_tags]
     lines += [f"  b missing: {x}" for x in b.missing_sample] + [
         f"  b extra: {x}" for x in b.extra_sample
     ]

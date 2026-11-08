@@ -53,9 +53,9 @@ from plantgraph.qa.scoring import score_answer
 
 SPLITS_FILENAME = "splits.json"
 WORDING_SPLIT = "held-out-wording"
-#: `H100` (v1), `H100g2` (v2 at the preset duplication rate) and `H100g2d0` / `H100g2d50` (v2 with
-#: another duplication rate, in percent); see `ingest.headline_v2.headline_corpus_id_v2`.
-_TEST_CORPUS_ID = re.compile(r"H\d+(g2(d\d+)?)?")
+#: `H100` (v1), `H100g2` / `H100g2d0` (first-measurement v2, rate in percent after `d`) and the
+#: v2.1 forms `H100g21p3`, `H100g21p1d50`, `H30g21`; see `ingest.headline_v2.headline_corpus_id_v2`.
+_TEST_CORPUS_ID = re.compile(r"H\d+(g2(d\d+)?|g21(p\d+)?(d\d+)?)?")
 
 
 class SealedSet(BaseModel):
@@ -96,8 +96,8 @@ def require_test_corpus(corpus_id: str) -> None:
     """
     if not _TEST_CORPUS_ID.fullmatch(corpus_id):
         raise ValueError(
-            f"expected a test corpus id like 'H100' or 'H100g2' (held-out families are never "
-            f"generated on a dev corpus), found {corpus_id!r}"
+            f"expected a test corpus id like 'H100', 'H100g2' or 'H100g21p1' (held-out families "
+            f"are never generated on a dev corpus), found {corpus_id!r}"
         )
 
 

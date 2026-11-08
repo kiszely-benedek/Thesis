@@ -11,6 +11,7 @@ from plantgraph.qa.cascade.report_sealed_models import (
     GapRow,
     KBinRow,
     PairedRow,
+    RobustnessRow,
     ScaleRow,
     ScopeRow,
     SealedReport,
@@ -209,6 +210,18 @@ def _paired_lines(rows: Sequence[PairedRow]) -> list[str]:
     ]
 
 
+def _robustness_lines(rows: Sequence[RobustnessRow]) -> list[str]:
+    """Descriptive: plants whose own point estimate has the pooled sign (nothing is judged)."""
+    if not rows:
+        return []
+    body = [[r.claim, r.scope, r.policy, f"{r.n_same_sign} of {r.n_plants}"] for r in rows]
+    return [
+        "## Plant robustness (descriptive, not judged)",
+        "",
+        *table(["claim", "scope", "policy", "plants with the pooled sign"], body),
+    ]
+
+
 def _claim_lines(claims: Sequence[Verdict], corpus_id: str) -> list[str]:
     lines = ["## T4 Claims", "", f"Claims corpus: {corpus_id}.", ""]
     for verdict in claims:
@@ -224,5 +237,6 @@ def sealed_lines(report: SealedReport, bound: LatencyBound) -> list[str]:
     lines += _t2_lines(report.split_rows, report.gap_rows)
     lines += _t3_lines(report)
     lines += _paired_lines(report.paired_rows)
+    lines += _robustness_lines(report.robustness)
     lines += ["## Notes", "", *[f"- {note}" for note in report.notes], ""]
     return lines

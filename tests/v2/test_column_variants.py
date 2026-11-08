@@ -15,7 +15,6 @@ from test_column import column, letters, one
 from trim_harness import ids_with_role
 
 from plantgraph.benchmark.v2.config import SheetKnobs
-from plantgraph.benchmark.v2.patterns import column as column_module
 from plantgraph.benchmark.v2.patterns.column import build_distillation_column
 from plantgraph.benchmark.v2.sheets import assign_unit_sheets
 from plantgraph.graph.schema import Relation
@@ -205,35 +204,27 @@ def test_combined_layout_is_one_group_and_one_sheet() -> None:
     assert assign_unit_sheets(1, instance, SheetKnobs()).sheet_count == 1
 
 
-def _with_equipment_cap(monkeypatch: pytest.MonkeyPatch, cap: int) -> None:
-    """Make the column read a smaller equipment cap than the default 16."""
-    monkeypatch.setattr(
-        column_module, "SheetKnobs", lambda: SheetKnobs(max_equipment_per_sheet=cap)
-    )
-
-
 _TOO_BIG = {
     "patterns": {"p_column_combined": 1.0, "p_triple_pump_set": 1.0, "p_single_pump": 0.0},
     "trims": {"condensate_mode_weights": {"drain_pot": 1.0}},
 }
 
 
-def test_the_combined_fallback_counts_the_equipment_without_the_ejector_package(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
+def _capped(cap: int) -> dict[str, dict[str, object]]:
+    """The oversize column's knobs with the plant's own equipment cap per sheet set to `cap`."""
+    return {**_TOO_BIG, "sheets": {"max_equipment_per_sheet": cap}}
+
+
+def test_the_combined_fallback_counts_the_equipment_without_the_ejector_package() -> None:
     """18 items with the 5-item ejector package, 13 without: a cap of 14 still draws one sheet."""
-    _with_equipment_cap(monkeypatch, 14)
-    _, instance, _ = column({**_AIR, "U1.feed_preheater": ("present",)}, **_TOO_BIG)
+    _, instance, _ = column({**_AIR, "U1.feed_preheater": ("present",)}, **_capped(14))
     assert len(instance.plan.equipment) == 18
     assert "layout=combined" in instance.variant
 
 
-def test_a_combined_column_with_too_much_equipment_falls_back_to_two_sheets(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
+def test_a_combined_column_with_too_much_equipment_falls_back_to_two_sheets() -> None:
     """Below 13 items (the column without ejectors) the combined sheet falls back."""
-    _with_equipment_cap(monkeypatch, 12)
-    _, instance, _ = column({**_AIR, "U1.feed_preheater": ("present",)}, **_TOO_BIG)
+    _, instance, _ = column({**_AIR, "U1.feed_preheater": ("present",)}, **_capped(12))
     assert set(instance.drawing_group_of.values()) == {"G1", "G2", "G3"}
     assert "layout=two_sheets" in instance.variant
 

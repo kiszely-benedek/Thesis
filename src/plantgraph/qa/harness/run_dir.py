@@ -19,6 +19,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from plantgraph.infra.environment import RunEnvironment
+from plantgraph.llm.models import CallRecord
 from plantgraph.qa.harness.freeze import differing_fields
 from plantgraph.qa.harness.usage_meter import TimingRow
 from plantgraph.qa.models import CorpusRecord, Outcome, QuestionResult, RunConfig
@@ -122,3 +123,19 @@ class RunDir:
         """Append this invocation's environment; a resumed run gets one line per invocation."""
         with self.environment_path.open("ab") as handle:
             handle.write((environment.model_dump_json() + "\n").encode("utf-8"))
+
+    def spent_usd(self) -> float:
+        """Money earlier invocations really paid: the logged calls that missed the cache.
+
+        Read from `calls.jsonl`, not from the rows: a row's cost is what its calls cost when
+        first made, so a row answered from the cache would count money spent in another run.
+        Late answers of abandoned calls are in the log too, so they count.
+        """
+        if not self.calls_path.exists():
+            return 0.0
+        total = 0.0
+        for line in self.calls_path.read_text(encoding="utf-8").splitlines():
+            response = CallRecord.model_validate_json(line).response
+            if response is not None and not response.from_cache:
+                total += response.cost_usd or 0.0
+        return total

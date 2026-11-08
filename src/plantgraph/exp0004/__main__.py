@@ -22,6 +22,7 @@ from plantgraph.exp0004 import commands, d4_cli
 from plantgraph.exp0004.bootstrap import N_RESAMPLES
 from plantgraph.exp0004.corpus import ALL_FAMILIES, DEV_SEED, CorpusSpec, corpus_id_for
 from plantgraph.exp0004.deciders import DECIDER_IDS
+from plantgraph.ingest.seed_plan import load_seed_plan
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -46,7 +47,7 @@ def main(argv: list[str] | None = None) -> None:
 
 def _spec(args: argparse.Namespace) -> CorpusSpec:
     corpus_id = args.corpus_id or corpus_id_for(
-        args.target_sheets, args.seed, args.duplication_rate, args.families
+        args.target_sheets, args.seed, args.duplication_rate, args.families, load_seed_plan()
     )
     return CorpusSpec(
         corpus_id=corpus_id,
