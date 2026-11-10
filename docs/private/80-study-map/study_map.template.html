@@ -1,0 +1,497 @@
+<title>Plantgraph tanulási térkép</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: a process line down the left (stations as ISA instrument bubbles), the open station on the right. */
+:root {
+  --bg: #f3f5f2;
+  --surface: #ffffff;
+  --ink: #18222c;
+  --muted: #5a6670;
+  --rule: #d3d9d2;
+  --accent: #0d6b66;
+  --accent-soft: #e0efec;
+  --done: #2e7a3c;
+  --done-soft: #e3f1e5;
+  --warn: #9a5b00;
+  --warn-soft: #fbefd9;
+  --old: #7a7f86;
+  --code-bg: #eef1ed;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-head: "IBM Plex Sans Condensed", "Arial Narrow", "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", Consolas, "Courier New", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11171c; --surface: #182027; --ink: #e2e7eb; --muted: #97a3ad; --rule: #2b353e;
+    --accent: #52b8af; --accent-soft: #163330; --done: #6cc47b; --done-soft: #17301c;
+    --warn: #e3a64a; --warn-soft: #33270f; --old: #8b9198; --code-bg: #1e272f; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11171c; --surface: #182027; --ink: #e2e7eb; --muted: #97a3ad; --rule: #2b353e;
+  --accent: #52b8af; --accent-soft: #163330; --done: #6cc47b; --done-soft: #17301c;
+  --warn: #e3a64a; --warn-soft: #33270f; --old: #8b9198; --code-bg: #1e272f; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 48px;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+a { color: var(--accent); text-underline-offset: 2px; }
+a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+code, .mono { font-family: var(--font-mono); font-size: 0.86em; }
+code { background: var(--code-bg); padding: 0 4px; border-radius: 3px; overflow-wrap: anywhere; }
+h1, h2, h3 { font-family: var(--font-head); text-wrap: balance; line-height: 1.2; margin: 0; }
+
+.top {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg);
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; padding-block: 12px; border-bottom: 1px solid var(--rule);
+  max-width: 1280px; margin: 0 auto;
+}
+.brand { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
+.brand h1 { font-size: 20px; font-weight: 700; letter-spacing: 0.01em; }
+.brand .commit { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.meter { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.meter .bar { width: 120px; height: 6px; background: var(--rule); border-radius: 3px; overflow: hidden; }
+.meter .bar i { display: block; height: 100%; background: var(--done); width: 0; }
+.tools { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-left: auto; }
+.tools input[type="search"] {
+  font: inherit; font-size: 14px; padding: 6px 10px; border: 1px solid var(--rule); border-radius: 6px;
+  background: var(--surface); color: var(--ink); width: 220px; max-width: 100%;
+}
+.toggle { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); cursor: pointer; }
+.saved { font-size: 12px; color: var(--muted); }
+
+.app { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 28px; max-width: 1280px; margin: 0 auto; padding-top: 20px; }
+.rail { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 70px); align-self: start; max-height: calc(100vh - 90px); overflow-y: auto; padding-right: 4px; }
+.rail details > summary { display: none; }
+.line { list-style: none; margin: 0; padding: 0; position: relative; }
+.line::before { content: ""; position: absolute; left: 21px; top: 22px; bottom: 22px; border-left: 2px solid var(--ink); opacity: 0.55; }
+.line li { position: relative; }
+.stop {
+  display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 10px; align-items: center; width: 100%;
+  padding: 6px 6px 6px 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; border-radius: 6px;
+}
+.stop:hover .st-title { color: var(--accent); }
+.stop[aria-current="true"] { background: var(--accent-soft); }
+.bubble { width: 44px; height: 44px; position: relative; flex: none; }
+.bubble svg { display: block; }
+.st-title { font-family: var(--font-head); font-weight: 600; font-size: 15px; line-height: 1.25; }
+.st-meta { font-size: 12px; color: var(--muted); display: flex; gap: 8px; align-items: center; font-variant-numeric: tabular-nums; }
+.mini { width: 54px; height: 4px; background: var(--rule); border-radius: 2px; overflow: hidden; }
+.mini i { display: block; height: 100%; background: var(--done); }
+
+main { min-width: 0; }
+.panel { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 26px 28px; }
+.st-head { display: flex; gap: 18px; align-items: flex-start; flex-wrap: wrap; }
+.st-head .bubble { width: 64px; height: 64px; }
+.st-head h2 { font-size: 30px; font-weight: 700; }
+.st-head .sub { color: var(--muted); font-size: 13px; margin-top: 6px; display: flex; flex-wrap: wrap; gap: 6px 14px; }
+.st-head .grow { flex: 1 1 260px; min-width: 0; }
+.seen {
+  font: inherit; font-size: 14px; font-weight: 600; border: 1.5px solid var(--done); color: var(--done); background: none;
+  border-radius: 20px; padding: 6px 14px; cursor: pointer; white-space: nowrap;
+}
+.seen[aria-pressed="true"] { background: var(--done); color: var(--surface); }
+.summary { font-size: 16px; max-width: 70ch; margin: 18px 0 6px; }
+.extra { margin-top: 16px; padding: 14px 16px; background: var(--accent-soft); border-radius: 6px; max-width: 75ch; }
+.extra h3 { font-size: 14px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); margin-bottom: 6px; }
+
+.part { border-top: 1px solid var(--rule); margin-top: 22px; padding-top: 4px; }
+.part > summary {
+  list-style: none; cursor: pointer; display: flex; align-items: baseline; gap: 12px; padding: 12px 0; flex-wrap: wrap;
+}
+.part > summary::-webkit-details-marker { display: none; }
+.part > summary::before { content: "▸"; color: var(--muted); width: 10px; transition: transform 0.15s; }
+.part[open] > summary::before { transform: rotate(90deg); }
+.part-name { font-family: var(--font-head); font-size: 19px; font-weight: 600; }
+.part-hint { color: var(--muted); font-size: 13px; }
+.part-count { margin-left: auto; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; font-family: var(--font-mono); }
+.items { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.item { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 8px; padding: 12px 14px 12px 10px; border: 1px solid var(--rule); border-radius: 6px; }
+.item.done { background: var(--done-soft); border-color: transparent; }
+.item.flash { outline: 2px solid var(--accent); }
+.item input[type="checkbox"] { width: 17px; height: 17px; margin: 3px 0 0; accent-color: var(--done); cursor: pointer; }
+.only-open .item.done { display: none; }
+.i-head { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; font-weight: 600; }
+.i-head .mono { font-weight: 500; overflow-wrap: anywhere; }
+.i-body { margin-top: 4px; max-width: 78ch; }
+.i-body p { margin: 4px 0 0; }
+.i-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); font-weight: 600; }
+.chain { font-family: var(--font-mono); font-size: 12.5px; color: var(--muted); margin-top: 4px; overflow-wrap: anywhere; }
+.num { font-family: var(--font-mono); font-weight: 500; background: var(--code-bg); padding: 1px 6px; border-radius: 3px; font-variant-numeric: tabular-nums; }
+.src { font-size: 12.5px; color: var(--muted); margin-top: 4px; overflow-wrap: anywhere; }
+.pill { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 1px 8px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); }
+.pill.superseded, .pill.retired { background: var(--code-bg); color: var(--old); }
+.pill.amended, .pill.proposed { background: var(--warn-soft); color: var(--warn); }
+.alts { margin: 4px 0 0; padding-left: 18px; color: var(--muted); }
+details.reveal > summary, details.code > summary { cursor: pointer; color: var(--accent); font-size: 13px; font-weight: 600; margin-top: 6px; }
+details.reveal p { margin: 6px 0 0; }
+pre { background: var(--code-bg); padding: 10px 12px; border-radius: 6px; overflow-x: auto; font-family: var(--font-mono); font-size: 12.5px; line-height: 1.45; margin: 6px 0 0; }
+.tablewrap { overflow-x: auto; margin-top: 8px; }
+table { border-collapse: collapse; font-size: 13.5px; min-width: 640px; }
+th, td { text-align: left; vertical-align: top; padding: 7px 10px; border-bottom: 1px solid var(--rule); }
+th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+td.when { white-space: nowrap; font-family: var(--font-mono); font-size: 12px; }
+.pager { display: flex; justify-content: space-between; gap: 12px; margin-top: 28px; flex-wrap: wrap; }
+.pager button { font: inherit; border: 1px solid var(--rule); background: var(--surface); color: var(--ink); border-radius: 6px; padding: 8px 14px; cursor: pointer; }
+.pager button:hover { border-color: var(--accent); }
+
+/* Start here */
+.start h2 { font-size: 32px; font-weight: 700; }
+.start .lead { font-size: 17px; max-width: 68ch; margin: 10px 0 0; }
+.start section { margin-top: 30px; }
+.start h3 { font-size: 21px; font-weight: 600; margin-bottom: 8px; }
+.start p { max-width: 70ch; margin: 8px 0; }
+.figure { overflow-x: auto; margin: 12px 0 4px; border: 1px solid var(--rule); border-radius: 6px; background: var(--surface); }
+.figure svg { display: block; min-width: 640px; width: 100%; height: auto; }
+.cap { font-size: 13px; color: var(--muted); }
+.pipe { display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch; margin-top: 12px; }
+.pipe .step {
+  flex: 1 1 140px; min-width: 0; border: 1.5px solid var(--ink); border-radius: 6px; padding: 10px 12px; background: var(--surface);
+  text-align: left; font: inherit; color: inherit; cursor: pointer;
+}
+.pipe .step:hover { border-color: var(--accent); }
+.pipe .step b { display: block; font-family: var(--font-head); font-size: 15px; }
+.pipe .step span { font-size: 12.5px; color: var(--muted); }
+.pipe .step em { font-style: normal; font-family: var(--font-mono); font-size: 11px; color: var(--accent); display: block; margin-top: 4px; }
+.pipe .arrow { align-self: center; color: var(--muted); font-size: 18px; }
+.claim { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; font-size: 16px; max-width: 70ch; margin: 14px 0; }
+.howto { padding-left: 20px; max-width: 72ch; }
+.howto li { margin: 6px 0; }
+.parts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; margin-top: 10px; }
+.parts-grid div { border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px; font-size: 13.5px; }
+.parts-grid b { font-family: var(--font-head); display: block; font-size: 15px; }
+.results h3 { margin-bottom: 4px; }
+.hit { display: block; text-align: left; width: 100%; font: inherit; color: inherit; background: none; border: 0; border-bottom: 1px solid var(--rule); padding: 10px 2px; cursor: pointer; }
+.hit:hover b { color: var(--accent); }
+.hit small { color: var(--muted); display: block; }
+
+@media (max-width: 900px) {
+  .app { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .rail { position: static; max-height: none; overflow: visible; }
+  .rail details > summary { display: block; cursor: pointer; font-family: var(--font-head); font-weight: 600; padding: 8px 0; }
+  .panel { padding: 18px 16px; }
+  .st-head h2 { font-size: 24px; }
+  .tools { margin-left: 0; }
+  .tools input[type="search"] { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+</style>
+
+<header class="top">
+  <div class="brand"><h1>Plantgraph tanulási térkép</h1><span class="commit" id="commit"></span></div>
+  <div class="meter" title="Kipipált tételek az egész térképen"><span class="bar"><i id="meter-bar"></i></span><span id="meter-text"></span></div>
+  <div class="tools">
+    <input type="search" id="search" placeholder="Keresés: tau, D4, Cypher…" aria-label="Keresés a térképen">
+    <label class="toggle"><input type="checkbox" id="only-open"> Csak a hátralévők</label>
+    <span class="saved" id="saved"></span>
+  </div>
+</header>
+
+<div class="app">
+  <nav class="rail" aria-label="Állomások">
+    <details id="rail-details" open><summary>Állomások</summary><ul class="line" id="rail"></ul></details>
+  </nav>
+  <main id="view" class="panel" tabindex="-1"></main>
+</div>
+
+<script type="application/json" id="map-data">__MAP_DATA__</script>
+<script>
+(function () {
+  "use strict";
+  const MAP = JSON.parse(document.getElementById("map-data").textContent);
+  const STATIONS = MAP.stations;
+  const PARTS = [
+    ["why", "Miért", "a döntések (ADR-ek) és az alternatíváik"],
+    ["what", "Mit", "a tervezési jegyzetek lényege"],
+    ["how", "Hogyan", "a kód olvasási sorrendben, mi mit hív"],
+    ["proof", "Bizonyíték", "a mért számok, forrással"],
+    ["learn", "Tanulás", "a magyar tanítójegyzetek"],
+    ["fixed", "Javítva", "amit a kódátnézés talált, és mit változtatott"],
+    ["check", "Ellenőrző kérdések", "amit egy bíráló kérdezhet; a választ előbb mondd ki magadban"]
+  ];
+  const IDENTITY = {
+    why: (x) => x.adr, what: (x) => x.design, how: (x) => x.file + "#" + (x.entry || ""),
+    proof: (x) => x.claim + "|" + (x.source || ""), learn: (x) => x.note, fixed: (x) => x.finding, check: (x) => x.q
+  };
+  const LS_KEY = "plantgraph-studymap-ticks-v1";
+  const $ = (id) => document.getElementById(id);
+
+  // ---------- ticks: db when the viewer grants it, browser storage as fallback ----------
+  let ticks = {};
+  try { ticks = JSON.parse(localStorage.getItem(LS_KEY) || "{}") || {}; } catch (e) { ticks = {}; }
+  let ref = null, writing = false, again = false, timer = null, dirty = false;
+
+  function saveLocal() { try { localStorage.setItem(LS_KEY, JSON.stringify(ticks)); } catch (e) { /* storage blocked */ } }
+  function setSaved(text) { $("saved").textContent = text; }
+  async function flush() {
+    if (!ref) return;
+    if (writing) { again = true; return; }
+    writing = true;
+    try { await ref.set({ ticks: ticks, updated: new Date().toISOString() }); dirty = false; setSaved("Mentve"); }
+    catch (e) { setSaved("Mentés sikertelen, a pipák ebben a böngészőben megmaradnak"); }
+    writing = false;
+    if (again) { again = false; flush(); }
+  }
+  function changed() {
+    saveLocal(); dirty = true;
+    if (!ref) return;
+    setSaved("Mentés…");
+    clearTimeout(timer); timer = setTimeout(flush, 700);
+  }
+  async function connect() {
+    const db = window.claude && window.claude.use ? await window.claude.use("db").catch(() => null) : null;
+    if (!db) { setSaved("A pipák ebben a böngészőben maradnak"); return; }
+    ref = db.doc("progress/ticks");
+    let first = true;
+    const slow = setTimeout(() => setSaved("A mentett pipák még nem érhetők el"), 10000);
+    ref.onSnapshot((snap) => {
+      if (!snap.metadata.fromCache) clearTimeout(slow);
+      if (dirty || snap.metadata.hasPendingWrites) return;
+      const remote = snap.exists ? (snap.data().ticks || {}) : {};
+      ticks = first ? Object.assign({}, ticks, remote) : Object.assign({}, remote);
+      first = false;
+      saveLocal(); setSaved("Szinkronban"); refresh();
+    }, () => { clearTimeout(slow); ref = null; setSaved("A pipák ebben a böngészőben maradnak"); });
+  }
+
+  // ---------- helpers ----------
+  function hash(s) { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0; return h.toString(36); }
+  function itemKey(sid, part, x) { return sid + "|" + part + "|" + hash(String(IDENTITY[part](x))); }
+  function stationKey(sid) { return sid + "|station"; }
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+  function inline(s) { return esc(s).replace(/`([^`]+)`/g, "<code>$1</code>"); }
+  function fold(s) { return String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, ""); }
+  const PATH_RE = /^[A-Za-z0-9_.\-\/]+$/;
+  function repoLink(path, label) {
+    const p = String(path || "").trim();
+    if (!p) return "";
+    const clean = p.split(" ")[0];
+    if (!PATH_RE.test(clean) || !clean.includes("/")) return '<span class="mono">' + esc(p) + "</span>";
+    const kind = clean.endsWith("/") ? "tree" : "blob";
+    const url = MAP.repo + "/" + kind + "/" + MAP.commit + "/" + clean.replace(/\/$/, "");
+    const rest = p.slice(clean.length);
+    return '<a class="mono" href="' + esc(url) + '" target="_blank" rel="noopener">' + esc(label || clean) + "</a>" + (rest ? '<span class="mono">' + esc(rest) + "</span>" : "");
+  }
+  function adrLink(id) { const f = (MAP.adr_files || {})[id]; return f ? repoLink(f, id) : '<span class="mono">' + esc(id) + "</span>"; }
+  function commitLink(c) { if (!c) return ""; const h = String(c).split(/[\s,]/)[0]; return /^[0-9a-f]{7,40}$/.test(h) ? '<a class="mono" target="_blank" rel="noopener" href="' + esc(MAP.repo + "/commit/" + h) + '">' + esc(c) + "</a>" : '<span class="mono">' + esc(c) + "</span>"; }
+
+  function bubble(id, size, done, current) {
+    const s = size || 44, r = s / 2 - 2;
+    const top = id === "A" ? "KÍV" : id === "S" ? "IND" : "ÁLL";
+    const bottom = id === "S" ? "0" + "" : id;
+    const fill = done ? "var(--done-soft)" : "var(--surface)";
+    const stroke = done ? "var(--done)" : current ? "var(--accent)" : "var(--ink)";
+    return '<svg width="' + s + '" height="' + s + '" viewBox="0 0 ' + s + " " + s + '" aria-hidden="true">' +
+      '<circle cx="' + s / 2 + '" cy="' + s / 2 + '" r="' + r + '" fill="' + fill + '" stroke="' + stroke + '" stroke-width="1.6"/>' +
+      '<line x1="' + 2 + '" y1="' + s / 2 + '" x2="' + (s - 2) + '" y2="' + s / 2 + '" stroke="' + stroke + '" stroke-width="1.2"/>' +
+      '<text x="' + s / 2 + '" y="' + (s / 2 - s * 0.09) + '" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="' + (s * 0.2) + '" fill="var(--muted)">' + top + "</text>" +
+      '<text x="' + s / 2 + '" y="' + (s / 2 + s * 0.29) + '" text-anchor="middle" font-family="IBM Plex Sans Condensed, sans-serif" font-weight="700" font-size="' + (s * 0.3) + '" fill="var(--ink)">' + esc(id === "S" ? "▶" : bottom) + "</text></svg>";
+  }
+
+  function stationItems(st) {
+    const out = [];
+    PARTS.forEach(([p]) => (st[p] || []).forEach((x) => out.push(itemKey(st.id, p, x))));
+    return out;
+  }
+  function progress(st) { const keys = stationItems(st); return [keys.filter((k) => ticks[k]).length, keys.length]; }
+
+  // ---------- rail ----------
+  function renderRail(current) {
+    const rows = ['<li><button class="stop" data-go="start" aria-current="' + (current === "start") + '"><span class="bubble">' + bubble("S", 44, false, current === "start") + '</span><span><span class="st-title">Kezdd itt</span><span class="st-meta">mi a P&amp;ID, mit csinál a projekt</span></span></button></li>'];
+    STATIONS.forEach((st) => {
+      const [d, n] = progress(st);
+      const seen = !!ticks[stationKey(st.id)];
+      const pct = n ? Math.round((100 * d) / n) : 0;
+      rows.push('<li><button class="stop" data-go="st-' + esc(st.id) + '" aria-current="' + (current === "st-" + st.id) + '">' +
+        '<span class="bubble">' + bubble(st.id, 44, seen, current === "st-" + st.id) + "</span>" +
+        '<span><span class="st-title">' + esc(st.title) + '</span><span class="st-meta"><span>' + esc(st.minutes || "?") + ' perc</span><span class="mini"><i style="width:' + pct + '%"></i></span><span>' + d + "/" + n + "</span></span></span></button></li>");
+    });
+    $("rail").innerHTML = rows.join("");
+    let all = 0, done = 0;
+    STATIONS.forEach((st) => { const [d, n] = progress(st); all += n; done += d; });
+    $("meter-bar").style.width = (all ? (100 * done) / all : 0) + "%";
+    $("meter-text").textContent = done + " / " + all + " tétel";
+  }
+
+  // ---------- item renderers ----------
+  const R = {
+    why: (x) => '<div class="i-head">' + adrLink(x.adr) + "<span>" + inline(x.title) + "</span>" + (x.status ? '<span class="pill ' + esc(fold(x.status).split(/[^a-z]/)[0]) + '">' + esc(x.status) + "</span>" : "") + "</div>" +
+      '<div class="i-body"><p>' + inline(x.decision) + "</p>" + ((x.alternatives || []).length ? '<div class="i-label" style="margin-top:6px">Elvetett alternatívák</div><ul class="alts">' + x.alternatives.map((a) => "<li>" + inline(a) + "</li>").join("") + "</ul>" : "") + "</div>",
+    what: (x) => '<div class="i-head">' + repoLink(x.design) + '</div><div class="i-body"><p>' + inline(x.gist) + "</p></div>",
+    how: (x) => '<div class="i-head">' + repoLink(x.file) + (x.entry ? '<span class="mono">' + esc(x.entry) + "</span>" : "") + "</div>" +
+      '<div class="i-body"><p>' + inline(x.role) + "</p>" + (x.calls || []).map((c) => '<div class="chain">' + esc(c) + "</div>").join("") +
+      (x.excerpt ? '<details class="code"><summary>Kódrészlet</summary><pre>' + esc(x.excerpt) + "</pre></details>" : "") + "</div>",
+    proof: (x) => '<div class="i-head"><span>' + inline(x.claim) + '</span></div><div class="i-body"><p><span class="num">' + esc(x.number) + '</span></p><div class="src">Forrás: ' + repoLink(x.source) + "</div></div>",
+    learn: (x) => '<div class="i-head">' + repoLink(x.note) + '</div><div class="i-body"><p>' + inline(x.topic) + "</p></div>",
+    fixed: (x) => '<div class="i-head"><span>' + inline(x.finding) + "</span>" + (x.commit ? commitLink(x.commit) : "") + "</div>" +
+      '<div class="i-body"><p><span class="i-label">Javítás</span> ' + inline(x.fix) + "</p>" + (x.effect ? '<p><span class="i-label">Hatás</span> ' + inline(x.effect) + "</p>" : "") + "</div>",
+    check: (x) => '<div class="i-head"><span>' + inline(x.q) + '</span></div><div class="i-body"><details class="reveal"><summary>Válasz</summary><p>' + inline(x.a) + "</p></details></div>"
+  };
+
+  function renderExtras(st) {
+    let html = "";
+    if (st.headline) html += '<div class="extra"><h3>Főeredmény</h3><p>' + inline(st.headline) + "</p></div>";
+    if ((st.timeline || []).length) {
+      html += '<details class="part" open><summary><span class="part-name">Idővonal</span><span class="part-hint">a mérések időrendben</span></summary><div class="tablewrap"><table><thead><tr><th>Mérés</th><th>Mikor</th><th>Kérdés</th><th>Eredmény</th><th>Állapot</th></tr></thead><tbody>' +
+        st.timeline.map((t) => "<tr><td><b>" + esc(t.exp) + '</b></td><td class="when">' + esc(t.date) + "</td><td>" + inline(t.question) + "</td><td>" + inline(t.result) + "</td><td>" + inline(t.status) + "</td></tr>").join("") +
+        "</tbody></table></div></details>";
+    }
+    return html;
+  }
+
+  function renderStation(st) {
+    const idx = STATIONS.indexOf(st);
+    const seen = !!ticks[stationKey(st.id)];
+    const pre = (st.prerequisites || []).map((p) => '<a href="#st-' + esc(p) + '">' + esc(p) + "</a>").join(", ");
+    let html = '<div class="st-head"><span class="bubble">' + bubble(st.id, 64, seen, true) + '</span><div class="grow"><h2>' + esc(st.title) + '</h2><div class="sub"><span>~' + esc(st.minutes || "?") + " perc</span>" + (pre ? "<span>Előtte: " + pre + "</span>" : "") + '<span id="st-progress"></span></div></div>' +
+      '<button class="seen" id="seen" aria-pressed="' + seen + '">' + (seen ? "✓ Megnéztem" : "Megnéztem") + "</button></div>";
+    html += '<p class="summary">' + inline(st.summary) + "</p>" + renderExtras(st);
+    PARTS.forEach(([p, name, hint]) => {
+      const list = st[p] || [];
+      if (!list.length) return;
+      const keys = list.map((x) => itemKey(st.id, p, x));
+      const d = keys.filter((k) => ticks[k]).length;
+      html += '<details class="part" data-part="' + p + '"' + (p === "check" ? "" : " open") + '><summary><span class="part-name">' + name + '</span><span class="part-hint">' + hint + '</span><span class="part-count">' + d + "/" + list.length + '</span></summary><ul class="items">' +
+        list.map((x, i) => '<li class="item' + (ticks[keys[i]] ? " done" : "") + '" id="it-' + esc(keys[i].replace(/\|/g, "-")) + '"><input type="checkbox" data-key="' + esc(keys[i]) + '"' + (ticks[keys[i]] ? " checked" : "") + ' aria-label="Megnéztem"><div>' + R[p](x) + "</div></li>").join("") +
+        "</ul></details>";
+    });
+    const prev = STATIONS[idx - 1], next = STATIONS[idx + 1];
+    html += '<div class="pager">' + (prev ? '<button data-go="st-' + esc(prev.id) + '">← ' + esc(prev.id + " " + prev.title) + "</button>" : '<button data-go="start">← Kezdd itt</button>') +
+      (next ? '<button data-go="st-' + esc(next.id) + '">' + esc(next.id + " " + next.title) + " →</button>" : "<span></span>") + "</div>";
+    $("view").innerHTML = html;
+    const [d, n] = progress(st);
+    $("st-progress").textContent = d + "/" + n + " tétel kipipálva";
+  }
+
+  // ---------- start here ----------
+  const PID_SVG = `
+<svg viewBox="0 0 680 290" role="img" aria-label="Egy kis P&amp;ID részlet: tartály, szivattyú, kézi szelep, áramlásmérő távadó, szabályozó, szabályozószelep, lapközi csatlakozó">
+  <style>
+    .k{stroke:var(--ink);stroke-width:2;fill:none}
+    .kf{stroke:var(--ink);stroke-width:2;fill:var(--surface)}
+    .sig{stroke:var(--ink);stroke-width:1.3;fill:none;stroke-dasharray:6 4}
+    .t{fill:var(--ink);font-family:'IBM Plex Mono',monospace;font-size:12px}
+    .tb{fill:var(--ink);font-family:'IBM Plex Sans Condensed',sans-serif;font-size:13px;font-weight:600}
+    .lab{fill:var(--accent);font-family:'IBM Plex Sans',sans-serif;font-size:12px}
+    .lead{stroke:var(--accent);stroke-width:1;fill:none}
+  </style>
+  <rect x="40" y="60" width="70" height="150" rx="30" class="kf"/>
+  <text x="75" y="140" text-anchor="middle" class="tb">T-101</text>
+  <path d="M110 195 H170" class="k"/>
+  <circle cx="190" cy="195" r="20" class="kf"/><path d="M178 183 L206 195 L178 207 Z" class="k"/>
+  <text x="190" y="236" text-anchor="middle" class="tb">P-101</text>
+  <path d="M210 195 H262" class="k"/>
+  <path d="M262 183 L262 207 L290 183 L290 207 Z" class="kf"/>
+  <text x="276" y="226" text-anchor="middle" class="t">HV-102</text>
+  <path d="M290 195 H448" class="k"/>
+  <text x="300" y="185" class="t">2"-P-1001-A1</text>
+  <circle cx="370" cy="195" r="3" fill="var(--ink)"/>
+  <path d="M370 192 V146" class="sig"/>
+  <circle cx="370" cy="126" r="20" class="kf"/>
+  <text x="370" y="130" text-anchor="middle" class="t">FT</text><text x="370" y="160" text-anchor="middle" class="t" dy="-38">101</text>
+  <circle cx="440" cy="60" r="20" class="kf"/><path d="M420 60 H460" class="k"/>
+  <text x="440" y="55" text-anchor="middle" class="t">FIC</text><text x="440" y="74" text-anchor="middle" class="t">101</text>
+  <path d="M386 114 L424 72" class="sig"/>
+  <path d="M460 60 H476 V160" class="sig"/>
+  <path d="M448 183 L448 207 L476 183 L476 207 Z" class="kf"/>
+  <path d="M462 195 V172" class="k"/><path d="M448 172 A14 14 0 0 1 476 172 Z" class="kf"/>
+  <text x="462" y="228" text-anchor="middle" class="t">FV-101</text>
+  <path d="M476 195 H560" class="k"/>
+  <path d="M560 181 H600 L616 195 L600 209 H560 Z" class="kf"/>
+  <text x="586" y="199" text-anchor="middle" class="t">2. lap</text>
+  <path d="M75 60 V40 H40" class="lead"/><text x="8" y="34" class="lab">berendezés</text>
+  <path d="M330 178 V160 H300" class="lead"/><text x="214" y="160" class="lab">vonalszám</text>
+  <path d="M276 228 V262" class="lead"/><text x="240" y="276" class="lab">kézi szelep</text>
+  <path d="M352 120 H300 V100" class="lead"/><text x="240" y="94" class="lab">távadó (műszer)</text>
+  <path d="M462 40 V22 H500" class="lead"/><text x="504" y="26" class="lab">szabályozó: a kör (loop) feje</text>
+  <path d="M462 236 V262 H500" class="lead"/><text x="504" y="266" class="lab">szabályozószelep</text>
+  <path d="M600 209 V236" class="lead"/><text x="560" y="252" class="lab">lapközi csatlakozó</text>
+  <text x="404" y="120" class="lab">jelvezeték</text>
+</svg>`;
+
+  function renderStart() {
+    const s = MAP.start || {};
+    const steps = (s.pipeline || []).map((p, i, a) => '<button class="step" data-go="st-' + esc(p.station) + '"><b>' + esc(p.name) + "</b><span>" + inline(p.text) + "</span><em>→ " + esc(p.station_label || "állomás " + p.station) + "</em></button>" + (i < a.length - 1 ? '<span class="arrow" aria-hidden="true">→</span>' : "")).join("");
+    const parts = PARTS.map(([, name, hint]) => "<div><b>" + name + "</b>" + esc(hint) + "</div>").join("");
+    $("view").innerHTML = '<div class="start"><h2>Kezdd itt</h2><p class="lead">' + inline(s.lead) + "</p>" +
+      "<section><h3>Mi az a P&amp;ID?</h3>" + (s.pid || []).map((p) => "<p>" + inline(p) + "</p>").join("") +
+      '<div class="figure">' + PID_SVG + '</div><p class="cap">' + inline(s.pid_caption) + "</p></section>" +
+      "<section><h3>Mit csinál a projekt?</h3>" + (s.project || []).map((p) => "<p>" + inline(p) + "</p>").join("") +
+      '<div class="pipe">' + steps + "</div>" +
+      '<div class="claim"><b>Az állítás.</b> ' + inline(s.claim) + "</div>" +
+      (s.headline ? '<div class="extra"><h3>Ahol most tartunk</h3><p>' + inline(s.headline) + "</p></div>" : "") + "</section>" +
+      "<section><h3>Hogyan olvasd a térképet?</h3><ul class=\"howto\">" + (s.howto || []).map((p) => "<li>" + inline(p) + "</li>").join("") + "</ul>" +
+      '<div class="parts-grid">' + parts + "</div></section>" +
+      '<div class="pager"><span></span><button data-go="st-' + esc(STATIONS[0].id) + '">' + esc(STATIONS[0].id + " " + STATIONS[0].title) + " →</button></div></div>";
+  }
+
+  // ---------- search ----------
+  function itemText(part, x) { return Object.values(x).filter((v) => typeof v === "string" || Array.isArray(v)).flat().join(" "); }
+  function renderSearch(q) {
+    const f = fold(q), hits = [];
+    STATIONS.forEach((st) => PARTS.forEach(([p, name]) => (st[p] || []).forEach((x) => {
+      if (fold(itemText(p, x)).includes(f)) hits.push({ st, p, name, x, key: itemKey(st.id, p, x) });
+    })));
+    const label = (h) => h.x.adr || h.x.design || h.x.file || h.x.note || h.x.claim || h.x.finding || h.x.q || "";
+    $("view").innerHTML = '<div class="results"><h3>Találatok: ' + hits.length + "</h3>" + (hits.length ? "" : "<p>Nincs találat. Próbálj rövidebb szót.</p>") +
+      hits.slice(0, 200).map((h) => '<button class="hit" data-go="st-' + esc(h.st.id) + '" data-item="' + esc(h.key) + '"><b>' + inline(label(h)) + "</b><small>" + esc(h.st.id + " " + h.st.title + " · " + h.name) + "</small></button>").join("") + "</div>";
+  }
+
+  // ---------- routing ----------
+  function current() { const h = location.hash.replace("#", ""); return h && (h === "start" || STATIONS.some((s) => "st-" + s.id === h)) ? h : "start"; }
+  function refresh() {
+    const c = current();
+    renderRail(c);
+    const q = $("search").value.trim();
+    if (q.length >= 2) { renderSearch(q); return; }
+    if (c === "start") renderStart(); else renderStation(STATIONS.find((s) => "st-" + s.id === c));
+  }
+  function go(target, item) {
+    $("search").value = "";
+    if (location.hash !== "#" + target) location.hash = target; else refresh();
+    window.scrollTo(0, 0);
+    if (item) setTimeout(() => {
+      const el = document.getElementById("it-" + item.replace(/\|/g, "-"));
+      if (!el) return;
+      const part = el.closest("details"); if (part) part.open = true;
+      el.scrollIntoView({ block: "center" }); el.classList.add("flash"); setTimeout(() => el.classList.remove("flash"), 1600);
+    }, 30);
+    if (window.matchMedia("(max-width: 900px)").matches) $("rail-details").open = false;
+  }
+
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-go]");
+    if (b) { e.preventDefault(); go(b.getAttribute("data-go"), b.getAttribute("data-item")); return; }
+    if (e.target.id === "seen") {
+      const c = current().replace("st-", ""), k = stationKey(c);
+      if (ticks[k]) delete ticks[k]; else ticks[k] = 1;
+      changed(); refresh();
+    }
+  });
+  document.addEventListener("change", (e) => {
+    const k = e.target.getAttribute && e.target.getAttribute("data-key");
+    if (!k) return;
+    if (e.target.checked) ticks[k] = 1; else delete ticks[k];
+    e.target.closest(".item").classList.toggle("done", e.target.checked);
+    changed(); renderRail(current());
+    const st = STATIONS.find((s) => "st-" + s.id === current());
+    if (st) { const [d, n] = progress(st); $("st-progress").textContent = d + "/" + n + " tétel kipipálva"; }
+  });
+  $("only-open").addEventListener("change", (e) => document.body.classList.toggle("only-open", e.target.checked));
+  let qt = null;
+  $("search").addEventListener("input", () => { clearTimeout(qt); qt = setTimeout(refresh, 150); });
+  window.addEventListener("hashchange", refresh);
+  if (window.matchMedia("(max-width: 900px)").matches) $("rail-details").open = false;
+
+  $("commit").textContent = "@" + String(MAP.commit || "").slice(0, 7);
+  refresh();
+  connect();
+})();
+</script>
