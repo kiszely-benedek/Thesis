@@ -15,7 +15,8 @@ from pathlib import Path
 
 #: part A states which code commit it was written against, on a line like this
 NAMED_HEAD_PATTERN = re.compile(r"^Frozen code commit:\s*`?([0-9a-f]{40})`?\s*$", re.MULTILINE)
-#: a commit made after the named one may add only the pre-registration (part A + the drawn seeds)
+#: a commit made after the named one may add the pre-registration (part A + the drawn seeds);
+#: callers pass only the changes under the hashed paths, so notes and the study map never count
 PREREG_PREFIX = "data/runs/exp0008/prereg/"
 
 
@@ -54,8 +55,10 @@ def check_clean(porcelain: str) -> None:
 def check_head(head: str, named: str, changed_between: Sequence[str]) -> None:
     """Refuse a HEAD that is not the commit part A names.
 
-    HEAD is the named commit itself, or a later commit that changed nothing but the
-    pre-registration (part A cannot name the commit that contains it).
+    HEAD is the named commit itself, or a later commit that changed no frozen file other than the
+    pre-registration (part A cannot name the commit that contains it). `changed_between` lists the
+    files changed since the named commit under the hashed paths only (git filters by pathspec), so a
+    later note or study-map commit does not count.
 
     Raises:
         FreezeRefused: HEAD differs from the named commit and the commits between touch other files.

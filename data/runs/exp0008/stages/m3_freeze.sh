@@ -3,7 +3,7 @@
 # After this stage nothing that decides what a test run does may change, and no test plant exists yet (M4
 # builds them). The stage
 #   1. refuses a dirty working tree under src/ or the EXP-0008 scripts, and a HEAD other than the commit part A
-#      names (or a later commit that changed only the pre-registration folder);
+#      names (or a later commit that changed no frozen file: only the pre-registration, notes, the study map);
 #   2. writes E9.commit and E9.sha256 (every tracked frozen file), then PREREG_B.md from the stage outputs, then
 #      PREREG.sha256 over part A, part B, the seeds, the E9 files and the judge prompt;
 #   3. logs the time, so the hash and the log line precede the first test-plant build.
@@ -33,7 +33,10 @@ git_facts() {  # git_facts: writes head, porcelain and the files changed since p
   git status --porcelain -- $FROZEN_PATHS > "$SD/porcelain" || stop_run infra "git status failed"
   gf_named=$(sed -n 's/^Frozen code commit:[ `]*\([0-9a-f]\{40\}\).*/\1/p' "$PREREG/PREREG_A.md")
   if [ -n "$gf_named" ] && [ "$gf_named" != "$(cat "$SD/head")" ]; then
-    git diff --name-only "$gf_named" HEAD > "$SD/changed" || stop_run infra "git diff failed"
+    # only the hashed paths count: a later note or study-map commit leaves the frozen code as it was
+    # shellcheck disable=SC2086
+    git diff --name-only "$gf_named" HEAD -- $FROZEN_PATHS pyproject.toml uv.lock > "$SD/changed" \
+      || stop_run infra "git diff failed"
   else : > "$SD/changed"; fi
 }
 

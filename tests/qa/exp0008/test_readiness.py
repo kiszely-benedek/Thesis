@@ -25,6 +25,19 @@ def test_the_smoke_evidence_must_exist_and_match_head(tmp_path: Path) -> None:
     assert "HEAD is" in readiness.check_smoke(stale).detail
 
 
+def test_a_smoke_at_an_ancestor_counts_only_while_no_frozen_file_changed(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    evidence = tmp_path / "SMOKE_PASSED"
+    evidence.write_text("a" * 40, encoding="utf-8")
+    monkeypatch.setattr(readiness, "_git", lambda *args: "b" * 40)
+    monkeypatch.setattr(readiness, "frozen_changes_since", lambda commit: [])
+    assert readiness.check_smoke(evidence).status == "OK"
+    monkeypatch.setattr(readiness, "frozen_changes_since", lambda commit: ["src/plantgraph/x.py"])
+    check = readiness.check_smoke(evidence)
+    assert check.status == "FAIL" and "src/plantgraph/x.py" in check.detail
+
+
 def test_neo4j_needs_the_plant_database_and_no_leftover_temporary_one() -> None:
     assert readiness.check_neo4j(None).status == "SKIP"
     assert readiness.check_neo4j(lambda: ["neo4j", "system"]).status == "OK"

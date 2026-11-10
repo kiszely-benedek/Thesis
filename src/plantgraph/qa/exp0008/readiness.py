@@ -35,6 +35,9 @@ FROZEN_PATHS = ("src", ":!src/plantgraph/demo", "scripts/audit_export_subgraphs.
                 "data/runs/exp0008/stages",
                 "data/runs/exp0007/inputs", "data/runs/exp0001/inputs",
                 "data/external/C01V04-VER.EX01.xml")  # fmt: skip
+# What E9.sha256 hashes: the frozen paths plus the dependency pins. A commit that changes none of
+# these (a note, the study map) leaves the frozen code as it was: part A and the smoke still hold.
+HASHED_PATHS = (*FROZEN_PATHS, "pyproject.toml", "uv.lock")
 MIN_FREE_DISK_GB = 10
 MIN_BALANCE_USD = 40.0
 PILOT_INPUTS = ("valves_ids.txt", "runs.txt", "subgraphs.json")
@@ -58,6 +61,20 @@ def _git(*args: str) -> str:
             f"expected `git {' '.join(args)}` to succeed, found: {result.stderr.strip()}"
         )
     return result.stdout
+
+
+def frozen_changes_since(commit: str) -> list[str]:
+    """The hashed files that differ between `commit` and HEAD (empty when only other files changed).
+
+    Raises:
+        RuntimeError: `commit` is not HEAD or an ancestor of HEAD, or git fails.
+    """
+    head = _git("rev-parse", "HEAD").strip()
+    if commit == head:
+        return []
+    if commit not in _git("rev-list", "HEAD").split():
+        raise RuntimeError(f"expected {commit[:10]} to be HEAD or an ancestor of it, found neither")
+    return _git("diff", "--name-only", commit, "HEAD", "--", *HASHED_PATHS).split()
 
 
 def check_tree_clean() -> Check:
@@ -93,15 +110,17 @@ def check_prereg_a(prereg: Path = SCRIPTS / "prereg") -> Check:
     try:
         head = _git("rev-parse", "HEAD").strip()
         named = named_head(text)
-        changed = [] if head == named else _git("diff", "--name-only", named, "HEAD").split()
-        check_head(head, named, changed)
+        check_head(head, named, frozen_changes_since(named))
     except (FreezeRefused, RuntimeError) as error:
         problems.append(str(error))
     return Check(item=item, status="FAIL" if problems else "OK", detail="; ".join(problems) or "ok")
 
 
 def check_smoke(smoke_passed: Path | None) -> Check:
-    """Item 4: `run_all.sh --smoke` ended with SMOKE_PASSED at this very HEAD."""
+    """Item 4: `run_all.sh --smoke` ended with SMOKE_PASSED at HEAD's frozen code.
+
+    That is HEAD itself, or an ancestor of HEAD with no hashed file changed since (only notes, say).
+    """
     item = "4. run_all.sh --smoke passed at this HEAD"
     if smoke_passed is None:
         return Check(
@@ -114,13 +133,26 @@ def check_smoke(smoke_passed: Path | None) -> Check:
     except RuntimeError as error:
         return Check(item=item, status="FAIL", detail=str(error))
     recorded = smoke_passed.read_text(encoding="utf-8").strip()
-    if recorded != head:
+    if recorded == head:
+        return Check(item=item, status="OK", detail=f"passed at {head[:10]}")
+    try:
+        changed = frozen_changes_since(recorded)
+    except RuntimeError as error:
+        changed = [str(error)]
+    if changed:
         return Check(
             item=item,
             status="FAIL",
-            detail=f"the smoke passed at {recorded[:10]}, HEAD is {head[:10]}",
+            detail=(
+                f"the smoke passed at {recorded[:10]}, HEAD is {head[:10]}; "
+                f"changed since: {changed[:3]}"
+            ),
         )
-    return Check(item=item, status="OK", detail=f"passed at {head[:10]}")
+    return Check(
+        item=item,
+        status="OK",
+        detail=f"passed at {recorded[:10]}; HEAD {head[:10]} changed no frozen file since",
+    )
 
 
 def check_neo4j(list_databases: Callable[[], list[str]] | None) -> Check:
