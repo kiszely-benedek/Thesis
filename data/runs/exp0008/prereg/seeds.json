@@ -1,0 +1,69 @@
+{
+  "validation": {
+    "100": 5310,
+    "1000": 5664
+  },
+  "ladder_seed": 5182,
+  "single_sheet_candidates": [
+    5583,
+    5863,
+    5739,
+    5745,
+    5486,
+    5748,
+    5681,
+    5386,
+    5330,
+    5188,
+    5577,
+    5339,
+    5994,
+    5238,
+    5829,
+    5548,
+    5562,
+    5416,
+    5550,
+    5147,
+    5973,
+    5977,
+    5364,
+    5720,
+    5611,
+    5462,
+    5751,
+    5414,
+    5836,
+    5750
+  ],
+  "sealed": {
+    "100": [
+      5232,
+      5582,
+      5705,
+      5512,
+      5558
+    ],
+    "1000": [
+      5214,
+      5161,
+      5976,
+      5170,
+      5215
+    ]
+  },
+  "draw": {
+    "draw_seed": 20261110,
+    "method": "random.Random(draw_seed).sample(sorted(pool), n); in order: validation 100, validation 1000, the ladder seed, the 1-sheet candidates, 5 sealed seeds at 100, 5 sealed seeds at 1000",
+    "pool": "5000-5999 minus retired: 996",
+    "retired": [
+      5001,
+      5002,
+      5003,
+      5100
+    ],
+    "retired_sources": "registered table + seed fields of *.json/*.jsonl under data\\runs",
+    "drawn_at_utc": "2026-11-10T11:43:50+00:00",
+    "python_version": "3.12.10"
+  }
+}
