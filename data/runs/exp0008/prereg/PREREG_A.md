@@ -2,7 +2,9 @@
 
 Written 2026-11-10, before any EXP-0008 plant exists. Part B is written by the launcher at stage M3.
 
-Frozen code commit: `9011adeef5de5cd3df4da123d676260beb67bf18`
+Frozen code commit: `80c26618d4beb13c14c1a83568c2814d3b8c7d8e`
+
+Amended 2026-11-10, before any EXP-0008 plant exists: the commit was `9011adeef5de5cd3df4da123d676260beb67bf18`. The new commit changes only the freeze check (`freeze.py`, `readiness.py`, `m3_freeze.sh` and its test), so that later commits touching no frozen file, such as notes, keep this part valid; no measured behaviour changed.
 
 ## 1. What is registered, and what is not
 
