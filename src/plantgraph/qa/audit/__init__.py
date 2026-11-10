@@ -10,7 +10,7 @@ Modules, in the order the data flows:
 - `excerpt`: turn a gold-side subgraph JSON into the plant text the judge reads.
 - `judge`: build the blind judge prompt, call the model, parse its JSON verdict.
 - `budget`: the spend ledger with the hard cap, and sizing from a measured per-call cost.
-- `pilot`: the 45-row gate-G2 pilot set.
+- `pilot`: the gate-G2 pilot set (every known defect row plus 20 controls).
 - `runner`: run a plan of rows through the judge under the ledger.
 - `report`: agreement, Cohen's kappa, disagreements, the G2 verdict.
 - `cli`: `python -m plantgraph.qa.audit` sub-commands.

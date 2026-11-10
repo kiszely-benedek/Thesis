@@ -22,10 +22,21 @@ def test_only_calls_not_served_from_the_cache_are_paid(tmp_path: Path) -> None:
     assert ledger.paid_usd_of_calls(tmp_path / "calls.jsonl") == pytest.approx(0.5)
 
 
-def test_a_broken_calls_line_stops_the_count(tmp_path: Path) -> None:
-    (tmp_path / "calls.jsonl").write_text("{not json\n", encoding="utf-8")
+def test_a_broken_calls_line_before_the_last_stops_the_count(tmp_path: Path) -> None:
+    (tmp_path / "calls.jsonl").write_text('{not json\n{"response": null}\n', encoding="utf-8")
     with pytest.raises(ValueError, match="expected JSON in .*calls.jsonl line 1"):
         ledger.paid_usd_of_calls(tmp_path / "calls.jsonl")
+
+
+def test_a_truncated_last_calls_line_is_skipped_with_a_warning(
+    tmp_path: Path, caplog: pytest.LogCaptureFixture
+) -> None:
+    _calls(tmp_path / "calls.jsonl", [(0.5, False)])
+    with (tmp_path / "calls.jsonl").open("a", encoding="utf-8") as handle:
+        handle.write('{"response": {"cost_usd": 0.')  # the process died mid-write
+
+    assert ledger.paid_usd_of_calls(tmp_path / "calls.jsonl") == pytest.approx(0.5)
+    assert "truncated last line" in caplog.text
 
 
 def test_runs_spend_adds_up_every_run_and_d4_but_not_the_audit(tmp_path: Path) -> None:
@@ -73,6 +84,21 @@ def test_a_dry_cap_is_misses_times_cost_times_one_and_a_half_with_a_floor() -> N
     )  # all cached: the harness still needs a cap
     with pytest.raises(ValueError, match="expected a tier"):
         caps.run_cap_usd(1, "gpu")
+
+
+def test_p4_arms_and_ladder_sizes_have_their_own_measured_cost_per_question() -> None:
+    assert caps.COST_PER_QUESTION_USD["cyp-d4"] == pytest.approx(0.0938 / 83, rel=1e-3)
+    assert caps.COST_PER_QUESTION_USD["ag-d4"] > caps.COST_PER_QUESTION_USD["ag-d0"]
+    # a 1-sheet ContextRAG run is capped far below the old 2.67/236 average
+    assert caps.run_cap_usd(70, "ctx-H1g21") == pytest.approx(70 * 0.00274 * 1.5, abs=1e-4)
+    assert caps.run_cap_usd(70, "ctx-H10g21") == pytest.approx(70 * 0.02172 * 1.5, abs=1e-4)
+
+
+def test_a_cap_always_covers_the_reservations_of_the_questions_in_flight() -> None:
+    # the smoke stopped on ag-d2: 5 x 0.00266 = 0.0133 is above the 0.01 floor
+    assert caps.run_cap_usd(0, "ag-d2") == pytest.approx(5 * 0.00266, abs=1e-4)
+    assert caps.run_cap_usd(1, "ctx-H10g21") == pytest.approx(5 * 0.02172, abs=1e-4)
+    assert caps.run_cap_usd(100, "ag-d2") == pytest.approx(100 * 0.00266 * 1.5, abs=1e-4)
 
 
 def test_every_ceiling_of_the_design_is_present_and_the_runs_ceilings_fit_the_ledger() -> None:

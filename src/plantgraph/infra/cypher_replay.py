@@ -4,8 +4,10 @@ A Cypher-tier question has two halves: a language model writes a Cypher query (C
 graph query language), then the database runs it. A normal replay of a stored run needs the
 model's replies from the cache, and those replies depend on the order of the database's rows,
 which changes after every reload. This replay skips the model: it takes the query the run
-recorded and executes it again, one question at a time, through the same call the strategy uses
-(`run_cypher`) plus the strategy's own row formatting.
+recorded (the tag check and every attempt) and sends it again, one question at a time, through
+the same guarded call the strategy uses (`GuardedCypherSource.run_cypher`, so a hung query ends
+as it does live) plus the strategy's own row formatting. A question that sent no query (it timed
+out or hit a provider error before one was written) replays as a row with zero queries.
 
 What it measures: the database round-trip, the server's own share of it, and the formatting of
 the rows. What it does NOT measure: the query-writing call, the answer-prompt build and the answer
@@ -22,6 +24,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict
 
 from plantgraph.qa.cypher import CypherExecutionError, CypherSource, WriteClauseError
+from plantgraph.qa.cypher_guard import HANG_GRACE_S, GuardedCypherSource
 from plantgraph.qa.harness.usage_meter import TimingRow
 from plantgraph.qa.local_timer import DB_CLIENT, DB_SERVER, LocalTimer, deactivate
 from plantgraph.qa.models import Outcome, QuestionResult
@@ -31,9 +34,10 @@ from plantgraph.qa.tag_check import TAG_CHECK_TIMEOUT_S, tag_lookup_query
 #: Files the replay writes into its run folder (next to `timings.jsonl`, `environment.jsonl`).
 REPLAY_META_FILE = "db_replay.json"
 
-#: How the replayed query ended: it ran, the write filter refused it before it was sent, or the
-#: database refused it (syntax error, timeout, out of memory).
-ReplayOutcome = Literal["ok", "write_clause_rejected", "database_error"]
+#: How the replayed query ended: it ran, the write filter refused it before it was sent, the
+#: database refused it (syntax error, timeout, hang, out of memory), or the question had sent
+#: no query at all (`no_query`; only its tag check, if any, was replayed).
+ReplayOutcome = Literal["ok", "write_clause_rejected", "database_error", "no_query"]
 
 
 class CypherReplayRow(TimingRow):
@@ -57,11 +61,15 @@ class CypherReplayMeta(BaseModel):
     row_cap: int
     n_source_questions: int
     n_original_retrieval_errors: int
+    #: Replayed queries the write filter or the database refused.
     n_replay_errors: int
+    #: Questions that had sent no query; they replay as rows with zero (or only tag-check) queries.
+    n_without_query: int = 0
     #: Plain-words statement of what these timings cover, copied into the report.
     measures: str = (
-        "database time only: the stored query run again plus the row formatting; "
-        "no query-writing call, no answer-prompt build, no answer parsing"
+        "database time only: the recorded queries (tag check and every attempt) sent again "
+        "plus the row formatting; no query-writing call, no answer-prompt build, "
+        "no answer parsing"
     )
 
 
@@ -71,7 +79,8 @@ class RecordedQuery:
 
     `tag_check_query` runs first (it is `None` when the question named no tag-like word),
     then every query-writing attempt in turn: a timed-out first attempt and its repair both cost
-    database time. The last attempt is the one whose rows the answer used.
+    database time. The last attempt is the one whose rows the answer used. A question that sent
+    no query has no attempts (and no tag check, or only the tag check).
     """
 
     question_id: str
@@ -88,8 +97,8 @@ class RecordedQuery:
 def recorded_queries(rows: Sequence[QuestionResult]) -> list[RecordedQuery]:
     """The queries of every row of a stored Cypher-tier run, in run order.
 
-    Raises:
-        ValueError: a row has no recorded query, so the replay would silently skip a question.
+    A row with no recorded query (timed out, provider error) is kept, with no attempts, so the
+    replay still has one row per source question.
     """
     return [_recorded_query(row) for row in rows]
 
@@ -97,11 +106,6 @@ def recorded_queries(rows: Sequence[QuestionResult]) -> list[RecordedQuery]:
 def _recorded_query(row: QuestionResult) -> RecordedQuery:
     retrieval = row.trace.get("retrieval", {})
     attempts = _attempt_queries(retrieval)
-    if not attempts:
-        raise ValueError(
-            f"expected a recorded query (trace.retrieval.cypher) for {row.question_id}, "
-            "found none; the replay does not skip questions"
-        )
     failed = row.outcome is Outcome.RETRIEVAL_ERROR
     return RecordedQuery(row.question_id, attempts, failed, _tag_check_query(retrieval))
 
@@ -169,6 +173,8 @@ def _execute_question(
     """Tag check, then every attempt; the last attempt's outcome is the question's."""
     if recorded.tag_check_query is not None:
         _run_and_ignore(source, recorded.tag_check_query, TAG_CHECK_TIMEOUT_S, row_cap)
+    if not recorded.attempt_queries:
+        return "no_query", 0
     *earlier, last = recorded.attempt_queries
     for query in earlier:
         _run_and_ignore(source, query, timeout_s, row_cap)
@@ -209,12 +215,22 @@ def replay_queries(
     strategy: str,
     timeout_s: float,
     row_cap: int,
+    hang_grace_s: float = HANG_GRACE_S,
     clock: Callable[[], float] = time.perf_counter,
 ) -> list[CypherReplayRow]:
-    """Execute the queries one after another (concurrency 1), each timed on its own."""
+    """Execute the queries one after another (concurrency 1), each timed on its own.
+
+    The source is wrapped in the live strategy's `GuardedCypherSource` (timeout plus hang
+    grace), so a query that hangs the server ends here as it would in a real run.
+    """
+    guarded = (
+        source
+        if isinstance(source, GuardedCypherSource)
+        else GuardedCypherSource(source, hang_grace_s=hang_grace_s)
+    )
     return [
         time_one_query(
-            source, recorded, strategy=strategy, timeout_s=timeout_s, row_cap=row_cap, clock=clock
+            guarded, recorded, strategy=strategy, timeout_s=timeout_s, row_cap=row_cap, clock=clock
         )
         for recorded in queries
     ]

@@ -47,7 +47,9 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(prog="python -m plantgraph.qa.audit", description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
 
-    pilot = commands.add_parser("pilot-set", help="build the 45-row G2 pilot set (free)")
+    pilot = commands.add_parser(
+        "pilot-set", help="build the G2 pilot set: every known defect row plus 20 controls (free)"
+    )
     _add_run_arguments(pilot)
     pilot.add_argument("--valves-ids", type=Path, required=True, help="question ids, one a line")
     pilot.add_argument("--seed", type=int, default=DEFAULT_SEED)
@@ -160,6 +162,7 @@ def _judge_command(args: argparse.Namespace) -> int:
         verdicts_path=args.out_dir / "verdicts.jsonl",
         stage=args.stage,
         stage_cap_usd=PILOT_CAP_USD if args.stage == "pilot" else None,
+        calls_log_path=args.out_dir / "calls.jsonl",
     )
     try:
         summary = run_plan(items, context)

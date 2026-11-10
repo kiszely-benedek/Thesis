@@ -11,7 +11,8 @@ import pytest
 from audit_fakes import CORPUS, make_question, make_result, make_run, make_subgraph
 from plantgraph.llm.fake_transport import FakeTransport, ScriptedReply
 from plantgraph.qa.audit import cli
-from plantgraph.qa.audit.budget import WORST_CASE_CALL_USD, SpendLedger
+from plantgraph.qa.audit import judge as judge_module
+from plantgraph.qa.audit.budget import SpendLedger, worst_case_call_usd
 from plantgraph.qa.audit.excerpt import SubgraphFile
 from plantgraph.qa.audit.judge import judge_pin
 from plantgraph.qa.audit.models import AuditItem, AuditRecord, JudgeReply, JudgeVerdict, Stratum
@@ -106,11 +107,21 @@ def test_a_second_run_over_the_same_plan_skips_the_judged_rows(tmp_path: Path) -
     assert len(transport.requests) == 4
 
 
+def _prompt_chars(tmp_path: Path) -> int:
+    """Length of the (equal-sized) toy prompts, read from a dry pass in its own folder."""
+    run, items = _run_and_items(1)
+    probe = tmp_path / "probe"
+    probe.mkdir()
+    summary = run_plan(items, _context(probe, run, _transport(), paid=False))
+    return summary.prompt_chars[0]
+
+
 def test_the_hard_cap_stops_the_run_before_a_call_that_could_pass_it(tmp_path: Path) -> None:
     run, items = _run_and_items()
     transport = _transport()
-    # room for one worst-case call (0.042) but not for a second after 0.02 was spent
-    context = _context(tmp_path, run, transport, cap_usd=WORST_CASE_CALL_USD + 0.01)
+    # room for one call's worst case, but not for a second after 0.02 was spent
+    worst = worst_case_call_usd(_prompt_chars(tmp_path))
+    context = _context(tmp_path, run, transport, cap_usd=worst + 0.01)
 
     summary = run_plan(items, context)
 
@@ -118,13 +129,66 @@ def test_the_hard_cap_stops_the_run_before_a_call_that_could_pass_it(tmp_path: P
     assert context.ledger.spent_usd() <= context.ledger.cap_usd
 
 
+def test_the_worst_case_grows_with_the_prompt_length() -> None:
+    # 27,584 chars is the longest pilot prompt measured; the old fixed $0.042 was too low for it
+    assert worst_case_call_usd(27_584) > 0.042
+    assert worst_case_call_usd(27_584) == pytest.approx(27_584 / 2.19 * 2e-6 + 2_048 * 1e-5)
+
+
+def test_the_cap_check_uses_this_prompts_worst_case(tmp_path: Path) -> None:
+    run, items = _run_and_items(1)
+    worst = worst_case_call_usd(_prompt_chars(tmp_path))
+    context = _context(tmp_path, run, _transport(), cap_usd=worst - 0.001)
+
+    summary = run_plan(items, context)
+
+    assert summary.judged == 0 and summary.stopped_by_cap
+
+
 def test_the_stage_cap_stops_the_pilot_before_the_shared_cap(tmp_path: Path) -> None:
     run, items = _run_and_items()
-    context = _context(tmp_path, run, _transport(), stage_cap_usd=0.06)
+    context = _context(tmp_path, run, _transport(), stage_cap_usd=0.04)
 
     summary = run_plan(items, context)
 
     assert summary.judged == 1 and summary.stopped_by_cap
+
+
+def test_a_failed_call_that_reported_usage_is_booked(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr("plantgraph.llm.retry_loop.time.sleep", lambda _s: None)
+    run, items = _run_and_items(1)
+    broken = FakeTransport(
+        default_reply=ScriptedReply(text="", finish_reason="error", cost_usd=0.003)
+    )
+    context = _context(tmp_path, run, broken)
+
+    summary = run_plan(items, context)
+
+    assert summary.judged == 0 and len(summary.failed) == 1
+    assert context.ledger.spent_usd() == pytest.approx(0.003 * len(broken.requests))
+
+
+def test_a_revised_prompt_template_judges_the_rows_again(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    run, items = _run_and_items(2)
+    transport = _transport()
+    context = _context(tmp_path, run, transport)
+    run_plan(items, context)
+    revised = tmp_path / "revised_judge.txt"
+    revised.write_text(
+        judge_module.TEMPLATE_PATH.read_text(encoding="utf-8") + " Also state it briefly.",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(judge_module, "TEMPLATE_PATH", revised)
+
+    again = run_plan(items, context)
+
+    assert again.judged == 2 and again.already_done == 0
+    assert len(read_records(context.verdicts_path)) == 2  # the newer verdict replaces the older
+    assert run_plan(items, context).already_done == 2
 
 
 def test_without_the_paid_flag_nothing_is_sent_and_prompt_sizes_are_reported(

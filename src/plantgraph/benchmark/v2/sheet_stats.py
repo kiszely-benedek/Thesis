@@ -117,19 +117,25 @@ def _chain(line: LineSpec) -> list[str]:
 
 
 def wired_out_ends(plan: PlantPlanV2) -> frozenset[str]:
-    """The last part of every line whose open end a later unit's line starts from (v2.1).
+    """The last part of every line whose open end a line of ANOTHER unit starts from (v2.1).
 
     The later line crosses the sheets and `_crossing_stubs` already counts both sides, so the
-    out-port's open end must not be counted a second time.
+    out-port's open end must not be counted a second time. A line of the same unit that starts at
+    the same part (a branch off its own line end) does not wire the end: it stays an open stub.
     """
-    sources = {line.src_id for unit in plan.units for line in unit.instance.plan.lines}
-    ends = {
-        _chain(line)[-1]
-        for unit in plan.units
-        for line in unit.instance.plan.lines
-        if line.dst_id is None
-    }
-    return frozenset(ends & {source for source in sources if source is not None})
+    # part id -> the units that start a line from it
+    starters: dict[str, set[int]] = {}
+    for unit in plan.units:
+        for line in unit.instance.plan.lines:
+            if line.src_id is not None:
+                starters.setdefault(line.src_id, set()).add(unit.slot.unit_no)
+    wired: set[str] = set()
+    for unit in plan.units:
+        for line in unit.instance.plan.lines:
+            end = _chain(line)[-1]
+            if line.dst_id is None and starters.get(end, set()) - {unit.slot.unit_no}:
+                wired.add(end)
+    return frozenset(wired)
 
 
 def open_end_stubs(

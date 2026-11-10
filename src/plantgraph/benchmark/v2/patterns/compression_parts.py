@@ -61,7 +61,7 @@ def inlet_line(ctx: PatternContext, style: LineStyle, drum_id: str) -> tuple[Tri
     thermometer = tee_plan(ctx, "inlet_thermometer_tee")
     run = run_of(battery_limit(ctx.trim, style), return_tee, thermometer)
     main = close_run(ctx, run, None, drum_id, style=style)
-    tap = thermometer_tap(ctx, thermometer.ports["tee"], "inlet_ti")
+    tap = thermometer_tap(ctx, thermometer.ports["tee"], "inlet_ti", style)
     return combine(main, tap), return_tee.ports["tee"]
 
 
@@ -83,8 +83,8 @@ def outlet_lines(
     takeoff = tee_plan(ctx, "recycle_takeoff_tee")
     gauge = tee_plan(ctx, "discharge_gauge_tee")
     taps = [
-        thermometer_tap(ctx, thermometer.ports["tee"], "cooler_outlet_ti"),
-        pressure_gauge_tap(ctx, gauge.ports["tee"], "discharge_pi"),
+        thermometer_tap(ctx, thermometer.ports["tee"], "cooler_outlet_ti", style),
+        pressure_gauge_tap(ctx, gauge.ports["tee"], "discharge_pi", style),
     ]
     last_run = run_of(gauge, battery_limit(ctx.trim, style))
     if second_drum_id is None:

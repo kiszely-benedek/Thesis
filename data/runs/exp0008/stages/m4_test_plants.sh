@@ -7,7 +7,8 @@
 #              the dev and held-out splits, 70-92 questions) for the ladder; 2 per family from the first
 #              1,000-sheet plant for the concurrency-1 control
 #   gates      round trip and identity (G1, S16) when built, LINE-01 on every plant, blocking completeness I0
-#              >= 0.99 on every V corpus, ContextRAG prompt sizes, and T9.sha256 over everything drawn
+#              >= 0.99 on every V corpus, ContextRAG prompt sizes, the ADR-0059 bands on the pooled sealed plants of
+#              each scale (reported only: the freeze is done), and T9.sha256 over everything drawn
 # Free: no model call, no Neo4j.
 
 I0_MIN_COMPLETENESS=0.99
@@ -70,6 +71,11 @@ prompt_sizes() {  # ContextRAG's prompt size on the ladder (free) and the corpus
   try $P -m plantgraph.qa.exp0007 corpus-prompt-hashes $ps_args --out "$ROOT/prompt_inputs.json"
 }
 
+sealed_bands() {  # the ADR-0059 bands on the pooled sealed plants of each scale: reported only, the freeze is done
+  plan_to_file sealed
+  bands_by_scale report sealed
+}
+
 write_t9() {  # T9.sha256: the plants and question sets as drawn; written once, never overwritten
   [ ! -e "$ROOT/T9.sha256" ] || stop_run infra "$ROOT/T9.sha256 exists; a drawn set is never overwritten"
   sha256sum "$PREREG/E9.commit" "$ROOT"/corpora/*/ingest.json "$ROOT"/questions/*/questions.jsonl \
@@ -88,6 +94,7 @@ stage_M4() {
   once descriptive for_each_plant descriptive plant_and_questions
   once variants for_each_plant p3 variant_corpus
   once control control_questions
+  once bands sealed_bands
   once prompt_sizes prompt_sizes
   once t9 write_t9
   outputs "$ROOT/T9.sha256"

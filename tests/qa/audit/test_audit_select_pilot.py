@@ -1,4 +1,4 @@
-"""Row selection in the registered budget order, the ledger, sizing and the 45-row pilot (F14)."""
+"""Row selection in the registered budget order, the ledger, sizing and the pilot (F14)."""
 
 from __future__ import annotations
 
@@ -15,9 +15,8 @@ from plantgraph.qa.audit.budget import (
 )
 from plantgraph.qa.audit.models import SourceRow
 from plantgraph.qa.audit.pilot import (
+    MIN_DEFECTS_PER_GROUP,
     N_CONTROLS,
-    N_PARSE,
-    N_VALVES,
     build_pilot_set,
     parse_failure_candidates,
 )
@@ -52,12 +51,12 @@ def _strata(plan: AuditPlan) -> list[str]:
     return [item.stratum for item in plan.items]
 
 
-def test_the_budget_order_is_wrong_then_right_minimum_then_contextrag_then_more_right() -> None:
+def test_rows_are_judged_right_minimum_first_then_wrong_then_contextrag_then_more_right() -> None:
     plan = _select(_pool(), remaining=10.0)
 
     strata = _strata(plan)
     assert strata == sorted(
-        strata, key=["wrong", "right_min", "contextrag_wrong", "right_extra"].index
+        strata, key=["right_min", "wrong", "contextrag_wrong", "right_extra"].index
     )
     assert strata.count("wrong") == 24  # every distinct wrong row
     assert strata.count("right_min") == 16  # 2 per family per scale
@@ -162,13 +161,19 @@ def test_sizing_uses_the_measured_pilot_cost_with_a_safety_factor(tmp_path: Path
 # --- the pilot set ---------------------------------------------------------------------------
 
 
-def _pilot_pool() -> tuple[list[SourceRow], list[SourceRow], set[str]]:
+N_VALVES_FOUND = 16  # the real first-measurement counts: more valves rows than planned,
+N_PARSE_FOUND = 9  # fewer parse rows than planned
+
+
+def _pilot_pool(
+    n_valves: int = N_VALVES_FOUND, n_parse: int = N_PARSE_FOUND
+) -> tuple[list[SourceRow], list[SourceRow], set[str]]:
     valves = [
         make_source_row(n, family=F.VALVES_ON_PATH, correct=False, scale_corpus="H1000g21p1")
-        for n in range(N_VALVES)
+        for n in range(n_valves)
     ]
     parse = [
-        make_source_row(500 + n, family=F.UNITS_REACHED, correct=False) for n in range(N_PARSE)
+        make_source_row(500 + n, family=F.UNITS_REACHED, correct=False) for n in range(n_parse)
     ]
     controls = [
         make_source_row(700 + n, family=_FAMILIES[n % 4], correct=True)
@@ -177,33 +182,42 @@ def _pilot_pool() -> tuple[list[SourceRow], list[SourceRow], set[str]]:
     return [*valves, *controls], parse, {r.question_id for r in valves}
 
 
-def test_the_pilot_set_holds_45_rows_in_three_groups() -> None:
+def test_the_pilot_keeps_every_defect_row_and_exactly_20_controls() -> None:
     pool, parse, valve_ids = _pilot_pool()
 
     items = build_pilot_set(pool, parse, valve_ids, seed=3)
 
-    assert len(items) == 45
     kinds = [item.stratum for item in items]
-    assert kinds.count("pilot_defect_valves") == 13
-    assert kinds.count("pilot_defect_parse") == 12
-    assert kinds.count("pilot_control") == 20
+    assert kinds.count("pilot_defect_valves") == 16
+    assert kinds.count("pilot_defect_parse") == 9
+    assert kinds.count("pilot_control") == N_CONTROLS == 20
+    assert len(items) == 16 + 9 + 20
     assert all(i.row.scorer_correct for i in items if i.stratum == "pilot_control")
     assert build_pilot_set(pool, parse, valve_ids, seed=3) == items  # reproducible
 
 
-def test_the_pilot_refuses_a_group_with_the_wrong_number_of_rows() -> None:
+def test_the_pilot_refuses_a_defect_group_below_the_minimum() -> None:
+    pool, parse, valve_ids = _pilot_pool()
+    few = MIN_DEFECTS_PER_GROUP - 1
+
+    with pytest.raises(ValueError, match=f"at least 8 parse-failure defect rows.*found {few}"):
+        build_pilot_set(pool, parse[:few], valve_ids, seed=3)
+    with pytest.raises(ValueError, match=f"at least 8 VALVES_ON_PATH defect rows.*found {few}"):
+        build_pilot_set(pool, parse, set(sorted(valve_ids)[:few]), seed=3)
+    build_pilot_set(pool, parse[:8], set(sorted(valve_ids)[:8]), seed=3)  # exactly 8 is enough
+
+
+def test_the_pilot_refuses_too_few_controls() -> None:
     pool, parse, valve_ids = _pilot_pool()
 
-    with pytest.raises(ValueError, match="expected 12 parse-failure defect rows.*found 11"):
-        build_pilot_set(pool, parse[:-1], valve_ids, seed=3)
-    with pytest.raises(ValueError, match="expected 13 VALVES_ON_PATH defect rows.*found 12"):
-        build_pilot_set(pool, parse, set(sorted(valve_ids)[:-1]), seed=3)
     with pytest.raises(ValueError, match="expected 20 control rows.*found 10"):
         build_pilot_set(pool[:-16], parse, valve_ids, seed=3)
 
 
 def test_parse_failure_candidates_are_the_failures_the_current_parser_reads() -> None:
-    question = make_question(1, F.UNITS_REACHED, answer_type=AnswerType.UNIT_SET)
+    question = make_question(1, F.UNITS_REACHED, answer_type=AnswerType.UNIT_SET).model_copy(
+        update={"reference": ["3", "7"]}
+    )
     readable = make_result(
         question, correct=False, answer=None, outcome=Outcome.PARSE_FAILURE,
         raw_reply='{"answer": [3, 7], "not_present": false}',
@@ -217,3 +231,16 @@ def test_parse_failure_candidates_are_the_failures_the_current_parser_reads() ->
     found = parse_failure_candidates(run)
 
     assert [row.question_id for row in found] == [question.question_id]
+
+
+def test_a_re_read_answer_that_is_still_wrong_is_not_a_parse_defect() -> None:
+    question = make_question(1, F.UNITS_REACHED, answer_type=AnswerType.UNIT_SET).model_copy(
+        update={"reference": ["3", "7"]}
+    )
+    wrong_but_readable = make_result(
+        question, correct=False, answer=None, outcome=Outcome.PARSE_FAILURE,
+        raw_reply='{"answer": [3, 9], "not_present": false}',
+    )  # fmt: skip
+    run = make_run("r", [(question, wrong_but_readable)])
+
+    assert parse_failure_candidates(run) == []

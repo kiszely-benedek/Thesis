@@ -16,6 +16,7 @@ from plantgraph.llm.models import ContextWall
 from plantgraph.qa.models import RunConfig
 
 _QA_DIR = Path(__file__).resolve().parents[1]
+_PACKAGE_DIR = _QA_DIR.parent
 _PROMPTS_DIR = _QA_DIR / "prompts"
 
 #: Python modules (paths under `qa/`) whose code decides the text a model is sent. The prompt
@@ -42,6 +43,22 @@ PROMPT_BUILDING_MODULES: tuple[str, ...] = (
     "agent/seed.py",
     "plant_api/results.py",
     "plant_api/line_render.py",
+    # agent behaviour that decides which prompts exist and what they contain: the loop and its
+    # actions (what a step may do, when it stops), the strategies and parameters that build it,
+    # and the tool registry (the tool list and arguments the model is told about)
+    "agent/loop.py",
+    "agent/actions.py",
+    "agent/models.py",
+    "agent/strategies.py",
+    "plant_api/tool_registry.py",
+    # what a tool call returns: the merged plant the tools walk (items, line view, traversal,
+    # contraction of repeated drawings and off-page connectors) and the primitives built on it
+    "plant_api/primitives.py",
+    "plant_api/traversal.py",
+    "plant_api/item_graph.py",
+    "plant_api/line_graph.py",
+    "plant_api/contraction.py",
+    "plant_api/model.py",
     # strategies that fill a template: the Cypher prompts (incl. the repair prompt and row
     # rendering) and the context strategies that choose and assemble the plant text
     "strategies/cypher_rag.py",
@@ -49,7 +66,27 @@ PROMPT_BUILDING_MODULES: tuple[str, ...] = (
     "strategies/context_rag.py",
     "strategies/hierarchical.py",
     "strategies/hierarchical_need.py",
+    # Cypher path: what a generated query may do and what the model reads back of a refused or
+    # slow one (guard, row/result types), and the tag check that rewrites or flags tags
+    "cypher.py",
+    "cypher_guard.py",
+    "tag_check.py",
+    "class_vocabulary.py",
+    # which part of the plant the context strategies pick: named anchors in the question, the
+    # sheets between them, the in-memory graph, and the need label that chooses the program
+    "anchors.py",
+    "sheet_selection.py",
+    "routing.py",
+    "graph_view.py",
+    "need/context.py",
+    "need/programs.py",
+    "need/rules.py",
+    "need/labels.py",
 )
+
+#: Prompt-building modules outside `qa/` (paths under the `plantgraph` package). The line view
+#: shapes the line-view tool text, yet lives in `graph/`. Hash keys start with `plantgraph/`.
+PROMPT_BUILDING_MODULES_OUTSIDE_QA: tuple[str, ...] = ("graph/line_view.py",)
 
 #: `RunConfig` fields that may differ between the original run and a resume or
 #: replay of it: they say when, where and how the run was started, not what it measures.
@@ -75,14 +112,17 @@ def prompt_hashes() -> dict[str, str]:
 
 
 def code_hashes() -> dict[str, str]:
-    """Sha256 of every module in `PROMPT_BUILDING_MODULES`, by path under `qa/`.
+    """Sha256 of every prompt-building module: names under `qa/`, plus `plantgraph/...` outside it.
 
     Raises:
         FileNotFoundError: a listed module is gone; the list must follow the rename.
     """
+    listed = {name: _QA_DIR / name for name in PROMPT_BUILDING_MODULES}
+    listed |= {
+        f"plantgraph/{name}": _PACKAGE_DIR / name for name in PROMPT_BUILDING_MODULES_OUTSIDE_QA
+    }
     hashes: dict[str, str] = {}
-    for name in PROMPT_BUILDING_MODULES:
-        path = _QA_DIR / name
+    for name, path in listed.items():
         if not path.is_file():
             raise FileNotFoundError(f"expected prompt-building module {path} to exist; found none")
         hashes[name] = hashlib.sha256(path.read_bytes()).hexdigest()

@@ -8,7 +8,13 @@ import pytest
 
 from plantgraph.exp0004.corpus import corpus_id_for
 from plantgraph.ingest.headline_v2 import headline_corpus_id_v2
-from plantgraph.ingest.seed_plan import RETIRED_TEST_SEEDS, SeedPlan, load_seed_plan
+from plantgraph.ingest.seed_plan import (
+    DEFAULT_SEED_PLAN_PATH,
+    RETIRED_TEST_SEEDS,
+    SeedPlan,
+    load_seed_plan,
+    require_drawn_test_seed,
+)
 from plantgraph.qa.exp0008.draw_seeds import draw_seed_plan, main, write_seed_plan
 from plantgraph.qa.exp0008.hygiene import (
     recorded_test_seeds,
@@ -81,6 +87,31 @@ def test_a_plan_with_a_retired_seed_is_invalid(tmp_path: Path) -> None:
     broken = _plan(tmp_path).model_dump() | {"ladder_seed": 5002}
     with pytest.raises(ValueError, match="fresh seeds"):
         SeedPlan.model_validate(broken)
+
+
+@pytest.mark.parametrize("seed", sorted(RETIRED_TEST_SEEDS))
+def test_every_retired_seed_is_refused_wherever_it_lies(seed: int) -> None:
+    """R2: 212 and 213 are outside 5000-5999 and used to slip through the guard."""
+    with pytest.raises(ValueError, match=rf"found {seed} \(retired"):
+        require_drawn_test_seed(seed, None)
+
+
+def test_a_dev_seed_and_a_drawn_seed_pass_the_guard(tmp_path: Path) -> None:
+    plan = _plan(tmp_path)
+    require_drawn_test_seed(1, None)
+    require_drawn_test_seed(plan.ladder_seed, plan)
+    with pytest.raises(ValueError, match="not"):
+        require_drawn_test_seed(5999, plan)  # in the test range but not drawn
+
+
+def test_the_default_seed_plan_path_is_the_repository_s_whatever_the_working_directory(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    assert DEFAULT_SEED_PLAN_PATH.is_absolute()
+    assert DEFAULT_SEED_PLAN_PATH.parent.parent.name == "exp0008"
+    assert (DEFAULT_SEED_PLAN_PATH.parents[4] / "pyproject.toml").is_file()  # the repository root
+    load_seed_plan()  # resolves from the repository root: no error from a foreign directory
 
 
 def test_a_missing_seed_file_means_not_drawn_yet(tmp_path: Path) -> None:

@@ -1,4 +1,6 @@
 src/plantgraph/qa/prompts/*.txt text eol=lf
+# The audit judge prompt is hashed into the pre-registration: it must be LF on every checkout.
+src/plantgraph/qa/audit/*.txt text eol=lf
 # Recorded runs under data/ store the SHA-256 of the files they read, as committed (LF). Never
 # convert line endings there, so a checkout with core.autocrlf=true keeps those hashes valid.
 data/** -text

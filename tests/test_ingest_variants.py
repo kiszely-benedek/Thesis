@@ -31,8 +31,9 @@ _VARIANTS = VariantConfig(profile="exp0004", seed=_SEED)
 
 # sha256 of the default-path IngestResult JSON (indent=2, stage_seconds emptied), taken before X-T4.
 # Re-recorded for generator v2.1 (ADR-0065): the config says "v2.1" and the product farms differ,
-# and for F8c (reactor code R, sensors on their lines, service codes of branch lines).
-_DEFAULT_GOLDEN_SHA256 = "4da3d15ab05939e7c7a40fe7c400d3b502418401fa82f007887af870735b9f64"
+# and for F8c (reactor code R, sensors on their lines, service codes of branch lines), and for
+# review R2 (a tank per receipt line in the product farms, tap services, spec-break branch classes).
+_DEFAULT_GOLDEN_SHA256 = "d672e1049fbec82dbf883026d700c07a27321ba5fbfc3c0a6477d6f70b223f45"
 
 
 @pytest.fixture(scope="module")

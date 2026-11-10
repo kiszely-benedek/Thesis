@@ -118,7 +118,7 @@ def _air_ejector_system(
     stage_one = _ejector_stage(ctx, style, first, source_id, vapour, (), cooler_id)
     silencer = part_plan(ctx, NodeClass.SILENCER.value, "ejector_silencer")
     stage_two = _ejector_stage(ctx, style, second, cooler_id, outlet_tee, (silencer,), None)
-    outlet_ti = thermometer_tap(ctx, outlet_tee.ports["tee"], "intercondenser_outlet_ti")
+    outlet_ti = thermometer_tap(ctx, outlet_tee.ports["tee"], "intercondenser_outlet_ti", style)
     steam = [_motive_steam(ctx, ejector.node_id) for ejector in (*first, *second)]
     machines = combine(spare_set_plan(first, "air_ejector"), spare_set_plan(second, "air_ejector"))
     parts = [quiet(cooler), machines, stage_one, stage_two, outlet_ti, cooler_trims.plan, *steam]

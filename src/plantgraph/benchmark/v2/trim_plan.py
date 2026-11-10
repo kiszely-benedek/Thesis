@@ -33,6 +33,7 @@ from plantgraph.graph.schema import NodeClass, Relation
 
 _PSGF = NodeClass.PROCESS_SIGNAL_GENERATING_FUNCTION.value
 _BREAK = NodeClass.PROPERTY_BREAK.value
+_SPEC_FIELD = 3  # `size-service-number-spec-insulation`: the piping class is the fourth field
 
 
 class TrimPlan(BaseModel):
@@ -87,6 +88,25 @@ class TrimPlan(BaseModel):
             )
         return self.model_copy(update={"run": (), "lines": (main, *self.lines)})
 
+    def with_branches_on_break_class(self) -> TrimPlan:
+        """The plan with every branch off a spec break's upstream stretch in that stretch's class.
+
+        Run on a finished plan: a branch (drain, vent, bypass, tap) is planned apart from the main
+        line, with the base (downstream, lighter) class, and may be added after the main line is
+        closed. A branch taken off the heavier upstream stretch is piped in the upstream class
+        (rule L20). Line numbers change in the spec field only; stream kinds are re-keyed to match.
+        """
+        lines = list(self.lines)
+        renamed: dict[str, str] = {}
+        for main in (line for line in self.lines if line.line_number_after_break is not None):
+            for index, branch in enumerate(lines):
+                number = _upstream_branch_number(main, branch)
+                if number is not None and number != branch.line_number:
+                    renamed[branch.line_number] = number
+                    lines[index] = branch.model_copy(update={"line_number": number})
+        kinds = {renamed.get(number, number): kind for number, kind in self.stream_kinds.items()}
+        return self.model_copy(update={"lines": tuple(lines), "stream_kinds": kinds})
+
     def with_port_prefix(self, prefix: str) -> TrimPlan:
         """The same plan with every port renamed `<prefix>.<name>`, so plans can be combined."""
         renamed = {f"{prefix}.{name}": node_id for name, node_id in self.ports.items()}
@@ -106,6 +126,22 @@ def combine(*plans: TrimPlan) -> TrimPlan:
         ports=_merge_keyed([plan.ports for plan in plans], "port"),
         spare_sets=tuple(spare for plan in plans for spare in plan.spare_sets),
     )
+
+
+def _upstream_branch_number(main: LineSpec, branch: LineSpec) -> str | None:
+    """The branch's number in the class of `main`'s upstream stretch; None if it is not on it."""
+    cut = next(i for i, item in enumerate(main.items) if item.node_class == _BREAK)
+    upstream_ids = {item.node_id for item in main.items[: cut + 1]}
+    if branch is main or branch.src_id not in upstream_ids:
+        return None
+    return _with_spec(branch.line_number, main.line_number.split("-")[_SPEC_FIELD])
+
+
+def _with_spec(line_number: str, spec: str) -> str:
+    """`4-P-120017-A1A-N` with its piping class replaced."""
+    fields = line_number.split("-")
+    fields[_SPEC_FIELD] = spec
+    return "-".join(fields)
 
 
 def _merge_keyed[V](tables: list[Mapping[str, V]], what: str) -> dict[str, V]:

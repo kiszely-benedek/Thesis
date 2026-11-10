@@ -10,6 +10,7 @@ from plantgraph.llm.fake_transport import FakeTransport
 from plantgraph.qa.harness import freeze
 from plantgraph.qa.harness.freeze import (
     PROMPT_BUILDING_MODULES,
+    PROMPT_BUILDING_MODULES_OUTSIDE_QA,
     changed_inputs,
     code_hashes,
     corpus_ingest_hashes,
@@ -37,6 +38,7 @@ def fake_qa_dir(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     (module_dir / "builder.py").write_text("PROMPT = 'v1'\n", encoding="utf-8")
     monkeypatch.setattr(freeze, "_QA_DIR", module_dir)
     monkeypatch.setattr(freeze, "PROMPT_BUILDING_MODULES", ("builder.py",))
+    monkeypatch.setattr(freeze, "PROMPT_BUILDING_MODULES_OUTSIDE_QA", ())
     return module_dir
 
 
@@ -56,7 +58,9 @@ def _run(toy: Toy, config: RunConfig, tmp_path: Path, fake: FakeTransport) -> No
 def test_every_listed_prompt_building_module_exists() -> None:
     hashes = code_hashes()
 
-    assert sorted(hashes) == sorted(PROMPT_BUILDING_MODULES)
+    outside = [f"plantgraph/{name}" for name in PROMPT_BUILDING_MODULES_OUTSIDE_QA]
+    assert sorted(hashes) == sorted([*PROMPT_BUILDING_MODULES, *outside])
+    assert "plantgraph/graph/line_view.py" in hashes
     assert all(len(digest) == 64 for digest in hashes.values())
 
 
@@ -132,3 +136,24 @@ def make_config_without_toy(hashes: dict[str, str]) -> RunConfig:
     """The old on-disk config with `code_hashes` filled in: enough for `changed_inputs`."""
     old = RunConfig.model_validate_json(_OLD_RUN_CONFIG.read_text(encoding="utf-8"))
     return old.model_copy(update={"code_hashes": hashes})
+
+
+def test_the_second_review_modules_are_in_the_prompt_building_list() -> None:
+    # R1: the agent loop, the Cypher guard and the context-choosing modules shape prompt text
+    for name in (
+        "agent/loop.py",
+        "agent/actions.py",
+        "plant_api/tool_registry.py",
+        "plant_api/primitives.py",
+        "tag_check.py",
+        "cypher.py",
+        "cypher_guard.py",
+        "need/context.py",
+        "need/programs.py",
+        "sheet_selection.py",
+        "anchors.py",
+        "plant_api/traversal.py",
+        "plant_api/item_graph.py",
+        "plant_api/line_graph.py",
+    ):
+        assert name in PROMPT_BUILDING_MODULES

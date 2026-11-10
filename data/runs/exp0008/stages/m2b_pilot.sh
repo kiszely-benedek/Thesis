@@ -1,17 +1,17 @@
 # M2b: the judge pilot and gate G2. Sourced by run_all.sh.
 #
 # The scorer audit (M10a) asks a second, independent LLM judge whether the deterministic scorer's verdicts are
-# right. Before the audit is relied on, the judge is piloted on 45 first-measurement rows whose truth is known:
-# 13 VALVES_ON_PATH rows the scorer got wrong, 12 numeric-list parse failures, 20 controls (right under both
+# right. Before the audit is relied on, the judge is piloted on every known first-measurement defect row (at least 8 per group) plus 20 controls:
+# the VALVES_ON_PATH rows the scorer got wrong, the numeric-list parse failures, then 20 controls (right under both
 # definitions). G2 passes if at least 80 % of the known defects are judged correct or ambiguous_question and at
 # least 80 % of the controls correct. The pilot also measures the cost per judge call, which sizes the audit.
 #
 # The pilot reads first-measurement records, which the v2.1 code cannot rebuild, so its inputs are prepared
 # once by hand and listed in data/runs/exp0008/inputs/pilot/ (see the README):
-#   valves_ids.txt   the 13 question ids         runs.txt       one first-measurement run directory per line
+#   valves_ids.txt   the question ids            runs.txt       one first-measurement run directory per line
 #   questions/       <corpus>/questions.jsonl     subgraphs.json  plant excerpts cut with
 #                                                scripts/audit_export_subgraphs.py on a `git archive 4dfad69` copy
-# Money: the judge's own ledger (audit/ledger.jsonl) caps the pilot at $1.50 and the audit at $10 in all.
+# Money: the judge's own ledger (audit/ledger.jsonl) caps the pilot at $2.50 and the audit at $10 in all.
 
 PILOT_IN=$SCRIPTS/inputs/pilot
 
@@ -53,5 +53,6 @@ stage_M2b() {
     once pilot_judge pilot_judge
   fi
   g2_gate
-  outputs "$STATE/g2.json" "$ROOT/audit/pilot/verdicts.jsonl" "$ROOT/audit/ledger.jsonl"
+  # not the ledger: M10a appends to it, which would make this stage look unfinished on a later resume
+  outputs "$STATE/g2.json" "$ROOT/audit/pilot/verdicts.jsonl"
 }

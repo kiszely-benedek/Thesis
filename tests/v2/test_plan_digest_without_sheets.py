@@ -21,10 +21,13 @@ UNITS = 60
 #: the product farms take the column distillate and side draw, so lines and receipts were added.
 #: Re-recorded again for F8c: reactor code R, fuel-gas and exchanger-outlet sensors on their lines,
 #: liquid and flare codes on drains, UC input variables, lighter class after a spec break.
+#: Re-recorded for review R2: product farms without a shared receipt header (a tank per receipt),
+#: tap branches in their parent line's service, branches off a spec break's upstream stretch in
+#: its heavier class.
 RECORDED_DIGESTS = {
-    1: "068c22fa74cc9c31b0320f5f242df9e8b88ffd5507db54ddbf38482a2eb72039",
-    2: "eb4000d7ec3155bf8cee7be6dd33951827c0714d30cad910f8d321afd0c05439",
-    3: "c397b03f109d475439c6171306173710951a57a5bff2a577f4ccad7957cb0c68",
+    1: "ff73c462d8912a64879004bc224722c81a7a15fa93aee3ea767b063725055d47",
+    2: "4dd3e61f4e235d79bd6ab3f31a1fff92f546ecf29b84c18fd1832a32f9caa0d3",
+    3: "46b22fcd48a522db809041ed80a211ef261d994b10785bc81387ba21fe2a7ac9",
 }
 
 

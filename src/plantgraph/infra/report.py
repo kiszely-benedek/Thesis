@@ -97,9 +97,9 @@ def _with_db_replay_notice(
         name="Database-only rows",
         status="flag",
         detail=(
-            "local compute of these rows is database time only (the stored query run again plus "
-            "the row formatting; no query-writing model call, no answer-prompt build, no answer "
-            "parsing): "
+            "local compute of these rows is database time only (the recorded queries sent again "
+            "plus the row formatting; no query-writing model call, no answer-prompt build, "
+            "no answer parsing): "
             + ", ".join(partial)
             + ". The model latency and token cost in the same row come from the source run."
         ),

@@ -1,4 +1,4 @@
-"""F5: recall over the scope, offline acc@C following the live fallback, report --setting."""
+"""F5: recall over the scope, conservative offline acc@C, report --setting."""
 
 from __future__ import annotations
 
@@ -48,9 +48,10 @@ def _late_agent_rows() -> list[dict[str, Any]]:
     return rows
 
 
-def test_offline_acc_at_cutoff_follows_the_live_fallback(tmp_path: Path) -> None:
-    # q2: Cypher answered but was cut at the row cap, so it is not accepted; the agent is late.
-    # Live, the agent is cut at the deadline and the policy falls back to Cypher's answer (right).
+def test_offline_acc_at_cutoff_is_the_conservative_lower_bound(tmp_path: Path) -> None:
+    # q2: Cypher was cut at the row cap, so the agent answers, but after 130 s. Live, the stopped
+    # agent still answers from partial evidence and the accept rule can take it; a stored run
+    # cannot show that, so offline the late answer counts as wrong (a lower bound).
     cypher = tier_sources(tmp_path, timeout_s=30.0)["cypher-v2t"]
     agent = write_tier(
         tmp_path, "a2", AGENT_V2T, "pin_agent_luna_final_high.json", _late_agent_rows()
@@ -60,12 +61,13 @@ def test_offline_acc_at_cutoff_follows_the_live_fallback(tmp_path: Path) -> None
     evaluation = evaluate_policy(joined, cutoff_s=120.0)
 
     by_id = {s.decision.question_id: s for s in evaluation.scored}
-    assert by_id["T1:q2"].timed_out and by_id["T1:q2"].correct_at_cutoff
+    assert by_id["T1:q2"].timed_out and not by_id["T1:q2"].correct_at_cutoff
     # the raw (uncut) count is untouched: q2 is the agent's correct answer there
     assert evaluation.summary.n_correct == 3
+    assert evaluation.summary.n_correct_at_cutoff == 1  # only q1, Cypher in time
 
 
-def test_secondary_cutoff_columns_use_the_same_late_fallback(tmp_path: Path) -> None:
+def test_secondary_cutoff_columns_use_the_same_conservative_rule(tmp_path: Path) -> None:
     cypher = tier_sources(tmp_path, timeout_s=30.0)["cypher-v2t"]
     agent = write_tier(
         tmp_path, "a2", AGENT_V2T, "pin_agent_luna_final_high.json", _late_agent_rows()
@@ -73,20 +75,8 @@ def test_secondary_cutoff_columns_use_the_same_late_fallback(tmp_path: Path) -> 
     joined = _join({"cypher-v2t": cypher, "agent-v2t": TierSource(agent)}, tmp_path)
     evaluation = evaluate_policy(joined, cutoff_s=120.0)
 
-    # at 120 s: q1 (Cypher), q2 (fallback to Cypher); the 130 s agent answers do not count
-    assert correct_within(joined, evaluation, 120.0) == 2
-    assert correct_within(joined, evaluation, 300.0) == 3  # q2 by the agent, nothing is late
-
-
-def test_a_late_answer_with_a_wrong_first_tier_fallback_stays_wrong(tmp_path: Path) -> None:
-    # q4: Cypher abstained (wrong); the agent's 130 s answer is late; the fallback is wrong too
-    sources = tier_sources(tmp_path, timeout_s=30.0)
-    joined = _join(sources, tmp_path)
-
-    evaluation = evaluate_policy(joined, cutoff_s=120.0)
-
-    q4 = next(s for s in evaluation.scored if s.decision.question_id == "T1:q4")
-    assert q4.timed_out and not q4.correct_at_cutoff
+    assert correct_within(evaluation, 120.0) == 1  # q1 only; both 130 s agent answers are late
+    assert correct_within(evaluation, 300.0) == 3  # nothing is late at 300 s
 
 
 def _report_arguments(tmp_path: Path, sources: dict[str, TierSource], setting: str) -> list[str]:

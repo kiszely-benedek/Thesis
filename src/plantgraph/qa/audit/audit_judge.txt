@@ -10,9 +10,6 @@ Expected answer type: <<ANSWER_TYPE>>
 The system's reply:
 <<RAW_REPLY>>
 
-The answer read from the reply:
-<<PARSED_ANSWER>>
-
 The benchmark's reference, which may be wrong:
 <<REFERENCE>>
 
@@ -20,7 +17,7 @@ The plant around the evidence, with connections written "from -> to" in the dire
 <<EXCERPT>>
 
 Decide three things:
-1. verdict: "correct" if the system's answer is right for the question as worded; "incorrect" if it is wrong, or if the reply gives no usable answer; "ambiguous_question" if the question can reasonably be read so that different answers are right, and the system's answer is right under one such reading.
+1. verdict: "correct" if the system's answer is right for the question as worded; "incorrect" if it is wrong; "ambiguous_question" if the question can reasonably be read so that different answers are right, and the system's answer is right under one such reading.
 2. reference_ok: true if the benchmark's reference is right for the question, false if it is wrong or the question is ambiguous.
 3. reason: one or two sentences, naming the parts you counted or followed.
 

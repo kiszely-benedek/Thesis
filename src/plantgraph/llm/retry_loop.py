@@ -1,8 +1,10 @@
 """The retry loop around one chat completion: what is retried, what the call's time covers.
 
 Split out of `client.py`. Only transport failures (429, 5xx, a dropped connection) and a
-reply that says `finish_reason: "error"` with no text are retried. The last one is a provider
-failure that arrives inside an HTTP 200, so the SDK does not raise on it.
+reply that says `finish_reason: "error"` are retried. The last one is a provider failure that
+arrives inside an HTTP 200, so the SDK does not raise on it; whatever text it carries (a
+half-written answer included) is thrown away, never returned and never cached. The provider
+may still bill such an attempt, so the caller can hear about it through `on_discarded`.
 """
 
 from __future__ import annotations
@@ -33,8 +35,8 @@ class LiveResult:
 
 
 def is_error_reply(response: ChatResponse) -> bool:
-    """True for a 200 reply that carries a provider failure instead of an answer."""
-    return response.finish_reason == ERROR_FINISH_REASON and not response.text
+    """True for a 200 reply that carries a provider failure, whatever text came with it."""
+    return response.finish_reason == ERROR_FINISH_REASON
 
 
 def call_with_retries(
@@ -44,24 +46,29 @@ def call_with_retries(
     api_key: SecretStr | None,
     max_retries: int,
     backoff_base_seconds: float,
+    on_discarded: Callable[[ChatResponse], None] | None = None,
 ) -> LiveResult:
     """Call until it answers; the result's `latency_s` spans every attempt and back-off.
 
+    `on_discarded` hears each error reply that was thrown away and reported usage or cost.
+
     Raises:
         ContextOverflow: the prompt does not fit; never retried.
-        ProviderError: a fatal error, or retries ran out.
+        ProviderError: a fatal error, or retries ran out; `paid_usd` sums the discarded replies.
     """
     started = time.monotonic()
     attempt = 0
+    discarded_usd = 0.0
     while True:
         try:
             response = call_once()
             if not is_error_reply(response):
                 elapsed = time.monotonic() - started
                 return LiveResult(response.model_copy(update={"latency_s": elapsed}), attempt)
-            message = "expected a reply with text, found finish_reason 'error' and no text"
+            message = "expected a finished reply, found finish_reason 'error'"
+            discarded_usd += _report_discarded(response, on_discarded)
             if attempt >= max_retries:
-                raise ProviderError(message, n_retries=attempt)
+                raise ProviderError(message, n_retries=attempt, paid_usd=discarded_usd)
         except openai.APIStatusError as exc:
             outcome, message = classify_status_error(exc, api_key)
             if outcome == "overflow":
@@ -73,6 +80,17 @@ def call_with_retries(
                 raise ProviderError(redact(str(exc), api_key), n_retries=attempt) from exc
         attempt += 1
         _wait_before_retry(purpose, attempt, max_retries, backoff_base_seconds)
+
+
+def _report_discarded(
+    response: ChatResponse, on_discarded: Callable[[ChatResponse], None] | None
+) -> float:
+    """Tell the caller about a discarded error reply that carries usage; return its cost."""
+    if response.cost_usd is None and not (response.prompt_tokens or response.completion_tokens):
+        return 0.0  # the provider reported nothing billable
+    if on_discarded is not None:
+        on_discarded(response)
+    return response.cost_usd or 0.0
 
 
 def _wait_before_retry(purpose: str, attempt: int, max_retries: int, base_seconds: float) -> None:

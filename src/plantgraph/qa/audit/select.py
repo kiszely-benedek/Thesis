@@ -2,6 +2,8 @@
 
 Order: (1) every wrong row, (2) a seeded right-sample of at least `right_min` per family and
 scale, (3) ContextRAG's wrong rows, (4) more right rows up to `right_max` per family and scale.
+That is the order of the cut. The rows are *judged* with the minimum right-sample first, so if
+the cap stops the run early, the unbiased agreement rate on right rows still exists.
 Two rows with the same question and the same answer are one row for the audit (a duplicate would
 get the same verdict twice); the first in (run, strategy) order stands for them.
 
@@ -132,8 +134,8 @@ def select_audit(
     room -= len(contextrag_chosen)
     extra_chosen = stratified_cut(right_extra, room, seed, "right_extra")
     items = (
-        _items(wrong_chosen, "wrong")
-        + _items(right_min, "right_min")
+        _items(right_min, "right_min")
+        + _items(wrong_chosen, "wrong")
         + _items(contextrag_chosen, "contextrag_wrong")
         + _items(extra_chosen, "right_extra")
     )

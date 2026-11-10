@@ -13,11 +13,22 @@ from pathlib import Path
 from pydantic import BaseModel, ConfigDict, Field
 
 HARD_CAP_USD = 10.0
-PILOT_CAP_USD = 1.5
+#: The pilot's own cap. $1.50 was planned on 8,000-character prompts; the real ones run to
+#: about 27,600 characters (about $0.025 a call at the PAID-04 price), so 49 rows need more.
+PILOT_CAP_USD = 2.5
 #: Planning figure of the design (≈ 8,000-character prompt, ≈ 800 completion tokens).
 ESTIMATED_CALL_USD = 0.015
-#: Design worst case: 24,000-character prompt and the full 2,048 output tokens.
+#: Design worst case: 24,000-character prompt and the full 2,048 output tokens. Planning only
+#: (it sizes the capacity in the pre-registration); the per-call guard is `worst_case_call_usd`.
 WORST_CASE_CALL_USD = 0.042
+#: Price basis, all from the PAID-04 rows (`30-experiments/paid04/answers.jsonl`, 36 Sonnet 5.5
+#: calls, 2026-10-03): $2.00 per million prompt tokens, $10.00 per million completion tokens,
+#: and that run's text averaged 2.19 characters per token.
+CHARS_PER_TOKEN = 2.19
+INPUT_USD_PER_TOKEN = 2.0 / 1_000_000
+OUTPUT_USD_PER_TOKEN = 10.0 / 1_000_000
+#: The judge pin's `max_output_tokens`: the most a reply can bill.
+MAX_OUTPUT_TOKENS = 2_048
 #: Sizing uses the measured mean cost times this, so a dearer-than-average tail does not
 #: push the plan over the budget.
 SIZING_SAFETY_FACTOR = 1.25
@@ -77,6 +88,12 @@ class SpendLedger:
         if not paid:
             raise ValueError(f"expected paid calls recorded for stage {stage!r}, found none")
         return sum(paid) / len(paid)
+
+
+def worst_case_call_usd(prompt_chars: int) -> float:
+    """The most one call can cost: this prompt at 2.19 characters per token, plus a full reply."""
+    prompt_tokens = prompt_chars / CHARS_PER_TOKEN
+    return prompt_tokens * INPUT_USD_PER_TOKEN + MAX_OUTPUT_TOKENS * OUTPUT_USD_PER_TOKEN
 
 
 def sizing_cost_per_call(measured_usd: float) -> float:

@@ -52,8 +52,7 @@ def _replays_identical(replays: list[RunData], fallbacks: list[RunData]) -> Self
     ]
     name = "M1 replay answers byte-identical to the source run"
     if bad or not replays:
-        problems = [*bad, *(["no replay was given"] if not replays else [])]
-        return SelfCheck(name=name, status="fail", detail="; ".join(problems))
+        return SelfCheck(name=name, status="fail", detail=_m1_problems(bad, replays, fallbacks))
     if fallbacks:
         used = ", ".join(f"{run.role} on {run.corpus_id} ({run.run_id})" for run in fallbacks)
         return SelfCheck(
@@ -64,6 +63,17 @@ def _replays_identical(replays: list[RunData], fallbacks: list[RunData]) -> Self
     return SelfCheck(
         name=name, status="pass", detail=f"{len(replays)} of {len(replays)} replays identical"
     )
+
+
+def _m1_problems(bad: list[str], replays: list[RunData], fallbacks: list[RunData]) -> str:
+    """Why M1 failed; with no replay at all, say whether none was given or all fell back."""
+    problems = list(bad)
+    if not replays and fallbacks:
+        used = ", ".join(f"{run.role} on {run.corpus_id} ({run.run_id})" for run in fallbacks)
+        problems.append(f"every replay fell back to the old run (missing or differing): {used}")
+    elif not replays:
+        problems.append("no replay was given")
+    return "; ".join(problems)
 
 
 def _all_environments(inputs: ReportInputs) -> list[tuple[str, RunEnvironment | None]]:

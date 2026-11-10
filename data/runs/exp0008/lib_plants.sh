@@ -36,26 +36,35 @@ build_plant() {  # build_plant: the plant PL_* without Neo4j; round trip (G1) an
 }
 
 neo4j_load() {  # neo4j_load <plant_lines|plant>: the plant PL_* alone in the database (smoke: files only)
+  nl_profile=$1
   nl_dir=$ROOT/neo4jplant/$PL_ID
   nl_args="--headline-v2 --target-sheets $PL_SHEETS --seed $PL_SEED --headline-duplication-rate $PL_RATE"
+  # the load mode goes in the positional parameters, so a Neo4j home with a space in it stays one word
   if smoke; then
     event NOTE "SMOKE: no Neo4j, $PL_ID written as files only"
-    nl_mode="--no-neo4j"
+    set -- --no-neo4j
   else
-    event NOTE "load $PL_ID into Neo4j ($1), wiping the database first"
-    nl_mode="--store-profile $1 --fresh-database"
-    if [ -n "${E9_NEO4J_HOME:-}" ]; then nl_mode="$nl_mode --neo4j-home $E9_NEO4J_HOME"; fi
+    event NOTE "load $PL_ID into Neo4j ($nl_profile), wiping the database first"
+    set -- --store-profile "$nl_profile" --fresh-database
+    if [ -n "${E9_NEO4J_HOME:-}" ]; then set -- "$@" --neo4j-home "$E9_NEO4J_HOME"; fi
   fi
   rm -rf "$nl_dir"
   # shellcheck disable=SC2086
-  try $P -m plantgraph.ingest synthetic $nl_args --corpus-id "$PL_ID" $nl_mode --out "$nl_dir" \
+  try $P -m plantgraph.ingest synthetic $nl_args --corpus-id "$PL_ID" "$@" --out "$nl_dir" \
     > "$LOGS/load_$PL_ID.json" 2> "$LOGS/load_$PL_ID.err"
   # A reload rewrites ingest.json (its timings differ), but a run freezes that file's hash (F7) and refuses
   # to resume on a changed one. The Cypher tier therefore reads a copy that is made once and never replaced.
-  mkdir -p "$ROOT/cypcorp/$1/$PL_ID"
-  if [ ! -f "$ROOT/cypcorp/$1/$PL_ID/ingest.json" ]; then
-    try cp "$nl_dir/ingest.json" "$ROOT/cypcorp/$1/$PL_ID/ingest.json"
+  mkdir -p "$ROOT/cypcorp/$nl_profile/$PL_ID"
+  if [ ! -f "$ROOT/cypcorp/$nl_profile/$PL_ID/ingest.json" ]; then
+    try cp "$nl_dir/ingest.json" "$ROOT/cypcorp/$nl_profile/$PL_ID/ingest.json"
   fi
+}
+
+demo_database() {  # the last load: plant 1 at 1,000 sheets, plant_lines, alone in the user's database
+  plan_to_file demo
+  read -r PL_ID PL_SHEETS PL_SEED PL_RATE PL_VARIANT < "$PLAN_FILE"
+  neo4j_load plant_lines
+  event NOTE "the database ends on $PL_ID (plant_lines)"
 }
 
 drop_tmp_database() {  # the first measurement's temporary database goes away before anything is loaded
@@ -96,10 +105,55 @@ line_view_gate() {  # line_view_gate <id>: LINE-01, the line view equals the gol
     --ingest-json "$ROOT/corpora/$1/ingest.json"
 }
 
-n_sheets_of() { $P -c "import json,sys;print(json.load(open(sys.argv[1]))['counts']['n_sheets'])" "$1"; }
+n_sheets_of() {  # n_sheets_of <ingest.json>: sets NS_COUNT; a missing file or a bad read stops the launcher
+  NS_COUNT=$($P -c "import json,sys;print(json.load(open(sys.argv[1]))['counts']['n_sheets'])" "$1") ||
+    stop_run infra "cannot read the sheet count from $1"
+  [ -n "$NS_COUNT" ] || stop_run infra "no sheet count in $1"
+}
 
 check_loaded_matches() {  # check_loaded_matches <id>: the loaded plant has the built plant's sheet count
-  cm_built=$(n_sheets_of "$ROOT/corpora/$1/ingest.json")
-  cm_loaded=$(n_sheets_of "$ROOT/neo4jplant/$1/ingest.json")
+  n_sheets_of "$ROOT/corpora/$1/ingest.json"; cm_built=$NS_COUNT
+  n_sheets_of "$ROOT/neo4jplant/$1/ingest.json"; cm_loaded=$NS_COUNT
   [ "$cm_built" = "$cm_loaded" ] || stop_run infra "loaded $1 has $cm_loaded sheets, the built plant $cm_built"
+}
+
+# ---- composition bands -----------------------------------------------------------------------------
+
+pooled_bands() {  # pooled_bands <gate|report> <name> <sheets> <seed>...: ADR-0059 bands on the mean over the plants
+  pb_mode=$1; pb_name=$2; pb_sheets=$3; shift 3
+  pb_json=$ROOT/bands/composition_$pb_name.json; pb_txt=$LOGS/composition_$pb_name.txt
+  mkdir -p "$ROOT/bands"; rm -f "$pb_json"
+  pb_test=; if [ "$pb_mode" = report ]; then pb_test=--allow-test-seed; fi   # test plants: seeds in the 5000s
+  pb_rc=0
+  # shellcheck disable=SC2086
+  $P -m plantgraph.benchmark.v2.composition --target-sheets "$pb_sheets" --seeds "$@" --pool --corpus $pb_test \
+    --json "$pb_json" > "$pb_txt" 2>&1 || pb_rc=$?
+  # Exit 1 means "a band failed" for the program and also for a Python crash; only a band failure
+  # leaves the JSON file behind (it is written before the exit code is chosen) and no traceback.
+  pb_crash=no
+  if [ $pb_rc -ne 0 ] && { [ ! -s "$pb_json" ] || grep -q Traceback "$pb_txt"; }; then pb_crash=yes; fi
+  [ "$pb_crash" = no ] || stop_run infra "the composition report of $pb_name crashed (exit $pb_rc), see $pb_txt"
+  if forced band && [ "$pb_mode" = gate ]; then pb_rc=1; fi
+  if [ $pb_rc -eq 0 ]; then gate_pass "composition bands hold on the $pb_name plants (mean over $# plants)"; return 0; fi
+  # the bands describe plants of 100+ sheets, so a tiny smoke plant is not judged by them unless forced
+  if smoke && ! forced band; then event NOTE "SMOKE: $pb_name is too small for the bands, not judged"; return 0; fi
+  if [ "$pb_mode" = report ]; then event NOTE "bands NOT met on the pooled $pb_name plants (reported, see $pb_txt)"; return 0; fi
+  gate_fail "U4" "the pooled $pb_name plants break a composition band (ADR-0059); see $pb_txt"
+}
+
+scale_of_id() {  # the sheet-count label of a plant id: D1000g21 and H1000g21p3 are 1000, the rest 100
+  case $1 in *1000g*) echo 1000 ;; *) echo 100 ;; esac
+}
+
+bands_by_scale() {  # bands_by_scale <gate|report> <name-prefix>: pooled_bands per scale over the plants of $PLAN_FILE
+  bs_mode=$1; bs_prefix=$2
+  for bs_scale in 100 1000; do
+    bs_seeds=; bs_sheets=
+    while read -r bs_id bs_n bs_seed bs_rest; do
+      if [ "$(scale_of_id "$bs_id")" = "$bs_scale" ]; then bs_seeds="$bs_seeds $bs_seed"; bs_sheets=$bs_n; fi
+    done < "$PLAN_FILE"
+    if [ -z "$bs_seeds" ]; then continue; fi
+    # shellcheck disable=SC2086
+    pooled_bands "$bs_mode" "$bs_prefix$bs_scale" "$bs_sheets" $bs_seeds
+  done
 }

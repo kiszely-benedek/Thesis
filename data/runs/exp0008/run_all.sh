@@ -29,6 +29,11 @@ while [ $# -gt 0 ]; do
   shift
 done
 if [ -n "$FORCE" ] && [ "$SMOKE" != yes ]; then echo "ERROR: --force is for --smoke only" >&2; exit 2; fi
+# a real run measures store sizes in M7: launch.sh sets E9_NEO4J_HOME (the Neo4j server's home folder)
+if [ "$SMOKE" != yes ] && [ ! -d "${E9_NEO4J_HOME:-}" ]; then
+  echo "ERROR: expected E9_NEO4J_HOME to name the Neo4j server's home folder, found '${E9_NEO4J_HOME:-}' (start with launch.sh)" >&2
+  exit 2
+fi
 export SMOKE FORCE
 if [ "$SMOKE" = yes ] && [ -z "${E9_ROOT:-}" ]; then   # a fresh temporary folder, as a path Python can open too
   E9_ROOT=$(mktemp -d); if command -v cygpath > /dev/null 2>&1; then E9_ROOT=$(cygpath -m "$E9_ROOT"); fi

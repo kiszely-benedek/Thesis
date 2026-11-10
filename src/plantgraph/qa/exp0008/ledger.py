@@ -12,6 +12,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from plantgraph.qa.harness.jsonl_tail import parse_jsonl
+
 PROGRAM_CAP_USD = 40.0
 AUDIT_CAP_USD = 10.0
 RUNS_CAP_USD = PROGRAM_CAP_USD - AUDIT_CAP_USD
@@ -30,19 +32,14 @@ class LedgerExhausted(RuntimeError):
 def paid_usd_of_calls(calls_file: Path) -> float:
     """Dollars paid in one `calls.jsonl`: the cost of every call whose reply was not cached.
 
+    A last line cut off by a crash is skipped with a warning.
+
     Raises:
-        ValueError: a line is not JSON, so the spend cannot be trusted.
+        ValueError: a line other than the last is not JSON, so the spend cannot be trusted.
     """
     total = 0.0
-    for number, line in enumerate(calls_file.read_text(encoding="utf-8").splitlines(), start=1):
-        if not line.strip():
-            continue
-        try:
-            response = json.loads(line).get("response")
-        except json.JSONDecodeError as error:
-            raise ValueError(
-                f"expected JSON in {calls_file} line {number}, found {error}"
-            ) from error
+    for record in parse_jsonl(calls_file, json.loads):
+        response = record.get("response")
         if response and not response.get("from_cache") and response.get("cost_usd"):
             total += float(response["cost_usd"])
     return total

@@ -47,7 +47,8 @@ def test_the_acceptance_command_writes_a_ten_sheet_v2_corpus_without_neo4j(
     assert result.config["split"]["duplication_rate"] == 0.25
     assert (tmp_path / "ingest.json").exists()
     assert (
-        json.loads((tmp_path / "ingest.json").read_text(encoding="utf-8"))["corpus_id"] == "X10g21s0"
+        json.loads((tmp_path / "ingest.json").read_text(encoding="utf-8"))["corpus_id"]
+        == "X10g21s0"
     )
 
 

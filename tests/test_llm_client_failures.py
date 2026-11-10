@@ -59,7 +59,8 @@ def test_an_empty_error_reply_is_retried_and_the_good_answer_is_cached(tmp_path:
     response = client.complete(_request(), run_id="r")
 
     assert response.text == "ok" and len(fake.requests) == 2
-    record = _calls(tmp_path)[0]
+    discarded, record = _calls(tmp_path)  # the thrown-away error reply is logged, then the answer
+    assert discarded["error_kind"] == "provider_error" and discarded["response"] is not None
     assert record["error_kind"] is None and record["n_retries"] == 1
     again = _client(tmp_path, FakeTransport(), replay=True).complete(_request(), run_id="r")
     assert again.text == "ok"
@@ -81,12 +82,30 @@ def test_a_persistent_empty_error_reply_is_a_provider_error_and_is_not_cached(
         _client(tmp_path, FakeTransport(), replay=True).complete(_request(), run_id="r")
 
 
-def test_an_error_finish_reason_with_text_is_kept_as_an_answer(tmp_path: Path) -> None:
-    fake = FakeTransport(default_reply=ScriptedReply(text="partial", finish_reason="error"))
+def test_an_error_finish_reason_with_text_is_still_a_failure(tmp_path: Path) -> None:
+    # a half-written reply inside a 200 is not an answer: retried, never cached, then an error
+    partial = ScriptedReply(text="partial", finish_reason="error", cost_usd=0.002)
+    fake = FakeTransport(default_reply=partial)
+    client = _client(tmp_path, fake)
 
-    response = _client(tmp_path, fake).complete(_request(), run_id="r")
+    with pytest.raises(ProviderError) as raised:
+        client.complete(_request(), run_id="r")
 
-    assert response.text == "partial" and len(fake.requests) == 1
+    assert len(fake.requests) == 3
+    assert raised.value.paid_usd == pytest.approx(0.006)  # three billed attempts
+    with pytest.raises(CacheMiss):
+        _client(tmp_path, FakeTransport(), replay=True).complete(_request(), run_id="r")
+
+
+def test_the_cost_of_every_discarded_error_attempt_is_in_calls_jsonl(tmp_path: Path) -> None:
+    partial = ScriptedReply(text="partial", finish_reason="error", cost_usd=0.002)
+    client = _client(tmp_path, FakeTransport(default_reply=partial))
+
+    with pytest.raises(ProviderError):
+        client.complete(_request(), run_id="r")
+
+    paid = [c["response"]["cost_usd"] for c in _calls(tmp_path) if c["response"] is not None]
+    assert paid == [0.002] * 3  # spend read from calls.jsonl counts them
 
 
 def test_backoff_and_failed_attempts_are_in_the_latency(tmp_path: Path) -> None:

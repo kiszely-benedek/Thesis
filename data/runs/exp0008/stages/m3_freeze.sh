@@ -9,8 +9,12 @@
 #   3. logs the time, so the hash and the log line precede the first test-plant build.
 # It never commits: the user commits part B and the hash files afterwards, on their order.
 
-# what a test run's behaviour depends on; `git status` is checked over exactly these paths
-FROZEN_PATHS="src $SCRIPTS/run_all.sh $SCRIPTS/lib.sh $SCRIPTS/lib_plants.sh $SCRIPTS/lib_runs.sh $SCRIPTS/stages $INPUTS"
+# What a test run's behaviour depends on; `git status` is checked over exactly these paths.
+# Not frozen: src/plantgraph/demo (the demo is built in parallel and cannot change a measurement; `:!` is
+# git's exclude pathspec). Added to the code: the audit's excerpt script, the EX01 inputs and the EX01 XML.
+FROZEN_PATHS="src :!src/plantgraph/demo scripts/audit_export_subgraphs.py $SCRIPTS/run_all.sh $SCRIPTS/lib.sh"
+FROZEN_PATHS="$FROZEN_PATHS $SCRIPTS/lib_plants.sh $SCRIPTS/lib_runs.sh $SCRIPTS/stages"
+FROZEN_PATHS="$FROZEN_PATHS $INPUTS data/runs/exp0001/inputs data/external/C01V04-VER.EX01.xml"
 JUDGE_PROMPT=src/plantgraph/qa/audit/audit_judge.txt
 
 git_facts() {  # git_facts: writes head, porcelain and the files changed since part A's commit into $SD

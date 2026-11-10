@@ -148,14 +148,11 @@ def test_one_receipt_line_is_one_in_port_and_the_transfer_line_is_the_out_port()
     assert (transfer.direction, transfer.phase) == (PortDirection.OUT, Phase.LIQUID)
 
 
-def test_a_second_receipt_line_joins_the_first_at_a_merge_tee() -> None:
-    _, instance, graph = _farm_with_receipts(2)
+def test_a_second_receipt_line_fills_tanks_of_its_own() -> None:
+    _, instance, _ = _farm_with_receipts(2)
     assert instance.port_names == ["receipt1", "receipt2", "transfer"]
-    (merge,) = ids_with_role(instance.plan, "receipt_merge_tee")
-    second = instance.port("receipt2")
-    assert graph.has_edge(second.node_id, merge)
-    first = instance.port("receipt1")
-    assert merge in send_to_path(graph, first.node_id, _tanks(instance)[-1])
+    assert not ids_with_role(instance.plan, "receipt_merge_tee")  # receipt lines never join
+    assert len(_tanks(instance)) >= 2  # a tank for each line
 
 
 # ---- trips and trims -----------------------------------------------------------------------------
@@ -164,9 +161,12 @@ def test_a_second_receipt_line_joins_the_first_at_a_merge_tee() -> None:
 def test_every_tank_inlet_has_one_valve_for_the_hand_switch_and_one_for_the_overfill_trip() -> None:
     """One driver per XV: two on-off valves in series, driven by `HS` and by `LT -> LSHH`."""
     _, instance, graph = _farm({"U4.tank_count": ("3",)})
-    first = instance.port("receipt1").node_id
+    receipts = [p.node_id for p in instance.ports if p.name.startswith("receipt")]
     for tank in _tanks(instance):
-        path = send_to_path(graph, first, tank)
+        # the tank's own receipt line is the shortest way in (others reach it only via the pumps)
+        path = min(
+            (send_to_path(graph, r, tank) for r in receipts if nx.has_path(graph, r, tank)), key=len
+        )
         on_off = [n for n in path if (graph.nodes[n].get("tag") or "")[:2] in ("XV", "YV")]
         assert len(on_off) == 2
         drivers = []
@@ -204,9 +204,15 @@ def test_optional_level_alarms_follow_their_chances(chance: float, expected: boo
 
 def test_the_transfer_rate_is_held_by_a_flow_loop_on_the_pump_header() -> None:
     _, instance, graph = _farm()
-    path = send_to_path(graph, _pumps(instance)[0], instance.port("transfer").node_id)
-    letters = [(graph.nodes[n].get("tag") or "").partition("-")[0] for n in path]
-    assert "FE" in letters and "FV" in letters
+    pump, out = _pumps(instance)[0], instance.port("transfer").node_id
+    # not the shortest path: a control valve station's bypass (tagged `GV`) can be shorter
+    for letters in ("FE", "FV"):
+        on_path = [
+            part
+            for part in nodes_with_letters(graph, letters)
+            if nx.has_path(graph, pump, part) and nx.has_path(graph, part, out)
+        ]
+        assert on_path, f"expected a {letters} part between the pump and the transfer line"
     assert nodes_with_letters(graph, "FIC")
 
 

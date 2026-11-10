@@ -24,8 +24,6 @@ def test_judge_input_has_no_field_that_carries_the_scorers_verdict() -> None:
         "question_text",
         "answer_type",
         "raw_reply",
-        "parsed_answer",
-        "not_present",
         "reference",
         "answerable",
         "plant_excerpt",
@@ -64,7 +62,7 @@ def test_the_prompt_labels_the_reference_as_possibly_wrong_and_holds_the_excerpt
     assert "<<" not in prompt  # every placeholder was filled
 
 
-def test_a_parse_failure_shows_its_raw_reply_and_no_parsed_answer() -> None:
+def test_a_parse_failure_shows_its_raw_reply_and_nothing_about_how_it_was_read() -> None:
     question = make_question(1, answer_type=AnswerType.UNIT_SET)
     result = make_result(
         question, correct=False, answer=None, outcome=Outcome.PARSE_FAILURE, raw_reply="[1, 2]"
@@ -73,7 +71,28 @@ def test_a_parse_failure_shows_its_raw_reply_and_no_parsed_answer() -> None:
     prompt = build_prompt(make_judge_input(question, result, _EXCERPT))
 
     assert "[1, 2]" in prompt
-    assert "no answer could be read from the reply" in prompt
+    assert "read from the reply" not in prompt and "no answer could" not in prompt
+    assert "usable answer" not in prompt  # the judge decides from the reply text itself
+
+
+def test_an_answered_row_and_a_parse_failure_with_the_same_reply_give_the_same_prompt() -> None:
+    question = make_question(1)
+    reply = '{"answer": "Pump", "not_present": false}'
+    answered = make_result(question, correct=True)  # the run kept no reply, only the answer
+    failed = make_result(
+        question, correct=False, answer=None, outcome=Outcome.PARSE_FAILURE, raw_reply=reply
+    )
+
+    assert _prompt_for(answered) == _prompt_for(failed)
+    assert reply in _prompt_for(answered)
+
+
+def test_a_row_with_neither_reply_nor_answer_is_refused() -> None:
+    question = make_question(1)
+    result = make_result(question, correct=False, answer=None, outcome=Outcome.PARSE_FAILURE)
+
+    with pytest.raises(ValueError, match="stored reply or a parsed answer"):
+        make_judge_input(question, result, _EXCERPT)
 
 
 def test_the_pin_is_the_paid04_sonnet_slug_at_low_reasoning() -> None:

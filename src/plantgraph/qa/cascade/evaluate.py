@@ -18,7 +18,6 @@ from plantgraph.qa.cascade.join import JoinedCorpus
 from plantgraph.qa.cascade.models import CascadePolicy, Decision
 from plantgraph.qa.cascade.policy import decide_all
 from plantgraph.qa.cascade.stats import PairedDifference, median, paired_bootstrap, percentile
-from plantgraph.qa.models import Outcome
 
 #: Key of `Summary.tier_shares` for questions that end without an answer.
 NO_ANSWER = "none"
@@ -53,16 +52,16 @@ class ScoredDecision(BaseModel):
     correct: bool
     #: The decision's summed latency exceeds the cutoff, so its answer arrived too late.
     timed_out: bool = False
-    #: Correctness of the first tier's own answer when it would replace a late answer live
-    #: (see `_late_fallback_correct`); `None` when no such answer exists.
-    late_fallback_correct: bool | None = None
 
     @property
     def correct_at_cutoff(self) -> bool:
-        """Correct and in time, as the live cascade would have answered (late: first tier's)."""
-        if self.timed_out:
-            return self.late_fallback_correct is True
-        return self.correct
+        """Correct and in time: a timed-out answer counts as wrong.
+
+        Conservative on purpose: live, a stopped agent tier still answers from partial evidence
+        and the accept rule can take it, which a stored run cannot reproduce. So the offline
+        acc@C is a lower bound of the live cascade's.
+        """
+        return self.correct and not self.timed_out
 
 
 @dataclass(frozen=True)
@@ -158,39 +157,18 @@ class Acceptance(BaseModel):
 def score_decisions(
     joined: JoinedCorpus, decisions: Sequence[Decision], cutoff_s: float = DEFAULT_CUTOFF_S
 ) -> list[ScoredDecision]:
-    """Attach `correct` from the final tier's stored row, and mark answers later than the cutoff."""
+    """Attach `correct` from the final tier's stored row, and mark answers later than the cutoff.
+
+    The resulting acc@C is a conservative lower bound of the live cascade (see `correct_at_cutoff`).
+    """
     return [
         ScoredDecision(
             decision=d,
             correct=_final_answer_correct(joined, d),
             timed_out=d.latency_s > cutoff_s,
-            late_fallback_correct=_late_fallback_correct(joined, d, cutoff_s),
         )
         for d in decisions
     ]
-
-
-def _late_fallback_correct(
-    joined: JoinedCorpus, decision: Decision, cutoff_s: float
-) -> bool | None:
-    """The live rule for a late question: drop the overrunning tier, keep the first tier's answer.
-
-    Live, a later tier gets only the time the cutoff has left. If it overruns, it is not
-    accepted, and the policy falls back to the first tier's answer, which was in time. Offline
-    the stored later tier ran to the end, so the summed latency is over the cutoff; this
-    function applies the same fallback so the offline acc@C is not stricter than the live one.
-    """
-    policy = joined.policy
-    first = policy.tiers[0].name
-    late = decision.latency_s > cutoff_s
-    if not late or not policy.fallback_to_first_answer or decision.tiers_tried[:1] != (first,):
-        return None
-    if len(decision.tiers_tried) < 2:
-        return None  # the first tier itself was late: nothing earlier to fall back to
-    signals = joined.signals[first][decision.question_id]
-    if signals.outcome is not Outcome.ANSWERED or signals.latency_s > cutoff_s:
-        return None
-    return joined.runs[first].rows[decision.question_id].correct
 
 
 def _final_answer_correct(joined: JoinedCorpus, decision: Decision) -> bool:

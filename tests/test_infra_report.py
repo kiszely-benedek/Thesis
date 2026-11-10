@@ -189,6 +189,15 @@ def test_a_replay_that_fell_back_to_an_old_run_does_not_pass_the_identity_check(
     assert check.status == "flag" and "need on D100" in check.detail
 
 
+def test_when_every_replay_fell_back_m1_says_so_instead_of_no_replay_given() -> None:
+    fallback = run("need", "D100", [timing(0.1)], status=None)
+    check = _check(build_infra_report(_inputs(runs=[fallback])).checks, "M1")
+    assert check.status == "fail"
+    assert "fell back to the old run" in check.detail and "need on D100" in check.detail
+    assert "no replay was given" not in check.detail
+    assert "no replay was given" in _check(build_infra_report(_inputs(runs=[])).checks, "M1").detail
+
+
 def test_no_price_file_means_no_money_table() -> None:
     report = build_infra_report(_inputs())
     assert report.money == []

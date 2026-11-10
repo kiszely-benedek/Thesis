@@ -28,13 +28,20 @@ def test_the_smoke_evidence_must_exist_and_match_head(tmp_path: Path) -> None:
 def test_neo4j_needs_the_plant_database_and_no_leftover_temporary_one() -> None:
     assert readiness.check_neo4j(None).status == "SKIP"
     assert readiness.check_neo4j(lambda: ["neo4j", "system"]).status == "OK"
-    assert "e7tune" in readiness.check_neo4j(lambda: ["neo4j", "e7tune"]).detail
+    leftover = readiness.check_neo4j(lambda: ["neo4j", "e7tune"])
+    assert leftover.status == "INFO" and "M0 drops it" in leftover.detail  # not a failure
 
     def down() -> list[str]:
         raise ConnectionError("no server")
 
     assert "ConnectionError" in readiness.check_neo4j(down).detail
     assert readiness.check_neo4j(lambda: ["system"]).status == "FAIL"
+
+
+def test_the_neo4j_home_must_be_set_and_exist(tmp_path: Path) -> None:
+    assert readiness.check_neo4j_home(None).status == "FAIL"
+    assert readiness.check_neo4j_home(str(tmp_path / "nope")).status == "FAIL"
+    assert readiness.check_neo4j_home(str(tmp_path)).status == "OK"
 
 
 def test_the_balance_check_uses_the_launchers_own_reader() -> None:

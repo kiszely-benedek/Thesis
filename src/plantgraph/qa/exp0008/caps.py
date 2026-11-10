@@ -13,10 +13,30 @@ import math
 SAFETY_FACTOR = 1.5
 #: the harness needs a positive cap even when the dry run found every call cached (a pure replay)
 MIN_RUN_CAP_USD = 0.01
-#: Dollars per question that needs a model call. cyp/ag: the first measurement's R5 figures at
-#: 1,000 sheets (`exp0004/e2e_caps.py`), the dearest scale, so they bound every EXP-0008 plant.
-#: ctx: ContextRAG high on the small ladder, $2.67 over 236 questions (EXP-0007-R4-ladder.md).
-COST_PER_QUESTION_USD = {"cyp": 0.00075, "ag": 0.00189, "ctx": 2.67 / 236}
+#: The harness reserves one question's cost per item in flight (4 at concurrency 4) and refuses a
+#: question that could reach the cap, so a cap below this many questions' cost stops even a replay.
+RESERVED_QUESTIONS = 5
+#: Dollars per question that needs a model call, by cost key. A key is a tier ("cyp", "ag", "ctx"),
+#: optionally followed by "-" and a variant: the identity arm for P4, the plant size for ContextRAG.
+#: Plain "cyp" / "ag": R5's figures at 1,000 sheets (`exp0004/e2e_caps.py`), the dearest scale.
+#: "cyp-dN" / "ag-dN": the first P4 measurement's real spend per question that needed a call
+#: (`EXP-0004-E2E.md`, Spend table): Cypher 0.0741/148, 0.0347/102, 0.0938/83; agent as printed.
+#: "ctx-HNg21": ContextRAG high on N sheets, the R4 ladder's $/q (`EXP-0007-R4-ladder.md`); the
+#: plain "ctx" is the dearest of them, H10.
+COST_PER_QUESTION_USD = {
+    "cyp": 0.00075,
+    "ag": 0.00189,
+    "cyp-d0": round(0.0741 / 148, 6),
+    "cyp-d2": round(0.0347 / 102, 6),
+    "cyp-d4": round(0.0938 / 83, 6),
+    "ag-d0": 0.00195,
+    "ag-d2": 0.00266,
+    "ag-d4": 0.00431,
+    "ctx": 0.02172,
+    "ctx-H1g21": 0.00274,
+    "ctx-H3g21": 0.00600,
+    "ctx-H10g21": 0.02172,
+}
 #: Step ceilings, the "Step cap" column of review-fixes §6 (M6c = d0/d50 $1.34 + C1 $0.10).
 STEP_CEILING_USD = {
     "M1": 2.00,
@@ -32,12 +52,17 @@ STEP_CEILING_USD = {
 
 
 def run_cap_usd(n_questions_with_miss: int, tier: str) -> float:
-    """Misses x cost per question x 1.5, rounded up to 0.0001 USD, at least `MIN_RUN_CAP_USD`.
+    """Misses x cost per question x 1.5, rounded up to 0.0001 USD.
+
+    Never below `MIN_RUN_CAP_USD` or the reservations of the questions in flight
+    (`RESERVED_QUESTIONS` x the cost per question: with 3 misses and a 0.02 cost, a cap of
+    0.09 would stop the run at its fourth in-flight question, found by the smoke on `ag-d2`).
 
     Raises:
         ValueError: an unknown tier.
     """
     if tier not in COST_PER_QUESTION_USD:
         raise ValueError(f"expected a tier in {sorted(COST_PER_QUESTION_USD)}, found {tier!r}")
-    raw = n_questions_with_miss * COST_PER_QUESTION_USD[tier] * SAFETY_FACTOR
+    cost = COST_PER_QUESTION_USD[tier]
+    raw = max(n_questions_with_miss * cost * SAFETY_FACTOR, RESERVED_QUESTIONS * cost)
     return max(MIN_RUN_CAP_USD, math.ceil(raw * 1e4) / 1e4)

@@ -106,16 +106,29 @@ def count_without_answer(run: LoadedRun) -> int:
 
 
 def make_judge_input(question: Question, result: QuestionResult, excerpt: str) -> JudgeInput:
-    """What the judge sees. The scorer's verdict, outcome, f1 and trace are not copied."""
-    final = result.final_answer
-    raw_reply = result.trace.get("raw_reply")
+    """What the judge sees. The scorer's verdict, outcome, f1 and trace are not copied.
+
+    Raises:
+        ValueError: the row has neither a stored reply nor a parsed answer to show.
+    """
     return JudgeInput(
         question_text=question.text,
         answer_type=question.answer_type,
-        raw_reply=str(raw_reply) if raw_reply is not None else None,
-        parsed_answer=final.answer if final is not None else None,
-        not_present=final.not_present if final is not None else False,
+        raw_reply=_reply_text(result),
         reference=question.reference,
         answerable=question.answerable,
         plant_excerpt=excerpt,
     )
+
+
+def _reply_text(result: QuestionResult) -> str:
+    """The stored reply, or the parsed answer in the canonical reply JSON when none was kept."""
+    raw_reply = result.trace.get("raw_reply")
+    if raw_reply is not None:
+        return str(raw_reply)
+    final = result.final_answer
+    if final is None:
+        raise ValueError(
+            f"expected a stored reply or a parsed answer for {result.question_id}, found neither"
+        )
+    return json.dumps({"answer": final.answer, "not_present": final.not_present})

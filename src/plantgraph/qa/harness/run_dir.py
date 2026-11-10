@@ -21,6 +21,7 @@ from pathlib import Path
 from plantgraph.infra.environment import RunEnvironment
 from plantgraph.llm.models import CallRecord
 from plantgraph.qa.harness.freeze import differing_fields
+from plantgraph.qa.harness.jsonl_tail import parse_jsonl
 from plantgraph.qa.harness.usage_meter import TimingRow
 from plantgraph.qa.models import CorpusRecord, Outcome, QuestionResult, RunConfig
 
@@ -129,13 +130,14 @@ class RunDir:
 
         Read from `calls.jsonl`, not from the rows: a row's cost is what its calls cost when
         first made, so a row answered from the cache would count money spent in another run.
-        Late answers of abandoned calls are in the log too, so they count.
+        Late answers of abandoned calls are in the log too, so they count. A last line cut
+        off by a crash is skipped with a warning; a bad line elsewhere raises.
         """
         if not self.calls_path.exists():
             return 0.0
         total = 0.0
-        for line in self.calls_path.read_text(encoding="utf-8").splitlines():
-            response = CallRecord.model_validate_json(line).response
+        for record in parse_jsonl(self.calls_path, CallRecord.model_validate_json):
+            response = record.response
             if response is not None and not response.from_cache:
                 total += response.cost_usd or 0.0
         return total

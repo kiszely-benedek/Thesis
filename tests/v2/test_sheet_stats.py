@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from types import SimpleNamespace
+from typing import Any
+
 from plant_v2 import generated
 
 from plantgraph.benchmark.v2.config import GeneratorConfigV2
@@ -103,11 +106,53 @@ def test_a_controller_bubble_is_an_instrument_symbol() -> None:
 def test_a_wired_out_port_counts_one_stub_not_an_open_end_plus_a_crossing() -> None:
     """Seed 1, 60 units: 80 out-ports are wired; v2 counted 697 stubs, v2.1 counts 617.
 
-    612 after F8c, which changed the plant itself (new draw order in U5, new tees in U3).
+    612 after F8c, which changed the plant itself (new draw order in U5, new tees in U3). After
+    review R2 (an end counts as wired only when a line of another unit starts from it, farm
+    receipts without a merge header, tap services): 76 wired ends, 611 stubs.
     """
     plan = plan_plant(GeneratorConfigV2(seed=1, n_units=60))
-    assert len(wired_out_ends(plan)) == 80
-    assert sum(s.stubs for s in sheet_stats(plan)) == 612
+    assert len(wired_out_ends(plan)) == 76
+    assert sum(s.stubs for s in sheet_stats(plan)) == 611
+
+
+def _fake_plan(units: dict[int, list[LineSpec]]) -> Any:
+    """The part of a plant plan `wired_out_ends` reads: units with a number and their lines."""
+    return SimpleNamespace(
+        units=[
+            SimpleNamespace(slot=SimpleNamespace(unit_no=no), instance=SimpleNamespace(plan=plan))
+            for no, plan in ((no, SimpleNamespace(lines=lines)) for no, lines in units.items())
+        ]
+    )
+
+
+def _open_line(unit: int, number: int, src: str | None, last: str, dst: str | None) -> LineSpec:
+    return LineSpec(
+        line_number=f"4-P-{unit}{number:04d}-A1A-N",
+        fluid_code="P",
+        unit_no=unit,
+        src_id=src,
+        dst_id=dst,
+        items=(LineItemSpec(node_id=last, node_class="GateValve"),),
+    )
+
+
+def test_an_end_is_wired_only_when_a_line_of_another_unit_starts_from_it() -> None:
+    """R2: a branch of the same unit starting at a line's last part does not wire that end."""
+    own_branch = _open_line(1, 2, "end1", "tap", None)
+    other_unit = _open_line(2, 1, "end2", "far", None)
+    plan = _fake_plan(
+        {
+            1: [_open_line(1, 1, "tank", "end1", None), own_branch],
+            2: [_open_line(2, 2, "pump", "end2", None)],
+            3: [other_unit],
+        }
+    )
+    assert wired_out_ends(plan) == frozenset({"end2"})  # end1's only starter is its own unit
+
+
+def test_seed_1_300_units_counts_370_wired_ends_not_386() -> None:
+    """The old rule counted 16 ends as wired that only a line of their own unit starts from."""
+    assert len(wired_out_ends(plan_plant(GeneratorConfigV2(seed=1, n_units=300)))) == 370
 
 
 def test_an_open_line_end_is_a_stub_unless_a_later_line_starts_from_it() -> None:

@@ -62,7 +62,6 @@ def build_prompt(judge_input: JudgeInput) -> str:
         "<<QUESTION>>": judge_input.question_text,
         "<<ANSWER_TYPE>>": _ANSWER_TYPE_HELP[judge_input.answer_type],
         "<<RAW_REPLY>>": _raw_reply_text(judge_input.raw_reply),
-        "<<PARSED_ANSWER>>": _parsed_answer_text(judge_input),
         "<<REFERENCE>>": _reference_text(judge_input),
         "<<EXCERPT>>": judge_input.plant_excerpt,
     }
@@ -106,18 +105,10 @@ def parse_reply(text: str) -> JudgeReply:
         ) from error
 
 
-def _raw_reply_text(raw_reply: str | None) -> str:
-    if raw_reply is None:
-        return "(the run did not store the full reply; only the answer read from it is below)"
+def _raw_reply_text(raw_reply: str) -> str:
     if len(raw_reply) > MAX_RAW_REPLY_CHARS:
         return raw_reply[:MAX_RAW_REPLY_CHARS] + "\n[reply cut here: it was longer]"
     return raw_reply
-
-
-def _parsed_answer_text(judge_input: JudgeInput) -> str:
-    if judge_input.not_present:
-        return "the system says the answer is not present in the drawings"
-    return _value_text(judge_input.parsed_answer, "(no answer could be read from the reply)")
 
 
 def _reference_text(judge_input: JudgeInput) -> str:

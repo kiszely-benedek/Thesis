@@ -212,11 +212,14 @@ class ProviderError(Exception):
     """The provider returned an error other than a context overflow.
 
     `n_retries` is how many extra attempts were made before giving up (for `calls.jsonl`).
+    `paid_usd` is what the failed attempts cost anyway, when the provider reported it (an error
+    reply inside an HTTP 200 can still be billed); callers with their own ledger book it.
     """
 
-    def __init__(self, message: str, n_retries: int = 0) -> None:
+    def __init__(self, message: str, n_retries: int = 0, paid_usd: float = 0.0) -> None:
         super().__init__(message)
         self.n_retries = n_retries
+        self.paid_usd = paid_usd
 
 
 class CacheMiss(Exception):

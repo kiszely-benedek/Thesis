@@ -115,7 +115,10 @@ def run_replay(
         row_cap=run.row_cap,
         n_source_questions=len(queries),
         n_original_retrieval_errors=sum(q.original_retrieval_error for q in queries),
-        n_replay_errors=sum(row.replay_outcome != "ok" for row in rows),
+        n_replay_errors=sum(
+            row.replay_outcome in ("write_clause_rejected", "database_error") for row in rows
+        ),
+        n_without_query=sum(row.replay_outcome == "no_query" for row in rows),
     )
     _write_replay(args.out_run, rows, _environment(), meta)
     return meta

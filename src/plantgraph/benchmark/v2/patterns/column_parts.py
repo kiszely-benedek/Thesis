@@ -79,7 +79,7 @@ def overhead_lines(
     top_trims = vessel_trims(ctx.trim, style, column_id, NodeClass.PROCESS_COLUMN.value)
     dp_tee = tee_plan(ctx, "column_dp_tee")
     top = close_run(ctx, run_of(top_trims, dp_tee), column_id, condenser_id, style=style)
-    dp = differential_pressure(ctx.trim, ctx.style, dp_tee.ports["tee"])
+    dp = differential_pressure(ctx.trim, style, dp_tee.ports["tee"])
     condensate = thermometer_line(ctx, condenser_id, drum_id, "condenser_outlet")
     return combine(top, quiet(dp), condensate)
 

@@ -38,7 +38,9 @@ ladder_agent() {
 
 ladder_context() {
   for lc_id in $CTX_LADDER; do
+    TIER_SUFFIX=$lc_id   # ContextRAG's cost per question grows with the plant: a size-specific cap
     paid_run CTX "E8-CTXH-$lc_id" "$lc_id" test "$SD/questions"
+    TIER_SUFFIX=
     replay_run CTX "E8-CTXH-$lc_id" "$lc_id" test "$SD/questions"
   done
 }
@@ -47,6 +49,7 @@ stage_M5() {
   STEP=M5; SD=$ROOT/ladder; CACHE=$SD/cache.sqlite; EXPERIMENT=EXP-0008-R4
   AG_CORPORA=$SD/corpora; QROOT=$SD/questions
   mkdir -p "$SD/runs" "$SD/replays"
+  require_frozen
   once copy ladder_copy_inputs
   plan_to_file ladder
   ladder_cypher

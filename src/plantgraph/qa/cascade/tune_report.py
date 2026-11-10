@@ -15,7 +15,7 @@ from pathlib import Path
 from plantgraph.qa.cascade.accept import first_failed_rule
 from plantgraph.qa.cascade.checks import load_questions_file
 from plantgraph.qa.cascade.corpus_checks import load_corpus_view
-from plantgraph.qa.cascade.evaluate import Evaluation, evaluate_policy, score_decisions
+from plantgraph.qa.cascade.evaluate import Evaluation, evaluate_policy
 from plantgraph.qa.cascade.join import JoinedCorpus, TierSource, join_corpus, require_complete
 from plantgraph.qa.cascade.labels import anchor_finder
 from plantgraph.qa.cascade.limits import LimitSetting, run_problems
@@ -41,10 +41,9 @@ from plantgraph.qa.cascade.tune_select import (
 FamilyCells = dict[str, dict[str, Cell]]
 
 
-def correct_within(joined: JoinedCorpus, evaluation: Evaluation, cutoff_s: float) -> int:
-    """Correct answers in time at `cutoff_s`, under the same late-fallback rule as acc@C."""
-    decisions = [s.decision for s in evaluation.scored]
-    return sum(s.correct_at_cutoff for s in score_decisions(joined, decisions, cutoff_s))
+def correct_within(evaluation: Evaluation, cutoff_s: float) -> int:
+    """Correct answers within `cutoff_s` seconds (conservative: a lower bound of the live one)."""
+    return sum(s.correct and s.decision.latency_s <= cutoff_s for s in evaluation.scored)
 
 
 def two_tier_oracle(joined: JoinedCorpus) -> int:
@@ -79,9 +78,7 @@ def cypher_acceptance(joined: JoinedCorpus) -> CypherAcceptance:
     )
 
 
-def variant_result(
-    joined: JoinedCorpus, evaluation: Evaluation, by_family: FamilyCells
-) -> VariantResult:
+def variant_result(evaluation: Evaluation, by_family: FamilyCells) -> VariantResult:
     """The numbers of one evaluated policy; `by_family` covers every evaluated policy."""
     summary = evaluation.summary
     return VariantResult(
@@ -90,9 +87,7 @@ def variant_result(
         n_correct_uncut=summary.n_correct,
         n_correct_in_limit=summary.n_correct_at_cutoff,
         n_beyond_limit=summary.n_timed_out,
-        n_correct_within={
-            f"{c:g}": correct_within(joined, evaluation, c) for c in SECONDARY_CUTOFFS_S
-        },
+        n_correct_within={f"{c:g}": correct_within(evaluation, c) for c in SECONDARY_CUTOFFS_S},
         latency_median_s=summary.latency_median_s,
         latency_p90_s=summary.latency_p90_s,
         cost_per_question_usd=summary.cost_per_question_usd,
@@ -133,7 +128,7 @@ def build_tune_report(
         evaluations[name] = evaluate_policy(joined, setting.cutoff_s)
     family_of = question_groups(questions, {})[DIM_FAMILY]
     by_family = breakdown(evaluations, family_of, DIM_FAMILY)
-    results = {name: variant_result(joins[name], ev, by_family) for name, ev in evaluations.items()}
+    results = {name: variant_result(ev, by_family) for name, ev in evaluations.items()}
     return TuneReport(
         corpus_id=corpus_id,
         setting=setting,

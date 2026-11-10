@@ -97,16 +97,27 @@ def local_gauge(ctx: PatternContext, letters: str, location_id: str, role: str) 
     return draft.finish()
 
 
-def thermometer_tap(ctx: PatternContext, tee_id: str, role: str) -> TrimPlan:
-    """A local `TI` on a branch from the tee `tee_id`, which must already be on a written line."""
-    draft = TrimDraft(ctx.trim, ctx.style)
+def thermometer_tap(
+    ctx: PatternContext, tee_id: str, role: str, style: LineStyle | None = None
+) -> TrimPlan:
+    """A local `TI` on a branch from the tee `tee_id`, which must already be on a written line.
+
+    Pass the `style` of that line when it is not the unit's own (a gas line is `PG`): the tap
+    takes its service code.
+    """
+    draft = TrimDraft(ctx.trim, style or ctx.style)
     temperature_tap(draft, tee_id, role)
     return draft.finish()
 
 
-def pressure_gauge_tap(ctx: PatternContext, tee_id: str, role: str) -> TrimPlan:
-    """A local `PI` on a branch from the tee `tee_id`: root valve, blind flange, gauge."""
-    draft = TrimDraft(ctx.trim, ctx.style)
+def pressure_gauge_tap(
+    ctx: PatternContext, tee_id: str, role: str, style: LineStyle | None = None
+) -> TrimPlan:
+    """A local `PI` on a branch from the tee `tee_id`: root valve, blind flange, gauge.
+
+    `style` is the style of the line the tee is on, as for `thermometer_tap`.
+    """
+    draft = TrimDraft(ctx.trim, style or ctx.style)
     pressure_tap(draft, tee_id, role)
     return draft.finish()
 
@@ -154,8 +165,11 @@ def with_stream_kinds(plan: TrimPlan) -> TrimPlan:
     """The plan with `process` recorded for every line that has no stream kind yet.
 
     Trims record the kind of the branches they add (`trim`, `recycle`, `utility_stub`); the main
-    lines they close have none, and a main line inside a pattern is a `process` stream.
+    lines they close have none, and a main line inside a pattern is a `process` stream. Every
+    pattern ends here, so this is also where the branches off a spec break's upstream stretch take
+    that stretch's class (`with_branches_on_break_class`).
     """
+    plan = plan.with_branches_on_break_class()
     kinds = dict(plan.stream_kinds)
     for line in plan.lines:
         for number in line.line_numbers:
@@ -176,7 +190,7 @@ def thermometer_line(
     """
     tee = tee_plan(ctx, f"{role}_tee")
     main = close_run(ctx, tee, src_id, dst_id, style=style)
-    return combine(main, thermometer_tap(ctx, tee.ports["tee"], f"{role}_ti"))
+    return combine(main, thermometer_tap(ctx, tee.ports["tee"], f"{role}_ti", style))
 
 
 def flow_indicator_plan(ctx: PatternContext) -> TrimPlan:

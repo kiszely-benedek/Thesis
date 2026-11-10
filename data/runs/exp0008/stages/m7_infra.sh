@@ -15,14 +15,17 @@ INFRA_POLICY=src/plantgraph/qa/cascade/policies_v2t/cascade_v4.json
 infra_footprint() {  # three ingests of this plant (the last stays loaded), then the probes; plants 1 only
   if smoke; then event NOTE "SMOKE: no ingest repeats or probes for $PL_ID (no Neo4j)"; return 0; fi
   [ -n "${E9_NEO4J_HOME:-}" ] || stop_run infra "set E9_NEO4J_HOME to the Neo4j server's home for the store-size measurement"
+  # every command is wrapped in `try`: inside once() a bare failing command would not stop the launcher
+  try mkdir -p "$SD/ingest/$PL_ID" "$SD/probe/$PL_ID"
   k=1
-  mkdir -p "$SD/ingest/$PL_ID" "$SD/probe/$PL_ID"
   while [ "$k" -le "$INFRA_REPS" ]; do
     neo4j_load plant_lines
-    rm -rf "$SD/ingest/$PL_ID/rep$k"; mv "$ROOT/neo4jplant/$PL_ID" "$SD/ingest/$PL_ID/rep$k"
+    try rm -rf "$SD/ingest/$PL_ID/rep$k"
+    try mv "$ROOT/neo4jplant/$PL_ID" "$SD/ingest/$PL_ID/rep$k"
     k=$((k + 1))
   done
-  mkdir -p "$ROOT/neo4jplant/$PL_ID"; cp "$SD/ingest/$PL_ID/rep$INFRA_REPS/ingest.json" "$ROOT/neo4jplant/$PL_ID/ingest.json"
+  try mkdir -p "$ROOT/neo4jplant/$PL_ID"
+  try cp "$SD/ingest/$PL_ID/rep$INFRA_REPS/ingest.json" "$ROOT/neo4jplant/$PL_ID/ingest.json"
   k=1
   while [ "$k" -le "$INFRA_REPS" ]; do
     infra_probe --neo4j-home "$E9_NEO4J_HOME" --out "$SD/probe/$PL_ID/rep$k.json"

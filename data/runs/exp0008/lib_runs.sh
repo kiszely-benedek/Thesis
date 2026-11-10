@@ -70,7 +70,9 @@ balance_args() { if smoke; then echo "--fake-balance ${E9_FAKE_BALANCE:-100}"; f
 
 paid_run() {  # paid_run <arm> <run-id> <corpus> <role> [qroot [concurrency [cache]]]
   pr_arm=$1; pr_id=$2; pr_corpus=$3; pr_role=$4; pr_qroot=${5:-$QROOT}; pr_conc=${6:-4}; pr_cache=${7:-$CACHE}
-  pr_tier=$(arm_tier "$pr_arm"); pr_deadline=$(arm_deadline "$pr_arm")
+  # TIER_SUFFIX (set by a stage) picks a finer cost key: the identity arm in M8b, the plant size for ContextRAG in M5
+  pr_tier=$(arm_tier "$pr_arm"); if [ -n "${TIER_SUFFIX:-}" ]; then pr_tier=$pr_tier-$TIER_SUFFIX; fi
+  pr_deadline=$(arm_deadline "$pr_arm")
   if [ -f "$SD/runs/$pr_id.complete" ]; then event NOTE "skip $pr_id (complete)"; return 0; fi
   dry_run "$pr_arm" "$pr_id" "$pr_corpus" "$pr_role" "$pr_deadline" "$pr_qroot" "$pr_cache"
   pr_cap=$($L run-cap --misses "$SD/dry/$pr_id.misses.json" --tier "$pr_tier" --step "$STEP" \
@@ -111,6 +113,10 @@ run_health() {  # run_health <run-id> <arm>: too many provider or parse failures
 
 replay_run() {  # replay_run <arm> <run-id> <corpus> <role> [qroot [cache]]: no --allow-paid-calls, concurrency 1
   rp_arm=$1; rp_id=$2; rp_qroot=${5:-$QROOT}; rp_cache=${6:-$CACHE}; rp_new=INF-$2; rp_rc=0
+  # A finished replay is marked, because on a resume the loaded plant may be another one: the Cypher tier
+  # replays against whatever is in Neo4j, so a replay that already passed must not run again.
+  rp_marker=$SD/replays/$rp_new.replayed
+  if [ -e "$rp_marker" ]; then event NOTE "skip replay $rp_new (done)"; return 0; fi
   rm -rf "$SD/replays/$rp_new"
   # shellcheck disable=SC2046
   $P -m plantgraph.qa.harness --run-id "$rp_new" --experiment "$EXPERIMENT-REPLAY" --corpus "$3:$4" \
@@ -124,6 +130,7 @@ replay_run() {  # replay_run <arm> <run-id> <corpus> <role> [qroot [cache]]: no 
     --allow-prefix "$rp_prefix_ok") \
     || stop_run infra "replay $rp_new differs from $2: $rp_verdict"
   event NOTE "replay $rp_new: $rp_verdict"
+  : > "$rp_marker"
 }
 
 # ---- the frozen state, checked before a stage that makes test runs -----------------------------------

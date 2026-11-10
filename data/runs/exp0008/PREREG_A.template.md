@@ -49,7 +49,7 @@ Every claim keeps the wording and the pass rule of its ADR; the ADR is the sourc
 - **M0:** the ADR-0059 composition bands (a failed band stops the launcher: U4) and the pool memory probe.
 - **G1 (after M1):** on both validation plants cascade_v4_iso >= F1's cascade_v3, and no dev family is below
   50 % on both plants at once. If it fails: stop (U2), one tuning round on X100g21s211 under ADR-0061, then a second fresh pair.
-- **G2 (after M2b):** the judge pilot (45 first-measurement rows with known truth) judges at least 80 % of the
+- **G2 (after M2b):** the judge pilot (every known first-measurement defect row of the two groups, at least 8 each, plus 20 controls) judges at least 80 % of the
   known defects `correct` or `ambiguous_question` and at least 80 % of the controls `correct`.
 - **M3:** a clean tree under `src/` and the EXP-0008 scripts, and HEAD as named above.
 - **Free gates of M4:** round trip and identity of each plant, LINE-01, blocking completeness I0 >= 0.99,
@@ -58,7 +58,7 @@ Every claim keeps the wording and the pass rule of its ADR; the ADR is the sourc
 ## 5. Money (design 6)
 
 EXP-0008 may spend at most **$40**: the runs at most $30 cumulative, the audit at most $10 including its
-pilot ($1.50). A run's cap is the smallest of its dry-run cap (cache misses x cost per question x 1.5), what
+pilot ($2.50). A run's cap is the smallest of its dry-run cap (cache misses x cost per question x 1.5; the cost per question is the first measurement's real spend per tier, per identity arm in M8b and per plant size for ContextRAG in M5, `qa/exp0008/caps.py`), what
 is left of its step's ceiling and what is left of the $30; the audit's cap is $10 or what the runs leave of
 the $40. The OpenRouter balance must cover a cap before the run starts. Step ceilings: M1 $2.00, M2 $0.05,
 M5 $4.90, M6a $10.00, M6b $6.27, M6c $1.44, M8a $0.80, M8b $7.28, M9 $0.25.

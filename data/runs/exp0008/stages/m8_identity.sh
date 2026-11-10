@@ -55,7 +55,8 @@ p3_report() {
   for p3_id in H100g21p1V H100g21p1d100V H1000g21p1V H1000g21p1d100V; do p3_dirs="$p3_dirs $ROOT/p3/$p3_id"; done
   for p3_id in H1000g21p2V H1000g21p3V H1000g21p4V H1000g21p5V; do p3_extra="$p3_extra $ROOT/p3/$p3_id"; done
   # shellcheck disable=SC2086
-  try $P -m plantgraph.exp0004 report "$ROOT/tune/dev/D100g21d100Vf" $p3_dirs --out "$SD/report.md"
+  # test corpora only (the design keeps P3 on the test set): M2 writes no score.json for the dev corpus
+  try $P -m plantgraph.exp0004 report $p3_dirs --out "$SD/report.md"
   # shellcheck disable=SC2086
   try $P -m plantgraph.exp0004 report $p3_extra --out "$SD/report_extra.md"
 }
@@ -112,9 +113,11 @@ e2e_plant_arm() {  # one V plant under the arm E2E_ARM (d0, d2 or d4)
   if [ ! -f "$CACHE" ]; then cp "$ROOT/m6a/cache.sqlite" "$CACHE"; fi   # R5's answers replay free where the prompt is unchanged
   once "load_${PL_ID}_$E2E_ARM" e2e_load
   once "rehome_${PL_ID}_$E2E_ARM" e2e_rehome
+  TIER_SUFFIX=$E2E_ARM   # the first P4 measurement's spend per missed question, per arm and tier
   paid_run CYP-A "E2E-CYP-$PL_ID-$E2E_ARM" "$PL_ID" test
   replay_run CYP-A "E2E-CYP-$PL_ID-$E2E_ARM" "$PL_ID" test
   paid_run AG "E2E-AG-$PL_ID-$E2E_ARM" "$PL_ID" test
+  TIER_SUFFIX=
   replay_run AG "E2E-AG-$PL_ID-$E2E_ARM" "$PL_ID" test
 }
 

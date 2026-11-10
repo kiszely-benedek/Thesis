@@ -184,3 +184,17 @@ def test_a_retried_row_lands_where_a_clean_run_puts_it(
         assert _ids(tmp_path, "retried", file_name) == _ids(tmp_path, "clean", file_name)
     outcomes = (tmp_path / "retried" / "toy" / "answers.jsonl").read_text("utf-8")
     assert Outcome.PROVIDER_ERROR.value not in outcomes
+
+
+def test_run_dir_spent_usd_skips_a_truncated_last_line_but_not_a_bad_one_elsewhere(
+    tmp_path: Path,
+) -> None:
+    run_dir = RunDir(tmp_path)
+    good = _call_line(_response(0.01), None)
+    run_dir.calls_path.write_text(good + good[:40], encoding="utf-8")  # cut mid-record
+
+    assert run_dir.spent_usd() == pytest.approx(0.01)
+
+    run_dir.calls_path.write_text(good[:40] + "\n" + good, encoding="utf-8")
+    with pytest.raises(ValueError, match="calls.jsonl line 1"):
+        run_dir.spent_usd()

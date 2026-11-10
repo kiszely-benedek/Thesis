@@ -22,8 +22,12 @@ TEST_SEED_RANGE = range(5000, 6000)
 #: other seed it finds recorded under `data/runs`.
 RETIRED_TEST_SEEDS: frozenset[int] = frozenset({5100, 5001, 5002, 5003, 212, 213})
 
+#: the repository root, found from this file (src/plantgraph/ingest/), so the default path below
+#: does not depend on the directory the command is run from
+_REPO_ROOT = Path(__file__).resolve().parents[3]
+
 #: where the draw is written (inside the pre-registration part A, ADR-0065) and read from
-DEFAULT_SEED_PLAN_PATH = Path("data/runs/exp0008/prereg/seeds.json")
+DEFAULT_SEED_PLAN_PATH = _REPO_ROOT / "data/runs/exp0008/prereg/seeds.json"
 
 #: the sizes with several sealed plants (design 5.1): five plants each
 SEALED_SIZES = (100, 1000)
@@ -96,15 +100,16 @@ class SeedPlan(BaseModel):
 
 
 def require_drawn_test_seed(seed: int, seed_plan: SeedPlan | None) -> None:
-    """Refuse a test-range seed that is retired or not in the drawn plan.
+    """Refuse a retired seed (any range), and a test-range seed that is not in the drawn plan.
 
     Raises:
         ValueError: names the seed and says whether it is retired or simply not drawn.
     """
-    if seed not in TEST_SEED_RANGE:
-        return
+    # retired first: 212 and 213 are outside 5000-5999 but were test seeds of the first measurement
     if seed in RETIRED_TEST_SEEDS:
         raise ValueError(f"expected a fresh test seed, found {seed} (retired by ADR-0065)")
+    if seed not in TEST_SEED_RANGE:
+        return
     if seed_plan is None or seed not in seed_plan.all_seeds():
         raise ValueError(f"expected test seed {seed} to be in the drawn seed plan, found it is not")
 

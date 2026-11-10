@@ -6,7 +6,13 @@ number is counted on the **plan** (`sheet_stats`), the one counting rule; `compo
 adds the checks that need the split sheet graphs. Each row is `(quantity, value, band, verdict)`.
 
     python -m plantgraph.benchmark.v2.composition --target-sheets 100 --seeds 1 2 3 [--corpus]
-        [--coverage] [--json PATH]
+        [--coverage] [--pool] [--json PATH]
+
+By default every plant (seed) is judged against the bands on its own, for tuning. With `--pool`
+the plants of the scale are judged together: each band is checked on the mean over the `--seeds`
+plants, and the per-plant values are printed but not judged (`composition_pool.py`); the exit
+code follows the pooled verdicts. The corpus ids of the plants follow from the seeds and
+`--target-sheets`, so the pooled plants of a scale are named by listing their seeds.
 
 Seeds 5000-5999 are test seeds and are refused unless `--allow-test-seed` is given: the tuning
 instrument must never look at a test plant (design 14.5).
@@ -38,7 +44,12 @@ from plantgraph.ingest.headline_v2 import (
     headline_corpus_id_v2,
     smallest_n_units_v2,
 )
-from plantgraph.ingest.seed_plan import TEST_SEED_RANGE, load_seed_plan, require_drawn_test_seed
+from plantgraph.ingest.seed_plan import (
+    TEST_SEED_RANGE,
+    SeedPlan,
+    load_seed_plan,
+    require_drawn_test_seed,
+)
 
 #: the symbol range of the real sheets the design measured (OPEN100, 40-134); a reported share
 SYMBOL_RANGE = (40, 134)
@@ -286,6 +297,9 @@ def _parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
     parser.add_argument("--seeds", type=int, nargs="+", default=[1])
     parser.add_argument("--corpus", action="store_true", help="also build the sheet graphs")
     parser.add_argument("--coverage", action="store_true", help="also print the class coverage")
+    parser.add_argument(
+        "--pool", action="store_true", help="judge the bands on the mean over all --seeds plants"
+    )
     parser.add_argument("--json", type=Path, default=None, help="write the reports as JSON")
     parser.add_argument("--allow-test-seed", action="store_true")
     return parser.parse_args(argv)
@@ -305,24 +319,47 @@ def main(argv: Sequence[str] | None = None) -> int:
             require_drawn_test_seed(seed, seed_plan)
     except ValueError as error:
         raise SystemExit(f"error: {error}") from error
-    reports = []
-    for seed in args.seeds:
-        n_units = smallest_n_units_v2(args.target_sheets, preset, seed).n_units
-        plan = plan_plant(preset.generator_config(n_units, seed))
-        corpus_id = headline_corpus_id_v2(
-            args.target_sheets, seed, preset.duplication_rate, seed_plan
-        )
-        report = build_report(plan, corpus_id, preset if args.corpus else None)
-        print(render_report(report))
-        if args.coverage:
-            print(render_coverage(coverage_report(plan)))
-        reports.append(report)
+    reports = [_report_of_seed(args, preset, seed_plan, seed) for seed in args.seeds]
+    if args.pool:
+        return _print_pooled(args, reports)
     if args.json is not None:
-        args.json.write_text(
-            json.dumps([r.model_dump(mode="json") for r in reports], indent=2), encoding="utf-8"
-        )
+        _write_json(args.json, [r.model_dump(mode="json") for r in reports])
     return 1 if any(report.failures for report in reports) else 0
 
 
+def _report_of_seed(
+    args: argparse.Namespace, preset: HeadlinePresetV2, seed_plan: SeedPlan | None, seed: int
+) -> CompositionReport:
+    """Plan the plant of `seed` and build its report; prints the plant's tables unless pooling."""
+    n_units = smallest_n_units_v2(args.target_sheets, preset, seed).n_units
+    plan = plan_plant(preset.generator_config(n_units, seed))
+    corpus_id = headline_corpus_id_v2(args.target_sheets, seed, preset.duplication_rate, seed_plan)
+    report = build_report(plan, corpus_id, preset if args.corpus else None)
+    if not args.pool:  # a pooled run prints one table with every plant in it
+        print(render_report(report))
+    if args.coverage:
+        print(render_coverage(coverage_report(plan)))
+    return report
+
+
+def _print_pooled(args: argparse.Namespace, reports: list[CompositionReport]) -> int:
+    # imported here: composition_pool builds on the report types defined above
+    from plantgraph.benchmark.v2.composition_pool import pool_reports, render_pooled
+
+    pooled = pool_reports(reports)
+    print(render_pooled(pooled))
+    if args.json is not None:
+        _write_json(args.json, pooled.model_dump(mode="json"))
+    return 1 if pooled.failures else 0
+
+
+def _write_json(path: Path, content: object) -> None:
+    path.write_text(json.dumps(content, indent=2), encoding="utf-8")
+
+
 if __name__ == "__main__":
-    raise SystemExit(main())
+    # run the importable copy of this module: under `python -m` the report classes here (`__main__`)
+    # would differ from the ones `composition_pool` imports, and pooling would refuse them
+    from plantgraph.benchmark.v2.composition import main as _main
+
+    raise SystemExit(_main())

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import threading
 from pathlib import Path
 
 import pytest
@@ -14,6 +15,7 @@ from plantgraph.infra.cypher_replay import (
     CypherReplayRow,
     RecordedQuery,
     recorded_queries,
+    replay_queries,
     time_one_query,
 )
 from plantgraph.infra.report import build_infra_report
@@ -185,10 +187,75 @@ def test_a_failed_first_attempt_does_not_decide_the_outcome() -> None:
     assert row.n_db_queries == 2 and row.replay_outcome == "database_error"
 
 
-def test_a_row_without_a_recorded_query_is_refused(toy: Toy, tmp_path: Path) -> None:
+def test_a_row_without_a_recorded_query_replays_as_a_row_with_zero_queries(
+    toy: Toy, tmp_path: Path
+) -> None:
     rows = _source_run(toy, tmp_path, "SRC")
-    with pytest.raises(ValueError, match="recorded query"):
-        recorded_queries([_with_query(rows[0], None, Outcome.RETRIEVAL_ERROR)])
+    [recorded] = recorded_queries([_with_query(rows[0], None, Outcome.TIMED_OUT)])
+    assert recorded.attempt_queries == () and recorded.n_queries == 0
+
+    source = _StubSource(_Clock())
+    [row] = replay_queries(
+        source,  # type: ignore[arg-type]
+        [recorded],
+        strategy="cypher_rag_lines",
+        timeout_s=30,
+        row_cap=200,
+    )
+
+    assert row.replay_outcome == "no_query" and row.n_db_queries == 0 and not source.sent
+
+
+def test_a_question_with_only_a_tag_check_replays_just_that_query() -> None:
+    clock = _Clock()
+    source = _StubSource(clock)
+    row = time_one_query(
+        source,  # type: ignore[arg-type]
+        RecordedQuery("q1", (), False, tag_check_query="TAGS"),
+        strategy="cypher_rag_lines",
+        timeout_s=30,
+        row_cap=200,
+        clock=clock,
+    )
+    assert [query for query, _ in source.sent] == ["TAGS"]
+    assert row.replay_outcome == "no_query" and row.n_db_queries == 1
+
+
+class _HangingSource(_StubSource):
+    """A database that never answers a query; `close` frees the blocked call, as a real one does."""
+
+    def __init__(self) -> None:
+        super().__init__(_Clock())
+        self.released = threading.Event()
+
+    def run_cypher(self, query: str, timeout_s: float, row_cap: int) -> CypherResult:
+        self.released.wait(5.0)
+        raise CypherExecutionError("connection closed")
+
+    def close(self) -> None:
+        self.released.set()
+
+
+def test_the_replay_goes_through_the_guard_so_a_hung_query_ends_at_timeout_plus_grace() -> None:
+    source = _HangingSource()
+    [row] = replay_queries(
+        source,  # type: ignore[arg-type]
+        [RecordedQuery("q1", ("HANGS",), False)],
+        strategy="cypher_rag_lines",
+        timeout_s=0.05,
+        row_cap=200,
+        hang_grace_s=0.05,
+    )
+    assert row.replay_outcome == "database_error"
+    assert source.released.is_set()  # the guard closed the stuck connection
+
+
+def test_the_replay_meta_does_not_claim_the_stored_query_was_run_again() -> None:
+    measures = CypherReplayMeta(
+        source_run="S", strategy="s", corpus_id="D", timeout_s=1, row_cap=1,
+        n_source_questions=0, n_original_retrieval_errors=0, n_replay_errors=0,
+    ).measures  # fmt: skip
+    assert "run again" not in measures and "recorded queries" in measures
 
 
 def _write_replay_folder(source_rows: list[QuestionResult], folder: Path) -> None:

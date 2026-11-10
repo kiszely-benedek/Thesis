@@ -291,8 +291,8 @@ class ChatClient:
         timeout_s: float | None,
     ) -> LiveResult:
         if timeout_s is None:
-            return self._call_with_retries(request)
-        future = start_daemon_call(lambda: self._call_with_retries(request))
+            return self._call_with_retries(request, origin)
+        future = start_daemon_call(lambda: self._call_with_retries(request, origin))
         done, _ = wait([future], timeout=timeout_s)
         if done:
             return future.result()  # re-raises the call's own ContextOverflow / ProviderError
@@ -333,13 +333,16 @@ class ChatClient:
         if self.on_late_response is not None:
             self.on_late_response(live.response)
 
-    def _call_with_retries(self, request: ChatRequest) -> LiveResult:
+    def _call_with_retries(self, request: ChatRequest, origin: CallOrigin) -> LiveResult:
         return call_with_retries(
             lambda: self._call_once(request),
             purpose=request.purpose,
             api_key=self._api_key,
             max_retries=self._max_retries,
             backoff_base_seconds=self._backoff_base_seconds,
+            on_discarded=lambda response: self._log_call(
+                request, origin, response=response, error_kind="provider_error"
+            ),
         )
 
     def _call_once(self, request: ChatRequest) -> ChatResponse:

@@ -226,7 +226,8 @@ def _valves_off_the_sheet_of(
 
 def _is_tank_inlet(line: LineSpec, unit: PlannedUnit) -> bool:
     classes = plan_node_classes(unit.instance.plan)
-    from_open_or_tee = line.src_id is None or classes.get(line.src_id) == "PipeTee"
+    # an open end, a tee of the farm, or (R2: every receipt is wired now) a part of another unit
+    from_open_or_tee = line.src_id is None or classes.get(line.src_id, "PipeTee") == "PipeTee"
     return (
         unit.instance.pattern == "U4" and classes[str(line.dst_id)] == "Tank" and from_open_or_tee
     )
@@ -239,8 +240,12 @@ def _is_into_own_sheet_pump(line: LineSpec, unit: PlannedUnit) -> bool:
 
 
 def test_no_tank_inlet_valve_is_off_its_tanks_sheet_on_the_dev_seed_plant() -> None:
-    """Seed 1, 60 units: 24 of 87 tank-inlet valves were off their tank's sheet in v2, now 0."""
-    assert _valves_off_the_sheet_of(_is_tank_inlet) == (87, 0)
+    """Seed 1, 60 units: 24 of 87 tank-inlet valves were off their tank's sheet in v2, now 0.
+
+    R2: the count is 175 because the filter now also takes the receipt lines wired to another unit
+    (each tank has one of its own); the 87 left them out, as a wired line starts at no open end.
+    """
+    assert _valves_off_the_sheet_of(_is_tank_inlet) == (175, 0)
 
 
 def test_no_valve_into_an_own_sheet_pump_is_off_the_pumps_sheet_on_the_dev_seed_plant() -> None:

@@ -85,12 +85,9 @@ class JudgeInput(BaseModel):
 
     question_text: str
     answer_type: AnswerType
-    #: The system's reply as stored; `None` when the run kept only the parsed answer.
-    raw_reply: str | None
-    #: The parsed answer; `None` when no answer could be read from the reply.
-    parsed_answer: AnswerValue
-    #: Whether the system said "this is not in the drawings".
-    not_present: bool
+    #: The system's reply text. A run that kept only the parsed answer shows it in the same JSON
+    #: form the model was asked to write, so every row has a reply and none says how it was read.
+    raw_reply: str
     #: The benchmark's reference answer (may be wrong); `None` for an unanswerable question.
     reference: AnswerValue
     answerable: bool
@@ -105,6 +102,8 @@ class AuditRecord(BaseModel):
     item: AuditItem
     reply: JudgeReply
     prompt_chars: int
+    #: Hash of the judge prompt template behind this verdict; a revised prompt judges again.
+    template_sha256: str = ""
     prompt_tokens: int
     completion_tokens: int
     #: Cost of this call as billed; 0.0 when served from the cache.

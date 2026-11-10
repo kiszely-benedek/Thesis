@@ -102,7 +102,7 @@ def test_a_farm_with_streams_waiting_gets_that_many_receipts_and_merge_tees() ->
     farm = _farm(waiting=4)
     names = [p.name for p in farm.ports if p.direction is PortDirection.IN]
     assert names == ["receipt1", "receipt2", "receipt3", "receipt4"]
-    assert len(ids_with_role(farm.plan, "receipt_merge_tee")) == 3
+    assert not ids_with_role(farm.plan, "receipt_merge_tee")  # no shared header: R2 fix
     assert all(p.collects for p in farm.ports if p.direction is PortDirection.IN)
 
 

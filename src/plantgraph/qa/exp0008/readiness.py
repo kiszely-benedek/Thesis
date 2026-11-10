@@ -2,15 +2,16 @@
 
     python -m plantgraph.qa.exp0008.readiness [--smoke-passed FILE] [--no-neo4j] [--no-network]
 
-Each item prints `[ OK ]`, `[FAIL]`, `[SKIP]` (a probe the caller switched off) or `[HAND]` (only a
-person can say). The exit code is 1 if any item failed. Nothing here starts a stage, writes a file
-or makes a paid call; the balance check reads the credit endpoint, Neo4j is only asked for its
-database names.
+Each item prints `[ OK ]`, `[FAIL]`, `[SKIP]` (a probe the caller switched off),
+`[INFO]` (worth knowing, not a failure) or `[HAND]` (only a person can say). The exit code is 1
+if any item failed. Nothing here starts a stage, writes a file or makes a paid call; the balance
+check reads the credit endpoint, Neo4j is only asked for its database names.
 """
 
 from __future__ import annotations
 
 import argparse
+import os
 import shutil
 import subprocess
 from collections.abc import Callable, Sequence
@@ -25,11 +26,15 @@ from plantgraph.qa.audit.judge import template_sha256
 from plantgraph.qa.exp0008 import balance
 from plantgraph.qa.exp0008.freeze import FreezeRefused, check_clean, check_head, named_head
 
-Status = Literal["OK", "FAIL", "SKIP", "HAND"]
+Status = Literal["OK", "FAIL", "SKIP", "HAND", "INFO"]
 SCRIPTS = Path("data/runs/exp0008")
-FROZEN_PATHS = ("src", "data/runs/exp0008/run_all.sh", "data/runs/exp0008/lib.sh",
+# Same list as FROZEN_PATHS in stages/m3_freeze.sh (the demo is built in parallel: not frozen).
+FROZEN_PATHS = ("src", ":!src/plantgraph/demo", "scripts/audit_export_subgraphs.py",
+                "data/runs/exp0008/run_all.sh", "data/runs/exp0008/lib.sh",
                 "data/runs/exp0008/lib_plants.sh", "data/runs/exp0008/lib_runs.sh",
-                "data/runs/exp0008/stages", "data/runs/exp0007/inputs")  # fmt: skip
+                "data/runs/exp0008/stages",
+                "data/runs/exp0007/inputs", "data/runs/exp0001/inputs",
+                "data/external/C01V04-VER.EX01.xml")  # fmt: skip
 MIN_FREE_DISK_GB = 10
 MIN_BALANCE_USD = 40.0
 PILOT_INPUTS = ("valves_ids.txt", "runs.txt", "subgraphs.json")
@@ -119,8 +124,8 @@ def check_smoke(smoke_passed: Path | None) -> Check:
 
 
 def check_neo4j(list_databases: Callable[[], list[str]] | None) -> Check:
-    """Item 5a: the server answers and the temporary database of the first measurement is gone."""
-    item = "5. Neo4j up, database `neo4j` reachable, `e7tune` dropped"
+    """Item 5a: the server answers; a leftover `e7tune` is only noted, because M0 drops it."""
+    item = "5. Neo4j up, database `neo4j` reachable (`e7tune` is dropped by M0)"
     if list_databases is None:
         return Check(item=item, status="SKIP", detail="--no-neo4j")
     try:
@@ -134,10 +139,22 @@ def check_neo4j(list_databases: Callable[[], list[str]] | None) -> Check:
     if TEMPORARY_DATABASE in names:
         return Check(
             item=item,
-            status="FAIL",
-            detail=f"`{TEMPORARY_DATABASE}` still exists (drop it before the launch)",
+            status="INFO",
+            detail=f"`{TEMPORARY_DATABASE}` exists; M0 drops it first. databases: {names}",
         )
     return Check(item=item, status="OK", detail=f"databases: {names}")
+
+
+def check_neo4j_home(home: str | None) -> Check:
+    """Item 5c: M7 measures store sizes in the server's home folder, so it must be set and exist."""
+    item = "5. E9_NEO4J_HOME names the Neo4j server's home folder (M7 store sizes)"
+    if not home:
+        return Check(
+            item=item, status="FAIL", detail="E9_NEO4J_HOME is not set (launch.sh sets it)"
+        )
+    if not Path(home).is_dir():
+        return Check(item=item, status="FAIL", detail=f"expected a folder at {home}, found none")
+    return Check(item=item, status="OK", detail=home)
 
 
 def check_disk(path: Path = Path(".")) -> Check:
@@ -226,6 +243,7 @@ def run_checks(smoke_passed: Path | None, use_neo4j: bool, use_network: bool) ->
         check_prereg_a(),
         check_smoke(smoke_passed),
         check_neo4j(neo4j_database_names if use_neo4j else None),
+        check_neo4j_home(os.environ.get("E9_NEO4J_HOME")),
         check_disk(),
         check_balance(balance.fetch_credits_json if use_network else None),
         check_power(),
