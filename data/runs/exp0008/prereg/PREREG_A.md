@@ -2,9 +2,11 @@
 
 Written 2026-11-10, before any EXP-0008 plant exists. Part B is written by the launcher at stage M3.
 
-Frozen code commit: `80c26618d4beb13c14c1a83568c2814d3b8c7d8e`
+Frozen code commit: `476499d4753e32ebac8670cfc899b80f61c0d179`
 
 Amended 2026-11-10, before any EXP-0008 plant exists: the commit was `9011adeef5de5cd3df4da123d676260beb67bf18`. The new commit changes only the freeze check (`freeze.py`, `readiness.py`, `m3_freeze.sh` and its test), so that later commits touching no frozen file, such as notes, keep this part valid; no measured behaviour changed.
+
+Amended 2026-11-11, after the first G2 pilot and before any test plant was measured: the commit was `80c26618d4beb13c14c1a83568c2814d3b8c7d8e`. The run had passed M0, M1 (G1) and M2 and was stopped by hand in M4 while the 1-sheet ladder plant was being built; no test run had started. The first pilot printed G2 as passed on 8 of its 49 rows, which was wrong: 41 judge replies were not read (the judge wrote its working before the JSON object) and the gate counted judged rows only. Recomputed from the stored replies, G2 failed (known defects 8 of 29, controls 19 of 20). The failure path of G2 below was taken. What changed: the reply parser reads the judge's last JSON object; G2 counts every row of the pilot set, a row without a verdict as a miss; the excerpt of a VALVES_ON_PATH question now writes out the routes between its two parts (the judge could not follow routes of 100 to 490 parts from a cut excerpt); and the pilot's valve group keeps only rows whose answer is an item-level count (5 of its 21 rows were answers wrong under every reading, so not scorer defects). The pilot set is now 16 + 8 defect rows and 20 controls. The judge's prompt file and pin, and every claim, threshold, seed and gate rule of this part, are unchanged. The re-pilot runs on the same first-measurement rows only.
 
 ## 1. What is registered, and what is not
 
