@@ -2,13 +2,13 @@
 #
 # The scorer audit (M10a) asks a second, independent LLM judge whether the deterministic scorer's verdicts are
 # right. Before the audit is relied on, the judge is piloted on every known first-measurement defect row (at least 8 per group) plus 20 controls:
-# the VALVES_ON_PATH rows the scorer got wrong, the numeric-list parse failures, then 20 controls (right under both
-# definitions). G2 passes if at least 80 % of the known defects are judged correct or ambiguous_question and at
+# the VALVES_ON_PATH rows the scorer called wrong although the system gave an item-level count, the numeric-list parse failures, then 20 controls (right under both
+# definitions). G2 counts every row of the pilot set, a row without a verdict as a miss. It passes if at least 80 % of the known defects are judged correct or ambiguous_question and at
 # least 80 % of the controls correct. The pilot also measures the cost per judge call, which sizes the audit.
 #
 # The pilot reads first-measurement records, which the v2.1 code cannot rebuild, so its inputs are prepared
 # once by hand and listed in data/runs/exp0008/inputs/pilot/ (see the README):
-#   valves_ids.txt   the question ids            runs.txt       one first-measurement run directory per line
+#   valves_counts.txt  question id and its item-level valve counts   runs.txt  one first-measurement run directory per line
 #   questions/       <corpus>/questions.jsonl     subgraphs.json  plant excerpts cut with
 #                                                scripts/audit_export_subgraphs.py on a `git archive 4dfad69` copy
 # Money: the judge's own ledger (audit/ledger.jsonl) caps the pilot at $2.50 and the audit at $10 in all.
@@ -20,7 +20,7 @@ pilot_set() {
   while read -r pilot_run; do pilot_runs="$pilot_runs --run $pilot_run"; done < "$PILOT_IN/runs.txt"
   # shellcheck disable=SC2086
   try $P -m plantgraph.qa.audit pilot-set $pilot_runs --questions-root "$PILOT_IN/questions" \
-    --valves-ids "$PILOT_IN/valves_ids.txt" --out "$ROOT/audit/pilot/plan.json"
+    --valves-counts "$PILOT_IN/valves_counts.txt" --out "$ROOT/audit/pilot/plan.json"
 }
 
 pilot_judge() {
@@ -42,7 +42,7 @@ g2_gate() {
     # shellcheck disable=SC2086
     try $L smoke-evidence g2 --out-dir "$ROOT/audit/pilot" $g2_fail
   fi
-  if g2_text=$($L g2 --verdicts "$g2_file" --out "$STATE/g2.json"); then gate_pass "G2 $g2_text"
+  if g2_text=$($L g2 --plan "$ROOT/audit/pilot/plan.json" --verdicts "$g2_file" --out "$STATE/g2.json"); then gate_pass "G2 $g2_text"
   else gate_fail "G2" "$g2_text (revise the judge prompt, commit a new part A, re-pilot on the old rows only)"; fi
 }
 

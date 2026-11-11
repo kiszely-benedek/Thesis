@@ -14,6 +14,7 @@ from plantgraph.exp0004.e2e_dry_run import DryRunReport
 from plantgraph.ingest.seed_plan import load_seed_plan
 from plantgraph.qa.audit.budget import SpendLedger
 from plantgraph.qa.audit.judge import judge_pin, template_sha256
+from plantgraph.qa.audit.models import ItemsFile
 from plantgraph.qa.audit.report import g2_verdict
 from plantgraph.qa.audit.runner import read_records
 from plantgraph.qa.exp0008 import balance, caps, freeze, gates, ledger, memory_probe, replay, state
@@ -123,8 +124,9 @@ def cmd_g1(args: argparse.Namespace) -> None:
 
 
 def cmd_g2(args: argparse.Namespace) -> None:
-    """Gate G2 over the judge pilot's verdicts; writes the verdict, raises on a fail."""
-    verdict = g2_verdict(read_records(args.verdicts))
+    """Gate G2 over every row of the pilot set; writes the verdict, raises on a fail."""
+    plan = ItemsFile.model_validate_json(args.plan.read_text(encoding="utf-8"))
+    verdict = g2_verdict(plan.items, read_records(args.verdicts))
     args.out.write_text(verdict.model_dump_json(indent=1) + "\n", encoding="utf-8")
     print(
         f"defects found {verdict.n_defect_found}/{verdict.n_defect}; "

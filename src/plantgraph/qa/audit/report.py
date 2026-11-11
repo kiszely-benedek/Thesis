@@ -15,7 +15,13 @@ from collections import Counter
 
 from pydantic import BaseModel, ConfigDict
 
-from plantgraph.qa.audit.models import PILOT_DEFECT_STRATA, AuditRecord, JudgeVerdict
+from plantgraph.qa.audit.models import (
+    PILOT_DEFECT_STRATA,
+    AuditItem,
+    AuditRecord,
+    JudgeVerdict,
+)
+from plantgraph.qa.audit.runner import item_key
 from plantgraph.qa.audit.select import AuditPlan
 
 #: Share of a pilot group the judge must get right for gate G2 (review-fixes §5.3).
@@ -111,12 +117,19 @@ def cohens_kappa(records: list[AuditRecord]) -> float | None:
     return (observed - expected) / (1 - expected)
 
 
-def g2_verdict(records: list[AuditRecord]) -> G2Verdict:
-    """Gate G2 over the pilot rows among `records`."""
-    defects = [r for r in records if r.item.stratum in PILOT_DEFECT_STRATA]
-    controls = [r for r in records if r.item.stratum == "pilot_control"]
-    found = [r for r in defects if r.reply.verdict is not JudgeVerdict.INCORRECT]
-    right = [r for r in controls if r.reply.verdict is JudgeVerdict.CORRECT]
+def g2_verdict(pilot_items: list[AuditItem], records: list[AuditRecord]) -> G2Verdict:
+    """Gate G2 over every row of the pilot set; a row without a verdict counts as a miss.
+
+    The denominators are the pilot set, not the judged rows. The first pilot (2026-11-11)
+    counted judged rows only: 41 of its 49 replies could not be read, and the gate passed on
+    the 8 that could.
+    """
+    verdicts = {item_key(record.item): record.reply.verdict for record in records}
+    defects = [item for item in pilot_items if item.stratum in PILOT_DEFECT_STRATA]
+    controls = [item for item in pilot_items if item.stratum == "pilot_control"]
+    accepted = (JudgeVerdict.CORRECT, JudgeVerdict.AMBIGUOUS_QUESTION)
+    found = [item for item in defects if verdicts.get(item_key(item)) in accepted]
+    right = [i for i in controls if verdicts.get(item_key(i)) is JudgeVerdict.CORRECT]
     return G2Verdict(
         n_defect=len(defects),
         n_defect_found=len(found),
@@ -195,8 +208,9 @@ def render_report(records: list[AuditRecord], plan: AuditPlan | None = None) -> 
     counts = disagreements_by_class_and_family(audit)
     lines += [f"| {cls} | {family} | {n} |" for (cls, family), n in sorted(counts.items())]
     if plan is not None:
-        lines += ["", _coverage_line(plan)]
-    pilot = g2_verdict(records)
+        lines += ["", _coverage_line(plan), "", _unjudged_line(plan, records)]
+    # a report holds the verdicts only, so this line covers the judged pilot rows
+    pilot = g2_verdict([record.item for record in records], records)
     if pilot.n_defect or pilot.n_control:
         lines += ["", _g2_line(pilot)]
     return "\n".join(lines) + "\n"
@@ -208,6 +222,12 @@ def _coverage_line(plan: AuditPlan) -> str:
         f"ContextRAG wrong rows {plan.contextrag_selected} of {plan.contextrag_available}; "
         f"extra right rows {plan.right_extra_selected} of {plan.right_extra_available}."
     )
+
+
+def _unjudged_line(plan: AuditPlan, records: list[AuditRecord]) -> str:
+    judged = {item_key(record.item) for record in records}
+    missing = sum(1 for item in plan.items if item_key(item) not in judged)
+    return f"Rows of the plan without a verdict: {missing} of {len(plan.items)}."
 
 
 def _g2_line(pilot: G2Verdict) -> str:

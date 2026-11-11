@@ -160,3 +160,124 @@ def test_render_cuts_the_far_parts_first_and_says_so() -> None:
 def test_render_refuses_when_the_evidence_alone_does_not_fit() -> None:
     with pytest.raises(ExcerptTooLarge, match="do not"):
         render_excerpt(make_subgraph("q"), max_chars=50)
+
+
+# --- routes of a count question ----------------------------------------------------------------
+
+_ITEMS = frozenset({"CentrifugalPump", "GateValve", "Tank", "HeatExchanger"})
+_VALVES = frozenset({"GateValve"})
+_COUNT_QUESTION: dict[str, Any] = {
+    "question_id": "q-count",
+    "corpus_id": _CORPUS_ID,
+    "family": "VALVES_ON_PATH",
+    "evidence_tags": ["P-1", "V-1", "V-2", "TK-9"],
+    "anchors": ["P-1", "TK-9"],
+}
+
+
+def _three_route_plant(with_exchanger_branch: bool = True) -> nx.DiGraph[str]:
+    """P-1 to TK-9 three ways: two valves and no fitting; one valve; one exchanger and no valve.
+
+    The two-valve route has the fewest parts (4). The other two pass one item each, so they tie
+    on items and differ in valves (1 and 0).
+    """
+    plant: nx.DiGraph[str] = nx.DiGraph()
+    tagged = {
+        "p1": ("CentrifugalPump", "P-1", "1"),
+        "v1": ("GateValve", "V-1", "1"),
+        "v2": ("GateValve", "V-2", "2"),
+        "v3": ("GateValve", "V-3", "2"),
+        "e1": ("HeatExchanger", "E-1", "2"),
+        "t9": ("Tank", "TK-9", "2"),
+    }
+    for node_id, (node_class, tag, unit) in tagged.items():
+        plant.add_node(node_id, node_class=node_class, tag=tag, unit_id=unit)
+    for node_id in ("f1", "f2", "f3", "f4", "f5", "f6", "f7"):
+        plant.add_node(node_id, node_class="PipeTee", unit_id="2")
+    routes = [["p1", "v1", "v2", "t9"], ["p1", "f1", "f2", "v3", "f3", "t9"]]
+    if with_exchanger_branch:
+        routes.append(["p1", "f4", "f5", "e1", "f6", "f7", "t9"])
+    for route in routes:
+        nx.add_path(plant, route, relation="send_to")
+    return plant
+
+
+def test_a_count_question_gets_every_reading_of_its_route() -> None:
+    plant = _three_route_plant()
+
+    routes = export.anchor_routes(plant, _COUNT_QUESTION, _ITEMS, _VALVES)
+
+    assert [r["node_ids"] for r in routes] == [
+        ["p1", "v1", "v2", "t9"],
+        ["p1", "f4", "f5", "e1", "f6", "f7", "t9"],
+        ["p1", "f1", "f2", "v3", "f3", "t9"],
+    ]
+    assert [export.valves_between(plant, r["node_ids"], _VALVES) for r in routes] == [2, 0, 1]
+    assert "fewest parts of any kind" in routes[0]["basis"]
+    assert routes[1]["basis"].endswith("fewest valves")
+    assert routes[2]["basis"].endswith("most valves")
+
+
+def test_routes_that_tie_on_items_and_valves_are_one_reading() -> None:
+    plant = _three_route_plant(with_exchanger_branch=False)
+
+    routes = export.anchor_routes(plant, _COUNT_QUESTION, _ITEMS, _VALVES)
+
+    assert [r["node_ids"][1] for r in routes] == ["v1", "f1"]
+    assert "several such routes" not in routes[1]["basis"]
+
+
+def test_one_route_under_both_readings_is_exported_once() -> None:
+    plant: nx.DiGraph[str] = nx.DiGraph()
+    plant.add_node("p1", node_class="CentrifugalPump", tag="P-1")
+    plant.add_node("v1", node_class="GateValve", tag="V-1")
+    plant.add_node("t9", node_class="Tank", tag="TK-9")
+    nx.add_path(plant, ["p1", "v1", "t9"], relation="send_to")
+
+    routes = export.anchor_routes(plant, _COUNT_QUESTION, _ITEMS, _VALVES)
+
+    assert len(routes) == 1 and routes[0]["node_ids"] == ["p1", "v1", "t9"]
+    assert "fewest parts" in routes[0]["basis"] and "; also " in routes[0]["basis"]
+
+
+def test_no_route_is_exported_for_another_family_or_a_pair_with_no_flow_path() -> None:
+    plant = _three_route_plant()
+    other_family = {**_COUNT_QUESTION, "family": "FLOW_PATH"}
+    against_the_flow = {**_COUNT_QUESTION, "anchors": ["TK-9", "P-1"]}
+    unknown_tag = {**_COUNT_QUESTION, "anchors": ["P-1", "TK-404"]}
+
+    for question in (other_family, against_the_flow, unknown_tag):
+        assert export.anchor_routes(plant, question, _ITEMS, _VALVES) == []
+
+
+def _count_subgraph() -> QuestionSubgraph:
+    plant = _three_route_plant()
+    routes = export.anchor_routes(plant, _COUNT_QUESTION, _ITEMS, _VALVES)
+    exported = export.subgraph_for_question(plant, _COUNT_QUESTION, radius=1, routes=routes)
+    return QuestionSubgraph.model_validate(exported)
+
+
+def test_the_routes_are_written_out_before_the_parts_one_tagged_part_a_line() -> None:
+    subgraph = _count_subgraph()
+
+    text = render_excerpt(subgraph)
+
+    routes_block, parts_block = text.split("Parts (*", maxsplit=1)
+    assert routes_block.startswith("Routes from P-1 to TK-9")
+    assert "Route 1: the route with the fewest parts of any kind (4 tagged parts):" in text
+    assert "in unit 1:\n1. P-1 [CentrifugalPump]\n2. V-1 [GateValve]\nin unit 2:\n3. V-2" in text
+    assert "untagged PipeTee" not in routes_block  # fittings are left out of a route
+    assert "(untagged PipeTee #1)" in parts_block  # and still shown among the parts
+    assert all(node.distance == 0 for node in subgraph.nodes)  # every route part is core
+
+
+def test_a_tight_budget_keeps_the_routes_and_cuts_the_parts() -> None:
+    subgraph = _count_subgraph()
+    routes_only = len(render_excerpt(subgraph).split("Parts (*")[0])
+
+    short = render_excerpt(subgraph, max_chars=routes_only + 150)
+
+    assert short.count("Route ") == 3 and "2. E-1 [HeatExchanger]" in short
+    assert "more distant parts left out" in short
+    with pytest.raises(ExcerptTooLarge, match="found 3 routes"):
+        render_excerpt(subgraph, max_chars=routes_only - 1)

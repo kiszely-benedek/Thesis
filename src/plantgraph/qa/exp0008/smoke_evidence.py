@@ -2,7 +2,7 @@
 
 In `run_all.sh --smoke` every model reply is a canned `{}`, so the reports that G1 and G2 read would
 show nothing but zeros. The smoke therefore writes small evidence files in the exact formats the
-real tools write (`tune_report.json`, `dev_report.json`, the judge's `verdicts.jsonl` and its
+real tools write (`tune_report.json`, `dev_report.json`, the pilot plan, the judge verdicts and its
 ledger), and the gate code that judges them is the real code. `--fail` writes evidence that makes
 the gate fail, which is how the smoke proves that a failed gate stops the launcher.
 """
@@ -17,6 +17,7 @@ from plantgraph.qa.audit.budget import LedgerLine, SpendLedger
 from plantgraph.qa.audit.models import (
     AuditItem,
     AuditRecord,
+    ItemsFile,
     JudgeReply,
     JudgeVerdict,
     SourceRow,
@@ -85,6 +86,8 @@ def write_g2_evidence(out_dir: Path, fail: bool) -> None:
     records += [_record(10 + i, "pilot_control", JudgeVerdict.CORRECT) for i in range(10)]
     text = "".join(r.model_dump_json() + "\n" for r in records)
     (out_dir / "verdicts.jsonl").write_text(text, encoding="utf-8")
+    plan = ItemsFile(items=[r.item for r in records])
+    (out_dir / "plan.json").write_text(plan.model_dump_json(indent=1), encoding="utf-8")
     ledger = SpendLedger(out_dir.parent / "ledger.jsonl")
     for r in records:
         ledger.record(

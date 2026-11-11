@@ -77,4 +77,4 @@ def test_the_pilot_inputs_are_reported_missing(
 ) -> None:
     monkeypatch.chdir(tmp_path)
     check = readiness.check_inputs(tmp_path / "exp0008")
-    assert check.status == "FAIL" and "valves_ids.txt" in check.detail
+    assert check.status == "FAIL" and "valves_counts.txt" in check.detail

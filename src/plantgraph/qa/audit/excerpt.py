@@ -9,6 +9,10 @@ Terms for a reader new to P&IDs (piping and instrumentation diagrams): a *tag* i
 printed next to a part, like `P-101` for a pump. A *fitting* (tee, reducer, ...) is a pipe part
 that has no tag. The judge must be able to count fittings along a route, so they are shown as
 numbered untagged parts, never hidden and never named by an internal id.
+
+A question that counts along a route between two parts carries that route (`routes`), written
+out part by part before the rest. Such a route can run through hundreds of parts, more than the
+excerpt can show with all their connections, and the judge cannot count what it cannot follow.
 """
 
 from __future__ import annotations
@@ -23,7 +27,7 @@ _HIDDEN_NODE_PROPERTIES = frozenset({"plant_id", "node_class", "tag", "unit_id"}
 
 
 class ExcerptTooLarge(ValueError):
-    """The parts that must be shown (evidence and route) alone exceed the character cap."""
+    """What must be shown (the routes, or else the evidence parts) alone exceeds the cap."""
 
 
 class SubgraphNode(BaseModel):
@@ -52,6 +56,16 @@ class SubgraphEdge(BaseModel):
     properties: dict[str, str] = Field(default_factory=dict)
 
 
+class SubgraphRoute(BaseModel):
+    """One route between the two parts a count question names, in flow order."""
+
+    model_config = ConfigDict(frozen=True)
+
+    #: Which reading of "between" this route answers, in words the judge reads.
+    basis: str
+    node_ids: list[str] = Field(min_length=2)
+
+
 class QuestionSubgraph(BaseModel):
     """The plant around one question's gold evidence."""
 
@@ -62,6 +76,8 @@ class QuestionSubgraph(BaseModel):
     evidence_ids: list[str]
     nodes: list[SubgraphNode]
     edges: list[SubgraphEdge]
+    #: Empty unless the question counts along a route; every route node is also in `nodes`.
+    routes: list[SubgraphRoute] = Field(default_factory=list)
 
 
 class SubgraphFile(BaseModel):
@@ -75,18 +91,58 @@ class SubgraphFile(BaseModel):
 def render_excerpt(subgraph: QuestionSubgraph, max_chars: int = MAX_EXCERPT_CHARS) -> str:
     """Text of the subgraph, nearest parts first, cut at `max_chars`.
 
+    Without routes, the evidence parts (distance 0) must all be shown. With routes, the routes
+    must all be shown and the parts and connections fill what room is left.
+
     Raises:
-        ExcerptTooLarge: the distance-0 parts alone do not fit.
+        ExcerptTooLarge: what must be shown does not fit.
     """
     ranked = sorted(subgraph.nodes, key=lambda node: (node.distance, node.id))
-    must_keep = sum(1 for node in ranked if node.distance == 0)
-    if len(_render_prefix(subgraph, ranked, must_keep)) > max_chars:
+    routes_text = _render_routes(subgraph, _labels(ranked))
+    room = max_chars - len(routes_text)
+    must_keep = 0 if subgraph.routes else sum(1 for node in ranked if node.distance == 0)
+    if len(_render_prefix(subgraph, ranked, must_keep)) > room:
         raise ExcerptTooLarge(
-            f"expected the evidence and route parts of {subgraph.question_id!r} to fit in "
-            f"{max_chars} characters, found {must_keep} parts that do not"
+            f"expected the routes and evidence parts of {subgraph.question_id!r} to fit in "
+            f"{max_chars} characters, found {len(subgraph.routes)} routes and {must_keep} "
+            "parts that do not"
         )
-    keep = _largest_fitting_count(subgraph, ranked, must_keep, max_chars)
-    return _render_prefix(subgraph, ranked, keep)
+    keep = _largest_fitting_count(subgraph, ranked, must_keep, room)
+    return routes_text + _render_prefix(subgraph, ranked, keep)
+
+
+def _render_routes(subgraph: QuestionSubgraph, labels: dict[str, str]) -> str:
+    """The routes, one tagged part a line under its process unit; empty when there is none.
+
+    Untagged fittings are left out: nothing asks for them, and a route is half fittings. The
+    unit headings break a route of a hundred parts into runs short enough to count.
+    """
+    if not subgraph.routes:
+        return ""
+    by_id = {node.id: node for node in subgraph.nodes}
+    first = subgraph.routes[0].node_ids
+    lines = [
+        f"Routes from {labels[first[0]]} to {labels[first[-1]]}, found by following the "
+        "connections in flow direction. Each route lists its tagged parts in order, both ends "
+        "included; the untagged pipe fittings between them are left out.",
+    ]
+    for number, route in enumerate(subgraph.routes, start=1):
+        steps = [by_id[node_id] for node_id in route.node_ids if by_id[node_id].tag is not None]
+        lines += ["", f"Route {number}: {route.basis} ({len(steps)} tagged parts):"]
+        lines += _route_step_lines(steps)
+    return "\n".join(lines) + "\n\n"
+
+
+def _route_step_lines(steps: list[SubgraphNode]) -> list[str]:
+    """Numbered parts of one route, with a heading line wherever the process unit changes."""
+    lines: list[str] = []
+    unit: str | None = None
+    for number, node in enumerate(steps, start=1):
+        if number == 1 or node.unit_id != unit:
+            unit = node.unit_id
+            lines.append(f"in unit {unit}:" if unit is not None else "in no unit:")
+        lines.append(f"{number}. {node.tag} [{node.node_class}]")
+    return lines
 
 
 def _largest_fitting_count(

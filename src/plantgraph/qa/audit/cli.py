@@ -10,8 +10,6 @@ import argparse
 import statistics
 from pathlib import Path
 
-from pydantic import BaseModel
-
 from plantgraph.qa.audit.budget import (
     HARD_CAP_USD,
     PILOT_CAP_USD,
@@ -20,8 +18,12 @@ from plantgraph.qa.audit.budget import (
 )
 from plantgraph.qa.audit.excerpt import QuestionSubgraph, SubgraphFile
 from plantgraph.qa.audit.judge import judge_pin, template_sha256
-from plantgraph.qa.audit.models import AuditItem, SourceRow
-from plantgraph.qa.audit.pilot import build_pilot_set, parse_failure_candidates
+from plantgraph.qa.audit.models import ItemsFile, SourceRow
+from plantgraph.qa.audit.pilot import (
+    build_pilot_set,
+    parse_failure_candidates,
+    parse_valve_counts,
+)
 from plantgraph.qa.audit.report import disagreement_sheet, render_report
 from plantgraph.qa.audit.runner import RunContext, RunSummary, read_records, run_plan
 from plantgraph.qa.audit.select import AuditPlan, select_audit
@@ -30,12 +32,6 @@ from plantgraph.qa.harness.clients import build_chat_client
 
 #: Seed of the right-sample draw and of every stratified cut; registered in the pre-registration.
 DEFAULT_SEED = 20261108
-
-
-class ItemsFile(BaseModel):
-    """The part of a plan file `judge` needs; an `AuditPlan` file and a pilot file both fit."""
-
-    items: list[AuditItem]
 
 
 def _add_run_arguments(parser: argparse.ArgumentParser) -> None:
@@ -51,7 +47,9 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         "pilot-set", help="build the G2 pilot set: every known defect row plus 20 controls (free)"
     )
     _add_run_arguments(pilot)
-    pilot.add_argument("--valves-ids", type=Path, required=True, help="question ids, one a line")
+    pilot.add_argument(
+        "--valves-counts", type=Path, required=True, help="lines: question id, item-level counts"
+    )
     pilot.add_argument("--seed", type=int, default=DEFAULT_SEED)
     pilot.add_argument("--out", type=Path, required=True)
 
@@ -99,8 +97,8 @@ def _pool(runs: dict[str, LoadedRun]) -> list[SourceRow]:
 def _pilot_command(args: argparse.Namespace) -> int:
     runs = _load_runs(args.run, args.questions_root)
     parse_rows = [row for run in runs.values() for row in parse_failure_candidates(run)]
-    valves_ids = set(args.valves_ids.read_text(encoding="utf-8").split())
-    items = build_pilot_set(_pool(runs), parse_rows, valves_ids, args.seed)
+    valve_counts = parse_valve_counts(args.valves_counts.read_text(encoding="utf-8"))
+    items = build_pilot_set(_pool(runs), parse_rows, valve_counts, args.seed)
     args.out.write_text(ItemsFile(items=items).model_dump_json(indent=1), encoding="utf-8")
     print(f"pilot set: {len(items)} rows -> {args.out}")
     return 0

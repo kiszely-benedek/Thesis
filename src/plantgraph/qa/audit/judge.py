@@ -91,18 +91,37 @@ def call_judge(
 
 
 def parse_reply(text: str) -> JudgeReply:
-    """Read the judge's JSON object, tolerating a markdown fence around it.
+    """Read the judge's verdict: the last JSON object of the reply that holds the three fields.
+
+    The prompt asks for the object alone, but the pinned model often works the answer out in
+    prose first and ends with the object (all 48 replies of the first pilot, 2026-11-11), so
+    text around the object is skipped. The last object wins: it is the judge's final word.
 
     Raises:
-        ValueError: the text is not the JSON object the prompt asked for.
+        ValueError: no JSON object in the text is the one the prompt asked for.
     """
-    body = text.strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip()
-    try:
-        return JudgeReply.model_validate(json.loads(body))
-    except (json.JSONDecodeError, ValidationError) as error:
-        raise ValueError(
-            f"expected a judge reply with verdict/reference_ok/reason, got {text[:200]!r}"
-        ) from error
+    for candidate in reversed(_json_objects(text)):
+        try:
+            return JudgeReply.model_validate(candidate)
+        except ValidationError:
+            continue
+    raise ValueError(f"expected a judge reply with verdict/reference_ok/reason, got {text[:200]!r}")
+
+
+def _json_objects(text: str) -> list[object]:
+    """Every JSON object that starts at a `{` of the text, outermost only, in order."""
+    decoder = json.JSONDecoder()
+    found: list[object] = []
+    start = text.find("{")
+    while start != -1:
+        try:
+            value, end = decoder.raw_decode(text, start)
+        except json.JSONDecodeError:
+            end = start + 1
+        else:
+            found.append(value)
+        start = text.find("{", end)
+    return found
 
 
 def _raw_reply_text(raw_reply: str) -> str:

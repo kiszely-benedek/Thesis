@@ -118,6 +118,24 @@ def test_parse_reply_reads_plain_and_fenced_json() -> None:
     assert parse_reply(f"```json\n{body}\n```").reason == "two readings"
 
 
+def test_parse_reply_reads_the_verdict_after_the_judges_own_working() -> None:
+    """The first pilot: all 48 replies were prose that ended with the object; 41 were refused."""
+    verdict = '{"verdict": "correct", "reference_ok": false, "reason": "route {B} has 78"}'
+    reply = f"The excerpt shows two routes.\n\nRoute A: 79 valves. Route B: 78.\n\n{verdict}"
+
+    parsed = parse_reply(reply)
+
+    assert parsed.verdict is JudgeVerdict.CORRECT and parsed.reason == "route {B} has 78"
+
+
+def test_parse_reply_takes_the_last_verdict_when_the_judge_changes_its_mind() -> None:
+    first = '{"verdict": "incorrect", "reference_ok": true, "reason": "first count"}'
+    last = '{"verdict": "ambiguous_question", "reference_ok": false, "reason": "recount"}'
+
+    assert parse_reply(f"{first}\nOn a recount:\n{last}").reason == "recount"
+    assert parse_reply(f'{first} and a stray object {{"note": 1}}').reason == "first count"
+
+
 def test_parse_reply_names_what_it_expected_when_the_reply_is_not_json() -> None:
     with pytest.raises(ValueError, match="verdict/reference_ok/reason"):
         parse_reply("I think it is right.")

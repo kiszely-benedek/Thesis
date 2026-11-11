@@ -80,7 +80,7 @@ def _add_state_and_gates(sub: argparse._SubParsersAction[argparse.ArgumentParser
         "--plant", action="append", required=True, metavar="PLANT|TUNE_REPORT|DEV_REPORT"
     )
     p = _add(sub, "g2", c.cmd_g2)
-    _path(p, "--verdicts", "--out")
+    _path(p, "--plan", "--verdicts", "--out")
     p = _add(sub, "memory-probe", c.cmd_memory_probe)
     _path(p, "--out")
     p.add_argument("--limit-gib", type=float)

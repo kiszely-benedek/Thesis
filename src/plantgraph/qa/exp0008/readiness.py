@@ -40,7 +40,7 @@ FROZEN_PATHS = ("src", ":!src/plantgraph/demo", "scripts/audit_export_subgraphs.
 HASHED_PATHS = (*FROZEN_PATHS, "pyproject.toml", "uv.lock")
 MIN_FREE_DISK_GB = 10
 MIN_BALANCE_USD = 40.0
-PILOT_INPUTS = ("valves_ids.txt", "runs.txt", "subgraphs.json")
+PILOT_INPUTS = ("valves_counts.txt", "runs.txt", "subgraphs.json")
 TEMPORARY_DATABASE = "e7tune"
 
 

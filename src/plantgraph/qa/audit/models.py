@@ -78,6 +78,12 @@ class AuditItem(BaseModel):
     row: SourceRow
 
 
+class ItemsFile(BaseModel):
+    """The rows of a plan file; an `AuditPlan` file and a pilot file both fit."""
+
+    items: list[AuditItem]
+
+
 class JudgeInput(BaseModel):
     """Everything the judge may see about one row. No scorer verdict, outcome or flag is here."""
 

@@ -89,7 +89,7 @@ x 1.5 -> cut to the step ceiling and the $30 runs ledger -> OpenRouter balance m
 ## Inputs a person prepares once
 
 - `prereg/PREREG_A.md` and `prereg/seeds.json` (from the template and `draw_seeds`), committed.
-- `inputs/pilot/` for M2b: `valves_ids.txt` (the VALVES_ON_PATH ids, at least 8), `runs.txt` (first-measurement run
+- `inputs/pilot/` for M2b: `valves_counts.txt` (per VALVES_ON_PATH question id its item-level valve counts: the valve counts of the fewest-items routes in `subgraphs.json`), `runs.txt` (first-measurement run
   directories, one per line), `questions/<corpus>/questions.jsonl`, and `subgraphs.json` cut with
   `scripts/audit_export_subgraphs.py` on a `git archive 4dfad69` copy (`PYTHONPATH=<copy>/src`).
 

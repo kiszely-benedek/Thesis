@@ -280,23 +280,48 @@ def test_g2_passes_at_80_percent_on_both_groups_and_fails_below() -> None:
     ]
     defects += [
         _record(MAYBE, scorer_correct=False, stratum="pilot_defect_parse", number=n)
-        for n in range(1)
+        for n in range(7, 8)
     ]
     defects += [
-        _record(NO, scorer_correct=False, stratum="pilot_defect_parse", number=n) for n in range(2)
+        _record(NO, scorer_correct=False, stratum="pilot_defect_parse", number=n)
+        for n in range(8, 10)
     ]
     controls = [
-        _record(YES, scorer_correct=True, stratum="pilot_control", number=n) for n in range(8)
+        _record(YES, scorer_correct=True, stratum="pilot_control", number=n) for n in range(10, 18)
     ]
     controls += [
-        _record(NO, scorer_correct=True, stratum="pilot_control", number=n) for n in range(2)
+        _record(NO, scorer_correct=True, stratum="pilot_control", number=n) for n in range(18, 20)
     ]
 
-    verdict = g2_verdict(defects + controls)
+    records = defects + controls
+    items = [record.item for record in records]
+
+    verdict = g2_verdict(items, records)
 
     assert (verdict.n_defect_found, verdict.n_defect) == (8, 10) and verdict.passed
-    assert not g2_verdict(defects[:-1] + [defects[-1]] * 2 + controls).passed  # 8/11 < 80 %
-    assert not g2_verdict(defects).passed  # no controls at all
+    assert not g2_verdict(items, defects).passed  # no control was judged
+    assert not g2_verdict([r.item for r in defects], defects).passed  # no controls at all
+
+
+def test_g2_counts_a_pilot_row_without_a_verdict_as_a_miss() -> None:
+    """The first pilot passed on 8 judged rows of 49; the other 41 replies were never read."""
+    YES = JudgeVerdict.CORRECT
+    defects = [
+        _record(YES, scorer_correct=False, stratum="pilot_defect_valves", number=n)
+        for n in range(10)
+    ]
+    controls = [
+        _record(YES, scorer_correct=True, stratum="pilot_control", number=n) for n in range(10, 20)
+    ]
+    items = [record.item for record in defects + controls]
+
+    judged_all = g2_verdict(items, defects + controls)
+    judged_few = g2_verdict(items, defects[:7] + controls)
+
+    assert judged_all.passed
+    assert (judged_few.n_defect_found, judged_few.n_defect) == (7, 10) and not judged_few.passed
+    # a verdict for a row that is not in the pilot set is not counted either
+    assert g2_verdict(items[:10], defects + controls).n_control == 0
 
 
 def test_the_report_and_sheet_name_every_group_and_disagreement() -> None:
