@@ -1,0 +1,6 @@
+data/runs/exp0008/corpora/D100g21/ingest.json
+data/runs/exp0008/corpora/D1000g21/ingest.json
+data/runs/exp0008/corpora/X100g21s211/ingest.json
+data/runs/exp0008/bands/composition_dev100.json
+data/runs/exp0008/bands/composition_dev1000.json
+data/runs/exp0008/dev/pool_probe.json

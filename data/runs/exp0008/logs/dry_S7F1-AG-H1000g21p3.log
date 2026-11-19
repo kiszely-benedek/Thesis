@@ -1,0 +1,101 @@
+run S7F1-AG-H1000g21p3: 280 rows to answer, 0 already on disk
+paid mode: up to 280 model calls; hard spend cap 1.0 USD
+no cost-per-question estimate given (the pilot has not provided one)
+{
+  "run_id": "S7F1-AG-H1000g21p3",
+  "n_rows": 280,
+  "n_new_rows": 280,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "graph_agent_low_steps": {
+      "0": {
+        "ANSWERED": 96,
+        "PARSE_FAILURE": 29
+      },
+      "1": {
+        "ANSWERED": 50,
+        "PARSE_FAILURE": 12
+      },
+      "2": {
+        "ANSWERED": 21,
+        "PARSE_FAILURE": 5
+      },
+      "3-4": {
+        "ANSWERED": 15,
+        "PARSE_FAILURE": 3
+      },
+      "5-8": {
+        "ANSWERED": 10,
+        "PARSE_FAILURE": 1
+      },
+      "9-16": {
+        "ANSWERED": 6
+      },
+      "17-32": {
+        "ANSWERED": 5,
+        "PARSE_FAILURE": 1
+      },
+      "33+": {
+        "ANSWERED": 1,
+        "PARSE_FAILURE": 5
+      },
+      "unanswerable": {
+        "PARSE_FAILURE": 20
+      }
+    }
+  },
+  "routing_recall": {
+    "graph_agent_low_steps": 0.7076923076923077
+  },
+  "relaxed_routing_recall": {
+    "graph_agent_low_steps": 0.7076923076923077
+  },
+  "evidence_node_recall": {
+    "graph_agent_low_steps": 0.6589411773258329
+  },
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {
+      "graph_agent_low_steps": {
+        "0": 0.744,
+        "1": 0.7419354838709677,
+        "2": 0.6923076923076923,
+        "3-4": 0.7777777777777778,
+        "5-8": 0.8181818181818182,
+        "9-16": 0.5,
+        "17-32": 0.16666666666666666,
+        "33+": 0.0
+      }
+    },
+    "relaxed_routing_recall": {
+      "graph_agent_low_steps": {
+        "0": 0.744,
+        "1": 0.7419354838709677,
+        "2": 0.6923076923076923,
+        "3-4": 0.7777777777777778,
+        "5-8": 0.8181818181818182,
+        "9-16": 0.5,
+        "17-32": 0.16666666666666666,
+        "33+": 0.0
+      }
+    },
+    "evidence_node_recall": {
+      "graph_agent_low_steps": {
+        "0": 0.7127483125737736,
+        "1": 0.6754041477588681,
+        "2": 0.5814107452407463,
+        "3-4": 0.7467946676179678,
+        "5-8": 0.5745178838010122,
+        "9-16": 0.4548200825985342,
+        "17-32": 0.3698438669498887,
+        "33+": 0.09372866672110265
+      }
+    }
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "graph_agent_low_steps": 0.0007956530178571429
+  },
+  "stopped_by_spend_cap": false,
+  "late_after_timeout_usd": 0.0
+}
+S7F1-AG-H1000g21p3: 76 of 280 questions need a model call (228 calls not in the cache, 1019 served from it)

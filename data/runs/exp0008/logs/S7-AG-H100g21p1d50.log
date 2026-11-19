@@ -1,0 +1,94 @@
+run S7-AG-H100g21p1d50: 280 rows to answer, 0 already on disk
+concurrency 4: up to that many questions in flight
+paid mode: up to 280 model calls; hard spend cap 0.5472 USD
+estimated cost: 0.5292 USD
+{
+  "run_id": "S7-AG-H100g21p1d50",
+  "n_rows": 280,
+  "n_new_rows": 280,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "graph_agent_lines": {
+      "0": {
+        "ANSWERED": 126
+      },
+      "1": {
+        "ANSWERED": 64
+      },
+      "2": {
+        "ANSWERED": 25
+      },
+      "3-4": {
+        "ANSWERED": 17
+      },
+      "5-8": {
+        "ANSWERED": 10
+      },
+      "9-16": {
+        "ANSWERED": 7
+      },
+      "17-32": {
+        "ANSWERED": 6
+      },
+      "33+": {
+        "ANSWERED": 5
+      },
+      "unanswerable": {
+        "ANSWERED": 20
+      }
+    }
+  },
+  "routing_recall": {
+    "graph_agent_lines": 0.9576923076923077
+  },
+  "relaxed_routing_recall": {
+    "graph_agent_lines": 0.9615384615384616
+  },
+  "evidence_node_recall": {
+    "graph_agent_lines": 0.8884436823719135
+  },
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {
+      "graph_agent_lines": {
+        "0": 0.9920634920634921,
+        "1": 0.90625,
+        "2": 1.0,
+        "3-4": 1.0,
+        "5-8": 1.0,
+        "9-16": 1.0,
+        "17-32": 1.0,
+        "33+": 0.2
+      }
+    },
+    "relaxed_routing_recall": {
+      "graph_agent_lines": {
+        "0": 0.9920634920634921,
+        "1": 0.90625,
+        "2": 1.0,
+        "3-4": 1.0,
+        "5-8": 1.0,
+        "9-16": 1.0,
+        "17-32": 1.0,
+        "33+": 0.4
+      }
+    },
+    "evidence_node_recall": {
+      "graph_agent_lines": {
+        "0": 0.9188601735411783,
+        "1": 0.8374032687237574,
+        "2": 0.9606641458436179,
+        "3-4": 0.8763730175710616,
+        "5-8": 0.8792557083645945,
+        "9-16": 0.8788944569190497,
+        "17-32": 0.8782743015807375,
+        "33+": 0.41748680132822213
+      }
+    }
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "graph_agent_lines": 0.0015995505714285715
+  },
+  "stopped_by_spend_cap": false,
+  "late_after_timeout_usd": 0.0
+}

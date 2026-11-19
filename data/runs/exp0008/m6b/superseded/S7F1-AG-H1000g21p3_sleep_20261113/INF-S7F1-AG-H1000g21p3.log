@@ -1,0 +1,4 @@
+stopped at a cache miss: No cached response for key '638541666e9fef0210c7d42ce41c3c80d50453b2c696f0997e294c9491fb6d62' (purpose='answer') in replay mode
+rerun with the same --run-id to resume; fill the cache with --allow-paid-calls only after approving the spend
+run INF-S7F1-AG-H1000g21p3: 280 rows to answer, 0 already on disk
+replay mode: cache only, no network; stops at the first cache miss

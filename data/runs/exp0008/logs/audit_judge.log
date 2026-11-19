@@ -1,0 +1,32 @@
+judge prompt sha256: b56c89d5fba7111f4270d47ef4d8cd53796eee5c499fc3cc5e1ce3d9d2312eaa
+judged 233, already done 0, not run 0
+failed 27; stopped by cap: False
+  FAILED S7-AG-H100g21p1|graph_agent_lines|H100g21p1:FLOW_PATH:BFV-10009|GTV-49029: expected the routes and evidence parts of 'H100g21p1:FLOW_PATH:BFV-10009|GTV-49029' to fit in 24000 characters, found 0 routes and 344 parts that do not
+  FAILED S7-AG-H100g21p5|graph_agent_lines|H100g21p5:ROUTE_AVOIDING:P-4301|D-4301|EA-4301: expected the routes and evidence parts of 'H100g21p5:ROUTE_AVOIDING:P-4301|D-4301|EA-4301' to fit in 24000 characters, found 0 routes and 681 parts that do not
+  FAILED S7-CYP-H1000g21p3|cypher_rag_lines|H1000g21p3:UPSTREAM_SOURCES:K-2401: expected the routes and evidence parts of 'H1000g21p3:UPSTREAM_SOURCES:K-2401' to fit in 24000 characters, found 0 routes and 666 parts that do not
+  FAILED S7-AG-H1000g21p2|graph_agent_lines|H1000g21p2:UPSTREAM_SOURCES:T-22401: expected the routes and evidence parts of 'H1000g21p2:UPSTREAM_SOURCES:T-22401' to fit in 24000 characters, found 0 routes and 5930 parts that do not
+  FAILED S7-AG-H1000g21p1|graph_agent_lines|H1000g21p1:ROUTE_AVOIDING:P-38902B|P-40001|EA-39901: expected the routes and evidence parts of 'H1000g21p1:ROUTE_AVOIDING:P-38902B|P-40001|EA-39901' to fit in 24000 characters, found 0 routes and 453 parts that do not
+  FAILED S7-AG-H1000g21p5|graph_agent_lines|H1000g21p5:UPSTREAM_SOURCES:P-29801B: expected the routes and evidence parts of 'H1000g21p5:UPSTREAM_SOURCES:P-29801B' to fit in 24000 characters, found 0 routes and 7885 parts that do not
+  FAILED S7-AG-H1000g21p3|graph_agent_lines|H1000g21p3:CONNECTED:E-25801|M-40701: expected the routes and evidence parts of 'H1000g21p3:CONNECTED:E-25801|M-40701' to fit in 24000 characters, found 0 routes and 14821 parts that do not
+  FAILED S7-AG-H1000g21p1|graph_agent_lines|H1000g21p1:ROUTE_AVOIDING:D-43901|P-52802|PGV-482003: expected the routes and evidence parts of 'H1000g21p1:ROUTE_AVOIDING:D-43901|P-52802|PGV-482003' to fit in 24000 characters, found 0 routes and 795 parts that do not
+  FAILED S7-AG-H1000g21p4|graph_agent_lines|H1000g21p4:UNITS_REACHED:P-29101B: expected the routes and evidence parts of 'H1000g21p4:UNITS_REACHED:P-29101B' to fit in 24000 characters, found 0 routes and 13453 parts that do not
+  FAILED S7-AG-H100g21p4|graph_agent_lines|H100g21p4:UPSTREAM_SOURCES:EJ-3402A: expected the routes and evidence parts of 'H100g21p4:UPSTREAM_SOURCES:EJ-3402A' to fit in 24000 characters, found 0 routes and 962 parts that do not
+  FAILED S7-CYP-H100g21p5|cypher_rag_lines|H100g21p5:UNITS_REACHED:P-5001A: expected the routes and evidence parts of 'H100g21p5:UNITS_REACHED:P-5001A' to fit in 24000 characters, found 0 routes and 364 parts that do not
+  FAILED S7-AG-H100g21p5|graph_agent_lines|H100g21p5:UPSTREAM_SOURCES:P-3701B: expected the routes and evidence parts of 'H100g21p5:UPSTREAM_SOURCES:P-3701B' to fit in 24000 characters, found 0 routes and 1017 parts that do not
+  FAILED S7-CYP-H1000g21p2|cypher_rag_lines|H1000g21p2:UNITS_REACHED:V-55001: expected the routes and evidence parts of 'H1000g21p2:UNITS_REACHED:V-55001' to fit in 24000 characters, found 0 routes and 2412 parts that do not
+  FAILED S7-AG-H100g21p2|graph_agent_lines|H100g21p2:UPSTREAM_SOURCES:F-6301A: expected the routes and evidence parts of 'H100g21p2:UPSTREAM_SOURCES:F-6301A' to fit in 24000 characters, found 0 routes and 1517 parts that do not
+  FAILED S7-CYP-H1000g21p2|cypher_rag_lines|H1000g21p2:VALVES_ON_PATH:D-27801|EA-32901: expected the routes and evidence parts of 'H1000g21p2:VALVES_ON_PATH:D-27801|EA-32901' to fit in 24000 characters, found 2 routes and 0 parts that do not
+  FAILED S7-AG-H100g21p5|graph_agent_lines|H100g21p5:CONNECTED:V-3401|K-2101: expected the routes and evidence parts of 'H100g21p5:CONNECTED:V-3401|K-2101' to fit in 24000 characters, found 0 routes and 1100 parts that do not
+  FAILED S7-AG-H1000g21p4|graph_agent_lines|H1000g21p4:FLOW_PATH:TV-16001|GTV-408032: expected the routes and evidence parts of 'H1000g21p4:FLOW_PATH:TV-16001|GTV-408032' to fit in 24000 characters, found 0 routes and 3291 parts that do not
+  FAILED S7-AG-H100g21p2|graph_agent_lines|H100g21p2:ROUTE_AVOIDING:P-601A|E-6501|GTV-51006: expected the routes and evidence parts of 'H100g21p2:ROUTE_AVOIDING:P-601A|E-6501|GTV-51006' to fit in 24000 characters, found 0 routes and 478 parts that do not
+  FAILED S7-AG-H100g21p3|graph_agent_lines|H100g21p3:UNITS_REACHED:P-1001A: expected the routes and evidence parts of 'H100g21p3:UNITS_REACHED:P-1001A' to fit in 24000 characters, found 0 routes and 2279 parts that do not
+  FAILED S7-AG-H1000g21p4|graph_agent_lines|H1000g21p4:UPSTREAM_SOURCES:P-46501: expected the routes and evidence parts of 'H1000g21p4:UPSTREAM_SOURCES:P-46501' to fit in 24000 characters, found 0 routes and 12691 parts that do not
+  FAILED S7-AG-H1000g21p5|graph_agent_lines|H1000g21p5:UNITS_REACHED:TK-53503: expected the routes and evidence parts of 'H1000g21p5:UNITS_REACHED:TK-53503' to fit in 24000 characters, found 0 routes and 2714 parts that do not
+  FAILED S7-AG-H100g21p4|graph_agent_lines|H100g21p4:UPSTREAM_SOURCES:P-1102: expected the routes and evidence parts of 'H100g21p4:UPSTREAM_SOURCES:P-1102' to fit in 24000 characters, found 0 routes and 367 parts that do not
+  FAILED S7-AG-H100g21p3|graph_agent_lines|H100g21p3:CONNECTED:TK-702|M-2901: expected the routes and evidence parts of 'H100g21p3:CONNECTED:TK-702|M-2901' to fit in 24000 characters, found 0 routes and 2469 parts that do not
+  FAILED S7-AG-H100g21p1|graph_agent_lines|H100g21p1:UPSTREAM_SOURCES:D-4901: expected the routes and evidence parts of 'H100g21p1:UPSTREAM_SOURCES:D-4901' to fit in 24000 characters, found 0 routes and 1234 parts that do not
+  FAILED S7-AG-H1000g21p1|graph_agent_lines|H1000g21p1:UPSTREAM_SOURCES:EJ-39601: expected the routes and evidence parts of 'H1000g21p1:UPSTREAM_SOURCES:EJ-39601' to fit in 24000 characters, found 0 routes and 10730 parts that do not
+  FAILED S7-AG-H1000g21p4|graph_agent_lines|H1000g21p4:CONNECTED:P-58903|TK-38803: expected the routes and evidence parts of 'H1000g21p4:CONNECTED:P-58903|TK-38803' to fit in 24000 characters, found 0 routes and 394 parts that do not
+  FAILED S7-AG-H100g21p3|graph_agent_lines|H100g21p3:UPSTREAM_SOURCES:P-4503: expected the routes and evidence parts of 'H100g21p3:UPSTREAM_SOURCES:P-4503' to fit in 24000 characters, found 0 routes and 1235 parts that do not
+prompt chars: median 5395, max 30715
+spent so far: 5.2304 of 10.00 USD

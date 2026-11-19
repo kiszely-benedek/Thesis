@@ -1,0 +1,55 @@
+run S7F1-CYP-H100g21p2: 280 rows to answer, 0 already on disk
+paid mode: up to 280 model calls; hard spend cap 1.0 USD
+no cost-per-question estimate given (the pilot has not provided one)
+{
+  "run_id": "S7F1-CYP-H100g21p2",
+  "n_rows": 280,
+  "n_new_rows": 280,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "cypher_rag_plant": {
+      "0": {
+        "RETRIEVAL_ERROR": 125
+      },
+      "1": {
+        "RETRIEVAL_ERROR": 66
+      },
+      "2": {
+        "RETRIEVAL_ERROR": 26
+      },
+      "3-4": {
+        "RETRIEVAL_ERROR": 16
+      },
+      "5-8": {
+        "RETRIEVAL_ERROR": 9
+      },
+      "9-16": {
+        "RETRIEVAL_ERROR": 6
+      },
+      "17-32": {
+        "RETRIEVAL_ERROR": 6
+      },
+      "33+": {
+        "RETRIEVAL_ERROR": 6
+      },
+      "unanswerable": {
+        "RETRIEVAL_ERROR": 20
+      }
+    }
+  },
+  "routing_recall": {},
+  "relaxed_routing_recall": {},
+  "evidence_node_recall": {},
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {},
+    "relaxed_routing_recall": {},
+    "evidence_node_recall": {}
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "cypher_rag_plant": 0.0
+  },
+  "stopped_by_spend_cap": false,
+  "late_after_timeout_usd": 0.0
+}
+S7F1-CYP-H100g21p2: 280 of 280 questions need a model call (280 calls not in the cache, 0 served from it)

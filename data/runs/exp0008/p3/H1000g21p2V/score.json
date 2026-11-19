@@ -1,0 +1,577 @@
+{
+ "corpus_id": "H1000g21p2V",
+ "n_pairs": 452,
+ "n_blocks": 257,
+ "n_resamples": 2000,
+ "bootstrap_seed": 20261104,
+ "deciders": [
+  {
+   "decider": "d0",
+   "threshold": null,
+   "subsets": {
+    "all": {
+     "prf": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 86,
+      "precision": null,
+      "recall": 0.0,
+      "f1": 0.0
+     },
+     "f1_ci": {
+      "low": 0.0,
+      "high": 0.0
+     }
+    },
+    "format": {
+     "prf": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 42,
+      "precision": null,
+      "recall": 0.0,
+      "f1": 0.0
+     },
+     "f1_ci": {
+      "low": 0.0,
+      "high": 0.0
+     }
+    },
+    "naming": {
+     "prf": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 44,
+      "precision": null,
+      "recall": 0.0,
+      "f1": 0.0
+     },
+     "f1_ci": {
+      "low": 0.0,
+      "high": 0.0
+     }
+    }
+   },
+   "group_level": {
+    "true_positives": 0,
+    "false_positives": 0,
+    "false_negatives": 86,
+    "precision": null,
+    "recall": 0.0,
+    "f1": null
+   },
+   "n_dropped_one_to_one": 0,
+   "n_identity_conflicts": 0,
+   "per_operator": {
+    "case": {
+     "gold": 9,
+     "recovered": 0
+    },
+    "class_synonym": {
+     "gold": 2,
+     "recovered": 0
+    },
+    "drop_separator": {
+     "gold": 4,
+     "recovered": 0
+    },
+    "split_number": {
+     "gold": 6,
+     "recovered": 0
+    },
+    "swap_separator": {
+     "gold": 12,
+     "recovered": 0
+    },
+    "unit_prefix": {
+     "gold": 42,
+     "recovered": 0
+    },
+    "unpad_sequence": {
+     "gold": 11,
+     "recovered": 0
+    }
+   },
+   "llm": null
+  },
+  {
+   "decider": "d1",
+   "threshold": 1.0,
+   "subsets": {
+    "all": {
+     "prf": {
+      "tp": 31,
+      "fp": 0,
+      "fn": 55,
+      "precision": 1.0,
+      "recall": 0.36046511627906974,
+      "f1": 0.5299145299145299
+     },
+     "f1_ci": {
+      "low": 0.41379310344827586,
+      "high": 0.6370370370370371
+     }
+    },
+    "format": {
+     "prf": {
+      "tp": 31,
+      "fp": 0,
+      "fn": 11,
+      "precision": 1.0,
+      "recall": 0.7380952380952381,
+      "f1": 0.8493150684931506
+     },
+     "f1_ci": {
+      "low": 0.7547169811320755,
+      "high": 0.9285714285714286
+     }
+    },
+    "naming": {
+     "prf": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 44,
+      "precision": null,
+      "recall": 0.0,
+      "f1": 0.0
+     },
+     "f1_ci": {
+      "low": 0.0,
+      "high": 0.0
+     }
+    }
+   },
+   "group_level": {
+    "true_positives": 31,
+    "false_positives": 0,
+    "false_negatives": 55,
+    "precision": 1.0,
+    "recall": 0.36046511627906974,
+    "f1": 0.5299145299145299
+   },
+   "n_dropped_one_to_one": 0,
+   "n_identity_conflicts": 0,
+   "per_operator": {
+    "case": {
+     "gold": 9,
+     "recovered": 9
+    },
+    "class_synonym": {
+     "gold": 2,
+     "recovered": 0
+    },
+    "drop_separator": {
+     "gold": 4,
+     "recovered": 4
+    },
+    "split_number": {
+     "gold": 6,
+     "recovered": 6
+    },
+    "swap_separator": {
+     "gold": 12,
+     "recovered": 12
+    },
+    "unit_prefix": {
+     "gold": 42,
+     "recovered": 0
+    },
+    "unpad_sequence": {
+     "gold": 11,
+     "recovered": 0
+    }
+   },
+   "llm": null
+  },
+  {
+   "decider": "d2",
+   "threshold": 0.8571428571428571,
+   "subsets": {
+    "all": {
+     "prf": {
+      "tp": 42,
+      "fp": 0,
+      "fn": 44,
+      "precision": 1.0,
+      "recall": 0.4883720930232558,
+      "f1": 0.65625
+     },
+     "f1_ci": {
+      "low": 0.5504587155963303,
+      "high": 0.746031746031746
+     }
+    },
+    "format": {
+     "prf": {
+      "tp": 42,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+     },
+     "f1_ci": {
+      "low": 1.0,
+      "high": 1.0
+     }
+    },
+    "naming": {
+     "prf": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 44,
+      "precision": null,
+      "recall": 0.0,
+      "f1": 0.0
+     },
+     "f1_ci": {
+      "low": 0.0,
+      "high": 0.0
+     }
+    }
+   },
+   "group_level": {
+    "true_positives": 42,
+    "false_positives": 0,
+    "false_negatives": 44,
+    "precision": 1.0,
+    "recall": 0.4883720930232558,
+    "f1": 0.65625
+   },
+   "n_dropped_one_to_one": 2,
+   "n_identity_conflicts": 0,
+   "per_operator": {
+    "case": {
+     "gold": 9,
+     "recovered": 9
+    },
+    "class_synonym": {
+     "gold": 2,
+     "recovered": 0
+    },
+    "drop_separator": {
+     "gold": 4,
+     "recovered": 4
+    },
+    "split_number": {
+     "gold": 6,
+     "recovered": 6
+    },
+    "swap_separator": {
+     "gold": 12,
+     "recovered": 12
+    },
+    "unit_prefix": {
+     "gold": 42,
+     "recovered": 0
+    },
+    "unpad_sequence": {
+     "gold": 11,
+     "recovered": 11
+    }
+   },
+   "llm": null
+  },
+  {
+   "decider": "d4",
+   "threshold": null,
+   "subsets": {
+    "all": {
+     "prf": {
+      "tp": 83,
+      "fp": 44,
+      "fn": 3,
+      "precision": 0.6535433070866141,
+      "recall": 0.9651162790697675,
+      "f1": 0.7793427230046949
+     },
+     "f1_ci": {
+      "low": 0.7162790697674418,
+      "high": 0.8387096774193549
+     }
+    },
+    "format": {
+     "prf": {
+      "tp": 39,
+      "fp": 2,
+      "fn": 3,
+      "precision": 0.9512195121951219,
+      "recall": 0.9285714285714286,
+      "f1": 0.9397590361445783
+     },
+     "f1_ci": {
+      "low": 0.8888888888888888,
+      "high": 0.9866666666666667
+     }
+    },
+    "naming": {
+     "prf": {
+      "tp": 44,
+      "fp": 3,
+      "fn": 0,
+      "precision": 0.9361702127659575,
+      "recall": 1.0,
+      "f1": 0.967032967032967
+     },
+     "f1_ci": {
+      "low": 0.9318181818181818,
+      "high": 1.0
+     }
+    }
+   },
+   "group_level": {
+    "true_positives": 83,
+    "false_positives": 44,
+    "false_negatives": 3,
+    "precision": 0.6535433070866141,
+    "recall": 0.9651162790697675,
+    "f1": 0.7793427230046948
+   },
+   "n_dropped_one_to_one": 0,
+   "n_identity_conflicts": 0,
+   "per_operator": {
+    "case": {
+     "gold": 9,
+     "recovered": 9
+    },
+    "class_synonym": {
+     "gold": 2,
+     "recovered": 2
+    },
+    "drop_separator": {
+     "gold": 4,
+     "recovered": 4
+    },
+    "split_number": {
+     "gold": 6,
+     "recovered": 6
+    },
+    "swap_separator": {
+     "gold": 12,
+     "recovered": 12
+    },
+    "unit_prefix": {
+     "gold": 42,
+     "recovered": 42
+    },
+    "unpad_sequence": {
+     "gold": 11,
+     "recovered": 8
+    }
+   },
+   "llm": {
+    "pin_hash": "acf24178d47dd4873fc2a36e7f67efbf2dc7ab5de694711f3b934e6ef4f4c21d",
+    "prompt_sha256": "8a4095d56d8036dad66a5cc8039a60f6ddf2ea3110a75250fb67c593bb994a98",
+    "n_calls": 452,
+    "n_cache_hits": 0,
+    "n_parse_failures": 0,
+    "parse_failure_rate": 0.0,
+    "cost_usd_spent": 0.0542143,
+    "cost_usd_recorded": 0.0542143,
+    "n_live_calls_without_cost": 0,
+    "latency_p50_s": 3.6410000000032596,
+    "latency_p95_s": 7.079000000027008
+   }
+  }
+ ],
+ "contrasts": [
+  {
+   "plus": "d1|all",
+   "minus": "d0|all",
+   "estimate": 0.5299145299145299,
+   "ci": {
+    "low": 0.41379310344827586,
+    "high": 0.6370370370370371
+   }
+  },
+  {
+   "plus": "d1|format",
+   "minus": "d0|format",
+   "estimate": 0.8493150684931506,
+   "ci": {
+    "low": 0.7547169811320755,
+    "high": 0.9285714285714286
+   }
+  },
+  {
+   "plus": "d1|naming",
+   "minus": "d0|naming",
+   "estimate": 0.0,
+   "ci": {
+    "low": 0.0,
+    "high": 0.0
+   }
+  },
+  {
+   "plus": "d2|all",
+   "minus": "d0|all",
+   "estimate": 0.65625,
+   "ci": {
+    "low": 0.5504587155963303,
+    "high": 0.746031746031746
+   }
+  },
+  {
+   "plus": "d2|format",
+   "minus": "d0|format",
+   "estimate": 1.0,
+   "ci": {
+    "low": 1.0,
+    "high": 1.0
+   }
+  },
+  {
+   "plus": "d2|naming",
+   "minus": "d0|naming",
+   "estimate": 0.0,
+   "ci": {
+    "low": 0.0,
+    "high": 0.0
+   }
+  },
+  {
+   "plus": "d2|all",
+   "minus": "d1|all",
+   "estimate": 0.12633547008547008,
+   "ci": {
+    "low": 0.06076759061833692,
+    "high": 0.19855699855699854
+   }
+  },
+  {
+   "plus": "d2|format",
+   "minus": "d1|format",
+   "estimate": 0.15068493150684936,
+   "ci": {
+    "low": 0.0714285714285714,
+    "high": 0.24528301886792447
+   }
+  },
+  {
+   "plus": "d2|naming",
+   "minus": "d1|naming",
+   "estimate": 0.0,
+   "ci": {
+    "low": 0.0,
+    "high": 0.0
+   }
+  },
+  {
+   "plus": "d4|all",
+   "minus": "d0|all",
+   "estimate": 0.7793427230046949,
+   "ci": {
+    "low": 0.7162790697674418,
+    "high": 0.8387096774193549
+   }
+  },
+  {
+   "plus": "d4|format",
+   "minus": "d0|format",
+   "estimate": 0.9397590361445783,
+   "ci": {
+    "low": 0.8888888888888888,
+    "high": 0.9866666666666667
+   }
+  },
+  {
+   "plus": "d4|naming",
+   "minus": "d0|naming",
+   "estimate": 0.967032967032967,
+   "ci": {
+    "low": 0.9318181818181818,
+    "high": 1.0
+   }
+  },
+  {
+   "plus": "d4|all",
+   "minus": "d1|all",
+   "estimate": 0.24942819309016495,
+   "ci": {
+    "low": 0.12704174228675136,
+    "high": 0.37725155279503103
+   }
+  },
+  {
+   "plus": "d4|format",
+   "minus": "d1|format",
+   "estimate": 0.0904439676514277,
+   "ci": {
+    "low": 0.014253563390847712,
+    "high": 0.18644067796610164
+   }
+  },
+  {
+   "plus": "d4|naming",
+   "minus": "d1|naming",
+   "estimate": 0.967032967032967,
+   "ci": {
+    "low": 0.9318181818181818,
+    "high": 1.0
+   }
+  },
+  {
+   "plus": "d4|all",
+   "minus": "d2|all",
+   "estimate": 0.12309272300469487,
+   "ci": {
+    "low": 0.01721879094141865,
+    "high": 0.24358130348913754
+   }
+  },
+  {
+   "plus": "d4|format",
+   "minus": "d2|format",
+   "estimate": -0.06024096385542166,
+   "ci": {
+    "low": -0.11111111111111116,
+    "high": -0.013333333333333308
+   }
+  },
+  {
+   "plus": "d4|naming",
+   "minus": "d2|naming",
+   "estimate": 0.967032967032967,
+   "ci": {
+    "low": 0.9318181818181818,
+    "high": 1.0
+   }
+  },
+  {
+   "plus": "d0|format",
+   "minus": "d0|naming",
+   "estimate": 0.0,
+   "ci": {
+    "low": 0.0,
+    "high": 0.0
+   }
+  },
+  {
+   "plus": "d1|format",
+   "minus": "d1|naming",
+   "estimate": 0.8493150684931506,
+   "ci": {
+    "low": 0.7547169811320755,
+    "high": 0.9285714285714286
+   }
+  },
+  {
+   "plus": "d2|format",
+   "minus": "d2|naming",
+   "estimate": 1.0,
+   "ci": {
+    "low": 1.0,
+    "high": 1.0
+   }
+  },
+  {
+   "plus": "d4|format",
+   "minus": "d4|naming",
+   "estimate": -0.027273930888388698,
+   "ci": {
+    "low": -0.08989898989898992,
+    "high": 0.03292396132741049
+   }
+  }
+ ]
+}

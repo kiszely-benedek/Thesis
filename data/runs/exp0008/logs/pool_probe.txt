@@ -1,0 +1,2 @@
+wrote 873 questions to data\runs\exp0008\qpool\D1000g21\questions.jsonl and data\runs\exp0008\qpool\D1000g21\availability.json
+peak 2.50 GiB of 13.87; 3134.92s; rc 0

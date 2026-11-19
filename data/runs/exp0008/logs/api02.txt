@@ -1,0 +1,20 @@
+| family | questions | equal | errors | share |
+|---|---|---|---|---|
+| CONNECTED | 10 | 10 | 0 | 1.000 |
+| COUNT_IN_UNIT | 10 | 10 | 0 | 1.000 |
+| CROSS_UNIT | 10 | 10 | 0 | 1.000 |
+| DOWNSTREAM_IN_UNIT | 10 | 10 | 0 | 1.000 |
+| FLOW_PATH | 10 | 10 | 0 | 1.000 |
+| INSTRUMENTS_OF_ITEM | 7 | 7 | 0 | 1.000 |
+| LOOKUP_TYPE | 7 | 7 | 0 | 1.000 |
+| LOOKUP_UNIT | 7 | 7 | 0 | 1.000 |
+| LOOPS_NEAR_ITEM | 10 | 10 | 0 | 1.000 |
+| LOOP_ACTUATED_VALVE | 10 | 10 | 0 | 1.000 |
+| LOOP_MEASURED_EQUIPMENT | 6 | 6 | 0 | 1.000 |
+| NEIGHBOURS_DOWNSTREAM | 10 | 10 | 0 | 1.000 |
+| NO_PATH | 10 | 10 | 0 | 1.000 |
+| SAME_UNIT | 6 | 6 | 0 | 1.000 |
+| SHEETS_OF_TAG | 10 | 10 | 0 | 1.000 |
+| UNANSWERABLE_TAG | 10 | 10 | 0 | 1.000 |
+| UPSTREAM_ISOLATION | 10 | 10 | 0 | 1.000 |
+| UPSTREAM_SOURCES | 10 | 10 | 0 | 1.000 |

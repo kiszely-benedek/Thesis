@@ -1,0 +1,19 @@
+{
+ "decider": "d2",
+ "links": [
+  {
+   "first": [
+    "75",
+    "E-4802",
+    "TubularHeatExchanger"
+   ],
+   "second": [
+    "74",
+    "E4802",
+    "TubularHeatExchanger"
+   ],
+   "score": 1.0,
+   "string_score": 1.0
+  }
+ ]
+}

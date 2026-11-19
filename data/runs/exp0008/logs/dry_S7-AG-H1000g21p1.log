@@ -1,0 +1,95 @@
+run S7-AG-H1000g21p1: 280 rows to answer, 0 already on disk
+paid mode: up to 280 model calls; hard spend cap 1.0 USD
+no cost-per-question estimate given (the pilot has not provided one)
+{
+  "run_id": "S7-AG-H1000g21p1",
+  "n_rows": 280,
+  "n_new_rows": 280,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "graph_agent_lines": {
+      "0": {
+        "PARSE_FAILURE": 125
+      },
+      "1": {
+        "PARSE_FAILURE": 62
+      },
+      "2": {
+        "PARSE_FAILURE": 26
+      },
+      "3-4": {
+        "PARSE_FAILURE": 18
+      },
+      "5-8": {
+        "PARSE_FAILURE": 11
+      },
+      "9-16": {
+        "PARSE_FAILURE": 6
+      },
+      "17-32": {
+        "PARSE_FAILURE": 6
+      },
+      "33+": {
+        "PARSE_FAILURE": 6
+      },
+      "unanswerable": {
+        "PARSE_FAILURE": 19,
+        "ANSWERED": 1
+      }
+    }
+  },
+  "routing_recall": {
+    "graph_agent_lines": 0.0
+  },
+  "relaxed_routing_recall": {
+    "graph_agent_lines": 0.0
+  },
+  "evidence_node_recall": {
+    "graph_agent_lines": 0.0
+  },
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {
+      "graph_agent_lines": {
+        "0": 0.0,
+        "1": 0.0,
+        "2": 0.0,
+        "3-4": 0.0,
+        "5-8": 0.0,
+        "9-16": 0.0,
+        "17-32": 0.0,
+        "33+": 0.0
+      }
+    },
+    "relaxed_routing_recall": {
+      "graph_agent_lines": {
+        "0": 0.0,
+        "1": 0.0,
+        "2": 0.0,
+        "3-4": 0.0,
+        "5-8": 0.0,
+        "9-16": 0.0,
+        "17-32": 0.0,
+        "33+": 0.0
+      }
+    },
+    "evidence_node_recall": {
+      "graph_agent_lines": {
+        "0": 0.0,
+        "1": 0.0,
+        "2": 0.0,
+        "3-4": 0.0,
+        "5-8": 0.0,
+        "9-16": 0.0,
+        "17-32": 0.0,
+        "33+": 0.0
+      }
+    }
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "graph_agent_lines": 6.778571428571429e-7
+  },
+  "stopped_by_spend_cap": false,
+  "late_after_timeout_usd": 0.0
+}
+S7-AG-H1000g21p1: 280 of 280 questions need a model call (839 calls not in the cache, 1 served from it)

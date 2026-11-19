@@ -1,0 +1,10 @@
+{
+ "stage": "M3",
+ "finished_utc": "2026-11-11T16:01:19+00:00",
+ "outputs": {
+  "data/runs/exp0008/prereg/E9.commit": "f8bff393a44e66ed0c8fa96e0ace845c982e1f564a2e58c2ab01ab17583d7976",
+  "data/runs/exp0008/prereg/E9.sha256": "9dfbaa07366c3aee7b3f6b100cf0a713dc3160e7971fae4a512859a438a7a203",
+  "data/runs/exp0008/prereg/PREREG.sha256": "13f3b935f98f6354b3e72e248927d42ce7d57d12dd0b11c1d2068fb485ca05be",
+  "data/runs/exp0008/prereg/PREREG_B.md": "01e1b101652ddb96d6c423c041f97d26651084e8740ff7877dcac0f13ad828c2"
+ }
+}

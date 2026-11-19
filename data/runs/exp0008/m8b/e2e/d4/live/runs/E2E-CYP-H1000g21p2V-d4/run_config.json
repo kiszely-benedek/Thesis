@@ -1,0 +1,100 @@
+{
+  "run_id": "E2E-CYP-H1000g21p2V-d4",
+  "experiment": "EXP-0008-P4",
+  "reported": false,
+  "corpora": [
+    "H1000g21p2V"
+  ],
+  "strategies": {
+    "cypher_rag_lines": {
+      "timeout_s": 30,
+      "row_cap": 1000
+    }
+  },
+  "answer_pin": {
+    "backend": "openrouter",
+    "model_id": "openai/gpt-6-luna",
+    "route_provider": "openai",
+    "temperature": null,
+    "seed": 0,
+    "max_output_tokens": 16384,
+    "extra": {
+      "reasoning": {
+        "effort": "low"
+      }
+    }
+  },
+  "judge_pins": [],
+  "prompt_hashes": {
+    "agent_graph_system.txt": "59a6a950480421eacffc6c536ea57c871a09716e3c76998b1ebddccc206aa3ad",
+    "agent_graph_system_v2t.txt": "32a063f68b42ef810473c4c7182db525903fe425becc59d4ed74e24fc18b6c91",
+    "agent_seed_rule.txt": "6422064a4956c502a8c56fb22ae0ad1aeb4fceed9180ac4da2778fb5635eff23",
+    "cypher_query.txt": "117d36cd98a326c4ed3b4505f7f6df9c8d68e998fda105271cbd95e40c14a830",
+    "cypher_query_v2t.txt": "5267193523535c63859f0d57984e72009959d71f04f2dadf671437d92c7502f8",
+    "cypher_repair_v2t.txt": "110ca32298e0aa2924c4bed440d44903f885b9295b3f839eec8bef8b907ff59e",
+    "final_answer.txt": "f9e22b901e45f7a38dfd85f307bf742dc6f3e4f9303ef48db77841ddf4912baf",
+    "final_answer_v2t.txt": "18972a0b0c8b49d197185fb15fe16e21959d51f5b450bd2a993bf9c7b4280577",
+    "legend_occurrence.txt": "48e48407317c96e5edc53eca64fc408fae65f62b67a652442a65e57b27ec2da6",
+    "legend_plant.txt": "3d6bf111495d7bfaa2b8371ed3e0a205e624ce7636aa8a0755d0db68ac6c2ae4",
+    "primer_pid_v1.txt": "198e62bdf4e6e6921013eae921db728ba7f6992d79d6c562fda84ae65c69a9d0",
+    "unit_router.txt": "05735b707145a84921902e06ce11711b4de1055ac6e6dec5b9582d2074df4e5a"
+  },
+  "question_set_sha256": "f4cd06dd85bd8bf4d0687fd394769a2aca241324ec927f2e8c462d02505d5903",
+  "code_hashes": {
+    "schema_text.py": "2aac56826de8518f16d919e129deee33a5b8f683ece86575dfab280648c5c992",
+    "schema_text_lines.py": "2956699a58a1fbc725f60883a74afbc71e911860de28e9467b7bc06b4f1eb91f",
+    "serialize.py": "77bb31e6c6e00544e662cdc2e9b00f230a3b920953f84c13a2a937c407db047b",
+    "context_render.py": "f6ae311de5fae3b70d1466a96d2685d287af57d664f71a50ff12d3762b8da5f6",
+    "context_budget.py": "60eeefb5a4eac89ca02e9abaa399cc7845c42439bae78455e6693a741f09b12f",
+    "final_answer.py": "df9dc18b5926ea24b4f060775758db1acd749e9853c8b25d4bf75fd518ebe7a2",
+    "final_answer_variants.py": "7cb77a284d862374e3d759150a418b22cc5fa5a3a23310b53adc36768ecbb4b9",
+    "primer.py": "5700766e77fe4485f91c250f08925fbdd482e181a57421ac1a95de92bce82ce7",
+    "unit_router.py": "0a82a446cf581e7367a6905bf2c795ce766549e9a2d84f764e9db85537c5b96b",
+    "agent/prompts.py": "320d2c599e10d1f82b38aec6a65a5a8d5e43e1ce7799a3380759c4d1109871c4",
+    "agent/tool_text.py": "c0b098cb6cfc80a1cb06a2f1066542a1cc9dd7693ecd0243983a0d730e04bd71",
+    "agent/seed.py": "5b0a549b4fc14f64d34ee8c0681d285b752d8d99dfcf78daf536bf881a651eda",
+    "plant_api/results.py": "42a506001cf8f389671c8ca599f611455740a15d85b6fa3514fe9bbb84e819e1",
+    "plant_api/line_render.py": "1a91df4963c1e7c5e22c65e194080ec78b6a8809622d93b392e8d1af72db2cd0",
+    "agent/loop.py": "e10d19dd5ee1450866ae382d8a4387e161a89e9a855ddbbfb1b0c11b059d7e46",
+    "agent/actions.py": "a3522885416827bb98ea1de0a1d9cd8de56b3f52469179b7605be94627a70849",
+    "agent/models.py": "13df8a99520bbcfc0269649d4578b844408f5d89311e684b765ea5e677be5a40",
+    "agent/strategies.py": "73148fa9ee9eda834fa3d00140e2e6c8ac3bc9994285255da45ff3edfd68025c",
+    "plant_api/tool_registry.py": "33f3b468c5782ca3d54bc68188302e85af8f7eb1962b758b316139ee69cc3fe3",
+    "plant_api/primitives.py": "04724ffbfe77e863c949ce87fe602b21e1ba90c4b1c9204265194e14f4a8d369",
+    "plant_api/traversal.py": "e69b31f6606806246a1824cd24a68317a3b52ee9f03c86ae0c54773401623de1",
+    "plant_api/item_graph.py": "d12915addffabc0fe6dd456d2c30df30eb436b75f417be342d3243ff154e1229",
+    "plant_api/line_graph.py": "8c7a2bd9a3bd71d2dd29a2781901a08b03f8b30668493218666b0821b4538b0f",
+    "plant_api/contraction.py": "88a1bfe23b9c9ba8dc7a3fb5c669dd539d417b34a0c3e13ee849814019201cd8",
+    "plant_api/model.py": "3f893f15ab66bae189598857cc00179c25ae22f9e10116dfb431e90f40fbc9e3",
+    "strategies/cypher_rag.py": "9ac8cdb61df5b1ad628c72f38d243a67eb23be6c21e8aa33fa64ea195dc9830f",
+    "strategies/cypher_rag_lines.py": "7f967bb1f27cb06901abb9f9f90128cee7b3b9c8a56543db5375aca39bfa5b2e",
+    "strategies/context_rag.py": "ab99d9193fb39bfbbbe4423799081d8ef119542f7e401b8e06e4dbf483f96f50",
+    "strategies/hierarchical.py": "ccf56faa30325ac78e3ecd350dfd893273fe54abf6fac65f4e5c5be3f2573bd3",
+    "strategies/hierarchical_need.py": "0601354ee86f8e4b20d139ebc4b0792626e42ee6ffb9afe7496260fa459d1b5e",
+    "cypher.py": "8bbdfcc7803566e531191fdd27d2d3e74fcac3ef42cb8b38c462b4a694cc9c54",
+    "cypher_guard.py": "3ead9dd58209c52e01a91228a6e7676f2a41ef1dab4a325bb71e44e1d67918a5",
+    "tag_check.py": "bb7846c52aa6ff23fb45c0ace62df3ebb8c1beacb80a2a93a0e4c24f9d4db201",
+    "class_vocabulary.py": "a57d9db8ccafb1927b1cf2e92a54ffcfa8129a5ffcf511711b141afbc4bac9ba",
+    "anchors.py": "6e564937e5ae44552f3cb2c90101d1ee91e0a59adfae7b65d3ce2a3f1eb44a4f",
+    "sheet_selection.py": "21ad4aa7cc6901ab0410dd2249939e6a75204be3a0550d39561ef4dbf3782af4",
+    "routing.py": "4ca3eb13b1f1756a519630fe5aaa8fd7bdab515b164be7e2d56ac881044e7b10",
+    "graph_view.py": "dd07de34c95ba007640938314037f079dec8ffd3c1b9bb4af2db3f01181f7d1a",
+    "need/context.py": "f79eec0ee01c8bb266ae67d4a14416a01df56018a95c044858ca3f63df2bfb0e",
+    "need/programs.py": "4c6b134ee4fe15a19551b4326c30394dc78415470ed8123142ff470f5f484305",
+    "need/rules.py": "ff320bfb27885f930287cf598ddf98617a4f1c859ff461fb604f5b298c5b4193",
+    "need/labels.py": "b337072b849a59686d330b967e7beac1480c7be1d24495cc0e9ef7c6f2aa3f16",
+    "plantgraph/graph/line_view.py": "51ab22c3f01b59f17df1508ccc698514c0a85e5abb5736a8dab703607bd04cea"
+  },
+  "corpus_ingest_sha256": {
+    "H1000g21p2V": "6753588e7f2cd605e50f48d1398043f738d3dfc9957cbda360222397f0a3c6eb"
+  },
+  "primer": true,
+  "context_wall": null,
+  "git_commit": "da7b3eb96ea5736c5ed9946443ee4f87a48a7b5f",
+  "git_dirty": true,
+  "created_at": "2026-11-16T13:20:33.117842Z",
+  "repeats": 1,
+  "allow_paid_calls": true,
+  "max_spend_usd": 0.0678,
+  "question_deadline_s": 120.0
+}

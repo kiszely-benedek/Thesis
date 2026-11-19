@@ -1,0 +1,1025 @@
+{
+ "corpus_id": "H100g21p1d100V",
+ "pairs": [
+  {
+   "index": 0,
+   "first": [
+    "20",
+    "EA-1201",
+    "AirCoolingSystem"
+   ],
+   "second": [
+    "19",
+    "U12-EA-01",
+    "AirCoolingSystem"
+   ],
+   "block": "AirCoolingSystem:121",
+   "is_true": true,
+   "family": "naming",
+   "operator": "unit_prefix"
+  },
+  {
+   "index": 1,
+   "first": [
+    "26",
+    "EA-1501",
+    "AirCoolingSystem"
+   ],
+   "second": [
+    "25",
+    "15-EA-01",
+    "AirCoolingSystem"
+   ],
+   "block": "AirCoolingSystem:151",
+   "is_true": true,
+   "family": "naming",
+   "operator": "unit_prefix"
+  },
+  {
+   "index": 2,
+   "first": [
+    "40",
+    "EA-2501",
+    "AirCoolingSystem"
+   ],
+   "second": [
+    "39",
+    "U25-EA-01",
+    "AirCoolingSystem"
+   ],
+   "block": "AirCoolingSystem:251",
+   "is_true": true,
+   "family": "naming",
+   "operator": "unit_prefix"
+  },
+  {
+   "index": 3,
+   "first": [
+    "51",
+    "EA-3301",
+    "AirCoolingSystem"
+   ],
+   "second": [
+    "50",
+    "EA.3301",
+    "AirCoolingSystem"
+   ],
+   "block": "AirCoolingSystem:331",
+   "is_true": true,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 4,
+   "first": [
+    "60",
+    "EA-3901",
+    "AirCoolingSystem"
+   ],
+   "second": [
+    "59",
+    "EA3901",
+    "AirCoolingSystem"
+   ],
+   "block": "AirCoolingSystem:391",
+   "is_true": true,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 5,
+   "first": [
+    "66",
+    "EA-4301",
+    "AirCoolingSystem"
+   ],
+   "second": [
+    "65",
+    "U43-EA-01",
+    "AirCoolingSystem"
+   ],
+   "block": "AirCoolingSystem:431",
+   "is_true": true,
+   "family": "naming",
+   "operator": "unit_prefix"
+  },
+  {
+   "index": 6,
+   "first": [
+    "72",
+    "EA-4601",
+    "AirCoolingSystem"
+   ],
+   "second": [
+    "71",
+    "46-EA-01",
+    "AirCoolingSystem"
+   ],
+   "block": "AirCoolingSystem:461",
+   "is_true": true,
+   "family": "naming",
+   "operator": "unit_prefix"
+  },
+  {
+   "index": 7,
+   "first": [
+    "6",
+    "EA-501",
+    "AirCoolingSystem"
+   ],
+   "second": [
+    "5",
+    "U5-EA-01",
+    "AirCoolingSystem"
+   ],
+   "block": "AirCoolingSystem:51",
+   "is_true": true,
+   "family": "naming",
+   "operator": "unit_prefix"
+  },
+  {
+   "index": 8,
+   "first": [
+    "91",
+    "EA-5701",
+    "AirCoolingSystem"
+   ],
+   "second": [
+    "90",
+    "U57-EA-01",
+    "AirCoolingSystem"
+   ],
+   "block": "AirCoolingSystem:571",
+   "is_true": true,
+   "family": "naming",
+   "operator": "unit_prefix"
+  },
+  {
+   "index": 9,
+   "first": [
+    "95",
+    "EA-6001",
+    "AirCoolingSystem"
+   ],
+   "second": [
+    "94",
+    "U60-EA-01",
+    "AirCoolingSystem"
+   ],
+   "block": "AirCoolingSystem:61",
+   "is_true": true,
+   "family": "naming",
+   "operator": "unit_prefix"
+  },
+  {
+   "index": 10,
+   "first": [
+    "16",
+    "EJ-1001",
+    "AirEjector"
+   ],
+   "second": [
+    "15",
+    "U10-EJ-01",
+    "AirEjector"
+   ],
+   "block": "AirEjector:11",
+   "is_true": true,
+   "family": "naming",
+   "operator": "unit_prefix"
+  },
+  {
+   "index": 11,
+   "first": [
+    "1",
+    "P-101A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "15",
+    "P-1001",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:11",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 12,
+   "first": [
+    "1",
+    "P-101B",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "15",
+    "P-1001",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:11",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 13,
+   "first": [
+    "2",
+    "P-201",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "33",
+    "P-2001A",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:21",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 14,
+   "first": [
+    "2",
+    "P-201",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "33",
+    "P-2001B",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:21",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 15,
+   "first": [
+    "2",
+    "P-201",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "33",
+    "P-2001C",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:21",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 16,
+   "first": [
+    "3",
+    "P-301",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "47",
+    "P-3001",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:31",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 17,
+   "first": [
+    "6",
+    "P-501",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "81",
+    "P-5001A",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:51",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 18,
+   "first": [
+    "6",
+    "P-501",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "81",
+    "P-5001B",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:51",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 19,
+   "first": [
+    "5",
+    "P-502A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "80",
+    "P-5002A",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:52",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 20,
+   "first": [
+    "5",
+    "P-502A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "80",
+    "P-5002B",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:52",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 21,
+   "first": [
+    "5",
+    "P-502B",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "80",
+    "P-5002A",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:52",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 22,
+   "first": [
+    "5",
+    "P-502B",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "80",
+    "P-5002B",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:52",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 23,
+   "first": [
+    "5",
+    "P-502C",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "80",
+    "P-5002A",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:52",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 24,
+   "first": [
+    "5",
+    "P-502C",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "80",
+    "P-5002B",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:52",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 25,
+   "first": [
+    "8",
+    "P-601A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "95",
+    "P-6001A",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:61",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 26,
+   "first": [
+    "8",
+    "P-601A",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "95",
+    "P-6001B",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:61",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 27,
+   "first": [
+    "8",
+    "P-601B",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "95",
+    "P-6001A",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:61",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 28,
+   "first": [
+    "8",
+    "P-601B",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "95",
+    "P-6001B",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:61",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 29,
+   "first": [
+    "8",
+    "P-601C",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "95",
+    "P-6001A",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:61",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 30,
+   "first": [
+    "8",
+    "P-601C",
+    "CentrifugalPump"
+   ],
+   "second": [
+    "95",
+    "P-6001B",
+    "CentrifugalPump"
+   ],
+   "block": "CentrifugalPump:61",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 31,
+   "first": [
+    "31",
+    "V-1901",
+    "GravitationalSeparator"
+   ],
+   "second": [
+    "32",
+    "U19-V-01",
+    "GravitationalSeparator"
+   ],
+   "block": "GravitationalSeparator:191",
+   "is_true": true,
+   "family": "naming",
+   "operator": "unit_prefix"
+  },
+  {
+   "index": 32,
+   "first": [
+    "51",
+    "V-3301",
+    "GravitationalSeparator"
+   ],
+   "second": [
+    "52",
+    "U33-V-01",
+    "GravitationalSeparator"
+   ],
+   "block": "GravitationalSeparator:331",
+   "is_true": true,
+   "family": "naming",
+   "operator": "unit_prefix"
+  },
+  {
+   "index": 33,
+   "first": [
+    "60",
+    "V-3901",
+    "GravitationalSeparator"
+   ],
+   "second": [
+    "61",
+    "V-39-01",
+    "GravitationalSeparator"
+   ],
+   "block": "GravitationalSeparator:391",
+   "is_true": true,
+   "family": "format",
+   "operator": "split_number"
+  },
+  {
+   "index": 34,
+   "first": [
+    "87",
+    "V-5501",
+    "GravitationalSeparator"
+   ],
+   "second": [
+    "88",
+    "55-V-01",
+    "GravitationalSeparator"
+   ],
+   "block": "GravitationalSeparator:551",
+   "is_true": true,
+   "family": "naming",
+   "operator": "unit_prefix"
+  },
+  {
+   "index": 35,
+   "first": [
+    "21",
+    "V-1301",
+    "PressureVessel"
+   ],
+   "second": [
+    "22",
+    "D-1301",
+    "PressureVessel"
+   ],
+   "block": "PressureVessel:131",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 36,
+   "first": [
+    "25",
+    "V-1501",
+    "PressureVessel"
+   ],
+   "second": [
+    "26",
+    "D-1501",
+    "PressureVessel"
+   ],
+   "block": "PressureVessel:151",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 37,
+   "first": [
+    "2",
+    "V-201",
+    "PressureVessel"
+   ],
+   "second": [
+    "33",
+    "V-2001",
+    "PressureVessel"
+   ],
+   "block": "PressureVessel:21",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 38,
+   "first": [
+    "42",
+    "D-2701",
+    "PressureVessel"
+   ],
+   "second": [
+    "43",
+    "U27-D-01",
+    "PressureVessel"
+   ],
+   "block": "PressureVessel:271",
+   "is_true": true,
+   "family": "naming",
+   "operator": "unit_prefix"
+  },
+  {
+   "index": 39,
+   "first": [
+    "54",
+    "V-3501",
+    "PressureVessel"
+   ],
+   "second": [
+    "55",
+    "V-35-01",
+    "PressureVessel"
+   ],
+   "block": "PressureVessel:351",
+   "is_true": true,
+   "family": "format",
+   "operator": "split_number"
+  },
+  {
+   "index": 40,
+   "first": [
+    "66",
+    "D-4301",
+    "PressureVessel"
+   ],
+   "second": [
+    "67",
+    "43-D-01",
+    "PressureVessel"
+   ],
+   "block": "PressureVessel:431",
+   "is_true": true,
+   "family": "naming",
+   "operator": "unit_prefix"
+  },
+  {
+   "index": 41,
+   "first": [
+    "74",
+    "V-4801",
+    "PressureVessel"
+   ],
+   "second": [
+    "75",
+    "D-4801",
+    "PressureVessel"
+   ],
+   "block": "PressureVessel:481",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 42,
+   "first": [
+    "78",
+    "D-4901",
+    "PressureVessel"
+   ],
+   "second": [
+    "79",
+    "49-D-01",
+    "PressureVessel"
+   ],
+   "block": "PressureVessel:491",
+   "is_true": true,
+   "family": "naming",
+   "operator": "unit_prefix"
+  },
+  {
+   "index": 43,
+   "first": [
+    "6",
+    "D-501",
+    "PressureVessel"
+   ],
+   "second": [
+    "81",
+    "D-5001",
+    "PressureVessel"
+   ],
+   "block": "PressureVessel:51",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 44,
+   "first": [
+    "96",
+    "V-6101",
+    "PressureVessel"
+   ],
+   "second": [
+    "97",
+    "U61-V-01",
+    "PressureVessel"
+   ],
+   "block": "PressureVessel:611",
+   "is_true": true,
+   "family": "naming",
+   "operator": "unit_prefix"
+  },
+  {
+   "index": 45,
+   "first": [
+    "9",
+    "V-701",
+    "PressureVessel"
+   ],
+   "second": [
+    "10",
+    "V701",
+    "PressureVessel"
+   ],
+   "block": "PressureVessel:71",
+   "is_true": true,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 46,
+   "first": [
+    "12",
+    "D-901",
+    "PressureVessel"
+   ],
+   "second": [
+    "13",
+    "9-D-01",
+    "PressureVessel"
+   ],
+   "block": "PressureVessel:91",
+   "is_true": true,
+   "family": "naming",
+   "operator": "unit_prefix"
+  },
+  {
+   "index": 47,
+   "first": [
+    "21",
+    "T-1301",
+    "ProcessColumn"
+   ],
+   "second": [
+    "23",
+    "13-T-01",
+    "ProcessColumn"
+   ],
+   "block": "ProcessColumn:131",
+   "is_true": true,
+   "family": "naming",
+   "operator": "unit_prefix"
+  },
+  {
+   "index": 48,
+   "first": [
+    "74",
+    "T-4801",
+    "ProcessColumn"
+   ],
+   "second": [
+    "76",
+    "U48-T-01",
+    "ProcessColumn"
+   ],
+   "block": "ProcessColumn:481",
+   "is_true": true,
+   "family": "naming",
+   "operator": "unit_prefix"
+  },
+  {
+   "index": 49,
+   "first": [
+    "5",
+    "T-501",
+    "ProcessColumn"
+   ],
+   "second": [
+    "80",
+    "T-5001",
+    "ProcessColumn"
+   ],
+   "block": "ProcessColumn:51",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 50,
+   "first": [
+    "17",
+    "TK-1104",
+    "Tank"
+   ],
+   "second": [
+    "18",
+    "U11-TK-04",
+    "Tank"
+   ],
+   "block": "Tank:114",
+   "is_true": true,
+   "family": "naming",
+   "operator": "unit_prefix"
+  },
+  {
+   "index": 51,
+   "first": [
+    "0",
+    "TK-103",
+    "Tank"
+   ],
+   "second": [
+    "1",
+    "tk-103",
+    "Tank"
+   ],
+   "block": "Tank:13",
+   "is_true": true,
+   "family": "format",
+   "operator": "case"
+  },
+  {
+   "index": 52,
+   "first": [
+    "35",
+    "TK-2202",
+    "Tank"
+   ],
+   "second": [
+    "36",
+    "22-TK-02",
+    "Tank"
+   ],
+   "block": "Tank:222",
+   "is_true": true,
+   "family": "naming",
+   "operator": "unit_prefix"
+  },
+  {
+   "index": 53,
+   "first": [
+    "82",
+    "TK-5104",
+    "Tank"
+   ],
+   "second": [
+    "83",
+    "TK 5104",
+    "Tank"
+   ],
+   "block": "Tank:514",
+   "is_true": true,
+   "family": "format",
+   "operator": "swap_separator"
+  },
+  {
+   "index": 54,
+   "first": [
+    "15",
+    "E-1002",
+    "TubularHeatExchanger"
+   ],
+   "second": [
+    "14",
+    "HX-1002",
+    "TubularHeatExchanger"
+   ],
+   "block": "TubularHeatExchanger:12",
+   "is_true": true,
+   "family": "naming",
+   "operator": "class_synonym"
+  },
+  {
+   "index": 55,
+   "first": [
+    "22",
+    "E-1302",
+    "TubularHeatExchanger"
+   ],
+   "second": [
+    "21",
+    "E-132",
+    "TubularHeatExchanger"
+   ],
+   "block": "TubularHeatExchanger:132",
+   "is_true": true,
+   "family": "format",
+   "operator": "unpad_sequence"
+  },
+  {
+   "index": 56,
+   "first": [
+    "75",
+    "E-4802",
+    "TubularHeatExchanger"
+   ],
+   "second": [
+    "74",
+    "E4802",
+    "TubularHeatExchanger"
+   ],
+   "block": "TubularHeatExchanger:482",
+   "is_true": true,
+   "family": "format",
+   "operator": "drop_separator"
+  },
+  {
+   "index": 57,
+   "first": [
+    "78",
+    "E-4902",
+    "TubularHeatExchanger"
+   ],
+   "second": [
+    "77",
+    "E-492",
+    "TubularHeatExchanger"
+   ],
+   "block": "TubularHeatExchanger:492",
+   "is_true": true,
+   "family": "format",
+   "operator": "unpad_sequence"
+  },
+  {
+   "index": 58,
+   "first": [
+    "5",
+    "E-501",
+    "TubularHeatExchanger"
+   ],
+   "second": [
+    "80",
+    "E-5001",
+    "TubularHeatExchanger"
+   ],
+   "block": "TubularHeatExchanger:51",
+   "is_true": false,
+   "family": "none",
+   "operator": "none"
+  },
+  {
+   "index": 59,
+   "first": [
+    "81",
+    "E-5002",
+    "TubularHeatExchanger"
+   ],
+   "second": [
+    "80",
+    "E-50-02",
+    "TubularHeatExchanger"
+   ],
+   "block": "TubularHeatExchanger:52",
+   "is_true": true,
+   "family": "format",
+   "operator": "split_number"
+  }
+ ]
+}

@@ -1,0 +1,1060 @@
+{
+ "decider": "d1",
+ "threshold": 1.0,
+ "link_set": {
+  "decider": "d1",
+  "links": [
+   {
+    "first": [
+     "28",
+     "EA-1801",
+     "AirCoolingSystem"
+    ],
+    "second": [
+     "27",
+     "EA.1801",
+     "AirCoolingSystem"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "317",
+     "EA-19301",
+     "AirCoolingSystem"
+    ],
+    "second": [
+     "316",
+     "ea-19301",
+     "AirCoolingSystem"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "465",
+     "EA-28301",
+     "AirCoolingSystem"
+    ],
+    "second": [
+     "464",
+     "EA-283-01",
+     "AirCoolingSystem"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "54",
+     "EA-3401",
+     "AirCoolingSystem"
+    ],
+    "second": [
+     "53",
+     "EA 3401",
+     "AirCoolingSystem"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "58",
+     "EA-3601",
+     "AirCoolingSystem"
+    ],
+    "second": [
+     "57",
+     "EA 3601",
+     "AirCoolingSystem"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "63",
+     "EA-4001",
+     "AirCoolingSystem"
+    ],
+    "second": [
+     "62",
+     "EA.4001",
+     "AirCoolingSystem"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "810",
+     "EA-48601",
+     "AirCoolingSystem"
+    ],
+    "second": [
+     "809",
+     "EA48601",
+     "AirCoolingSystem"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "883",
+     "EA-52701",
+     "AirCoolingSystem"
+    ],
+    "second": [
+     "882",
+     "EA 52701",
+     "AirCoolingSystem"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "972",
+     "EA-58101",
+     "AirCoolingSystem"
+    ],
+    "second": [
+     "971",
+     "EA.58101",
+     "AirCoolingSystem"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "993",
+     "EA-59401",
+     "AirCoolingSystem"
+    ],
+    "second": [
+     "992",
+     "EA59401",
+     "AirCoolingSystem"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "105",
+     "EA-6601",
+     "AirCoolingSystem"
+    ],
+    "second": [
+     "104",
+     "EA-66-01",
+     "AirCoolingSystem"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "331",
+     "EJ-20201",
+     "AirEjector"
+    ],
+    "second": [
+     "330",
+     "EJ.20201",
+     "AirEjector"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "469",
+     "EJ-28501A",
+     "AirEjector"
+    ],
+    "second": [
+     "468",
+     "EJ-285-01A",
+     "AirEjector"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "115",
+     "EJ-7201A",
+     "AirEjector"
+    ],
+    "second": [
+     "114",
+     "EJ7201A",
+     "AirEjector"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "248",
+     "V-15301",
+     "GravitationalSeparator"
+    ],
+    "second": [
+     "249",
+     "V15301",
+     "GravitationalSeparator"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "603",
+     "V-36701",
+     "GravitationalSeparator"
+    ],
+    "second": [
+     "604",
+     "V-367-01",
+     "GravitationalSeparator"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "237",
+     "V-14601",
+     "PressureVessel"
+    ],
+    "second": [
+     "238",
+     "V.14601",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "294",
+     "V-18201",
+     "PressureVessel"
+    ],
+    "second": [
+     "295",
+     "V18201",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "326",
+     "V-19801",
+     "PressureVessel"
+    ],
+    "second": [
+     "325",
+     "v-19801",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "416",
+     "V-25501",
+     "PressureVessel"
+    ],
+    "second": [
+     "417",
+     "v-25501",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "55",
+     "V-3501",
+     "PressureVessel"
+    ],
+    "second": [
+     "56",
+     "V.3501",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "686",
+     "R-41501",
+     "PressureVessel"
+    ],
+    "second": [
+     "685",
+     "r-41501",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "11",
+     "V-701",
+     "PressureVessel"
+    ],
+    "second": [
+     "12",
+     "V701",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "370",
+     "T-22901",
+     "ProcessColumn"
+    ],
+    "second": [
+     "373",
+     "T-229-01",
+     "ProcessColumn"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "396",
+     "T-24401",
+     "ProcessColumn"
+    ],
+    "second": [
+     "398",
+     "t-24401",
+     "ProcessColumn"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "737",
+     "T-44301",
+     "ProcessColumn"
+    ],
+    "second": [
+     "738",
+     "T 44301",
+     "ProcessColumn"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "843",
+     "T-50701",
+     "ProcessColumn"
+    ],
+    "second": [
+     "844",
+     "T-507-01",
+     "ProcessColumn"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "954",
+     "T-57101",
+     "ProcessColumn"
+    ],
+    "second": [
+     "956",
+     "T57101",
+     "ProcessColumn"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "535",
+     "TK-32501",
+     "Tank"
+    ],
+    "second": [
+     "536",
+     "TK32501",
+     "Tank"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "575",
+     "TK-35004",
+     "Tank"
+    ],
+    "second": [
+     "576",
+     "TK.35004",
+     "Tank"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "786",
+     "TK-47202",
+     "Tank"
+    ],
+    "second": [
+     "787",
+     "tk-47202",
+     "Tank"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "994",
+     "TK-59504",
+     "Tank"
+    ],
+    "second": [
+     "995",
+     "tk-59504",
+     "Tank"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "544",
+     "E-33002",
+     "TubularHeatExchanger"
+    ],
+    "second": [
+     "543",
+     "E-330-02",
+     "TubularHeatExchanger"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "716",
+     "E-43202",
+     "TubularHeatExchanger"
+    ],
+    "second": [
+     "715",
+     "e-43202",
+     "TubularHeatExchanger"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "783",
+     "E-47002",
+     "TubularHeatExchanger"
+    ],
+    "second": [
+     "782",
+     "E47002",
+     "TubularHeatExchanger"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "139",
+     "E-8802",
+     "TubularHeatExchanger"
+    ],
+    "second": [
+     "138",
+     "E.8802",
+     "TubularHeatExchanger"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   }
+  ]
+ },
+ "said_same": [
+  false,
+  false,
+  false,
+  true,
+  false,
+  true,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  true,
+  false,
+  false,
+  true,
+  true,
+  true,
+  false,
+  false,
+  false,
+  true,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  true,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true
+ ],
+ "pair_level": {
+  "tp": 36,
+  "fp": 0,
+  "fn": 56,
+  "precision": 1.0,
+  "recall": 0.391304347826087,
+  "f1": 0.5625
+ },
+ "group_level": {
+  "true_positives": 36,
+  "false_positives": 0,
+  "false_negatives": 56,
+  "precision": 1.0,
+  "recall": 0.391304347826087,
+  "f1": 0.5625
+ },
+ "n_dropped_one_to_one": 0,
+ "n_identity_conflicts": 0,
+ "llm": null
+}

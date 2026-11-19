@@ -1,0 +1,74 @@
+run INF-E8-AG-H3g21: 82 rows to answer, 0 already on disk
+replay mode: cache only, no network; stops at the first cache miss
+{
+  "run_id": "INF-E8-AG-H3g21",
+  "n_rows": 82,
+  "n_new_rows": 82,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "graph_agent_lines": {
+      "0": {
+        "ANSWERED": 52
+      },
+      "1": {
+        "ANSWERED": 9
+      },
+      "2": {
+        "ANSWERED": 4
+      },
+      "3-4": {
+        "ANSWERED": 7
+      },
+      "5-8": {
+        "ANSWERED": 2
+      },
+      "unanswerable": {
+        "ANSWERED": 8
+      }
+    }
+  },
+  "routing_recall": {
+    "graph_agent_lines": 0.9459459459459459
+  },
+  "relaxed_routing_recall": {
+    "graph_agent_lines": 0.9459459459459459
+  },
+  "evidence_node_recall": {
+    "graph_agent_lines": 0.8754959805711441
+  },
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {
+      "graph_agent_lines": {
+        "0": 0.9423076923076923,
+        "1": 1.0,
+        "2": 1.0,
+        "3-4": 0.8571428571428571,
+        "5-8": 1.0
+      }
+    },
+    "relaxed_routing_recall": {
+      "graph_agent_lines": {
+        "0": 0.9423076923076923,
+        "1": 1.0,
+        "2": 1.0,
+        "3-4": 0.8571428571428571,
+        "5-8": 1.0
+      }
+    },
+    "evidence_node_recall": {
+      "graph_agent_lines": {
+        "0": 0.8940705128205129,
+        "1": 0.9371492704826038,
+        "2": 0.8015873015873016,
+        "3-4": 0.6977786831124405,
+        "5-8": 0.8849462365591398
+      }
+    }
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "graph_agent_lines": 0.0006273644512195122
+  },
+  "stopped_by_spend_cap": false,
+  "late_after_timeout_usd": 0.0
+}

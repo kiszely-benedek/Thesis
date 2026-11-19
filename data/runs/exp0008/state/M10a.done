@@ -1,0 +1,8 @@
+{
+ "stage": "M10a",
+ "finished_utc": "2026-11-17T14:10:05+00:00",
+ "outputs": {
+  "data/runs/exp0008/audit/main/disagreements.csv": "7b48fc9d768570b1f4c7c701002ea3ca8b4c374c37fb252e21f564c99ce8bdac",
+  "data/runs/exp0008/audit/main/report.md": "b1ce874c6023b321c09d972af60d4631647f63774eb94b507e418afc50151129"
+ }
+}

@@ -1,0 +1,989 @@
+{
+  "cutoff_s": 120.0,
+  "n_boot": 10000,
+  "seed": 20261101,
+  "sizes": [
+    {
+      "corpus_id": "H1g21",
+      "n_sheets": 1,
+      "n_occurrence_nodes": 89,
+      "ctx_prompt_chars": 38353,
+      "ctx_prompt_tokens_median": 14788,
+      "chars_per_token": 2.5937446880609905
+    },
+    {
+      "corpus_id": "H3g21",
+      "n_sheets": 3,
+      "n_occurrence_nodes": 267,
+      "ctx_prompt_chars": 110507,
+      "ctx_prompt_tokens_median": 43102,
+      "chars_per_token": 2.563965427107704
+    },
+    {
+      "corpus_id": "H10g21",
+      "n_sheets": 11,
+      "n_occurrence_nodes": 968,
+      "ctx_prompt_chars": 393076,
+      "ctx_prompt_tokens_median": 154874,
+      "chars_per_token": 2.5380810631057615
+    },
+    {
+      "corpus_id": "H30g21",
+      "n_sheets": 32,
+      "n_occurrence_nodes": 3275,
+      "ctx_prompt_chars": null,
+      "ctx_prompt_tokens_median": null,
+      "chars_per_token": null
+    }
+  ],
+  "scope_families": {
+    "common": [
+      "CONNECTED",
+      "COUNT_IN_UNIT",
+      "DOWNSTREAM_IN_UNIT",
+      "DOWNSTREAM_ISOLATION",
+      "FLOW_PATH",
+      "INSTRUMENTS_OF_ITEM",
+      "LOOKUP_TYPE",
+      "LOOKUP_UNIT",
+      "LOOPS_NEAR_ITEM",
+      "LOOP_MEASURED_EQUIPMENT",
+      "NEIGHBOURS_DOWNSTREAM",
+      "NO_PATH",
+      "ROUTE_AVOIDING",
+      "SAME_UNIT",
+      "UNANSWERABLE_TAG",
+      "UNITS_REACHED",
+      "UPSTREAM_ISOLATION",
+      "UPSTREAM_SOURCES",
+      "VALVES_ON_PATH"
+    ],
+    "all": [
+      "CONNECTED",
+      "COUNT_IN_UNIT",
+      "CROSS_UNIT",
+      "DOWNSTREAM_IN_UNIT",
+      "DOWNSTREAM_ISOLATION",
+      "FEEDING_UNITS",
+      "FLOW_PATH",
+      "INSTRUMENTS_OF_ITEM",
+      "LOOKUP_TYPE",
+      "LOOKUP_UNIT",
+      "LOOPS_NEAR_ITEM",
+      "LOOP_ACTUATED_VALVE",
+      "LOOP_MEASURED_EQUIPMENT",
+      "NEIGHBOURS_DOWNSTREAM",
+      "NO_PATH",
+      "ROUTE_AVOIDING",
+      "SAME_UNIT",
+      "SHEETS_OF_TAG",
+      "UNANSWERABLE_TAG",
+      "UNITS_REACHED",
+      "UPSTREAM_ISOLATION",
+      "UPSTREAM_SOURCES",
+      "VALVES_ON_PATH"
+    ]
+  },
+  "cells": [
+    {
+      "corpus_id": "H1g21",
+      "policy": "ctx-high",
+      "scope": "common",
+      "n": 68,
+      "correct_at_120": 53,
+      "acc_at_120": {
+        "estimate": 0.7794117647058824,
+        "ci_low": 0.6674303647622984,
+        "ci_high": 0.8615110842032035
+      },
+      "acc_uncut": 0.7794117647058824,
+      "cost_mean": 0.0022548,
+      "cost_median": 0.002014925,
+      "latency_median": 4.6224544500000775,
+      "latency_p90": 24.37541239998245,
+      "outcomes": {
+        "ANSWERED": 68,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H1g21",
+      "policy": "ctx-high",
+      "scope": "all",
+      "n": 68,
+      "correct_at_120": 53,
+      "acc_at_120": {
+        "estimate": 0.7794117647058824,
+        "ci_low": 0.6674303647622984,
+        "ci_high": 0.8615110842032035
+      },
+      "acc_uncut": 0.7794117647058824,
+      "cost_mean": 0.0022548,
+      "cost_median": 0.002014925,
+      "latency_median": 4.6224544500000775,
+      "latency_p90": 24.37541239998245,
+      "outcomes": {
+        "ANSWERED": 68,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H1g21",
+      "policy": "cyp",
+      "scope": "common",
+      "n": 68,
+      "correct_at_120": 56,
+      "acc_at_120": {
+        "estimate": 0.8235294117647058,
+        "ci_low": 0.7163933737056788,
+        "ci_high": 0.8960651461491128
+      },
+      "acc_uncut": 0.8235294117647058,
+      "cost_mean": 0.0005176746323529411,
+      "cost_median": 0.0004728,
+      "latency_median": 5.338747549998516,
+      "latency_p90": 10.276426599957631,
+      "outcomes": {
+        "ANSWERED": 68,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H1g21",
+      "policy": "cyp",
+      "scope": "all",
+      "n": 68,
+      "correct_at_120": 56,
+      "acc_at_120": {
+        "estimate": 0.8235294117647058,
+        "ci_low": 0.7163933737056788,
+        "ci_high": 0.8960651461491128
+      },
+      "acc_uncut": 0.8235294117647058,
+      "cost_mean": 0.0005176746323529411,
+      "cost_median": 0.0004728,
+      "latency_median": 5.338747549998516,
+      "latency_p90": 10.276426599957631,
+      "outcomes": {
+        "ANSWERED": 68,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H1g21",
+      "policy": "ag",
+      "scope": "common",
+      "n": 68,
+      "correct_at_120": 67,
+      "acc_at_120": {
+        "estimate": 0.9852941176470589,
+        "ci_low": 0.9212883963845384,
+        "ci_high": 0.9973993833976493
+      },
+      "acc_uncut": 0.9852941176470589,
+      "cost_mean": 0.00046746014705882356,
+      "cost_median": 0.000296525,
+      "latency_median": 8.485341350002273,
+      "latency_p90": 22.21984859999793,
+      "outcomes": {
+        "ANSWERED": 68,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H1g21",
+      "policy": "ag",
+      "scope": "all",
+      "n": 68,
+      "correct_at_120": 67,
+      "acc_at_120": {
+        "estimate": 0.9852941176470589,
+        "ci_low": 0.9212883963845384,
+        "ci_high": 0.9973993833976493
+      },
+      "acc_uncut": 0.9852941176470589,
+      "cost_mean": 0.00046746014705882356,
+      "cost_median": 0.000296525,
+      "latency_median": 8.485341350002273,
+      "latency_p90": 22.21984859999793,
+      "outcomes": {
+        "ANSWERED": 68,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H1g21",
+      "policy": "cascade_v4_iso",
+      "scope": "common",
+      "n": 68,
+      "correct_at_120": 67,
+      "acc_at_120": {
+        "estimate": 0.9852941176470589,
+        "ci_low": 0.9212883963845384,
+        "ci_high": 0.9973993833976493
+      },
+      "acc_uncut": 0.9852941176470589,
+      "cost_mean": 0.0006994111764705882,
+      "cost_median": 0.0004942875,
+      "latency_median": 6.83727170000202,
+      "latency_p90": 25.81449789997714,
+      "outcomes": {
+        "ANSWERED": 68,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H1g21",
+      "policy": "cascade_v4_iso",
+      "scope": "all",
+      "n": 68,
+      "correct_at_120": 67,
+      "acc_at_120": {
+        "estimate": 0.9852941176470589,
+        "ci_low": 0.9212883963845384,
+        "ci_high": 0.9973993833976493
+      },
+      "acc_uncut": 0.9852941176470589,
+      "cost_mean": 0.0006994111764705882,
+      "cost_median": 0.0004942875,
+      "latency_median": 6.83727170000202,
+      "latency_p90": 25.81449789997714,
+      "outcomes": {
+        "ANSWERED": 68,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H3g21",
+      "policy": "ctx-high",
+      "scope": "common",
+      "n": 76,
+      "correct_at_120": 43,
+      "acc_at_120": {
+        "estimate": 0.5657894736842105,
+        "ci_low": 0.4538555158542199,
+        "ci_high": 0.671392475168004
+      },
+      "acc_uncut": 0.5657894736842105,
+      "cost_mean": 0.006137727631578948,
+      "cost_median": 0.0058184875,
+      "latency_median": 10.617577249999158,
+      "latency_p90": 38.54748870000185,
+      "outcomes": {
+        "ANSWERED": 76,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H3g21",
+      "policy": "ctx-high",
+      "scope": "all",
+      "n": 78,
+      "correct_at_120": 45,
+      "acc_at_120": {
+        "estimate": 0.5769230769230769,
+        "ci_low": 0.46621355164287304,
+        "ci_high": 0.680411147776493
+      },
+      "acc_uncut": 0.5769230769230769,
+      "cost_mean": 0.006132663782051282,
+      "cost_median": 0.0058184875,
+      "latency_median": 10.617577249999158,
+      "latency_p90": 38.54748870000185,
+      "outcomes": {
+        "ANSWERED": 78,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H3g21",
+      "policy": "cyp",
+      "scope": "common",
+      "n": 76,
+      "correct_at_120": 60,
+      "acc_at_120": {
+        "estimate": 0.7894736842105263,
+        "ci_low": 0.6850414943195869,
+        "ci_high": 0.8660496661781988
+      },
+      "acc_uncut": 0.7894736842105263,
+      "cost_mean": 0.0005559220394736842,
+      "cost_median": 0.00048659999999999996,
+      "latency_median": 5.204673799991724,
+      "latency_p90": 13.198172299991711,
+      "outcomes": {
+        "ANSWERED": 76,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H3g21",
+      "policy": "cyp",
+      "scope": "all",
+      "n": 78,
+      "correct_at_120": 62,
+      "acc_at_120": {
+        "estimate": 0.7948717948717948,
+        "ci_low": 0.692458195735871,
+        "ci_high": 0.8696031520383659
+      },
+      "acc_uncut": 0.7948717948717948,
+      "cost_mean": 0.0005542923076923078,
+      "cost_median": 0.00048659999999999996,
+      "latency_median": 5.204673799991724,
+      "latency_p90": 13.198172299991711,
+      "outcomes": {
+        "ANSWERED": 78,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H3g21",
+      "policy": "ag",
+      "scope": "common",
+      "n": 76,
+      "correct_at_120": 71,
+      "acc_at_120": {
+        "estimate": 0.9342105263157895,
+        "ci_low": 0.8550628538100542,
+        "ci_high": 0.9715738869366242
+      },
+      "acc_uncut": 0.9342105263157895,
+      "cost_mean": 0.0005958890789473684,
+      "cost_median": 0.0004013075,
+      "latency_median": 11.719796049997967,
+      "latency_p90": 22.37608299999556,
+      "outcomes": {
+        "ANSWERED": 76,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H3g21",
+      "policy": "ag",
+      "scope": "all",
+      "n": 78,
+      "correct_at_120": 72,
+      "acc_at_120": {
+        "estimate": 0.9230769230769231,
+        "ci_low": 0.842165824059759,
+        "ci_high": 0.9642700227467552
+      },
+      "acc_uncut": 0.9230769230769231,
+      "cost_mean": 0.0006407202564102564,
+      "cost_median": 0.0004148725,
+      "latency_median": 11.962449899998319,
+      "latency_p90": 22.938640399981523,
+      "outcomes": {
+        "ANSWERED": 78,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H3g21",
+      "policy": "cascade_v4_iso",
+      "scope": "common",
+      "n": 76,
+      "correct_at_120": 70,
+      "acc_at_120": {
+        "estimate": 0.9210526315789473,
+        "ci_low": 0.8382706480636879,
+        "ci_high": 0.9633164944785457
+      },
+      "acc_uncut": 0.9210526315789473,
+      "cost_mean": 0.0006931542763157896,
+      "cost_median": 0.0005277875,
+      "latency_median": 6.167268849996617,
+      "latency_p90": 22.579191899989382,
+      "outcomes": {
+        "ANSWERED": 76,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H3g21",
+      "policy": "cascade_v4_iso",
+      "scope": "all",
+      "n": 78,
+      "correct_at_120": 72,
+      "acc_at_120": {
+        "estimate": 0.9230769230769231,
+        "ci_low": 0.842165824059759,
+        "ci_high": 0.9642700227467552
+      },
+      "acc_uncut": 0.9230769230769231,
+      "cost_mean": 0.0006880057692307692,
+      "cost_median": 0.0005277875,
+      "latency_median": 6.153982649986574,
+      "latency_p90": 22.579191899989382,
+      "outcomes": {
+        "ANSWERED": 78,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H10g21",
+      "policy": "ctx-high",
+      "scope": "common",
+      "n": 76,
+      "correct_at_120": 45,
+      "acc_at_120": {
+        "estimate": 0.5921052631578947,
+        "ci_low": 0.47978347984220315,
+        "ci_high": 0.6955637075889103
+      },
+      "acc_uncut": 0.5921052631578947,
+      "cost_mean": 0.020665982565789474,
+      "cost_median": 0.020260425,
+      "latency_median": 20.61011570001574,
+      "latency_p90": 68.1261119999981,
+      "outcomes": {
+        "ANSWERED": 76,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H10g21",
+      "policy": "ctx-high",
+      "scope": "all",
+      "n": 86,
+      "correct_at_120": 55,
+      "acc_at_120": {
+        "estimate": 0.6395348837209303,
+        "ci_low": 0.5341048855063251,
+        "ci_high": 0.7330319419767117
+      },
+      "acc_uncut": 0.6395348837209303,
+      "cost_mean": 0.02055209796511628,
+      "cost_median": 0.02012605,
+      "latency_median": 16.704019400000107,
+      "latency_p90": 67.7823897999915,
+      "outcomes": {
+        "ANSWERED": 86,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H10g21",
+      "policy": "cyp",
+      "scope": "common",
+      "n": 76,
+      "correct_at_120": 58,
+      "acc_at_120": {
+        "estimate": 0.7631578947368421,
+        "ci_low": 0.6563840337948657,
+        "ci_high": 0.8446079302940304
+      },
+      "acc_uncut": 0.7631578947368421,
+      "cost_mean": 0.0006108457236842106,
+      "cost_median": 0.00052085,
+      "latency_median": 5.682274849983514,
+      "latency_p90": 12.848537899990333,
+      "outcomes": {
+        "ANSWERED": 71,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 5,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H10g21",
+      "policy": "cyp",
+      "scope": "all",
+      "n": 86,
+      "correct_at_120": 67,
+      "acc_at_120": {
+        "estimate": 0.7790697674418605,
+        "ci_low": 0.6805215998574408,
+        "ci_high": 0.8537520551086328
+      },
+      "acc_uncut": 0.7790697674418605,
+      "cost_mean": 0.0006042962209302326,
+      "cost_median": 0.0005269249999999999,
+      "latency_median": 5.900961749990529,
+      "latency_p90": 12.789048699982231,
+      "outcomes": {
+        "ANSWERED": 81,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 5,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H10g21",
+      "policy": "ag",
+      "scope": "common",
+      "n": 76,
+      "correct_at_120": 67,
+      "acc_at_120": {
+        "estimate": 0.881578947368421,
+        "ci_low": 0.7900058191184284,
+        "ci_high": 0.9364325288104708
+      },
+      "acc_uncut": 0.881578947368421,
+      "cost_mean": 0.0009775396052631579,
+      "cost_median": 0.00038676250000000003,
+      "latency_median": 10.102846849993512,
+      "latency_p90": 31.125965300016105,
+      "outcomes": {
+        "ANSWERED": 76,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H10g21",
+      "policy": "ag",
+      "scope": "all",
+      "n": 86,
+      "correct_at_120": 77,
+      "acc_at_120": {
+        "estimate": 0.8953488372093024,
+        "ci_low": 0.812927940593436,
+        "ci_high": 0.9439597372751682
+      },
+      "acc_uncut": 0.8953488372093024,
+      "cost_mean": 0.0010782462209302326,
+      "cost_median": 0.000437775,
+      "latency_median": 10.392424599995138,
+      "latency_p90": 31.125965300016105,
+      "outcomes": {
+        "ANSWERED": 86,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H10g21",
+      "policy": "cascade_v4_iso",
+      "scope": "common",
+      "n": 76,
+      "correct_at_120": 65,
+      "acc_at_120": {
+        "estimate": 0.8552631578947368,
+        "ci_low": 0.7591234649192224,
+        "ci_high": 0.9172156866007872
+      },
+      "acc_uncut": 0.8552631578947368,
+      "cost_mean": 0.0009045221052631579,
+      "cost_median": 0.000555725,
+      "latency_median": 6.578018000007432,
+      "latency_p90": 33.37251039996045,
+      "outcomes": {
+        "ANSWERED": 76,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H10g21",
+      "policy": "cascade_v4_iso",
+      "scope": "all",
+      "n": 86,
+      "correct_at_120": 75,
+      "acc_at_120": {
+        "estimate": 0.872093023255814,
+        "ci_low": 0.7853103414868934,
+        "ci_high": 0.9270545318012047
+      },
+      "acc_uncut": 0.872093023255814,
+      "cost_mean": 0.0008849278488372094,
+      "cost_median": 0.000562575,
+      "latency_median": 6.682415500006755,
+      "latency_p90": 25.86289959998976,
+      "outcomes": {
+        "ANSWERED": 86,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H30g21",
+      "policy": "cyp",
+      "scope": "common",
+      "n": 76,
+      "correct_at_120": 66,
+      "acc_at_120": {
+        "estimate": 0.868421052631579,
+        "ci_low": 0.7744567799430048,
+        "ci_high": 0.9269319697814496
+      },
+      "acc_uncut": 0.868421052631579,
+      "cost_mean": 0.0006713868421052632,
+      "cost_median": 0.0005201875,
+      "latency_median": 6.206053449997853,
+      "latency_p90": 21.727645400023903,
+      "outcomes": {
+        "ANSWERED": 74,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 2,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H30g21",
+      "policy": "cyp",
+      "scope": "all",
+      "n": 88,
+      "correct_at_120": 75,
+      "acc_at_120": {
+        "estimate": 0.8522727272727273,
+        "ci_low": 0.7634870210099294,
+        "ci_high": 0.9115883261094588
+      },
+      "acc_uncut": 0.8522727272727273,
+      "cost_mean": 0.0006598258522727273,
+      "cost_median": 0.000523325,
+      "latency_median": 6.39836365001247,
+      "latency_p90": 16.372422200001893,
+      "outcomes": {
+        "ANSWERED": 85,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 3,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H30g21",
+      "policy": "ag",
+      "scope": "common",
+      "n": 76,
+      "correct_at_120": 68,
+      "acc_at_120": {
+        "estimate": 0.8947368421052632,
+        "ci_low": 0.805798558740362,
+        "ci_high": 0.9456893873929819
+      },
+      "acc_uncut": 0.8947368421052632,
+      "cost_mean": 0.0015040307236842104,
+      "cost_median": 0.0004211925,
+      "latency_median": 9.774442100009765,
+      "latency_p90": 32.67097979997925,
+      "outcomes": {
+        "ANSWERED": 76,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H30g21",
+      "policy": "ag",
+      "scope": "all",
+      "n": 88,
+      "correct_at_120": 79,
+      "acc_at_120": {
+        "estimate": 0.8977272727272727,
+        "ci_low": 0.8169257242733358,
+        "ci_high": 0.9452561192485541
+      },
+      "acc_uncut": 0.8977272727272727,
+      "cost_mean": 0.0015549978977272727,
+      "cost_median": 0.0004800125,
+      "latency_median": 10.204655849993287,
+      "latency_p90": 31.457510699983686,
+      "outcomes": {
+        "ANSWERED": 88,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H30g21",
+      "policy": "cascade_v4_iso",
+      "scope": "common",
+      "n": 76,
+      "correct_at_120": 69,
+      "acc_at_120": {
+        "estimate": 0.9078947368421053,
+        "ci_low": 0.8218709721189175,
+        "ci_high": 0.9546665722188714
+      },
+      "acc_uncut": 0.9078947368421053,
+      "cost_mean": 0.0013445150657894738,
+      "cost_median": 0.00056935,
+      "latency_median": 6.722942100008368,
+      "latency_p90": 45.117147000011755,
+      "outcomes": {
+        "ANSWERED": 76,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    },
+    {
+      "corpus_id": "H30g21",
+      "policy": "cascade_v4_iso",
+      "scope": "all",
+      "n": 88,
+      "correct_at_120": 81,
+      "acc_at_120": {
+        "estimate": 0.9204545454545454,
+        "ci_low": 0.8447994519714657,
+        "ci_high": 0.9609356397516751
+      },
+      "acc_uncut": 0.9204545454545454,
+      "cost_mean": 0.0013292359090909091,
+      "cost_median": 0.0005816875000000001,
+      "latency_median": 6.831043199992564,
+      "latency_p90": 43.96835579999606,
+      "outcomes": {
+        "ANSWERED": 88,
+        "DID_NOT_FIT": 0,
+        "PARSE_FAILURE": 0,
+        "RETRIEVAL_ERROR": 0,
+        "PROVIDER_ERROR": 0,
+        "TIMED_OUT": 0
+      }
+    }
+  ],
+  "deltas": [
+    {
+      "corpus_id": "H1g21",
+      "scope": "common",
+      "a": "ctx-high",
+      "b": "cascade_v4_iso",
+      "n": 68,
+      "delta": -0.20588235294117646,
+      "ci": {
+        "estimate": -0.20588235294117646,
+        "ci_low": -0.3088235294117647,
+        "ci_high": -0.11764705882352941
+      },
+      "metric": "acc@120"
+    },
+    {
+      "corpus_id": "H1g21",
+      "scope": "all",
+      "a": "ctx-high",
+      "b": "cascade_v4_iso",
+      "n": 68,
+      "delta": -0.20588235294117646,
+      "ci": {
+        "estimate": -0.20588235294117646,
+        "ci_low": -0.3088235294117647,
+        "ci_high": -0.11764705882352941
+      },
+      "metric": "acc@120"
+    },
+    {
+      "corpus_id": "H3g21",
+      "scope": "common",
+      "a": "ctx-high",
+      "b": "cascade_v4_iso",
+      "n": 76,
+      "delta": -0.35526315789473684,
+      "ci": {
+        "estimate": -0.35526315789473684,
+        "ci_low": -0.47368421052631576,
+        "ci_high": -0.23684210526315788
+      },
+      "metric": "acc@120"
+    },
+    {
+      "corpus_id": "H3g21",
+      "scope": "all",
+      "a": "ctx-high",
+      "b": "cascade_v4_iso",
+      "n": 78,
+      "delta": -0.34615384615384615,
+      "ci": {
+        "estimate": -0.34615384615384615,
+        "ci_low": -0.46153846153846156,
+        "ci_high": -0.23076923076923078
+      },
+      "metric": "acc@120"
+    },
+    {
+      "corpus_id": "H10g21",
+      "scope": "common",
+      "a": "ctx-high",
+      "b": "cascade_v4_iso",
+      "n": 76,
+      "delta": -0.2631578947368421,
+      "ci": {
+        "estimate": -0.2631578947368421,
+        "ci_low": -0.3815789473684211,
+        "ci_high": -0.15789473684210525
+      },
+      "metric": "acc@120"
+    },
+    {
+      "corpus_id": "H10g21",
+      "scope": "all",
+      "a": "ctx-high",
+      "b": "cascade_v4_iso",
+      "n": 86,
+      "delta": -0.23255813953488372,
+      "ci": {
+        "estimate": -0.23255813953488372,
+        "ci_low": -0.3372093023255814,
+        "ci_high": -0.12790697674418605
+      },
+      "metric": "acc@120"
+    }
+  ],
+  "trends": [
+    {
+      "scope": "common",
+      "slope": -0.04841736145363606,
+      "ci": {
+        "estimate": -0.04841736145363606,
+        "ci_low": -0.18959166627591081,
+        "ci_high": 0.09565774473940038
+      },
+      "n_boot": 10000,
+      "seed": 20261101,
+      "sizes": [
+        "H1g21",
+        "H3g21",
+        "H10g21"
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "id": "X1",
+      "wording": "The single-sheet advantage of ContextRAG shrinks with corpus size",
+      "value": "slope -0.048 per log10(sheets), 95% CI [-0.190, +0.096] over H1g21, H3g21, H10g21 (common families)",
+      "verdict": "FAIL"
+    },
+    {
+      "id": "X2",
+      "wording": "ChatP&ID's end holds: on one sheet ContextRAG is not worse than the cascade",
+      "value": "H1g21 common: delta -0.206 [-0.309, -0.118], n=68; all families: delta -0.206 [-0.309, -0.118], n=68; margin -0.05",
+      "verdict": "FAIL"
+    },
+    {
+      "id": "X3",
+      "wording": "Accuracy flip point",
+      "value": "s_acc = H1g21, the smallest measured size",
+      "verdict": "REPORTED"
+    },
+    {
+      "id": "X4",
+      "wording": "Cost and latency flip",
+      "value": "s_cost = H1g21; s_lat = H3g21; $/q ratio ctx-high/cascade_v4_iso: H1g21 3.22, H3g21 8.91, H10g21 23.22; median-latency ratio: H1g21 0.68, H3g21 1.73, H10g21 2.50",
+      "verdict": "REPORTED"
+    },
+    {
+      "id": "X5",
+      "wording": "The context wall",
+      "value": "r = 2.56 chars/token over 244 calls; c = 35,429 chars/sheet; W = 67 sheets (window 922,000 prompt tokens)",
+      "verdict": "REPORTED"
+    },
+    {
+      "id": "X6",
+      "wording": "Effort sensitivity",
+      "value": "not run on v2 (ADR-0060), see EXP-0001",
+      "verdict": "NOT_RUN"
+    }
+  ],
+  "absent": [
+    "ctx-low at H1g21: no run for tier 'context-luna-low' (arm 'ctx-low')",
+    "ctx-low at H3g21: no run for tier 'context-luna-low' (arm 'ctx-low')",
+    "ctx-low at H10g21: no run for tier 'context-luna-low' (arm 'ctx-low')",
+    "ctx-high at H30g21: no run for tier 'context-luna-high' (arm 'ctx-high')",
+    "ctx-low at H30g21: no run for tier 'context-luna-low' (arm 'ctx-low')"
+  ],
+  "wall_sheets": 66.72036900631372
+}

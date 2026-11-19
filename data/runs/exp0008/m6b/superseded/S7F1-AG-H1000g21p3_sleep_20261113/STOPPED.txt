@@ -1,0 +1,3 @@
+stage: M6b
+reason: [infrastructure] replay INF-S7F1-AG-H1000g21p3 differs from S7F1-AG-H1000g21p3: 
+resume: sh data/runs/exp0008/run_all.sh --from M6b

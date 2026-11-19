@@ -1,0 +1,92 @@
+run INF-S7F1-AG-H1000g21p2: 280 rows to answer, 0 already on disk
+replay mode: cache only, no network; stops at the first cache miss
+{
+  "run_id": "INF-S7F1-AG-H1000g21p2",
+  "n_rows": 280,
+  "n_new_rows": 280,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "graph_agent_low_steps": {
+      "0": {
+        "ANSWERED": 125
+      },
+      "1": {
+        "ANSWERED": 63
+      },
+      "2": {
+        "ANSWERED": 25
+      },
+      "3-4": {
+        "ANSWERED": 19
+      },
+      "5-8": {
+        "ANSWERED": 10
+      },
+      "9-16": {
+        "ANSWERED": 6
+      },
+      "17-32": {
+        "ANSWERED": 6
+      },
+      "33+": {
+        "ANSWERED": 6
+      },
+      "unanswerable": {
+        "ANSWERED": 20
+      }
+    }
+  },
+  "routing_recall": {
+    "graph_agent_low_steps": 0.8461538461538461
+  },
+  "relaxed_routing_recall": {
+    "graph_agent_low_steps": 0.8461538461538461
+  },
+  "evidence_node_recall": {
+    "graph_agent_low_steps": 0.8084427836692689
+  },
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {
+      "graph_agent_low_steps": {
+        "0": 0.952,
+        "1": 0.7936507936507936,
+        "2": 0.84,
+        "3-4": 0.8421052631578947,
+        "5-8": 0.9,
+        "9-16": 0.5,
+        "17-32": 0.3333333333333333,
+        "33+": 0.0
+      }
+    },
+    "relaxed_routing_recall": {
+      "graph_agent_low_steps": {
+        "0": 0.952,
+        "1": 0.7936507936507936,
+        "2": 0.84,
+        "3-4": 0.8421052631578947,
+        "5-8": 0.9,
+        "9-16": 0.5,
+        "17-32": 0.3333333333333333,
+        "33+": 0.0
+      }
+    },
+    "evidence_node_recall": {
+      "graph_agent_low_steps": {
+        "0": 0.9181241177810837,
+        "1": 0.7659799537735653,
+        "2": 0.7943432069943698,
+        "3-4": 0.754191071928839,
+        "5-8": 0.7500651974144988,
+        "9-16": 0.46223389597762027,
+        "17-32": 0.3723979738769396,
+        "33+": 0.0510611482129155
+      }
+    }
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "graph_agent_low_steps": 0.0010419220714285714
+  },
+  "stopped_by_spend_cap": false,
+  "late_after_timeout_usd": 0.0
+}

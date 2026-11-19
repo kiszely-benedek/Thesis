@@ -1,0 +1,16 @@
+{
+ "source_path": "data/runs/exp0008/questions/H1000g21p3/questions.jsonl",
+ "source_sha256": "b96ce0cab19a600ee6bf6346e7205836dbd2812471fd14f6170818463c7af9bd",
+ "output_path": "data/runs/exp0008/m8b/e2e/d0/questions/H1000g21p3V/questions.jsonl",
+ "output_sha256": "27ba04891fb0da0f1d8a5bacb6257c61cb93e566ca5376258b9b575b3e64cfc4",
+ "sealed_corpus_id": "H1000g21p3",
+ "variant_corpus_id": "H1000g21p3V",
+ "n_questions": 280,
+ "other_fields_equal": true,
+ "source_graph_hash": "a36dd2b246da0207d0bc517ad2a3d2038843d953fa5515b95c937095f2588c1a",
+ "source_graph_hash_equal": true,
+ "manifest_digest": "c7a25d772f72249c40677a3a5b1fcbce70f49c7898474d737f461f30a3003e15",
+ "manifest_equal_modulo_reference_tags": true,
+ "n_variant_references_sealed": 0,
+ "n_variant_references_variant": 92
+}

@@ -1,0 +1,100 @@
+Retrying answer call after a transport error (attempt 1/5, waiting 1.00s)
+Retrying agent_step call after a transport error (attempt 1/5, waiting 1.00s)
+Retrying answer call after a transport error (attempt 2/5, waiting 2.00s)
+Retrying agent_step call after a transport error (attempt 2/5, waiting 2.00s)
+Retrying agent_step call after a transport error (attempt 1/5, waiting 1.00s)
+Retrying answer call after a transport error (attempt 1/5, waiting 1.00s)
+run S7F1-AG-H1000g21p3: 280 rows to answer, 0 already on disk
+concurrency 4: up to that many questions in flight
+paid mode: up to 280 model calls; hard spend cap 0.7939 USD
+estimated cost: 0.5292 USD
+{
+  "run_id": "S7F1-AG-H1000g21p3",
+  "n_rows": 280,
+  "n_new_rows": 280,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "graph_agent_low_steps": {
+      "0": {
+        "ANSWERED": 125
+      },
+      "1": {
+        "ANSWERED": 62
+      },
+      "2": {
+        "ANSWERED": 26
+      },
+      "3-4": {
+        "ANSWERED": 18
+      },
+      "5-8": {
+        "ANSWERED": 11
+      },
+      "9-16": {
+        "ANSWERED": 6
+      },
+      "17-32": {
+        "ANSWERED": 6
+      },
+      "33+": {
+        "ANSWERED": 6
+      },
+      "unanswerable": {
+        "ANSWERED": 20
+      }
+    }
+  },
+  "routing_recall": {
+    "graph_agent_low_steps": 0.85
+  },
+  "relaxed_routing_recall": {
+    "graph_agent_low_steps": 0.85
+  },
+  "evidence_node_recall": {
+    "graph_agent_low_steps": 0.8122630749638675
+  },
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {
+      "graph_agent_low_steps": {
+        "0": 0.96,
+        "1": 0.8387096774193549,
+        "2": 0.7692307692307693,
+        "3-4": 0.8888888888888888,
+        "5-8": 0.8181818181818182,
+        "9-16": 0.5,
+        "17-32": 0.16666666666666666,
+        "33+": 0.0
+      }
+    },
+    "relaxed_routing_recall": {
+      "graph_agent_low_steps": {
+        "0": 0.96,
+        "1": 0.8387096774193549,
+        "2": 0.7692307692307693,
+        "3-4": 0.8888888888888888,
+        "5-8": 0.8181818181818182,
+        "9-16": 0.5,
+        "17-32": 0.16666666666666666,
+        "33+": 0.0
+      }
+    },
+    "evidence_node_recall": {
+      "graph_agent_low_steps": {
+        "0": 0.9266343810853029,
+        "1": 0.788779934612916,
+        "2": 0.7435967027583549,
+        "3-4": 0.8240540075679395,
+        "5-8": 0.6202926749408287,
+        "9-16": 0.4557517185291778,
+        "17-32": 0.3653957012827736,
+        "33+": 0.08186487951317369
+      }
+    }
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "graph_agent_low_steps": 0.0009803821607142858
+  },
+  "stopped_by_spend_cap": false,
+  "late_after_timeout_usd": 0.0
+}

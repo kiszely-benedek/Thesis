@@ -1,0 +1,64 @@
+run S7-AG-H1000g21p1-C1: 46 rows to answer, 0 already on disk
+paid mode: up to 46 model calls; hard spend cap 1.0 USD
+no cost-per-question estimate given (the pilot has not provided one)
+{
+  "run_id": "S7-AG-H1000g21p1-C1",
+  "n_rows": 46,
+  "n_new_rows": 46,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "graph_agent_lines": {
+      "0": {
+        "PARSE_FAILURE": 24
+      },
+      "1": {
+        "PARSE_FAILURE": 16
+      },
+      "2": {
+        "PARSE_FAILURE": 2
+      },
+      "unanswerable": {
+        "PARSE_FAILURE": 4
+      }
+    }
+  },
+  "routing_recall": {
+    "graph_agent_lines": 0.0
+  },
+  "relaxed_routing_recall": {
+    "graph_agent_lines": 0.0
+  },
+  "evidence_node_recall": {
+    "graph_agent_lines": 0.0
+  },
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {
+      "graph_agent_lines": {
+        "0": 0.0,
+        "1": 0.0,
+        "2": 0.0
+      }
+    },
+    "relaxed_routing_recall": {
+      "graph_agent_lines": {
+        "0": 0.0,
+        "1": 0.0,
+        "2": 0.0
+      }
+    },
+    "evidence_node_recall": {
+      "graph_agent_lines": {
+        "0": 0.0,
+        "1": 0.0,
+        "2": 0.0
+      }
+    }
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "graph_agent_lines": 0.0
+  },
+  "stopped_by_spend_cap": false,
+  "late_after_timeout_usd": 0.0
+}
+S7-AG-H1000g21p1-C1: 46 of 46 questions need a model call (138 calls not in the cache, 0 served from it)

@@ -1,0 +1,76 @@
+run E8-AG-H30g21: 92 rows to answer, 0 already on disk
+concurrency 4: up to that many questions in flight
+paid mode: up to 92 model calls; hard spend cap 0.2609 USD
+estimated cost: 0.1739 USD
+{
+  "run_id": "E8-AG-H30g21",
+  "n_rows": 92,
+  "n_new_rows": 92,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "graph_agent_lines": {
+      "0": {
+        "ANSWERED": 41
+      },
+      "1": {
+        "ANSWERED": 23
+      },
+      "2": {
+        "ANSWERED": 11
+      },
+      "3-4": {
+        "ANSWERED": 8
+      },
+      "5-8": {
+        "ANSWERED": 1
+      },
+      "unanswerable": {
+        "ANSWERED": 8
+      }
+    }
+  },
+  "routing_recall": {
+    "graph_agent_lines": 0.9285714285714286
+  },
+  "relaxed_routing_recall": {
+    "graph_agent_lines": 0.9285714285714286
+  },
+  "evidence_node_recall": {
+    "graph_agent_lines": 0.8999148339629996
+  },
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {
+      "graph_agent_lines": {
+        "0": 0.926829268292683,
+        "1": 0.9565217391304348,
+        "2": 0.9090909090909091,
+        "3-4": 0.875,
+        "5-8": 1.0
+      }
+    },
+    "relaxed_routing_recall": {
+      "graph_agent_lines": {
+        "0": 0.926829268292683,
+        "1": 0.9565217391304348,
+        "2": 0.9090909090909091,
+        "3-4": 0.875,
+        "5-8": 1.0
+      }
+    },
+    "evidence_node_recall": {
+      "graph_agent_lines": {
+        "0": 0.9174477842097191,
+        "1": 0.8990923394293956,
+        "2": 0.922998597646485,
+        "3-4": 0.7881723149132579,
+        "5-8": 0.84
+      }
+    }
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "graph_agent_lines": 0.0015026395652173914
+  },
+  "stopped_by_spend_cap": false,
+  "late_after_timeout_usd": 0.0
+}

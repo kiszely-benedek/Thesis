@@ -1,0 +1,96 @@
+run E2E-AG-H1000g21p1V-d4: 280 rows to answer, 0 already on disk
+concurrency 4: up to that many questions in flight
+paid mode: up to 280 model calls; hard spend cap 0.5884 USD
+estimated cost: 1.2068 USD
+{
+  "run_id": "E2E-AG-H1000g21p1V-d4",
+  "n_rows": 280,
+  "n_new_rows": 280,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "graph_agent_lines": {
+      "0": {
+        "ANSWERED": 125
+      },
+      "1": {
+        "ANSWERED": 62
+      },
+      "2": {
+        "ANSWERED": 26
+      },
+      "3-4": {
+        "ANSWERED": 18
+      },
+      "5-8": {
+        "ANSWERED": 11
+      },
+      "9-16": {
+        "ANSWERED": 6
+      },
+      "17-32": {
+        "ANSWERED": 6
+      },
+      "33+": {
+        "ANSWERED": 6
+      },
+      "unanswerable": {
+        "PARSE_FAILURE": 2,
+        "ANSWERED": 17,
+        "TIMED_OUT": 1
+      }
+    }
+  },
+  "routing_recall": {
+    "graph_agent_lines": 0.9076923076923077
+  },
+  "relaxed_routing_recall": {
+    "graph_agent_lines": 0.9230769230769231
+  },
+  "evidence_node_recall": {
+    "graph_agent_lines": 0.8675889522888176
+  },
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {
+      "graph_agent_lines": {
+        "0": 0.936,
+        "1": 0.9354838709677419,
+        "2": 0.9615384615384616,
+        "3-4": 1.0,
+        "5-8": 0.7272727272727273,
+        "9-16": 1.0,
+        "17-32": 0.6666666666666666,
+        "33+": 0.0
+      }
+    },
+    "relaxed_routing_recall": {
+      "graph_agent_lines": {
+        "0": 0.936,
+        "1": 0.9354838709677419,
+        "2": 0.9615384615384616,
+        "3-4": 1.0,
+        "5-8": 0.9090909090909091,
+        "9-16": 1.0,
+        "17-32": 0.8333333333333334,
+        "33+": 0.16666666666666666
+      }
+    },
+    "evidence_node_recall": {
+      "graph_agent_lines": {
+        "0": 0.9095317389733536,
+        "1": 0.823016466928153,
+        "2": 0.9157295783290478,
+        "3-4": 0.882081079237585,
+        "5-8": 0.8225184788856125,
+        "9-16": 0.9080198280862732,
+        "17-32": 0.7039756839643623,
+        "33+": 0.38580283581976665
+      }
+    }
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "graph_agent_lines": 0.001971572946428572
+  },
+  "stopped_by_spend_cap": false,
+  "late_after_timeout_usd": 0.0
+}

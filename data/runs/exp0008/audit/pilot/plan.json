@@ -1,0 +1,620 @@
+{
+ "items": [
+  {
+   "stratum": "pilot_defect_valves",
+   "row": {
+    "run_id": "E2E-AG-H1000g2V-d0",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g2:VALVES_ON_PATH:E-48301|P-50102B",
+    "corpus_id": "H1000g2V",
+    "family": "VALVES_ON_PATH",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 90, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "pilot_defect_valves",
+   "row": {
+    "run_id": "E2E-AG-H1000g2V-d0",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g2:VALVES_ON_PATH:E-54201|V-55301",
+    "corpus_id": "H1000g2V",
+    "family": "VALVES_ON_PATH",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 57, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "pilot_defect_valves",
+   "row": {
+    "run_id": "E2E-AG-H1000g2V-d0",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g2:VALVES_ON_PATH:P-48601C|F-49601B",
+    "corpus_id": "H1000g2V",
+    "family": "VALVES_ON_PATH",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 62, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "pilot_defect_valves",
+   "row": {
+    "run_id": "S7-AG-H1000g2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g2:VALVES_ON_PATH:P-27501|D-29501",
+    "corpus_id": "H1000g2",
+    "family": "VALVES_ON_PATH",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 101, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "pilot_defect_valves",
+   "row": {
+    "run_id": "S7-AG-H1000g2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g2:VALVES_ON_PATH:P-27604|TK-29101",
+    "corpus_id": "H1000g2",
+    "family": "VALVES_ON_PATH",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 78, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "pilot_defect_valves",
+   "row": {
+    "run_id": "S7-AG-H1000g2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g2:VALVES_ON_PATH:TK-26602|E-29501",
+    "corpus_id": "H1000g2",
+    "family": "VALVES_ON_PATH",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 147, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "pilot_defect_valves",
+   "row": {
+    "run_id": "S7-AG-H100g2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g2:VALVES_ON_PATH:P-2501A|V-3001",
+    "corpus_id": "H100g2",
+    "family": "VALVES_ON_PATH",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 27, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "pilot_defect_valves",
+   "row": {
+    "run_id": "S7-AG-H100g2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g2:VALVES_ON_PATH:P-3401|P-4801A",
+    "corpus_id": "H100g2",
+    "family": "VALVES_ON_PATH",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 75, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "pilot_defect_valves",
+   "row": {
+    "run_id": "S7-AG-H100g2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g2:VALVES_ON_PATH:P-4401A|V-5601",
+    "corpus_id": "H100g2",
+    "family": "VALVES_ON_PATH",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 57, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "pilot_defect_valves",
+   "row": {
+    "run_id": "S7-AG-H100g2d0",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g2d0:VALVES_ON_PATH:EA-4001|P-5602B",
+    "corpus_id": "H100g2d0",
+    "family": "VALVES_ON_PATH",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 79, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "pilot_defect_valves",
+   "row": {
+    "run_id": "S7-AG-H100g2d0",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g2d0:VALVES_ON_PATH:P-2501B|V-3301",
+    "corpus_id": "H100g2d0",
+    "family": "VALVES_ON_PATH",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 41, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "pilot_defect_valves",
+   "row": {
+    "run_id": "S7-AG-H100g2d0",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g2d0:VALVES_ON_PATH:TK-2201|P-3201",
+    "corpus_id": "H100g2d0",
+    "family": "VALVES_ON_PATH",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 46, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "pilot_defect_valves",
+   "row": {
+    "run_id": "S7-AG-H100g2d50",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g2d50:VALVES_ON_PATH:E-5002|E-5603",
+    "corpus_id": "H100g2d50",
+    "family": "VALVES_ON_PATH",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 27, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "pilot_defect_valves",
+   "row": {
+    "run_id": "S7-AG-H100g2d50",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g2d50:VALVES_ON_PATH:P-3801B|P-4401B",
+    "corpus_id": "H100g2d50",
+    "family": "VALVES_ON_PATH",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 36, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "pilot_defect_valves",
+   "row": {
+    "run_id": "S7-AG-H100g2d50",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g2d50:VALVES_ON_PATH:P-4201B|P-5301B",
+    "corpus_id": "H100g2d50",
+    "family": "VALVES_ON_PATH",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 60, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "pilot_defect_valves",
+   "row": {
+    "run_id": "S7-AG-H100g2d50",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g2d50:VALVES_ON_PATH:TK-2401|V-3301",
+    "corpus_id": "H100g2d50",
+    "family": "VALVES_ON_PATH",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 48, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "pilot_defect_parse",
+   "row": {
+    "run_id": "E2E-AG-H1000g2V-d0",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g2:SHEETS_OF_TAG:EA-28201",
+    "corpus_id": "H1000g2V",
+    "family": "SHEETS_OF_TAG",
+    "scale": "1000",
+    "outcome": "PARSE_FAILURE",
+    "scorer_correct": false,
+    "answer_key": "raw:{\"answer\":[469],\"not_present\":false}"
+   }
+  },
+  {
+   "stratum": "pilot_defect_parse",
+   "row": {
+    "run_id": "E7-AG-H30g2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H30g2:CROSS_UNIT:7",
+    "corpus_id": "H30g2",
+    "family": "CROSS_UNIT",
+    "scale": "30",
+    "outcome": "PARSE_FAILURE",
+    "scorer_correct": false,
+    "answer_key": "raw:{\"answer\":[8,9],\"not_present\":false}"
+   }
+  },
+  {
+   "stratum": "pilot_defect_parse",
+   "row": {
+    "run_id": "S7-AG-H100g2d50",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g2d50:FEEDING_UNITS:29",
+    "corpus_id": "H100g2d50",
+    "family": "FEEDING_UNITS",
+    "scale": "100",
+    "outcome": "PARSE_FAILURE",
+    "scorer_correct": false,
+    "answer_key": "raw:{\"answer\":[28],\"not_present\":false}"
+   }
+  },
+  {
+   "stratum": "pilot_defect_parse",
+   "row": {
+    "run_id": "S7F1-AG-H1000g2",
+    "strategy": "graph_agent_low_steps",
+    "question_id": "H1000g2:CROSS_UNIT:427",
+    "corpus_id": "H1000g2",
+    "family": "CROSS_UNIT",
+    "scale": "1000",
+    "outcome": "PARSE_FAILURE",
+    "scorer_correct": false,
+    "answer_key": "raw:{\"answer\":[428,429],\"not_present\":false}"
+   }
+  },
+  {
+   "stratum": "pilot_defect_parse",
+   "row": {
+    "run_id": "S7F1-AG-H1000g2",
+    "strategy": "graph_agent_low_steps",
+    "question_id": "H1000g2:SHEETS_OF_TAG:V-7301",
+    "corpus_id": "H1000g2",
+    "family": "SHEETS_OF_TAG",
+    "scale": "1000",
+    "outcome": "PARSE_FAILURE",
+    "scorer_correct": false,
+    "answer_key": "raw:{\"answer\":[118,119],\"not_present\":false}"
+   }
+  },
+  {
+   "stratum": "pilot_defect_parse",
+   "row": {
+    "run_id": "S7F1-AG-H100g2",
+    "strategy": "graph_agent_low_steps",
+    "question_id": "H100g2:FEEDING_UNITS:29",
+    "corpus_id": "H100g2",
+    "family": "FEEDING_UNITS",
+    "scale": "100",
+    "outcome": "PARSE_FAILURE",
+    "scorer_correct": false,
+    "answer_key": "raw:{\"answer\":[28],\"not_present\":false}"
+   }
+  },
+  {
+   "stratum": "pilot_defect_parse",
+   "row": {
+    "run_id": "S7F1-AG-H100g2",
+    "strategy": "graph_agent_low_steps",
+    "question_id": "H100g2:SHEETS_OF_TAG:P-5101A",
+    "corpus_id": "H100g2",
+    "family": "SHEETS_OF_TAG",
+    "scale": "100",
+    "outcome": "PARSE_FAILURE",
+    "scorer_correct": false,
+    "answer_key": "raw:{\"answer\":[80,81],\"not_present\":false}"
+   }
+  },
+  {
+   "stratum": "pilot_defect_parse",
+   "row": {
+    "run_id": "S7F1-AG-H100g2",
+    "strategy": "graph_agent_low_steps",
+    "question_id": "H100g2:SHEETS_OF_TAG:T-2701",
+    "corpus_id": "H100g2",
+    "family": "SHEETS_OF_TAG",
+    "scale": "100",
+    "outcome": "PARSE_FAILURE",
+    "scorer_correct": false,
+    "answer_key": "raw:{\"answer\":[43,44],\"not_present\":false}"
+   }
+  },
+  {
+   "stratum": "pilot_control",
+   "row": {
+    "run_id": "S7-AG-H100g2d50",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g2d50:CONNECTED:EJ-5601A|E-5604",
+    "corpus_id": "H100g2d50",
+    "family": "CONNECTED",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"yes\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "pilot_control",
+   "row": {
+    "run_id": "E2E-AG-H1000g2V-d0",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g2:COUNT_IN_UNIT:473|GlobeValve",
+    "corpus_id": "H1000g2V",
+    "family": "COUNT_IN_UNIT",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": 2, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "pilot_control",
+   "row": {
+    "run_id": "S7-AG-H100g2d0",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g2d0:CROSS_UNIT:CROSS_UNIT_P1:40",
+    "corpus_id": "H100g2d0",
+    "family": "CROSS_UNIT",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"41\", \"42\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "pilot_control",
+   "row": {
+    "run_id": "S7-AG-H100g2d0",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g2d0:DOWNSTREAM_IN_UNIT:P-4801C|48",
+    "corpus_id": "H100g2d0",
+    "family": "DOWNSTREAM_IN_UNIT",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"BFV-48004\", \"BFV-48005\", \"BFV-48006\", \"BFV-48007\", \"BFV-48008\", \"BFV-48009\", \"BV-48002\", \"BV-48004\", \"BV-48005\", \"BV-48006\", \"BV-48007\", \"BV-48008\", \"BV-48009\", \"BV-48010\", \"CHV-48001\", \"CHV-48002\", \"CHV-48003\", \"CHV-48004\", \"CHV-48005\", \"CHV-48006\", \"D-4801\", \"E-4801\", \"E-4802\", \"FV-48064\", \"GTV-48001\", \"GTV-48002\", \"GTV-48003\", \"GTV-48004\", \"GTV-48005\", \"GTV-48006\", \"GTV-48010\", \"GTV-48011\", \"GTV-48012\", \"GTV-48013\", \"GTV-48014\", \"GTV-48015\", \"GTV-48016\", \"GTV-48017\", \"GTV-48018\", \"GTV-48019\", \"GTV-48020\", \"GTV-48021\", \"GTV-48022\", \"GTV-48023\", \"GTV-48024\", \"GTV-48025\", \"GTV-48026\", \"GTV-48027\", \"GTV-48028\", \"GTV-48029\", \"GV-48001\", \"GV-48003\", \"GV-48004\", \"GV-48005\", \"K-4801\", \"LV-48052\", \"LV-48066\", \"NV-48001\", \"NV-48003\", \"NV-48004\", \"P-4801A\", \"P-4801B\", \"P-4802\", \"PSV-48014\", \"PSV-48034\", \"PSV-48039\", \"PSV-48042\", \"PV-48040\", \"T-4801\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "pilot_control",
+   "row": {
+    "run_id": "S7-AG-H100g2d50",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g2d50:DOWNSTREAM_ISOLATION:V-3701",
+    "corpus_id": "H100g2d50",
+    "family": "DOWNSTREAM_ISOLATION",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"LV-37005\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "pilot_control",
+   "row": {
+    "run_id": "S7-AG-H100g2d50",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g2d50:FEEDING_UNITS:45",
+    "corpus_id": "H100g2d50",
+    "family": "FEEDING_UNITS",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"44\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "pilot_control",
+   "row": {
+    "run_id": "E7-AG-H30g2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H30g2:FIRST_MEETING_POINT:P-1801|V-1501",
+    "corpus_id": "H30g2",
+    "family": "FIRST_MEETING_POINT",
+    "scale": "30",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"M-1801\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "pilot_control",
+   "row": {
+    "run_id": "S7-AG-H1000g2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g2:FLOW_PATH:GTV-61003|GTV-177004",
+    "corpus_id": "H1000g2",
+    "family": "FLOW_PATH",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"GTV-61003\", \"P-6101\", \"CHV-61001\", \"GTV-61004\", \"GV-61001\", \"GTV-61002\", \"GTV-62010\", \"XV-62013\", \"V-6201\", \"BFV-62001\", \"P-6201\", \"CHV-62001\", \"GTV-62003\", \"GV-62001\", \"GTV-63008\", \"T-6301\", \"BFV-63007\", \"P-6304\", \"CHV-63006\", \"GTV-63028\", \"GV-63003\", \"GTV-63022\", \"GTV-64005\", \"XV-64009\", \"V-6401\", \"GTV-64001\", \"P-6401\", \"CHV-64001\", \"BFV-64002\", \"FV-64002\", \"BFV-64001\", \"GTV-65004\", \"GTV-65003\", \"GTV-65002\", \"XV-65003\", \"XV-65004\", \"TK-6502\", \"GTV-65008\", \"P-6501\", \"CHV-65001\", \"BFV-65002\", \"GV-65001\", \"GTV-65007\", \"E-6601\", \"EA-6601\", \"XV-66024\", \"V-6602\", \"GTV-66005\", \"P-6601A\", \"CHV-66001\", \"GTV-66006\", \"GV-66002\", \"BFV-66002\", \"XV-68012\", \"V-6801\", \"GTV-68001\", \"P-6801A\", \"CHV-68001\", \"GTV-68002\", \"FV-68002\", \"BFV-69001\", \"PGV-69004\", \"PGV-69003\", \"XV-69005\", \"XV-69006\", \"TK-6903\", \"GTV-69004\", \"P-6901\", \"CHV-69001\", \"GTV-69005\", \"GV-69001\", \"BFV-69002\", \"GTV-70001\", \"F-7001\", \"BFV-70001\", \"FV-70002\", \"E-7101\", \"E-7102\", \"E-7103\", \"E-7104\", \"EH-7101\", \"GTV-71014\", \"GTV-72001\", \"E-7201\", \"EA-7201\", \"XV-72028\", \"V-7202\", \"BFV-72003\", \"P-7201\", \"CHV-72001\", \"GTV-72007\", \"FV-72010\", \"GTV-72006\", \"BFV-73003\", \"XV-73017\", \"V-7301\", \"BFV-73001\", \"P-7301\", \"CHV-73001\", \"GTV-73001\", \"FV-73002\", \"XV-74012\", \"V-7401\", \"BFV-74002\", \"P-7402\", \"CHV-74003\", \"GTV-74007\", \"FV-74002\", \"BFV-74001\", \"E-7502\", \"T-7501\", \"BFV-75008\", \"P-7504\", \"CHV-75004\", \"GTV-75028\", \"LV-75049\", \"BFV-75007\", \"GTV-76004\", \"GTV-76003\", \"GTV-76002\", \"XV-76003\", \"XV-76004\", \"TK-7602\", \"GTV-76005\", \"P-7601\", \"CHV-76001\", \"GTV-76006\", \"FV-76006\", \"BFV-76001\", \"BFV-77001\", \"E-7701\", \"EA-7701\", \"XV-77029\", \"V-7702\", \"BFV-77003\", \"P-7701\", \"CHV-77001\", \"GTV-77004\", \"FV-77010\", \"BFV-77002\", \"GTV-79011\", \"XV-79011\", \"V-7901\", \"BFV-79001\", \"P-7901\", \"CHV-79001\", \"GTV-79003\", \"GV-79001\", \"GTV-80004\", \"GTV-80003\", \"XV-80005\", \"XV-80006\", \"TK-8003\", \"BFV-80001\", \"P-8001\", \"CHV-80001\", \"BFV-80002\", \"GV-80001\", \"BFV-81002\", \"M-8101\", \"V-8101\", \"LV-81019\", \"GTV-81011\", \"M-8201\", \"V-8201\", \"GV-82001\", \"GTV-83001\", \"E-8301\", \"EA-8301\", \"XV-83025\", \"V-8302\", \"BFV-83004\", \"P-8301B\", \"CHV-83002\", \"GTV-83014\", \"GV-83003\", \"BFV-83003\", \"BFV-85002\", \"T-8501\", \"GTV-85023\", \"P-8502A\", \"CHV-85004\", \"BFV-85007\", \"LV-85048\", \"GTV-86009\", \"XV-86011\", \"V-8601\", \"BFV-86001\", \"P-8601A\", \"CHV-86001\", \"GTV-86004\", \"GV-86001\", \"GTV-86003\", \"XV-87009\", \"V-8701\", \"BFV-87002\", \"P-8701B\", \"CHV-87002\", \"GTV-87006\", \"GV-87001\", \"GTV-87002\", \"PGV-88005\", \"PGV-88004\", \"XV-88007\", \"XV-88008\", \"TK-8804\", \"GTV-88002\", \"P-8801A\", \"CHV-88001\", \"BFV-88001\", \"FV-88010\", \"GTV-88001\", \"GTV-89001\", \"BFV-89002\", \"F-8901B\", \"BFV-89003\", \"GV-89001\", \"GTV-90001\", \"E-9001\", \"EA-9001\", \"XV-90024\", \"V-9002\", \"BFV-90004\", \"P-9001B\", \"CHV-90002\", \"GTV-90013\", \"GV-90003\", \"GTV-90009\", \"XV-91010\", \"V-9101\", \"GTV-91001\", \"P-9101A\", \"CHV-91001\", \"BFV-91001\", \"LV-91001\", \"E-9202\", \"T-9201\", \"GTV-92032\", \"P-9202\", \"CHV-92004\", \"GTV-92033\", \"GV-92002\", \"E-9303\", \"T-9301\", \"GTV-93027\", \"P-9302A\", \"CHV-93003\", \"BFV-93009\", \"GV-93006\", \"GTV-93026\", \"BFV-94001\", \"PGV-94004\", \"PGV-94003\", \"XV-94005\", \"XV-94006\", \"TK-9403\", \"BFV-94002\", \"P-9401A\", \"CHV-94001\", \"GTV-94003\", \"GV-94001\", \"BFV-95002\", \"XV-95010\", \"V-9501\", \"BFV-95001\", \"P-9501B\", \"CHV-95002\", \"GTV-95005\", \"FV-95002\", \"GTV-95001\", \"T-9601\", \"GTV-96023\", \"P-9602\", \"CHV-96002\", \"BFV-96006\", \"GV-96003\", \"GTV-96022\", \"GTV-97003\", \"GTV-97002\", \"XV-97003\", \"XV-97004\", \"TK-9702\", \"GTV-97007\", \"P-9701\", \"CHV-97001\", \"GTV-97008\", \"GV-97001\", \"BFV-97001\", \"E-9801\", \"E-9802\", \"E-9901\", \"EA-9901\", \"XV-99026\", \"V-9902\", \"BFV-99003\", \"P-9901A\", \"CHV-99001\", \"BFV-99004\", \"LV-99008\", \"GTV-99007\", \"E-10103\", \"T-10101\", \"GTV-101032\", \"P-10102A\", \"CHV-101003\", \"BFV-101012\", \"LV-101073\", \"GTV-101031\", \"XV-102012\", \"V-10201\", \"BFV-102002\", \"P-10201B\", \"CHV-102002\", \"GTV-102006\", \"GV-102001\", \"BFV-102001\", \"GTV-103006\", \"GTV-103005\", \"GTV-103004\", \"XV-103007\", \"XV-103008\", \"TK-10304\", \"BFV-103002\", \"P-10301B\", \"CHV-103003\", \"GTV-103012\", \"FV-103010\", \"GTV-103007\", \"EJ-10401\", \"E-10501\", \"E-10502\", \"E-10503\", \"EH-10501\", \"GTV-106015\", \"XV-106011\", \"V-10601\", \"GTV-106004\", \"P-10601\", \"CHV-106001\", \"GTV-106005\", \"GV-106001\", \"BFV-106001\", \"GTV-107003\", \"XV-107006\", \"V-10701\", \"GTV-107001\", \"P-10701\", \"CHV-107001\", \"GTV-107002\", \"LV-107001\", \"GTV-108006\", \"GTV-108005\", \"GTV-108004\", \"XV-108007\", \"XV-108008\", \"TK-10804\", \"GTV-108008\", \"P-10801\", \"CHV-108001\", \"GTV-108009\", \"GV-108001\", \"BFV-108002\", \"GTV-109009\", \"E-10901\", \"E-10902\", \"BFV-109004\", \"GTV-110001\", \"GTV-110002\", \"F-11001A\", \"BFV-110001\", \"BFV-110002\", \"BFV-111003\", \"XV-111016\", \"V-11101\", \"BFV-111002\", \"P-11101B\", \"CHV-111002\", \"GTV-111007\", \"GV-111001\", \"XV-112009\", \"V-11201\", \"GTV-112003\", \"P-11201A\", \"CHV-112001\", \"BFV-112002\", \"GV-112001\", \"GTV-113001\", \"PGV-113004\", \"PGV-113003\", \"XV-113005\", \"XV-113006\", \"TK-11303\", \"GTV-113003\", \"P-11301\", \"CHV-113001\", \"BFV-113002\", \"GV-113001\", \"GTV-114001\", \"GTV-114002\", \"F-11401A\", \"BFV-114001\", \"XV-115013\", \"V-11501\", \"BFV-115001\", \"P-11501B\", \"CHV-115003\", \"GTV-115005\", \"FV-115002\", \"XV-116008\", \"V-11601\", \"GTV-116003\", \"P-11601\", \"CHV-116001\", \"GTV-116004\", \"GV-116001\", \"BFV-116001\", \"BFV-117003\", \"T-11701\", \"BFV-117010\", \"P-11702B\", \"CHV-117006\", \"GTV-117031\", \"LV-117060\", \"GTV-117026\", \"E-11802\", \"T-11801\", \"GTV-118029\", \"P-11802A\", \"CHV-118004\", \"BFV-118009\", \"GV-118005\", \"GTV-119003\", \"GTV-119002\", \"XV-119003\", \"XV-119004\", \"TK-11902\", \"GTV-119006\", \"P-11901A\", \"CHV-119001\", \"BFV-119002\", \"GV-119001\", \"GTV-120011\", \"M-12001\", \"V-12001\", \"GV-120001\", \"BFV-120003\", \"GTV-121001\", \"E-12101\", \"EA-12101\", \"XV-121026\", \"V-12102\", \"GTV-121008\", \"P-12101\", \"CHV-121001\", \"GTV-121009\", \"GV-121001\", \"BFV-121002\", \"XV-122012\", \"V-12201\", \"BFV-122002\", \"P-12201\", \"CHV-122001\", \"GTV-122003\", \"GV-122001\", \"BFV-122001\", \"T-12301\", \"BFV-123010\", \"P-12303\", \"CHV-123004\", \"GTV-123032\", \"GV-123004\", \"XV-124011\", \"V-12401\", \"BFV-124001\", \"P-12401\", \"CHV-124001\", \"GTV-124001\", \"FV-124002\", \"BFV-125001\", \"GTV-125003\", \"GTV-125002\", \"XV-125003\", \"XV-125004\", \"TK-12502\", \"GTV-125008\", \"P-12501\", \"CHV-125001\", \"BFV-125002\", \"GV-125001\", \"GTV-125007\", \"BFV-126001\", \"E-12601\", \"EA-12601\", \"YV-126033\", \"V-12602\", \"BFV-126004\", \"P-12601A\", \"CHV-126001\", \"GTV-126007\", \"GV-126002\", \"GTV-126006\", \"GTV-128009\", \"E-12803\", \"T-12801\", \"BFV-128008\", \"P-12802B\", \"CHV-128005\", \"GTV-128030\", \"LV-128053\", \"GTV-129007\", \"T-12901\", \"GTV-129021\", \"P-12902\", \"CHV-129003\", \"BFV-129008\", \"LV-129046\", \"GTV-130006\", \"GTV-130005\", \"GTV-130004\", \"YV-130007\", \"YV-130008\", \"TK-13004\", \"BFV-130002\", \"P-13001A\", \"CHV-130001\", \"GTV-130009\", \"GV-130001\", \"GTV-131010\", \"YV-131009\", \"V-13101\", \"BFV-131002\", \"P-13101B\", \"CHV-131002\", \"GTV-131006\", \"GV-131001\", \"BFV-131001\", \"BFV-132001\", \"YV-132011\", \"V-13201\", \"GTV-132001\", \"P-13201A\", \"CHV-132001\", \"GTV-132002\", \"FV-132002\", \"GTV-133005\", \"YV-133006\", \"V-13301\", \"GTV-133003\", \"P-13301\", \"CHV-133001\", \"BFV-133002\", \"GV-133001\", \"GTV-133002\", \"PGV-134004\", \"PGV-134003\", \"YV-134005\", \"YV-134006\", \"TK-13403\", \"GTV-134004\", \"P-13401\", \"CHV-134001\", \"BFV-134002\", \"GV-134001\", \"GTV-134003\", \"GTV-135016\", \"E-13501\", \"E-13502\", \"E-13503\", \"E-13504\", \"EH-13501\", \"BFV-135005\", \"YV-136017\", \"V-13601\", \"BFV-136002\", \"P-13601C\", \"CHV-136004\", \"BFV-136003\", \"FV-136002\", \"GTV-136001\", \"GTV-137010\", \"YV-137012\", \"V-13701\", \"BFV-137002\", \"P-13701B\", \"CHV-137002\", \"GTV-137007\", \"GV-137001\", \"BFV-137001\", \"E-13803\", \"T-13801\", \"BFV-138011\", \"P-13802A\", \"CHV-138003\", \"GTV-138034\", \"LV-138072\", \"YV-139008\", \"V-13901\", \"GTV-139001\", \"P-13901\", \"CHV-139001\", \"BFV-139001\", \"FV-139002\", \"GTV-140003\", \"GTV-140002\", \"YV-140003\", \"YV-140004\", \"TK-14002\", \"GTV-140007\", \"P-14001\", \"CHV-140001\", \"GTV-140008\", \"GV-140001\", \"BFV-141001\", \"GTV-141001\", \"F-14101A\", \"GTV-141004\", \"GV-141001\", \"GTV-142007\", \"XV-142012\", \"V-14201\", \"BFV-142001\", \"P-14201A\", \"CHV-142001\", \"GTV-142001\", \"FV-142002\", \"XV-143009\", \"V-14301\", \"GTV-143003\", \"P-14301A\", \"CHV-143001\", \"BFV-143002\", \"GV-143001\", \"GTV-143002\", \"GTV-144005\", \"GTV-144004\", \"XV-144007\", \"XV-144008\", \"TK-14404\", \"GTV-144007\", \"P-14401\", \"CHV-144001\", \"BFV-144001\", \"FV-144010\", \"GTV-144006\", \"BFV-145002\", \"YV-145008\", \"V-14501\", \"GTV-145002\", \"P-14501\", \"CHV-145001\", \"GTV-145003\", \"GV-145001\", \"YV-146014\", \"V-14601\", \"BFV-146002\", \"P-14602\", \"CHV-146002\", \"GTV-146006\", \"GV-146001\", \"BFV-146001\", \"T-14701\", \"BFV-147007\", \"P-14705\", \"CHV-147006\", \"BFV-147008\", \"GV-147003\", \"GTV-147024\", \"GTV-148001\", \"PGV-148004\", \"PGV-148003\", \"YV-148005\", \"YV-148006\", \"TK-14803\", \"BFV-148002\", \"P-14803\", \"CHV-148003\", \"GTV-148012\", \"GV-148001\", \"BFV-149001\", \"E-14901\", \"EA-14901\", \"YV-149029\", \"V-14902\", \"BFV-149004\", \"P-14902\", \"CHV-149003\", \"BFV-149005\", \"FV-149010\", \"GTV-149006\", \"T-15101\", \"BFV-151005\", \"P-15102\", \"CHV-151003\", \"GTV-151013\", \"LV-151048\", \"GTV-151012\", \"BFV-152003\", \"YV-152012\", \"V-15201\", \"BFV-152001\", \"P-15201\", \"CHV-152001\", \"GTV-152002\", \"FV-152002\", \"GTV-152001\", \"BFV-153003\", \"E-15303\", \"T-15301\", \"BFV-153008\", \"P-15303\", \"CHV-153003\", \"GTV-153024\", \"LV-153051\", \"GTV-153023\", \"BFV-154001\", \"GTV-154005\", \"GTV-154004\", \"YV-154007\", \"YV-154008\", \"TK-15404\", \"GTV-154007\", \"P-15401\", \"CHV-154001\", \"GTV-154008\", \"GV-154001\", \"E-15501\", \"EA-15501\", \"YV-155027\", \"V-15502\", \"BFV-155003\", \"P-15501A\", \"CHV-155001\", \"GTV-155010\", \"GV-155003\", \"GTV-155009\", \"GTV-156007\", \"E-15602\", \"T-15601\", \"BFV-156009\", \"P-15602B\", \"CHV-156006\", \"GTV-156027\", \"GV-156003\", \"BFV-156008\", \"BFV-157001\", \"PGV-157003\", \"PGV-157002\", \"YV-157003\", \"YV-157004\", \"TK-15702\", \"BFV-157002\", \"P-15701\", \"CHV-157001\", \"GTV-157003\", \"GV-157001\", \"GTV-158001\", \"F-15801A\", \"BFV-158001\", \"GTV-158002\", \"GTV-159001\", \"E-15901\", \"EA-15901\", \"YV-159025\", \"V-15902\", \"BFV-159001\", \"P-15901A\", \"CHV-159001\", \"GTV-159005\", \"LV-159008\", \"GTV-159004\", \"T-16001\", \"BFV-160009\", \"P-16002B\", \"CHV-160005\", \"BFV-160010\", \"GV-160002\", \"GTV-161005\", \"GTV-161004\", \"GTV-161003\", \"YV-161005\", \"YV-161006\", \"TK-16103\", \"BFV-161001\", \"P-16101A\", \"CHV-161001\", \"GTV-161010\", \"GV-161001\", \"GTV-161009\", \"BFV-162001\", \"E-16201\", \"EA-16201\", \"XV-162025\", \"V-16202\", \"BFV-162002\", \"P-16201A\", \"CHV-162001\", \"GTV-162006\", \"FV-162009\", \"GTV-162005\", \"GTV-163008\", \"T-16301\", \"BFV-163006\", \"P-16302A\", \"CHV-163007\", \"GTV-163028\", \"LV-163045\", \"GTV-164006\", \"GTV-164005\", \"GTV-164004\", \"XV-164007\", \"XV-164008\", \"TK-16404\", \"BFV-164001\", \"P-16401A\", \"CHV-164001\", \"GTV-164010\", \"GV-164001\", \"GTV-165001\", \"BFV-165002\", \"F-16501B\", \"GTV-165003\", \"BFV-166002\", \"XV-166011\", \"V-16601\", \"BFV-166001\", \"P-16601A\", \"CHV-166001\", \"GTV-166002\", \"FV-166002\", \"GTV-166001\", \"GTV-167006\", \"E-16703\", \"T-16701\", \"BFV-167007\", \"P-16702A\", \"CHV-167003\", \"GTV-167024\", \"LV-167052\", \"GTV-167023\", \"XV-168011\", \"V-16801\", \"BFV-168002\", \"P-16801B\", \"CHV-168002\", \"GTV-168007\", \"GV-168001\", \"XV-169008\", \"V-16901\", \"BFV-169002\", \"P-16901A\", \"CHV-169001\", \"GTV-169002\", \"GV-169001\", \"GTV-170001\", \"PGV-170004\", \"PGV-170003\", \"XV-170005\", \"XV-170006\", \"TK-17003\", \"GTV-170004\", \"P-17001A\", \"CHV-170001\", \"GTV-170005\", \"GV-170001\", \"BFV-170002\", \"YV-171014\", \"V-17101\", \"GTV-171003\", \"P-17101\", \"CHV-171001\", \"BFV-171002\", \"GV-171001\", \"BFV-171001\", \"YV-172010\", \"V-17201\", \"BFV-172001\", \"P-17201\", \"CHV-172001\", \"BFV-172002\", \"GV-172001\", \"GTV-172004\", \"T-17301\", \"GTV-173024\", \"P-17303\", \"CHV-173005\", \"BFV-173007\", \"LV-173040\", \"BFV-173006\", \"GTV-174003\", \"GTV-174002\", \"YV-174003\", \"YV-174004\", \"TK-17402\", \"GTV-174005\", \"P-17401\", \"CHV-174001\", \"GTV-174006\", \"GV-174001\", \"GTV-174004\", \"BFV-175004\", \"E-17501\", \"E-17502\", \"E-17503\", \"EH-17501\", \"BFV-176001\", \"F-17601A\", \"GTV-176001\", \"XV-177014\", \"V-17701\", \"GTV-177003\", \"P-17701A\", \"CHV-177001\", \"GTV-177004\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "pilot_control",
+   "row": {
+    "run_id": "S7-AG-H100g2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g2:INSTRUMENTS_OF_ITEM:P-302",
+    "corpus_id": "H100g2",
+    "family": "INSTRUMENTS_OF_ITEM",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"TT-3008\", \"YI-3007\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "pilot_control",
+   "row": {
+    "run_id": "E2E-AG-H1000g2V-d0",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g2:LOOKUP_TYPE:TI-578023",
+    "corpus_id": "H1000g2V",
+    "family": "LOOKUP_TYPE",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"ProcessSignalGeneratingFunction\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "pilot_control",
+   "row": {
+    "run_id": "E2E-AG-H1000g2V-d0",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g2:LOOKUP_UNIT:PSV-51005",
+    "corpus_id": "H1000g2V",
+    "family": "LOOKUP_UNIT",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"51\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "pilot_control",
+   "row": {
+    "run_id": "S7-AG-H100g2d50",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g2d50:LOOPS_NEAR_ITEM:TK-4402",
+    "corpus_id": "H100g2d50",
+    "family": "LOOPS_NEAR_ITEM",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"LSHH-44004\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "pilot_control",
+   "row": {
+    "run_id": "E2E-AG-H1000g2V-d0",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g2:LOOP_ACTUATED_VALVE:LIC-579067",
+    "corpus_id": "H1000g2V",
+    "family": "LOOP_ACTUATED_VALVE",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"LV-579067\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "pilot_control",
+   "row": {
+    "run_id": "S7-AG-H100g2d0",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g2d0:LOOP_MEASURED_EQUIPMENT:LOOP_MEASURED_EQUIPMENT_P1:TIAH-38010",
+    "corpus_id": "H100g2d0",
+    "family": "LOOP_MEASURED_EQUIPMENT",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"P-3801B\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "pilot_control",
+   "row": {
+    "run_id": "S7-AG-H100g2d0",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g2d0:NEIGHBOURS_DOWNSTREAM:GTV-4002",
+    "corpus_id": "H100g2d0",
+    "family": "NEIGHBOURS_DOWNSTREAM",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"V-401\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "pilot_control",
+   "row": {
+    "run_id": "S7-AG-H100g2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g2:NO_PATH:FLOW_PATH:P-5301B|P-1501",
+    "corpus_id": "H100g2",
+    "family": "NO_PATH",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "pilot_control",
+   "row": {
+    "run_id": "E2E-AG-H1000g2V-d0",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g2:ROUTE_AVOIDING:TK-19704|D-20101|YV-199012",
+    "corpus_id": "H1000g2V",
+    "family": "ROUTE_AVOIDING",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"no\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "pilot_control",
+   "row": {
+    "run_id": "E2E-AG-H1000g2V-d0",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g2:SAME_UNIT:TK-55001|P-55102",
+    "corpus_id": "H1000g2V",
+    "family": "SAME_UNIT",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"no\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "pilot_control",
+   "row": {
+    "run_id": "S7-AG-H1000g2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g2:SHEETS_OF_TAG:TK-19702",
+    "corpus_id": "H1000g2",
+    "family": "SHEETS_OF_TAG",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"328\", \"329\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "pilot_control",
+   "row": {
+    "run_id": "S7-AG-H100g2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g2:UNANSWERABLE_TAG:FLOW_PATH:P-5202|T-5602",
+    "corpus_id": "H100g2",
+    "family": "UNANSWERABLE_TAG",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  }
+ ]
+}

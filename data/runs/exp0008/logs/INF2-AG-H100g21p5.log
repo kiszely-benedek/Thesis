@@ -1,0 +1,92 @@
+run INF2-AG-H100g21p5: 280 rows to answer, 0 already on disk
+replay mode: cache only, no network; stops at the first cache miss
+{
+  "run_id": "INF2-AG-H100g21p5",
+  "n_rows": 280,
+  "n_new_rows": 280,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "graph_agent_lines": {
+      "0": {
+        "ANSWERED": 126
+      },
+      "1": {
+        "ANSWERED": 67
+      },
+      "2": {
+        "ANSWERED": 25
+      },
+      "3-4": {
+        "ANSWERED": 15
+      },
+      "5-8": {
+        "ANSWERED": 9
+      },
+      "9-16": {
+        "ANSWERED": 6
+      },
+      "17-32": {
+        "ANSWERED": 6
+      },
+      "33+": {
+        "ANSWERED": 6
+      },
+      "unanswerable": {
+        "ANSWERED": 20
+      }
+    }
+  },
+  "routing_recall": {
+    "graph_agent_lines": 0.9423076923076923
+  },
+  "relaxed_routing_recall": {
+    "graph_agent_lines": 0.9538461538461539
+  },
+  "evidence_node_recall": {
+    "graph_agent_lines": 0.8866419941886756
+  },
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {
+      "graph_agent_lines": {
+        "0": 0.9603174603174603,
+        "1": 0.9552238805970149,
+        "2": 1.0,
+        "3-4": 1.0,
+        "5-8": 1.0,
+        "9-16": 0.6666666666666666,
+        "17-32": 0.8333333333333334,
+        "33+": 0.3333333333333333
+      }
+    },
+    "relaxed_routing_recall": {
+      "graph_agent_lines": {
+        "0": 0.9603174603174603,
+        "1": 0.9552238805970149,
+        "2": 1.0,
+        "3-4": 1.0,
+        "5-8": 1.0,
+        "9-16": 0.8333333333333334,
+        "17-32": 1.0,
+        "33+": 0.5
+      }
+    },
+    "evidence_node_recall": {
+      "graph_agent_lines": {
+        "0": 0.906942801776057,
+        "1": 0.8579034228290883,
+        "2": 0.9592150925538023,
+        "3-4": 0.9269213472958883,
+        "5-8": 0.9498492201271554,
+        "9-16": 0.6866399474176236,
+        "17-32": 0.8781989277652343,
+        "33+": 0.4822075395799088
+      }
+    }
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "graph_agent_lines": 0.0016579455892857143
+  },
+  "stopped_by_spend_cap": false,
+  "late_after_timeout_usd": 0.0
+}

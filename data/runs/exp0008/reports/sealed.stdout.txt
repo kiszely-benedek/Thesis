@@ -1,0 +1,2130 @@
+# Method-and-effort cascade report
+
+Latency counts every model call of a question (final answer, retrieval and agent steps) plus local compute where recorded, summed over the tiers tried. LB-1: median <= 10 s; LB-2: p90 <= 60 s; LB-3: an answer later than C = 120 s counts as no answer (TIMED_OUT, wrong) for every arm alike, so acc@120 is the cutoff-scored accuracy. A run made under a live deadline cannot show raw accuracy beyond C.
+
+## T4 Claims
+
+Claims corpus: S1000.
+
+- **PASS** Q4 (primary) cascade_v4_iso [headline]: supported
+  - acc@C large minus small -0.005 [-0.035, +0.025] (needs the interval to contain 0 or lie above): ok
+  - cost elasticity 0.044 [-0.016, 0.103] (needs < 0.5): ok
+- **FAIL** K1 [headline]: the cascade saves nothing
+  - acc@C +0.010 [-0.007, +0.027]: ok
+  - $/question -0.00042 [-0.00056, -0.00029] (needs CI below 0): ok
+  - latency s/question +1.91 [-3.48, +6.04] (needs CI below 0): not met
+- **PASS** K2 [headline]: supported
+  - acc@C +0.072 [+0.055, +0.089] (needs CI above 0)
+- **PASS** K3 [headline]: supported
+  - median 9.3 [8.8, 10.0] s (limit 10): ok
+  - p90 51.7 [48.3, 61.1] s (limit 60): ok
+- **PASS** Q5 [headline]: supported
+  - acc@C +0.087 [+0.057, +0.117] (needs CI above 0)
+- **PASS** Q4' cascade_v4 [headline]: supported
+  - acc@C large minus small +0.001 [-0.029, +0.030] (needs the interval to contain 0 or lie above): ok
+  - cost elasticity 0.054 [-0.006, 0.113] (needs < 0.5): ok
+- **PASS** Q4' always_g_v2t [headline]: supported
+  - acc@C large minus small +0.000 [-0.030, +0.030] (needs the interval to contain 0 or lie above): ok
+  - cost elasticity 0.048 [-0.007, 0.102] (needs < 0.5): ok
+- **PASS** Q4' always_c_v2t [headline]: supported
+  - acc@C large minus small +0.000 [-0.037, +0.038] (needs the interval to contain 0 or lie above): ok
+  - cost elasticity -0.014 [-0.060, 0.031] (needs < 0.5): ok
+- **PASS** Q4 (primary) cascade_v4_iso [held-out]: supported
+  - acc@C large minus small -0.008 [-0.092, +0.076] (needs the interval to contain 0 or lie above): ok
+  - cost elasticity 0.027 [-0.068, 0.125] (needs < 0.5): ok
+- **FAIL** K1 [held-out]: the cascade saves nothing
+  - acc@C +0.004 [-0.052, +0.060]: ok
+  - $/question -0.00089 [-0.00142, -0.00046] (needs CI below 0): ok
+  - latency s/question +15.76 [+8.02, +22.35] (needs CI below 0): not met
+- **PASS** K2 [held-out]: supported
+  - acc@C +0.106 [+0.061, +0.155] (needs CI above 0)
+- **FAIL** K3 [held-out]: the cascade is not fast enough at plant scale
+  - median 21.1 [14.9, 38.9] s (limit 10): not met
+  - p90 120.6 [112.0, 128.7] s (limit 60): not met
+- **PASS** Q5 [held-out]: supported
+  - acc@C +0.156 [+0.092, +0.220] (needs CI above 0)
+- **PASS** Q4' cascade_v4 [held-out]: supported
+  - acc@C large minus small -0.008 [-0.092, +0.076] (needs the interval to contain 0 or lie above): ok
+  - cost elasticity 0.027 [-0.068, 0.125] (needs < 0.5): ok
+- **PASS** Q4' always_g_v2t [held-out]: supported
+  - acc@C large minus small +0.008 [-0.068, +0.084] (needs the interval to contain 0 or lie above): ok
+  - cost elasticity 0.057 [-0.030, 0.155] (needs < 0.5): ok
+- **PASS** Q4' always_c_v2t [held-out]: supported
+  - acc@C large minus small -0.024 [-0.112, +0.064] (needs the interval to contain 0 or lie above): ok
+  - cost elasticity -0.012 [-0.092, 0.069] (needs < 0.5): ok
+- **NOT_RUN** Q1: not run - need-aware Hierarchical was dropped (ADR-0047, ADR-0048)
+- **NOT_RUN** Q2: not run - need-aware Hierarchical was dropped (ADR-0047, ADR-0048)
+- **NOT_RUN** Q3: not run - hier_agent was dropped (ADR-0047)
+
+## T1 Headline
+
+### H100g21p1, scope `headline`
+
+| policy | n | acc@120 (95 % Wilson CI) | all-question acc@120 | $/question | latency s median / mean / p90 / p95 / max | LB-1 / LB-2 | answered by | tier-1 accept share | tier-1 accept precision |
+|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 220 | 203/220 0.923 [0.880, 0.951] | 260/280 | 0.00134 | 8.1 / 16.4 / 44.6 / 50.9 / 109.0 | PASS / PASS | cypher-v2t 72%, agent-v2t 28% | - | - |
+| cascade_v4 | 220 | 199/220 0.905 [0.858, 0.937] | 256/280 | 0.00134 | 8.1 / 16.5 / 44.4 / 58.1 / 109.0 | PASS / PASS | cypher-v2t 75%, agent-v2t 25% | 74.5% | 0.939 (154/164) |
+| always_g_v2t | 220 | 203/220 0.923 [0.880, 0.951] | 262/280 | 0.00172 | 12.4 / 16.5 / 32.2 / 41.8 / 77.8 | FAIL / PASS | agent-v2t 100% | - | - |
+| always_c_v2t | 220 | 176/220 0.800 [0.742, 0.848] | 224/280 | 0.00073 | 6.7 / 10.9 / 17.9 / 45.6 / 78.9 | PASS / PASS | cypher-v2t 93%, none 7% | - | - |
+
+Latency, 95 % bootstrap intervals (s):
+
+| policy | median | p90 |
+|---|---|---|
+| cascade_v4_iso | 8.1 [6.8, 8.9] | 44.6 [36.2, 49.6] |
+| cascade_v4 | 8.1 [6.8, 8.9] | 44.4 [36.2, 49.5] |
+| always_g_v2t | 12.4 [10.4, 13.3] | 32.2 [29.2, 39.2] |
+| always_c_v2t | 6.7 [6.2, 7.4] | 17.9 [15.0, 37.8] |
+
+### H100g21p1, scope `held-out`
+
+| policy | n | acc@120 (95 % Wilson CI) | all-question acc@120 | $/question | latency s median / mean / p90 / p95 / max | LB-1 / LB-2 | answered by | tier-1 accept share | tier-1 accept precision |
+|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 50 | 40/50 0.800 [0.670, 0.888] | 260/280 | 0.00209 | 21.5 / 31.6 / 58.4 / 86.7 / 109.0 | FAIL / PASS | cypher-v2t 62%, agent-v2t 38% | - | - |
+| cascade_v4 | 50 | 40/50 0.800 [0.670, 0.888] | 256/280 | 0.00209 | 21.5 / 31.6 / 58.4 / 86.7 / 109.0 | FAIL / PASS | cypher-v2t 62%, agent-v2t 38% | 62.0% | 1.000 (31/31) |
+| always_g_v2t | 50 | 40/50 0.800 [0.670, 0.888] | 262/280 | 0.00263 | 21.0 / 23.4 / 39.5 / 44.3 / 47.3 | FAIL / PASS | agent-v2t 100% | - | - |
+| always_c_v2t | 50 | 33/50 0.660 [0.522, 0.776] | 224/280 | 0.00098 | 13.0 / 20.9 / 48.7 / 54.5 / 78.9 | FAIL / PASS | cypher-v2t 80%, none 20% | - | - |
+
+Latency, 95 % bootstrap intervals (s):
+
+| policy | median | p90 |
+|---|---|---|
+| cascade_v4_iso | 21.5 [12.3, 41.6] | 58.4 [48.8, 86.7] |
+| cascade_v4 | 21.5 [12.3, 41.6] | 58.4 [48.8, 86.7] |
+| always_g_v2t | 21.0 [16.6, 26.8] | 39.5 [32.2, 44.3] |
+| always_c_v2t | 13.0 [9.8, 15.1] | 48.7 [37.8, 54.5] |
+
+### H100g21p2, scope `headline`
+
+| policy | n | acc@120 (95 % Wilson CI) | all-question acc@120 | $/question | latency s median / mean / p90 / p95 / max | LB-1 / LB-2 | answered by | tier-1 accept share | tier-1 accept precision |
+|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 220 | 198/220 0.900 [0.853, 0.933] | 253/280 | 0.00143 | 9.1 / 17.5 / 43.7 / 54.7 / 123.8 | PASS / PASS | cypher-v2t 73%, agent-v2t 27% | - | - |
+| cascade_v4 | 220 | 197/220 0.895 [0.848, 0.929] | 252/280 | 0.00138 | 9.1 / 17.0 / 43.4 / 51.7 / 123.8 | PASS / PASS | cypher-v2t 76%, agent-v2t 24% | 75.5% | 0.934 (155/166) |
+| always_g_v2t | 220 | 196/220 0.891 [0.843, 0.926] | 253/280 | 0.00179 | 12.4 / 17.1 / 36.0 / 42.6 / 84.7 | FAIL / PASS | agent-v2t 100%, none 0% | - | - |
+| always_c_v2t | 220 | 179/220 0.814 [0.757, 0.860] | 231/280 | 0.00078 | 7.2 / 11.7 / 21.7 / 43.7 / 84.7 | PASS / PASS | cypher-v2t 93%, none 7% | - | - |
+
+Latency, 95 % bootstrap intervals (s):
+
+| policy | median | p90 |
+|---|---|---|
+| cascade_v4_iso | 9.1 [7.4, 10.1] | 43.7 [38.3, 51.0] |
+| cascade_v4 | 9.1 [7.4, 10.1] | 43.4 [36.2, 49.4] |
+| always_g_v2t | 12.4 [10.7, 14.9] | 36.0 [28.1, 40.6] |
+| always_c_v2t | 7.2 [6.4, 8.1] | 21.7 [16.1, 40.4] |
+
+### H100g21p2, scope `held-out`
+
+| policy | n | acc@120 (95 % Wilson CI) | all-question acc@120 | $/question | latency s median / mean / p90 / p95 / max | LB-1 / LB-2 | answered by | tier-1 accept share | tier-1 accept precision |
+|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 50 | 41/50 0.820 [0.692, 0.902] | 253/280 | 0.00249 | 21.9 / 32.2 / 59.9 / 95.5 / 123.8 | FAIL / PASS | cypher-v2t 64%, agent-v2t 36% | - | - |
+| cascade_v4 | 50 | 41/50 0.820 [0.692, 0.902] | 252/280 | 0.00249 | 21.9 / 32.2 / 59.9 / 95.5 / 123.8 | FAIL / PASS | cypher-v2t 64%, agent-v2t 36% | 64.0% | 0.969 (31/32) |
+| always_g_v2t | 50 | 39/50 0.780 [0.648, 0.872] | 253/280 | 0.00329 | 22.8 / 25.5 / 41.5 / 44.8 / 64.2 | FAIL / PASS | agent-v2t 100% | - | - |
+| always_c_v2t | 50 | 34/50 0.680 [0.542, 0.792] | 231/280 | 0.00110 | 13.0 / 22.0 / 50.0 / 78.1 / 84.7 | FAIL / PASS | cypher-v2t 80%, none 20% | - | - |
+
+Latency, 95 % bootstrap intervals (s):
+
+| policy | median | p90 |
+|---|---|---|
+| cascade_v4_iso | 21.9 [13.1, 37.7] | 59.9 [49.4, 95.5] |
+| cascade_v4 | 21.9 [13.1, 37.7] | 59.9 [49.4, 95.5] |
+| always_g_v2t | 22.8 [20.0, 27.2] | 41.5 [36.1, 44.8] |
+| always_c_v2t | 13.0 [11.5, 15.3] | 50.0 [26.7, 78.1] |
+
+### H100g21p3, scope `headline`
+
+| policy | n | acc@120 (95 % Wilson CI) | all-question acc@120 | $/question | latency s median / mean / p90 / p95 / max | LB-1 / LB-2 | answered by | tier-1 accept share | tier-1 accept precision |
+|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 220 | 204/220 0.927 [0.885, 0.955] | 259/280 | 0.00135 | 7.3 / 16.2 / 43.0 / 52.0 / 118.0 | PASS / PASS | cypher-v2t 75%, agent-v2t 25%, none 0% | - | - |
+| cascade_v4 | 220 | 202/220 0.918 [0.874, 0.948] | 257/280 | 0.00135 | 7.3 / 16.5 / 43.7 / 54.5 / 118.0 | PASS / PASS | cypher-v2t 77%, agent-v2t 22%, none 0% | 76.8% | 0.964 (163/169) |
+| always_g_v2t | 220 | 196/220 0.891 [0.843, 0.926] | 255/280 | 0.00166 | 13.7 / 17.8 / 35.8 / 43.3 / 78.9 | FAIL / PASS | agent-v2t 99%, none 1% | - | - |
+| always_c_v2t | 220 | 183/220 0.832 [0.777, 0.875] | 232/280 | 0.00073 | 6.8 / 10.7 / 18.5 / 39.7 / 78.7 | PASS / PASS | cypher-v2t 91%, none 9% | - | - |
+
+Latency, 95 % bootstrap intervals (s):
+
+| policy | median | p90 |
+|---|---|---|
+| cascade_v4_iso | 7.3 [6.8, 8.4] | 43.0 [35.3, 48.3] |
+| cascade_v4 | 7.3 [6.8, 8.4] | 43.7 [32.5, 51.0] |
+| always_g_v2t | 13.7 [11.7, 15.5] | 35.8 [30.5, 40.3] |
+| always_c_v2t | 6.8 [6.2, 7.2] | 18.5 [14.7, 25.2] |
+
+### H100g21p3, scope `held-out`
+
+| policy | n | acc@120 (95 % Wilson CI) | all-question acc@120 | $/question | latency s median / mean / p90 / p95 / max | LB-1 / LB-2 | answered by | tier-1 accept share | tier-1 accept precision |
+|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 50 | 39/50 0.780 [0.648, 0.872] | 259/280 | 0.00272 | 20.4 / 33.6 / 75.0 / 98.9 / 118.0 | FAIL / FAIL | cypher-v2t 62%, agent-v2t 38% | - | - |
+| cascade_v4 | 50 | 39/50 0.780 [0.648, 0.872] | 257/280 | 0.00272 | 20.4 / 33.6 / 75.0 / 98.9 / 118.0 | FAIL / FAIL | cypher-v2t 62%, agent-v2t 38% | 62.0% | 1.000 (31/31) |
+| always_g_v2t | 50 | 38/50 0.760 [0.626, 0.857] | 255/280 | 0.00311 | 23.7 / 27.6 / 46.4 / 59.1 / 78.9 | FAIL / PASS | agent-v2t 100% | - | - |
+| always_c_v2t | 50 | 33/50 0.660 [0.522, 0.776] | 232/280 | 0.00109 | 13.3 / 20.2 / 48.0 / 62.4 / 78.7 | FAIL / PASS | cypher-v2t 76%, none 24% | - | - |
+
+Latency, 95 % bootstrap intervals (s):
+
+| policy | median | p90 |
+|---|---|---|
+| cascade_v4_iso | 20.4 [11.6, 43.0] | 75.0 [51.0, 98.9] |
+| cascade_v4 | 20.4 [11.6, 43.0] | 75.0 [51.0, 98.9] |
+| always_g_v2t | 23.7 [19.1, 30.2] | 46.4 [37.6, 59.1] |
+| always_c_v2t | 13.3 [10.4, 15.7] | 48.0 [21.8, 62.4] |
+
+### H100g21p4, scope `headline`
+
+| policy | n | acc@120 (95 % Wilson CI) | all-question acc@120 | $/question | latency s median / mean / p90 / p95 / max | LB-1 / LB-2 | answered by | tier-1 accept share | tier-1 accept precision |
+|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 220 | 200/220 0.909 [0.864, 0.940] | 254/280 | 0.00134 | 7.7 / 18.0 / 46.7 / 58.3 / 145.0 | PASS / PASS | cypher-v2t 74%, agent-v2t 26% | - | - |
+| cascade_v4 | 220 | 198/220 0.900 [0.853, 0.933] | 252/280 | 0.00137 | 7.7 / 18.4 / 46.9 / 65.0 / 145.0 | PASS / PASS | cypher-v2t 76%, agent-v2t 24% | 75.9% | 0.940 (157/167) |
+| always_g_v2t | 220 | 195/220 0.886 [0.838, 0.922] | 252/280 | 0.00183 | 13.9 / 19.0 / 35.6 / 50.0 / 120.2 | FAIL / PASS | agent-v2t 100%, none 0% | - | - |
+| always_c_v2t | 220 | 178/220 0.809 [0.752, 0.856] | 229/280 | 0.00078 | 6.9 / 12.1 / 26.1 / 46.7 / 75.8 | PASS / PASS | cypher-v2t 91%, none 9% | - | - |
+
+Latency, 95 % bootstrap intervals (s):
+
+| policy | median | p90 |
+|---|---|---|
+| cascade_v4_iso | 7.7 [6.9, 9.6] | 46.7 [39.8, 53.0] |
+| cascade_v4 | 7.7 [6.9, 9.6] | 46.9 [40.5, 53.3] |
+| always_g_v2t | 13.9 [12.6, 15.8] | 35.6 [31.0, 47.6] |
+| always_c_v2t | 6.9 [6.2, 7.6] | 26.1 [17.2, 41.0] |
+
+### H100g21p4, scope `held-out`
+
+| policy | n | acc@120 (95 % Wilson CI) | all-question acc@120 | $/question | latency s median / mean / p90 / p95 / max | LB-1 / LB-2 | answered by | tier-1 accept share | tier-1 accept precision |
+|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 50 | 39/50 0.780 [0.648, 0.872] | 254/280 | 0.00232 | 23.7 / 34.3 / 69.8 / 91.2 / 145.0 | FAIL / FAIL | cypher-v2t 62%, agent-v2t 38% | - | - |
+| cascade_v4 | 50 | 39/50 0.780 [0.648, 0.872] | 252/280 | 0.00232 | 23.7 / 34.3 / 69.8 / 91.2 / 145.0 | FAIL / FAIL | cypher-v2t 62%, agent-v2t 38% | 62.0% | 0.935 (29/31) |
+| always_g_v2t | 50 | 39/50 0.780 [0.648, 0.872] | 252/280 | 0.00308 | 21.9 / 25.7 / 49.1 / 51.8 / 69.1 | FAIL / PASS | agent-v2t 100% | - | - |
+| always_c_v2t | 50 | 31/50 0.620 [0.482, 0.741] | 229/280 | 0.00103 | 14.5 / 23.4 / 52.7 / 73.5 / 75.8 | FAIL / PASS | cypher-v2t 74%, none 26% | - | - |
+
+Latency, 95 % bootstrap intervals (s):
+
+| policy | median | p90 |
+|---|---|---|
+| cascade_v4_iso | 23.7 [12.6, 41.9] | 69.8 [53.0, 91.2] |
+| cascade_v4 | 23.7 [12.6, 41.9] | 69.8 [53.0, 91.2] |
+| always_g_v2t | 21.9 [18.4, 27.3] | 49.1 [34.8, 51.8] |
+| always_c_v2t | 14.5 [10.9, 17.1] | 52.7 [43.2, 73.5] |
+
+### H100g21p5, scope `headline`
+
+| policy | n | acc@120 (95 % Wilson CI) | all-question acc@120 | $/question | latency s median / mean / p90 / p95 / max | LB-1 / LB-2 | answered by | tier-1 accept share | tier-1 accept precision |
+|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 220 | 200/220 0.909 [0.864, 0.940] | 254/280 | 0.00155 | 8.5 / 17.3 / 44.2 / 55.4 / 166.5 | PASS / PASS | cypher-v2t 72%, agent-v2t 28% | - | - |
+| cascade_v4 | 220 | 197/220 0.895 [0.848, 0.929] | 251/280 | 0.00155 | 8.5 / 17.5 / 43.8 / 56.9 / 166.5 | PASS / PASS | cypher-v2t 75%, agent-v2t 25% | 74.5% | 0.933 (153/164) |
+| always_g_v2t | 220 | 198/220 0.900 [0.853, 0.933] | 256/280 | 0.00185 | 12.5 / 17.2 / 33.3 / 44.4 / 73.7 | FAIL / PASS | agent-v2t 100% | - | - |
+| always_c_v2t | 220 | 176/220 0.800 [0.742, 0.848] | 225/280 | 0.00085 | 7.3 / 11.5 / 19.7 / 39.7 / 122.2 | PASS / PASS | cypher-v2t 91%, none 9% | - | - |
+
+Latency, 95 % bootstrap intervals (s):
+
+| policy | median | p90 |
+|---|---|---|
+| cascade_v4_iso | 8.5 [7.5, 9.5] | 44.2 [36.1, 52.4] |
+| cascade_v4 | 8.5 [7.5, 9.5] | 43.8 [36.1, 52.4] |
+| always_g_v2t | 12.5 [11.1, 14.9] | 33.3 [28.3, 41.9] |
+| always_c_v2t | 7.3 [6.8, 8.1] | 19.7 [15.9, 28.8] |
+
+### H100g21p5, scope `held-out`
+
+| policy | n | acc@120 (95 % Wilson CI) | all-question acc@120 | $/question | latency s median / mean / p90 / p95 / max | LB-1 / LB-2 | answered by | tier-1 accept share | tier-1 accept precision |
+|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 50 | 39/50 0.780 [0.648, 0.872] | 254/280 | 0.00269 | 18.4 / 32.1 / 66.5 / 83.0 / 166.5 | FAIL / FAIL | cypher-v2t 64%, agent-v2t 36% | - | - |
+| cascade_v4 | 50 | 39/50 0.780 [0.648, 0.872] | 251/280 | 0.00269 | 18.4 / 32.1 / 66.5 / 83.0 / 166.5 | FAIL / FAIL | cypher-v2t 64%, agent-v2t 36% | 64.0% | 0.906 (29/32) |
+| always_g_v2t | 50 | 37/50 0.740 [0.604, 0.841] | 256/280 | 0.00332 | 20.4 / 23.9 / 43.4 / 57.2 / 70.8 | FAIL / PASS | agent-v2t 100% | - | - |
+| always_c_v2t | 50 | 31/50 0.620 [0.482, 0.741] | 225/280 | 0.00128 | 13.6 / 21.7 / 47.3 / 52.2 / 122.2 | FAIL / PASS | cypher-v2t 78%, none 22% | - | - |
+
+Latency, 95 % bootstrap intervals (s):
+
+| policy | median | p90 |
+|---|---|---|
+| cascade_v4_iso | 18.4 [13.3, 40.2] | 66.5 [51.7, 83.0] |
+| cascade_v4 | 18.4 [13.3, 40.2] | 66.5 [51.7, 83.0] |
+| always_g_v2t | 20.4 [16.1, 25.4] | 43.4 [30.9, 57.2] |
+| always_c_v2t | 13.6 [10.7, 16.7] | 47.3 [25.1, 52.2] |
+
+### H1000g21p1, scope `headline`
+
+| policy | n | acc@120 (95 % Wilson CI) | all-question acc@120 | $/question | latency s median / mean / p90 / p95 / max | LB-1 / LB-2 | answered by | tier-1 accept share | tier-1 accept precision |
+|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 220 | 199/220 0.905 [0.858, 0.937] | 258/280 | 0.00148 | 9.2 / 22.1 / 48.2 / 108.4 / 148.4 | PASS / PASS | cypher-v2t 71%, agent-v2t 29% | - | - |
+| cascade_v4 | 220 | 198/220 0.900 [0.853, 0.933] | 257/280 | 0.00149 | 9.2 / 25.3 / 82.7 / 115.2 / 148.4 | PASS / FAIL | cypher-v2t 72%, agent-v2t 28% | 72.3% | 0.956 (152/159) |
+| always_g_v2t | 220 | 197/220 0.895 [0.848, 0.929] | 256/280 | 0.00183 | 10.9 / 15.0 / 29.6 / 38.0 / 83.4 | FAIL / PASS | agent-v2t 100% | - | - |
+| always_c_v2t | 220 | 174/220 0.791 [0.732, 0.839] | 226/280 | 0.00080 | 7.5 / 19.5 / 72.7 / 77.7 / 125.2 | PASS / FAIL | cypher-v2t 89%, none 11% | - | - |
+
+Latency, 95 % bootstrap intervals (s):
+
+| policy | median | p90 |
+|---|---|---|
+| cascade_v4_iso | 9.2 [7.9, 11.2] | 48.2 [43.5, 89.5] |
+| cascade_v4 | 9.2 [8.2, 12.1] | 82.7 [46.2, 108.4] |
+| always_g_v2t | 10.9 [9.4, 12.8] | 29.6 [26.1, 35.9] |
+| always_c_v2t | 7.5 [6.6, 8.8] | 72.7 [43.9, 76.8] |
+
+### H1000g21p1, scope `held-out`
+
+| policy | n | acc@120 (95 % Wilson CI) | all-question acc@120 | $/question | latency s median / mean / p90 / p95 / max | LB-1 / LB-2 | answered by | tier-1 accept share | tier-1 accept precision |
+|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 50 | 38/50 0.760 [0.626, 0.857] | 258/280 | 0.00249 | 17.6 / 43.8 / 115.2 / 125.9 / 130.4 | FAIL / FAIL | cypher-v2t 64%, agent-v2t 36% | - | - |
+| cascade_v4 | 50 | 38/50 0.760 [0.626, 0.857] | 257/280 | 0.00249 | 17.6 / 43.8 / 115.2 / 125.9 / 130.4 | FAIL / FAIL | cypher-v2t 64%, agent-v2t 36% | 64.0% | 0.938 (30/32) |
+| always_g_v2t | 50 | 38/50 0.760 [0.626, 0.857] | 256/280 | 0.00309 | 19.2 / 22.1 / 35.9 / 43.0 / 50.7 | FAIL / PASS | agent-v2t 100% | - | - |
+| always_c_v2t | 50 | 31/50 0.620 [0.482, 0.741] | 226/280 | 0.00113 | 14.2 / 33.6 / 79.5 / 80.3 / 120.1 | FAIL / FAIL | cypher-v2t 72%, none 28% | - | - |
+
+Latency, 95 % bootstrap intervals (s):
+
+| policy | median | p90 |
+|---|---|---|
+| cascade_v4_iso | 17.6 [12.7, 44.1] | 115.2 [91.1, 125.9] |
+| cascade_v4 | 17.6 [12.7, 44.1] | 115.2 [91.1, 125.9] |
+| always_g_v2t | 19.2 [16.2, 25.9] | 35.9 [29.8, 43.0] |
+| always_c_v2t | 14.2 [12.2, 32.3] | 79.5 [75.3, 80.3] |
+
+### H1000g21p2, scope `headline`
+
+| policy | n | acc@120 (95 % Wilson CI) | all-question acc@120 | $/question | latency s median / mean / p90 / p95 / max | LB-1 / LB-2 | answered by | tier-1 accept share | tier-1 accept precision |
+|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 220 | 198/220 0.900 [0.853, 0.933] | 256/280 | 0.00168 | 9.7 / 26.5 / 64.3 / 90.0 / 186.2 | PASS / FAIL | cypher-v2t 73%, agent-v2t 27%, none 0% | - | - |
+| cascade_v4 | 220 | 196/220 0.891 [0.843, 0.926] | 254/280 | 0.00172 | 9.7 / 29.9 / 84.7 / 139.8 / 186.2 | PASS / FAIL | cypher-v2t 73%, agent-v2t 27%, none 0% | 72.7% | 0.963 (154/160) |
+| always_g_v2t | 220 | 201/220 0.914 [0.869, 0.944] | 259/280 | 0.00218 | 26.3 / 34.4 / 64.3 / 75.4 / 113.4 | FAIL / FAIL | agent-v2t 100%, none 0% | - | - |
+| always_c_v2t | 220 | 175/220 0.795 [0.737, 0.843] | 226/280 | 0.00072 | 7.6 / 17.4 / 49.7 / 75.4 / 120.4 | PASS / PASS | cypher-v2t 90%, none 10% | - | - |
+
+Latency, 95 % bootstrap intervals (s):
+
+| policy | median | p90 |
+|---|---|---|
+| cascade_v4_iso | 9.7 [7.9, 12.1] | 64.3 [51.0, 76.8] |
+| cascade_v4 | 9.7 [7.9, 12.1] | 84.7 [62.0, 133.0] |
+| always_g_v2t | 26.3 [24.3, 30.1] | 64.3 [57.8, 73.7] |
+| always_c_v2t | 7.6 [6.7, 8.9] | 49.7 [40.9, 73.5] |
+
+### H1000g21p2, scope `held-out`
+
+| policy | n | acc@120 (95 % Wilson CI) | all-question acc@120 | $/question | latency s median / mean / p90 / p95 / max | LB-1 / LB-2 | answered by | tier-1 accept share | tier-1 accept precision |
+|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 50 | 37/50 0.740 [0.604, 0.841] | 256/280 | 0.00294 | 26.9 / 53.5 / 155.3 / 170.2 / 186.2 | FAIL / FAIL | cypher-v2t 64%, agent-v2t 36% | - | - |
+| cascade_v4 | 50 | 37/50 0.740 [0.604, 0.841] | 254/280 | 0.00294 | 26.9 / 53.5 / 155.3 / 170.2 / 186.2 | FAIL / FAIL | cypher-v2t 64%, agent-v2t 36% | 64.0% | 0.875 (28/32) |
+| always_g_v2t | 50 | 40/50 0.800 [0.670, 0.888] | 259/280 | 0.00455 | 46.0 / 49.3 / 86.8 / 101.0 / 113.4 | FAIL / FAIL | agent-v2t 100% | - | - |
+| always_c_v2t | 50 | 29/50 0.580 [0.442, 0.706] | 226/280 | 0.00095 | 14.4 / 30.6 / 77.4 / 80.8 / 96.5 | FAIL / FAIL | cypher-v2t 78%, none 22% | - | - |
+
+Latency, 95 % bootstrap intervals (s):
+
+| policy | median | p90 |
+|---|---|---|
+| cascade_v4_iso | 26.9 [13.8, 49.2] | 155.3 [76.8, 170.2] |
+| cascade_v4 | 26.9 [13.8, 49.2] | 155.3 [76.8, 170.2] |
+| always_g_v2t | 46.0 [32.0, 57.9] | 86.8 [73.7, 101.0] |
+| always_c_v2t | 14.4 [11.9, 27.8] | 77.4 [49.7, 80.8] |
+
+### H1000g21p3, scope `headline`
+
+| policy | n | acc@120 (95 % Wilson CI) | all-question acc@120 | $/question | latency s median / mean / p90 / p95 / max | LB-1 / LB-2 | answered by | tier-1 accept share | tier-1 accept precision |
+|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 220 | 195/220 0.886 [0.838, 0.922] | 253/280 | 0.00160 | 9.5 / 21.0 / 48.3 / 82.8 / 145.1 | PASS / PASS | cypher-v2t 75%, agent-v2t 24%, none 0% | - | - |
+| cascade_v4 | 220 | 195/220 0.886 [0.838, 0.922] | 253/280 | 0.00163 | 9.5 / 24.1 / 55.4 / 110.5 / 170.6 | PASS / PASS | cypher-v2t 76%, agent-v2t 24%, none 0% | 75.9% | 0.958 (160/167) |
+| always_g_v2t | 220 | 193/220 0.877 [0.827, 0.914] | 252/280 | 0.00192 | 12.6 / 17.2 / 35.6 / 49.0 / 120.2 | FAIL / PASS | agent-v2t 99%, none 1% | - | - |
+| always_c_v2t | 220 | 181/220 0.823 [0.767, 0.868] | 231/280 | 0.00072 | 8.4 / 17.4 / 48.8 / 75.2 / 81.9 | PASS / PASS | cypher-v2t 89%, none 11% | - | - |
+
+Latency, 95 % bootstrap intervals (s):
+
+| policy | median | p90 |
+|---|---|---|
+| cascade_v4_iso | 9.5 [8.6, 11.1] | 48.3 [42.3, 62.0] |
+| cascade_v4 | 9.5 [8.6, 11.1] | 55.4 [46.1, 103.8] |
+| always_g_v2t | 12.6 [10.4, 14.1] | 35.6 [27.8, 41.9] |
+| always_c_v2t | 8.4 [7.7, 9.1] | 48.8 [40.9, 73.3] |
+
+### H1000g21p3, scope `held-out`
+
+| policy | n | acc@120 (95 % Wilson CI) | all-question acc@120 | $/question | latency s median / mean / p90 / p95 / max | LB-1 / LB-2 | answered by | tier-1 accept share | tier-1 accept precision |
+|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 50 | 37/50 0.740 [0.604, 0.841] | 253/280 | 0.00255 | 16.2 / 42.1 / 114.7 / 125.3 / 145.1 | FAIL / FAIL | cypher-v2t 68%, agent-v2t 32% | - | - |
+| cascade_v4 | 50 | 37/50 0.740 [0.604, 0.841] | 253/280 | 0.00255 | 16.2 / 42.1 / 114.7 / 125.3 / 145.1 | FAIL / FAIL | cypher-v2t 68%, agent-v2t 32% | 68.0% | 0.912 (31/34) |
+| always_g_v2t | 50 | 39/50 0.780 [0.648, 0.872] | 252/280 | 0.00292 | 18.7 / 24.3 / 46.7 / 53.5 / 65.6 | FAIL / PASS | agent-v2t 100% | - | - |
+| always_c_v2t | 50 | 32/50 0.640 [0.501, 0.759] | 231/280 | 0.00110 | 15.2 / 30.3 / 78.2 / 81.4 / 81.9 | FAIL / FAIL | cypher-v2t 74%, none 26% | - | - |
+
+Latency, 95 % bootstrap intervals (s):
+
+| policy | median | p90 |
+|---|---|---|
+| cascade_v4_iso | 16.2 [11.9, 44.4] | 114.7 [82.8, 125.3] |
+| cascade_v4 | 16.2 [11.9, 44.4] | 114.7 [82.8, 125.3] |
+| always_g_v2t | 18.7 [16.1, 25.5] | 46.7 [32.9, 53.5] |
+| always_c_v2t | 15.2 [11.5, 26.0] | 78.2 [55.4, 81.4] |
+
+### H1000g21p4, scope `headline`
+
+| policy | n | acc@120 (95 % Wilson CI) | all-question acc@120 | $/question | latency s median / mean / p90 / p95 / max | LB-1 / LB-2 | answered by | tier-1 accept share | tier-1 accept precision |
+|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 220 | 200/220 0.909 [0.864, 0.940] | 257/280 | 0.00146 | 10.0 / 22.4 / 49.8 / 89.5 / 151.2 | FAIL / PASS | cypher-v2t 73%, agent-v2t 27% | - | - |
+| cascade_v4 | 220 | 200/220 0.909 [0.864, 0.940] | 257/280 | 0.00150 | 10.0 / 25.9 / 89.0 / 114.6 / 151.2 | FAIL / FAIL | cypher-v2t 73%, agent-v2t 27% | 72.7% | 0.975 (156/160) |
+| always_g_v2t | 220 | 196/220 0.891 [0.843, 0.926] | 254/280 | 0.00192 | 11.7 / 17.0 / 36.4 / 45.2 / 83.3 | FAIL / PASS | agent-v2t 100%, none 0% | - | - |
+| always_c_v2t | 220 | 177/220 0.805 [0.747, 0.852] | 227/280 | 0.00079 | 8.1 / 19.0 / 71.0 / 78.0 / 101.9 | PASS / FAIL | cypher-v2t 86%, none 14% | - | - |
+
+Latency, 95 % bootstrap intervals (s):
+
+| policy | median | p90 |
+|---|---|---|
+| cascade_v4_iso | 10.0 [8.6, 11.5] | 49.8 [43.7, 78.3] |
+| cascade_v4 | 10.0 [8.6, 11.5] | 89.0 [46.8, 100.2] |
+| always_g_v2t | 11.7 [10.3, 14.4] | 36.4 [31.4, 41.1] |
+| always_c_v2t | 8.1 [7.0, 9.5] | 71.0 [43.1, 76.6] |
+
+### H1000g21p4, scope `held-out`
+
+| policy | n | acc@120 (95 % Wilson CI) | all-question acc@120 | $/question | latency s median / mean / p90 / p95 / max | LB-1 / LB-2 | answered by | tier-1 accept share | tier-1 accept precision |
+|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 50 | 42/50 0.840 [0.715, 0.917] | 257/280 | 0.00255 | 23.2 / 45.4 / 119.0 / 129.9 / 151.2 | FAIL / FAIL | cypher-v2t 62%, agent-v2t 38% | - | - |
+| cascade_v4 | 50 | 42/50 0.840 [0.715, 0.917] | 257/280 | 0.00255 | 23.2 / 45.4 / 119.0 / 129.9 / 151.2 | FAIL / FAIL | cypher-v2t 62%, agent-v2t 38% | 62.0% | 1.000 (31/31) |
+| always_g_v2t | 50 | 38/50 0.760 [0.626, 0.857] | 254/280 | 0.00349 | 24.5 / 26.3 / 40.9 / 51.3 / 67.6 | FAIL / PASS | agent-v2t 100% | - | - |
+| always_c_v2t | 50 | 31/50 0.620 [0.482, 0.741] | 227/280 | 0.00119 | 16.1 / 33.4 / 80.0 / 84.4 / 87.8 | FAIL / FAIL | cypher-v2t 70%, none 30% | - | - |
+
+Latency, 95 % bootstrap intervals (s):
+
+| policy | median | p90 |
+|---|---|---|
+| cascade_v4_iso | 23.2 [14.5, 44.5] | 119.0 [89.5, 129.9] |
+| cascade_v4 | 23.2 [14.5, 44.5] | 119.0 [89.5, 129.9] |
+| always_g_v2t | 24.5 [18.7, 31.2] | 40.9 [36.4, 51.3] |
+| always_c_v2t | 16.1 [12.1, 33.5] | 80.0 [77.1, 84.4] |
+
+### H1000g21p5, scope `headline`
+
+| policy | n | acc@120 (95 % Wilson CI) | all-question acc@120 | $/question | latency s median / mean / p90 / p95 / max | LB-1 / LB-2 | answered by | tier-1 accept share | tier-1 accept precision |
+|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 220 | 207/220 0.941 [0.902, 0.965] | 265/280 | 0.00154 | 8.4 / 20.8 / 50.6 / 66.3 / 152.3 | PASS / PASS | cypher-v2t 75%, agent-v2t 25% | - | - |
+| cascade_v4 | 220 | 205/220 0.932 [0.891, 0.958] | 263/280 | 0.00158 | 8.4 / 24.2 / 57.7 / 118.1 / 152.3 | PASS / PASS | cypher-v2t 75%, agent-v2t 25% | 74.5% | 0.994 (163/164) |
+| always_g_v2t | 220 | 201/220 0.914 [0.869, 0.944] | 259/280 | 0.00203 | 14.1 / 19.6 / 40.2 / 52.1 / 85.3 | FAIL / PASS | agent-v2t 100% | - | - |
+| always_c_v2t | 220 | 185/220 0.841 [0.787, 0.883] | 237/280 | 0.00071 | 7.1 / 17.1 / 52.1 / 76.3 / 83.2 | PASS / PASS | cypher-v2t 88%, none 12% | - | - |
+
+Latency, 95 % bootstrap intervals (s):
+
+| policy | median | p90 |
+|---|---|---|
+| cascade_v4_iso | 8.4 [7.4, 10.3] | 50.6 [44.7, 58.2] |
+| cascade_v4 | 8.4 [7.4, 10.3] | 57.7 [47.9, 112.4] |
+| always_g_v2t | 14.1 [12.8, 17.5] | 40.2 [36.3, 44.9] |
+| always_c_v2t | 7.1 [6.4, 7.9] | 52.1 [40.8, 75.5] |
+
+### H1000g21p5, scope `held-out`
+
+| policy | n | acc@120 (95 % Wilson CI) | all-question acc@120 | $/question | latency s median / mean / p90 / p95 / max | LB-1 / LB-2 | answered by | tier-1 accept share | tier-1 accept precision |
+|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 50 | 42/50 0.840 [0.715, 0.917] | 265/280 | 0.00259 | 24.1 / 44.4 / 117.8 / 130.1 / 152.3 | FAIL / FAIL | cypher-v2t 66%, agent-v2t 34% | - | - |
+| cascade_v4 | 50 | 42/50 0.840 [0.715, 0.917] | 263/280 | 0.00259 | 24.1 / 44.4 / 117.8 / 130.1 / 152.3 | FAIL / FAIL | cypher-v2t 66%, agent-v2t 34% | 66.0% | 0.970 (32/33) |
+| always_g_v2t | 50 | 40/50 0.800 [0.670, 0.888] | 259/280 | 0.00353 | 25.5 / 28.4 / 42.9 / 56.8 / 73.3 | FAIL / PASS | agent-v2t 100% | - | - |
+| always_c_v2t | 50 | 33/50 0.660 [0.522, 0.776] | 237/280 | 0.00097 | 14.8 / 32.1 / 78.0 / 80.2 / 83.2 | FAIL / FAIL | cypher-v2t 74%, none 26% | - | - |
+
+Latency, 95 % bootstrap intervals (s):
+
+| policy | median | p90 |
+|---|---|---|
+| cascade_v4_iso | 24.1 [12.6, 48.0] | 117.8 [65.9, 130.1] |
+| cascade_v4 | 24.1 [12.6, 48.0] | 117.8 [65.9, 130.1] |
+| always_g_v2t | 25.5 [21.7, 33.1] | 42.9 [37.4, 56.8] |
+| always_c_v2t | 14.8 [11.1, 37.2] | 78.0 [55.8, 80.2] |
+
+### S100, scope `headline`
+
+| policy | n | acc@120 (95 % Wilson CI) | all-question acc@120 | $/question | latency s median / mean / p90 / p95 / max | LB-1 / LB-2 | answered by | tier-1 accept share | tier-1 accept precision |
+|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 1100 | 1005/1100 0.914 [0.895, 0.932] | 1280/1400 | 0.00140 | 8.2 / 17.1 / 44.5 / 55.3 / 166.5 | PASS / PASS | cypher-v2t 73%, agent-v2t 27%, none 0% | - | - |
+| cascade_v4 | 1100 | 993/1100 0.903 [0.883, 0.922] | 1268/1400 | 0.00140 | 8.2 / 17.2 / 44.6 / 58.1 / 166.5 | PASS / PASS | cypher-v2t 76%, agent-v2t 24%, none 0% | - | - |
+| always_g_v2t | 1100 | 988/1100 0.898 [0.877, 0.919] | 1278/1400 | 0.00177 | 13.1 / 17.5 / 35.6 / 44.8 / 120.2 | FAIL / PASS | agent-v2t 100%, none 0% | - | - |
+| always_c_v2t | 1100 | 892/1100 0.811 [0.785, 0.836] | 1141/1400 | 0.00077 | 7.0 / 11.4 / 21.6 / 42.8 / 122.2 | PASS / PASS | cypher-v2t 92%, none 8% | - | - |
+
+Latency, 95 % bootstrap intervals (s):
+
+| policy | median | p90 |
+|---|---|---|
+| cascade_v4_iso | 8.2 [7.6, 8.6] | 44.5 [41.8, 47.8] |
+| cascade_v4 | 8.2 [7.6, 8.6] | 44.6 [41.7, 47.6] |
+| always_g_v2t | 13.1 [12.2, 13.8] | 35.6 [33.3, 37.7] |
+| always_c_v2t | 7.0 [6.7, 7.2] | 21.6 [17.5, 25.2] |
+
+### S100, scope `held-out`
+
+| policy | n | acc@120 (95 % Wilson CI) | all-question acc@120 | $/question | latency s median / mean / p90 / p95 / max | LB-1 / LB-2 | answered by | tier-1 accept share | tier-1 accept precision |
+|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 250 | 198/250 0.792 [0.740, 0.844] | 1280/1400 | 0.00246 | 21.6 / 32.8 / 69.4 / 91.2 / 166.5 | FAIL / FAIL | cypher-v2t 63%, agent-v2t 37% | - | - |
+| cascade_v4 | 250 | 198/250 0.792 [0.740, 0.844] | 1268/1400 | 0.00246 | 21.6 / 32.8 / 69.4 / 91.2 / 166.5 | FAIL / FAIL | cypher-v2t 63%, agent-v2t 37% | - | - |
+| always_g_v2t | 250 | 193/250 0.772 [0.716, 0.828] | 1278/1400 | 0.00309 | 22.0 / 25.2 / 43.8 / 51.2 / 78.9 | FAIL / PASS | agent-v2t 100% | - | - |
+| always_c_v2t | 250 | 162/250 0.648 [0.588, 0.708] | 1141/1400 | 0.00110 | 13.1 / 21.6 / 49.5 / 65.1 / 122.2 | FAIL / PASS | cypher-v2t 78%, none 22% | - | - |
+
+Latency, 95 % bootstrap intervals (s):
+
+| policy | median | p90 |
+|---|---|---|
+| cascade_v4_iso | 21.6 [15.4, 28.3] | 69.4 [59.3, 84.6] |
+| cascade_v4 | 21.6 [15.4, 28.3] | 69.4 [59.3, 84.6] |
+| always_g_v2t | 22.0 [20.3, 24.6] | 43.8 [39.2, 47.6] |
+| always_c_v2t | 13.1 [12.0, 14.1] | 49.5 [47.3, 54.5] |
+
+### S1000, scope `headline`
+
+| policy | n | acc@120 (95 % Wilson CI) | all-question acc@120 | $/question | latency s median / mean / p90 / p95 / max | LB-1 / LB-2 | answered by | tier-1 accept share | tier-1 accept precision |
+|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 1100 | 999/1100 0.908 [0.885, 0.932] | 1289/1400 | 0.00155 | 9.3 / 22.6 / 51.7 / 90.7 / 186.2 | PASS / PASS | cypher-v2t 73%, agent-v2t 26%, none 0% | - | - |
+| cascade_v4 | 1100 | 994/1100 0.904 [0.881, 0.926] | 1284/1400 | 0.00158 | 9.3 / 25.9 / 82.7 / 118.8 / 186.2 | PASS / FAIL | cypher-v2t 74%, agent-v2t 26%, none 0% | - | - |
+| always_g_v2t | 1100 | 988/1100 0.898 [0.875, 0.919] | 1280/1400 | 0.00198 | 15.1 / 20.7 / 44.7 / 56.9 / 120.2 | FAIL / PASS | agent-v2t 100%, none 0% | - | - |
+| always_c_v2t | 1100 | 892/1100 0.811 [0.782, 0.840] | 1147/1400 | 0.00075 | 7.8 / 18.1 / 67.7 / 76.7 / 125.2 | PASS / FAIL | cypher-v2t 88%, none 12% | - | - |
+
+Latency, 95 % bootstrap intervals (s):
+
+| policy | median | p90 |
+|---|---|---|
+| cascade_v4_iso | 9.3 [8.8, 10.0] | 51.7 [48.3, 61.1] |
+| cascade_v4 | 9.3 [8.8, 10.0] | 82.7 [61.6, 91.7] |
+| always_g_v2t | 15.1 [14.0, 16.4] | 44.7 [41.1, 48.8] |
+| always_c_v2t | 7.8 [7.3, 8.2] | 67.7 [48.3, 72.7] |
+
+### S1000, scope `held-out`
+
+| policy | n | acc@120 (95 % Wilson CI) | all-question acc@120 | $/question | latency s median / mean / p90 / p95 / max | LB-1 / LB-2 | answered by | tier-1 accept share | tier-1 accept precision |
+|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 250 | 196/250 0.784 [0.716, 0.844] | 1289/1400 | 0.00262 | 21.1 / 45.8 / 120.6 / 145.1 / 186.2 | FAIL / FAIL | cypher-v2t 65%, agent-v2t 35% | - | - |
+| cascade_v4 | 250 | 196/250 0.784 [0.716, 0.844] | 1284/1400 | 0.00262 | 21.1 / 45.8 / 120.6 / 145.1 / 186.2 | FAIL / FAIL | cypher-v2t 65%, agent-v2t 35% | - | - |
+| always_g_v2t | 250 | 195/250 0.780 [0.724, 0.832] | 1280/1400 | 0.00352 | 24.7 / 30.1 / 56.8 / 70.3 / 113.4 | FAIL / PASS | agent-v2t 100% | - | - |
+| always_c_v2t | 250 | 156/250 0.624 [0.560, 0.684] | 1147/1400 | 0.00107 | 14.9 / 32.0 / 79.0 / 81.3 / 120.1 | FAIL / FAIL | cypher-v2t 74%, none 26% | - | - |
+
+Latency, 95 % bootstrap intervals (s):
+
+| policy | median | p90 |
+|---|---|---|
+| cascade_v4_iso | 21.1 [14.9, 38.9] | 120.6 [112.0, 128.7] |
+| cascade_v4 | 21.1 [14.9, 38.9] | 120.6 [112.0, 128.7] |
+| always_g_v2t | 24.7 [22.1, 27.4] | 56.8 [49.9, 65.2] |
+| always_c_v2t | 14.9 [13.5, 19.5] | 79.0 [77.4, 80.0] |
+
+## T2 Splits
+
+### H100g21p1
+
+| policy | dev-old | dev-new | held-out | held-out-wording |
+|---|---|---|---|---|
+| cascade_v4_iso | 106/110 0.964 [0.910, 0.986] | 57/60 0.950 [0.863, 0.983] | 40/50 0.800 [0.670, 0.888] | 42/45 0.933 [0.821, 0.977] |
+| cascade_v4 | 102/110 0.927 [0.863, 0.963] | 57/60 0.950 [0.863, 0.983] | 40/50 0.800 [0.670, 0.888] | 42/45 0.933 [0.821, 0.977] |
+| always_g_v2t | 107/110 0.973 [0.923, 0.991] | 56/60 0.933 [0.841, 0.974] | 40/50 0.800 [0.670, 0.888] | 44/45 0.978 [0.884, 0.996] |
+| always_c_v2t | 91/110 0.827 [0.746, 0.887] | 52/60 0.867 [0.758, 0.931] | 33/50 0.660 [0.522, 0.776] | 33/45 0.733 [0.590, 0.840] |
+
+### H100g21p2
+
+| policy | dev-old | dev-new | held-out | held-out-wording |
+|---|---|---|---|---|
+| cascade_v4_iso | 101/110 0.918 [0.852, 0.956] | 56/60 0.933 [0.841, 0.974] | 41/50 0.820 [0.692, 0.902] | 40/45 0.889 [0.765, 0.952] |
+| cascade_v4 | 100/110 0.909 [0.841, 0.950] | 56/60 0.933 [0.841, 0.974] | 41/50 0.820 [0.692, 0.902] | 40/45 0.889 [0.765, 0.952] |
+| always_g_v2t | 100/110 0.909 [0.841, 0.950] | 57/60 0.950 [0.863, 0.983] | 39/50 0.780 [0.648, 0.872] | 42/45 0.933 [0.821, 0.977] |
+| always_c_v2t | 93/110 0.845 [0.766, 0.901] | 52/60 0.867 [0.758, 0.931] | 34/50 0.680 [0.542, 0.792] | 37/45 0.822 [0.687, 0.907] |
+
+### H100g21p3
+
+| policy | dev-old | dev-new | held-out | held-out-wording |
+|---|---|---|---|---|
+| cascade_v4_iso | 106/110 0.964 [0.910, 0.986] | 59/60 0.983 [0.911, 0.997] | 39/50 0.780 [0.648, 0.872] | 40/45 0.889 [0.765, 0.952] |
+| cascade_v4 | 104/110 0.945 [0.886, 0.975] | 59/60 0.983 [0.911, 0.997] | 39/50 0.780 [0.648, 0.872] | 40/45 0.889 [0.765, 0.952] |
+| always_g_v2t | 103/110 0.936 [0.874, 0.969] | 55/60 0.917 [0.819, 0.964] | 38/50 0.760 [0.626, 0.857] | 44/45 0.978 [0.884, 0.996] |
+| always_c_v2t | 96/110 0.873 [0.798, 0.923] | 54/60 0.900 [0.799, 0.953] | 33/50 0.660 [0.522, 0.776] | 34/45 0.756 [0.613, 0.858] |
+
+### H100g21p4
+
+| policy | dev-old | dev-new | held-out | held-out-wording |
+|---|---|---|---|---|
+| cascade_v4_iso | 102/110 0.927 [0.863, 0.963] | 59/60 0.983 [0.911, 0.997] | 39/50 0.780 [0.648, 0.872] | 39/45 0.867 [0.738, 0.937] |
+| cascade_v4 | 100/110 0.909 [0.841, 0.950] | 59/60 0.983 [0.911, 0.997] | 39/50 0.780 [0.648, 0.872] | 39/45 0.867 [0.738, 0.937] |
+| always_g_v2t | 104/110 0.945 [0.886, 0.975] | 52/60 0.867 [0.758, 0.931] | 39/50 0.780 [0.648, 0.872] | 42/45 0.933 [0.821, 0.977] |
+| always_c_v2t | 91/110 0.827 [0.746, 0.887] | 56/60 0.933 [0.841, 0.974] | 31/50 0.620 [0.482, 0.741] | 36/45 0.800 [0.662, 0.891] |
+
+### H100g21p5
+
+| policy | dev-old | dev-new | held-out | held-out-wording |
+|---|---|---|---|---|
+| cascade_v4_iso | 105/110 0.955 [0.898, 0.980] | 56/60 0.933 [0.841, 0.974] | 39/50 0.780 [0.648, 0.872] | 39/45 0.867 [0.738, 0.937] |
+| cascade_v4 | 102/110 0.927 [0.863, 0.963] | 56/60 0.933 [0.841, 0.974] | 39/50 0.780 [0.648, 0.872] | 39/45 0.867 [0.738, 0.937] |
+| always_g_v2t | 107/110 0.973 [0.923, 0.991] | 54/60 0.900 [0.799, 0.953] | 37/50 0.740 [0.604, 0.841] | 43/45 0.956 [0.852, 0.988] |
+| always_c_v2t | 94/110 0.855 [0.777, 0.908] | 51/60 0.850 [0.739, 0.919] | 31/50 0.620 [0.482, 0.741] | 34/45 0.756 [0.613, 0.858] |
+
+### H1000g21p1
+
+| policy | dev-old | dev-new | held-out | held-out-wording |
+|---|---|---|---|---|
+| cascade_v4_iso | 105/110 0.955 [0.898, 0.980] | 56/60 0.933 [0.841, 0.974] | 38/50 0.760 [0.626, 0.857] | 44/45 0.978 [0.884, 0.996] |
+| cascade_v4 | 104/110 0.945 [0.886, 0.975] | 56/60 0.933 [0.841, 0.974] | 38/50 0.760 [0.626, 0.857] | 44/45 0.978 [0.884, 0.996] |
+| always_g_v2t | 106/110 0.964 [0.910, 0.986] | 53/60 0.883 [0.778, 0.942] | 38/50 0.760 [0.626, 0.857] | 45/45 1.000 [0.921, 1.000] |
+| always_c_v2t | 93/110 0.845 [0.766, 0.901] | 50/60 0.833 [0.720, 0.907] | 31/50 0.620 [0.482, 0.741] | 37/45 0.822 [0.687, 0.907] |
+
+### H1000g21p2
+
+| policy | dev-old | dev-new | held-out | held-out-wording |
+|---|---|---|---|---|
+| cascade_v4_iso | 103/110 0.936 [0.874, 0.969] | 58/60 0.967 [0.886, 0.991] | 37/50 0.740 [0.604, 0.841] | 43/45 0.956 [0.852, 0.988] |
+| cascade_v4 | 101/110 0.918 [0.852, 0.956] | 58/60 0.967 [0.886, 0.991] | 37/50 0.740 [0.604, 0.841] | 43/45 0.956 [0.852, 0.988] |
+| always_g_v2t | 104/110 0.945 [0.886, 0.975] | 57/60 0.950 [0.863, 0.983] | 40/50 0.800 [0.670, 0.888] | 43/45 0.956 [0.852, 0.988] |
+| always_c_v2t | 93/110 0.845 [0.766, 0.901] | 53/60 0.883 [0.778, 0.942] | 29/50 0.580 [0.442, 0.706] | 36/45 0.800 [0.662, 0.891] |
+
+### H1000g21p3
+
+| policy | dev-old | dev-new | held-out | held-out-wording |
+|---|---|---|---|---|
+| cascade_v4_iso | 99/110 0.900 [0.830, 0.943] | 59/60 0.983 [0.911, 0.997] | 37/50 0.740 [0.604, 0.841] | 43/45 0.956 [0.852, 0.988] |
+| cascade_v4 | 99/110 0.900 [0.830, 0.943] | 59/60 0.983 [0.911, 0.997] | 37/50 0.740 [0.604, 0.841] | 43/45 0.956 [0.852, 0.988] |
+| always_g_v2t | 100/110 0.909 [0.841, 0.950] | 54/60 0.900 [0.799, 0.953] | 39/50 0.780 [0.648, 0.872] | 44/45 0.978 [0.884, 0.996] |
+| always_c_v2t | 93/110 0.845 [0.766, 0.901] | 56/60 0.933 [0.841, 0.974] | 32/50 0.640 [0.501, 0.759] | 35/45 0.778 [0.637, 0.875] |
+
+### H1000g21p4
+
+| policy | dev-old | dev-new | held-out | held-out-wording |
+|---|---|---|---|---|
+| cascade_v4_iso | 102/110 0.927 [0.863, 0.963] | 56/60 0.933 [0.841, 0.974] | 42/50 0.840 [0.715, 0.917] | 42/45 0.933 [0.821, 0.977] |
+| cascade_v4 | 102/110 0.927 [0.863, 0.963] | 56/60 0.933 [0.841, 0.974] | 42/50 0.840 [0.715, 0.917] | 42/45 0.933 [0.821, 0.977] |
+| always_g_v2t | 103/110 0.936 [0.874, 0.969] | 55/60 0.917 [0.819, 0.964] | 38/50 0.760 [0.626, 0.857] | 43/45 0.956 [0.852, 0.988] |
+| always_c_v2t | 97/110 0.882 [0.808, 0.930] | 49/60 0.817 [0.701, 0.894] | 31/50 0.620 [0.482, 0.741] | 35/45 0.778 [0.637, 0.875] |
+
+### H1000g21p5
+
+| policy | dev-old | dev-new | held-out | held-out-wording |
+|---|---|---|---|---|
+| cascade_v4_iso | 106/110 0.964 [0.910, 0.986] | 59/60 0.983 [0.911, 0.997] | 42/50 0.840 [0.715, 0.917] | 43/45 0.956 [0.852, 0.988] |
+| cascade_v4 | 104/110 0.945 [0.886, 0.975] | 59/60 0.983 [0.911, 0.997] | 42/50 0.840 [0.715, 0.917] | 43/45 0.956 [0.852, 0.988] |
+| always_g_v2t | 105/110 0.955 [0.898, 0.980] | 56/60 0.933 [0.841, 0.974] | 40/50 0.800 [0.670, 0.888] | 43/45 0.956 [0.852, 0.988] |
+| always_c_v2t | 95/110 0.864 [0.787, 0.916] | 57/60 0.950 [0.863, 0.983] | 33/50 0.660 [0.522, 0.776] | 37/45 0.822 [0.687, 0.907] |
+
+### Generalisation gap
+
+| corpus | policy | dev | held-out | gap dev - held-out (unpaired 95 % CI) |
+|---|---|---|---|---|
+| H100g21p1 | cascade_v4_iso | 163/170 | 40/50 | +0.159 [+0.051, +0.279] |
+| H100g21p1 | cascade_v4 | 159/170 | 40/50 | +0.135 [+0.024, +0.253] |
+| H100g21p1 | always_g_v2t | 163/170 | 40/50 | +0.159 [+0.053, +0.279] |
+| H100g21p1 | always_c_v2t | 143/170 | 33/50 | +0.181 [+0.042, +0.325] |
+| H100g21p2 | cascade_v4_iso | 157/170 | 41/50 | +0.104 [-0.002, +0.222] |
+| H100g21p2 | cascade_v4 | 156/170 | 41/50 | +0.098 [-0.008, +0.218] |
+| H100g21p2 | always_g_v2t | 157/170 | 39/50 | +0.144 [+0.029, +0.273] |
+| H100g21p2 | always_c_v2t | 145/170 | 34/50 | +0.173 [+0.035, +0.311] |
+| H100g21p3 | cascade_v4_iso | 165/170 | 39/50 | +0.191 [+0.079, +0.316] |
+| H100g21p3 | cascade_v4 | 163/170 | 39/50 | +0.179 [+0.067, +0.305] |
+| H100g21p3 | always_g_v2t | 158/170 | 38/50 | +0.169 [+0.052, +0.304] |
+| H100g21p3 | always_c_v2t | 150/170 | 33/50 | +0.222 [+0.087, +0.365] |
+| H100g21p4 | cascade_v4_iso | 161/170 | 39/50 | +0.167 [+0.052, +0.293] |
+| H100g21p4 | cascade_v4 | 159/170 | 39/50 | +0.155 [+0.038, +0.281] |
+| H100g21p4 | always_g_v2t | 156/170 | 39/50 | +0.138 [+0.018, +0.264] |
+| H100g21p4 | always_c_v2t | 147/170 | 31/50 | +0.245 [+0.098, +0.394] |
+| H100g21p5 | cascade_v4_iso | 161/170 | 39/50 | +0.167 [+0.055, +0.293] |
+| H100g21p5 | cascade_v4 | 158/170 | 39/50 | +0.149 [+0.038, +0.275] |
+| H100g21p5 | always_g_v2t | 161/170 | 37/50 | +0.207 [+0.087, +0.339] |
+| H100g21p5 | always_c_v2t | 145/170 | 31/50 | +0.233 [+0.084, +0.379] |
+| H1000g21p1 | cascade_v4_iso | 161/170 | 38/50 | +0.187 [+0.069, +0.313] |
+| H1000g21p1 | cascade_v4 | 160/170 | 38/50 | +0.181 [+0.064, +0.307] |
+| H1000g21p1 | always_g_v2t | 159/170 | 38/50 | +0.175 [+0.055, +0.299] |
+| H1000g21p1 | always_c_v2t | 143/170 | 31/50 | +0.221 [+0.078, +0.369] |
+| H1000g21p2 | cascade_v4_iso | 161/170 | 37/50 | +0.207 [+0.081, +0.339] |
+| H1000g21p2 | cascade_v4 | 159/170 | 37/50 | +0.195 [+0.072, +0.327] |
+| H1000g21p2 | always_g_v2t | 161/170 | 40/50 | +0.147 [+0.035, +0.267] |
+| H1000g21p2 | always_c_v2t | 146/170 | 29/50 | +0.279 [+0.133, +0.429] |
+| H1000g21p3 | cascade_v4_iso | 158/170 | 37/50 | +0.189 [+0.069, +0.321] |
+| H1000g21p3 | cascade_v4 | 158/170 | 37/50 | +0.189 [+0.069, +0.321] |
+| H1000g21p3 | always_g_v2t | 154/170 | 39/50 | +0.126 [+0.011, +0.258] |
+| H1000g21p3 | always_c_v2t | 149/170 | 32/50 | +0.236 [+0.100, +0.382] |
+| H1000g21p4 | cascade_v4_iso | 158/170 | 42/50 | +0.089 [-0.016, +0.201] |
+| H1000g21p4 | cascade_v4 | 158/170 | 42/50 | +0.089 [-0.016, +0.201] |
+| H1000g21p4 | always_g_v2t | 158/170 | 38/50 | +0.169 [+0.049, +0.299] |
+| H1000g21p4 | always_c_v2t | 146/170 | 31/50 | +0.239 [+0.092, +0.389] |
+| H1000g21p5 | cascade_v4_iso | 165/170 | 42/50 | +0.131 [+0.033, +0.242] |
+| H1000g21p5 | cascade_v4 | 163/170 | 42/50 | +0.119 [+0.021, +0.231] |
+| H1000g21p5 | always_g_v2t | 161/170 | 40/50 | +0.147 [+0.035, +0.271] |
+| H1000g21p5 | always_c_v2t | 152/170 | 33/50 | +0.234 [+0.096, +0.378] |
+
+## T3 Scale
+
+S100 has 100 sheets, S1000 has 1001; e = ln(cost ratio) / ln(sheet ratio).
+
+| scope | policy | acc@C S100 | acc@C S1000 | S1000 - S100 (unpaired CI) | $/question | cost elasticity e (95 % CI) | latency ratio median / p90 |
+|---|---|---|---|---|---|---|---|
+| headline | cascade_v4_iso | 0.914 [0.895, 0.932] | 0.908 [0.885, 0.932] | -0.005 [-0.035, +0.025] | 0.00140 -> 0.00155 | 0.044 [-0.016, 0.103] | 1.13 / 1.16 |
+| headline | cascade_v4 | 0.903 [0.883, 0.922] | 0.904 [0.881, 0.926] | +0.001 [-0.029, +0.030] | 0.00140 -> 0.00158 | 0.054 [-0.006, 0.113] | 1.13 / 1.85 |
+| headline | always_g_v2t | 0.898 [0.877, 0.919] | 0.898 [0.875, 0.919] | +0.000 [-0.030, +0.030] | 0.00177 -> 0.00198 | 0.048 [-0.007, 0.102] | 1.16 / 1.25 |
+| headline | always_c_v2t | 0.811 [0.785, 0.836] | 0.811 [0.782, 0.840] | +0.000 [-0.037, +0.038] | 0.00077 -> 0.00075 | -0.014 [-0.060, 0.031] | 1.12 / 3.13 |
+| held-out | cascade_v4_iso | 0.792 [0.740, 0.844] | 0.784 [0.716, 0.844] | -0.008 [-0.092, +0.076] | 0.00246 -> 0.00262 | 0.027 [-0.068, 0.125] | 0.97 / 1.74 |
+| held-out | cascade_v4 | 0.792 [0.740, 0.844] | 0.784 [0.716, 0.844] | -0.008 [-0.092, +0.076] | 0.00246 -> 0.00262 | 0.027 [-0.068, 0.125] | 0.97 / 1.74 |
+| held-out | always_g_v2t | 0.772 [0.716, 0.828] | 0.780 [0.724, 0.832] | +0.008 [-0.068, +0.084] | 0.00309 -> 0.00352 | 0.057 [-0.030, 0.155] | 1.12 / 1.30 |
+| held-out | always_c_v2t | 0.648 [0.588, 0.708] | 0.624 [0.560, 0.684] | -0.024 [-0.112, +0.064] | 0.00110 -> 0.00107 | -0.012 [-0.092, 0.069] | 1.13 / 1.60 |
+
+### Tier 1 by k bin (headline questions)
+
+| corpus | policy | k bin | n | tier-1 accept share | tier-1 accept precision |
+|---|---|---|---|---|---|
+| H100g21p1 | cascade_v4 | k=0 | 92 | 84.8% | 0.949 (74/78) |
+| H100g21p1 | cascade_v4 | k=1-2 | 66 | 77.3% | 0.902 (46/51) |
+| H100g21p1 | cascade_v4 | k>=3 | 42 | 83.3% | 0.971 (34/35) |
+| H100g21p1 | cascade_v4 | unanswerable | 20 | 0.0% | - |
+| H100g21p2 | cascade_v4 | k=0 | 91 | 82.4% | 0.973 (73/75) |
+| H100g21p2 | cascade_v4 | k=1-2 | 70 | 81.4% | 0.877 (50/57) |
+| H100g21p2 | cascade_v4 | k>=3 | 39 | 87.2% | 0.941 (32/34) |
+| H100g21p2 | cascade_v4 | unanswerable | 20 | 0.0% | - |
+| H100g21p3 | cascade_v4 | k=0 | 93 | 83.9% | 0.987 (77/78) |
+| H100g21p3 | cascade_v4 | k=1-2 | 70 | 84.3% | 0.915 (54/59) |
+| H100g21p3 | cascade_v4 | k>=3 | 37 | 86.5% | 1.000 (32/32) |
+| H100g21p3 | cascade_v4 | unanswerable | 20 | 0.0% | - |
+| H100g21p4 | cascade_v4 | k=0 | 91 | 86.8% | 0.949 (75/79) |
+| H100g21p4 | cascade_v4 | k=1-2 | 68 | 77.9% | 0.925 (49/53) |
+| H100g21p4 | cascade_v4 | k>=3 | 41 | 85.4% | 0.943 (33/35) |
+| H100g21p4 | cascade_v4 | unanswerable | 20 | 0.0% | - |
+| H100g21p5 | cascade_v4 | k=0 | 92 | 85.9% | 0.949 (75/79) |
+| H100g21p5 | cascade_v4 | k=1-2 | 69 | 78.3% | 0.907 (49/54) |
+| H100g21p5 | cascade_v4 | k>=3 | 39 | 79.5% | 0.935 (29/31) |
+| H100g21p5 | cascade_v4 | unanswerable | 20 | 0.0% | - |
+| H1000g21p1 | cascade_v4 | k=0 | 91 | 83.5% | 0.961 (73/76) |
+| H1000g21p1 | cascade_v4 | k=1-2 | 66 | 69.7% | 0.957 (44/46) |
+| H1000g21p1 | cascade_v4 | k>=3 | 43 | 86.0% | 0.946 (35/37) |
+| H1000g21p1 | cascade_v4 | unanswerable | 20 | 0.0% | - |
+| H1000g21p2 | cascade_v4 | k=0 | 91 | 83.5% | 0.987 (75/76) |
+| H1000g21p2 | cascade_v4 | k=1-2 | 66 | 71.2% | 0.957 (45/47) |
+| H1000g21p2 | cascade_v4 | k>=3 | 43 | 86.0% | 0.919 (34/37) |
+| H1000g21p2 | cascade_v4 | unanswerable | 20 | 0.0% | - |
+| H1000g21p3 | cascade_v4 | k=0 | 91 | 89.0% | 0.975 (79/81) |
+| H1000g21p3 | cascade_v4 | k=1-2 | 66 | 77.3% | 0.961 (49/51) |
+| H1000g21p3 | cascade_v4 | k>=3 | 43 | 81.4% | 0.914 (32/35) |
+| H1000g21p3 | cascade_v4 | unanswerable | 20 | 0.0% | - |
+| H1000g21p4 | cascade_v4 | k=0 | 91 | 85.7% | 0.987 (77/78) |
+| H1000g21p4 | cascade_v4 | k=1-2 | 63 | 77.8% | 0.980 (48/49) |
+| H1000g21p4 | cascade_v4 | k>=3 | 46 | 71.7% | 0.939 (31/33) |
+| H1000g21p4 | cascade_v4 | unanswerable | 20 | 0.0% | - |
+| H1000g21p5 | cascade_v4 | k=0 | 90 | 88.9% | 0.988 (79/80) |
+| H1000g21p5 | cascade_v4 | k=1-2 | 64 | 75.0% | 1.000 (48/48) |
+| H1000g21p5 | cascade_v4 | k>=3 | 46 | 78.3% | 1.000 (36/36) |
+| H1000g21p5 | cascade_v4 | unanswerable | 20 | 0.0% | - |
+
+## Paired bootstrap sections (K1, K2, Q5; mean difference [95 % CI])
+
+| claim | corpus | scope | policy - reference | acc@C | $/question | latency s |
+|---|---|---|---|---|---|---|
+| K1 | H100g21p1 | headline | cascade_v4_iso - always_g_v2t | +0.000 [-0.027, +0.023] | -0.00038 [-0.00062, -0.00016] | -0.07 [-2.31, +2.26] |
+| K2 | H100g21p1 | headline | cascade_v4 - random escalation | +0.074 [+0.046, +0.106] | +0.00017 [-0.00001, +0.00036] | +1.42 [+0.03, +2.93] |
+| Q5 | H100g21p1 | headline | always_g_v2t - always_c_v2t | +0.123 [+0.073, +0.173] | +0.00099 [+0.00073, +0.00125] | +5.57 [+3.43, +7.71] |
+| K1 | H100g21p2 | headline | cascade_v4_iso - always_g_v2t | +0.009 [-0.014, +0.032] | -0.00036 [-0.00060, -0.00014] | +0.39 [-1.63, +2.56] |
+| K2 | H100g21p2 | headline | cascade_v4 - random escalation | +0.061 [+0.033, +0.092] | +0.00017 [-0.00002, +0.00038] | +1.10 [-0.23, +2.49] |
+| Q5 | H100g21p2 | headline | always_g_v2t - always_c_v2t | +0.077 [+0.032, +0.123] | +0.00101 [+0.00073, +0.00130] | +5.46 [+3.41, +7.39] |
+| K1 | H100g21p3 | headline | cascade_v4_iso - always_g_v2t | +0.036 [+0.009, +0.064] | -0.00031 [-0.00053, -0.00010] | -1.57 [-3.71, +0.61] |
+| K2 | H100g21p3 | headline | cascade_v4 - random escalation | +0.072 [+0.044, +0.102] | +0.00024 [+0.00006, +0.00043] | +1.63 [+0.14, +3.13] |
+| Q5 | H100g21p3 | headline | always_g_v2t - always_c_v2t | +0.059 [+0.009, +0.109] | +0.00093 [+0.00069, +0.00118] | +7.06 [+5.18, +8.97] |
+| K1 | H100g21p4 | headline | cascade_v4_iso - always_g_v2t | +0.023 [-0.009, +0.059] | -0.00049 [-0.00081, -0.00022] | -1.03 [-3.73, +1.69] |
+| K2 | H100g21p4 | headline | cascade_v4 - random escalation | +0.072 [+0.043, +0.104] | +0.00015 [-0.00003, +0.00034] | +1.72 [+0.16, +3.36] |
+| Q5 | H100g21p4 | headline | always_g_v2t - always_c_v2t | +0.077 [+0.023, +0.132] | +0.00105 [+0.00076, +0.00136] | +6.94 [+4.40, +9.40] |
+| K1 | H100g21p5 | headline | cascade_v4_iso - always_g_v2t | +0.009 [-0.023, +0.041] | -0.00030 [-0.00060, -0.00001] | +0.12 [-2.40, +2.86] |
+| K2 | H100g21p5 | headline | cascade_v4 - random escalation | +0.071 [+0.042, +0.101] | +0.00022 [+0.00004, +0.00042] | +1.68 [+0.19, +3.22] |
+| Q5 | H100g21p5 | headline | always_g_v2t - always_c_v2t | +0.100 [+0.050, +0.155] | +0.00100 [+0.00068, +0.00131] | +5.76 [+3.22, +8.07] |
+| K1 | S100 | headline | cascade_v4_iso - always_g_v2t | +0.015 [-0.001, +0.034] | -0.00037 [-0.00050, -0.00024] | -0.43 [-1.67, +0.79] |
+| K2 | S100 | headline | cascade_v4 - random escalation | +0.070 [+0.056, +0.084] | +0.00019 [+0.00010, +0.00028] | +1.51 [+0.85, +2.21] |
+| Q5 | S100 | headline | always_g_v2t - always_c_v2t | +0.087 [+0.058, +0.116] | +0.00100 [+0.00087, +0.00113] | +6.16 [+5.02, +7.29] |
+| K1 | H100g21p1 | held-out | cascade_v4_iso - always_g_v2t | +0.000 [+0.000, +0.000] | -0.00054 [-0.00117, +0.00004] | +8.17 [+1.18, +15.55] |
+| K2 | H100g21p1 | held-out | cascade_v4 - random escalation | +0.087 [+0.037, +0.150] | +0.00011 [-0.00032, +0.00056] | +1.76 [-1.82, +5.40] |
+| Q5 | H100g21p1 | held-out | always_g_v2t - always_c_v2t | +0.140 [+0.060, +0.240] | +0.00165 [+0.00112, +0.00218] | +2.47 [-4.43, +8.90] |
+| K1 | H100g21p2 | held-out | cascade_v4_iso - always_g_v2t | +0.040 [+0.000, +0.100] | -0.00080 [-0.00153, -0.00015] | +6.76 [-0.64, +14.76] |
+| K2 | H100g21p2 | held-out | cascade_v4 - random escalation | +0.105 [+0.046, +0.172] | +0.00022 [-0.00038, +0.00090] | +1.13 [-2.76, +5.00] |
+| Q5 | H100g21p2 | held-out | always_g_v2t - always_c_v2t | +0.100 [-0.020, +0.220] | +0.00220 [+0.00147, +0.00301] | +3.50 [-3.12, +9.50] |
+| K1 | H100g21p3 | held-out | cascade_v4_iso - always_g_v2t | +0.020 [+0.000, +0.060] | -0.00039 [-0.00106, +0.00019] | +6.03 [-1.36, +13.87] |
+| K2 | H100g21p3 | held-out | cascade_v4 - random escalation | +0.083 [+0.033, +0.144] | +0.00045 [-0.00013, +0.00104] | +2.91 [-1.49, +7.46] |
+| Q5 | H100g21p3 | held-out | always_g_v2t - always_c_v2t | +0.100 [+0.000, +0.200] | +0.00202 [+0.00139, +0.00272] | +7.34 [+1.26, +13.21] |
+| K1 | H100g21p4 | held-out | cascade_v4_iso - always_g_v2t | +0.000 [-0.080, +0.080] | -0.00076 [-0.00149, -0.00007] | +8.63 [+0.27, +17.15] |
+| K2 | H100g21p4 | held-out | cascade_v4 - random escalation | +0.099 [+0.032, +0.169] | +0.00012 [-0.00038, +0.00067] | +1.11 [-2.80, +5.56] |
+| Q5 | H100g21p4 | held-out | always_g_v2t - always_c_v2t | +0.160 [+0.040, +0.300] | +0.00204 [+0.00144, +0.00271] | +2.26 [-4.87, +9.25] |
+| K1 | H100g21p5 | held-out | cascade_v4_iso - always_g_v2t | +0.040 [-0.040, +0.120] | -0.00063 [-0.00153, +0.00029] | +8.14 [+0.57, +16.54] |
+| K2 | H100g21p5 | held-out | cascade_v4 - random escalation | +0.118 [+0.053, +0.193] | +0.00021 [-0.00034, +0.00075] | +1.76 [-2.03, +5.73] |
+| Q5 | H100g21p5 | held-out | always_g_v2t - always_c_v2t | +0.120 [+0.000, +0.240] | +0.00204 [+0.00127, +0.00279] | +2.25 [-4.93, +9.07] |
+| K1 | S100 | held-out | cascade_v4_iso - always_g_v2t | +0.020 [-0.008, +0.052] | -0.00062 [-0.00097, -0.00029] | +7.55 [+4.07, +11.08] |
+| K2 | S100 | held-out | cascade_v4 - random escalation | +0.098 [+0.069, +0.130] | +0.00022 [-0.00003, +0.00049] | +1.73 [-0.14, +3.59] |
+| Q5 | S100 | held-out | always_g_v2t - always_c_v2t | +0.124 [+0.072, +0.180] | +0.00199 [+0.00166, +0.00234] | +3.57 [+0.15, +6.89] |
+| K1 | H1000g21p1 | headline | cascade_v4_iso - always_g_v2t | +0.009 [-0.023, +0.041] | -0.00035 [-0.00064, -0.00007] | +7.03 [+3.90, +10.48] |
+| K2 | H1000g21p1 | headline | cascade_v4 - random escalation | +0.085 [+0.055, +0.118] | +0.00019 [-0.00000, +0.00039] | +1.64 [+0.36, +3.00] |
+| Q5 | H1000g21p1 | headline | always_g_v2t - always_c_v2t | +0.105 [+0.055, +0.159] | +0.00103 [+0.00071, +0.00136] | -4.46 [-7.54, -1.51] |
+| K1 | H1000g21p2 | headline | cascade_v4_iso - always_g_v2t | -0.014 [-0.041, +0.014] | -0.00050 [-0.00081, -0.00021] | -7.91 [-11.73, -3.77] |
+| K2 | H1000g21p2 | headline | cascade_v4 - random escalation | +0.067 [+0.039, +0.097] | +0.00040 [+0.00014, +0.00070] | +3.07 [+0.29, +6.07] |
+| Q5 | H1000g21p2 | headline | always_g_v2t - always_c_v2t | +0.118 [+0.068, +0.168] | +0.00146 [+0.00111, +0.00184] | +17.04 [+14.02, +20.01] |
+| K1 | H1000g21p3 | headline | cascade_v4_iso - always_g_v2t | +0.009 [-0.023, +0.041] | -0.00032 [-0.00058, -0.00009] | +3.79 [+1.04, +6.68] |
+| K2 | H1000g21p3 | headline | cascade_v4 - random escalation | +0.051 [+0.027, +0.077] | +0.00045 [+0.00022, +0.00070] | +2.62 [+0.95, +4.34] |
+| Q5 | H1000g21p3 | headline | always_g_v2t - always_c_v2t | +0.055 [+0.009, +0.100] | +0.00120 [+0.00089, +0.00153] | -0.17 [-2.61, +2.30] |
+| K1 | H1000g21p4 | headline | cascade_v4_iso - always_g_v2t | +0.018 [-0.014, +0.050] | -0.00046 [-0.00071, -0.00024] | +5.42 [+2.48, +8.61] |
+| K2 | H1000g21p4 | headline | cascade_v4 - random escalation | +0.082 [+0.051, +0.116] | +0.00018 [-0.00001, +0.00038] | +2.27 [+0.68, +3.92] |
+| Q5 | H1000g21p4 | headline | always_g_v2t - always_c_v2t | +0.086 [+0.036, +0.141] | +0.00113 [+0.00087, +0.00141] | -1.94 [-4.73, +0.74] |
+| K1 | H1000g21p5 | headline | cascade_v4_iso - always_g_v2t | +0.027 [+0.005, +0.055] | -0.00049 [-0.00076, -0.00025] | +1.22 [-1.63, +4.37] |
+| K2 | H1000g21p5 | headline | cascade_v4 - random escalation | +0.077 [+0.048, +0.108] | +0.00036 [+0.00012, +0.00060] | +2.19 [+0.49, +4.04] |
+| Q5 | H1000g21p5 | headline | always_g_v2t - always_c_v2t | +0.073 [+0.023, +0.123] | +0.00132 [+0.00100, +0.00166] | +2.56 [+0.03, +5.09] |
+| K1 | S1000 | headline | cascade_v4_iso - always_g_v2t | +0.010 [-0.007, +0.027] | -0.00042 [-0.00056, -0.00029] | +1.91 [-3.48, +6.04] |
+| K2 | S1000 | headline | cascade_v4 - random escalation | +0.072 [+0.055, +0.089] | +0.00032 [+0.00018, +0.00046] | +2.36 [+1.47, +3.34] |
+| Q5 | S1000 | headline | always_g_v2t - always_c_v2t | +0.087 [+0.057, +0.117] | +0.00123 [+0.00104, +0.00143] | +2.61 [-2.82, +10.35] |
+| K1 | H1000g21p1 | held-out | cascade_v4_iso - always_g_v2t | +0.000 [-0.080, +0.080] | -0.00061 [-0.00126, +0.00013] | +21.78 [+11.26, +32.44] |
+| K2 | H1000g21p1 | held-out | cascade_v4 - random escalation | +0.098 [+0.038, +0.169] | +0.00024 [-0.00027, +0.00080] | +2.22 [-1.31, +5.94] |
+| Q5 | H1000g21p1 | held-out | always_g_v2t - always_c_v2t | +0.140 [+0.020, +0.260] | +0.00197 [+0.00121, +0.00267] | -11.57 [-19.88, -3.82] |
+| K1 | H1000g21p2 | held-out | cascade_v4_iso - always_g_v2t | -0.060 [-0.160, +0.020] | -0.00161 [-0.00263, -0.00068] | +4.15 [-8.23, +16.82] |
+| K2 | H1000g21p2 | held-out | cascade_v4 - random escalation | +0.081 [+0.009, +0.158] | +0.00037 [-0.00046, +0.00128] | +5.19 [-2.45, +13.45] |
+| Q5 | H1000g21p2 | held-out | always_g_v2t - always_c_v2t | +0.220 [+0.100, +0.340] | +0.00360 [+0.00249, +0.00478] | +18.69 [+9.95, +27.37] |
+| K1 | H1000g21p3 | held-out | cascade_v4_iso - always_g_v2t | -0.040 [-0.120, +0.040] | -0.00037 [-0.00086, +0.00010] | +17.76 [+8.42, +27.43] |
+| K2 | H1000g21p3 | held-out | cascade_v4 - random escalation | +0.053 [-0.006, +0.119] | +0.00051 [-0.00002, +0.00106] | +3.95 [-0.31, +8.42] |
+| Q5 | H1000g21p3 | held-out | always_g_v2t - always_c_v2t | +0.140 [+0.040, +0.260] | +0.00182 [+0.00123, +0.00241] | -5.98 [-13.28, +1.07] |
+| K1 | H1000g21p4 | held-out | cascade_v4_iso - always_g_v2t | +0.080 [+0.020, +0.160] | -0.00094 [-0.00165, -0.00027] | +19.06 [+8.02, +30.21] |
+| K2 | H1000g21p4 | held-out | cascade_v4 - random escalation | +0.167 [+0.099, +0.243] | +0.00004 [-0.00055, +0.00064] | +1.97 [-2.32, +6.44] |
+| Q5 | H1000g21p4 | held-out | always_g_v2t - always_c_v2t | +0.140 [+0.000, +0.300] | +0.00231 [+0.00162, +0.00297] | -7.11 [-15.28, +0.81] |
+| K1 | H1000g21p5 | held-out | cascade_v4_iso - always_g_v2t | +0.040 [-0.040, +0.120] | -0.00094 [-0.00162, -0.00028] | +16.05 [+5.77, +26.97] |
+| K2 | H1000g21p5 | held-out | cascade_v4 - random escalation | +0.132 [+0.060, +0.211] | +0.00042 [-0.00020, +0.00110] | +2.72 [-1.80, +7.61] |
+| Q5 | H1000g21p5 | held-out | always_g_v2t - always_c_v2t | +0.140 [+0.000, +0.280] | +0.00256 [+0.00184, +0.00333] | -3.73 [-11.59, +3.92] |
+| K1 | S1000 | held-out | cascade_v4_iso - always_g_v2t | +0.004 [-0.052, +0.060] | -0.00089 [-0.00142, -0.00046] | +15.76 [+8.02, +22.35] |
+| K2 | S1000 | held-out | cascade_v4 - random escalation | +0.106 [+0.061, +0.155] | +0.00031 [-0.00001, +0.00064] | +3.21 [+0.82, +5.94] |
+| Q5 | S1000 | held-out | always_g_v2t - always_c_v2t | +0.156 [+0.092, +0.220] | +0.00245 [+0.00187, +0.00318] | -1.94 [-10.13, +9.16] |
+
+## Plant robustness (descriptive, not judged)
+
+| claim | scope | policy | plants with the pooled sign |
+|---|---|---|---|
+| K1 | headline | cascade_v4_iso | 4 of 5 |
+| K2 | headline | cascade_v4 | 5 of 5 |
+| Q5 | headline | always_g_v2t | 5 of 5 |
+| K1 | held-out | cascade_v4_iso | 3 of 5 |
+| K2 | held-out | cascade_v4 | 5 of 5 |
+| Q5 | held-out | always_g_v2t | 5 of 5 |
+| K1 | headline | cascade_v4_iso | 4 of 5 |
+| K2 | headline | cascade_v4 | 5 of 5 |
+| Q5 | headline | always_g_v2t | 5 of 5 |
+| K1 | held-out | cascade_v4_iso | 2 of 5 |
+| K2 | held-out | cascade_v4 | 5 of 5 |
+| Q5 | held-out | always_g_v2t | 5 of 5 |
+| Q4 | headline | cascade_v4_iso | 4 of 5 |
+| Q4 | headline | cascade_v4 | 2 of 5 |
+| Q4 | headline | always_g_v2t | 0 of 5 |
+| Q4 | headline | always_c_v2t | 0 of 5 |
+| Q4 | held-out | cascade_v4_iso | 3 of 5 |
+| Q4 | held-out | cascade_v4 | 3 of 5 |
+| Q4 | held-out | always_g_v2t | 3 of 5 |
+| Q4 | held-out | always_c_v2t | 4 of 5 |
+
+## Notes
+
+- pooled scales: S100 (5 plants), S1000 (5 plants); the pooled value is the equal-weight mean of the plants, intervals are two-stage cluster bootstraps (plants, then questions) with the EXP-0007 seed and resample count
+- with few plants the bootstrap understates between-plant variance (about 4/5 at five plants); pooled latency intervals resample questions only
+- the plant-robustness table counts plants whose own acc@C difference has the pooled sign; it is descriptive and judges nothing
+- scope `headline` leaves out the family LOOP_ACTUATED_VALVE (ADR-0044 U2)
+
+## Corpus H100g21p1 (280 questions)
+
+### Policies
+
+| policy | correct | acc@120 | total $ | $/question | latency s median / mean / p90 / p95 / max | answered by | tier-1 accept precision | tier-1 accept recall |
+|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 260/280 | 260/280 | 0.3671 | 0.00131 | 7.6 / 15.9 / 43.5 / 50.9 / 109.0 | cypher-v2t 74%, agent-v2t 26% | - | - |
+| cascade_v4 | 256/280 | 256/280 | 0.3667 | 0.00131 | 7.6 / 16.0 / 43.0 / 58.1 / 109.0 | cypher-v2t 76%, agent-v2t 24% | 0.944 (202/214) | 0.902 (202/224) |
+| always_g_v2t | 262/280 | 262/280 | 0.4294 | 0.00153 | 11.7 / 15.7 / 30.6 / 39.3 / 77.8 | agent-v2t 100% | - | - |
+| always_c_v2t | 224/280 | 224/280 | 0.2069 | 0.00074 | 6.7 / 10.8 / 17.0 / 39.6 / 81.9 | cypher-v2t 92%, none 8% | - | - |
+
+### Latency bound
+
+| policy | over C = 120 s | correct lost to C | latency without local compute | median <= 10 s | p90 <= 60 s |
+|---|---|---|---|---|---|
+| cascade_v4_iso | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| cascade_v4 | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| always_g_v2t | 0 | 0 | 0 | LB-1 FAIL | LB-2 PASS |
+| always_c_v2t | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+
+### References (never deployable)
+
+| policy | correct / acc@120 | oracle cascade | random escalation, same share |
+|---|---|---|---|
+| cascade_v4 | 256 / 256 | 266 / 266 ($0.3413) | 232.9 [228, 238] / 232.9 [228, 238] ($0.3085, 66 escalated) |
+
+
+### Paired bootstrap vs random escalation
+
+| policy | accuracy | acc@120 | $/question | latency s/question |
+|---|---|---|---|---|
+| cascade_v4 | +0.082 [+0.053, +0.113] | +0.082 [+0.053, +0.113] | +0.00021 [+0.00006, +0.00036] | +1.5 [+0.4, +2.7] |
+
+### Agent tier: stop reasons
+
+| policy | tier | questions tried | done | deadline | runaway | prompt_budget | errors | max_steps | overflow | timed_out | unrecorded |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | agent-v2t | 72 | 72 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| cascade_v4 | agent-v2t | 66 | 66 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| always_g_v2t | agent-v2t | 280 | 280 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+### Agent tier: answers without evidence gathered
+
+| policy | no tool call | no plant item touched |
+|---|---|---|
+| cascade_v4_iso | 0 (0 correct) | 10 (10 correct) |
+| cascade_v4 | 0 (0 correct) | 10 (10 correct) |
+| always_g_v2t | 0 (0 correct) | 12 (10 correct) |
+
+### Agent tier: a tag named in the question was never touched
+
+| policy | questions naming a tag | never touched |
+|---|---|---|
+| cascade_v4_iso | 56 | 4 (4 correct) |
+| cascade_v4 | 50 | 4 (4 correct) |
+| always_g_v2t | 233 | 6 (4 correct) |
+
+### UPSTREAM_ISOLATION: secondary score, control valves do not isolate
+
+Secondary only (offline re-score); the primary score is the gold key as built. Secondary reference = gold minus control valves.
+
+| policy | primary correct | secondary correct |
+|---|---|---|
+| cascade_v4_iso | 11/15 | 10/15 |
+| cascade_v4 | 7/15 | 6/15 |
+| always_g_v2t | 11/15 | 10/15 |
+| always_c_v2t | 0/15 | 0/15 |
+
+### Made-up yes (BOOLEAN questions whose gold is no)
+
+| policy | gold-no questions | answered yes |
+|---|---|---|
+| cascade_v4_iso | 18 | 0 |
+| cascade_v4 | 18 | 0 |
+| always_g_v2t | 18 | 0 |
+| always_c_v2t | 18 | 0 |
+
+### Breakdowns (correct / questions)
+
+#### By need label
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| DOWNSTREAM_ALL | 11/20 | 11/20 | 10/20 | 9/20 |
+| GENERIC | 65/70 | 65/70 | 68/70 | 55/70 |
+| ITEM | 44/44 | 44/44 | 44/44 | 43/44 |
+| NEIGHBOURS_DOWNSTREAM | 13/13 | 13/13 | 13/13 | 11/13 |
+| PATH | 36/38 | 36/38 | 36/38 | 34/38 |
+| SIGNAL_CHAIN | 35/35 | 35/35 | 35/35 | 32/35 |
+| UNIT_SCOPE | 39/40 | 39/40 | 40/40 | 30/40 |
+| UPSTREAM_ALL | 10/10 | 10/10 | 9/10 | 10/10 |
+| UPSTREAM_TO_FIRST_VALVE | 7/10 | 3/10 | 7/10 | 0/10 |
+
+#### By family
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| CONNECTED | 10/10 | 10/10 | 8/10 | 8/10 |
+| COUNT_IN_UNIT | 15/15 | 15/15 | 15/15 | 15/15 |
+| CROSS_UNIT | 14/15 | 14/15 | 15/15 | 8/15 |
+| DOWNSTREAM_IN_UNIT | 10/10 | 10/10 | 9/10 | 9/10 |
+| DOWNSTREAM_ISOLATION | 1/10 | 1/10 | 1/10 | 0/10 |
+| FEEDING_UNITS | 10/10 | 10/10 | 10/10 | 7/10 |
+| FLOW_PATH | 13/15 | 13/15 | 15/15 | 13/15 |
+| INSTRUMENTS_OF_ITEM | 10/10 | 10/10 | 10/10 | 10/10 |
+| LOOKUP_TYPE | 15/15 | 15/15 | 15/15 | 15/15 |
+| LOOKUP_UNIT | 15/15 | 15/15 | 15/15 | 15/15 |
+| LOOPS_NEAR_ITEM | 7/10 | 7/10 | 10/10 | 5/10 |
+| LOOP_ACTUATED_VALVE | 15/15 | 15/15 | 15/15 | 15/15 |
+| LOOP_MEASURED_EQUIPMENT | 15/15 | 15/15 | 15/15 | 11/15 |
+| NEIGHBOURS_DOWNSTREAM | 15/15 | 15/15 | 15/15 | 13/15 |
+| NO_PATH | 10/10 | 10/10 | 10/10 | 10/10 |
+| ROUTE_AVOIDING | 9/10 | 9/10 | 9/10 | 9/10 |
+| SAME_UNIT | 10/10 | 10/10 | 10/10 | 10/10 |
+| SHEETS_OF_TAG | 15/15 | 15/15 | 15/15 | 14/15 |
+| UNANSWERABLE_TAG | 10/10 | 10/10 | 10/10 | 10/10 |
+| UNITS_REACHED | 10/10 | 10/10 | 10/10 | 9/10 |
+| UPSTREAM_ISOLATION | 11/15 | 7/15 | 11/15 | 0/15 |
+| UPSTREAM_SOURCES | 10/10 | 10/10 | 9/10 | 10/10 |
+| VALVES_ON_PATH | 10/10 | 10/10 | 10/10 | 8/10 |
+
+#### By k bin
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| k=0 | 120/126 | 118/126 | 122/126 | 105/126 |
+| k=1-2 | 78/89 | 76/89 | 80/89 | 62/89 |
+| k>=3 | 42/45 | 42/45 | 40/45 | 37/45 |
+| unanswerable | 20/20 | 20/20 | 20/20 | 20/20 |
+
+## Corpus H100g21p2 (280 questions)
+
+### Policies
+
+| policy | correct | acc@120 | total $ | $/question | latency s median / mean / p90 / p95 / max | answered by | tier-1 accept precision | tier-1 accept recall |
+|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 253/280 | 253/280 | 0.3737 | 0.00133 | 7.7 / 16.1 / 42.8 / 51.8 / 123.8 | cypher-v2t 77%, agent-v2t 23% | - | - |
+| cascade_v4 | 252/280 | 252/280 | 0.3633 | 0.00130 | 7.7 / 15.7 / 40.5 / 50.9 / 123.8 | cypher-v2t 79%, agent-v2t 21% | 0.937 (207/221) | 0.896 (207/231) |
+| always_g_v2t | 253/280 | 253/280 | 0.4604 | 0.00164 | 11.8 / 16.6 / 34.4 / 42.6 / 84.7 | agent-v2t 100%, none 0% | - | - |
+| always_c_v2t | 231/280 | 231/280 | 0.2137 | 0.00076 | 6.9 / 10.9 / 18.8 / 42.8 / 84.7 | cypher-v2t 94%, none 6% | - | - |
+
+### Latency bound
+
+| policy | over C = 120 s | correct lost to C | latency without local compute | median <= 10 s | p90 <= 60 s |
+|---|---|---|---|---|---|
+| cascade_v4_iso | 2 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| cascade_v4 | 2 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| always_g_v2t | 0 | 0 | 0 | LB-1 FAIL | LB-2 PASS |
+| always_c_v2t | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+
+### References (never deployable)
+
+| policy | correct / acc@120 | oracle cascade | random escalation, same share |
+|---|---|---|---|
+| cascade_v4 | 252 / 252 | 259 / 259 ($0.3660) | 235.9 [231, 240] / 235.9 [231, 240] ($0.3103, 59 escalated) |
+
+
+### Paired bootstrap vs random escalation
+
+| policy | accuracy | acc@120 | $/question | latency s/question |
+|---|---|---|---|---|
+| cascade_v4 | +0.058 [+0.032, +0.085] | +0.058 [+0.032, +0.085] | +0.00019 [+0.00003, +0.00036] | +1.3 [+0.1, +2.5] |
+
+### Agent tier: stop reasons
+
+| policy | tier | questions tried | done | deadline | runaway | prompt_budget | errors | max_steps | overflow | timed_out | unrecorded |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | agent-v2t | 65 | 64 | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
+| cascade_v4 | agent-v2t | 59 | 58 | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
+| always_g_v2t | agent-v2t | 280 | 279 | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
+
+### Agent tier: answers without evidence gathered
+
+| policy | no tool call | no plant item touched |
+|---|---|---|
+| cascade_v4_iso | 0 (0 correct) | 15 (12 correct) |
+| cascade_v4 | 0 (0 correct) | 15 (12 correct) |
+| always_g_v2t | 0 (0 correct) | 16 (13 correct) |
+
+### Agent tier: a tag named in the question was never touched
+
+| policy | questions naming a tag | never touched |
+|---|---|---|
+| cascade_v4_iso | 51 | 9 (5 correct) |
+| cascade_v4 | 45 | 9 (5 correct) |
+| always_g_v2t | 233 | 10 (6 correct) |
+
+### UPSTREAM_ISOLATION: secondary score, control valves do not isolate
+
+Secondary only (offline re-score); the primary score is the gold key as built. Secondary reference = gold minus control valves.
+
+| policy | primary correct | secondary correct |
+|---|---|---|
+| cascade_v4_iso | 4/15 | 3/13 |
+| cascade_v4 | 3/15 | 3/13 |
+| always_g_v2t | 5/15 | 3/13 |
+| always_c_v2t | 0/15 | 0/13 |
+
+### Made-up yes (BOOLEAN questions whose gold is no)
+
+| policy | gold-no questions | answered yes |
+|---|---|---|
+| cascade_v4_iso | 14 | 0 |
+| cascade_v4 | 14 | 0 |
+| always_g_v2t | 14 | 0 |
+| always_c_v2t | 14 | 0 |
+
+### Breakdowns (correct / questions)
+
+#### By need label
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| DOWNSTREAM_ALL | 10/20 | 10/20 | 11/20 | 9/20 |
+| GENERIC | 65/70 | 65/70 | 65/70 | 55/70 |
+| ITEM | 44/44 | 44/44 | 44/44 | 44/44 |
+| NEIGHBOURS_DOWNSTREAM | 13/13 | 13/13 | 13/13 | 13/13 |
+| PATH | 35/38 | 35/38 | 34/38 | 36/38 |
+| SIGNAL_CHAIN | 35/35 | 35/35 | 35/35 | 33/35 |
+| UNIT_SCOPE | 38/40 | 38/40 | 39/40 | 31/40 |
+| UPSTREAM_ALL | 10/10 | 10/10 | 9/10 | 10/10 |
+| UPSTREAM_TO_FIRST_VALVE | 3/10 | 2/10 | 3/10 | 0/10 |
+
+#### By family
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| CONNECTED | 8/10 | 8/10 | 8/10 | 9/10 |
+| COUNT_IN_UNIT | 14/15 | 14/15 | 14/15 | 14/15 |
+| CROSS_UNIT | 14/15 | 14/15 | 15/15 | 10/15 |
+| DOWNSTREAM_IN_UNIT | 9/10 | 9/10 | 10/10 | 9/10 |
+| DOWNSTREAM_ISOLATION | 1/10 | 1/10 | 1/10 | 0/10 |
+| FEEDING_UNITS | 10/10 | 10/10 | 10/10 | 7/10 |
+| FLOW_PATH | 14/15 | 14/15 | 14/15 | 14/15 |
+| INSTRUMENTS_OF_ITEM | 10/10 | 10/10 | 10/10 | 10/10 |
+| LOOKUP_TYPE | 15/15 | 15/15 | 15/15 | 15/15 |
+| LOOKUP_UNIT | 15/15 | 15/15 | 15/15 | 15/15 |
+| LOOPS_NEAR_ITEM | 9/10 | 9/10 | 10/10 | 4/10 |
+| LOOP_ACTUATED_VALVE | 15/15 | 15/15 | 15/15 | 15/15 |
+| LOOP_MEASURED_EQUIPMENT | 15/15 | 15/15 | 15/15 | 12/15 |
+| NEIGHBOURS_DOWNSTREAM | 15/15 | 15/15 | 15/15 | 15/15 |
+| NO_PATH | 10/10 | 10/10 | 10/10 | 10/10 |
+| ROUTE_AVOIDING | 10/10 | 10/10 | 9/10 | 9/10 |
+| SAME_UNIT | 10/10 | 10/10 | 10/10 | 10/10 |
+| SHEETS_OF_TAG | 15/15 | 15/15 | 15/15 | 15/15 |
+| UNANSWERABLE_TAG | 10/10 | 10/10 | 9/10 | 10/10 |
+| UNITS_REACHED | 10/10 | 10/10 | 9/10 | 10/10 |
+| UPSTREAM_ISOLATION | 4/15 | 3/15 | 5/15 | 0/15 |
+| UPSTREAM_SOURCES | 10/10 | 10/10 | 9/10 | 10/10 |
+| VALVES_ON_PATH | 10/10 | 10/10 | 10/10 | 8/10 |
+
+#### By k bin
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| k=0 | 119/125 | 118/125 | 119/125 | 106/125 |
+| k=1-2 | 75/92 | 75/92 | 78/92 | 68/92 |
+| k>=3 | 39/43 | 39/43 | 37/43 | 37/43 |
+| unanswerable | 20/20 | 20/20 | 19/20 | 20/20 |
+
+## Corpus H100g21p3 (280 questions)
+
+### Policies
+
+| policy | correct | acc@120 | total $ | $/question | latency s median / mean / p90 / p95 / max | answered by | tier-1 accept precision | tier-1 accept recall |
+|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 259/280 | 259/280 | 0.3627 | 0.00130 | 7.0 / 15.3 / 42.2 / 52.0 / 118.0 | cypher-v2t 78%, agent-v2t 22%, none 0% | - | - |
+| cascade_v4 | 257/280 | 257/280 | 0.3628 | 0.00130 | 7.0 / 15.5 / 43.0 / 54.5 / 118.0 | cypher-v2t 80%, agent-v2t 20%, none 0% | 0.955 (212/222) | 0.914 (212/232) |
+| always_g_v2t | 255/280 | 255/280 | 0.4184 | 0.00149 | 12.9 / 17.2 / 34.8 / 43.3 / 78.9 | agent-v2t 99%, none 1% | - | - |
+| always_c_v2t | 232/280 | 232/280 | 0.2066 | 0.00074 | 6.5 / 10.3 / 17.9 / 39.6 / 78.7 | cypher-v2t 92%, none 8% | - | - |
+
+### Latency bound
+
+| policy | over C = 120 s | correct lost to C | latency without local compute | median <= 10 s | p90 <= 60 s |
+|---|---|---|---|---|---|
+| cascade_v4_iso | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| cascade_v4 | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| always_g_v2t | 0 | 0 | 0 | LB-1 FAIL | LB-2 PASS |
+| always_c_v2t | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+
+### References (never deployable)
+
+| policy | correct / acc@120 | oracle cascade | random escalation, same share |
+|---|---|---|---|
+| cascade_v4 | 257 / 257 | 264 / 264 ($0.3504) | 237.0 [232, 242] / 237.0 [232, 242] ($0.2941, 58 escalated) |
+
+
+### Paired bootstrap vs random escalation
+
+| policy | accuracy | acc@120 | $/question | latency s/question |
+|---|---|---|---|---|
+| cascade_v4 | +0.071 [+0.046, +0.099] | +0.071 [+0.046, +0.099] | +0.00025 [+0.00009, +0.00041] | +1.7 [+0.4, +3.0] |
+
+### Agent tier: stop reasons
+
+| policy | tier | questions tried | done | deadline | runaway | prompt_budget | errors | max_steps | overflow | timed_out | unrecorded |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | agent-v2t | 63 | 61 | 0 | 0 | 0 | 2 | 0 | 0 | 0 | 0 |
+| cascade_v4 | agent-v2t | 58 | 56 | 0 | 0 | 0 | 2 | 0 | 0 | 0 | 0 |
+| always_g_v2t | agent-v2t | 280 | 277 | 0 | 0 | 0 | 3 | 0 | 0 | 0 | 0 |
+
+### Agent tier: answers without evidence gathered
+
+| policy | no tool call | no plant item touched |
+|---|---|---|
+| cascade_v4_iso | 1 (0 correct) | 12 (11 correct) |
+| cascade_v4 | 1 (0 correct) | 12 (11 correct) |
+| always_g_v2t | 1 (0 correct) | 16 (11 correct) |
+
+### Agent tier: a tag named in the question was never touched
+
+| policy | questions naming a tag | never touched |
+|---|---|---|
+| cascade_v4_iso | 50 | 8 (6 correct) |
+| cascade_v4 | 45 | 8 (6 correct) |
+| always_g_v2t | 233 | 12 (6 correct) |
+
+### UPSTREAM_ISOLATION: secondary score, control valves do not isolate
+
+Secondary only (offline re-score); the primary score is the gold key as built. Secondary reference = gold minus control valves.
+
+| policy | primary correct | secondary correct |
+|---|---|---|
+| cascade_v4_iso | 8/15 | 6/13 |
+| cascade_v4 | 6/15 | 5/13 |
+| always_g_v2t | 10/15 | 6/13 |
+| always_c_v2t | 0/15 | 0/13 |
+
+### Made-up yes (BOOLEAN questions whose gold is no)
+
+| policy | gold-no questions | answered yes |
+|---|---|---|
+| cascade_v4_iso | 13 | 0 |
+| cascade_v4 | 13 | 0 |
+| always_g_v2t | 13 | 0 |
+| always_c_v2t | 13 | 0 |
+
+### Breakdowns (correct / questions)
+
+#### By need label
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| DOWNSTREAM_ALL | 10/20 | 10/20 | 9/20 | 10/20 |
+| GENERIC | 65/70 | 65/70 | 67/70 | 55/70 |
+| ITEM | 46/46 | 46/46 | 46/46 | 45/46 |
+| NEIGHBOURS_DOWNSTREAM | 11/11 | 11/11 | 11/11 | 11/11 |
+| PATH | 37/38 | 37/38 | 34/38 | 34/38 |
+| SIGNAL_CHAIN | 35/35 | 35/35 | 34/35 | 34/35 |
+| UNIT_SCOPE | 39/40 | 39/40 | 39/40 | 33/40 |
+| UPSTREAM_ALL | 10/10 | 10/10 | 9/10 | 10/10 |
+| UPSTREAM_TO_FIRST_VALVE | 6/10 | 4/10 | 6/10 | 0/10 |
+
+#### By family
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| CONNECTED | 10/10 | 10/10 | 7/10 | 9/10 |
+| COUNT_IN_UNIT | 15/15 | 15/15 | 15/15 | 15/15 |
+| CROSS_UNIT | 14/15 | 14/15 | 14/15 | 11/15 |
+| DOWNSTREAM_IN_UNIT | 10/10 | 10/10 | 9/10 | 10/10 |
+| DOWNSTREAM_ISOLATION | 0/10 | 0/10 | 0/10 | 0/10 |
+| FEEDING_UNITS | 10/10 | 10/10 | 10/10 | 7/10 |
+| FLOW_PATH | 14/15 | 14/15 | 15/15 | 13/15 |
+| INSTRUMENTS_OF_ITEM | 10/10 | 10/10 | 10/10 | 10/10 |
+| LOOKUP_TYPE | 15/15 | 15/15 | 15/15 | 15/15 |
+| LOOKUP_UNIT | 15/15 | 15/15 | 15/15 | 15/15 |
+| LOOPS_NEAR_ITEM | 9/10 | 9/10 | 10/10 | 5/10 |
+| LOOP_ACTUATED_VALVE | 15/15 | 15/15 | 15/15 | 15/15 |
+| LOOP_MEASURED_EQUIPMENT | 15/15 | 15/15 | 14/15 | 13/15 |
+| NEIGHBOURS_DOWNSTREAM | 15/15 | 15/15 | 15/15 | 15/15 |
+| NO_PATH | 10/10 | 10/10 | 10/10 | 9/10 |
+| ROUTE_AVOIDING | 9/10 | 9/10 | 9/10 | 7/10 |
+| SAME_UNIT | 10/10 | 10/10 | 10/10 | 10/10 |
+| SHEETS_OF_TAG | 15/15 | 15/15 | 15/15 | 15/15 |
+| UNANSWERABLE_TAG | 10/10 | 10/10 | 9/10 | 9/10 |
+| UNITS_REACHED | 10/10 | 10/10 | 9/10 | 10/10 |
+| UPSTREAM_ISOLATION | 8/15 | 6/15 | 10/15 | 0/15 |
+| UPSTREAM_SOURCES | 10/10 | 10/10 | 9/10 | 10/10 |
+| VALVES_ON_PATH | 10/10 | 10/10 | 10/10 | 9/10 |
+
+#### By k bin
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| k=0 | 121/127 | 120/127 | 120/127 | 109/127 |
+| k=1-2 | 80/93 | 79/93 | 81/93 | 71/93 |
+| k>=3 | 38/40 | 38/40 | 35/40 | 34/40 |
+| unanswerable | 20/20 | 20/20 | 19/20 | 18/20 |
+
+## Corpus H100g21p4 (280 questions)
+
+### Policies
+
+| policy | correct | acc@120 | total $ | $/question | latency s median / mean / p90 / p95 / max | answered by | tier-1 accept precision | tier-1 accept recall |
+|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 254/280 | 254/280 | 0.3629 | 0.00130 | 7.5 / 16.9 / 44.3 / 58.3 / 145.0 | cypher-v2t 78%, agent-v2t 22% | - | - |
+| cascade_v4 | 252/280 | 252/280 | 0.3694 | 0.00132 | 7.5 / 17.2 / 45.3 / 65.0 / 145.0 | cypher-v2t 79%, agent-v2t 21% | 0.937 (208/222) | 0.908 (208/229) |
+| always_g_v2t | 252/280 | 252/280 | 0.4549 | 0.00162 | 13.5 / 18.4 / 34.8 / 50.0 / 120.2 | agent-v2t 100%, none 0% | - | - |
+| always_c_v2t | 229/280 | 229/280 | 0.2169 | 0.00077 | 6.9 / 11.4 / 22.1 / 41.0 / 75.8 | cypher-v2t 92%, none 8% | - | - |
+
+### Latency bound
+
+| policy | over C = 120 s | correct lost to C | latency without local compute | median <= 10 s | p90 <= 60 s |
+|---|---|---|---|---|---|
+| cascade_v4_iso | 1 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| cascade_v4 | 1 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| always_g_v2t | 1 | 0 | 0 | LB-1 FAIL | LB-2 PASS |
+| always_c_v2t | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+
+### References (never deployable)
+
+| policy | correct / acc@120 | oracle cascade | random escalation, same share |
+|---|---|---|---|
+| cascade_v4 | 252 / 252 | 262 / 262 ($0.3799) | 234.0 [229, 239] / 233.8 [229, 239] ($0.3114, 58 escalated) |
+
+
+### Paired bootstrap vs random escalation
+
+| policy | accuracy | acc@120 | $/question | latency s/question |
+|---|---|---|---|---|
+| cascade_v4 | +0.064 [+0.039, +0.092] | +0.065 [+0.039, +0.092] | +0.00021 [+0.00006, +0.00037] | +2.0 [+0.6, +3.6] |
+
+### Agent tier: stop reasons
+
+| policy | tier | questions tried | done | deadline | runaway | prompt_budget | errors | max_steps | overflow | timed_out | unrecorded |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | agent-v2t | 63 | 63 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| cascade_v4 | agent-v2t | 58 | 58 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| always_g_v2t | agent-v2t | 280 | 280 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+### Agent tier: answers without evidence gathered
+
+| policy | no tool call | no plant item touched |
+|---|---|---|
+| cascade_v4_iso | 0 (0 correct) | 12 (12 correct) |
+| cascade_v4 | 0 (0 correct) | 12 (12 correct) |
+| always_g_v2t | 0 (0 correct) | 13 (12 correct) |
+
+### Agent tier: a tag named in the question was never touched
+
+| policy | questions naming a tag | never touched |
+|---|---|---|
+| cascade_v4_iso | 49 | 7 (7 correct) |
+| cascade_v4 | 44 | 7 (7 correct) |
+| always_g_v2t | 233 | 8 (7 correct) |
+
+### UPSTREAM_ISOLATION: secondary score, control valves do not isolate
+
+Secondary only (offline re-score); the primary score is the gold key as built. Secondary reference = gold minus control valves.
+
+| policy | primary correct | secondary correct |
+|---|---|---|
+| cascade_v4_iso | 6/15 | 3/13 |
+| cascade_v4 | 4/15 | 1/13 |
+| always_g_v2t | 7/15 | 4/13 |
+| always_c_v2t | 0/15 | 0/13 |
+
+### Made-up yes (BOOLEAN questions whose gold is no)
+
+| policy | gold-no questions | answered yes |
+|---|---|---|
+| cascade_v4_iso | 10 | 0 |
+| cascade_v4 | 10 | 0 |
+| always_g_v2t | 10 | 0 |
+| always_c_v2t | 10 | 0 |
+
+### Abandoned calls: estimate against logged late charges
+
+| run | strategy | abandoned calls | timeouts logged | late answers | estimate |
+|---|---|---|---|---|---|
+| S7-AG-H100g21p4 | graph_agent_lines | 1 | 1 | 1 ($0.0066) | $0.0106 |
+
+### Breakdowns (correct / questions)
+
+#### By need label
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| DOWNSTREAM_ALL | 10/20 | 10/20 | 6/20 | 10/20 |
+| GENERIC | 65/70 | 65/70 | 66/70 | 55/70 |
+| ITEM | 45/45 | 45/45 | 45/45 | 45/45 |
+| NEIGHBOURS_DOWNSTREAM | 12/12 | 12/12 | 12/12 | 12/12 |
+| PATH | 35/38 | 35/38 | 36/38 | 34/38 |
+| SIGNAL_CHAIN | 35/35 | 35/35 | 35/35 | 32/35 |
+| UNIT_SCOPE | 38/40 | 38/40 | 40/40 | 31/40 |
+| UPSTREAM_ALL | 10/10 | 10/10 | 8/10 | 10/10 |
+| UPSTREAM_TO_FIRST_VALVE | 4/10 | 2/10 | 4/10 | 0/10 |
+
+#### By family
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| CONNECTED | 10/10 | 10/10 | 9/10 | 10/10 |
+| COUNT_IN_UNIT | 15/15 | 15/15 | 15/15 | 15/15 |
+| CROSS_UNIT | 13/15 | 13/15 | 15/15 | 9/15 |
+| DOWNSTREAM_IN_UNIT | 10/10 | 10/10 | 5/10 | 10/10 |
+| DOWNSTREAM_ISOLATION | 0/10 | 0/10 | 1/10 | 0/10 |
+| FEEDING_UNITS | 10/10 | 10/10 | 10/10 | 7/10 |
+| FLOW_PATH | 12/15 | 12/15 | 14/15 | 12/15 |
+| INSTRUMENTS_OF_ITEM | 10/10 | 10/10 | 10/10 | 10/10 |
+| LOOKUP_TYPE | 15/15 | 15/15 | 15/15 | 15/15 |
+| LOOKUP_UNIT | 15/15 | 15/15 | 15/15 | 15/15 |
+| LOOPS_NEAR_ITEM | 9/10 | 9/10 | 10/10 | 6/10 |
+| LOOP_ACTUATED_VALVE | 15/15 | 15/15 | 15/15 | 15/15 |
+| LOOP_MEASURED_EQUIPMENT | 15/15 | 15/15 | 15/15 | 12/15 |
+| NEIGHBOURS_DOWNSTREAM | 15/15 | 15/15 | 15/15 | 15/15 |
+| NO_PATH | 10/10 | 10/10 | 10/10 | 9/10 |
+| ROUTE_AVOIDING | 10/10 | 10/10 | 8/10 | 9/10 |
+| SAME_UNIT | 10/10 | 10/10 | 10/10 | 10/10 |
+| SHEETS_OF_TAG | 15/15 | 15/15 | 15/15 | 15/15 |
+| UNANSWERABLE_TAG | 10/10 | 10/10 | 10/10 | 10/10 |
+| UNITS_REACHED | 10/10 | 10/10 | 10/10 | 10/10 |
+| UPSTREAM_ISOLATION | 6/15 | 4/15 | 7/15 | 0/15 |
+| UPSTREAM_SOURCES | 10/10 | 10/10 | 8/10 | 10/10 |
+| VALVES_ON_PATH | 9/10 | 9/10 | 10/10 | 5/10 |
+
+#### By k bin
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| k=0 | 118/125 | 116/125 | 119/125 | 107/125 |
+| k=1-2 | 76/90 | 76/90 | 78/90 | 67/90 |
+| k>=3 | 40/45 | 40/45 | 35/45 | 36/45 |
+| unanswerable | 20/20 | 20/20 | 20/20 | 19/20 |
+
+## Corpus H100g21p5 (280 questions)
+
+### Policies
+
+| policy | correct | acc@120 | total $ | $/question | latency s median / mean / p90 / p95 / max | answered by | tier-1 accept precision | tier-1 accept recall |
+|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 255/280 | 254/280 | 0.4077 | 0.00146 | 7.6 / 16.3 / 40.9 / 55.4 / 166.5 | cypher-v2t 76%, agent-v2t 24% | - | - |
+| cascade_v4 | 252/280 | 251/280 | 0.4071 | 0.00145 | 7.6 / 16.5 / 41.7 / 56.9 / 166.5 | cypher-v2t 78%, agent-v2t 22% | 0.931 (202/217) | 0.898 (202/225) |
+| always_g_v2t | 256/280 | 256/280 | 0.4642 | 0.00166 | 11.5 / 16.4 / 30.9 / 44.4 / 76.3 | agent-v2t 100% | - | - |
+| always_c_v2t | 225/280 | 225/280 | 0.2348 | 0.00084 | 7.0 / 11.0 / 17.7 / 36.6 / 122.2 | cypher-v2t 91%, none 9% | - | - |
+
+### Latency bound
+
+| policy | over C = 120 s | correct lost to C | latency without local compute | median <= 10 s | p90 <= 60 s |
+|---|---|---|---|---|---|
+| cascade_v4_iso | 2 | 1 | 0 | LB-1 PASS | LB-2 PASS |
+| cascade_v4 | 2 | 1 | 0 | LB-1 PASS | LB-2 PASS |
+| always_g_v2t | 0 | 0 | 0 | LB-1 FAIL | LB-2 PASS |
+| always_c_v2t | 2 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+
+### References (never deployable)
+
+| policy | correct / acc@120 | oracle cascade | random escalation, same share |
+|---|---|---|---|
+| cascade_v4 | 252 / 251 | 264 / 263 ($0.4007) | 231.9 [227, 237] / 231.7 [227, 237] ($0.3396, 63 escalated) |
+
+
+### Paired bootstrap vs random escalation
+
+| policy | accuracy | acc@120 | $/question | latency s/question |
+|---|---|---|---|---|
+| cascade_v4 | +0.072 [+0.045, +0.101] | +0.069 [+0.043, +0.098] | +0.00024 [+0.00008, +0.00041] | +1.8 [+0.5, +3.2] |
+
+### Agent tier: stop reasons
+
+| policy | tier | questions tried | done | deadline | runaway | prompt_budget | errors | max_steps | overflow | timed_out | unrecorded |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | agent-v2t | 68 | 68 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| cascade_v4 | agent-v2t | 63 | 63 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| always_g_v2t | agent-v2t | 280 | 280 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+### Agent tier: answers without evidence gathered
+
+| policy | no tool call | no plant item touched |
+|---|---|---|
+| cascade_v4_iso | 0 (0 correct) | 13 (12 correct) |
+| cascade_v4 | 0 (0 correct) | 13 (12 correct) |
+| always_g_v2t | 0 (0 correct) | 16 (12 correct) |
+
+### Agent tier: a tag named in the question was never touched
+
+| policy | questions naming a tag | never touched |
+|---|---|---|
+| cascade_v4_iso | 54 | 7 (6 correct) |
+| cascade_v4 | 49 | 7 (6 correct) |
+| always_g_v2t | 233 | 10 (6 correct) |
+
+### UPSTREAM_ISOLATION: secondary score, control valves do not isolate
+
+Secondary only (offline re-score); the primary score is the gold key as built. Secondary reference = gold minus control valves.
+
+| policy | primary correct | secondary correct |
+|---|---|---|
+| cascade_v4_iso | 9/15 | 5/13 |
+| cascade_v4 | 6/15 | 4/13 |
+| always_g_v2t | 10/15 | 6/13 |
+| always_c_v2t | 1/15 | 1/13 |
+
+### Made-up yes (BOOLEAN questions whose gold is no)
+
+| policy | gold-no questions | answered yes |
+|---|---|---|
+| cascade_v4_iso | 13 | 0 |
+| cascade_v4 | 13 | 0 |
+| always_g_v2t | 13 | 0 |
+| always_c_v2t | 13 | 0 |
+
+### Abandoned calls: estimate against logged late charges
+
+| run | strategy | abandoned calls | timeouts logged | late answers | estimate |
+|---|---|---|---|---|---|
+| S7-CYP-H100g21p5 | cypher_rag_lines | 2 | 2 | 0 ($0.0000) | $0.0212 |
+
+### Breakdowns (correct / questions)
+
+#### By need label
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| DOWNSTREAM_ALL | 10/20 | 10/20 | 9/20 | 9/20 |
+| GENERIC | 63/70 | 63/70 | 66/70 | 51/70 |
+| ITEM | 44/44 | 44/44 | 44/44 | 44/44 |
+| NEIGHBOURS_DOWNSTREAM | 13/13 | 13/13 | 13/13 | 12/13 |
+| PATH | 36/38 | 36/38 | 34/38 | 36/38 |
+| SIGNAL_CHAIN | 35/35 | 35/35 | 35/35 | 32/35 |
+| UNIT_SCOPE | 37/40 | 37/40 | 39/40 | 30/40 |
+| UPSTREAM_ALL | 10/10 | 10/10 | 9/10 | 10/10 |
+| UPSTREAM_TO_FIRST_VALVE | 7/10 | 4/10 | 7/10 | 1/10 |
+
+#### By family
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| CONNECTED | 9/10 | 9/10 | 6/10 | 9/10 |
+| COUNT_IN_UNIT | 15/15 | 15/15 | 15/15 | 15/15 |
+| CROSS_UNIT | 12/15 | 12/15 | 15/15 | 8/15 |
+| DOWNSTREAM_IN_UNIT | 10/10 | 10/10 | 9/10 | 9/10 |
+| DOWNSTREAM_ISOLATION | 0/10 | 0/10 | 0/10 | 0/10 |
+| FEEDING_UNITS | 10/10 | 10/10 | 9/10 | 7/10 |
+| FLOW_PATH | 14/15 | 14/15 | 15/15 | 14/15 |
+| INSTRUMENTS_OF_ITEM | 10/10 | 10/10 | 10/10 | 10/10 |
+| LOOKUP_TYPE | 15/15 | 15/15 | 15/15 | 15/15 |
+| LOOKUP_UNIT | 15/15 | 15/15 | 15/15 | 15/15 |
+| LOOPS_NEAR_ITEM | 7/10 | 7/10 | 10/10 | 3/10 |
+| LOOP_ACTUATED_VALVE | 15/15 | 15/15 | 15/15 | 15/15 |
+| LOOP_MEASURED_EQUIPMENT | 15/15 | 15/15 | 15/15 | 11/15 |
+| NEIGHBOURS_DOWNSTREAM | 15/15 | 15/15 | 15/15 | 14/15 |
+| NO_PATH | 10/10 | 10/10 | 10/10 | 10/10 |
+| ROUTE_AVOIDING | 10/10 | 10/10 | 8/10 | 9/10 |
+| SAME_UNIT | 10/10 | 10/10 | 10/10 | 10/10 |
+| SHEETS_OF_TAG | 15/15 | 15/15 | 15/15 | 15/15 |
+| UNANSWERABLE_TAG | 10/10 | 10/10 | 10/10 | 10/10 |
+| UNITS_REACHED | 10/10 | 10/10 | 10/10 | 9/10 |
+| UPSTREAM_ISOLATION | 9/15 | 6/15 | 10/15 | 1/15 |
+| UPSTREAM_SOURCES | 10/10 | 10/10 | 9/10 | 10/10 |
+| VALVES_ON_PATH | 9/10 | 9/10 | 10/10 | 6/10 |
+
+#### By k bin
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| k=0 | 120/126 | 118/126 | 119/126 | 107/126 |
+| k=1-2 | 76/92 | 75/92 | 82/92 | 66/92 |
+| k>=3 | 39/42 | 39/42 | 35/42 | 32/42 |
+| unanswerable | 20/20 | 20/20 | 20/20 | 20/20 |
+
+## Corpus H1000g21p1 (280 questions)
+
+### Policies
+
+| policy | correct | acc@120 | total $ | $/question | latency s median / mean / p90 / p95 / max | answered by | tier-1 accept precision | tier-1 accept recall |
+|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 260/280 | 258/280 | 0.3779 | 0.00135 | 8.3 / 20.8 / 48.5 / 102.6 / 148.4 | cypher-v2t 75%, agent-v2t 25% | - | - |
+| cascade_v4 | 259/280 | 257/280 | 0.3798 | 0.00136 | 8.3 / 23.3 / 78.3 / 108.4 / 148.4 | cypher-v2t 75%, agent-v2t 25% | 0.962 (203/211) | 0.898 (203/226) |
+| always_g_v2t | 256/280 | 256/280 | 0.4487 | 0.00160 | 11.4 / 15.3 / 31.0 / 38.4 / 83.4 | agent-v2t 100% | - | - |
+| always_c_v2t | 226/280 | 226/280 | 0.2188 | 0.00078 | 7.0 / 18.1 / 70.8 / 77.5 / 125.2 | cypher-v2t 90%, none 10% | - | - |
+
+### Latency bound
+
+| policy | over C = 120 s | correct lost to C | latency without local compute | median <= 10 s | p90 <= 60 s |
+|---|---|---|---|---|---|
+| cascade_v4_iso | 6 | 2 | 0 | LB-1 PASS | LB-2 PASS |
+| cascade_v4 | 9 | 2 | 0 | LB-1 PASS | LB-2 FAIL |
+| always_g_v2t | 0 | 0 | 0 | LB-1 FAIL | LB-2 PASS |
+| always_c_v2t | 3 | 0 | 0 | LB-1 PASS | LB-2 FAIL |
+
+### References (never deployable)
+
+| policy | correct / acc@120 | oracle cascade | random escalation, same share |
+|---|---|---|---|
+| cascade_v4 | 259 / 257 | 264 / 262 ($0.3635) | 233.4 [228, 239] / 232.4 [227, 238] ($0.3293, 69 escalated) |
+
+
+### Paired bootstrap vs random escalation
+
+| policy | accuracy | acc@120 | $/question | latency s/question |
+|---|---|---|---|---|
+| cascade_v4 | +0.092 [+0.063, +0.122] | +0.088 [+0.060, +0.117] | +0.00018 [+0.00002, +0.00035] | +1.5 [+0.3, +2.7] |
+
+### Agent tier: stop reasons
+
+| policy | tier | questions tried | done | deadline | runaway | prompt_budget | errors | max_steps | overflow | timed_out | unrecorded |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | agent-v2t | 71 | 71 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| cascade_v4 | agent-v2t | 69 | 69 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| always_g_v2t | agent-v2t | 280 | 279 | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
+
+### Agent tier: answers without evidence gathered
+
+| policy | no tool call | no plant item touched |
+|---|---|---|
+| cascade_v4_iso | 0 (0 correct) | 16 (14 correct) |
+| cascade_v4 | 0 (0 correct) | 16 (14 correct) |
+| always_g_v2t | 0 (0 correct) | 17 (14 correct) |
+
+### Agent tier: a tag named in the question was never touched
+
+| policy | questions naming a tag | never touched |
+|---|---|---|
+| cascade_v4_iso | 57 | 13 (10 correct) |
+| cascade_v4 | 55 | 13 (10 correct) |
+| always_g_v2t | 233 | 14 (10 correct) |
+
+### UPSTREAM_ISOLATION: secondary score, control valves do not isolate
+
+Secondary only (offline re-score); the primary score is the gold key as built. Secondary reference = gold minus control valves.
+
+| policy | primary correct | secondary correct |
+|---|---|---|
+| cascade_v4_iso | 11/15 | 6/12 |
+| cascade_v4 | 10/15 | 6/12 |
+| always_g_v2t | 11/15 | 6/12 |
+| always_c_v2t | 0/15 | 0/12 |
+
+### Made-up yes (BOOLEAN questions whose gold is no)
+
+| policy | gold-no questions | answered yes |
+|---|---|---|
+| cascade_v4_iso | 13 | 0 |
+| cascade_v4 | 13 | 0 |
+| always_g_v2t | 13 | 0 |
+| always_c_v2t | 13 | 0 |
+
+### Abandoned calls: estimate against logged late charges
+
+| run | strategy | abandoned calls | timeouts logged | late answers | estimate |
+|---|---|---|---|---|---|
+| S7-CYP-H1000g21p1 | cypher_rag_lines | 2 | 2 | 2 ($0.0002) | $0.0212 |
+
+### Breakdowns (correct / questions)
+
+#### By need label
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| DOWNSTREAM_ALL | 11/20 | 11/20 | 8/20 | 8/20 |
+| GENERIC | 66/70 | 66/70 | 66/70 | 51/70 |
+| ITEM | 45/45 | 45/45 | 45/45 | 45/45 |
+| NEIGHBOURS_DOWNSTREAM | 12/12 | 12/12 | 12/12 | 12/12 |
+| PATH | 36/38 | 36/38 | 37/38 | 36/38 |
+| SIGNAL_CHAIN | 35/35 | 35/35 | 34/35 | 31/35 |
+| UNIT_SCOPE | 39/40 | 39/40 | 40/40 | 33/40 |
+| UPSTREAM_ALL | 10/10 | 10/10 | 8/10 | 10/10 |
+| UPSTREAM_TO_FIRST_VALVE | 6/10 | 5/10 | 6/10 | 0/10 |
+
+#### By family
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| CONNECTED | 9/10 | 9/10 | 9/10 | 9/10 |
+| COUNT_IN_UNIT | 15/15 | 15/15 | 15/15 | 15/15 |
+| CROSS_UNIT | 14/15 | 14/15 | 15/15 | 10/15 |
+| DOWNSTREAM_IN_UNIT | 10/10 | 10/10 | 7/10 | 8/10 |
+| DOWNSTREAM_ISOLATION | 1/10 | 1/10 | 1/10 | 0/10 |
+| FEEDING_UNITS | 10/10 | 10/10 | 10/10 | 8/10 |
+| FLOW_PATH | 14/15 | 14/15 | 15/15 | 14/15 |
+| INSTRUMENTS_OF_ITEM | 10/10 | 10/10 | 10/10 | 9/10 |
+| LOOKUP_TYPE | 15/15 | 15/15 | 15/15 | 15/15 |
+| LOOKUP_UNIT | 15/15 | 15/15 | 15/15 | 15/15 |
+| LOOPS_NEAR_ITEM | 8/10 | 8/10 | 9/10 | 4/10 |
+| LOOP_ACTUATED_VALVE | 15/15 | 15/15 | 14/15 | 15/15 |
+| LOOP_MEASURED_EQUIPMENT | 15/15 | 15/15 | 15/15 | 11/15 |
+| NEIGHBOURS_DOWNSTREAM | 15/15 | 15/15 | 15/15 | 15/15 |
+| NO_PATH | 10/10 | 10/10 | 10/10 | 10/10 |
+| ROUTE_AVOIDING | 9/10 | 9/10 | 7/10 | 8/10 |
+| SAME_UNIT | 10/10 | 10/10 | 10/10 | 10/10 |
+| SHEETS_OF_TAG | 15/15 | 15/15 | 15/15 | 15/15 |
+| UNANSWERABLE_TAG | 10/10 | 10/10 | 10/10 | 10/10 |
+| UNITS_REACHED | 10/10 | 10/10 | 10/10 | 9/10 |
+| UPSTREAM_ISOLATION | 11/15 | 10/15 | 11/15 | 0/15 |
+| UPSTREAM_SOURCES | 10/10 | 10/10 | 8/10 | 10/10 |
+| VALVES_ON_PATH | 9/10 | 9/10 | 10/10 | 6/10 |
+
+#### By k bin
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| k=0 | 119/125 | 118/125 | 119/125 | 104/125 |
+| k=1-2 | 78/88 | 78/88 | 79/88 | 64/88 |
+| k>=3 | 43/47 | 43/47 | 38/47 | 38/47 |
+| unanswerable | 20/20 | 20/20 | 20/20 | 20/20 |
+
+## Corpus H1000g21p2 (280 questions)
+
+### Policies
+
+| policy | correct | acc@120 | total $ | $/question | latency s median / mean / p90 / p95 / max | answered by | tier-1 accept precision | tier-1 accept recall |
+|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 258/280 | 256/280 | 0.4351 | 0.00155 | 8.5 / 24.9 / 64.3 / 97.7 / 186.2 | cypher-v2t 75%, agent-v2t 24%, none 0% | - | - |
+| cascade_v4 | 258/280 | 254/280 | 0.4446 | 0.00159 | 8.5 / 27.6 / 74.2 / 139.7 / 186.2 | cypher-v2t 75%, agent-v2t 24%, none 0% | 0.972 (205/211) | 0.907 (205/226) |
+| always_g_v2t | 259/280 | 259/280 | 0.5352 | 0.00191 | 26.2 / 33.2 / 63.2 / 74.5 / 113.4 | agent-v2t 100%, none 0% | - | - |
+| always_c_v2t | 226/280 | 226/280 | 0.2029 | 0.00072 | 7.3 / 16.5 / 49.2 / 75.4 / 120.4 | cypher-v2t 90%, none 10% | - | - |
+
+### Latency bound
+
+| policy | over C = 120 s | correct lost to C | latency without local compute | median <= 10 s | p90 <= 60 s |
+|---|---|---|---|---|---|
+| cascade_v4_iso | 13 | 2 | 0 | LB-1 PASS | LB-2 FAIL |
+| cascade_v4 | 18 | 4 | 0 | LB-1 PASS | LB-2 FAIL |
+| always_g_v2t | 0 | 0 | 0 | LB-1 FAIL | LB-2 FAIL |
+| always_c_v2t | 1 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+
+### References (never deployable)
+
+| policy | correct / acc@120 | oracle cascade | random escalation, same share |
+|---|---|---|---|
+| cascade_v4 | 258 / 254 | 263 / 259 ($0.4248) | 234.1 [229, 240] / 233.1 [228, 238] ($0.3348, 69 escalated) |
+
+
+### Paired bootstrap vs random escalation
+
+| policy | accuracy | acc@120 | $/question | latency s/question |
+|---|---|---|---|---|
+| cascade_v4 | +0.085 [+0.057, +0.115] | +0.075 [+0.049, +0.103] | +0.00039 [+0.00017, +0.00063] | +2.9 [+0.6, +5.3] |
+
+### Agent tier: stop reasons
+
+| policy | tier | questions tried | done | deadline | runaway | prompt_budget | errors | max_steps | overflow | timed_out | unrecorded |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | agent-v2t | 69 | 65 | 3 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
+| cascade_v4 | agent-v2t | 69 | 65 | 3 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
+| always_g_v2t | agent-v2t | 280 | 275 | 4 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
+
+### Agent tier: answers without evidence gathered
+
+| policy | no tool call | no plant item touched |
+|---|---|---|
+| cascade_v4_iso | 0 (0 correct) | 12 (12 correct) |
+| cascade_v4 | 0 (0 correct) | 12 (12 correct) |
+| always_g_v2t | 0 (0 correct) | 13 (12 correct) |
+
+### Agent tier: a tag named in the question was never touched
+
+| policy | questions naming a tag | never touched |
+|---|---|---|
+| cascade_v4_iso | 51 | 13 (12 correct) |
+| cascade_v4 | 51 | 13 (12 correct) |
+| always_g_v2t | 233 | 18 (16 correct) |
+
+### UPSTREAM_ISOLATION: secondary score, control valves do not isolate
+
+Secondary only (offline re-score); the primary score is the gold key as built. Secondary reference = gold minus control valves.
+
+| policy | primary correct | secondary correct |
+|---|---|---|
+| cascade_v4_iso | 9/15 | 6/13 |
+| cascade_v4 | 9/15 | 6/13 |
+| always_g_v2t | 9/15 | 6/13 |
+| always_c_v2t | 0/15 | 0/13 |
+
+### Made-up yes (BOOLEAN questions whose gold is no)
+
+| policy | gold-no questions | answered yes |
+|---|---|---|
+| cascade_v4_iso | 13 | 0 |
+| cascade_v4 | 13 | 0 |
+| always_g_v2t | 13 | 0 |
+| always_c_v2t | 13 | 0 |
+
+### Abandoned calls: estimate against logged late charges
+
+| run | strategy | abandoned calls | timeouts logged | late answers | estimate |
+|---|---|---|---|---|---|
+| S7-AG-H1000g21p2 | graph_agent_lines | 4 | 4 | 4 ($0.0013) | $0.0424 |
+| S7-CYP-H1000g21p2 | cypher_rag_lines | 1 | 1 | 1 ($0.0103) | $0.0106 |
+
+### Breakdowns (correct / questions)
+
+#### By need label
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| DOWNSTREAM_ALL | 10/20 | 10/20 | 11/20 | 9/20 |
+| GENERIC | 65/70 | 65/70 | 66/70 | 53/70 |
+| ITEM | 45/45 | 45/45 | 45/45 | 44/45 |
+| NEIGHBOURS_DOWNSTREAM | 12/12 | 12/12 | 12/12 | 12/12 |
+| PATH | 36/38 | 36/38 | 36/38 | 36/38 |
+| SIGNAL_CHAIN | 35/35 | 35/35 | 35/35 | 33/35 |
+| UNIT_SCOPE | 40/40 | 40/40 | 40/40 | 29/40 |
+| UPSTREAM_ALL | 10/10 | 10/10 | 9/10 | 10/10 |
+| UPSTREAM_TO_FIRST_VALVE | 5/10 | 5/10 | 5/10 | 0/10 |
+
+#### By family
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| CONNECTED | 10/10 | 10/10 | 9/10 | 10/10 |
+| COUNT_IN_UNIT | 15/15 | 15/15 | 15/15 | 14/15 |
+| CROSS_UNIT | 15/15 | 15/15 | 15/15 | 10/15 |
+| DOWNSTREAM_IN_UNIT | 10/10 | 10/10 | 10/10 | 9/10 |
+| DOWNSTREAM_ISOLATION | 0/10 | 0/10 | 1/10 | 0/10 |
+| FEEDING_UNITS | 10/10 | 10/10 | 10/10 | 5/10 |
+| FLOW_PATH | 13/15 | 13/15 | 14/15 | 13/15 |
+| INSTRUMENTS_OF_ITEM | 10/10 | 10/10 | 10/10 | 10/10 |
+| LOOKUP_TYPE | 15/15 | 15/15 | 15/15 | 14/15 |
+| LOOKUP_UNIT | 15/15 | 15/15 | 15/15 | 15/15 |
+| LOOPS_NEAR_ITEM | 9/10 | 9/10 | 9/10 | 4/10 |
+| LOOP_ACTUATED_VALVE | 15/15 | 15/15 | 15/15 | 15/15 |
+| LOOP_MEASURED_EQUIPMENT | 15/15 | 15/15 | 15/15 | 13/15 |
+| NEIGHBOURS_DOWNSTREAM | 15/15 | 15/15 | 14/15 | 15/15 |
+| NO_PATH | 10/10 | 10/10 | 10/10 | 10/10 |
+| ROUTE_AVOIDING | 10/10 | 10/10 | 10/10 | 9/10 |
+| SAME_UNIT | 10/10 | 10/10 | 10/10 | 10/10 |
+| SHEETS_OF_TAG | 15/15 | 15/15 | 15/15 | 15/15 |
+| UNANSWERABLE_TAG | 10/10 | 10/10 | 10/10 | 10/10 |
+| UNITS_REACHED | 9/10 | 9/10 | 9/10 | 9/10 |
+| UPSTREAM_ISOLATION | 9/15 | 9/15 | 9/15 | 0/15 |
+| UPSTREAM_SOURCES | 10/10 | 10/10 | 9/10 | 10/10 |
+| VALVES_ON_PATH | 8/10 | 8/10 | 10/10 | 6/10 |
+
+#### By k bin
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| k=0 | 120/125 | 120/125 | 118/125 | 107/125 |
+| k=1-2 | 78/88 | 78/88 | 79/88 | 63/88 |
+| k>=3 | 40/47 | 40/47 | 42/47 | 36/47 |
+| unanswerable | 20/20 | 20/20 | 20/20 | 20/20 |
+
+## Corpus H1000g21p3 (280 questions)
+
+### Policies
+
+| policy | correct | acc@120 | total $ | $/question | latency s median / mean / p90 / p95 / max | answered by | tier-1 accept precision | tier-1 accept recall |
+|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 253/280 | 253/280 | 0.4211 | 0.00150 | 8.6 / 20.3 / 48.3 / 87.8 / 145.1 | cypher-v2t 77%, agent-v2t 22%, none 0% | - | - |
+| cascade_v4 | 253/280 | 253/280 | 0.4267 | 0.00152 | 8.6 / 22.8 / 55.4 / 104.2 / 170.6 | cypher-v2t 78%, agent-v2t 22%, none 0% | 0.963 (209/217) | 0.905 (209/231) |
+| always_g_v2t | 252/280 | 252/280 | 0.4729 | 0.00169 | 11.3 / 16.6 / 34.6 / 46.1 / 120.2 | agent-v2t 99%, none 1% | - | - |
+| always_c_v2t | 231/280 | 231/280 | 0.2007 | 0.00072 | 8.0 / 16.4 / 48.5 / 74.9 / 84.2 | cypher-v2t 89%, none 11% | - | - |
+
+### Latency bound
+
+| policy | over C = 120 s | correct lost to C | latency without local compute | median <= 10 s | p90 <= 60 s |
+|---|---|---|---|---|---|
+| cascade_v4_iso | 6 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| cascade_v4 | 10 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| always_g_v2t | 1 | 0 | 0 | LB-1 FAIL | LB-2 PASS |
+| always_c_v2t | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+
+### References (never deployable)
+
+| policy | correct / acc@120 | oracle cascade | random escalation, same share |
+|---|---|---|---|
+| cascade_v4 | 253 / 253 | 259 / 259 ($0.3754) | 235.9 [231, 241] / 235.7 [231, 241] ($0.3067, 63 escalated) |
+
+
+### Paired bootstrap vs random escalation
+
+| policy | accuracy | acc@120 | $/question | latency s/question |
+|---|---|---|---|---|
+| cascade_v4 | +0.061 [+0.037, +0.088] | +0.062 [+0.037, +0.089] | +0.00043 [+0.00023, +0.00064] | +2.7 [+1.2, +4.3] |
+
+### Agent tier: stop reasons
+
+| policy | tier | questions tried | done | deadline | runaway | prompt_budget | errors | max_steps | overflow | timed_out | unrecorded |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | agent-v2t | 64 | 63 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
+| cascade_v4 | agent-v2t | 63 | 62 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
+| always_g_v2t | agent-v2t | 280 | 279 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
+
+### Agent tier: answers without evidence gathered
+
+| policy | no tool call | no plant item touched |
+|---|---|---|
+| cascade_v4_iso | 0 (0 correct) | 11 (11 correct) |
+| cascade_v4 | 0 (0 correct) | 11 (11 correct) |
+| always_g_v2t | 0 (0 correct) | 13 (11 correct) |
+
+### Agent tier: a tag named in the question was never touched
+
+| policy | questions naming a tag | never touched |
+|---|---|---|
+| cascade_v4_iso | 48 | 8 (7 correct) |
+| cascade_v4 | 47 | 8 (7 correct) |
+| always_g_v2t | 233 | 10 (7 correct) |
+
+### UPSTREAM_ISOLATION: secondary score, control valves do not isolate
+
+Secondary only (offline re-score); the primary score is the gold key as built. Secondary reference = gold minus control valves.
+
+| policy | primary correct | secondary correct |
+|---|---|---|
+| cascade_v4_iso | 7/15 | 4/15 |
+| cascade_v4 | 7/15 | 4/15 |
+| always_g_v2t | 7/15 | 4/15 |
+| always_c_v2t | 0/15 | 0/15 |
+
+### Made-up yes (BOOLEAN questions whose gold is no)
+
+| policy | gold-no questions | answered yes |
+|---|---|---|
+| cascade_v4_iso | 12 | 0 |
+| cascade_v4 | 12 | 0 |
+| always_g_v2t | 12 | 0 |
+| always_c_v2t | 12 | 0 |
+
+### Abandoned calls: estimate against logged late charges
+
+| run | strategy | abandoned calls | timeouts logged | late answers | estimate |
+|---|---|---|---|---|---|
+| S7-AG-H1000g21p3 | graph_agent_lines | 1 | 1 | 1 ($0.0044) | $0.0106 |
+
+### Breakdowns (correct / questions)
+
+#### By need label
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| DOWNSTREAM_ALL | 10/20 | 10/20 | 8/20 | 10/20 |
+| GENERIC | 66/70 | 66/70 | 68/70 | 54/70 |
+| ITEM | 46/46 | 46/46 | 45/46 | 46/46 |
+| NEIGHBOURS_DOWNSTREAM | 11/11 | 11/11 | 11/11 | 11/11 |
+| PATH | 35/38 | 35/38 | 34/38 | 35/38 |
+| SIGNAL_CHAIN | 35/35 | 35/35 | 35/35 | 35/35 |
+| UNIT_SCOPE | 37/40 | 37/40 | 39/40 | 30/40 |
+| UPSTREAM_ALL | 10/10 | 10/10 | 9/10 | 10/10 |
+| UPSTREAM_TO_FIRST_VALVE | 3/10 | 3/10 | 3/10 | 0/10 |
+
+#### By family
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| CONNECTED | 10/10 | 10/10 | 8/10 | 10/10 |
+| COUNT_IN_UNIT | 15/15 | 15/15 | 15/15 | 15/15 |
+| CROSS_UNIT | 13/15 | 13/15 | 14/15 | 7/15 |
+| DOWNSTREAM_IN_UNIT | 10/10 | 10/10 | 8/10 | 10/10 |
+| DOWNSTREAM_ISOLATION | 0/10 | 0/10 | 0/10 | 0/10 |
+| FEEDING_UNITS | 9/10 | 9/10 | 10/10 | 8/10 |
+| FLOW_PATH | 12/15 | 12/15 | 13/15 | 12/15 |
+| INSTRUMENTS_OF_ITEM | 10/10 | 10/10 | 10/10 | 10/10 |
+| LOOKUP_TYPE | 15/15 | 15/15 | 15/15 | 15/15 |
+| LOOKUP_UNIT | 15/15 | 15/15 | 15/15 | 15/15 |
+| LOOPS_NEAR_ITEM | 9/10 | 9/10 | 10/10 | 6/10 |
+| LOOP_ACTUATED_VALVE | 15/15 | 15/15 | 15/15 | 15/15 |
+| LOOP_MEASURED_EQUIPMENT | 15/15 | 15/15 | 15/15 | 14/15 |
+| NEIGHBOURS_DOWNSTREAM | 15/15 | 15/15 | 15/15 | 15/15 |
+| NO_PATH | 10/10 | 10/10 | 10/10 | 10/10 |
+| ROUTE_AVOIDING | 10/10 | 10/10 | 9/10 | 7/10 |
+| SAME_UNIT | 10/10 | 10/10 | 9/10 | 10/10 |
+| SHEETS_OF_TAG | 15/15 | 15/15 | 15/15 | 15/15 |
+| UNANSWERABLE_TAG | 10/10 | 10/10 | 10/10 | 10/10 |
+| UNITS_REACHED | 10/10 | 10/10 | 10/10 | 10/10 |
+| UPSTREAM_ISOLATION | 7/15 | 7/15 | 7/15 | 0/15 |
+| UPSTREAM_SOURCES | 10/10 | 10/10 | 9/10 | 10/10 |
+| VALVES_ON_PATH | 8/10 | 8/10 | 10/10 | 7/10 |
+
+#### By k bin
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| k=0 | 117/125 | 117/125 | 117/125 | 110/125 |
+| k=1-2 | 77/88 | 77/88 | 77/88 | 67/88 |
+| k>=3 | 39/47 | 39/47 | 38/47 | 34/47 |
+| unanswerable | 20/20 | 20/20 | 20/20 | 20/20 |
+
+## Corpus H1000g21p4 (280 questions)
+
+### Policies
+
+| policy | correct | acc@120 | total $ | $/question | latency s median / mean / p90 / p95 / max | answered by | tier-1 accept precision | tier-1 accept recall |
+|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 258/280 | 257/280 | 0.3863 | 0.00138 | 8.6 / 21.4 / 49.5 / 94.0 / 168.7 | cypher-v2t 75%, agent-v2t 25% | - | - |
+| cascade_v4 | 258/280 | 257/280 | 0.3955 | 0.00141 | 8.6 / 24.1 / 87.9 / 113.0 / 168.7 | cypher-v2t 75%, agent-v2t 25% | 0.976 (206/211) | 0.907 (206/227) |
+| always_g_v2t | 254/280 | 254/280 | 0.4799 | 0.00171 | 11.1 / 16.3 / 35.1 / 44.7 / 86.7 | agent-v2t 100%, none 0% | - | - |
+| always_c_v2t | 227/280 | 227/280 | 0.2169 | 0.00077 | 7.2 / 17.6 / 70.2 / 78.1 / 101.9 | cypher-v2t 87%, none 13% | - | - |
+
+### Latency bound
+
+| policy | over C = 120 s | correct lost to C | latency without local compute | median <= 10 s | p90 <= 60 s |
+|---|---|---|---|---|---|
+| cascade_v4_iso | 7 | 1 | 0 | LB-1 PASS | LB-2 PASS |
+| cascade_v4 | 11 | 1 | 0 | LB-1 PASS | LB-2 FAIL |
+| always_g_v2t | 0 | 0 | 0 | LB-1 FAIL | LB-2 PASS |
+| always_c_v2t | 0 | 0 | 0 | LB-1 PASS | LB-2 FAIL |
+
+### References (never deployable)
+
+| policy | correct / acc@120 | oracle cascade | random escalation, same share |
+|---|---|---|---|
+| cascade_v4 | 258 / 257 | 264 / 263 ($0.3785) | 234.0 [228, 240] / 233.5 [228, 239] ($0.3357, 69 escalated) |
+
+
+### Paired bootstrap vs random escalation
+
+| policy | accuracy | acc@120 | $/question | latency s/question |
+|---|---|---|---|---|
+| cascade_v4 | +0.086 [+0.057, +0.115] | +0.084 [+0.056, +0.113] | +0.00021 [+0.00006, +0.00039] | +2.4 [+1.0, +3.9] |
+
+### Agent tier: stop reasons
+
+| policy | tier | questions tried | done | deadline | runaway | prompt_budget | errors | max_steps | overflow | timed_out | unrecorded |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | agent-v2t | 69 | 68 | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
+| cascade_v4 | agent-v2t | 69 | 68 | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
+| always_g_v2t | agent-v2t | 280 | 277 | 0 | 0 | 2 | 1 | 0 | 0 | 0 | 0 |
+
+### Agent tier: answers without evidence gathered
+
+| policy | no tool call | no plant item touched |
+|---|---|---|
+| cascade_v4_iso | 0 (0 correct) | 13 (11 correct) |
+| cascade_v4 | 0 (0 correct) | 13 (11 correct) |
+| always_g_v2t | 0 (0 correct) | 13 (11 correct) |
+
+### Agent tier: a tag named in the question was never touched
+
+| policy | questions naming a tag | never touched |
+|---|---|---|
+| cascade_v4_iso | 56 | 10 (8 correct) |
+| cascade_v4 | 56 | 10 (8 correct) |
+| always_g_v2t | 233 | 11 (9 correct) |
+
+### UPSTREAM_ISOLATION: secondary score, control valves do not isolate
+
+Secondary only (offline re-score); the primary score is the gold key as built. Secondary reference = gold minus control valves.
+
+| policy | primary correct | secondary correct |
+|---|---|---|
+| cascade_v4_iso | 8/15 | 5/15 |
+| cascade_v4 | 8/15 | 5/15 |
+| always_g_v2t | 8/15 | 5/15 |
+| always_c_v2t | 0/15 | 0/15 |
+
+### Made-up yes (BOOLEAN questions whose gold is no)
+
+| policy | gold-no questions | answered yes |
+|---|---|---|
+| cascade_v4_iso | 8 | 0 |
+| cascade_v4 | 8 | 0 |
+| always_g_v2t | 8 | 0 |
+| always_c_v2t | 8 | 0 |
+
+### Breakdowns (correct / questions)
+
+#### By need label
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| DOWNSTREAM_ALL | 12/20 | 12/20 | 10/20 | 8/20 |
+| GENERIC | 67/70 | 67/70 | 65/70 | 51/70 |
+| ITEM | 45/45 | 45/45 | 45/45 | 44/45 |
+| NEIGHBOURS_DOWNSTREAM | 12/12 | 12/12 | 12/12 | 12/12 |
+| PATH | 34/38 | 34/38 | 35/38 | 34/38 |
+| SIGNAL_CHAIN | 35/35 | 35/35 | 35/35 | 35/35 |
+| UNIT_SCOPE | 39/40 | 39/40 | 39/40 | 33/40 |
+| UPSTREAM_ALL | 10/10 | 10/10 | 9/10 | 10/10 |
+| UPSTREAM_TO_FIRST_VALVE | 4/10 | 4/10 | 4/10 | 0/10 |
+
+#### By family
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| CONNECTED | 8/10 | 8/10 | 8/10 | 8/10 |
+| COUNT_IN_UNIT | 15/15 | 15/15 | 15/15 | 15/15 |
+| CROSS_UNIT | 14/15 | 14/15 | 14/15 | 11/15 |
+| DOWNSTREAM_IN_UNIT | 10/10 | 10/10 | 8/10 | 8/10 |
+| DOWNSTREAM_ISOLATION | 2/10 | 2/10 | 2/10 | 0/10 |
+| FEEDING_UNITS | 10/10 | 10/10 | 10/10 | 7/10 |
+| FLOW_PATH | 13/15 | 13/15 | 14/15 | 13/15 |
+| INSTRUMENTS_OF_ITEM | 10/10 | 10/10 | 10/10 | 10/10 |
+| LOOKUP_TYPE | 15/15 | 15/15 | 15/15 | 14/15 |
+| LOOKUP_UNIT | 15/15 | 15/15 | 15/15 | 14/15 |
+| LOOPS_NEAR_ITEM | 8/10 | 8/10 | 10/10 | 3/10 |
+| LOOP_ACTUATED_VALVE | 15/15 | 15/15 | 15/15 | 15/15 |
+| LOOP_MEASURED_EQUIPMENT | 15/15 | 15/15 | 15/15 | 15/15 |
+| NEIGHBOURS_DOWNSTREAM | 15/15 | 15/15 | 15/15 | 15/15 |
+| NO_PATH | 10/10 | 10/10 | 10/10 | 10/10 |
+| ROUTE_AVOIDING | 10/10 | 10/10 | 7/10 | 9/10 |
+| SAME_UNIT | 10/10 | 10/10 | 10/10 | 10/10 |
+| SHEETS_OF_TAG | 15/15 | 15/15 | 15/15 | 15/15 |
+| UNANSWERABLE_TAG | 10/10 | 10/10 | 10/10 | 10/10 |
+| UNITS_REACHED | 10/10 | 10/10 | 9/10 | 9/10 |
+| UPSTREAM_ISOLATION | 8/15 | 8/15 | 8/15 | 0/15 |
+| UPSTREAM_SOURCES | 10/10 | 10/10 | 9/10 | 10/10 |
+| VALVES_ON_PATH | 10/10 | 10/10 | 10/10 | 6/10 |
+
+#### By k bin
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| k=0 | 120/125 | 120/125 | 119/125 | 108/125 |
+| k=1-2 | 75/85 | 75/85 | 74/85 | 65/85 |
+| k>=3 | 43/50 | 43/50 | 41/50 | 34/50 |
+| unanswerable | 20/20 | 20/20 | 20/20 | 20/20 |
+
+## Corpus H1000g21p5 (280 questions)
+
+### Policies
+
+| policy | correct | acc@120 | total $ | $/question | latency s median / mean / p90 / p95 / max | answered by | tier-1 accept precision | tier-1 accept recall |
+|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | 265/280 | 265/280 | 0.4098 | 0.00146 | 7.6 / 20.2 / 50.6 / 90.7 / 152.3 | cypher-v2t 77%, agent-v2t 23% | - | - |
+| cascade_v4 | 265/280 | 263/280 | 0.4193 | 0.00150 | 7.6 / 22.8 / 55.8 / 117.8 / 152.3 | cypher-v2t 77%, agent-v2t 23% | 0.995 (215/216) | 0.907 (215/237) |
+| always_g_v2t | 259/280 | 259/280 | 0.5059 | 0.00181 | 13.0 / 18.5 / 37.8 / 50.6 / 85.3 | agent-v2t 100% | - | - |
+| always_c_v2t | 237/280 | 237/280 | 0.1998 | 0.00071 | 6.9 / 16.2 / 50.7 / 76.3 / 84.0 | cypher-v2t 89%, none 11% | - | - |
+
+### Latency bound
+
+| policy | over C = 120 s | correct lost to C | latency without local compute | median <= 10 s | p90 <= 60 s |
+|---|---|---|---|---|---|
+| cascade_v4_iso | 6 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+| cascade_v4 | 12 | 2 | 0 | LB-1 PASS | LB-2 PASS |
+| always_g_v2t | 0 | 0 | 0 | LB-1 FAIL | LB-2 PASS |
+| always_c_v2t | 0 | 0 | 0 | LB-1 PASS | LB-2 PASS |
+
+### References (never deployable)
+
+| policy | correct / acc@120 | oracle cascade | random escalation, same share |
+|---|---|---|---|
+| cascade_v4 | 265 / 263 | 267 / 265 ($0.3572) | 242.0 [237, 247] / 241.1 [236, 246] ($0.3157, 64 escalated) |
+
+
+### Paired bootstrap vs random escalation
+
+| policy | accuracy | acc@120 | $/question | latency s/question |
+|---|---|---|---|---|
+| cascade_v4 | +0.082 [+0.055, +0.110] | +0.078 [+0.051, +0.106] | +0.00037 [+0.00017, +0.00058] | +2.4 [+0.9, +4.0] |
+
+### Agent tier: stop reasons
+
+| policy | tier | questions tried | done | deadline | runaway | prompt_budget | errors | max_steps | overflow | timed_out | unrecorded |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| cascade_v4_iso | agent-v2t | 64 | 63 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
+| cascade_v4 | agent-v2t | 64 | 63 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
+| always_g_v2t | agent-v2t | 280 | 279 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
+
+### Agent tier: answers without evidence gathered
+
+| policy | no tool call | no plant item touched |
+|---|---|---|
+| cascade_v4_iso | 0 (0 correct) | 13 (12 correct) |
+| cascade_v4 | 0 (0 correct) | 13 (12 correct) |
+| always_g_v2t | 0 (0 correct) | 14 (12 correct) |
+
+### Agent tier: a tag named in the question was never touched
+
+| policy | questions naming a tag | never touched |
+|---|---|---|
+| cascade_v4_iso | 51 | 10 (9 correct) |
+| cascade_v4 | 51 | 10 (9 correct) |
+| always_g_v2t | 234 | 12 (10 correct) |
+
+### UPSTREAM_ISOLATION: secondary score, control valves do not isolate
+
+Secondary only (offline re-score); the primary score is the gold key as built. Secondary reference = gold minus control valves.
+
+| policy | primary correct | secondary correct |
+|---|---|---|
+| cascade_v4_iso | 9/15 | 4/13 |
+| cascade_v4 | 9/15 | 4/13 |
+| always_g_v2t | 9/15 | 4/13 |
+| always_c_v2t | 0/15 | 0/13 |
+
+### Made-up yes (BOOLEAN questions whose gold is no)
+
+| policy | gold-no questions | answered yes |
+|---|---|---|
+| cascade_v4_iso | 13 | 0 |
+| cascade_v4 | 13 | 0 |
+| always_g_v2t | 13 | 1 |
+| always_c_v2t | 13 | 0 |
+
+### Breakdowns (correct / questions)
+
+#### By need label
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| DOWNSTREAM_ALL | 12/20 | 12/20 | 12/20 | 11/20 |
+| GENERIC | 68/70 | 68/70 | 65/70 | 57/70 |
+| ITEM | 45/45 | 45/45 | 45/45 | 44/45 |
+| NEIGHBOURS_DOWNSTREAM | 11/11 | 11/11 | 11/11 | 11/11 |
+| PATH | 38/39 | 38/39 | 36/39 | 37/39 |
+| SIGNAL_CHAIN | 35/35 | 35/35 | 35/35 | 34/35 |
+| UNIT_SCOPE | 40/40 | 40/40 | 40/40 | 33/40 |
+| UPSTREAM_ALL | 10/10 | 10/10 | 9/10 | 10/10 |
+| UPSTREAM_TO_FIRST_VALVE | 6/10 | 6/10 | 6/10 | 0/10 |
+
+#### By family
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| CONNECTED | 9/10 | 9/10 | 8/10 | 9/10 |
+| COUNT_IN_UNIT | 15/15 | 15/15 | 15/15 | 15/15 |
+| CROSS_UNIT | 15/15 | 15/15 | 15/15 | 10/15 |
+| DOWNSTREAM_IN_UNIT | 10/10 | 10/10 | 9/10 | 10/10 |
+| DOWNSTREAM_ISOLATION | 2/10 | 2/10 | 3/10 | 1/10 |
+| FEEDING_UNITS | 10/10 | 10/10 | 10/10 | 8/10 |
+| FLOW_PATH | 15/15 | 15/15 | 14/15 | 14/15 |
+| INSTRUMENTS_OF_ITEM | 10/10 | 10/10 | 10/10 | 10/10 |
+| LOOKUP_TYPE | 15/15 | 15/15 | 15/15 | 15/15 |
+| LOOKUP_UNIT | 15/15 | 15/15 | 15/15 | 14/15 |
+| LOOPS_NEAR_ITEM | 10/10 | 10/10 | 10/10 | 8/10 |
+| LOOP_ACTUATED_VALVE | 15/15 | 15/15 | 15/15 | 15/15 |
+| LOOP_MEASURED_EQUIPMENT | 15/15 | 15/15 | 15/15 | 14/15 |
+| NEIGHBOURS_DOWNSTREAM | 15/15 | 15/15 | 15/15 | 15/15 |
+| NO_PATH | 10/10 | 10/10 | 10/10 | 10/10 |
+| ROUTE_AVOIDING | 10/10 | 10/10 | 9/10 | 7/10 |
+| SAME_UNIT | 10/10 | 10/10 | 10/10 | 10/10 |
+| SHEETS_OF_TAG | 15/15 | 15/15 | 15/15 | 15/15 |
+| UNANSWERABLE_TAG | 10/10 | 10/10 | 10/10 | 10/10 |
+| UNITS_REACHED | 10/10 | 10/10 | 9/10 | 10/10 |
+| UPSTREAM_ISOLATION | 9/15 | 9/15 | 9/15 | 0/15 |
+| UPSTREAM_SOURCES | 10/10 | 10/10 | 9/10 | 10/10 |
+| VALVES_ON_PATH | 10/10 | 10/10 | 9/10 | 7/10 |
+
+#### By k bin
+
+| group | cascade_v4_iso | cascade_v4 | always_g_v2t | always_c_v2t |
+|---|---|---|---|---|
+| k=0 | 119/124 | 119/124 | 118/124 | 111/124 |
+| k=1-2 | 80/86 | 80/86 | 79/86 | 67/86 |
+| k>=3 | 46/50 | 46/50 | 42/50 | 39/50 |
+| unanswerable | 20/20 | 20/20 | 20/20 | 20/20 |
+
+wrote data\runs\exp0008\reports\sealed\report.md and data\runs\exp0008\reports\sealed\report.json

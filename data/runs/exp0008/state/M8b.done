@@ -1,0 +1,7 @@
+{
+ "stage": "M8b",
+ "finished_utc": "2026-11-17T12:43:40+00:00",
+ "outputs": {
+  "data/runs/exp0008/m8b/completed_runs.txt": "8e3ba720b6ef6b1e9e737b5dfc14ce5412d21c80f58dd2e28ee1e0bf5918f166"
+ }
+}

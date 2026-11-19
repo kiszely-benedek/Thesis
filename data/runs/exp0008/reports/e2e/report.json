@@ -1,0 +1,1003 @@
+{
+  "cutoff_s": 120.0,
+  "policy": "cascade_v4_iso",
+  "n_questions": 1100,
+  "n_plants": 5,
+  "plants": [
+    {
+      "plant_id": "H1000g21p1",
+      "arms": [
+        {
+          "label": "R5",
+          "n": 220,
+          "n_correct": 199,
+          "accuracy": {
+            "estimate": 0.9045454545454545,
+            "ci_low": 0.8584869509131916,
+            "ci_high": 0.9367182298932357
+          },
+          "spend_usd": 0.646311125
+        },
+        {
+          "label": "V-d0",
+          "n": 220,
+          "n_correct": 179,
+          "accuracy": {
+            "estimate": 0.8136363636363636,
+            "ci_low": 0.7569574352856933,
+            "ci_high": 0.8595499520810875
+          },
+          "spend_usd": 0.243004535
+        },
+        {
+          "label": "V-d2",
+          "n": 220,
+          "n_correct": 187,
+          "accuracy": {
+            "estimate": 0.85,
+            "ci_low": 0.7968312616635213,
+            "ci_high": 0.8911552430791182
+          },
+          "spend_usd": 0.24254404
+        },
+        {
+          "label": "V-d4",
+          "n": 220,
+          "n_correct": 180,
+          "accuracy": {
+            "estimate": 0.8181818181818182,
+            "ci_low": 0.7618992528857385,
+            "ci_high": 0.8635430241530246
+          },
+          "spend_usd": 0.392682265
+        }
+      ]
+    },
+    {
+      "plant_id": "H1000g21p2",
+      "arms": [
+        {
+          "label": "R5",
+          "n": 220,
+          "n_correct": 198,
+          "accuracy": {
+            "estimate": 0.9,
+            "ci_low": 0.853238798945531,
+            "ci_high": 0.933031492188914
+          },
+          "spend_usd": 0.696787355
+        },
+        {
+          "label": "V-d0",
+          "n": 220,
+          "n_correct": 180,
+          "accuracy": {
+            "estimate": 0.8181818181818182,
+            "ci_low": 0.7618992528857385,
+            "ci_high": 0.8635430241530246
+          },
+          "spend_usd": 0.271798245
+        },
+        {
+          "label": "V-d2",
+          "n": 220,
+          "n_correct": 184,
+          "accuracy": {
+            "estimate": 0.8363636363636363,
+            "ci_low": 0.7817838926220115,
+            "ci_high": 0.8793979431046808
+          },
+          "spend_usd": 0.258679075
+        },
+        {
+          "label": "V-d4",
+          "n": 220,
+          "n_correct": 184,
+          "accuracy": {
+            "estimate": 0.8363636363636363,
+            "ci_low": 0.7817838926220115,
+            "ci_high": 0.8793979431046808
+          },
+          "spend_usd": 0.39530821000000005
+        }
+      ]
+    },
+    {
+      "plant_id": "H1000g21p3",
+      "arms": [
+        {
+          "label": "R5",
+          "n": 220,
+          "n_correct": 195,
+          "accuracy": {
+            "estimate": 0.8863636363636364,
+            "ci_low": 0.8376306485493717,
+            "ci_high": 0.9218349735691264
+          },
+          "spend_usd": 0.66623722
+        },
+        {
+          "label": "V-d0",
+          "n": 220,
+          "n_correct": 181,
+          "accuracy": {
+            "estimate": 0.8227272727272728,
+            "ci_low": 0.7668524632727969,
+            "ci_high": 0.8675247034379485
+          },
+          "spend_usd": 0.227535615
+        },
+        {
+          "label": "V-d2",
+          "n": 220,
+          "n_correct": 190,
+          "accuracy": {
+            "estimate": 0.8636363636363636,
+            "ci_low": 0.8120071748250025,
+            "ci_high": 0.9027839989335839
+          },
+          "spend_usd": 0.20349691
+        },
+        {
+          "label": "V-d4",
+          "n": 220,
+          "n_correct": 178,
+          "accuracy": {
+            "estimate": 0.8090909090909091,
+            "ci_low": 0.7520266972293633,
+            "ci_high": 0.8555458004654352
+          },
+          "spend_usd": 0.461380165
+        }
+      ]
+    },
+    {
+      "plant_id": "H1000g21p4",
+      "arms": [
+        {
+          "label": "R5",
+          "n": 220,
+          "n_correct": 200,
+          "accuracy": {
+            "estimate": 0.9090909090909091,
+            "ci_low": 0.8637601014945324,
+            "ci_high": 0.9403799689838772
+          },
+          "spend_usd": 0.696232025
+        },
+        {
+          "label": "V-d0",
+          "n": 220,
+          "n_correct": 182,
+          "accuracy": {
+            "estimate": 0.8272727272727273,
+            "ci_low": 0.7718173995743113,
+            "ci_high": 0.8714946568084164
+          },
+          "spend_usd": 0.2615532
+        },
+        {
+          "label": "V-d2",
+          "n": 220,
+          "n_correct": 188,
+          "accuracy": {
+            "estimate": 0.8545454545454545,
+            "ci_low": 0.8018749135807679,
+            "ci_high": 0.8950464808338536
+          },
+          "spend_usd": 0.25036842
+        },
+        {
+          "label": "V-d4",
+          "n": 220,
+          "n_correct": 178,
+          "accuracy": {
+            "estimate": 0.8090909090909091,
+            "ci_low": 0.7520266972293633,
+            "ci_high": 0.8555458004654352
+          },
+          "spend_usd": 0.43071711500000004
+        }
+      ]
+    },
+    {
+      "plant_id": "H1000g21p5",
+      "arms": [
+        {
+          "label": "R5",
+          "n": 220,
+          "n_correct": 207,
+          "accuracy": {
+            "estimate": 0.9409090909090909,
+            "ci_low": 0.9015387028777413,
+            "ci_high": 0.9651455953045447
+          },
+          "spend_usd": 0.70467361
+        },
+        {
+          "label": "V-d0",
+          "n": 220,
+          "n_correct": 183,
+          "accuracy": {
+            "estimate": 0.8318181818181818,
+            "ci_low": 0.7767944165622037,
+            "ci_high": 0.8754525294925063
+          },
+          "spend_usd": 0.23829049
+        },
+        {
+          "label": "V-d2",
+          "n": 220,
+          "n_correct": 193,
+          "accuracy": {
+            "estimate": 0.8772727272727273,
+            "ci_low": 0.8273273628818703,
+            "ci_high": 0.9142684798926632
+          },
+          "spend_usd": 0.23411419
+        },
+        {
+          "label": "V-d4",
+          "n": 220,
+          "n_correct": 193,
+          "accuracy": {
+            "estimate": 0.8772727272727273,
+            "ci_low": 0.8273273628818703,
+            "ci_high": 0.9142684798926632
+          },
+          "spend_usd": 0.32842804000000003
+        }
+      ]
+    }
+  ],
+  "arms": [
+    {
+      "label": "R5",
+      "n": 1100,
+      "n_correct": 999,
+      "accuracy": {
+        "estimate": 0.9081818181818182,
+        "ci_low": 0.8854545454545455,
+        "ci_high": 0.9318181818181819
+      },
+      "spend_usd": 3.410241335
+    },
+    {
+      "label": "V-d0",
+      "n": 1100,
+      "n_correct": 905,
+      "accuracy": {
+        "estimate": 0.8227272727272726,
+        "ci_low": 0.8,
+        "ci_high": 0.8454545454545455
+      },
+      "spend_usd": 1.242182085
+    },
+    {
+      "label": "V-d2",
+      "n": 1100,
+      "n_correct": 942,
+      "accuracy": {
+        "estimate": 0.8563636363636362,
+        "ci_low": 0.8318181818181818,
+        "ci_high": 0.8800000000000001
+      },
+      "spend_usd": 1.189202635
+    },
+    {
+      "label": "V-d4",
+      "n": 1100,
+      "n_correct": 913,
+      "accuracy": {
+        "estimate": 0.8300000000000001,
+        "ci_low": 0.7981818181818182,
+        "ci_high": 0.8618181818181819
+      },
+      "spend_usd": 2.008515795
+    }
+  ],
+  "claims": [
+    {
+      "claim": "E1",
+      "description": "acc(V,D0) - acc(R5)",
+      "rule": "CI upper < 0",
+      "difference": {
+        "mean": -0.08545454545454545,
+        "ci_low": -0.10818181818181818,
+        "ci_high": -0.06454545454545454
+      },
+      "passed": true,
+      "n_plants": 5,
+      "n_same_sign": 5
+    },
+    {
+      "claim": "E2",
+      "description": "acc(V,D2) - acc(V,D0)",
+      "rule": "CI lower > 0",
+      "difference": {
+        "mean": 0.03363636363636364,
+        "ci_low": 0.01818181818181818,
+        "ci_high": 0.049999999999999996
+      },
+      "passed": true,
+      "n_plants": 5,
+      "n_same_sign": 5
+    },
+    {
+      "claim": "E3",
+      "description": "acc(V,D4) - acc(V,D0)",
+      "rule": "CI lower > 0",
+      "difference": {
+        "mean": 0.007272727272727273,
+        "ci_low": -0.022727272727272728,
+        "ci_high": 0.03727272727272728
+      },
+      "passed": false,
+      "n_plants": 5,
+      "n_same_sign": 3
+    },
+    {
+      "claim": "E4 (D2)",
+      "description": "acc(V,D2) - acc(R5)",
+      "rule": "CI lower > -0.03",
+      "difference": {
+        "mean": -0.05181818181818182,
+        "ci_low": -0.07090909090909091,
+        "ci_high": -0.031818181818181815
+      },
+      "passed": false,
+      "n_plants": 5,
+      "n_same_sign": 5
+    },
+    {
+      "claim": "E4 (D4)",
+      "description": "acc(V,D4) - acc(R5)",
+      "rule": "CI lower > -0.03",
+      "difference": {
+        "mean": -0.07818181818181817,
+        "ci_low": -0.1009090909090909,
+        "ci_high": -0.05818181818181818
+      },
+      "passed": false,
+      "n_plants": 5,
+      "n_same_sign": 5
+    }
+  ],
+  "families": [
+    {
+      "group": "CONNECTED",
+      "arm": "R5",
+      "n": 50,
+      "n_correct": 46
+    },
+    {
+      "group": "CONNECTED",
+      "arm": "V-d0",
+      "n": 50,
+      "n_correct": 37
+    },
+    {
+      "group": "CONNECTED",
+      "arm": "V-d2",
+      "n": 50,
+      "n_correct": 40
+    },
+    {
+      "group": "CONNECTED",
+      "arm": "V-d4",
+      "n": 50,
+      "n_correct": 45
+    },
+    {
+      "group": "COUNT_IN_UNIT",
+      "arm": "R5",
+      "n": 50,
+      "n_correct": 50
+    },
+    {
+      "group": "COUNT_IN_UNIT",
+      "arm": "V-d0",
+      "n": 50,
+      "n_correct": 50
+    },
+    {
+      "group": "COUNT_IN_UNIT",
+      "arm": "V-d2",
+      "n": 50,
+      "n_correct": 50
+    },
+    {
+      "group": "COUNT_IN_UNIT",
+      "arm": "V-d4",
+      "n": 50,
+      "n_correct": 50
+    },
+    {
+      "group": "CROSS_UNIT",
+      "arm": "R5",
+      "n": 50,
+      "n_correct": 49
+    },
+    {
+      "group": "CROSS_UNIT",
+      "arm": "V-d0",
+      "n": 50,
+      "n_correct": 50
+    },
+    {
+      "group": "CROSS_UNIT",
+      "arm": "V-d2",
+      "n": 50,
+      "n_correct": 49
+    },
+    {
+      "group": "CROSS_UNIT",
+      "arm": "V-d4",
+      "n": 50,
+      "n_correct": 48
+    },
+    {
+      "group": "DOWNSTREAM_IN_UNIT",
+      "arm": "R5",
+      "n": 50,
+      "n_correct": 48
+    },
+    {
+      "group": "DOWNSTREAM_IN_UNIT",
+      "arm": "V-d0",
+      "n": 50,
+      "n_correct": 36
+    },
+    {
+      "group": "DOWNSTREAM_IN_UNIT",
+      "arm": "V-d2",
+      "n": 50,
+      "n_correct": 39
+    },
+    {
+      "group": "DOWNSTREAM_IN_UNIT",
+      "arm": "V-d4",
+      "n": 50,
+      "n_correct": 26
+    },
+    {
+      "group": "DOWNSTREAM_ISOLATION",
+      "arm": "R5",
+      "n": 50,
+      "n_correct": 5
+    },
+    {
+      "group": "DOWNSTREAM_ISOLATION",
+      "arm": "V-d0",
+      "n": 50,
+      "n_correct": 3
+    },
+    {
+      "group": "DOWNSTREAM_ISOLATION",
+      "arm": "V-d2",
+      "n": 50,
+      "n_correct": 5
+    },
+    {
+      "group": "DOWNSTREAM_ISOLATION",
+      "arm": "V-d4",
+      "n": 50,
+      "n_correct": 3
+    },
+    {
+      "group": "FEEDING_UNITS",
+      "arm": "R5",
+      "n": 50,
+      "n_correct": 49
+    },
+    {
+      "group": "FEEDING_UNITS",
+      "arm": "V-d0",
+      "n": 50,
+      "n_correct": 49
+    },
+    {
+      "group": "FEEDING_UNITS",
+      "arm": "V-d2",
+      "n": 50,
+      "n_correct": 50
+    },
+    {
+      "group": "FEEDING_UNITS",
+      "arm": "V-d4",
+      "n": 50,
+      "n_correct": 47
+    },
+    {
+      "group": "FLOW_PATH",
+      "arm": "R5",
+      "n": 50,
+      "n_correct": 42
+    },
+    {
+      "group": "FLOW_PATH",
+      "arm": "V-d0",
+      "n": 50,
+      "n_correct": 36
+    },
+    {
+      "group": "FLOW_PATH",
+      "arm": "V-d2",
+      "n": 50,
+      "n_correct": 38
+    },
+    {
+      "group": "FLOW_PATH",
+      "arm": "V-d4",
+      "n": 50,
+      "n_correct": 35
+    },
+    {
+      "group": "INSTRUMENTS_OF_ITEM",
+      "arm": "R5",
+      "n": 50,
+      "n_correct": 50
+    },
+    {
+      "group": "INSTRUMENTS_OF_ITEM",
+      "arm": "V-d0",
+      "n": 50,
+      "n_correct": 50
+    },
+    {
+      "group": "INSTRUMENTS_OF_ITEM",
+      "arm": "V-d2",
+      "n": 50,
+      "n_correct": 50
+    },
+    {
+      "group": "INSTRUMENTS_OF_ITEM",
+      "arm": "V-d4",
+      "n": 50,
+      "n_correct": 46
+    },
+    {
+      "group": "LOOKUP_TYPE",
+      "arm": "R5",
+      "n": 50,
+      "n_correct": 50
+    },
+    {
+      "group": "LOOKUP_TYPE",
+      "arm": "V-d0",
+      "n": 50,
+      "n_correct": 50
+    },
+    {
+      "group": "LOOKUP_TYPE",
+      "arm": "V-d2",
+      "n": 50,
+      "n_correct": 50
+    },
+    {
+      "group": "LOOKUP_TYPE",
+      "arm": "V-d4",
+      "n": 50,
+      "n_correct": 49
+    },
+    {
+      "group": "LOOKUP_UNIT",
+      "arm": "R5",
+      "n": 50,
+      "n_correct": 50
+    },
+    {
+      "group": "LOOKUP_UNIT",
+      "arm": "V-d0",
+      "n": 50,
+      "n_correct": 50
+    },
+    {
+      "group": "LOOKUP_UNIT",
+      "arm": "V-d2",
+      "n": 50,
+      "n_correct": 50
+    },
+    {
+      "group": "LOOKUP_UNIT",
+      "arm": "V-d4",
+      "n": 50,
+      "n_correct": 50
+    },
+    {
+      "group": "LOOPS_NEAR_ITEM",
+      "arm": "R5",
+      "n": 50,
+      "n_correct": 44
+    },
+    {
+      "group": "LOOPS_NEAR_ITEM",
+      "arm": "V-d0",
+      "n": 50,
+      "n_correct": 44
+    },
+    {
+      "group": "LOOPS_NEAR_ITEM",
+      "arm": "V-d2",
+      "n": 50,
+      "n_correct": 44
+    },
+    {
+      "group": "LOOPS_NEAR_ITEM",
+      "arm": "V-d4",
+      "n": 50,
+      "n_correct": 41
+    },
+    {
+      "group": "LOOP_MEASURED_EQUIPMENT",
+      "arm": "R5",
+      "n": 50,
+      "n_correct": 50
+    },
+    {
+      "group": "LOOP_MEASURED_EQUIPMENT",
+      "arm": "V-d0",
+      "n": 50,
+      "n_correct": 50
+    },
+    {
+      "group": "LOOP_MEASURED_EQUIPMENT",
+      "arm": "V-d2",
+      "n": 50,
+      "n_correct": 50
+    },
+    {
+      "group": "LOOP_MEASURED_EQUIPMENT",
+      "arm": "V-d4",
+      "n": 50,
+      "n_correct": 50
+    },
+    {
+      "group": "NEIGHBOURS_DOWNSTREAM",
+      "arm": "R5",
+      "n": 50,
+      "n_correct": 50
+    },
+    {
+      "group": "NEIGHBOURS_DOWNSTREAM",
+      "arm": "V-d0",
+      "n": 50,
+      "n_correct": 45
+    },
+    {
+      "group": "NEIGHBOURS_DOWNSTREAM",
+      "arm": "V-d2",
+      "n": 50,
+      "n_correct": 47
+    },
+    {
+      "group": "NEIGHBOURS_DOWNSTREAM",
+      "arm": "V-d4",
+      "n": 50,
+      "n_correct": 49
+    },
+    {
+      "group": "NO_PATH",
+      "arm": "R5",
+      "n": 50,
+      "n_correct": 50
+    },
+    {
+      "group": "NO_PATH",
+      "arm": "V-d0",
+      "n": 50,
+      "n_correct": 50
+    },
+    {
+      "group": "NO_PATH",
+      "arm": "V-d2",
+      "n": 50,
+      "n_correct": 50
+    },
+    {
+      "group": "NO_PATH",
+      "arm": "V-d4",
+      "n": 50,
+      "n_correct": 34
+    },
+    {
+      "group": "ROUTE_AVOIDING",
+      "arm": "R5",
+      "n": 50,
+      "n_correct": 49
+    },
+    {
+      "group": "ROUTE_AVOIDING",
+      "arm": "V-d0",
+      "n": 50,
+      "n_correct": 45
+    },
+    {
+      "group": "ROUTE_AVOIDING",
+      "arm": "V-d2",
+      "n": 50,
+      "n_correct": 45
+    },
+    {
+      "group": "ROUTE_AVOIDING",
+      "arm": "V-d4",
+      "n": 50,
+      "n_correct": 46
+    },
+    {
+      "group": "SAME_UNIT",
+      "arm": "R5",
+      "n": 50,
+      "n_correct": 50
+    },
+    {
+      "group": "SAME_UNIT",
+      "arm": "V-d0",
+      "n": 50,
+      "n_correct": 50
+    },
+    {
+      "group": "SAME_UNIT",
+      "arm": "V-d2",
+      "n": 50,
+      "n_correct": 50
+    },
+    {
+      "group": "SAME_UNIT",
+      "arm": "V-d4",
+      "n": 50,
+      "n_correct": 50
+    },
+    {
+      "group": "SHEETS_OF_TAG",
+      "arm": "R5",
+      "n": 50,
+      "n_correct": 50
+    },
+    {
+      "group": "SHEETS_OF_TAG",
+      "arm": "V-d0",
+      "n": 50,
+      "n_correct": 25
+    },
+    {
+      "group": "SHEETS_OF_TAG",
+      "arm": "V-d2",
+      "n": 50,
+      "n_correct": 37
+    },
+    {
+      "group": "SHEETS_OF_TAG",
+      "arm": "V-d4",
+      "n": 50,
+      "n_correct": 49
+    },
+    {
+      "group": "UNANSWERABLE_TAG",
+      "arm": "R5",
+      "n": 50,
+      "n_correct": 50
+    },
+    {
+      "group": "UNANSWERABLE_TAG",
+      "arm": "V-d0",
+      "n": 50,
+      "n_correct": 50
+    },
+    {
+      "group": "UNANSWERABLE_TAG",
+      "arm": "V-d2",
+      "n": 50,
+      "n_correct": 50
+    },
+    {
+      "group": "UNANSWERABLE_TAG",
+      "arm": "V-d4",
+      "n": 50,
+      "n_correct": 50
+    },
+    {
+      "group": "UNITS_REACHED",
+      "arm": "R5",
+      "n": 50,
+      "n_correct": 48
+    },
+    {
+      "group": "UNITS_REACHED",
+      "arm": "V-d0",
+      "n": 50,
+      "n_correct": 35
+    },
+    {
+      "group": "UNITS_REACHED",
+      "arm": "V-d2",
+      "n": 50,
+      "n_correct": 42
+    },
+    {
+      "group": "UNITS_REACHED",
+      "arm": "V-d4",
+      "n": 50,
+      "n_correct": 43
+    },
+    {
+      "group": "UPSTREAM_ISOLATION",
+      "arm": "R5",
+      "n": 50,
+      "n_correct": 24
+    },
+    {
+      "group": "UPSTREAM_ISOLATION",
+      "arm": "V-d0",
+      "n": 50,
+      "n_correct": 25
+    },
+    {
+      "group": "UPSTREAM_ISOLATION",
+      "arm": "V-d2",
+      "n": 50,
+      "n_correct": 27
+    },
+    {
+      "group": "UPSTREAM_ISOLATION",
+      "arm": "V-d4",
+      "n": 50,
+      "n_correct": 22
+    },
+    {
+      "group": "UPSTREAM_SOURCES",
+      "arm": "R5",
+      "n": 50,
+      "n_correct": 50
+    },
+    {
+      "group": "UPSTREAM_SOURCES",
+      "arm": "V-d0",
+      "n": 50,
+      "n_correct": 43
+    },
+    {
+      "group": "UPSTREAM_SOURCES",
+      "arm": "V-d2",
+      "n": 50,
+      "n_correct": 45
+    },
+    {
+      "group": "UPSTREAM_SOURCES",
+      "arm": "V-d4",
+      "n": 50,
+      "n_correct": 35
+    },
+    {
+      "group": "VALVES_ON_PATH",
+      "arm": "R5",
+      "n": 50,
+      "n_correct": 45
+    },
+    {
+      "group": "VALVES_ON_PATH",
+      "arm": "V-d0",
+      "n": 50,
+      "n_correct": 32
+    },
+    {
+      "group": "VALVES_ON_PATH",
+      "arm": "V-d2",
+      "n": 50,
+      "n_correct": 34
+    },
+    {
+      "group": "VALVES_ON_PATH",
+      "arm": "V-d4",
+      "n": 50,
+      "n_correct": 45
+    }
+  ],
+  "exposure": [
+    {
+      "group": "exposed (k_identity > 0)",
+      "arm": "R5",
+      "n": 146,
+      "n_correct": 122
+    },
+    {
+      "group": "exposed (k_identity > 0)",
+      "arm": "V-d0",
+      "n": 146,
+      "n_correct": 33
+    },
+    {
+      "group": "exposed (k_identity > 0)",
+      "arm": "V-d2",
+      "n": 146,
+      "n_correct": 66
+    },
+    {
+      "group": "exposed (k_identity > 0)",
+      "arm": "V-d4",
+      "n": 146,
+      "n_correct": 104
+    },
+    {
+      "group": "unexposed (k_identity = 0 or None)",
+      "arm": "R5",
+      "n": 954,
+      "n_correct": 877
+    },
+    {
+      "group": "unexposed (k_identity = 0 or None)",
+      "arm": "V-d0",
+      "n": 954,
+      "n_correct": 872
+    },
+    {
+      "group": "unexposed (k_identity = 0 or None)",
+      "arm": "V-d2",
+      "n": 954,
+      "n_correct": 876
+    },
+    {
+      "group": "unexposed (k_identity = 0 or None)",
+      "arm": "V-d4",
+      "n": 954,
+      "n_correct": 809
+    }
+  ],
+  "outcomes": {
+    "R5": {
+      "cypher-v2t": {
+        "ANSWERED": 972,
+        "RETRIEVAL_ERROR": 121,
+        "TIMED_OUT": 3,
+        "PARSE_FAILURE": 4
+      },
+      "agent-v2t": {
+        "ANSWERED": 1096,
+        "PARSE_FAILURE": 3,
+        "TIMED_OUT": 1
+      }
+    },
+    "V-d0": {
+      "cypher-v2t": {
+        "ANSWERED": 1041,
+        "PARSE_FAILURE": 32,
+        "RETRIEVAL_ERROR": 25,
+        "TIMED_OUT": 2
+      },
+      "agent-v2t": {
+        "ANSWERED": 1100
+      }
+    },
+    "V-d2": {
+      "cypher-v2t": {
+        "ANSWERED": 1029,
+        "PARSE_FAILURE": 41,
+        "RETRIEVAL_ERROR": 28,
+        "TIMED_OUT": 2
+      },
+      "agent-v2t": {
+        "ANSWERED": 1100
+      }
+    },
+    "V-d4": {
+      "cypher-v2t": {
+        "ANSWERED": 970,
+        "RETRIEVAL_ERROR": 120,
+        "PARSE_FAILURE": 8,
+        "TIMED_OUT": 2
+      },
+      "agent-v2t": {
+        "ANSWERED": 1096,
+        "PARSE_FAILURE": 3,
+        "TIMED_OUT": 1
+      }
+    }
+  },
+  "notes": [
+    "Exposed means the question's k_identity is greater than 0; a missing (None) k_identity counts as unexposed.",
+    "Accuracy and outcome counts cover the same questions (R5's headline scope).",
+    "New spend is the sum of cost_usd over calls not served from the cache, over all questions of the run (not only the headline scope). The V arms reused R5's cache, so their figure counts only the calls R5 had not already paid for: it is not a cost per arm and must not be compared with R5's full spend.",
+    "Pooled over 5 plants: the value is the equal-weight mean of the plants; intervals are two-stage cluster bootstraps (plants, then questions) with the EXP-0007 seed and resample count, and every claim uses the same draws. With few plants the bootstrap understates between-plant variance (about 4/5 at five).",
+    "'Plants with the pooled sign' is descriptive and judges nothing."
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "source_run": "S7-CYP-H1000g21p5",
+  "strategy": "cypher_rag_lines",
+  "corpus_id": "H1000g21p5",
+  "timeout_s": 30.0,
+  "row_cap": 1000,
+  "n_source_questions": 280,
+  "n_original_retrieval_errors": 31,
+  "n_replay_errors": 31,
+  "n_without_query": 0,
+  "measures": "database time only: the recorded queries (tag check and every attempt) sent again plus the row formatting; no query-writing call, no answer-prompt build, no answer parsing"
+}

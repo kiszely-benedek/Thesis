@@ -1,0 +1,259 @@
+{
+  "corpus_id": "H100g21p1",
+  "config": {
+    "generator": {
+      "generator_version": "v2.1",
+      "plant_id": "plant0",
+      "seed": 5232,
+      "n_units": 62,
+      "sheets": {
+        "min_equipment_per_sheet": 1,
+        "max_equipment_per_sheet": 16,
+        "max_symbols_before_stubs": 100
+      },
+      "trims": {
+        "p_pump_vent_drain": 1.0,
+        "p_min_flow": 0.3,
+        "p_cv_station": 0.6,
+        "p_cv_reducers": 0.5,
+        "p_cv_drain": 0.3,
+        "p_limit_switches": 0.5,
+        "p_psv_blocks": 0.5,
+        "p_psv_drain": 0.3,
+        "vent_drain_convention": "klm_all",
+        "p_hnf_vent_drain": 0.3,
+        "p_thermal_relief": 1.0,
+        "p_exchanger_vent_drain": 0.5,
+        "p_battery_limit": 0.5,
+        "p_open_drain": 0.3,
+        "p_skillet": 0.5,
+        "p_flex_connector": 0.3,
+        "p_flush_connection": 0.3,
+        "condensate_mode_weights": {
+          "trap": 2.0,
+          "trap_station": 1.0,
+          "drain_pot": 1.0
+        },
+        "pump_pressure_mode_weights": {
+          "per_pump_pi": 3.0,
+          "header_pt": 1.0
+        }
+      },
+      "instruments": {
+        "p_motor_hs": 1.0,
+        "p_cascade": 0.5
+      },
+      "density": {
+        "monitor_points_per_major_item": {
+          "low": 5,
+          "high": 7
+        },
+        "monitor_variable_weights": {
+          "T": 1.0,
+          "P": 1.0
+        },
+        "p_monitor_local": 0.7,
+        "tray_temperature_points": {
+          "low": 2,
+          "high": 4
+        },
+        "reactor_temperature_points": {
+          "low": 3,
+          "high": 5
+        },
+        "p_optional_instrument": 0.5,
+        "p_point_level_switch": 0.5,
+        "p_bearing_temperature": 0.5,
+        "p_indicator_alarm": 0.5,
+        "p_motor_current": 0.5,
+        "p_vfd": 0.5,
+        "p_multivariable": 0.5
+      },
+      "patterns": {
+        "p_triple_pump_set": 0.15,
+        "p_single_pump": 0.2,
+        "p_column_combined": 0.3,
+        "pump_set_group_weights": {
+          "with_suction_vessel": 2.0,
+          "own_sheet": 1.0
+        }
+      },
+      "flowsheet": {
+        "conditioning_count_weights": {
+          "0": 1.0,
+          "1": 1.0,
+          "2": 1.0
+        },
+        "conditioning_weights": {
+          "U5": 1.0,
+          "U7": 1.0,
+          "U8": 1.0
+        },
+        "core_weights": {
+          "U3+U2": 1.0,
+          "U3": 1.0,
+          "U6": 2.0
+        },
+        "separation_count_weights": {
+          "1": 1.0,
+          "2": 1.0,
+          "3": 1.0
+        },
+        "separation_weights": {
+          "U1": 1.0,
+          "U6": 1.0
+        },
+        "p_side_draw": 0.2,
+        "p_shared_farm_feed": 0.0
+      }
+    },
+    "split": {
+      "strategy": "by_sheet_group",
+      "sheet_equipment_budget": 16,
+      "seed": 5232,
+      "duplication_rate": 0.25,
+      "equipment_classes": [
+        "Agitator",
+        "AirCoolingSystem",
+        "AirEjector",
+        "CentrifugalCompressor",
+        "CentrifugalPump",
+        "Compressor",
+        "EjectorPump",
+        "ElectricHeater",
+        "ElectricalSeparator",
+        "Filter",
+        "Furnace",
+        "GasFilter",
+        "GravitationalSeparator",
+        "HeatExchanger",
+        "Heater",
+        "LiquidFilter",
+        "Mixer",
+        "PlateHeatExchanger",
+        "PressureVessel",
+        "ProcessColumn",
+        "Pump",
+        "ReciprocatingCompressor",
+        "ReciprocatingPump",
+        "RotaryCompressor",
+        "RotaryMixer",
+        "RotaryPump",
+        "ScrubbingSeparator",
+        "Separator",
+        "SpiralHeatExchanger",
+        "StaticMixer",
+        "Tank",
+        "TubularHeatExchanger",
+        "Vessel"
+      ],
+      "numbering_scheme": "sequential",
+      "use_grid_reference": false,
+      "exact_match_tags": true,
+      "connector_label_detail": "drawing_only"
+    }
+  },
+  "counts": {
+    "n_sheets": 100,
+    "n_nodes": 9449,
+    "n_relationships": 31666,
+    "n_connector_pairs_predicted": 170,
+    "n_unresolved": 0
+  },
+  "store_profile": "plant_lines",
+  "layer_counts": {
+    "n_occurrences": 0,
+    "n_plant_items": 9285,
+    "n_structure_nodes": 164,
+    "n_drawn_as": 0,
+    "n_invariants": 5
+  },
+  "stage_seconds": {
+    "generate": 5.2903549000038765,
+    "split": 0.2628938000125345,
+    "localize": 0.1419684000138659,
+    "resolve": 0.06186570000136271,
+    "plan": 0.3807323999935761,
+    "load_recreate": 0.5431367999990471,
+    "load_wipe": 0.041292999987490475,
+    "load_schema": 0.12587270000949502,
+    "load_nodes": 1.55088799999794,
+    "load_relationships": 1.2539355999906547,
+    "load_verify": 0.2937240000173915,
+    "load_total": 3.2657261999847833
+  },
+  "resolution": {
+    "n_sheets": 100,
+    "n_occurrences": 9633,
+    "n_connectors": 340,
+    "pairs_by_rule": {
+      "line_number": 148,
+      "service_direction": 22
+    },
+    "unresolved_by_reason": {},
+    "n_identity_groups": 8,
+    "ambiguous_tag_keys": 0,
+    "edge_attribute_conflicts": 0
+  },
+  "import_report": null,
+  "load_report": {
+    "corpus_id": "H100g21p1",
+    "nodes_written": 9449,
+    "relationships_written": 31666,
+    "batch_size": 5000,
+    "wipe_s": 0.041292999987490475,
+    "schema_s": 0.12587270000949502,
+    "nodes_s": 1.55088799999794,
+    "relationships_s": 1.2539355999906547,
+    "verify_s": 0.2937240000173915,
+    "total_s": 3.2657261999847833,
+    "neo4j_version": "Neo4j Kernel 2026.09.0 (enterprise)",
+    "invariants_checked": 5
+  },
+  "gate_equal": null,
+  "gate_differences": [],
+  "resolution_score": null,
+  "neo4j_version": "Neo4j Kernel 2026.09.0 (enterprise)",
+  "environment": {
+    "git_commit": "da7b3eb96ea5736c5ed9946443ee4f87a48a7b5f",
+    "git_dirty": true,
+    "machine": {
+      "cpu_name": "AMD Ryzen 9 5900HX with Radeon Graphics",
+      "physical_cores": 8,
+      "logical_cores": 16,
+      "ram_bytes": 16542019584,
+      "os": "Windows-11-10.0.26200-SP0",
+      "python_version": "3.12.10",
+      "power_plugged": true
+    },
+    "clock": "perf_counter",
+    "clock_resolution_s": 1e-7,
+    "concurrency": null,
+    "neo4j_version": "Neo4j Kernel 2026.09.0 (enterprise)",
+    "neo4j_memory_settings": {
+      "server.memory.heap.initial_size": "512.00MiB",
+      "server.memory.heap.max_size": "1.00GiB",
+      "server.memory.pagecache.async": "false",
+      "server.memory.pagecache.directio": "false",
+      "server.memory.pagecache.flush.buffer.enabled": "false",
+      "server.memory.pagecache.flush.buffer.size_in_pages": "128",
+      "server.memory.pagecache.scan.prefetchers": "4",
+      "server.memory.pagecache.size": "512.00MiB",
+      "server.memory.query_cache.per_db_cache_num_entries": "1000",
+      "server.memory.query_cache.shared_cache_num_entries": "1000",
+      "server.memory.query_cache.sharing_enabled": "false"
+    },
+    "recorded_at": "2026-11-13T21:54:02.211336Z"
+  },
+  "store_footprint": {
+    "database": "neo4j",
+    "fresh_database": true,
+    "data_bytes": 6891244,
+    "tx_log_bytes": 3532079,
+    "metrics_store_bytes": null,
+    "metrics_reserved_bytes": null,
+    "n_nodes": 9449,
+    "n_relationships": 31666,
+    "n_properties": 103341
+  }
+}

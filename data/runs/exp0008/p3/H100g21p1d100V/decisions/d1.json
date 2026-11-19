@@ -1,0 +1,216 @@
+{
+ "decider": "d1",
+ "threshold": 1.0,
+ "link_set": {
+  "decider": "d1",
+  "links": [
+   {
+    "first": [
+     "51",
+     "EA-3301",
+     "AirCoolingSystem"
+    ],
+    "second": [
+     "50",
+     "EA.3301",
+     "AirCoolingSystem"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "60",
+     "EA-3901",
+     "AirCoolingSystem"
+    ],
+    "second": [
+     "59",
+     "EA3901",
+     "AirCoolingSystem"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "60",
+     "V-3901",
+     "GravitationalSeparator"
+    ],
+    "second": [
+     "61",
+     "V-39-01",
+     "GravitationalSeparator"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "54",
+     "V-3501",
+     "PressureVessel"
+    ],
+    "second": [
+     "55",
+     "V-35-01",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "9",
+     "V-701",
+     "PressureVessel"
+    ],
+    "second": [
+     "10",
+     "V701",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "0",
+     "TK-103",
+     "Tank"
+    ],
+    "second": [
+     "1",
+     "tk-103",
+     "Tank"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "82",
+     "TK-5104",
+     "Tank"
+    ],
+    "second": [
+     "83",
+     "TK 5104",
+     "Tank"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "75",
+     "E-4802",
+     "TubularHeatExchanger"
+    ],
+    "second": [
+     "74",
+     "E4802",
+     "TubularHeatExchanger"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "81",
+     "E-5002",
+     "TubularHeatExchanger"
+    ],
+    "second": [
+     "80",
+     "E-50-02",
+     "TubularHeatExchanger"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   }
+  ]
+ },
+ "said_same": [
+  false,
+  false,
+  false,
+  true,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  true,
+  false,
+  false,
+  true,
+  false,
+  false,
+  true
+ ],
+ "pair_level": {
+  "tp": 9,
+  "fp": 0,
+  "fn": 24,
+  "precision": 1.0,
+  "recall": 0.2727272727272727,
+  "f1": 0.42857142857142855
+ },
+ "group_level": {
+  "true_positives": 9,
+  "false_positives": 0,
+  "false_negatives": 24,
+  "precision": 1.0,
+  "recall": 0.2727272727272727,
+  "f1": 0.42857142857142855
+ },
+ "n_dropped_one_to_one": 0,
+ "n_identity_conflicts": 0,
+ "llm": null
+}

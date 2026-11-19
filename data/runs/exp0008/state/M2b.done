@@ -1,0 +1,8 @@
+{
+ "stage": "M2b",
+ "finished_utc": "2026-11-11T16:01:01+00:00",
+ "outputs": {
+  "data/runs/exp0008/audit/pilot/verdicts.jsonl": "5c5407f90a8e2620784d132eaf753a6198d72d9167e185627be6c02194d96df0",
+  "data/runs/exp0008/state/g2.json": "021c857d2e319748c5d991ce357aedee8ccb13d55fb58bb52b7c139fd895faa9"
+ }
+}

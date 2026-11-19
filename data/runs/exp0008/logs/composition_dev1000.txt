@@ -1,0 +1,22 @@
+pooled over 1 plants (D1000g21): bands judged on the mean
+  quantity                                                             mean  band                                      verdict        D1000g21
+  symbols per sheet, mean                                            84.243  56-109                                    pass             84.243
+  sheets with 40-134 symbols (share)                                  0.868  reported (target >= 0.95 not enforced)    reported          0.868
+  valves per sheet, mean                                             23.890  15-28                                     pass             23.890
+  instruments per sheet, mean                                        32.300  20-38                                     pass             32.300
+  instruments : valves                                                1.352  1-1.8                                     pass              1.352
+  off-page stubs per sheet, mean                                      5.999  5-11                                      pass              5.999
+  off-page stubs per sheet, max                                      20.000  <= 21                                     pass             20.000
+  equipment per sheet, min                                            1.000  >= 1                                      pass              1.000
+  equipment per sheet, max                                           13.000  <= 16                                     pass             13.000
+  sheets with at most 10 equipment (share)                            0.999  >= 0.9                                    pass              0.999
+  equipment in A/B(/C) sets (share)                                   0.387  0.25-0.45                                 pass              0.387
+  units drawn on 2 or more sheets (share)                             0.498  0.25-0.65                                 pass              0.498
+  signal cuts per sheet, mean                                         0.444  reported, no band                         reported          0.444
+  instruments with sheet-graph degree 1 (share)                       0.647  >= 0.55                                   pass              0.647
+  sheets that show one unit (share)                                   1.000  = 1                                       pass              1.000
+  dup 0: sheets with corpus symbols = plan symbols (share)            1.000  = 1                                       pass              1.000
+  dup 0: sheets with pipe connectors = plan crossings (share)         1.000  = 1                                       pass              1.000
+  dup 0: sheets with signal connectors = plan signal cuts (share)     1.000  = 1                                       pass              1.000
+  preset duplication: reference copies added per sheet                0.087  reported, no band                         reported          0.087
+  preset duplication: crossings absorbed per sheet                    0.174  reported, no band                         reported          0.174

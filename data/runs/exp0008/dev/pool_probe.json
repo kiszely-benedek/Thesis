@@ -1,0 +1,23 @@
+{
+ "command": [
+  ".venv/Scripts\\python.EXE",
+  "-m",
+  "plantgraph.qa.questions",
+  "--corpus-id",
+  "D1000g21",
+  "--ingest-json",
+  "data/runs/exp0008/corpora/D1000g21/ingest.json",
+  "--seed",
+  "1",
+  "--n-per-bin",
+  "97",
+  "--n-unanswerable",
+  "97",
+  "--out",
+  "data/runs/exp0008/qpool/D1000g21"
+ ],
+ "return_code": 0,
+ "seconds": 3134.92,
+ "peak_rss_bytes": 2688675840,
+ "limit_bytes": 14887817625
+}

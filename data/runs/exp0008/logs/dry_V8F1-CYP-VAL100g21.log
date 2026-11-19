@@ -1,0 +1,55 @@
+run V8F1-CYP-VAL100g21: 163 rows to answer, 0 already on disk
+paid mode: up to 163 model calls; hard spend cap 1.0 USD
+no cost-per-question estimate given (the pilot has not provided one)
+{
+  "run_id": "V8F1-CYP-VAL100g21",
+  "n_rows": 163,
+  "n_new_rows": 163,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "cypher_rag_plant": {
+      "0": {
+        "RETRIEVAL_ERROR": 68
+      },
+      "1": {
+        "RETRIEVAL_ERROR": 38
+      },
+      "2": {
+        "RETRIEVAL_ERROR": 16
+      },
+      "3-4": {
+        "RETRIEVAL_ERROR": 7
+      },
+      "5-8": {
+        "RETRIEVAL_ERROR": 5
+      },
+      "9-16": {
+        "RETRIEVAL_ERROR": 3
+      },
+      "17-32": {
+        "RETRIEVAL_ERROR": 3
+      },
+      "33+": {
+        "RETRIEVAL_ERROR": 3
+      },
+      "unanswerable": {
+        "RETRIEVAL_ERROR": 20
+      }
+    }
+  },
+  "routing_recall": {},
+  "relaxed_routing_recall": {},
+  "evidence_node_recall": {},
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {},
+    "relaxed_routing_recall": {},
+    "evidence_node_recall": {}
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "cypher_rag_plant": 0.0
+  },
+  "stopped_by_spend_cap": false,
+  "late_after_timeout_usd": 0.0
+}
+V8F1-CYP-VAL100g21: 163 of 163 questions need a model call (163 calls not in the cache, 0 served from it)

@@ -1,0 +1,93 @@
+run INF-S7F1-AG-H100g21p2: 280 rows to answer, 0 already on disk
+replay mode: cache only, no network; stops at the first cache miss
+{
+  "run_id": "INF-S7F1-AG-H100g21p2",
+  "n_rows": 280,
+  "n_new_rows": 280,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "graph_agent_low_steps": {
+      "0": {
+        "ANSWERED": 124,
+        "TIMED_OUT": 1
+      },
+      "1": {
+        "ANSWERED": 66
+      },
+      "2": {
+        "ANSWERED": 26
+      },
+      "3-4": {
+        "ANSWERED": 16
+      },
+      "5-8": {
+        "ANSWERED": 9
+      },
+      "9-16": {
+        "ANSWERED": 6
+      },
+      "17-32": {
+        "ANSWERED": 6
+      },
+      "33+": {
+        "ANSWERED": 6
+      },
+      "unanswerable": {
+        "ANSWERED": 20
+      }
+    }
+  },
+  "routing_recall": {
+    "graph_agent_low_steps": 0.8764478764478765
+  },
+  "relaxed_routing_recall": {
+    "graph_agent_low_steps": 0.8764478764478765
+  },
+  "evidence_node_recall": {
+    "graph_agent_low_steps": 0.8197373758533157
+  },
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {
+      "graph_agent_low_steps": {
+        "0": 0.9919354838709677,
+        "1": 0.8333333333333334,
+        "2": 0.8846153846153846,
+        "3-4": 0.875,
+        "5-8": 0.7777777777777778,
+        "9-16": 0.5,
+        "17-32": 0.3333333333333333,
+        "33+": 0.0
+      }
+    },
+    "relaxed_routing_recall": {
+      "graph_agent_low_steps": {
+        "0": 0.9919354838709677,
+        "1": 0.8333333333333334,
+        "2": 0.8846153846153846,
+        "3-4": 0.875,
+        "5-8": 0.7777777777777778,
+        "9-16": 0.5,
+        "17-32": 0.3333333333333333,
+        "33+": 0.0
+      }
+    },
+    "evidence_node_recall": {
+      "graph_agent_low_steps": {
+        "0": 0.9097398999238843,
+        "1": 0.8003814328198383,
+        "2": 0.798235956175401,
+        "3-4": 0.8168543150397989,
+        "5-8": 0.7810176097144205,
+        "9-16": 0.42834070534004437,
+        "17-32": 0.3810661234352388,
+        "33+": 0.1551571569986926
+      }
+    }
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "graph_agent_low_steps": 0.0009869953392857142
+  },
+  "stopped_by_spend_cap": false,
+  "late_after_timeout_usd": 0.0
+}

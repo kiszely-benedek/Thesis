@@ -1,0 +1,2493 @@
+{
+ "decider": "d4",
+ "threshold": null,
+ "link_set": {
+  "decider": "d4",
+  "links": [
+   {
+    "first": [
+     "233",
+     "EA-13901",
+     "AirCoolingSystem"
+    ],
+    "second": [
+     "232",
+     "EA-1391",
+     "AirCoolingSystem"
+    ],
+    "score": 1.0,
+    "string_score": 0.9230769230769231
+   },
+   {
+    "first": [
+     "174",
+     "EA-10501",
+     "AirCoolingSystem"
+    ],
+    "second": [
+     "173",
+     "U105-EA-01",
+     "AirCoolingSystem"
+    ],
+    "score": 1.0,
+    "string_score": 0.6666666666666666
+   },
+   {
+    "first": [
+     "36",
+     "EA-2301",
+     "AirCoolingSystem"
+    ],
+    "second": [
+     "35",
+     "23-EA-01",
+     "AirCoolingSystem"
+    ],
+    "score": 1.0,
+    "string_score": 0.6666666666666666
+   },
+   {
+    "first": [
+     "40",
+     "EA-2501",
+     "AirCoolingSystem"
+    ],
+    "second": [
+     "39",
+     "EA-251",
+     "AirCoolingSystem"
+    ],
+    "score": 1.0,
+    "string_score": 0.9090909090909091
+   },
+   {
+    "first": [
+     "434",
+     "EA-25701",
+     "AirCoolingSystem"
+    ],
+    "second": [
+     "433",
+     "U257-EA-01",
+     "AirCoolingSystem"
+    ],
+    "score": 1.0,
+    "string_score": 0.6666666666666666
+   },
+   {
+    "first": [
+     "512",
+     "EA-30101",
+     "AirCoolingSystem"
+    ],
+    "second": [
+     "511",
+     "EA 30101",
+     "AirCoolingSystem"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "519",
+     "EA-30301",
+     "AirCoolingSystem"
+    ],
+    "second": [
+     "518",
+     "U303-EA-01",
+     "AirCoolingSystem"
+    ],
+    "score": 1.0,
+    "string_score": 0.6666666666666666
+   },
+   {
+    "first": [
+     "522",
+     "EA-30501",
+     "AirCoolingSystem"
+    ],
+    "second": [
+     "521",
+     "U305-EA-01",
+     "AirCoolingSystem"
+    ],
+    "score": 1.0,
+    "string_score": 0.6666666666666666
+   },
+   {
+    "first": [
+     "647",
+     "EA-38001",
+     "AirCoolingSystem"
+    ],
+    "second": [
+     "646",
+     "EA38001",
+     "AirCoolingSystem"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "718",
+     "EA-42001",
+     "AirCoolingSystem"
+    ],
+    "second": [
+     "717",
+     "420-EA-01",
+     "AirCoolingSystem"
+    ],
+    "score": 1.0,
+    "string_score": 0.7142857142857143
+   },
+   {
+    "first": [
+     "725",
+     "EA-42401",
+     "AirCoolingSystem"
+    ],
+    "second": [
+     "724",
+     "EA-4241",
+     "AirCoolingSystem"
+    ],
+    "score": 1.0,
+    "string_score": 0.9230769230769231
+   },
+   {
+    "first": [
+     "749",
+     "EA-43901",
+     "AirCoolingSystem"
+    ],
+    "second": [
+     "748",
+     "EA43901",
+     "AirCoolingSystem"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "73",
+     "EA-4601",
+     "AirCoolingSystem"
+    ],
+    "second": [
+     "72",
+     "EA.4601",
+     "AirCoolingSystem"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "829",
+     "EA-48901",
+     "AirCoolingSystem"
+    ],
+    "second": [
+     "828",
+     "489-EA-01",
+     "AirCoolingSystem"
+    ],
+    "score": 1.0,
+    "string_score": 0.7142857142857143
+   },
+   {
+    "first": [
+     "857",
+     "EA-50301",
+     "AirCoolingSystem"
+    ],
+    "second": [
+     "856",
+     "503-EA-01",
+     "AirCoolingSystem"
+    ],
+    "score": 1.0,
+    "string_score": 0.7142857142857143
+   },
+   {
+    "first": [
+     "940",
+     "EA-55001",
+     "AirCoolingSystem"
+    ],
+    "second": [
+     "939",
+     "550-EA-01",
+     "AirCoolingSystem"
+    ],
+    "score": 1.0,
+    "string_score": 0.7142857142857143
+   },
+   {
+    "first": [
+     "980",
+     "EA-57401",
+     "AirCoolingSystem"
+    ],
+    "second": [
+     "979",
+     "ea-57401",
+     "AirCoolingSystem"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "187",
+     "EJ-11301A",
+     "AirEjector"
+    ],
+    "second": [
+     "186",
+     "EJ-11301-A",
+     "AirEjector"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "291",
+     "EJ-17201A",
+     "AirEjector"
+    ],
+    "second": [
+     "290",
+     "U172-EJ-01A",
+     "AirEjector"
+    ],
+    "score": 1.0,
+    "string_score": 0.7058823529411765
+   },
+   {
+    "first": [
+     "27",
+     "EJ-1801",
+     "AirEjector"
+    ],
+    "second": [
+     "26",
+     "EJ1801",
+     "AirEjector"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "350",
+     "EJ-20801",
+     "AirEjector"
+    ],
+    "second": [
+     "349",
+     "U208-EJ-01",
+     "AirEjector"
+    ],
+    "score": 1.0,
+    "string_score": 0.6666666666666666
+   },
+   {
+    "first": [
+     "513",
+     "EJ-30101A",
+     "AirEjector"
+    ],
+    "second": [
+     "512",
+     "U301-EJ-01A",
+     "AirEjector"
+    ],
+    "score": 1.0,
+    "string_score": 0.7058823529411765
+   },
+   {
+    "first": [
+     "661",
+     "EJ-38801A",
+     "AirEjector"
+    ],
+    "second": [
+     "660",
+     "U388-EJ-01A",
+     "AirEjector"
+    ],
+    "score": 1.0,
+    "string_score": 0.7058823529411765
+   },
+   {
+    "first": [
+     "692",
+     "EJ-40501A",
+     "AirEjector"
+    ],
+    "second": [
+     "691",
+     "U405-EJ-01A",
+     "AirEjector"
+    ],
+    "score": 1.0,
+    "string_score": 0.7058823529411765
+   },
+   {
+    "first": [
+     "831",
+     "EJ-49001A",
+     "AirEjector"
+    ],
+    "second": [
+     "830",
+     "U490-EJ-01A",
+     "AirEjector"
+    ],
+    "score": 1.0,
+    "string_score": 0.7058823529411765
+   },
+   {
+    "first": [
+     "851",
+     "EJ-49901",
+     "AirEjector"
+    ],
+    "second": [
+     "850",
+     "U499-EJ-01",
+     "AirEjector"
+    ],
+    "score": 1.0,
+    "string_score": 0.6666666666666666
+   },
+   {
+    "first": [
+     "931",
+     "EJ-54601A",
+     "AirEjector"
+    ],
+    "second": [
+     "930",
+     "EJ54601A",
+     "AirEjector"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "1",
+     "P-101A",
+     "CentrifugalPump"
+    ],
+    "second": [
+     "166",
+     "P-10001A",
+     "CentrifugalPump"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "24",
+     "P-1601",
+     "CentrifugalPump"
+    ],
+    "second": [
+     "269",
+     "P-16001",
+     "CentrifugalPump"
+    ],
+    "score": 1.0,
+    "string_score": 0.9090909090909091
+   },
+   {
+    "first": [
+     "522",
+     "P-30501A",
+     "CentrifugalPump"
+    ],
+    "second": [
+     "55",
+     "P-3501",
+     "CentrifugalPump"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "67",
+     "P-4101",
+     "CentrifugalPump"
+    ],
+    "second": [
+     "700",
+     "P-41001B",
+     "CentrifugalPump"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "82",
+     "P-5202",
+     "CentrifugalPump"
+    ],
+    "second": [
+     "886",
+     "P-52002",
+     "CentrifugalPump"
+    ],
+    "score": 1.0,
+    "string_score": 0.9090909090909091
+   },
+   {
+    "first": [
+     "704",
+     "H-41301",
+     "Furnace"
+    ],
+    "second": [
+     "705",
+     "U413-H-01",
+     "Furnace"
+    ],
+    "score": 1.0,
+    "string_score": 0.7692307692307693
+   },
+   {
+    "first": [
+     "225",
+     "V-13501",
+     "GravitationalSeparator"
+    ],
+    "second": [
+     "226",
+     "v-13501",
+     "GravitationalSeparator"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "287",
+     "V-17101",
+     "GravitationalSeparator"
+    ],
+    "second": [
+     "288",
+     "U171-V-01",
+     "GravitationalSeparator"
+    ],
+    "score": 1.0,
+    "string_score": 0.7692307692307693
+   },
+   {
+    "first": [
+     "627",
+     "V-37001",
+     "GravitationalSeparator"
+    ],
+    "second": [
+     "628",
+     "V37001",
+     "GravitationalSeparator"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "712",
+     "V-41601",
+     "GravitationalSeparator"
+    ],
+    "second": [
+     "713",
+     "V-4161",
+     "GravitationalSeparator"
+    ],
+    "score": 1.0,
+    "string_score": 0.9090909090909091
+   },
+   {
+    "first": [
+     "151",
+     "V-9201",
+     "GravitationalSeparator"
+    ],
+    "second": [
+     "152",
+     "92-V-01",
+     "GravitationalSeparator"
+    ],
+    "score": 1.0,
+    "string_score": 0.8
+   },
+   {
+    "first": [
+     "190",
+     "V-11501",
+     "PressureVessel"
+    ],
+    "second": [
+     "191",
+     "D-11501",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "197",
+     "V-11801",
+     "PressureVessel"
+    ],
+    "second": [
+     "198",
+     "D-11801",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "168",
+     "V-10201",
+     "PressureVessel"
+    ],
+    "second": [
+     "169",
+     "102-V-01",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "213",
+     "V-12901",
+     "PressureVessel"
+    ],
+    "second": [
+     "214",
+     "D-12901",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "216",
+     "V-13001",
+     "PressureVessel"
+    ],
+    "second": [
+     "217",
+     "D-13001",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "242",
+     "V-14501",
+     "PressureVessel"
+    ],
+    "second": [
+     "243",
+     "145-V-01",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "297",
+     "V-17701",
+     "PressureVessel"
+    ],
+    "second": [
+     "298",
+     "D-17701",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "300",
+     "V-17801",
+     "PressureVessel"
+    ],
+    "second": [
+     "301",
+     "D-17801",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "304",
+     "D-17901",
+     "PressureVessel"
+    ],
+    "second": [
+     "305",
+     "U179-D-01",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.7692307692307693
+   },
+   {
+    "first": [
+     "26",
+     "D-1801",
+     "PressureVessel"
+    ],
+    "second": [
+     "28",
+     "D-18-01",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "311",
+     "V-18401",
+     "PressureVessel"
+    ],
+    "second": [
+     "312",
+     "D-18401",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "357",
+     "V-21201",
+     "PressureVessel"
+    ],
+    "second": [
+     "358",
+     "D-21201",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "372",
+     "V-22201",
+     "PressureVessel"
+    ],
+    "second": [
+     "373",
+     "D-22201",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "416",
+     "D-24801",
+     "PressureVessel"
+    ],
+    "second": [
+     "417",
+     "d-24801",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "424",
+     "V-25301",
+     "PressureVessel"
+    ],
+    "second": [
+     "425",
+     "D-25301",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "429",
+     "V-25501",
+     "PressureVessel"
+    ],
+    "second": [
+     "430",
+     "D-25501",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "435",
+     "V-25801",
+     "PressureVessel"
+    ],
+    "second": [
+     "436",
+     "D-25801",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "43",
+     "V-2601",
+     "PressureVessel"
+    ],
+    "second": [
+     "440",
+     "V-26001",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.9090909090909091
+   },
+   {
+    "first": [
+     "447",
+     "V-26501",
+     "PressureVessel"
+    ],
+    "second": [
+     "448",
+     "D-26501",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "462",
+     "V-27401",
+     "PressureVessel"
+    ],
+    "second": [
+     "463",
+     "D-27401",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "348",
+     "V-20801",
+     "PressureVessel"
+    ],
+    "second": [
+     "349",
+     "D-20801",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "483",
+     "V-28601",
+     "PressureVessel"
+    ],
+    "second": [
+     "484",
+     "D-28601",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "484",
+     "D-28601",
+     "PressureVessel"
+    ],
+    "second": [
+     "485",
+     "U286-D-01",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.7692307692307693
+   },
+   {
+    "first": [
+     "497",
+     "V-29301",
+     "PressureVessel"
+    ],
+    "second": [
+     "498",
+     "V-2931",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.9090909090909091
+   },
+   {
+    "first": [
+     "508",
+     "V-30001",
+     "PressureVessel"
+    ],
+    "second": [
+     "509",
+     "D-30001",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "511",
+     "V-30101",
+     "PressureVessel"
+    ],
+    "second": [
+     "512",
+     "D-30101",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "573",
+     "V-33601",
+     "PressureVessel"
+    ],
+    "second": [
+     "574",
+     "V-336-01",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "575",
+     "V-33701",
+     "PressureVessel"
+    ],
+    "second": [
+     "576",
+     "D-33701",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "56",
+     "V-3601",
+     "PressureVessel"
+    ],
+    "second": [
+     "57",
+     "D-3601",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8
+   },
+   {
+    "first": [
+     "616",
+     "V-36301",
+     "PressureVessel"
+    ],
+    "second": [
+     "615",
+     "U363-V-01",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.7692307692307693
+   },
+   {
+    "first": [
+     "629",
+     "V-37101",
+     "PressureVessel"
+    ],
+    "second": [
+     "630",
+     "D-37101",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "630",
+     "D-37101",
+     "PressureVessel"
+    ],
+    "second": [
+     "631",
+     "U371-D-01",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.7692307692307693
+   },
+   {
+    "first": [
+     "641",
+     "V-37801",
+     "PressureVessel"
+    ],
+    "second": [
+     "642",
+     "D-37801",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "659",
+     "V-38801",
+     "PressureVessel"
+    ],
+    "second": [
+     "660",
+     "D-38801",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "669",
+     "V-39401",
+     "PressureVessel"
+    ],
+    "second": [
+     "670",
+     "394-V-01",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "678",
+     "V-39901",
+     "PressureVessel"
+    ],
+    "second": [
+     "679",
+     "D-39901",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "678",
+     "V-39901",
+     "PressureVessel"
+    ],
+    "second": [
+     "680",
+     "D 39901",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "679",
+     "D-39901",
+     "PressureVessel"
+    ],
+    "second": [
+     "680",
+     "D 39901",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "67",
+     "D-4101",
+     "PressureVessel"
+    ],
+    "second": [
+     "700",
+     "D-41001",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.9090909090909091
+   },
+   {
+    "first": [
+     "707",
+     "V-41401",
+     "PressureVessel"
+    ],
+    "second": [
+     "708",
+     "D-41401",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "684",
+     "V-40201",
+     "PressureVessel"
+    ],
+    "second": [
+     "685",
+     "V.40201",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "719",
+     "V-42101",
+     "PressureVessel"
+    ],
+    "second": [
+     "720",
+     "D-42101",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "719",
+     "V-42101",
+     "PressureVessel"
+    ],
+    "second": [
+     "721",
+     "D-421-01",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "720",
+     "D-42101",
+     "PressureVessel"
+    ],
+    "second": [
+     "721",
+     "D-421-01",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "727",
+     "V-42601",
+     "PressureVessel"
+    ],
+    "second": [
+     "728",
+     "V-426-01",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "691",
+     "D-40501",
+     "PressureVessel"
+    ],
+    "second": [
+     "71",
+     "V-4501",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.7272727272727273
+   },
+   {
+    "first": [
+     "768",
+     "V-45201",
+     "PressureVessel"
+    ],
+    "second": [
+     "769",
+     "D-45201",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "768",
+     "V-45201",
+     "PressureVessel"
+    ],
+    "second": [
+     "770",
+     "452-D-01",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "769",
+     "D-45201",
+     "PressureVessel"
+    ],
+    "second": [
+     "770",
+     "452-D-01",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "785",
+     "R-46101",
+     "PressureVessel"
+    ],
+    "second": [
+     "784",
+     "r-46101",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "849",
+     "V-49901",
+     "PressureVessel"
+    ],
+    "second": [
+     "850",
+     "D-49901",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "874",
+     "V-51301",
+     "PressureVessel"
+    ],
+    "second": [
+     "875",
+     "D-51301",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "874",
+     "V-51301",
+     "PressureVessel"
+    ],
+    "second": [
+     "876",
+     "D-513-01",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "875",
+     "D-51301",
+     "PressureVessel"
+    ],
+    "second": [
+     "876",
+     "D-513-01",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "883",
+     "V-51901",
+     "PressureVessel"
+    ],
+    "second": [
+     "884",
+     "D-51901",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "888",
+     "D-52101",
+     "PressureVessel"
+    ],
+    "second": [
+     "889",
+     "D-5211",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.9090909090909091
+   },
+   {
+    "first": [
+     "896",
+     "D-52501",
+     "PressureVessel"
+    ],
+    "second": [
+     "897",
+     "D-5251",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.9090909090909091
+   },
+   {
+    "first": [
+     "913",
+     "V-53601",
+     "PressureVessel"
+    ],
+    "second": [
+     "914",
+     "v-53601",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "991",
+     "V-58201",
+     "PressureVessel"
+    ],
+    "second": [
+     "992",
+     "D-58201",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "996",
+     "V-58401",
+     "PressureVessel"
+    ],
+    "second": [
+     "997",
+     "V-5841",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.9090909090909091
+   },
+   {
+    "first": [
+     "118",
+     "V-7601",
+     "PressureVessel"
+    ],
+    "second": [
+     "119",
+     "D-7601",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8
+   },
+   {
+    "first": [
+     "124",
+     "V-7801",
+     "PressureVessel"
+    ],
+    "second": [
+     "125",
+     "D-7801",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8
+   },
+   {
+    "first": [
+     "155",
+     "V-9501",
+     "PressureVessel"
+    ],
+    "second": [
+     "156",
+     "D-9501",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 0.8
+   },
+   {
+    "first": [
+     "427",
+     "T-25401",
+     "ProcessColumn"
+    ],
+    "second": [
+     "428",
+     "T-254-01",
+     "ProcessColumn"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "500",
+     "T-29501",
+     "ProcessColumn"
+    ],
+    "second": [
+     "501",
+     "295-T-01",
+     "ProcessColumn"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "567",
+     "T-33301",
+     "ProcessColumn"
+    ],
+    "second": [
+     "569",
+     "333-T-01",
+     "ProcessColumn"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "66",
+     "T-4101",
+     "ProcessColumn"
+    ],
+    "second": [
+     "699",
+     "T-41001",
+     "ProcessColumn"
+    ],
+    "score": 1.0,
+    "string_score": 0.9090909090909091
+   },
+   {
+    "first": [
+     "699",
+     "T-41001",
+     "ProcessColumn"
+    ],
+    "second": [
+     "701",
+     "T-410-01",
+     "ProcessColumn"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "760",
+     "T-44601",
+     "ProcessColumn"
+    ],
+    "second": [
+     "761",
+     "T-4461",
+     "ProcessColumn"
+    ],
+    "score": 1.0,
+    "string_score": 0.9090909090909091
+   },
+   {
+    "first": [
+     "778",
+     "T-45801",
+     "ProcessColumn"
+    ],
+    "second": [
+     "780",
+     "U458-T-01",
+     "ProcessColumn"
+    ],
+    "score": 1.0,
+    "string_score": 0.7692307692307693
+   },
+   {
+    "first": [
+     "22",
+     "TK-1501",
+     "Tank"
+    ],
+    "second": [
+     "23",
+     "TK-15-01",
+     "Tank"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "328",
+     "TK-19602",
+     "Tank"
+    ],
+    "second": [
+     "329",
+     "TK-196-02",
+     "Tank"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "339",
+     "TK-20404",
+     "Tank"
+    ],
+    "second": [
+     "340",
+     "204-TK-04",
+     "Tank"
+    ],
+    "score": 1.0,
+    "string_score": 0.7142857142857143
+   },
+   {
+    "first": [
+     "50",
+     "TK-3204",
+     "Tank"
+    ],
+    "second": [
+     "516",
+     "TK-30204",
+     "Tank"
+    ],
+    "score": 1.0,
+    "string_score": 0.9230769230769231
+   },
+   {
+    "first": [
+     "563",
+     "TK-33103",
+     "Tank"
+    ],
+    "second": [
+     "564",
+     "tk-33103",
+     "Tank"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "586",
+     "TK-34401",
+     "Tank"
+    ],
+    "second": [
+     "587",
+     "TK.34401",
+     "Tank"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "634",
+     "TK-37401",
+     "Tank"
+    ],
+    "second": [
+     "635",
+     "U374-TK-01",
+     "Tank"
+    ],
+    "score": 1.0,
+    "string_score": 0.6666666666666666
+   },
+   {
+    "first": [
+     "662",
+     "TK-38902",
+     "Tank"
+    ],
+    "second": [
+     "663",
+     "U389-TK-02",
+     "Tank"
+    ],
+    "score": 1.0,
+    "string_score": 0.6666666666666666
+   },
+   {
+    "first": [
+     "790",
+     "TK-46404",
+     "Tank"
+    ],
+    "second": [
+     "791",
+     "TK-464-04",
+     "Tank"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "7",
+     "TK-502",
+     "Tank"
+    ],
+    "second": [
+     "852",
+     "TK-50002",
+     "Tank"
+    ],
+    "score": 1.0,
+    "string_score": 0.8333333333333334
+   },
+   {
+    "first": [
+     "935",
+     "TK-54801",
+     "Tank"
+    ],
+    "second": [
+     "936",
+     "U548-TK-01",
+     "Tank"
+    ],
+    "score": 1.0,
+    "string_score": 0.6666666666666666
+   },
+   {
+    "first": [
+     "983",
+     "TK-57701",
+     "Tank"
+    ],
+    "second": [
+     "984",
+     "577-TK-01",
+     "Tank"
+    ],
+    "score": 1.0,
+    "string_score": 0.7142857142857143
+   },
+   {
+    "first": [
+     "94",
+     "TK-6103",
+     "Tank"
+    ],
+    "second": [
+     "95",
+     "tk-6103",
+     "Tank"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "165",
+     "E-10002",
+     "TubularHeatExchanger"
+    ],
+    "second": [
+     "164",
+     "HX-10002",
+     "TubularHeatExchanger"
+    ],
+    "score": 1.0,
+    "string_score": 0.7692307692307693
+   },
+   {
+    "first": [
+     "236",
+     "E-14102",
+     "TubularHeatExchanger"
+    ],
+    "second": [
+     "235",
+     "HX-14102",
+     "TubularHeatExchanger"
+    ],
+    "score": 1.0,
+    "string_score": 0.7692307692307693
+   },
+   {
+    "first": [
+     "245",
+     "E-14602",
+     "TubularHeatExchanger"
+    ],
+    "second": [
+     "244",
+     "E 14602",
+     "TubularHeatExchanger"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "301",
+     "E-17802",
+     "TubularHeatExchanger"
+    ],
+    "second": [
+     "300",
+     "E.17802",
+     "TubularHeatExchanger"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "312",
+     "E-18402",
+     "TubularHeatExchanger"
+    ],
+    "second": [
+     "311",
+     "U184-E-02",
+     "TubularHeatExchanger"
+    ],
+    "score": 1.0,
+    "string_score": 0.7692307692307693
+   },
+   {
+    "first": [
+     "425",
+     "E-25302",
+     "TubularHeatExchanger"
+    ],
+    "second": [
+     "424",
+     "e-25302",
+     "TubularHeatExchanger"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "559",
+     "E-32902",
+     "TubularHeatExchanger"
+    ],
+    "second": [
+     "558",
+     "e-32902",
+     "TubularHeatExchanger"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "609",
+     "E-35802",
+     "TubularHeatExchanger"
+    ],
+    "second": [
+     "608",
+     "HX-35802",
+     "TubularHeatExchanger"
+    ],
+    "score": 1.0,
+    "string_score": 0.7692307692307693
+   },
+   {
+    "first": [
+     "660",
+     "E-38802",
+     "TubularHeatExchanger"
+    ],
+    "second": [
+     "659",
+     "E38802",
+     "TubularHeatExchanger"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "677",
+     "E-39802",
+     "TubularHeatExchanger"
+    ],
+    "second": [
+     "676",
+     "HX-39802",
+     "TubularHeatExchanger"
+    ],
+    "score": 1.0,
+    "string_score": 0.7692307692307693
+   },
+   {
+    "first": [
+     "66",
+     "E-4101",
+     "TubularHeatExchanger"
+    ],
+    "second": [
+     "699",
+     "E-41001",
+     "TubularHeatExchanger"
+    ],
+    "score": 1.0,
+    "string_score": 0.9090909090909091
+   },
+   {
+    "first": [
+     "67",
+     "E-4102",
+     "TubularHeatExchanger"
+    ],
+    "second": [
+     "66",
+     "41-E-02",
+     "TubularHeatExchanger"
+    ],
+    "score": 1.0,
+    "string_score": 0.8
+   },
+   {
+    "first": [
+     "769",
+     "E-45202",
+     "TubularHeatExchanger"
+    ],
+    "second": [
+     "768",
+     "e-45202",
+     "TubularHeatExchanger"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "847",
+     "E-49802",
+     "TubularHeatExchanger"
+    ],
+    "second": [
+     "846",
+     "e-49802",
+     "TubularHeatExchanger"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "850",
+     "E-49902",
+     "TubularHeatExchanger"
+    ],
+    "second": [
+     "849",
+     "E-499-02",
+     "TubularHeatExchanger"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "121",
+     "E-7702",
+     "TubularHeatExchanger"
+    ],
+    "second": [
+     "120",
+     "E 7702",
+     "TubularHeatExchanger"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "125",
+     "E-7802",
+     "TubularHeatExchanger"
+    ],
+    "second": [
+     "124",
+     "78-E-02",
+     "TubularHeatExchanger"
+    ],
+    "score": 1.0,
+    "string_score": 0.8
+   },
+   {
+    "first": [
+     "142",
+     "E-8702",
+     "TubularHeatExchanger"
+    ],
+    "second": [
+     "141",
+     "E.8702",
+     "TubularHeatExchanger"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "144",
+     "E-8802",
+     "TubularHeatExchanger"
+    ],
+    "second": [
+     "143",
+     "U88-E-02",
+     "TubularHeatExchanger"
+    ],
+    "score": 1.0,
+    "string_score": 0.7272727272727273
+   }
+  ]
+ },
+ "said_same": [
+  true,
+  true,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  true,
+  true,
+  true,
+  false,
+  false,
+  true,
+  false,
+  false,
+  true,
+  true,
+  false,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  false,
+  false,
+  true,
+  true,
+  true,
+  false,
+  true,
+  false,
+  true,
+  true,
+  true,
+  false,
+  true,
+  false,
+  true,
+  false,
+  true,
+  false,
+  true,
+  true,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  true,
+  true,
+  false,
+  false,
+  false,
+  true,
+  true,
+  false,
+  false,
+  false,
+  true,
+  false,
+  true,
+  true,
+  true,
+  false,
+  false,
+  true,
+  true,
+  true,
+  false,
+  false,
+  true,
+  true,
+  true,
+  true,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  true,
+  false,
+  true,
+  false,
+  true,
+  true,
+  true,
+  false,
+  false,
+  true,
+  true,
+  false,
+  true,
+  true,
+  true,
+  true,
+  true,
+  false,
+  true,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  true,
+  true,
+  false,
+  true,
+  false,
+  false,
+  true,
+  false,
+  true,
+  true,
+  true,
+  true,
+  false,
+  true,
+  true,
+  true,
+  true,
+  true,
+  false,
+  true,
+  true,
+  true,
+  false,
+  false,
+  true,
+  true,
+  true,
+  true,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  true,
+  true,
+  true,
+  true,
+  false,
+  false,
+  false,
+  true,
+  true,
+  true,
+  true,
+  true,
+  false,
+  true,
+  true,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  true,
+  false,
+  false,
+  true,
+  true,
+  false,
+  false,
+  true,
+  true,
+  false,
+  true,
+  true,
+  false,
+  true,
+  true,
+  true,
+  true,
+  true,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  true,
+  true,
+  true,
+  true,
+  true,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  true,
+  true,
+  false,
+  false,
+  false,
+  true,
+  true,
+  false,
+  true,
+  false,
+  false,
+  true,
+  true,
+  true,
+  true,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  true,
+  false,
+  true,
+  true,
+  true,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  true,
+  true,
+  false,
+  false,
+  true,
+  true,
+  true,
+  true
+ ],
+ "pair_level": {
+  "tp": 90,
+  "fp": 53,
+  "fn": 2,
+  "precision": 0.6293706293706294,
+  "recall": 0.9782608695652174,
+  "f1": 0.7659574468085106
+ },
+ "group_level": {
+  "true_positives": 90,
+  "false_positives": 53,
+  "false_negatives": 2,
+  "precision": 0.6293706293706294,
+  "recall": 0.9782608695652174,
+  "f1": 0.7659574468085106
+ },
+ "n_dropped_one_to_one": 0,
+ "n_identity_conflicts": 0,
+ "llm": {
+  "pin_hash": "acf24178d47dd4873fc2a36e7f67efbf2dc7ab5de694711f3b934e6ef4f4c21d",
+  "prompt_sha256": "8a4095d56d8036dad66a5cc8039a60f6ddf2ea3110a75250fb67c593bb994a98",
+  "n_calls": 491,
+  "n_cache_hits": 0,
+  "n_parse_failures": 0,
+  "parse_failure_rate": 0.0,
+  "cost_usd_spent": 0.0552483,
+  "cost_usd_recorded": 0.0552483,
+  "n_live_calls_without_cost": 0,
+  "latency_p50_s": 3.7179999999934807,
+  "latency_p95_s": 7.078000000037719
+ }
+}

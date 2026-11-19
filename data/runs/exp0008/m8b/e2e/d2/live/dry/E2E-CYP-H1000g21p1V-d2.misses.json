@@ -1,0 +1,16 @@
+{
+ "run_id": "E2E-CYP-H1000g21p1V-d2",
+ "n_questions": 280,
+ "n_calls": 593,
+ "n_cache_hits": 590,
+ "n_miss_calls": 3,
+ "n_questions_with_miss": 3,
+ "questions_with_miss": [
+  "H1000g21p1:UPSTREAM_ISOLATION:UPSTREAM_ISOLATION_P1:P-3701",
+  "H1000g21p1:UPSTREAM_ISOLATION:UPSTREAM_ISOLATION_P1:T-31401",
+  "H1000g21p1:UPSTREAM_ISOLATION:UPSTREAM_ISOLATION_P1:V-55801"
+ ],
+ "misses_by_purpose": {
+  "answer": 3
+ }
+}

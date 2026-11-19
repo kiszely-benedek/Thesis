@@ -1,0 +1,92 @@
+run INF-E2E-AG-H1000g21p3V-d4: 280 rows to answer, 0 already on disk
+replay mode: cache only, no network; stops at the first cache miss
+{
+  "run_id": "INF-E2E-AG-H1000g21p3V-d4",
+  "n_rows": 280,
+  "n_new_rows": 280,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "graph_agent_lines": {
+      "0": {
+        "ANSWERED": 125
+      },
+      "1": {
+        "ANSWERED": 62
+      },
+      "2": {
+        "ANSWERED": 26
+      },
+      "3-4": {
+        "ANSWERED": 18
+      },
+      "5-8": {
+        "ANSWERED": 11
+      },
+      "9-16": {
+        "ANSWERED": 6
+      },
+      "17-32": {
+        "ANSWERED": 6
+      },
+      "33+": {
+        "ANSWERED": 6
+      },
+      "unanswerable": {
+        "ANSWERED": 20
+      }
+    }
+  },
+  "routing_recall": {
+    "graph_agent_lines": 0.9461538461538461
+  },
+  "relaxed_routing_recall": {
+    "graph_agent_lines": 0.9461538461538461
+  },
+  "evidence_node_recall": {
+    "graph_agent_lines": 0.8894828901147785
+  },
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {
+      "graph_agent_lines": {
+        "0": 0.96,
+        "1": 0.9354838709677419,
+        "2": 1.0,
+        "3-4": 1.0,
+        "5-8": 1.0,
+        "9-16": 1.0,
+        "17-32": 1.0,
+        "33+": 0.16666666666666666
+      }
+    },
+    "relaxed_routing_recall": {
+      "graph_agent_lines": {
+        "0": 0.96,
+        "1": 0.9354838709677419,
+        "2": 1.0,
+        "3-4": 1.0,
+        "5-8": 1.0,
+        "9-16": 1.0,
+        "17-32": 1.0,
+        "33+": 0.16666666666666666
+      }
+    },
+    "evidence_node_recall": {
+      "graph_agent_lines": {
+        "0": 0.9272007084516304,
+        "1": 0.8456823723311431,
+        "2": 0.9477819958866489,
+        "3-4": 0.9338058949442392,
+        "5-8": 0.8662060237442241,
+        "9-16": 0.8447055257938443,
+        "17-32": 0.8692876224607299,
+        "33+": 0.26374860008789996
+      }
+    }
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "graph_agent_lines": 0.00202491425
+  },
+  "stopped_by_spend_cap": false,
+  "late_after_timeout_usd": 0.0
+}

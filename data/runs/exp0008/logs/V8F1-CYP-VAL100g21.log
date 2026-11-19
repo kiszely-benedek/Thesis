@@ -1,0 +1,67 @@
+run V8F1-CYP-VAL100g21: 163 rows to answer, 0 already on disk
+concurrency 4: up to that many questions in flight
+paid mode: up to 163 model calls; hard spend cap 0.1834 USD
+estimated cost: 0.1222 USD
+{
+  "run_id": "V8F1-CYP-VAL100g21",
+  "n_rows": 163,
+  "n_new_rows": 163,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "cypher_rag_plant": {
+      "0": {
+        "ANSWERED": 53,
+        "RETRIEVAL_ERROR": 15
+      },
+      "1": {
+        "ANSWERED": 27,
+        "RETRIEVAL_ERROR": 11
+      },
+      "2": {
+        "ANSWERED": 11,
+        "RETRIEVAL_ERROR": 4,
+        "PARSE_FAILURE": 1
+      },
+      "3-4": {
+        "ANSWERED": 7
+      },
+      "5-8": {
+        "ANSWERED": 4,
+        "RETRIEVAL_ERROR": 1
+      },
+      "9-16": {
+        "ANSWERED": 3
+      },
+      "17-32": {
+        "ANSWERED": 2,
+        "RETRIEVAL_ERROR": 1
+      },
+      "33+": {
+        "RETRIEVAL_ERROR": 2,
+        "ANSWERED": 1
+      },
+      "unanswerable": {
+        "ANSWERED": 16,
+        "RETRIEVAL_ERROR": 4
+      }
+    }
+  },
+  "routing_recall": {},
+  "relaxed_routing_recall": {},
+  "evidence_node_recall": {},
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {},
+    "relaxed_routing_recall": {},
+    "evidence_node_recall": {}
+  },
+  "trace_rates": {
+    "cypher_rag_plant": {
+      "truncated_rate": 0.0
+    }
+  },
+  "mean_total_cost_usd": {
+    "cypher_rag_plant": 0.00045686748466257674
+  },
+  "stopped_by_spend_cap": false,
+  "late_after_timeout_usd": 0.0
+}

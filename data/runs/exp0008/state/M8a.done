@@ -1,0 +1,8 @@
+{
+ "stage": "M8a",
+ "finished_utc": "2026-11-14T10:50:19+00:00",
+ "outputs": {
+  "data/runs/exp0008/p3/report.md": "01f301c1444d87e9e51b9e506d2ea07272665f244b78402bced4e54ba420b881",
+  "data/runs/exp0008/p3/report_extra.md": "37b3ab4d1484e7f382b50edfa65d9f5fb6d2149619c684a5730778f3c3dc8bf5"
+ }
+}

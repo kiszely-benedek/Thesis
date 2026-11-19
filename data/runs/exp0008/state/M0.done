@@ -1,0 +1,12 @@
+{
+ "stage": "M0",
+ "finished_utc": "2026-11-11T08:20:30+00:00",
+ "outputs": {
+  "data/runs/exp0008/bands/composition_dev100.json": "47471fac4fbbc5018e1ab1597432c8e7eb5e1cf1d905a2b8be73672e3b104754",
+  "data/runs/exp0008/bands/composition_dev1000.json": "b87a5ef7cb28b78e27fa5851b6915b11fa8e511b72f63b97063d5bf09fb9bb0a",
+  "data/runs/exp0008/corpora/D1000g21/ingest.json": "d59a57ed5f6d243e7c3085e12139359e22663063e7f874d42f956154d1a4652d",
+  "data/runs/exp0008/corpora/D100g21/ingest.json": "47675d9b385317bb54b315fb7fdf41abe079ffbd61f6a5defac459f6ec03e92e",
+  "data/runs/exp0008/corpora/X100g21s211/ingest.json": "45980218cae437fbea8617ac776a05312a52953fee3d95dfd60e8a66bad765ab",
+  "data/runs/exp0008/dev/pool_probe.json": "52d64684846b6bd53519f11d28c1269007ba1506a13b205121980fe04a0f191d"
+ }
+}

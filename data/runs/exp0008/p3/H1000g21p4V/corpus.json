@@ -1,0 +1,33 @@
+{
+ "spec": {
+  "corpus_id": "H1000g21p4V",
+  "target_sheets": 1000,
+  "seed": 5170,
+  "duplication_rate": 0.25,
+  "families": [
+   "format",
+   "naming"
+  ]
+ },
+ "description": {
+  "n_units": 596,
+  "n_sheets": 1002,
+  "generate_s": 422.4,
+  "n_identity_groups": 92,
+  "n_variant_draws": 92,
+  "blocking": {
+   "n_candidates": 483,
+   "n_all_pairs": 5626335,
+   "n_gold_links": 92,
+   "n_gold_links_found": 92,
+   "pair_completeness": 1.0,
+   "reduction_ratio": 0.9999141537075201
+  },
+  "n_candidates_true": 92,
+  "n_candidates_false": 391,
+  "units_agree_true": 92,
+  "units_agree_false": 51,
+  "n_ambiguous_occurrences": 0,
+  "n_without_digits": 0
+ }
+}

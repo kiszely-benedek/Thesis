@@ -1,0 +1,8 @@
+{
+ "stage": "M2",
+ "finished_utc": "2026-11-11T12:00:13+00:00",
+ "outputs": {
+  "data/runs/exp0008/tune/dev/D100g21d100Vf/pilot/summary.json": "8d2861272c4c0e0371fb252f976e66d595dc138354ea969d1b2f92d17762b02a",
+  "data/runs/exp0008/tune/dev/D100g21d100Vf/taus.json": "5c3bea19dd2be39ef484dfb8bdf20d3dc4270ef9332df5e756eed7868fa35903"
+ }
+}

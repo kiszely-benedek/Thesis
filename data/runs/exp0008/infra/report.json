@@ -1,0 +1,1127 @@
+{
+  "machine_summary": "AMD Ryzen 9 5900HX with Radeon Graphics (8 cores / 16 threads), 15.4 GiB RAM, Windows-11-10.0.26200-SP0, Python 3.12.10, plugged in",
+  "git_commit": "da7b3eb96ea5736c5ed9946443ee4f87a48a7b5f",
+  "git_dirty": true,
+  "checks": [
+    {
+      "name": "M1 replay answers byte-identical to the source run",
+      "status": "fail",
+      "detail": "every replay fell back to the old run (missing or differing): agent on H100g21p1 (S7-AG-H100g21p1), agent on H100g21p2 (S7-AG-H100g21p2), agent on H100g21p3 (S7-AG-H100g21p3), agent on H100g21p4 (S7-AG-H100g21p4), agent on H100g21p5 (S7-AG-H100g21p5), agent on H1000g21p1 (S7-AG-H1000g21p1), agent on H1000g21p2 (S7-AG-H1000g21p2), agent on H1000g21p3 (S7-AG-H1000g21p3), agent on H1000g21p4 (S7-AG-H1000g21p4), agent on H1000g21p5 (S7-AG-H1000g21p5)"
+    },
+    {
+      "name": "M2 clock resolution",
+      "status": "pass",
+      "detail": "every record has a clock step of at most 1e-06 s and every replay row was timed with perf_counter"
+    },
+    {
+      "name": "M3 parts add up (db + graph API <= local; server <= client)",
+      "status": "pass",
+      "detail": "0 violations in 2800 rows (tolerance 1 ms)"
+    },
+    {
+      "name": "M4 repeat spread (max/min within x1.5)",
+      "status": "flag",
+      "detail": "repeats disagree by more than x1.5: H100g21p1 ingest.load_nodes (x1.86), H100g21p1 ingest.load_relationships (x1.58), H100g21p1 ingest.load_verify (x1.87), H100g21p1 startup.tier_runs (x19.22), H1000g21p1 startup.tier_runs (x24.49), H1000g21p1 startup.schema_text (x1.54), H1000g21p1 startup.neo4j_open_check (x2.10)"
+    },
+    {
+      "name": "M5 right corpus, right size",
+      "status": "pass",
+      "detail": "database counts equal the load plan and the load report in every repeat"
+    },
+    {
+      "name": "M6 two size sources",
+      "status": "flag",
+      "detail": "H1000g21p1: the server's store.size.database metric differs from the bytes on disk by more than 10% in 3 of 3 repeats: it lags, so the bytes on disk are the figure and the metric is secondary"
+    },
+    {
+      "name": "M7 zero spend",
+      "status": "pass",
+      "detail": "no replay allowed paid calls, total spend $0"
+    },
+    {
+      "name": "Old-run rows",
+      "status": "flag",
+      "detail": "the replay missed the cache or differed from its source, so the original run's timings are shown instead: agent on H100g21p1 (clock perf_counter; concurrency 4; no database split shown); agent on H100g21p2 (clock perf_counter; concurrency 4; no database split shown); agent on H100g21p3 (clock perf_counter; concurrency 4; no database split shown); agent on H100g21p4 (clock perf_counter; concurrency 4; no database split shown); agent on H100g21p5 (clock perf_counter; concurrency 4; no database split shown); agent on H1000g21p1 (clock perf_counter; concurrency 4; no database split shown); agent on H1000g21p2 (clock perf_counter; concurrency 4; no database split shown); agent on H1000g21p3 (clock perf_counter; concurrency 4; no database split shown); agent on H1000g21p4 (clock perf_counter; concurrency 4; no database split shown); agent on H1000g21p5 (clock perf_counter; concurrency 4; no database split shown)"
+    },
+    {
+      "name": "Database-only rows",
+      "status": "flag",
+      "detail": "local compute of these rows is database time only (the recorded queries sent again plus the row formatting; no query-writing model call, no answer-prompt build, no answer parsing): cypher_db_only on H100g21p1, cypher_db_only on H100g21p2, cypher_db_only on H100g21p3, cypher_db_only on H100g21p4, cypher_db_only on H100g21p5, cypher_db_only on H1000g21p1, cypher_db_only on H1000g21p2, cypher_db_only on H1000g21p3, cypher_db_only on H1000g21p4, cypher_db_only on H1000g21p5. The model latency and token cost in the same row come from the source run."
+    }
+  ],
+  "footprints": [
+    {
+      "corpus_id": "H100g21p1",
+      "sizes": {
+        "sheets": 100,
+        "nodes": 9449,
+        "relationships": 31666,
+        "properties": 103341
+      },
+      "quantities": {
+        "ingest.generate": {
+          "median": 5.185581099998672,
+          "minimum": 5.1758034999947995,
+          "maximum": 5.2903549000038765,
+          "n_repeats": 3
+        },
+        "ingest.split": {
+          "median": 0.25774179998552427,
+          "minimum": 0.2518357999797445,
+          "maximum": 0.2628938000125345,
+          "n_repeats": 3
+        },
+        "ingest.localize": {
+          "median": 0.14229489999706857,
+          "minimum": 0.1419684000138659,
+          "maximum": 0.1436876000079792,
+          "n_repeats": 3
+        },
+        "ingest.resolve": {
+          "median": 0.06186570000136271,
+          "minimum": 0.060586500010685995,
+          "maximum": 0.062066599988611415,
+          "n_repeats": 3
+        },
+        "ingest.plan": {
+          "median": 0.37322119998862036,
+          "minimum": 0.3699927999987267,
+          "maximum": 0.3807323999935761,
+          "n_repeats": 3
+        },
+        "ingest.load_schema": {
+          "median": 0.12817300000460818,
+          "minimum": 0.12587270000949502,
+          "maximum": 0.1632396999921184,
+          "n_repeats": 3
+        },
+        "ingest.load_nodes": {
+          "median": 1.6012263000011444,
+          "minimum": 1.55088799999794,
+          "maximum": 2.889995799981989,
+          "n_repeats": 3
+        },
+        "ingest.load_relationships": {
+          "median": 1.343104300001869,
+          "minimum": 1.2539355999906547,
+          "maximum": 1.9752581999928225,
+          "n_repeats": 3
+        },
+        "ingest.load_verify": {
+          "median": 0.2937240000173915,
+          "minimum": 0.2899905999947805,
+          "maximum": 0.542751800006954,
+          "n_repeats": 3
+        },
+        "ingest.build_total": {
+          "median": 9.380171399971005,
+          "minimum": 9.362235500040697,
+          "maximum": 11.576380099955713,
+          "n_repeats": 3
+        },
+        "store.data_bytes": {
+          "median": 6891281.0,
+          "minimum": 6891244.0,
+          "maximum": 6932204.0,
+          "n_repeats": 3
+        },
+        "store.tx_log_bytes": {
+          "median": 3532079.0,
+          "minimum": 3532079.0,
+          "maximum": 3532079.0,
+          "n_repeats": 3
+        },
+        "store.page_cache_needed_bytes": {
+          "median": 8269537.199999999,
+          "minimum": 8269492.8,
+          "maximum": 8318644.8,
+          "n_repeats": 3
+        },
+        "startup.rebuild": {
+          "median": 6.075634100008756,
+          "minimum": 6.016031200008001,
+          "maximum": 6.107567000028212,
+          "n_repeats": 3
+        },
+        "startup.graph_view": {
+          "median": 0.045072700013406575,
+          "minimum": 0.04502940000384115,
+          "maximum": 0.047163400013232604,
+          "n_repeats": 3
+        },
+        "startup.tier_runs": {
+          "median": 0.0009109000093303621,
+          "minimum": 0.0008734999864827842,
+          "maximum": 0.0167850999860093,
+          "n_repeats": 3
+        },
+        "startup.schema_text": {
+          "median": 0.00009850002243183553,
+          "minimum": 0.00009659997886046767,
+          "maximum": 0.0001255999959539622,
+          "n_repeats": 3
+        },
+        "startup.neo4j_open_check": {
+          "median": 0.037707400013459846,
+          "minimum": 0.032305800006724894,
+          "maximum": 0.04134240001440048,
+          "n_repeats": 3
+        },
+        "startup.item_graph": {
+          "median": 0.5384000999911223,
+          "minimum": 0.5237909000134096,
+          "maximum": 0.5434247000084724,
+          "n_repeats": 3
+        },
+        "startup.total": {
+          "median": 6.6924202000082005,
+          "minimum": 6.643104600021616,
+          "maximum": 6.736834500072291,
+          "n_repeats": 3
+        },
+        "startup.without_rebuild": {
+          "median": 0.6270734000136144,
+          "minimum": 0.6167860999994446,
+          "maximum": 0.6292675000440795,
+          "n_repeats": 3
+        },
+        "startup.context_rag_build": {
+          "median": 0.8256197000155225,
+          "minimum": 0.8240695999993477,
+          "maximum": 0.8264163999992888,
+          "n_repeats": 3
+        },
+        "process.baseline_bytes": {
+          "median": 183427072.0,
+          "minimum": 183050240.0,
+          "maximum": 183865344.0,
+          "n_repeats": 3
+        },
+        "process.peak_bytes": {
+          "median": 357908480.0,
+          "minimum": 356900864.0,
+          "maximum": 358776832.0,
+          "n_repeats": 3
+        },
+        "neo4j.rss_bytes": {
+          "median": 1198567424.0,
+          "minimum": 1197326336.0,
+          "maximum": 1199124480.0,
+          "n_repeats": 3
+        },
+        "neo4j.page_cache_used_bytes": {
+          "median": 41005101.0,
+          "minimum": 41005101.0,
+          "maximum": 41046545.0,
+          "n_repeats": 3
+        },
+        "memory.view_bytes": {
+          "median": 9526957.0,
+          "minimum": 9526957.0,
+          "maximum": 9526957.0,
+          "n_repeats": 1
+        },
+        "memory.item_graph_bytes": {
+          "median": 28105083.0,
+          "minimum": 28105083.0,
+          "maximum": 28105083.0,
+          "n_repeats": 1
+        },
+        "memory.traced_peak_bytes": {
+          "median": 45816208.0,
+          "minimum": 45816208.0,
+          "maximum": 45816208.0,
+          "n_repeats": 1
+        }
+      },
+      "notes": []
+    },
+    {
+      "corpus_id": "H1000g21p1",
+      "sizes": {
+        "sheets": 1000,
+        "nodes": 93171,
+        "relationships": 312868,
+        "properties": 1021060
+      },
+      "quantities": {
+        "ingest.generate": {
+          "median": 390.9870155999961,
+          "minimum": 381.7647706999851,
+          "maximum": 391.242742500006,
+          "n_repeats": 3
+        },
+        "ingest.split": {
+          "median": 3.2083240000065416,
+          "minimum": 3.2026177999796346,
+          "maximum": 3.429529499990167,
+          "n_repeats": 3
+        },
+        "ingest.localize": {
+          "median": 0.9113053999899421,
+          "minimum": 0.9060763000161387,
+          "maximum": 1.2433649000013247,
+          "n_repeats": 3
+        },
+        "ingest.resolve": {
+          "median": 1.1878748000017367,
+          "minimum": 1.1853754000039771,
+          "maximum": 1.1891908000106923,
+          "n_repeats": 3
+        },
+        "ingest.plan": {
+          "median": 4.477597000019159,
+          "minimum": 4.471108300000196,
+          "maximum": 4.497229600005085,
+          "n_repeats": 3
+        },
+        "ingest.load_schema": {
+          "median": 0.15364359997329302,
+          "minimum": 0.13600210001459345,
+          "maximum": 0.18869599999743514,
+          "n_repeats": 3
+        },
+        "ingest.load_nodes": {
+          "median": 8.091163400007645,
+          "minimum": 7.89927200000966,
+          "maximum": 8.772190900024725,
+          "n_repeats": 3
+        },
+        "ingest.load_relationships": {
+          "median": 16.904634600010468,
+          "minimum": 16.507539399986854,
+          "maximum": 18.632830199989257,
+          "n_repeats": 3
+        },
+        "ingest.load_verify": {
+          "median": 1.957368300005328,
+          "minimum": 1.77071299997624,
+          "maximum": 2.0324397000076715,
+          "n_repeats": 3
+        },
+        "ingest.build_total": {
+          "median": 427.2665993999981,
+          "minimum": 418.4819235999894,
+          "maximum": 431.20209280002746,
+          "n_repeats": 3
+        },
+        "store.data_bytes": {
+          "median": 58951570.0,
+          "minimum": 58951533.0,
+          "maximum": 58951570.0,
+          "n_repeats": 3
+        },
+        "store.tx_log_bytes": {
+          "median": 37328438.0,
+          "minimum": 37328438.0,
+          "maximum": 37328540.0,
+          "n_repeats": 3
+        },
+        "store.page_cache_needed_bytes": {
+          "median": 70741884.0,
+          "minimum": 70741839.6,
+          "maximum": 70741884.0,
+          "n_repeats": 3
+        },
+        "store.metrics_bytes": {
+          "median": 41960.0,
+          "minimum": 41960.0,
+          "maximum": 41960.0,
+          "n_repeats": 3
+        },
+        "startup.rebuild": {
+          "median": 385.2062636000046,
+          "minimum": 383.42760590001126,
+          "maximum": 386.42529809998814,
+          "n_repeats": 3
+        },
+        "startup.graph_view": {
+          "median": 0.48426079997443594,
+          "minimum": 0.4793798000027891,
+          "maximum": 0.5167750999971759,
+          "n_repeats": 3
+        },
+        "startup.tier_runs": {
+          "median": 0.0009888999920804054,
+          "minimum": 0.00090230000205338,
+          "maximum": 0.022097099979873747,
+          "n_repeats": 3
+        },
+        "startup.schema_text": {
+          "median": 0.00011069999891333282,
+          "minimum": 0.00009779998799785972,
+          "maximum": 0.00015050001093186438,
+          "n_repeats": 3
+        },
+        "startup.neo4j_open_check": {
+          "median": 0.1535036000132095,
+          "minimum": 0.10699509998084977,
+          "maximum": 0.224361400003545,
+          "n_repeats": 3
+        },
+        "startup.item_graph": {
+          "median": 4.845770999992965,
+          "minimum": 4.82047470001271,
+          "maximum": 4.8582932999997865,
+          "n_repeats": 3
+        },
+        "startup.total": {
+          "median": 390.6394961999613,
+          "minimum": 388.9571909000224,
+          "maximum": 391.97664259996964,
+          "n_repeats": 3
+        },
+        "startup.without_rebuild": {
+          "median": 5.529585000011139,
+          "minimum": 5.433232599956682,
+          "maximum": 5.5513444999814965,
+          "n_repeats": 3
+        },
+        "startup.context_rag_build": {
+          "median": 8.472659099992597,
+          "minimum": 8.43430389999412,
+          "maximum": 8.546193299989682,
+          "n_repeats": 3
+        },
+        "process.baseline_bytes": {
+          "median": 183459840.0,
+          "minimum": 183406592.0,
+          "maximum": 183545856.0,
+          "n_repeats": 3
+        },
+        "process.peak_bytes": {
+          "median": 1827717120.0,
+          "minimum": 1824161792.0,
+          "maximum": 1827991552.0,
+          "n_repeats": 3
+        },
+        "neo4j.rss_bytes": {
+          "median": 1319575552.0,
+          "minimum": 1278636032.0,
+          "maximum": 1320140800.0,
+          "n_repeats": 3
+        },
+        "neo4j.page_cache_used_bytes": {
+          "median": 93581482.0,
+          "minimum": 93581482.0,
+          "maximum": 93581482.0,
+          "n_repeats": 3
+        },
+        "memory.view_bytes": {
+          "median": 99756299.0,
+          "minimum": 99756299.0,
+          "maximum": 99756299.0,
+          "n_repeats": 1
+        },
+        "memory.item_graph_bytes": {
+          "median": 282534546.0,
+          "minimum": 282534546.0,
+          "maximum": 282534546.0,
+          "n_repeats": 1
+        },
+        "memory.traced_peak_bytes": {
+          "median": 462902901.0,
+          "minimum": 462902901.0,
+          "maximum": 462902901.0,
+          "n_repeats": 1
+        }
+      },
+      "notes": [
+        "the server's store.size.database metric differs from the bytes on disk by more than 10% in 3 of 3 repeats: it lags, so the bytes on disk are the figure and the metric is secondary"
+      ]
+    }
+  ],
+  "compute": [
+    {
+      "role": "cypher_db_only",
+      "strategy": "cypher_rag_lines",
+      "corpus_id": "H100g21p1",
+      "basis": "db_replay",
+      "needs_database": true,
+      "needs_memory_graph": false,
+      "n_questions": 280,
+      "local_median_s": 0.04467099999601487,
+      "local_p90_s": 0.881794860001537,
+      "local_max_s": 62.00706619999255,
+      "local_sum_s": 771.9261101998272,
+      "db_client_sum_s": 771.5633979997365,
+      "db_server_sum_s": 30.334,
+      "graph_api_sum_s": 0.0,
+      "other_sum_s": 0.3627122000907548,
+      "local_share_of_latency": 0.2556602817321813,
+      "token_usd_per_question": 0.0007387580357142856,
+      "n_cost_missing": 0
+    },
+    {
+      "role": "cypher_db_only",
+      "strategy": "cypher_rag_lines",
+      "corpus_id": "H100g21p2",
+      "basis": "db_replay",
+      "needs_database": true,
+      "needs_memory_graph": false,
+      "n_questions": 280,
+      "local_median_s": 0.047205499999108724,
+      "local_p90_s": 0.7626683200069238,
+      "local_max_s": 61.81720910000149,
+      "local_sum_s": 647.5583981997625,
+      "db_client_sum_s": 647.2078454999428,
+      "db_server_sum_s": 30.554,
+      "graph_api_sum_s": 0.0,
+      "other_sum_s": 0.35055269981967285,
+      "local_share_of_latency": 0.2148207718978743,
+      "token_usd_per_question": 0.00076305125,
+      "n_cost_missing": 0
+    },
+    {
+      "role": "cypher_db_only",
+      "strategy": "cypher_rag_lines",
+      "corpus_id": "H100g21p3",
+      "basis": "db_replay",
+      "needs_database": true,
+      "needs_memory_graph": false,
+      "n_questions": 280,
+      "local_median_s": 0.05583675000525545,
+      "local_p90_s": 0.9249294600071151,
+      "local_max_s": 61.89450389999547,
+      "local_sum_s": 622.1684160995064,
+      "db_client_sum_s": 621.7963269006577,
+      "db_server_sum_s": 35.705,
+      "graph_api_sum_s": 0.0,
+      "other_sum_s": 0.3720891988486983,
+      "local_share_of_latency": 0.22110542137358552,
+      "token_usd_per_question": 0.0007376952678571428,
+      "n_cost_missing": 0
+    },
+    {
+      "role": "cypher_db_only",
+      "strategy": "cypher_rag_lines",
+      "corpus_id": "H100g21p4",
+      "basis": "db_replay",
+      "needs_database": true,
+      "needs_memory_graph": false,
+      "n_questions": 280,
+      "local_median_s": 0.041274449991760775,
+      "local_p90_s": 0.9376100499910536,
+      "local_max_s": 61.8292083000124,
+      "local_sum_s": 738.739470999979,
+      "db_client_sum_s": 738.3802314999339,
+      "db_server_sum_s": 30.952,
+      "graph_api_sum_s": 0.0,
+      "other_sum_s": 0.3592395000450779,
+      "local_share_of_latency": 0.2365948047240461,
+      "token_usd_per_question": 0.0007747676785714285,
+      "n_cost_missing": 0
+    },
+    {
+      "role": "cypher_db_only",
+      "strategy": "cypher_rag_lines",
+      "corpus_id": "H100g21p5",
+      "basis": "db_replay",
+      "needs_database": true,
+      "needs_memory_graph": false,
+      "n_questions": 280,
+      "local_median_s": 0.05821125001239125,
+      "local_p90_s": 0.8737309500138507,
+      "local_max_s": 61.33684720000019,
+      "local_sum_s": 506.6858390996058,
+      "db_client_sum_s": 506.2769982991449,
+      "db_server_sum_s": 38.982,
+      "graph_api_sum_s": 0.0,
+      "other_sum_s": 0.40884080046089366,
+      "local_share_of_latency": 0.16708145241363162,
+      "token_usd_per_question": 0.0007629716964285715,
+      "n_cost_missing": 0
+    },
+    {
+      "role": "cypher_db_only",
+      "strategy": "cypher_rag_lines",
+      "corpus_id": "H1000g21p1",
+      "basis": "db_replay",
+      "needs_database": true,
+      "needs_memory_graph": false,
+      "n_questions": 280,
+      "local_median_s": 0.15306919999420643,
+      "local_p90_s": 31.597927649994382,
+      "local_max_s": 62.007978800014826,
+      "local_sum_s": 2182.8788795995642,
+      "db_client_sum_s": 2182.5267390999943,
+      "db_server_sum_s": 125.938,
+      "graph_api_sum_s": 0.0,
+      "other_sum_s": 0.3521404995699413,
+      "local_share_of_latency": 0.43692095399469366,
+      "token_usd_per_question": 0.0007057648214285714,
+      "n_cost_missing": 0
+    },
+    {
+      "role": "cypher_db_only",
+      "strategy": "cypher_rag_lines",
+      "corpus_id": "H1000g21p2",
+      "basis": "db_replay",
+      "needs_database": true,
+      "needs_memory_graph": false,
+      "n_questions": 280,
+      "local_median_s": 0.09749219998775516,
+      "local_p90_s": 31.611658059988986,
+      "local_max_s": 62.013052599999355,
+      "local_sum_s": 1999.8155343998806,
+      "db_client_sum_s": 1999.4975103998731,
+      "db_server_sum_s": 85.53699999999999,
+      "graph_api_sum_s": 0.0,
+      "other_sum_s": 0.31802400000742637,
+      "local_share_of_latency": 0.447923881526942,
+      "token_usd_per_question": 0.0006869374107142858,
+      "n_cost_missing": 0
+    },
+    {
+      "role": "cypher_db_only",
+      "strategy": "cypher_rag_lines",
+      "corpus_id": "H1000g21p3",
+      "basis": "db_replay",
+      "needs_database": true,
+      "needs_memory_graph": false,
+      "n_questions": 280,
+      "local_median_s": 0.13297325000166893,
+      "local_p90_s": 31.402101940012653,
+      "local_max_s": 62.006918300001416,
+      "local_sum_s": 2021.3617965999583,
+      "db_client_sum_s": 2021.0045406001445,
+      "db_server_sum_s": 84.388,
+      "graph_api_sum_s": 0.0,
+      "other_sum_s": 0.35725599981378764,
+      "local_share_of_latency": 0.45985610517119385,
+      "token_usd_per_question": 0.0007169025892857142,
+      "n_cost_missing": 0
+    },
+    {
+      "role": "cypher_db_only",
+      "strategy": "cypher_rag_lines",
+      "corpus_id": "H1000g21p4",
+      "basis": "db_replay",
+      "needs_database": true,
+      "needs_memory_graph": false,
+      "n_questions": 280,
+      "local_median_s": 0.13923364999936894,
+      "local_p90_s": 34.462188080008325,
+      "local_max_s": 62.00197250000201,
+      "local_sum_s": 2328.854297200014,
+      "db_client_sum_s": 2328.51120560008,
+      "db_server_sum_s": 85.199,
+      "graph_api_sum_s": 0.0,
+      "other_sum_s": 0.34309159993426874,
+      "local_share_of_latency": 0.47374500190160673,
+      "token_usd_per_question": 0.0007746446428571428,
+      "n_cost_missing": 0
+    },
+    {
+      "role": "cypher_db_only",
+      "strategy": "cypher_rag_lines",
+      "corpus_id": "H1000g21p5",
+      "basis": "db_replay",
+      "needs_database": true,
+      "needs_memory_graph": false,
+      "n_questions": 280,
+      "local_median_s": 0.1394799499976216,
+      "local_p90_s": 31.72594046999875,
+      "local_max_s": 62.03789800000959,
+      "local_sum_s": 2208.972920700093,
+      "db_client_sum_s": 2208.629945499939,
+      "db_server_sum_s": 78.721,
+      "graph_api_sum_s": 0.0,
+      "other_sum_s": 0.34297520015388727,
+      "local_share_of_latency": 0.4852530814015281,
+      "token_usd_per_question": 0.0007137027678571429,
+      "n_cost_missing": 0
+    },
+    {
+      "role": "agent",
+      "strategy": "graph_agent_lines",
+      "corpus_id": "H100g21p1",
+      "basis": "old_run",
+      "needs_database": false,
+      "needs_memory_graph": true,
+      "n_questions": 280,
+      "local_median_s": 0.0016259999974863604,
+      "local_p90_s": 0.04906316003180108,
+      "local_max_s": 0.16798710000875872,
+      "local_sum_s": 4.379994999806513,
+      "db_client_sum_s": null,
+      "db_server_sum_s": null,
+      "graph_api_sum_s": null,
+      "other_sum_s": null,
+      "local_share_of_latency": 0.0009933450353382801,
+      "token_usd_per_question": 0.001533571642857143,
+      "n_cost_missing": 0
+    },
+    {
+      "role": "agent",
+      "strategy": "graph_agent_lines",
+      "corpus_id": "H100g21p2",
+      "basis": "old_run",
+      "needs_database": false,
+      "needs_memory_graph": true,
+      "n_questions": 280,
+      "local_median_s": 0.0042762500161188655,
+      "local_p90_s": 0.12415112000744553,
+      "local_max_s": 0.44453429999703076,
+      "local_sum_s": 11.425280000010389,
+      "db_client_sum_s": null,
+      "db_server_sum_s": null,
+      "graph_api_sum_s": null,
+      "other_sum_s": null,
+      "local_share_of_latency": 0.002463265749217934,
+      "token_usd_per_question": 0.0016441435,
+      "n_cost_missing": 0
+    },
+    {
+      "role": "agent",
+      "strategy": "graph_agent_lines",
+      "corpus_id": "H100g21p3",
+      "basis": "old_run",
+      "needs_database": false,
+      "needs_memory_graph": true,
+      "n_questions": 280,
+      "local_median_s": 0.00394635001430288,
+      "local_p90_s": 0.13641518998920218,
+      "local_max_s": 0.5893254000111483,
+      "local_sum_s": 12.089162000149372,
+      "db_client_sum_s": null,
+      "db_server_sum_s": null,
+      "graph_api_sum_s": null,
+      "other_sum_s": null,
+      "local_share_of_latency": 0.002511580580016444,
+      "token_usd_per_question": 0.001494366125,
+      "n_cost_missing": 0
+    },
+    {
+      "role": "agent",
+      "strategy": "graph_agent_lines",
+      "corpus_id": "H100g21p4",
+      "basis": "old_run",
+      "needs_database": false,
+      "needs_memory_graph": true,
+      "n_questions": 280,
+      "local_median_s": 0.004014350015495438,
+      "local_p90_s": 0.12327518000820417,
+      "local_max_s": 0.427137099992251,
+      "local_sum_s": 11.81306700030109,
+      "db_client_sum_s": null,
+      "db_server_sum_s": null,
+      "graph_api_sum_s": null,
+      "other_sum_s": null,
+      "local_share_of_latency": 0.002297097841734796,
+      "token_usd_per_question": 0.0015868634285714286,
+      "n_cost_missing": 0
+    },
+    {
+      "role": "agent",
+      "strategy": "graph_agent_lines",
+      "corpus_id": "H100g21p5",
+      "basis": "old_run",
+      "needs_database": false,
+      "needs_memory_graph": true,
+      "n_questions": 280,
+      "local_median_s": 0.004369150003185496,
+      "local_p90_s": 0.1167257600041921,
+      "local_max_s": 0.4308028999803355,
+      "local_sum_s": 11.363456999970367,
+      "db_client_sum_s": null,
+      "db_server_sum_s": null,
+      "graph_api_sum_s": null,
+      "other_sum_s": null,
+      "local_share_of_latency": 0.0024806700544957932,
+      "token_usd_per_question": 0.0016579455892857143,
+      "n_cost_missing": 0
+    },
+    {
+      "role": "agent",
+      "strategy": "graph_agent_lines",
+      "corpus_id": "H1000g21p1",
+      "basis": "old_run",
+      "needs_database": false,
+      "needs_memory_graph": true,
+      "n_questions": 280,
+      "local_median_s": 0.0015805499933776446,
+      "local_p90_s": 0.4238165500006288,
+      "local_max_s": 1.5964717000024393,
+      "local_sum_s": 37.174252299795626,
+      "db_client_sum_s": null,
+      "db_server_sum_s": null,
+      "graph_api_sum_s": null,
+      "other_sum_s": null,
+      "local_share_of_latency": 0.008682075283065865,
+      "token_usd_per_question": 0.001602433125,
+      "n_cost_missing": 0
+    },
+    {
+      "role": "agent",
+      "strategy": "graph_agent_lines",
+      "corpus_id": "H1000g21p2",
+      "basis": "old_run",
+      "needs_database": false,
+      "needs_memory_graph": true,
+      "n_questions": 280,
+      "local_median_s": 0.0048785499966470525,
+      "local_p90_s": 1.07174592999072,
+      "local_max_s": 3.1268271999433637,
+      "local_sum_s": 94.00710770004662,
+      "db_client_sum_s": null,
+      "db_server_sum_s": null,
+      "graph_api_sum_s": null,
+      "other_sum_s": null,
+      "local_share_of_latency": 0.010106974953210375,
+      "token_usd_per_question": 0.00175986875,
+      "n_cost_missing": 0
+    },
+    {
+      "role": "agent",
+      "strategy": "graph_agent_lines",
+      "corpus_id": "H1000g21p3",
+      "basis": "old_run",
+      "needs_database": false,
+      "needs_memory_graph": true,
+      "n_questions": 280,
+      "local_median_s": 0.0016993000026559457,
+      "local_p90_s": 0.4167850500263739,
+      "local_max_s": 1.37004969996633,
+      "local_sum_s": 36.96019810103462,
+      "db_client_sum_s": null,
+      "db_server_sum_s": null,
+      "graph_api_sum_s": null,
+      "other_sum_s": null,
+      "local_share_of_latency": 0.007973350796124578,
+      "token_usd_per_question": 0.00165095775,
+      "n_cost_missing": 0
+    },
+    {
+      "role": "agent",
+      "strategy": "graph_agent_lines",
+      "corpus_id": "H1000g21p4",
+      "basis": "old_run",
+      "needs_database": false,
+      "needs_memory_graph": true,
+      "n_questions": 280,
+      "local_median_s": 0.0018647999968379736,
+      "local_p90_s": 0.4276026900188299,
+      "local_max_s": 1.4890542999783065,
+      "local_sum_s": 37.07469939973089,
+      "db_client_sum_s": null,
+      "db_server_sum_s": null,
+      "graph_api_sum_s": null,
+      "other_sum_s": null,
+      "local_share_of_latency": 0.008099994130508669,
+      "token_usd_per_question": 0.0017138614285714287,
+      "n_cost_missing": 0
+    },
+    {
+      "role": "agent",
+      "strategy": "graph_agent_lines",
+      "corpus_id": "H1000g21p5",
+      "basis": "old_run",
+      "needs_database": false,
+      "needs_memory_graph": true,
+      "n_questions": 280,
+      "local_median_s": 0.0017880499945022166,
+      "local_p90_s": 0.40809653998294376,
+      "local_max_s": 2.104373599984683,
+      "local_sum_s": 35.839700799580896,
+      "db_client_sum_s": null,
+      "db_server_sum_s": null,
+      "graph_api_sum_s": null,
+      "other_sum_s": null,
+      "local_share_of_latency": 0.006901642093077517,
+      "token_usd_per_question": 0.0018066220892857144,
+      "n_cost_missing": 0
+    }
+  ],
+  "growth": [
+    {
+      "name": "size.sheets",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 100.0,
+      "to_value": 1000.0
+    },
+    {
+      "name": "size.nodes",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 9449.0,
+      "to_value": 93171.0
+    },
+    {
+      "name": "size.relationships",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 31666.0,
+      "to_value": 312868.0
+    },
+    {
+      "name": "size.properties",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 103341.0,
+      "to_value": 1021060.0
+    },
+    {
+      "name": "ingest.generate",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 5.185581099998672,
+      "to_value": 390.9870155999961
+    },
+    {
+      "name": "ingest.split",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 0.25774179998552427,
+      "to_value": 3.2083240000065416
+    },
+    {
+      "name": "ingest.localize",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 0.14229489999706857,
+      "to_value": 0.9113053999899421
+    },
+    {
+      "name": "ingest.resolve",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 0.06186570000136271,
+      "to_value": 1.1878748000017367
+    },
+    {
+      "name": "ingest.plan",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 0.37322119998862036,
+      "to_value": 4.477597000019159
+    },
+    {
+      "name": "ingest.load_schema",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 0.12817300000460818,
+      "to_value": 0.15364359997329302
+    },
+    {
+      "name": "ingest.load_nodes",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 1.6012263000011444,
+      "to_value": 8.091163400007645
+    },
+    {
+      "name": "ingest.load_relationships",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 1.343104300001869,
+      "to_value": 16.904634600010468
+    },
+    {
+      "name": "ingest.load_verify",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 0.2937240000173915,
+      "to_value": 1.957368300005328
+    },
+    {
+      "name": "ingest.build_total",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 9.380171399971005,
+      "to_value": 427.2665993999981
+    },
+    {
+      "name": "store.data_bytes",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 6891281.0,
+      "to_value": 58951570.0
+    },
+    {
+      "name": "store.tx_log_bytes",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 3532079.0,
+      "to_value": 37328438.0
+    },
+    {
+      "name": "store.page_cache_needed_bytes",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 8269537.199999999,
+      "to_value": 70741884.0
+    },
+    {
+      "name": "startup.rebuild",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 6.075634100008756,
+      "to_value": 385.2062636000046
+    },
+    {
+      "name": "startup.graph_view",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 0.045072700013406575,
+      "to_value": 0.48426079997443594
+    },
+    {
+      "name": "startup.tier_runs",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 0.0009109000093303621,
+      "to_value": 0.0009888999920804054
+    },
+    {
+      "name": "startup.schema_text",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 0.00009850002243183553,
+      "to_value": 0.00011069999891333282
+    },
+    {
+      "name": "startup.neo4j_open_check",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 0.037707400013459846,
+      "to_value": 0.1535036000132095
+    },
+    {
+      "name": "startup.item_graph",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 0.5384000999911223,
+      "to_value": 4.845770999992965
+    },
+    {
+      "name": "startup.total",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 6.6924202000082005,
+      "to_value": 390.6394961999613
+    },
+    {
+      "name": "startup.without_rebuild",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 0.6270734000136144,
+      "to_value": 5.529585000011139
+    },
+    {
+      "name": "startup.context_rag_build",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 0.8256197000155225,
+      "to_value": 8.472659099992597
+    },
+    {
+      "name": "process.baseline_bytes",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 183427072.0,
+      "to_value": 183459840.0
+    },
+    {
+      "name": "process.peak_bytes",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 357908480.0,
+      "to_value": 1827717120.0
+    },
+    {
+      "name": "neo4j.rss_bytes",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 1198567424.0,
+      "to_value": 1319575552.0
+    },
+    {
+      "name": "neo4j.page_cache_used_bytes",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 41005101.0,
+      "to_value": 93581482.0
+    },
+    {
+      "name": "memory.view_bytes",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 9526957.0,
+      "to_value": 99756299.0
+    },
+    {
+      "name": "memory.item_graph_bytes",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 28105083.0,
+      "to_value": 282534546.0
+    },
+    {
+      "name": "memory.traced_peak_bytes",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 45816208.0,
+      "to_value": 462902901.0
+    },
+    {
+      "name": "agent.local_median_s",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 0.0016259999974863604,
+      "to_value": 0.0015805499933776446
+    },
+    {
+      "name": "agent.local_p90_s",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 0.04906316003180108,
+      "to_value": 0.4238165500006288
+    },
+    {
+      "name": "agent.local_sum_s",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 4.379994999806513,
+      "to_value": 37.174252299795626
+    },
+    {
+      "name": "agent.token_usd_per_question",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 0.001533571642857143,
+      "to_value": 0.001602433125
+    },
+    {
+      "name": "cypher_db_only.local_median_s",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 0.04467099999601487,
+      "to_value": 0.15306919999420643
+    },
+    {
+      "name": "cypher_db_only.local_p90_s",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 0.881794860001537,
+      "to_value": 31.597927649994382
+    },
+    {
+      "name": "cypher_db_only.local_sum_s",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 771.9261101998272,
+      "to_value": 2182.8788795995642
+    },
+    {
+      "name": "cypher_db_only.token_usd_per_question",
+      "from_corpus": "H100g21p1",
+      "to_corpus": "H1000g21p1",
+      "from_value": 0.0007387580357142856,
+      "to_value": 0.0007057648214285714
+    }
+  ],
+  "reference_price": null,
+  "money": []
+}

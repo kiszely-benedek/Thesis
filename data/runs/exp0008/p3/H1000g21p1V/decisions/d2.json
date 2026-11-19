@@ -1,0 +1,1105 @@
+{
+ "decider": "d2",
+ "threshold": 0.8571428571428571,
+ "link_set": {
+  "decider": "d2",
+  "links": [
+   {
+    "first": [
+     "373",
+     "EA-23301",
+     "AirCoolingSystem"
+    ],
+    "second": [
+     "372",
+     "EA 23301",
+     "AirCoolingSystem"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "591",
+     "EA-35901",
+     "AirCoolingSystem"
+    ],
+    "second": [
+     "590",
+     "EA-359-01",
+     "AirCoolingSystem"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "679",
+     "EA-41601",
+     "AirCoolingSystem"
+    ],
+    "second": [
+     "678",
+     "EA-416-01",
+     "AirCoolingSystem"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "340",
+     "EJ-21301A",
+     "AirEjector"
+    ],
+    "second": [
+     "339",
+     "EJ-213-01A",
+     "AirEjector"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "340",
+     "EJ-21301B",
+     "AirEjector"
+    ],
+    "second": [
+     "339",
+     "EJ-213-01A",
+     "AirEjector"
+    ],
+    "score": 0.875,
+    "string_score": 0.875
+   },
+   {
+    "first": [
+     "655",
+     "EJ-40001",
+     "AirEjector"
+    ],
+    "second": [
+     "654",
+     "EJ-4001",
+     "AirEjector"
+    ],
+    "score": 0.9230769230769231,
+    "string_score": 0.9230769230769231
+   },
+   {
+    "first": [
+     "743",
+     "EJ-45501",
+     "AirEjector"
+    ],
+    "second": [
+     "742",
+     "EJ-4551",
+     "AirEjector"
+    ],
+    "score": 0.9230769230769231,
+    "string_score": 0.9230769230769231
+   },
+   {
+    "first": [
+     "978",
+     "EJ-59401A",
+     "AirEjector"
+    ],
+    "second": [
+     "977",
+     "EJ59401A",
+     "AirEjector"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "978",
+     "EJ-59401B",
+     "AirEjector"
+    ],
+    "second": [
+     "977",
+     "EJ59401A",
+     "AirEjector"
+    ],
+    "score": 0.875,
+    "string_score": 0.875
+   },
+   {
+    "first": [
+     "23",
+     "V-1501",
+     "GravitationalSeparator"
+    ],
+    "second": [
+     "24",
+     "v-1501",
+     "GravitationalSeparator"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "363",
+     "V-22801",
+     "GravitationalSeparator"
+    ],
+    "second": [
+     "364",
+     "v-22801",
+     "GravitationalSeparator"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "494",
+     "V-30501",
+     "GravitationalSeparator"
+    ],
+    "second": [
+     "495",
+     "v-30501",
+     "GravitationalSeparator"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "240",
+     "V-15001",
+     "PressureVessel"
+    ],
+    "second": [
+     "241",
+     "V-150-01",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "266",
+     "D-16701",
+     "PressureVessel"
+    ],
+    "second": [
+     "267",
+     "D-167-01",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "315",
+     "V-19801",
+     "PressureVessel"
+    ],
+    "second": [
+     "316",
+     "V-1981",
+     "PressureVessel"
+    ],
+    "score": 0.9090909090909091,
+    "string_score": 0.9090909090909091
+   },
+   {
+    "first": [
+     "521",
+     "D-32001",
+     "PressureVessel"
+    ],
+    "second": [
+     "522",
+     "D-3201",
+     "PressureVessel"
+    ],
+    "score": 0.9090909090909091,
+    "string_score": 0.9090909090909091
+   },
+   {
+    "first": [
+     "690",
+     "V-42501",
+     "PressureVessel"
+    ],
+    "second": [
+     "691",
+     "V-4251",
+     "PressureVessel"
+    ],
+    "score": 0.9090909090909091,
+    "string_score": 0.9090909090909091
+   },
+   {
+    "first": [
+     "861",
+     "V-52701",
+     "PressureVessel"
+    ],
+    "second": [
+     "862",
+     "V-527-01",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "933",
+     "V-57101",
+     "PressureVessel"
+    ],
+    "second": [
+     "934",
+     "V57101",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "986",
+     "D-60001",
+     "PressureVessel"
+    ],
+    "second": [
+     "988",
+     "D 60001",
+     "PressureVessel"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "143",
+     "D-8901",
+     "PressureVessel"
+    ],
+    "second": [
+     "144",
+     "D-891",
+     "PressureVessel"
+    ],
+    "score": 0.8888888888888888,
+    "string_score": 0.8888888888888888
+   },
+   {
+    "first": [
+     "413",
+     "T-25601",
+     "ProcessColumn"
+    ],
+    "second": [
+     "416",
+     "t-25601",
+     "ProcessColumn"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "545",
+     "T-33101",
+     "ProcessColumn"
+    ],
+    "second": [
+     "547",
+     "T-3311",
+     "ProcessColumn"
+    ],
+    "score": 0.9090909090909091,
+    "string_score": 0.9090909090909091
+   },
+   {
+    "first": [
+     "595",
+     "T-36201",
+     "ProcessColumn"
+    ],
+    "second": [
+     "598",
+     "t-36201",
+     "ProcessColumn"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "951",
+     "T-58101",
+     "ProcessColumn"
+    ],
+    "second": [
+     "953",
+     "T-5811",
+     "ProcessColumn"
+    ],
+    "score": 0.9090909090909091,
+    "string_score": 0.9090909090909091
+   },
+   {
+    "first": [
+     "994",
+     "T-60501",
+     "ProcessColumn"
+    ],
+    "second": [
+     "996",
+     "T-6051",
+     "ProcessColumn"
+    ],
+    "score": 0.9090909090909091,
+    "string_score": 0.9090909090909091
+   },
+   {
+    "first": [
+     "114",
+     "T-7101",
+     "ProcessColumn"
+    ],
+    "second": [
+     "115",
+     "T-71-01",
+     "ProcessColumn"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "775",
+     "M-47301",
+     "StaticMixer"
+    ],
+    "second": [
+     "776",
+     "M-473-01",
+     "StaticMixer"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "369",
+     "TK-23103",
+     "Tank"
+    ],
+    "second": [
+     "370",
+     "tk-23103",
+     "Tank"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "600",
+     "TK-36403",
+     "Tank"
+    ],
+    "second": [
+     "601",
+     "tk-36403",
+     "Tank"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "498",
+     "TK-30802",
+     "Tank"
+    ],
+    "second": [
+     "499",
+     "TK30802",
+     "Tank"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "639",
+     "TK-39103",
+     "Tank"
+    ],
+    "second": [
+     "640",
+     "TK39103",
+     "Tank"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "775",
+     "TK-47301",
+     "Tank"
+    ],
+    "second": [
+     "776",
+     "TK-473-01",
+     "Tank"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "811",
+     "TK-49603",
+     "Tank"
+    ],
+    "second": [
+     "812",
+     "TK.49603",
+     "Tank"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "250",
+     "E-15602",
+     "TubularHeatExchanger"
+    ],
+    "second": [
+     "249",
+     "E-156-02",
+     "TubularHeatExchanger"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "307",
+     "E-19202",
+     "TubularHeatExchanger"
+    ],
+    "second": [
+     "306",
+     "E-192-02",
+     "TubularHeatExchanger"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "399",
+     "E-24802",
+     "TubularHeatExchanger"
+    ],
+    "second": [
+     "398",
+     "E-2482",
+     "TubularHeatExchanger"
+    ],
+    "score": 0.9090909090909091,
+    "string_score": 0.9090909090909091
+   },
+   {
+    "first": [
+     "623",
+     "E-37902",
+     "TubularHeatExchanger"
+    ],
+    "second": [
+     "622",
+     "e-37902",
+     "TubularHeatExchanger"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "654",
+     "E-40002",
+     "TubularHeatExchanger"
+    ],
+    "second": [
+     "653",
+     "E40002",
+     "TubularHeatExchanger"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "742",
+     "E-45502",
+     "TubularHeatExchanger"
+    ],
+    "second": [
+     "741",
+     "E45502",
+     "TubularHeatExchanger"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   },
+   {
+    "first": [
+     "873",
+     "E-53502",
+     "TubularHeatExchanger"
+    ],
+    "second": [
+     "872",
+     "E-535-02",
+     "TubularHeatExchanger"
+    ],
+    "score": 1.0,
+    "string_score": 1.0
+   }
+  ]
+ },
+ "said_same": [
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  true,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  true,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  true,
+  false,
+  true,
+  true,
+  false,
+  false,
+  true,
+  false,
+  false,
+  true,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  true,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false
+ ],
+ "pair_level": {
+  "tp": 39,
+  "fp": 0,
+  "fn": 50,
+  "precision": 1.0,
+  "recall": 0.43820224719101125,
+  "f1": 0.609375
+ },
+ "group_level": {
+  "true_positives": 39,
+  "false_positives": 0,
+  "false_negatives": 50,
+  "precision": 1.0,
+  "recall": 0.43820224719101125,
+  "f1": 0.609375
+ },
+ "n_dropped_one_to_one": 2,
+ "n_identity_conflicts": 0,
+ "llm": null
+}

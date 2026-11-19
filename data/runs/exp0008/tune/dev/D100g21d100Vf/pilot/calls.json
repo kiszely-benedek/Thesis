@@ -1,0 +1,204 @@
+{
+ "calls": [
+  {
+   "card": "Occurrence A: tag \"EA-4401\"; class AirCoolingSystem; sheet 78; unit 44; drawn next to: BV-44001 (sends to, line 4-P-440007-A1A-N), GTV-44004 (sends to, line 4-P-440008-A1A-N), PI-44013 (measured by), PI-44015 (measured by), TI-44014 (measured by), TI-44016 (measured by)\nOccurrence B: tag \"EA-44-01\"; class AirCoolingSystem; sheet 77; unit not printed; units on sheet 77: 44; drawn next to: nothing\nSheets 78 and 77 are joined by 2 off-page connector pairs.",
+   "answer_text": "{\"same_item\": true, \"reason\": \"The tags differ only in formatting, and both identify the same air-cooling system in unit 44 on connected sheets.\"}",
+   "same_item": true,
+   "reason": "The tags differ only in formatting, and both identify the same air-cooling system in unit 44 on connected sheets.",
+   "parse_ok": true,
+   "from_cache": false,
+   "cost_usd": 0.0000481,
+   "latency_s": 1.75
+  },
+  {
+   "card": "Occurrence A: tag \"EJ-401B\"; class AirEjector; sheet 5; unit 4; drawn next to: GTV-4010 (receives from, line 6-PG-40030-A1A-N), GTV-4011 (sends to, line 6-PG-40032-A1A-N)\nOccurrence B: tag \"EJ-41A\"; class AirEjector; sheet 4; unit not printed; units on sheet 4: 4; drawn next to: GTV-4009 (receives from, line 6-PG-40029-A1A-N)\nSheets 5 and 4 are joined by 1 off-page connector pair.",
+   "answer_text": "{\"same_item\": false, \"reason\": \"The tags have different base numbers (401 and 41), so the differing trailing letters do not identify them as installed spares of the same item.\"}",
+   "same_item": false,
+   "reason": "The tags have different base numbers (401 and 41), so the differing trailing letters do not identify them as installed spares of the same item.",
+   "parse_ok": true,
+   "from_cache": false,
+   "cost_usd": 0.0002342,
+   "latency_s": 6.157000000002881
+  },
+  {
+   "card": "Occurrence A: tag \"P-101A\"; class CentrifugalPump; sheet 0; unit 1; drawn next to: BV-1002 (sends to, line 4-P-10007-A1A-N), GTV-1006 (sends to, line 4-P-10008-A1A-N), YI-1011 (measured by)\nOccurrence B: tag \"P-1001\"; class CentrifugalPump; sheet 17; unit 10; drawn next to: GTV-10009 (sends to, line 4-P-100009-A1A-N), GTV-10010 (sends to, line 4-P-100010-A1A-N), GTV-10011 (sends to, line 4-P-100011-A1A-N), TT-10016 (measured by), YI-10015 (measured by)\nNo off-page connector pair joins sheets 0 and 17.",
+   "answer_text": "{\"same_item\": false, \"reason\": \"The tags and unit numbers differ, and no off-page connector links the occurrences.\"}",
+   "same_item": false,
+   "reason": "The tags and unit numbers differ, and no off-page connector links the occurrences.",
+   "parse_ok": true,
+   "from_cache": false,
+   "cost_usd": 0.0000882,
+   "latency_s": 3.8440000000009604
+  },
+  {
+   "card": "Occurrence A: tag \"P-301C\"; class CentrifugalPump; sheet 3; unit 3; drawn next to: BV-3003 (sends to, line 4-P-30017-A1A-N), GTV-3012 (sends to, line 4-P-30018-A1A-N), YI-3011 (measured by)\nOccurrence B: tag \"P-3001C\"; class CentrifugalPump; sheet 51; unit 30; drawn next to: BV-30005 (sends to, line 4-P-300032-A1A-N), GTV-30019 (sends to, line 4-P-300031-A1A-N), YI-30021 (measured by)\nNo off-page connector pair joins sheets 3 and 51.",
+   "answer_text": "{\"same_item\": false, \"reason\": \"Their tags, units, and connected equipment differ, with no off-page connector linking the sheets.\"}",
+   "same_item": false,
+   "reason": "Their tags, units, and connected equipment differ, with no off-page connector linking the sheets.",
+   "parse_ok": true,
+   "from_cache": false,
+   "cost_usd": 0.0000906,
+   "latency_s": 3.5
+  },
+  {
+   "card": "Occurrence A: tag \"P-402B\"; class CentrifugalPump; sheet 4; unit 4; drawn next to: BV-4013 (sends to, line 4-P-40079-A1A-N), CHV-4006 (sends to, line 6-P-40077-A1A-N), GTV-4038 (sends to, line 4-P-40078-A1A-N), TT-4067 (measured by), YI-4066 (measured by)\nOccurrence B: tag \"P-4002\"; class CentrifugalPump; sheet 70; unit 40; drawn next to: BV-40010 (sends to, line 4-P-400070-A1A-N), CHV-40003 (sends to, line 6-P-400068-A1A-N), GTV-40031 (sends to, line 4-P-400069-A1A-N), TT-40068 (measured by), YI-40067 (measured by)\nNo off-page connector pair joins sheets 4 and 70.",
+   "answer_text": "{\"same_item\": false, \"reason\": \"P-402B’s trailing B marks an installed spare, so it is not the unsuffixed P-4002.\"}",
+   "same_item": false,
+   "reason": "P-402B’s trailing B marks an installed spare, so it is not the unsuffixed P-4002.",
+   "parse_ok": true,
+   "from_cache": false,
+   "cost_usd": 0.0002782,
+   "latency_s": 8.03099999999904
+  },
+  {
+   "card": "Occurrence A: tag \"P-501A\"; class CentrifugalPump; sheet 8; unit 5; drawn next to: BV-5007 (sends to, line 4-P-50038-A1A-N), GTV-5015 (sends to, line 4-P-50039-A1A-N), TT-5042 (measured by), YI-5041 (measured by)\nOccurrence B: tag \"P-5001A\"; class CentrifugalPump; sheet 85; unit 50; drawn next to: BV-50002 (sends to, line 4-P-500007-A1A-N), GTV-50006 (sends to, line 4-P-500006-A1A-N), TT-50005 (measured by), YI-50004 (measured by)\nNo off-page connector pair joins sheets 8 and 85.",
+   "answer_text": "{\"same_item\": false, \"reason\": \"The tags have different numeric identifiers (501 versus 5001), and no connector links the sheets.\"}",
+   "same_item": false,
+   "reason": "The tags have different numeric identifiers (501 versus 5001), and no connector links the sheets.",
+   "parse_ok": true,
+   "from_cache": false,
+   "cost_usd": 0.0001334,
+   "latency_s": 2.75
+  },
+  {
+   "card": "Occurrence A: tag \"P-501B\"; class CentrifugalPump; sheet 8; unit 5; drawn next to: BV-5008 (sends to, line 4-P-50044-A1A-N), GTV-5018 (sends to, line 4-P-50043-A1A-N), GTV-5019 (sends to, line 4-P-50045-A1A-N), TT-5047 (measured by), YI-5046 (measured by)\nOccurrence B: tag \"P-5001A\"; class CentrifugalPump; sheet 85; unit 50; drawn next to: BV-50002 (sends to, line 4-P-500007-A1A-N), GTV-50006 (sends to, line 4-P-500006-A1A-N), TT-50005 (measured by), YI-50004 (measured by)\nNo off-page connector pair joins sheets 8 and 85.",
+   "answer_text": "{\"same_item\": false, \"reason\": \"The tags have different base numbers (501 and 5001), so they are not installed spares of the same item.\"}",
+   "same_item": false,
+   "reason": "The tags have different base numbers (501 and 5001), so they are not installed spares of the same item.",
+   "parse_ok": true,
+   "from_cache": false,
+   "cost_usd": 0.0000951,
+   "latency_s": 2.797000000002299
+  },
+  {
+   "card": "Occurrence A: tag \"P-501B\"; class CentrifugalPump; sheet 8; unit 5; drawn next to: BV-5008 (sends to, line 4-P-50044-A1A-N), GTV-5018 (sends to, line 4-P-50043-A1A-N), GTV-5019 (sends to, line 4-P-50045-A1A-N), TT-5047 (measured by), YI-5046 (measured by)\nOccurrence B: tag \"P-5001C\"; class CentrifugalPump; sheet 85; unit 50; drawn next to: BV-50005 (sends to, line 4-P-500017-A1A-N), GTV-50011 (sends to, line 4-P-500016-A1A-N), TT-50013 (measured by), YI-50012 (measured by)\nNo off-page connector pair joins sheets 8 and 85.",
+   "answer_text": "{\"same_item\": false, \"reason\": \"The tags have different equipment numbers and suffixes, and no off-page connector links the occurrences.\"}",
+   "same_item": false,
+   "reason": "The tags have different equipment numbers and suffixes, and no off-page connector links the occurrences.",
+   "parse_ok": true,
+   "from_cache": false,
+   "cost_usd": 0.0001331,
+   "latency_s": 4.53099999999904
+  },
+  {
+   "card": "Occurrence A: tag \"V-1101\"; class PressureVessel; sheet 18; unit 11; drawn next to: BFV-11003 (sends to, line 4-FL-110016-A1A-N), GTV-11003 (receives from, line 4-P-110003-A1A-N), GTV-11007 (sends to, line 4-P-110013-A1A-N), GTV-11008 (sends to, line 4-PG-110014-A1A-N), GTV-11010 (sends to, line 4-PG-110017-A1A-N), LG-11016 (measured by)\nOccurrence B: tag \"V-11-01\"; class PressureVessel; sheet 19; unit not printed; units on sheet 19: 11; drawn next to: nothing\nSheets 18 and 19 are joined by 2 off-page connector pairs.",
+   "answer_text": "{\"same_item\": true, \"reason\": \"The tags normalize to the same vessel number, and the connected sheets share unit 11.\"}",
+   "same_item": true,
+   "reason": "The tags normalize to the same vessel number, and the connected sheets share unit 11.",
+   "parse_ok": true,
+   "from_cache": false,
+   "cost_usd": 0.0000719,
+   "latency_s": 2.375
+  },
+  {
+   "card": "Occurrence A: tag \"V-301\"; class PressureVessel; sheet 2; unit 3; drawn next to: BV-3004 (sends to, line 4-PG-30022-A1A-N), GTV-3008 (receives from, line 4-P-30011-A1A-N), GTV-3013 (sends to, line 4-P-30021-A1A-N), LG-3018 (measured by), LSH-3019 (measured by), LT-3001 (measured by)\nOccurrence B: tag \"V.301\"; class PressureVessel; sheet 3; unit not printed; units on sheet 3: 3; drawn next to: nothing\nSheets 2 and 3 are joined by 2 off-page connector pairs.",
+   "answer_text": "{\"same_item\": true, \"reason\": \"Both tags identify a PressureVessel numbered 301, with punctuation differing across sheets.\"}",
+   "same_item": true,
+   "reason": "Both tags identify a PressureVessel numbered 301, with punctuation differing across sheets.",
+   "parse_ok": true,
+   "from_cache": false,
+   "cost_usd": 0.0000728,
+   "latency_s": 2.5780000000013388
+  },
+  {
+   "card": "Occurrence A: tag \"V-301\"; class PressureVessel; sheet 2; unit 3; drawn next to: BV-3004 (sends to, line 4-PG-30022-A1A-N), GTV-3008 (receives from, line 4-P-30011-A1A-N), GTV-3013 (sends to, line 4-P-30021-A1A-N), LG-3018 (measured by), LSH-3019 (measured by), LT-3001 (measured by)\nOccurrence B: tag \"R-3001\"; class PressureVessel; sheet 49; unit 30; drawn next to: BFV-30005 (sends to, line 4-FL-300038-A1A-N), BV-30006 (sends to, line 4-P-300036-A1A-N), GTV-30020 (sends to, line 4-P-300035-A1A-N), PI-30024 (measured by), PI-30056 (measured by), PI-30057 (measured by)\nNo off-page connector pair joins sheets 2 and 49.",
+   "answer_text": "{\"same_item\": false, \"reason\": \"The tags, units, and neighboring connections differ, with no off-page connector linking the occurrences.\"}",
+   "same_item": false,
+   "reason": "The tags, units, and neighboring connections differ, with no off-page connector linking the occurrences.",
+   "parse_ok": true,
+   "from_cache": false,
+   "cost_usd": 0.0000818,
+   "latency_s": 2.4840000000003783
+  },
+  {
+   "card": "Occurrence A: tag \"R-3001\"; class PressureVessel; sheet 49; unit 30; drawn next to: BFV-30005 (sends to, line 4-FL-300038-A1A-N), BV-30006 (sends to, line 4-P-300036-A1A-N), GTV-30020 (sends to, line 4-P-300035-A1A-N), PI-30024 (measured by), PI-30056 (measured by), PI-30057 (measured by)\nOccurrence B: tag \"V.301\"; class PressureVessel; sheet 3; unit not printed; units on sheet 3: 3; drawn next to: nothing\nNo off-page connector pair joins sheets 49 and 3.",
+   "answer_text": "{\"same_item\": false, \"reason\": \"The tags R-3001 and V.301 do not match, and no connector links their sheets.\"}",
+   "same_item": false,
+   "reason": "The tags R-3001 and V.301 do not match, and no connector links their sheets.",
+   "parse_ok": true,
+   "from_cache": false,
+   "cost_usd": 0.0000475,
+   "latency_s": 1.1869999999980791
+  },
+  {
+   "card": "Occurrence A: tag \"V-501\"; class PressureVessel; sheet 6; unit 5; drawn next to: CT-5004 (measured by), CT-5006 (measured by), GTV-5001 (receives from, line 6-CD-50003-A1A-H), LT-5003 (measured by), LV-5003 (sends to, line 6-CD-50004-A1A-H)\nOccurrence B: tag \"D-501\"; class PressureVessel; sheet 7; unit 5; drawn next to: BV-5005 (sends to, line 4-PG-50027-A1A-N), GTV-5008 (sends to, line 4-P-50026-A1A-N), LG-5067 (measured by), LT-5038 (measured by), PI-5034 (measured by), PI-5070 (measured by)\nSheets 6 and 7 are joined by 1 off-page connector pair.",
+   "answer_text": "{\"same_item\": true, \"reason\": \"Both are unit 5 pressure vessels with the same equipment number 501, and their sheets are connected.\"}",
+   "same_item": true,
+   "reason": "Both are unit 5 pressure vessels with the same equipment number 501, and their sheets are connected.",
+   "parse_ok": true,
+   "from_cache": false,
+   "cost_usd": 0.0001813,
+   "latency_s": 5.264999999999418
+  },
+  {
+   "card": "Occurrence A: tag \"V-501\"; class PressureVessel; sheet 6; unit 5; drawn next to: CT-5004 (measured by), CT-5006 (measured by), GTV-5001 (receives from, line 6-CD-50003-A1A-H), LT-5003 (measured by), LV-5003 (sends to, line 6-CD-50004-A1A-H)\nOccurrence B: tag \"D-51\"; class PressureVessel; sheet 8; unit not printed; units on sheet 8: 5; drawn next to: nothing\nSheets 6 and 8 are joined by 1 off-page connector pair.",
+   "answer_text": "{\"same_item\": false, \"reason\": \"The tags differ substantially, and the sheet connector provides no evidence linking these occurrences as the same equipment.\"}",
+   "same_item": false,
+   "reason": "The tags differ substantially, and the sheet connector provides no evidence linking these occurrences as the same equipment.",
+   "parse_ok": true,
+   "from_cache": false,
+   "cost_usd": 0.0002159,
+   "latency_s": 5.4540000000015425
+  },
+  {
+   "card": "Occurrence A: tag \"D-501\"; class PressureVessel; sheet 7; unit 5; drawn next to: BV-5005 (sends to, line 4-PG-50027-A1A-N), GTV-5008 (sends to, line 4-P-50026-A1A-N), LG-5067 (measured by), LT-5038 (measured by), PI-5034 (measured by), PI-5070 (measured by)\nOccurrence B: tag \"D-51\"; class PressureVessel; sheet 8; unit not printed; units on sheet 8: 5; drawn next to: nothing\nSheets 7 and 8 are joined by 1 off-page connector pair.",
+   "answer_text": "{\"same_item\": true, \"reason\": \"Both are pressure vessels in unit 5, and D-51 is a plausible abbreviated rendering of D-501.\"}",
+   "same_item": true,
+   "reason": "Both are pressure vessels in unit 5, and D-51 is a plausible abbreviated rendering of D-501.",
+   "parse_ok": true,
+   "from_cache": false,
+   "cost_usd": 0.0001509,
+   "latency_s": 4.968000000000757
+  },
+  {
+   "card": "Occurrence A: tag \"D-501\"; class PressureVessel; sheet 7; unit 5; drawn next to: BV-5005 (sends to, line 4-PG-50027-A1A-N), GTV-5008 (sends to, line 4-P-50026-A1A-N), LG-5067 (measured by), LT-5038 (measured by), PI-5034 (measured by), PI-5070 (measured by)\nOccurrence B: tag \"V-5001\"; class PressureVessel; sheet 85; unit 50; drawn next to: BV-50006 (sends to, line 4-PG-500021-A1A-N), GTV-50012 (sends to, line 4-P-500020-A1A-N), GTV-50013 (sends to, line 4-FL-500023-A1A-N), LG-50020 (measured by), LSH-50022 (measured by), LSLL-50021 (measured by)\nNo off-page connector pair joins sheets 7 and 85.",
+   "answer_text": "{\"same_item\": false, \"reason\": \"The tags and unit numbers differ, and no off-page connector links the occurrences.\"}",
+   "same_item": false,
+   "reason": "The tags and unit numbers differ, and no off-page connector links the occurrences.",
+   "parse_ok": true,
+   "from_cache": false,
+   "cost_usd": 0.0001902,
+   "latency_s": 3.702999999997701
+  },
+  {
+   "card": "Occurrence A: tag \"V-5801\"; class PressureVessel; sheet 97; unit 58; drawn next to: GTV-58011 (sends to, line 4-P-580019-A1A-N), GTV-58012 (sends to, line 4-PG-580020-A1A-N), GTV-58013 (sends to, line 4-FL-580022-A1A-N), GTV-58015 (sends to, line 4-PG-580024-A1A-N), LG-58020 (measured by), LSH-58022 (measured by)\nOccurrence B: tag \"V5801\"; class PressureVessel; sheet 98; unit not printed; units on sheet 98: 58; drawn next to: nothing\nSheets 97 and 98 are joined by 1 off-page connector pair.",
+   "answer_text": "{\"same_item\":true,\"reason\":\"V-5801 and V5801 are equivalent tag spellings, and the joined sheets both identify unit 58.\"}",
+   "same_item": true,
+   "reason": "V-5801 and V5801 are equivalent tag spellings, and the joined sheets both identify unit 58.",
+   "parse_ok": true,
+   "from_cache": false,
+   "cost_usd": 0.00007,
+   "latency_s": 1.6879999999982829
+  },
+  {
+   "card": "Occurrence A: tag \"TK-101\"; class Tank; sheet 0; unit 1; drawn next to: FA-1016 (sends to, line 4-PG-10014-A1A-N), GTV-1009 (sends to, line 4-P-10015-A1A-N), LSL-1020 (measured by), LT-1002 (measured by), LT-1018 (measured by), PGV-1005 (sends to, line 6-P-10018-A1A-N)\nOccurrence B: tag \"TK-1001\"; class Tank; sheet 16; unit 10; drawn next to: BV-10004 (sends to, line 4-P-100019-A1A-N), GTV-10018 (sends to, line 6-P-100026-A1A-N), LSLL-10023 (measured by), LT-10002 (measured by), LT-10021 (measured by), TI-10022 (measured by)\nNo off-page connector pair joins sheets 0 and 16.",
+   "answer_text": "{\"same_item\": false, \"reason\": \"The occurrences are in different units, have distinct surrounding equipment and line tags, and no off-page connector links the sheets.\"}",
+   "same_item": false,
+   "reason": "The occurrences are in different units, have distinct surrounding equipment and line tags, and no off-page connector links the sheets.",
+   "parse_ok": true,
+   "from_cache": false,
+   "cost_usd": 0.0001551,
+   "latency_s": 3.4690000000009604
+  },
+  {
+   "card": "Occurrence A: tag \"E-2102\"; class TubularHeatExchanger; sheet 37; unit 21; drawn next to: BFV-21003 (receives from, line 6-CWS-210009-A1A-N), PI-21017 (measured by), PI-21018 (measured by), PI-21021 (measured by), TI-21022 (measured by), TT-21016 (measured by)\nOccurrence B: tag \"E2102\"; class TubularHeatExchanger; sheet 36; unit not printed; units on sheet 36: 21; drawn next to: nothing\nSheets 37 and 36 are joined by 2 off-page connector pairs.",
+   "answer_text": "{\"same_item\":true,\"reason\":\"Both tags identify tubular heat exchanger E-2102 in unit 21, and the differing punctuation does not indicate a different item.\"}",
+   "same_item": true,
+   "reason": "Both tags identify tubular heat exchanger E-2102 in unit 21, and the differing punctuation does not indicate a different item.",
+   "parse_ok": true,
+   "from_cache": false,
+   "cost_usd": 0.0000667,
+   "latency_s": 2.2659999999996217
+  },
+  {
+   "card": "Occurrence A: tag \"E-3902\"; class TubularHeatExchanger; sheet 67; unit 39; drawn next to: BFV-39003 (receives from, line 6-CWS-390007-A1A-N), GTV-39005 (sends to, line 4-P-390010-A1A-N), GTV-39006 (sends to, line 4-P-390011-A1A-N), PI-39018 (measured by), PT-39016 (measured by), PT-39017 (measured by)\nOccurrence B: tag \"e-3902\"; class TubularHeatExchanger; sheet 66; unit not printed; units on sheet 66: 39; drawn next to: nothing\nSheets 67 and 66 are joined by 2 off-page connector pairs.",
+   "answer_text": "{\"same_item\": true, \"reason\": \"Both occurrences have the same heat exchanger tag, differing only in letter case.\"}",
+   "same_item": true,
+   "reason": "Both occurrences have the same heat exchanger tag, differing only in letter case.",
+   "parse_ok": true,
+   "from_cache": false,
+   "cost_usd": 0.0000714,
+   "latency_s": 2.8590000000003783
+  }
+ ]
+}

@@ -1,0 +1,167 @@
+{
+ "passed": true,
+ "plants": [
+  {
+   "plant": "VAL100g21",
+   "n_questions": 163,
+   "v2t_correct": 152,
+   "f1_correct": 147,
+   "v2t_by_family": {
+    "CONNECTED": [
+     8,
+     10
+    ],
+    "COUNT_IN_UNIT": [
+     10,
+     10
+    ],
+    "CROSS_UNIT": [
+     10,
+     10
+    ],
+    "DOWNSTREAM_IN_UNIT": [
+     9,
+     10
+    ],
+    "FLOW_PATH": [
+     7,
+     10
+    ],
+    "INSTRUMENTS_OF_ITEM": [
+     7,
+     7
+    ],
+    "LOOKUP_TYPE": [
+     7,
+     7
+    ],
+    "LOOKUP_UNIT": [
+     7,
+     7
+    ],
+    "LOOPS_NEAR_ITEM": [
+     10,
+     10
+    ],
+    "LOOP_ACTUATED_VALVE": [
+     10,
+     10
+    ],
+    "LOOP_MEASURED_EQUIPMENT": [
+     6,
+     6
+    ],
+    "NEIGHBOURS_DOWNSTREAM": [
+     10,
+     10
+    ],
+    "NO_PATH": [
+     10,
+     10
+    ],
+    "SAME_UNIT": [
+     6,
+     6
+    ],
+    "SHEETS_OF_TAG": [
+     10,
+     10
+    ],
+    "UNANSWERABLE_TAG": [
+     10,
+     10
+    ],
+    "UPSTREAM_ISOLATION": [
+     5,
+     10
+    ],
+    "UPSTREAM_SOURCES": [
+     10,
+     10
+    ]
+   }
+  },
+  {
+   "plant": "VAL1000g21",
+   "n_questions": 163,
+   "v2t_correct": 156,
+   "f1_correct": 140,
+   "v2t_by_family": {
+    "CONNECTED": [
+     9,
+     10
+    ],
+    "COUNT_IN_UNIT": [
+     9,
+     10
+    ],
+    "CROSS_UNIT": [
+     10,
+     10
+    ],
+    "DOWNSTREAM_IN_UNIT": [
+     10,
+     10
+    ],
+    "FLOW_PATH": [
+     8,
+     10
+    ],
+    "INSTRUMENTS_OF_ITEM": [
+     7,
+     7
+    ],
+    "LOOKUP_TYPE": [
+     7,
+     7
+    ],
+    "LOOKUP_UNIT": [
+     7,
+     7
+    ],
+    "LOOPS_NEAR_ITEM": [
+     9,
+     10
+    ],
+    "LOOP_ACTUATED_VALVE": [
+     10,
+     10
+    ],
+    "LOOP_MEASURED_EQUIPMENT": [
+     6,
+     6
+    ],
+    "NEIGHBOURS_DOWNSTREAM": [
+     10,
+     10
+    ],
+    "NO_PATH": [
+     10,
+     10
+    ],
+    "SAME_UNIT": [
+     6,
+     6
+    ],
+    "SHEETS_OF_TAG": [
+     10,
+     10
+    ],
+    "UNANSWERABLE_TAG": [
+     10,
+     10
+    ],
+    "UPSTREAM_ISOLATION": [
+     8,
+     10
+    ],
+    "UPSTREAM_SOURCES": [
+     10,
+     10
+    ]
+   }
+  }
+ ],
+ "plants_where_v2t_below_f1": [],
+ "families_weak_on_every_plant": []
+}

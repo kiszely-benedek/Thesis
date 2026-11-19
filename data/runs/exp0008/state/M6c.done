@@ -1,0 +1,8 @@
+{
+ "stage": "M6c",
+ "finished_utc": "2026-11-13T21:53:02+00:00",
+ "outputs": {
+  "data/runs/exp0008/m6c/runs/S7-AG-H1000g21p1-C1/answers.jsonl": "988241e60c047b4b096356119f550dd14a030e971d049f29b7e7b2be7acb4809",
+  "data/runs/exp0008/m6c/runs/S7-AG-H100g21p1d50/answers.jsonl": "e4462a1c464b4348301d8eae04d14408ce89d6861f5830039ead23ec1ed225f0"
+ }
+}

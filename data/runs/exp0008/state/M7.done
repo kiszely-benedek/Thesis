@@ -1,0 +1,7 @@
+{
+ "stage": "M7",
+ "finished_utc": "2026-11-14T04:28:49+00:00",
+ "outputs": {
+  "data/runs/exp0008/infra/summary.txt": "40f672b8d6ce7402220a6ff41c2e7e89c6945eb4946c553708f6072aa427da40"
+ }
+}

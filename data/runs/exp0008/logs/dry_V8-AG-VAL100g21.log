@@ -1,0 +1,94 @@
+run V8-AG-VAL100g21: 163 rows to answer, 0 already on disk
+paid mode: up to 163 model calls; hard spend cap 1.0 USD
+no cost-per-question estimate given (the pilot has not provided one)
+{
+  "run_id": "V8-AG-VAL100g21",
+  "n_rows": 163,
+  "n_new_rows": 163,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "graph_agent_lines": {
+      "0": {
+        "PARSE_FAILURE": 68
+      },
+      "1": {
+        "PARSE_FAILURE": 38
+      },
+      "2": {
+        "PARSE_FAILURE": 16
+      },
+      "3-4": {
+        "PARSE_FAILURE": 7
+      },
+      "5-8": {
+        "PARSE_FAILURE": 5
+      },
+      "9-16": {
+        "PARSE_FAILURE": 3
+      },
+      "17-32": {
+        "PARSE_FAILURE": 3
+      },
+      "33+": {
+        "PARSE_FAILURE": 3
+      },
+      "unanswerable": {
+        "PARSE_FAILURE": 20
+      }
+    }
+  },
+  "routing_recall": {
+    "graph_agent_lines": 0.0
+  },
+  "relaxed_routing_recall": {
+    "graph_agent_lines": 0.0
+  },
+  "evidence_node_recall": {
+    "graph_agent_lines": 0.0
+  },
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {
+      "graph_agent_lines": {
+        "0": 0.0,
+        "1": 0.0,
+        "2": 0.0,
+        "3-4": 0.0,
+        "5-8": 0.0,
+        "9-16": 0.0,
+        "17-32": 0.0,
+        "33+": 0.0
+      }
+    },
+    "relaxed_routing_recall": {
+      "graph_agent_lines": {
+        "0": 0.0,
+        "1": 0.0,
+        "2": 0.0,
+        "3-4": 0.0,
+        "5-8": 0.0,
+        "9-16": 0.0,
+        "17-32": 0.0,
+        "33+": 0.0
+      }
+    },
+    "evidence_node_recall": {
+      "graph_agent_lines": {
+        "0": 0.0,
+        "1": 0.0,
+        "2": 0.0,
+        "3-4": 0.0,
+        "5-8": 0.0,
+        "9-16": 0.0,
+        "17-32": 0.0,
+        "33+": 0.0
+      }
+    }
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "graph_agent_lines": 0.0
+  },
+  "stopped_by_spend_cap": false,
+  "late_after_timeout_usd": 0.0
+}
+V8-AG-VAL100g21: 163 of 163 questions need a model call (489 calls not in the cache, 0 served from it)

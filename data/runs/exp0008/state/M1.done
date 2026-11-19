@@ -1,0 +1,9 @@
+{
+ "stage": "M1",
+ "finished_utc": "2026-11-11T11:58:04+00:00",
+ "outputs": {
+  "data/runs/exp0008/state/g1.json": "2df94098402e87ace2a515f7474c80abd0f98a9b37f28a7aa7e6c70e90939424",
+  "data/runs/exp0008/val/runs/V8-AG-VAL1000g21/answers.jsonl": "6cbf8a7de86f73539b6b9f5bd9e37686bb996d600acacb6d71725386fd4d3c14",
+  "data/runs/exp0008/val/runs/V8-AG-VAL100g21/answers.jsonl": "8645ea9dbcb9128f8cda8d63a0d844dcdddfb626aba0754b0c8b4465eb35a86c"
+ }
+}

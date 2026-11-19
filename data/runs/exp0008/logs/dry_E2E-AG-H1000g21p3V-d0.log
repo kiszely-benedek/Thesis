@@ -1,0 +1,103 @@
+run E2E-AG-H1000g21p3V-d0: 280 rows to answer, 0 already on disk
+paid mode: up to 280 model calls; hard spend cap 1.0 USD
+no cost-per-question estimate given (the pilot has not provided one)
+{
+  "run_id": "E2E-AG-H1000g21p3V-d0",
+  "n_rows": 280,
+  "n_new_rows": 280,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "graph_agent_lines": {
+      "0": {
+        "ANSWERED": 100,
+        "PARSE_FAILURE": 25
+      },
+      "1": {
+        "PARSE_FAILURE": 19,
+        "ANSWERED": 43
+      },
+      "2": {
+        "ANSWERED": 17,
+        "PARSE_FAILURE": 9
+      },
+      "3-4": {
+        "ANSWERED": 8,
+        "PARSE_FAILURE": 10
+      },
+      "5-8": {
+        "ANSWERED": 4,
+        "PARSE_FAILURE": 7
+      },
+      "9-16": {
+        "PARSE_FAILURE": 2,
+        "ANSWERED": 4
+      },
+      "17-32": {
+        "ANSWERED": 3,
+        "PARSE_FAILURE": 3
+      },
+      "33+": {
+        "ANSWERED": 2,
+        "PARSE_FAILURE": 4
+      },
+      "unanswerable": {
+        "PARSE_FAILURE": 15,
+        "ANSWERED": 5
+      }
+    }
+  },
+  "routing_recall": {
+    "graph_agent_lines": 0.8346153846153846
+  },
+  "relaxed_routing_recall": {
+    "graph_agent_lines": 0.8423076923076923
+  },
+  "evidence_node_recall": {
+    "graph_agent_lines": 0.8244307846087529
+  },
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {
+      "graph_agent_lines": {
+        "0": 0.944,
+        "1": 0.8225806451612904,
+        "2": 0.7307692307692307,
+        "3-4": 0.7777777777777778,
+        "5-8": 0.7272727272727273,
+        "9-16": 0.6666666666666666,
+        "17-32": 0.5,
+        "33+": 0.0
+      }
+    },
+    "relaxed_routing_recall": {
+      "graph_agent_lines": {
+        "0": 0.944,
+        "1": 0.8225806451612904,
+        "2": 0.8076923076923077,
+        "3-4": 0.7777777777777778,
+        "5-8": 0.7272727272727273,
+        "9-16": 0.6666666666666666,
+        "17-32": 0.5,
+        "33+": 0.0
+      }
+    },
+    "evidence_node_recall": {
+      "graph_agent_lines": {
+        "0": 0.9192007084516304,
+        "1": 0.8306360760348468,
+        "2": 0.8042584027779663,
+        "3-4": 0.7089087756026754,
+        "5-8": 0.634181266891881,
+        "9-16": 0.6583105844335485,
+        "17-32": 0.5500803962720108,
+        "33+": 0.011245509565720284
+      }
+    }
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "graph_agent_lines": 0.000597821875
+  },
+  "stopped_by_spend_cap": false,
+  "late_after_timeout_usd": 0.0
+}
+E2E-AG-H1000g21p3V-d0: 94 of 280 questions need a model call (240 calls not in the cache, 924 served from it)

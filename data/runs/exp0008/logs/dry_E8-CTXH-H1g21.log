@@ -1,0 +1,34 @@
+run E8-CTXH-H1g21: 72 rows to answer, 0 already on disk
+paid mode: up to 72 model calls; hard spend cap 1.0 USD
+no cost-per-question estimate given (the pilot has not provided one)
+{
+  "run_id": "E8-CTXH-H1g21",
+  "n_rows": 72,
+  "n_new_rows": 72,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "context_rag": {
+      "0": {
+        "PARSE_FAILURE": 64
+      },
+      "unanswerable": {
+        "PARSE_FAILURE": 8
+      }
+    }
+  },
+  "routing_recall": {},
+  "relaxed_routing_recall": {},
+  "evidence_node_recall": {},
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {},
+    "relaxed_routing_recall": {},
+    "evidence_node_recall": {}
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "context_rag": 0.0
+  },
+  "stopped_by_spend_cap": false,
+  "late_after_timeout_usd": 0.0
+}
+E8-CTXH-H1g21: 72 of 72 questions need a model call (72 calls not in the cache, 0 served from it)
