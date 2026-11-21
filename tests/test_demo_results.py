@@ -10,7 +10,13 @@ from typing import Any, cast
 import pytest
 from fastapi.testclient import TestClient
 
-from plantgraph.demo.app.config import DemoConfig, ResultsSources
+from plantgraph.demo.app.config import (
+    V1_SEALED_POLICIES,
+    DemoConfig,
+    LadderSource,
+    ResultsSources,
+    SealedSource,
+)
 from plantgraph.demo.app.results import ladder_view, results_view, sealed_view
 from plantgraph.demo.app.server import create_app
 from plantgraph.demo.app.state import AppState
@@ -75,13 +81,19 @@ def _sealed_json() -> dict[str, Any]:
     return {"sealed": {"sheets": {"H100": 100, "H1000": 1001}, "scope_rows": rows}}
 
 
+def _v1_source(report: Path) -> SealedSource:
+    return SealedSource(report=report, result_row="ROW", label="v1", policies=V1_SEALED_POLICIES)
+
+
 def _write(path: Path, data: dict[str, Any]) -> Path:
     path.write_text(json.dumps(data), encoding="utf-8")
     return path
 
 
 def test_ladder_keeps_only_the_common_scope_and_resolves_sheets(tmp_path: Path) -> None:
-    view = ladder_view(_write(tmp_path / "l.json", _ladder_json()), "ROW")
+    view = ladder_view(
+        LadderSource(report=_write(tmp_path / "l.json", _ladder_json()), result_row="ROW")
+    )
 
     assert [(p.corpus_id, p.n_sheets, p.arm) for p in view.points] == [
         ("H1", 1, "ctx-high"),
@@ -91,11 +103,12 @@ def test_ladder_keeps_only_the_common_scope_and_resolves_sheets(tmp_path: Path) 
     assert view.wall_sheets == 142.5
     assert view.absent == ("ctx-low at H3: no run",)
     assert view.source.result_row == "ROW"
+    assert view.claims == ()  # a v1 report has no claim lines
     assert len(view.source.sha256) == 64
 
 
 def test_sealed_keeps_headline_rows_of_the_three_policies(tmp_path: Path) -> None:
-    view = sealed_view(_write(tmp_path / "s.json", _sealed_json()), "ROW")
+    view = sealed_view([_v1_source(_write(tmp_path / "s.json", _sealed_json()))], [])
 
     assert [(r.corpus_id, r.policy, r.n_sheets) for r in view.rows] == [
         ("H100", "cascade_v3", 100),
@@ -110,16 +123,16 @@ def test_missing_field_names_the_file_and_the_field(tmp_path: Path) -> None:
     path = _write(tmp_path / "l.json", broken)
 
     with pytest.raises(ValueError, match=r"wall_sheets.*l\.json"):
-        ladder_view(path, "ROW")
+        ladder_view(LadderSource(report=path, result_row="ROW"))
 
 
 def test_missing_file_is_reported_with_its_path(tmp_path: Path) -> None:
     with pytest.raises(FileNotFoundError, match="nope.json"):
-        sealed_view(tmp_path / "nope.json", "ROW")
+        sealed_view([_v1_source(tmp_path / "nope.json")], [])
 
 
 def _client(tmp_path: Path, results: ResultsSources | None) -> TestClient:
-    config = SimpleNamespace(results=results)
+    config = SimpleNamespace(results=results, corpora=())
     state = cast(AppState, SimpleNamespace(config=cast(DemoConfig, config)))
     return TestClient(create_app(state))
 
@@ -132,8 +145,8 @@ def test_endpoint_serves_both_views(tmp_path: Path) -> None:
     body = _client(tmp_path, sources).get("/api/results").json()
 
     assert body["ladder"]["scope"] == "common"
-    assert body["sealed"]["scope"] == "headline"
-    assert body["sealed"]["source"]["result_row"] == "EXP-0002-H100, EXP-0002-H1000"
+    assert body["sealed"]["scopes"] == ["headline"]
+    assert body["sealed"]["sources"][0]["result_row"] == "EXP-0002-H100, EXP-0002-H1000"
 
 
 def test_endpoint_is_404_when_not_configured(tmp_path: Path) -> None:

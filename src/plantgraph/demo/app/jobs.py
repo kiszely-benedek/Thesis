@@ -13,6 +13,7 @@ from plantgraph.demo.app.api_models import DemoAnswer, JobStatus
 from plantgraph.demo.app.ask_trace import build_trace
 from plantgraph.demo.app.corpus_runtime import LoadedCorpus
 from plantgraph.demo.app.models import SpendStatus
+from plantgraph.demo.app.need_routing import NeedRoute
 from plantgraph.demo.app.progress import live_progress
 from plantgraph.demo.app.progress_models import LiveProgress
 from plantgraph.demo.app.spend import SessionSpend
@@ -90,8 +91,8 @@ def run_job(job: Job, corpus: LoadedCorpus, asked: AskedQuestion, session: Sessi
     spent_before = session.guard.spent_usd
     try:
         reservation = session.reserve()
-        live, window = _ask_live(job, corpus, asked)
-        job.result = demo_answer(corpus, live, asked, _trace_of(window, corpus))
+        live, window, need_route = _ask_live(job, corpus, asked)
+        job.result = demo_answer(corpus, live, asked, _trace_of(window, corpus), need_route)
         if job.result.cache_hit_detected:
             _LOG.error(
                 "a stored answer was used for %r: the live-only guard failed", live.question_text
@@ -111,15 +112,16 @@ def run_job(job: Job, corpus: LoadedCorpus, asked: AskedQuestion, session: Sessi
 
 def _ask_live(
     job: Job, corpus: LoadedCorpus, asked: AskedQuestion
-) -> tuple[LiveAnswer, TraceWindow]:
-    """Empty the model cache, then ask the corpus's open cascade once."""
-    handle = corpus.source.begin_ask()
+) -> tuple[LiveAnswer, TraceWindow, NeedRoute]:
+    """Route the question, empty the model cache, then ask the cascade that starts at its tier."""
+    need_route = corpus.source.route(asked.text)
+    handle = corpus.source.begin_ask(need_route)
     job.clear_s = handle.clear_s
     job.window = handle.window  # from here on the page can poll the attempts
     result = handle.cascade.ask(asked)
     if isinstance(result, NeedsPaidCall):  # a live client never raises CacheMiss
         raise RuntimeError(f"expected a live answer, found a missing cache entry: {result.reason}")
-    return result, handle.window
+    return result, handle.window, need_route
 
 
 def _trace_of(window: TraceWindow, corpus: LoadedCorpus) -> AskTrace:

@@ -106,6 +106,9 @@ class DemoAnswer(BaseModel):
     route: RouteView | None = None
     #: True if any model call of this ask came from a cache. Live-only means it must stay False.
     cache_hit_detected: bool = False
+    #: The need label the router gave the question, and the first tier it started at.
+    need_label: str | None = None
+    start_tier: str | None = None
 
 
 class JobStatus(BaseModel):

@@ -27,6 +27,7 @@ from plantgraph.demo.app.estimate import estimate_cost
 from plantgraph.demo.app.jobs import Job, run_job
 from plantgraph.demo.app.live_cascades import NO_API_KEY, NoApiKey
 from plantgraph.demo.app.models import CostEstimate
+from plantgraph.demo.app.results import check_results_sources
 from plantgraph.demo.app.spend import SessionSpend
 from plantgraph.demo.app.store_loader import (
     PlantSwitcher,
@@ -365,6 +366,7 @@ def build_app_state(
     # every ask is a paid call; the cap is the safety net (the config's, unless overridden)
     cap_usd = config.session_cap_usd if session_cap_usd is None else session_cap_usd
     policy = resolve_policy(config.policy)
+    check_results_sources(config.results, config.corpora)  # fail now, not with a 500 per request
     estimates = {c.corpus_id: _estimate(policy, c) for c in config.corpora}
     # one guard serves every corpus, so its reservation is the dearest corpus's
     dearest = max(estimates.values(), key=lambda e: e.reservation_usd)

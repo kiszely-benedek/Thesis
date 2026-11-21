@@ -6,19 +6,17 @@ import { pct, seconds, usd } from "./format.js";
 import { STRINGS } from "./strings.js";
 
 // The report's own arm names, in drawing order (the demo's method last, so it lies on top).
-const ARM_ORDER = ["ctx-high", "ctx-low", "cyp", "ag", "cascade_v3"];
+const ARM_ORDER = ["ctx-high", "ctx-low", "cyp", "ag", "cascade_v3", "cascade_v4_iso"];
 const ARM_STYLE = {
   "ctx-high": { color: "var(--series-2)", marker: "square" },
   "ctx-low": { color: "var(--series-4)", marker: "diamond", dash: "3 3" },
   cyp: { color: "var(--series-3)", marker: "triangle" },
   ag: { color: "var(--series-5)", marker: "triangle-down" },
-  cascade_v3: { color: "var(--series-1)", marker: "circle" },
+  cascade_v4_iso: { color: "var(--series-1)", marker: "circle" },
+  // F1, the previous system: its own dashed series, never styled like the current cascade
+  cascade_v3: { color: "var(--series-4)", marker: "circle", dash: "3 3" },
 };
 const UNKNOWN_STYLE = { color: "var(--ink-muted)", marker: "circle" };
-// The sealed test names its policies differently; each is the same method as one ladder arm.
-const ARM_OF_POLICY = { cascade_v3: "cascade_v3", always_g_luna: "ag", always_c_luna: "cyp" };
-const POLICY_ORDER = ["cascade_v3", "always_g_luna", "always_c_luna"];
-
 const X_MARGIN_LEFT = 1.5;  // room left of the first point, as a factor on the log axis
 const X_MARGIN_RIGHT = 1.12; // and right of the last point or the context wall
 
@@ -124,45 +122,5 @@ export function latencySpec(ladder) {
     y: { domain: [0, ticks[ticks.length - 1]], ticks, format: (v) => `${v} s`, label: STRINGS.axisLatency },
     series,
     wall: wallMark(ladder, false),
-  };
-}
-
-export function policyName(policy) {
-  return STRINGS.policyNames[policy] ?? policy;
-}
-
-export function policyStyle(policy) {
-  return armStyle(ARM_OF_POLICY[policy] ?? policy);
-}
-
-/** The policies in the sealed table, in display order. */
-export function policiesIn(sealed) {
-  const present = [...new Set(sealed.rows.map((r) => r.policy))];
-  return [...POLICY_ORDER.filter((p) => present.includes(p)), ...present.filter((p) => !POLICY_ORDER.includes(p))];
-}
-
-function barOf(row) {
-  const accuracy = row.accuracy;
-  const tip = [
-    policyName(row.policy),
-    STRINGS.plantOption(row.corpus_id, row.n_sheets),
-    STRINGS.tipAccuracy(pct(accuracy.estimate), pct(accuracy.ci_low), pct(accuracy.ci_high)),
-    STRINGS.tipCorrect(row.n_correct, row.n_questions),
-  ].join("\n");
-  return { value: accuracy.estimate, low: accuracy.ci_low, high: accuracy.ci_high, color: policyStyle(row.policy).color, tip };
-}
-
-/** The sealed test as grouped bars: one group per plant, one bar per policy, Wilson whiskers. */
-export function sealedSpec(sealed) {
-  const plants = [...new Map(sealed.rows.map((r) => [r.corpus_id, r.n_sheets]))].sort((a, b) => a[1] - b[1]);
-  const groups = plants.map(([corpusId, sheets]) => {
-    const rows = policiesIn(sealed).map((p) => sealed.rows.find((r) => r.corpus_id === corpusId && r.policy === p));
-    return { label: STRINGS.plantOption(corpusId, sheets), bars: rows.filter((r) => r !== undefined).map(barOf) };
-  });
-  return {
-    height: 320,
-    label: STRINGS.sealedChartLabel,
-    y: { domain: [0, 1], ticks: [0, 0.25, 0.5, 0.75, 1], format: (v) => pct(v, 0), label: STRINGS.axisAccuracy },
-    groups,
   };
 }

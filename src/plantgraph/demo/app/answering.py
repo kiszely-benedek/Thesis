@@ -11,6 +11,7 @@ import logging
 from plantgraph.demo.app.api_models import AskRequest, BenchmarkView, DemoAnswer
 from plantgraph.demo.app.corpus_runtime import LoadedCorpus
 from plantgraph.demo.app.evidence import answer_sheet_links, read_sheet_links
+from plantgraph.demo.app.need_routing import NeedRoute
 from plantgraph.demo.app.route import RouteView, route_view
 from plantgraph.demo.app.trace_models import AskTrace
 from plantgraph.qa.cascade.live_models import FreeTextQuestion, LiveAnswer
@@ -81,7 +82,11 @@ def benchmark_view(
 
 
 def demo_answer(
-    corpus: LoadedCorpus, live: LiveAnswer, asked: AskedQuestion, trace: AskTrace
+    corpus: LoadedCorpus,
+    live: LiveAnswer,
+    asked: AskedQuestion,
+    trace: AskTrace,
+    need_route: NeedRoute | None = None,
 ) -> DemoAnswer:
     """The live answer with its sheets, its recorded route and (benchmark question) the verdict."""
     return DemoAnswer(
@@ -94,6 +99,8 @@ def demo_answer(
         trace=trace,
         route=_route_of(corpus, live, trace),
         cache_hit_detected=came_from_cache(live) or any(call.from_cache for call in trace.calls),
+        need_label=need_route.need_label.value if need_route else None,
+        start_tier=need_route.start_tier if need_route else None,
     )
 
 

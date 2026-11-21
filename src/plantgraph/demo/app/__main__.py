@@ -1,7 +1,8 @@
 """Start the demo server: `python -m plantgraph.demo.app --config <demo_config.json>`.
 
 Every question is answered live (real model calls, within the session cap). Sub-command:
-`examples --from Q --out E` writes a corpus's example questions.
+`examples --from Q --out E` writes a corpus's example questions;
+`replay-agreement --corpus C` checks the routed cascade against the offline walk (free).
 """
 
 from __future__ import annotations
@@ -15,6 +16,7 @@ import uvicorn
 
 from plantgraph.demo.app.config import load_demo_config
 from plantgraph.demo.app.examples import run_examples
+from plantgraph.demo.app.replay_agreement import run_replay_agreement
 from plantgraph.demo.app.server import HOST, create_app
 from plantgraph.demo.app.state import build_app_state
 
@@ -37,6 +39,9 @@ def main(argv: Sequence[str] | None = None) -> None:
     arguments = list(sys.argv[1:] if argv is None else argv)
     if arguments[:1] == ["examples"]:  # a sub-command; plain `--config ...` serves
         run_examples(arguments[1:])
+        return
+    if arguments[:1] == ["replay-agreement"]:
+        run_replay_agreement(arguments[1:])
         return
     args = build_parser().parse_args(arguments)
     state = build_app_state(

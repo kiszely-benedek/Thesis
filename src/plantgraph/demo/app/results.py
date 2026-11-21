@@ -1,4 +1,4 @@
-"""The Results tab's data: two recorded experiment reports, projected into what the page draws.
+"""The Results tab's data: recorded experiment reports, projected into what the page draws.
 
 Nothing here is computed or typed in. Every number is read from a report file written by an
 earlier experiment run (`report.json`); the page also gets the file's path, hash and date, so a
@@ -7,185 +7,45 @@ visitor can see which recorded run a figure comes from.
 
 from __future__ import annotations
 
-import hashlib
-import json
-from datetime import UTC, datetime
-from pathlib import Path
-from typing import Literal
+import re
+from collections.abc import Sequence
 
-from pydantic import BaseModel, ConfigDict, ValidationError
+from plantgraph.demo.app.config import DemoCorpus, LadderSource, ResultsSources, SealedSource
+from plantgraph.demo.app.results_infra import e2e_view, infra_view
+from plantgraph.demo.app.results_reports import (
+    IngestRecord,
+    LadderReport,
+    ScopeRow,
+    Sealed,
+    SealedReport,
+    provenance,
+    read_report,
+)
+from plantgraph.demo.app.results_views import (
+    ClaimLine,
+    LadderPoint,
+    LadderView,
+    ResultsView,
+    SealedRow,
+    SealedView,
+)
 
-from plantgraph.demo.app.config import ResultsSources
-
-# --- what the API returns ---------------------------------------------------------------------
-
-
-class Interval(BaseModel):
-    """A proportion with its Wilson 95 % confidence interval (a range that stays inside 0..1)."""
-
-    estimate: float
-    ci_low: float
-    ci_high: float
-
-
-class Provenance(BaseModel):
-    """Which file a view was read from, so the figure's caption can cite it."""
-
-    path: str
-    sha256: str
-    modified: datetime
-    #: The row(s) of the experiment results table that record this run.
-    result_row: str
+#: Claim headlines name their scope in brackets, e.g. "K1 [held-out]: ...".
+_SCOPE_TAG = re.compile(r"\[([^\]]+)\]")
 
 
-class LadderPoint(BaseModel):
-    """One arm (a retrieval strategy) on one corpus size of the scale ladder."""
-
-    corpus_id: str
-    n_sheets: int
-    arm: str
-    n: int
-    accuracy: Interval
-    cost_mean_usd: float
-    latency_median_s: float
+# --- ladder -----------------------------------------------------------------------------------
 
 
-class LadderView(BaseModel):
-    """EXP-0001: accuracy, cost and latency of each arm as the corpus grows."""
-
-    scope: Literal["common"]
-    n_families: int
-    cutoff_s: float
-    #: The sheet count at which the whole drawing set stops fitting in one prompt.
-    wall_sheets: float
-    points: tuple[LadderPoint, ...]
-    #: Arm/size cells the experiment has no run for (shown, never silently dropped).
-    absent: tuple[str, ...]
-    source: Provenance
-
-
-class SealedRow(BaseModel):
-    """One policy on one sealed-test corpus."""
-
-    corpus_id: str
-    n_sheets: int
-    policy: str
-    n_questions: int
-    n_correct: int
-    accuracy: Interval
-    cost_per_question_usd: float
-    latency_median_s: float
-    latency_p90_s: float
-
-
-class SealedView(BaseModel):
-    """EXP-0002: the held-out test, frozen cascade against the two single-tier policies."""
-
-    scope: Literal["headline"]
-    rows: tuple[SealedRow, ...]
-    source: Provenance
-
-
-class ResultsView(BaseModel):
-    """Both result views; a view is `None` when its report is not configured."""
-
-    ladder: LadderView | None
-    sealed: SealedView | None
-
-
-# --- the fields we read from the report files (everything else is ignored) ---------------------
-
-
-class _Parsed(BaseModel):
-    model_config = ConfigDict(extra="ignore")
-
-
-class _Cell(_Parsed):
-    corpus_id: str
-    policy: str
-    scope: str
-    n: int
-    acc_at_120: Interval
-    cost_mean: float
-    latency_median: float
-
-
-class _Size(_Parsed):
-    corpus_id: str
-    n_sheets: int
-
-
-class _Families(_Parsed):
-    common: list[str]
-
-
-class _LadderReport(_Parsed):
-    cutoff_s: float
-    wall_sheets: float
-    absent: list[str]
-    sizes: list[_Size]
-    scope_families: _Families
-    cells: list[_Cell]
-
-
-class _Summary(_Parsed):
-    n_questions: int
-    n_correct_at_cutoff: int
-    cost_per_question_usd: float
-    latency_median_s: float
-    latency_p90_s: float
-
-
-class _ScopeRow(_Parsed):
-    corpus_id: str
-    scope: str
-    policy: str
-    summary: _Summary
-    accuracy: Interval
-
-
-class _Sealed(_Parsed):
-    sheets: dict[str, int]
-    scope_rows: list[_ScopeRow]
-
-
-class _SealedReport(_Parsed):
-    sealed: _Sealed
-
-
-#: The policies the sealed table shows; `cascade_v3_iso` is an ablation and stays out.
-SEALED_POLICIES = ("cascade_v3", "always_g_luna", "always_c_luna")
-
-
-# --- reading ----------------------------------------------------------------------------------
-
-
-def _provenance(path: Path, result_row: str) -> Provenance:
-    data = path.read_bytes()
-    modified = datetime.fromtimestamp(path.stat().st_mtime, tz=UTC)
-    return Provenance(
-        path=path.as_posix(),
-        sha256=hashlib.sha256(data).hexdigest(),
-        modified=modified,
-        result_row=result_row,
-    )
-
-
-def _read_report[T: BaseModel](path: Path, model: type[T]) -> T:
-    """Parse a report file, naming the file and the broken field when it does not fit."""
-    if not path.exists():
-        raise FileNotFoundError(f"expected the results report at {path}, found no such file")
-    try:
-        return model.model_validate(json.loads(path.read_text(encoding="utf-8")))
-    except ValidationError as error:
-        first = error.errors()[0]
-        where = ".".join(str(part) for part in first["loc"])
-        raise ValueError(f"expected field {where!r} in {path}, found: {first['msg']}") from error
-
-
-def ladder_view(path: Path, result_row: str) -> LadderView:
-    """Project the EXP-0001 report: the `common` question families only (the claim's scope)."""
-    report = _read_report(path, _LadderReport)
+def ladder_view(source: LadderSource) -> LadderView:
+    """Project the ladder report: the configured scope's cells, with the report's claim lines."""
+    report = read_report(source.report, LadderReport)
+    families = report.scope_families.get(source.scope)
+    if families is None:
+        raise ValueError(
+            f"expected scope {source.scope!r} in {source.report}, "
+            f"found scopes {sorted(report.scope_families)}"
+        )
     sheets = {size.corpus_id: size.n_sheets for size in report.sizes}
     points = tuple(
         LadderPoint(
@@ -198,53 +58,143 @@ def ladder_view(path: Path, result_row: str) -> LadderView:
             latency_median_s=cell.latency_median,
         )
         for cell in report.cells
-        if cell.scope == "common"
+        if cell.scope == source.scope
+    )
+    claims = tuple(
+        ClaimLine(claim_id=c.id, verdict=c.verdict, text=f"{c.wording}: {c.value}")
+        for c in report.claims
     )
     return LadderView(
-        scope="common",
-        n_families=len(report.scope_families.common),
+        scope=source.scope,
+        n_families=len(families),
         cutoff_s=report.cutoff_s,
         wall_sheets=report.wall_sheets,
         points=points,
         absent=tuple(report.absent),
-        source=_provenance(path, result_row),
+        claims=claims,
+        source=provenance(source.report, source.result_row),
     )
 
 
-def _sealed_row(row: _ScopeRow, sheets: dict[str, int]) -> SealedRow:
+# --- sealed -----------------------------------------------------------------------------------
+
+
+def _plant_sheet_count(corpus_id: str, corpora: Sequence[DemoCorpus]) -> int:
+    """A plant's sheet count, from its ingest record (the report names pooled scales only)."""
+    corpus = next((c for c in corpora if c.corpus_id == corpus_id), None)
+    if corpus is None:
+        raise ValueError(
+            f"expected corpus {corpus_id!r} to be a pooled scale in the report or a configured "
+            f"plant {sorted(c.corpus_id for c in corpora)}, found neither"
+        )
+    return read_report(corpus.ingest_json, IngestRecord).counts.n_sheets
+
+
+def _sealed_row(
+    row: ScopeRow, sealed: Sealed, label: str, corpora: Sequence[DemoCorpus]
+) -> SealedRow:
+    pooled_plants = sealed.scales.get(row.corpus_id)
+    pooled = pooled_plants is not None
+    n_sheets = sealed.sheets.get(row.corpus_id)
     summary = row.summary
     return SealedRow(
         corpus_id=row.corpus_id,
-        n_sheets=sheets[row.corpus_id],
+        n_sheets=n_sheets if n_sheets is not None else _plant_sheet_count(row.corpus_id, corpora),
         policy=row.policy,
+        source_label=label,
+        scope=row.scope,
         n_questions=summary.n_questions,
         n_correct=summary.n_correct_at_cutoff,
         accuracy=row.accuracy,
         cost_per_question_usd=summary.cost_per_question_usd,
         latency_median_s=summary.latency_median_s,
         latency_p90_s=summary.latency_p90_s,
+        pooled=pooled,
+        n_plants=len(pooled_plants) if pooled_plants is not None else None,
+        # a pooled figure is a mean over plants: its interval resamples plants too
+        interval_method="two-stage bootstrap" if pooled else "wilson",
     )
 
 
-def sealed_view(path: Path, result_row: str) -> SealedView:
-    """Project the EXP-0002 report: the `headline` questions, three policies, both corpora."""
-    sealed = _read_report(path, _SealedReport).sealed
+def _selected(row: ScopeRow, source: SealedSource) -> bool:
+    return (
+        row.policy in source.policies
+        and row.scope in source.scopes
+        and (not source.corpora or row.corpus_id in source.corpora)
+    )
+
+
+def _claims_in_scopes(sealed: Sealed, scopes: Sequence[str]) -> tuple[ClaimLine, ...]:
+    """Claim lines for the shown scopes; a line with no scope tag (a not-run claim) always shows."""
+    lines = []
+    for claim in sealed.claims:
+        tag = _SCOPE_TAG.search(claim.headline)
+        if tag is None or tag.group(1) in scopes:
+            lines.append(ClaimLine(claim_id=claim.rule, verdict=claim.status, text=claim.headline))
+    return tuple(lines)
+
+
+def _source_rows(
+    source: SealedSource, sealed: Sealed, corpora: Sequence[DemoCorpus]
+) -> tuple[SealedRow, ...]:
+    chosen = [row for row in sealed.scope_rows if _selected(row, source)]
+    missing = [c for c in source.corpora if c not in {row.corpus_id for row in chosen}]
+    if not chosen or missing:
+        raise ValueError(
+            f"expected rows for policies {source.policies}, scopes {source.scopes} and corpora "
+            f"{source.corpora or 'any'} in {source.report}, found none for {missing or 'any'}"
+        )
+    return tuple(_sealed_row(row, sealed, source.label, corpora) for row in chosen)
+
+
+def sealed_view(sources: Sequence[SealedSource], corpora: Sequence[DemoCorpus]) -> SealedView:
+    """Project the sealed reports: each source's selected rows, in source order.
+
+    Args:
+        sources: the reports to read; the first one also supplies the claim lines.
+        corpora: the configured plants, whose ingest records give a plant row its sheet count.
+
+    Raises:
+        ValueError: a source selects nothing, or a plant row has no known sheet count.
+    """
+    if not sources:
+        raise ValueError("expected at least one sealed source, found none")
+    reports = [read_report(source.report, SealedReport).sealed for source in sources]
     rows = tuple(
-        _sealed_row(row, sealed.sheets)
-        for row in sealed.scope_rows
-        if row.scope == "headline" and row.policy in SEALED_POLICIES
+        row
+        for source, sealed in zip(sources, reports, strict=True)
+        for row in _source_rows(source, sealed, corpora)
     )
-    return SealedView(scope="headline", rows=rows, source=_provenance(path, result_row))
+    scopes = tuple(dict.fromkeys(scope for source in sources for scope in source.scopes))
+    return SealedView(
+        scopes=scopes,
+        rows=rows,
+        claims=_claims_in_scopes(reports[0], sources[0].scopes),
+        sources=tuple(provenance(source.report, source.result_row) for source in sources),
+    )
 
 
-def results_view(sources: ResultsSources) -> ResultsView:
-    """Both views from the configured report files.
+def results_view(sources: ResultsSources, corpora: Sequence[DemoCorpus] = ()) -> ResultsView:
+    """The views for the configured report files.
 
     Raises:
         FileNotFoundError: a configured report does not exist.
-        ValueError: a report lacks a field the projection reads.
+        ValueError: a report lacks a field the projection reads, or a row cannot be resolved.
     """
     return ResultsView(
-        ladder=ladder_view(sources.ladder_report, sources.ladder_result_row),
-        sealed=sealed_view(sources.sealed_report, sources.sealed_result_row),
+        ladder=ladder_view(sources.ladder) if sources.ladder else None,
+        sealed=sealed_view(sources.sealed, corpora) if sources.sealed else None,
+        infra=infra_view(sources.infra) if sources.infra else None,
+        e2e=e2e_view(sources.e2e) if sources.e2e else None,
     )
+
+
+def check_results_sources(sources: ResultsSources | None, corpora: Sequence[DemoCorpus]) -> None:
+    """Resolve every configured source once, so a broken one stops the app at startup.
+
+    Raises:
+        FileNotFoundError: a configured report or ingest record does not exist.
+        ValueError: a plant row has no sheet count, or an infra row or e2e arm is unknown.
+    """
+    if sources is not None:
+        results_view(sources, corpora)

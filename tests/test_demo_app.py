@@ -31,7 +31,7 @@ from plantgraph.qa.models import Question
 from qa_harness_toy import ABSTAIN_REPLY, CORPUS_ID, Toy, build_toy, pin
 
 PDF_BYTES = b"%PDF-1.4\n% toy drawing set\n%%EOF\n"
-EXAMPLE_CONFIG = Path("src/plantgraph/demo/app/demo_config.example.json")
+EXAMPLE_CONFIG = Path("src/plantgraph/demo/app/demo_config.v1.example.json")
 
 
 @dataclass(frozen=True)

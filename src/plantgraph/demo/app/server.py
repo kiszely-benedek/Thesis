@@ -28,7 +28,8 @@ from plantgraph.demo.app.api_models import (
 from plantgraph.demo.app.corpus_runtime import read_drawing_index
 from plantgraph.demo.app.live_cascades import NO_API_KEY
 from plantgraph.demo.app.presentation import example_texts_of, presentation_view
-from plantgraph.demo.app.results import ResultsView, results_view
+from plantgraph.demo.app.results import results_view
+from plantgraph.demo.app.results_views import ResultsView
 from plantgraph.demo.app.state import (
     AppState,
     Busy,
@@ -151,7 +152,7 @@ def create_app(state: AppState) -> FastAPI:
                 404, RESULTS_NOT_CONFIGURED, "expected a `results` entry in the demo config"
             )
         try:
-            return results_view(sources)
+            return results_view(sources, state.config.corpora)
         except FileNotFoundError as error:
             raise _http_error(404, MISSING_FILE, str(error)) from error
 

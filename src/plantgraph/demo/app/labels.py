@@ -1,9 +1,9 @@
 """The English text table of the demo page, loaded from `static/labels.en.json`.
 
 The JSON is the one place where an outcome, stop reason, tier, strategy, topic, store state,
-job state, error code, call purpose, plant class or glossary term gets its visitor-facing
-English text. The server sends codes; the page looks the text up. The server itself reads
-only the topic sections (to tag examples).
+job state, error code, call purpose, plant class, need label or glossary term gets its
+visitor-facing English text. The server sends codes; the page looks the text up. The server
+itself reads only the topic sections (to tag examples).
 """
 
 from __future__ import annotations
@@ -40,6 +40,8 @@ class Labels(BaseModel):
     call_errors: dict[str, str]
     #: Plant class name (`CentrifugalPump`) -> plain English ("centrifugal pump").
     class_names: dict[str, str]
+    #: Need label (`PATH`) -> short name shown on the answer card.
+    need_labels: dict[str, str]
     #: Glossary term key -> one or two plain sentences, shown as a tooltip.
     glossary: dict[str, str]
 

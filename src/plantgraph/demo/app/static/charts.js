@@ -10,6 +10,7 @@ import { el } from "./dom.js";
 const NS = "http://www.w3.org/2000/svg";
 const MARKER_R = 5;
 const HIT_R = 11;          // the invisible, larger target around a mark: easy to hover, tap and focus
+const LABEL_LINE_PX = 14;  // line spacing of a bar group's label
 const SERIES_SHIFT_PX = 4; // series sharing an x are drawn this far apart
 
 function svgEl(tag, attrs = {}, ...children) {
@@ -136,12 +137,15 @@ function drawGroup(svg, frame, sy, group, left, groupWidth, format) {
   const used = barWidth * group.bars.length;
   const start = left + (groupWidth - used) / 2;
   group.bars.forEach((bar, i) => drawBar(svg, frame, sy, bar, start + i * barWidth, barWidth * 0.86, format));
-  svg.append(axisText(left + groupWidth / 2, frame.bottom + 19, group.label, { "text-anchor": "middle" }));
+  // a label may be several lines (name, kind, interval method), one every LABEL_LINE_PX
+  [group.label].flat().forEach((line, i) => {
+    svg.append(axisText(left + groupWidth / 2, frame.bottom + 19 + i * LABEL_LINE_PX, line, { "text-anchor": "middle" }));
+  });
 }
 
 /** Draw a grouped bar chart in `host`.
     spec: { height, label, y: {domain, ticks, format, label},
-            groups: [{label, bars: [{value, low, high, color, tip}]}] } */
+            groups: [{label (a string, or an array of lines), bars: [{value, low, high, color, tip}]}] } */
 export function barChart(host, spec) {
   const width = host.clientWidth;
   if (width === 0) return;

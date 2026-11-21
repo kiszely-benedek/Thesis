@@ -43,15 +43,106 @@ class DemoCorpus(BaseModel):
         return self.drawings_dir / INDEX_NAME
 
 
-class ResultsSources(BaseModel):
-    """The two experiment reports the Results tab reads, and the results rows that cite them."""
+#: The policies v1's sealed table showed; `cascade_v3_iso` is an ablation and stayed out.
+V1_SEALED_POLICIES = ("cascade_v3", "always_g_luna", "always_c_luna")
+
+
+class LadderSource(BaseModel):
+    """The scale-ladder report (accuracy, cost and latency as the corpus grows)."""
 
     model_config = ConfigDict(frozen=True)
 
-    ladder_report: Path
-    ladder_result_row: str = "EXP-0001-LADDER"
-    sealed_report: Path
-    sealed_result_row: str = "EXP-0002-H100, EXP-0002-H1000"
+    report: Path
+    #: The row(s) of the experiment results table that record this run.
+    result_row: str
+    #: `common` = the question families every arm could answer, which is the claim's scope.
+    scope: Literal["common", "all"] = "common"
+
+
+class SealedSource(BaseModel):
+    """One sealed-test report (frozen policy on held-out plants) and the rows to show from it."""
+
+    model_config = ConfigDict(frozen=True)
+
+    report: Path
+    result_row: str
+    #: Shown next to the rows, e.g. "V2T-A2" or "F1, previous system".
+    label: str
+    policies: tuple[str, ...]
+    scopes: tuple[str, ...] = ("headline",)
+    #: Pooled ids (`S100`) and/or configured plant ids; empty = every corpus in the report.
+    corpora: tuple[str, ...] = ()
+
+
+class InfraRow(BaseModel):
+    """One growth row of the infrastructure report to show, with its unit."""
+
+    model_config = ConfigDict(frozen=True)
+
+    #: The report's row name, e.g. `ingest.build_total`.
+    name: str
+    #: The report's names carry no unit (`ingest.build_total` is seconds), so the config gives it.
+    unit: Literal["count", "s", "bytes", "usd"]
+
+
+class InfraSource(BaseModel):
+    """The infrastructure report (build time, store size, memory, latency as the plant grows)."""
+
+    model_config = ConfigDict(frozen=True)
+
+    report: Path
+    result_row: str
+    rows: tuple[InfraRow, ...]
+
+
+class E2ESource(BaseModel):
+    """The end-to-end tag-identity report (clean tags against three tag-identity deciders)."""
+
+    model_config = ConfigDict(frozen=True)
+
+    report: Path
+    result_row: str
+    #: Arm labels to show, in this order.
+    arms: tuple[str, ...] = ("R5", "V-d0", "V-d2", "V-d4")
+    #: The plant whose own arms are shown next to the pooled ones; `None` = pooled only.
+    plant: str | None = None
+
+
+class ResultsSources(BaseModel):
+    """The experiment reports the Results tab reads, and the results rows that cite them."""
+
+    model_config = ConfigDict(frozen=True)
+
+    ladder: LadderSource | None = None
+    sealed: tuple[SealedSource, ...] = ()
+    infra: InfraSource | None = None
+    e2e: E2ESource | None = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def _accept_v1_flat_keys(cls, data: object) -> object:
+        """Turn v1's `ladder_report` / `sealed_report` keys into the v2 shape."""
+        if not isinstance(data, dict) or not ({"ladder_report", "sealed_report"} & data.keys()):
+            return data
+        if {"ladder", "sealed"} & data.keys():
+            raise ValueError("expected either the v1 flat keys or `ladder`/`sealed`, found both")
+        return {"ladder": _v1_ladder(data), "sealed": (_v1_sealed(data),)}
+
+
+def _v1_ladder(data: dict[str, object]) -> dict[str, object]:
+    return {
+        "report": data["ladder_report"],
+        "result_row": data.get("ladder_result_row", "EXP-0001-LADDER"),
+    }
+
+
+def _v1_sealed(data: dict[str, object]) -> dict[str, object]:
+    return {
+        "report": data["sealed_report"],
+        "result_row": data.get("sealed_result_row", "EXP-0002-H100, EXP-0002-H1000"),
+        "label": "sealed test",
+        "policies": V1_SEALED_POLICIES,
+    }
 
 
 class PresentationStep(BaseModel):

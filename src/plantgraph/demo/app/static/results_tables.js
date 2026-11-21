@@ -3,7 +3,7 @@
 import { el } from "./dom.js";
 import { isoDate, pct, seconds, usd } from "./format.js";
 import { table } from "./parts.js";
-import { armName, armsIn, policiesIn, policyName, sheetSizes } from "./results_data.js";
+import { armName, armsIn, sheetSizes } from "./results_data.js";
 import { STRINGS } from "./strings.js";
 
 const SHORT_HASH = 8;
@@ -44,13 +44,20 @@ export function absentList(ladder) {
     el("ul", { className: "hint" }, ...ladder.absent.map((text) => el("li", {}, text))));
 }
 
-/** Every policy on every sealed plant, with the counts behind the accuracy. */
-export function sealedTable(sealed) {
-  const rank = (policy) => policiesIn(sealed).indexOf(policy);
-  const rows = [...sealed.rows]
-    .sort((a, b) => a.n_sheets - b.n_sheets || rank(a.policy) - rank(b.policy))
-    .map((r) => [STRINGS.plantOption(r.corpus_id, r.n_sheets), policyName(r.policy), pct(r.accuracy.estimate),
-      interval(r.accuracy), `${r.n_correct} / ${r.n_questions}`, usd(r.cost_per_question_usd),
-      seconds(r.latency_median_s), seconds(r.latency_p90_s)]);
-  return table(STRINGS.sealedCols, rows, [2, 3, 4, 5, 6, 7]);
+const PILL_OF_VERDICT = { PASS: "pill good", FAIL: "pill bad", FLAG: "pill warn" };
+
+/** The verdict as a pill (colour repeats the word; REPORTED and NOT_RUN stay plain). */
+export function verdictPill(verdict) {
+  return el("span", { className: PILL_OF_VERDICT[verdict] ?? "pill", textContent: verdict });
+}
+
+/** Claim lines as a list: verdict, the claim's id when the text does not start with it, the report's words. */
+export function claimList(claims) {
+  if (claims.length === 0) return null;
+  const items = claims.map((claim) => {
+    const named = claim.text.startsWith(claim.claim_id) ? claim.text : `${claim.claim_id}: ${claim.text}`;
+    return el("li", {}, verdictPill(claim.verdict), " ", named);
+  });
+  return el("div", { className: "claims" },
+    el("h4", {}, STRINGS.claimsHeading), el("p", { className: "hint" }, STRINGS.claimsNote), el("ul", {}, ...items));
 }

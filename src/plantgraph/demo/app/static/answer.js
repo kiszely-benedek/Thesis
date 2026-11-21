@@ -77,12 +77,19 @@ function captioned(caption, content) {
   return el("div", { className: "captioned" }, el("h3", { className: "field-label" }, caption), content);
 }
 
-/** The tier that gave the answer, as a glossary word: "Step 1: database query (Cypher)". */
-function answeredByNode(live) {
-  if (!live.answered_by) return STRINGS.nobody;
-  const tier = live.tiers.find((t) => t.tier === live.answered_by);
-  const text = label("tiers", live.answered_by);
+/** A tier's name as a glossary word: "Step 1: database query (Cypher)"; `null` tier is nobody. */
+function tierNode(live, tierName) {
+  if (!tierName) return STRINGS.nobody;
+  const tier = live.tiers.find((t) => t.tier === tierName);
+  const text = label("tiers", tierName);
   return tier ? strategyTerm(tier.strategy, text) : text;
+}
+
+/** "Read as: Everything upstream · started at Step 2: graph agent"; absent for an answer with no routing. */
+function routeLine(result) {
+  if (!result.need_label) return null;
+  const text = STRINGS.routeLine(label("need_labels", result.need_label));
+  return el("p", { className: "facts-line" }, ...richText(text), tierNode(result.live, result.start_tier));
 }
 
 /** "Answered in 4.2 s · model time 3.9 s · cost $0.0021 · by Step 1: ...". The answer time leaves out
@@ -91,7 +98,7 @@ function factsLine(job) {
   const live = job.result.live;
   const answerS = Math.max(0, job.elapsed_s - (job.clear_s ?? 0));
   const text = STRINGS.factsLine(seconds(answerS), seconds(live.latency_s), usd(live.spent_usd));
-  const line = el("p", { className: "facts-line" }, ...richText(text), answeredByNode(live));
+  const line = el("p", { className: "facts-line" }, ...richText(text), tierNode(live, live.answered_by));
   const trace = job.result.trace;
   if (trace.failed_attempts > 0) line.append(lostTimeNote(trace));
   return line;
@@ -145,6 +152,8 @@ function answerBlock(job, link) {
   );
   if (live.fell_back) block.append(el("p", { className: "notice" }, STRINGS.fallbackLine));
   block.append(factsLine(job));
+  const route = routeLine(job.result);
+  if (route) block.append(route);
   if ((job.clear_s ?? 0) >= SLOW_CLEAR_S) block.append(el("p", { className: "hint" }, STRINGS.preparing(job.clear_s)));
   return block;
 }

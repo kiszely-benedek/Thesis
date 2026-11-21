@@ -27,6 +27,7 @@ from plantgraph.demo.app.live_cascades import (
     CascadeSource,
     LiveCascadeFactory,
 )
+from plantgraph.demo.app.need_routing import NeedRoute
 from plantgraph.demo.app.state import AppState, build_app_state
 from plantgraph.llm.fake_transport import FakeTransport
 from plantgraph.qa.cascade.live_build import OpenedCascade
@@ -101,9 +102,12 @@ class _SpySource:
         self.tier1_store = real.tier1_store
         self.store = real.store
 
-    def begin_ask(self) -> AskHandle:
+    def route(self, text: str) -> NeedRoute:
+        return self._real.route(text)
+
+    def begin_ask(self, route: NeedRoute) -> AskHandle:
         self.begun += 1
-        handle = self._real.begin_ask()
+        handle = self._real.begin_ask(route)
         if not self._force_cached:
             return handle
         return dataclasses.replace(handle, cascade=_CachedLooking(handle.cascade))
@@ -190,7 +194,8 @@ def test_the_stored_response_is_really_there_until_the_demo_empties_it(env: Env)
     with closing(sqlite3.connect(cache_file)) as connection:
         stored = connection.execute("SELECT COUNT(*) FROM responses").fetchone()[0]
     assert stored >= 1
-    _factory(state).begin_ask()  # also marks a trace window; harmless here
+    factory = _factory(state)
+    factory.begin_ask(factory.route("any text"))  # also marks a trace window; harmless here
     with closing(sqlite3.connect(cache_file)) as connection:
         assert connection.execute("SELECT COUNT(*) FROM responses").fetchone()[0] == 0
 

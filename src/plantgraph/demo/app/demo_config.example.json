@@ -1,41 +1,135 @@
 {
-  "policy": "cascade_v3",
+  "policy": "src/plantgraph/qa/cascade/policies_v2t/cascade_v4_iso.json",
   "question_deadline_s": 120.0,
-  "session_cap_usd": 2.0,
-  "calls_log_path": "data/runs/cv1/demo/calls.jsonl",
-  "presentation": [],
-  "results": {
-    "ladder_report": "data/runs/exp0001/report/report.json",
-    "sealed_report": "data/runs/sealed/report/report.json"
-  },
+  "session_cap_usd": 5.0,
+  "calls_log_path": "data/runs/exp0008/demo/calls.jsonl",
   "corpora": [
     {
-      "corpus_id": "D100",
-      "ingest_json": "data/runs/cv1/neo4jplant/D100/ingest.json",
-      "drawings_dir": "data/runs/cv1/drawings/D100",
-      "questions_jsonl": "data/runs/cv1/questions/D100/questions.jsonl",
+      "corpus_id": "H1000g21p1",
+      "ingest_json": "data/runs/exp0008/neo4jplant/H1000g21p1/ingest.json",
+      "drawings_dir": "data/runs/exp0008/demo/drawings/H1000g21p1",
+      "questions_jsonl": "data/runs/exp0008/demo/examples/H1000g21p1.jsonl",
       "tier_runs": {
-        "cypher-luna": "data/runs/cv1/runs/CYPL2-D100",
-        "agent-luna": "data/runs/cv1/runs/AGL3-D100"
+        "cypher-v2t": "data/runs/exp0008/m6a/runs/S7-CYP-H1000g21p1",
+        "agent-v2t": "data/runs/exp0008/m6a/runs/S7-AG-H1000g21p1"
       },
       "recorded_runs": [
-        "data/runs/cv1/runs/CYPL2-D100",
-        "data/runs/cv1/runs/AGL3-D100"
+        "data/runs/exp0008/m6a/runs/S7-CYP-H1000g21p1",
+        "data/runs/exp0008/m6a/runs/S7-AG-H1000g21p1",
+        "data/runs/exp0008/m6b/runs/S7F1-CYP-H1000g21p1",
+        "data/runs/exp0008/m6b/runs/S7F1-AG-H1000g21p1"
       ]
     },
     {
-      "corpus_id": "D1000",
-      "ingest_json": "data/runs/cv1/neo4jplant/D1000/ingest.json",
-      "drawings_dir": "data/runs/cv1/drawings/D1000",
-      "questions_jsonl": "data/runs/cv1/questions/D1000/questions.jsonl",
+      "corpus_id": "H100g21p1",
+      "ingest_json": "data/runs/exp0008/neo4jplant/H100g21p1/ingest.json",
+      "drawings_dir": "data/runs/exp0008/demo/drawings/H100g21p1",
+      "questions_jsonl": "data/runs/exp0008/demo/examples/H100g21p1.jsonl",
       "tier_runs": {
-        "cypher-luna": "data/runs/cv1/runs/CYPL2-D1000",
-        "agent-luna": "data/runs/cv1/runs/AGL3-D1000"
+        "cypher-v2t": "data/runs/exp0008/m6a/runs/S7-CYP-H100g21p1",
+        "agent-v2t": "data/runs/exp0008/m6a/runs/S7-AG-H100g21p1"
       },
       "recorded_runs": [
-        "data/runs/cv1/runs/CYPL2-D1000",
-        "data/runs/cv1/runs/AGL3-D1000"
+        "data/runs/exp0008/m6a/runs/S7-CYP-H100g21p1",
+        "data/runs/exp0008/m6a/runs/S7-AG-H100g21p1",
+        "data/runs/exp0008/m6b/runs/S7F1-CYP-H100g21p1",
+        "data/runs/exp0008/m6b/runs/S7F1-AG-H100g21p1"
       ]
     }
-  ]
+  ],
+  "results": {
+    "ladder": {
+      "report": "data/runs/exp0008/reports/ladder/report.json",
+      "result_row": "EXP-0008",
+      "scope": "common"
+    },
+    "sealed": [
+      {
+        "report": "data/runs/exp0008/reports/sealed/report.json",
+        "result_row": "EXP-0008",
+        "label": "V2T-A2",
+        "policies": [
+          "cascade_v4_iso",
+          "always_g_v2t",
+          "always_c_v2t"
+        ],
+        "scopes": [
+          "headline",
+          "held-out"
+        ],
+        "corpora": [
+          "S100",
+          "S1000",
+          "H100g21p1",
+          "H1000g21p1"
+        ]
+      },
+      {
+        "report": "data/runs/exp0008/reports/f1_baseline/report.json",
+        "result_row": "EXP-0008",
+        "label": "F1, previous system",
+        "policies": [
+          "cascade_v3"
+        ],
+        "scopes": [
+          "headline",
+          "held-out"
+        ],
+        "corpora": [
+          "S100",
+          "S1000",
+          "H100g21p1",
+          "H1000g21p1"
+        ]
+      }
+    ],
+    "infra": {
+      "report": "data/runs/exp0008/infra/report.json",
+      "result_row": "EXP-0008",
+      "rows": [
+        {
+          "name": "size.sheets",
+          "unit": "count"
+        },
+        {
+          "name": "store.data_bytes",
+          "unit": "bytes"
+        },
+        {
+          "name": "ingest.build_total",
+          "unit": "s"
+        },
+        {
+          "name": "startup.total",
+          "unit": "s"
+        },
+        {
+          "name": "startup.without_rebuild",
+          "unit": "s"
+        },
+        {
+          "name": "process.peak_bytes",
+          "unit": "bytes"
+        },
+        {
+          "name": "neo4j.rss_bytes",
+          "unit": "bytes"
+        },
+        {
+          "name": "cypher_db_only.local_median_s",
+          "unit": "s"
+        },
+        {
+          "name": "cypher_db_only.local_p90_s",
+          "unit": "s"
+        }
+      ]
+    },
+    "e2e": {
+      "report": "data/runs/exp0008/reports/e2e/report.json",
+      "result_row": "EXP-0008",
+      "plant": "H1000g21p1"
+    }
+  },
+  "presentation": []
 }

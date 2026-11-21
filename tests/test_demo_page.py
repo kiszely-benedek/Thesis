@@ -107,6 +107,7 @@ def test_every_api_path_the_javascript_calls_exists_in_the_router() -> None:
 
 def test_every_string_the_javascript_uses_is_defined() -> None:
     defined = set(STRINGS_DEF.findall(_text(STATIC_DIR / "strings.js")))
+    defined |= set(STRINGS_DEF.findall(_text(STATIC_DIR / "strings_results.js")))
     used = set(STRINGS_USE.findall(_all_js()))
 
     assert used - defined == set(), f"STRINGS keys used but not defined: {sorted(used - defined)}"
@@ -150,7 +151,7 @@ def test_every_module_is_imported_by_another(path: Path) -> None:
 
 
 def test_visitor_facing_files_hold_no_hungarian_letters() -> None:
-    for name in ("strings.js", "labels.en.json", "index.html"):
+    for name in ("strings.js", "strings_results.js", "labels.en.json", "index.html"):
         assert HUNGARIAN.search(_text(STATIC_DIR / name)) is None, f"{name} has Hungarian letters"
 
 
@@ -183,6 +184,10 @@ def _glossary_keys_used() -> set[str]:
     return {key for match in TERM_USE.findall(sources) for key in match if key}
 
 
+# glossary texts written before the page uses them; a key is removed once a page word uses it
+PENDING_TERMS: set[str] = set()
+
+
 def test_every_glossary_word_has_text_and_every_text_is_used() -> None:
     glossary = json.loads(_text(STATIC_DIR / "labels.en.json"))["glossary"]
     used = _glossary_keys_used()
@@ -191,8 +196,8 @@ def test_every_glossary_word_has_text_and_every_text_is_used() -> None:
     assert used - set(glossary) == set(), (
         f"glossary words without text: {sorted(used - set(glossary))}"
     )
-    assert set(glossary) - used == set(), (
-        f"glossary texts nobody uses: {sorted(set(glossary) - used)}"
+    assert set(glossary) - used - PENDING_TERMS == set(), (
+        f"glossary texts nobody uses: {sorted(set(glossary) - used - PENDING_TERMS)}"
     )
 
 
@@ -237,6 +242,8 @@ def test_the_results_tab_reads_the_results_api_and_draws_with_inline_svg() -> No
         "results",
         "results_data",
         "results_tables",
+        "results_sealed",
+        "results_infra",
         "charts",
         "chart_scale",
         "chart_tip",
@@ -262,8 +269,7 @@ def test_the_tabs_follow_the_aria_tabs_pattern() -> None:
 
 def test_no_chart_number_is_typed_into_the_page_text() -> None:
     # captions describe, figures show values: no digit sits in a results caption string
-    strings = _text(STATIC_DIR / "strings.js")
-    section = strings.split("// figure 1-3: the scale ladder")[1].split("// drawings")[0]
+    section = _text(STATIC_DIR / "strings_results.js")
     captions = re.findall(r"Caption:\s*(?:\([^)]*\)\s*=>)?\s*((?:\s*\"[^\"]*\"\s*\+?)+)", section)
 
     assert captions, "expected the caption strings to be found"
@@ -303,3 +309,63 @@ def test_presentation_mode_hides_the_intro_the_examples_and_the_typing_box() -> 
 
     for part in ("#examples", "#question-text", ".tb-tabs", "#intro-open"):
         assert part in hidden, f"expected presentation mode to hide {part}"
+
+
+def test_v2_arms_and_policies_have_names_and_styles_and_f1_is_its_own_series() -> None:
+    strings = _text(STATIC_DIR / "strings_results.js")
+    data = _text(STATIC_DIR / "results_data.js")
+
+    for name in ("cascade_v4_iso", "always_g_v2t", "always_c_v2t"):
+        assert f"{name}:" in strings, f"expected a name for {name}"
+    assert '"Cascade (V2T-A2)"' in strings and '"F1, previous system"' in strings
+    # the previous system keeps its own dashed style and never reuses the current cascade's
+    assert 'cascade_v3: { color: "var(--series-4)", marker: "circle", dash' in data
+    assert "cascade_v4_iso: {" in data
+    # no label calls a v2 arm "v3"
+    for line in strings.splitlines():
+        if "cascade_v4_iso:" in line:
+            assert "v3" not in line.split("cascade_v4_iso:")[1].split(",")[0]
+
+
+def test_the_sealed_view_reads_sources_not_the_legacy_source_field() -> None:
+    script = _all_js()
+
+    assert "sealed.sources" in script
+    assert not re.search(r"sealed\.source(?!s)", script), "the page still reads the legacy `source`"
+
+
+def test_pooled_and_plant_rows_name_different_interval_methods_and_no_blanket_wilson() -> None:
+    strings = _text(STATIC_DIR / "strings_results.js")
+
+    assert '"two-stage bootstrap": "two-stage bootstrap"' in strings
+    assert 'wilson: "Wilson interval"' in strings
+    # the captions say which kind of row gets which interval; none says every row is Wilson
+    assert "Pooled arms use a" in strings and "A single plant gets a" in strings
+    assert "Bars show accuracy per plant and method; the whisker is the" not in strings
+
+
+def test_the_ladder_captions_never_claim_an_inversion() -> None:
+    assert "inversion" not in _text(STATIC_DIR / "strings_results.js").lower()
+    assert "inverts" not in _text(STATIC_DIR / "strings_results.js").lower()
+
+
+def test_the_answer_card_shows_the_need_label_and_the_start_tier() -> None:
+    answer = _text(STATIC_DIR / "answer.js")
+
+    assert 'label("need_labels", result.need_label)' in answer
+    assert "result.start_tier" in answer and "routeLine(job.result)" in answer
+
+
+def test_how_it_works_names_the_complete_rule_and_need_routing() -> None:
+    strings = _text(STATIC_DIR / "strings.js")
+    how = strings.split("howText:")[1].split("// the route line")[0]
+
+    assert "{{need_routing|" in how and "complete" in how and "row limit" in how
+
+
+def test_the_results_tab_draws_infra_and_e2e_and_never_the_spend() -> None:
+    results = _text(STATIC_DIR / "results.js")
+    infra = _text(STATIC_DIR / "results_infra.js") + _text(STATIC_DIR / "strings_results.js")
+
+    assert "infraSection(view.infra)" in results and "e2eSection(view.e2e)" in results
+    assert "spend_usd" not in infra

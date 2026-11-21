@@ -72,3 +72,15 @@
   .arm-notes { grid-template-columns: minmax(0, 1fr); }
   .arm-notes dd { margin-bottom: var(--sp-2); }
 }
+
+/* ---------- claim lines, infrastructure checks ---------- */
+
+.claims { margin-top: var(--sp-3); font-size: var(--fs-sm); }
+.claims h4 { font-size: var(--fs-sm); }
+.claims ul { margin: var(--sp-2) 0 0; padding: 0; list-style: none; display: grid; gap: var(--sp-1); }
+.claims li { overflow-wrap: anywhere; }
+.checks { margin-top: var(--sp-3); font-size: var(--fs-sm); }
+.checks h4 { font-size: var(--fs-sm); margin-bottom: var(--sp-1); }
+.check { border-top: var(--rule-w) solid var(--rule); padding: var(--sp-1) 0; }
+.check > summary { cursor: pointer; }
+.check > p { margin: var(--sp-1) 0 0 var(--sp-4); color: var(--ink-muted); overflow-wrap: anywhere; }

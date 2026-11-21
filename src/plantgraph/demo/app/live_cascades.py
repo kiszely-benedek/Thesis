@@ -1,4 +1,7 @@
-"""One live cascade per corpus, opened once; its model cache is emptied before every ask.
+"""Live cascades per corpus, opened once; their shared model cache is emptied before every ask.
+
+A corpus gets one cascade per start tier of its policy (see `need_routing`): a question the
+policy starts at a later tier runs on the cascade that begins there.
 
 The frozen paid model client always looks a request up in its SQLite cache before it sends it.
 The demo cannot switch that off, but it owns the cache file: a temporary SQLite file per corpus.
@@ -21,6 +24,7 @@ from typing import Protocol
 import httpx2
 import openai
 
+from plantgraph.demo.app.need_routing import NeedRoute, route_question, split_by_start
 from plantgraph.demo.app.store_probe import (
     HeldCorporaProbe,
     StoreState,
@@ -29,6 +33,7 @@ from plantgraph.demo.app.store_probe import (
 )
 from plantgraph.demo.app.trace_recorder import RecordingTransport, TraceWindow
 from plantgraph.llm import openrouter_settings
+from plantgraph.qa.cascade.labels import anchor_finder
 from plantgraph.qa.cascade.live_build import OpenedCascade, open_live_cascade
 from plantgraph.qa.cascade.live_models import LiveAnswer, NeedsPaidCall
 from plantgraph.qa.cascade.models import CascadePolicy
@@ -84,12 +89,16 @@ class CascadeSource(Protocol):
     #: Why the database tier can or cannot answer (the page explains it).
     store: StoreState
 
-    def begin_ask(self) -> AskHandle:
-        """The open cascade with its model cache emptied, and the marks that bound the ask."""
+    def route(self, text: str) -> NeedRoute:
+        """Label the question and say which tier it starts at (free, no model call)."""
+        ...
+
+    def begin_ask(self, route: NeedRoute) -> AskHandle:
+        """The cascade for `route`, its model cache emptied, and the marks that bound the ask."""
         ...
 
     def close(self) -> None:
-        """Close the cascade and delete its cache file."""
+        """Close the cascades and delete the cache file."""
         ...
 
     def reopen(self) -> CascadeSource:
@@ -135,26 +144,30 @@ class _StoreProbe:
 
 
 class LiveCascadeFactory:
-    """Opens a corpus's live cascade once and keeps it for the session."""
+    """Opens a corpus's live cascades once (one per start tier) and keeps them for the session."""
 
     def __init__(self, settings: LiveSettings) -> None:
-        """Open the cascade; its tiers are what the corpus can answer with.
+        """Open the cascades; `tiers` are what the corpus can answer with from the first tier on.
 
         Raises:
             NoApiKey: no model key and no injected transport.
         """
         _require_api_key(settings.transport)
         self._settings = settings
-        # one recorder per opened cascade; a reopen builds a new one with the new cascade
+        self._routed = split_by_start(settings.policy)
+        self._find_anchors = anchor_finder(settings.view)
+        # one recorder for all cascades of the corpus; a reopen builds a new one
         self._recorder = RecordingTransport(settings.transport or httpx2.HTTPTransport())
         self._sdk_client = _sdk_client(self._recorder)
         probe = _StoreProbe(settings.cypher_source_factory)
         self._cache_dir = Path(tempfile.mkdtemp(prefix="plantgraph-demo-"))
         self.cache_file = self._cache_dir / f"{settings.corpus_id}.sqlite"
         started = time.perf_counter()
+        self._opened: dict[int, OpenedCascade] = {}
         try:
-            self._opened = _open(settings, probe, self.cache_file, self._sdk_client)
+            self._open_all(probe)
         except Exception:
+            self._close_cascades()
             self._sdk_client.close()
             shutil.rmtree(self._cache_dir)
             raise
@@ -178,13 +191,29 @@ class LiveCascadeFactory:
             time.perf_counter() - started,
         )
 
-    def begin_ask(self) -> AskHandle:
+    def _open_all(self, probe: _StoreProbe) -> None:
+        # only the start-0 policy can hold a database tier, so the probe learns the store there
+        for start, policy in self._routed.by_start.items():
+            self._opened[start] = _open(
+                self._settings, policy, probe, self.cache_file, self._sdk_client
+            )
+
+    def route(self, text: str) -> NeedRoute:
+        """Label the question with the frozen need rules and pick the start tier."""
+        return route_question(text, self._find_anchors, self._routed)
+
+    def begin_ask(self, route: NeedRoute) -> AskHandle:
         """Empty the model cache (so no call can be a stored one) and mark where the ask starts."""
+        opened = self._opened.get(route.start_index)
+        if opened is None:
+            raise ValueError(
+                f"expected a start tier in {sorted(self._opened)}, found {route.start_index}"
+            )
         started = time.perf_counter()
         _empty_cache(self.cache_file)
         clear_s = round(time.perf_counter() - started, 4)
         window = TraceWindow.open(self._recorder, self._settings.calls_log_path)
-        return AskHandle(self._opened.cascade, clear_s, window)
+        return AskHandle(opened.cascade, clear_s, window)
 
     def close(self) -> None:
         """Close the cascade's caches and database connection, then delete the cache file.
@@ -193,9 +222,13 @@ class LiveCascadeFactory:
         """
         if not self._cache_dir.exists():
             return
-        self._opened.close()
+        self._close_cascades()
         self._sdk_client.close()
         shutil.rmtree(self._cache_dir)
+
+    def _close_cascades(self) -> None:
+        for opened in self._opened.values():
+            opened.close()
 
     def reopen(self) -> LiveCascadeFactory:
         """Close this cascade, then open a new one (the old one holds the database connection)."""
@@ -209,11 +242,15 @@ def _sdk_client(recorder: RecordingTransport) -> httpx2.Client:
 
 
 def _open(
-    settings: LiveSettings, factory: CypherSourceFactory, cache_file: Path, client: httpx2.Client
+    settings: LiveSettings,
+    policy: CascadePolicy,
+    factory: CypherSourceFactory,
+    cache_file: Path,
+    client: httpx2.Client,
 ) -> OpenedCascade:
     return open_live_cascade(
         corpus_id=settings.corpus_id,
-        policy=settings.policy,
+        policy=policy,
         view=settings.view,
         load_plan=settings.load_plan,
         tier_run_dirs=settings.tier_run_dirs,
