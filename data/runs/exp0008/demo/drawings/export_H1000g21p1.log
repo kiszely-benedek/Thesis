@@ -1,0 +1,17 @@
+corpus rebuild 1221.4 s; total 1404.9 s
+data\runs\exp0008\demo\drawings\H1000g21p1\drawings.pdf (12.97 MB)
+{
+  "pages": 1000,
+  "symbols": 95034,
+  "lines": 98868,
+  "flags": 3384,
+  "flags_linked": 3384,
+  "dangling_flags": 0,
+  "overlaps": 0,
+  "foreign_crossings": 0,
+  "min_scale": 0.29739583333333336,
+  "layout_s": 14.284,
+  "render_s": 47.031
+}
+wall 1430 s
+wall 1415 s

@@ -1,0 +1,330 @@
+{
+  "freeze": {
+    "list_path": "data\\runs\\exp0008\\prereg\\E9.sha256",
+    "n_files": 515,
+    "n_mismatch": 0,
+    "mismatched": []
+  },
+  "corpora": [
+    {
+      "corpus_id": "H1000g21p1",
+      "policy": "cascade_v4_iso",
+      "routed_only": true,
+      "cutoff_s": 120.0,
+      "cache_source": "data\\runs\\exp0008\\m6a\\cache.sqlite",
+      "cache_sha256_before": "3c66482f8ecdc991ce1e59d71871e4c7d8fb320ff1d970e63fbdfd34457c6449",
+      "cache_sha256_after": "3c66482f8ecdc991ce1e59d71871e4c7d8fb320ff1d970e63fbdfd34457c6449",
+      "n_questions": 10,
+      "n_agree": 10,
+      "n_disagree": 0,
+      "n_miss": 0,
+      "n_derived_policy": 0,
+      "rows": [
+        {
+          "question_id": "H1000g21p1:UPSTREAM_ISOLATION:V-50801",
+          "routed": true,
+          "agreement": "agree",
+          "differs": [],
+          "missing_tier": null,
+          "live_policy_evaluated": true,
+          "offline": {
+            "need_label": "UPSTREAM_TO_FIRST_VALVE",
+            "answered_by": "agent-v2t",
+            "outcome": "ANSWERED",
+            "final_answer": {
+              "answer": null,
+              "not_present": true
+            }
+          },
+          "live": {
+            "need_label": "UPSTREAM_TO_FIRST_VALVE",
+            "answered_by": "agent-v2t",
+            "outcome": "ANSWERED",
+            "final_answer": {
+              "answer": null,
+              "not_present": true
+            }
+          }
+        },
+        {
+          "question_id": "H1000g21p1:UPSTREAM_ISOLATION:P-3701",
+          "routed": true,
+          "agreement": "agree",
+          "differs": [],
+          "missing_tier": null,
+          "live_policy_evaluated": true,
+          "offline": {
+            "need_label": "UPSTREAM_TO_FIRST_VALVE",
+            "answered_by": "agent-v2t",
+            "outcome": "ANSWERED",
+            "final_answer": {
+              "answer": [
+                "GTV-37010"
+              ],
+              "not_present": false
+            }
+          },
+          "live": {
+            "need_label": "UPSTREAM_TO_FIRST_VALVE",
+            "answered_by": "agent-v2t",
+            "outcome": "ANSWERED",
+            "final_answer": {
+              "answer": [
+                "GTV-37010"
+              ],
+              "not_present": false
+            }
+          }
+        },
+        {
+          "question_id": "H1000g21p1:UPSTREAM_ISOLATION:V-1101",
+          "routed": true,
+          "agreement": "agree",
+          "differs": [],
+          "missing_tier": null,
+          "live_policy_evaluated": true,
+          "offline": {
+            "need_label": "UPSTREAM_TO_FIRST_VALVE",
+            "answered_by": "agent-v2t",
+            "outcome": "ANSWERED",
+            "final_answer": {
+              "answer": [
+                "YV-11031"
+              ],
+              "not_present": false
+            }
+          },
+          "live": {
+            "need_label": "UPSTREAM_TO_FIRST_VALVE",
+            "answered_by": "agent-v2t",
+            "outcome": "ANSWERED",
+            "final_answer": {
+              "answer": [
+                "YV-11031"
+              ],
+              "not_present": false
+            }
+          }
+        },
+        {
+          "question_id": "H1000g21p1:UPSTREAM_ISOLATION:E-53101",
+          "routed": true,
+          "agreement": "agree",
+          "differs": [],
+          "missing_tier": null,
+          "live_policy_evaluated": true,
+          "offline": {
+            "need_label": "UPSTREAM_TO_FIRST_VALVE",
+            "answered_by": "agent-v2t",
+            "outcome": "ANSWERED",
+            "final_answer": {
+              "answer": [
+                "BFV-531001",
+                "GTV-530009"
+              ],
+              "not_present": false
+            }
+          },
+          "live": {
+            "need_label": "UPSTREAM_TO_FIRST_VALVE",
+            "answered_by": "agent-v2t",
+            "outcome": "ANSWERED",
+            "final_answer": {
+              "answer": [
+                "BFV-531001",
+                "GTV-530009"
+              ],
+              "not_present": false
+            }
+          }
+        },
+        {
+          "question_id": "H1000g21p1:UPSTREAM_ISOLATION:T-31401",
+          "routed": true,
+          "agreement": "agree",
+          "differs": [],
+          "missing_tier": null,
+          "live_policy_evaluated": true,
+          "offline": {
+            "need_label": "UPSTREAM_TO_FIRST_VALVE",
+            "answered_by": "agent-v2t",
+            "outcome": "ANSWERED",
+            "final_answer": {
+              "answer": [
+                "FV-314045",
+                "GTV-313002",
+                "GTV-314020",
+                "BFV-314001",
+                "GV-314001"
+              ],
+              "not_present": false
+            }
+          },
+          "live": {
+            "need_label": "UPSTREAM_TO_FIRST_VALVE",
+            "answered_by": "agent-v2t",
+            "outcome": "ANSWERED",
+            "final_answer": {
+              "answer": [
+                "FV-314045",
+                "GTV-313002",
+                "GTV-314020",
+                "BFV-314001",
+                "GV-314001"
+              ],
+              "not_present": false
+            }
+          }
+        },
+        {
+          "question_id": "H1000g21p1:UPSTREAM_ISOLATION:M-17301",
+          "routed": true,
+          "agreement": "agree",
+          "differs": [],
+          "missing_tier": null,
+          "live_policy_evaluated": true,
+          "offline": {
+            "need_label": "UPSTREAM_TO_FIRST_VALVE",
+            "answered_by": "agent-v2t",
+            "outcome": "ANSWERED",
+            "final_answer": {
+              "answer": [
+                "BFV-173003",
+                "GTV-173001"
+              ],
+              "not_present": false
+            }
+          },
+          "live": {
+            "need_label": "UPSTREAM_TO_FIRST_VALVE",
+            "answered_by": "agent-v2t",
+            "outcome": "ANSWERED",
+            "final_answer": {
+              "answer": [
+                "BFV-173003",
+                "GTV-173001"
+              ],
+              "not_present": false
+            }
+          }
+        },
+        {
+          "question_id": "H1000g21p1:UPSTREAM_ISOLATION:E-12902",
+          "routed": true,
+          "agreement": "agree",
+          "differs": [],
+          "missing_tier": null,
+          "live_policy_evaluated": true,
+          "offline": {
+            "need_label": "UPSTREAM_TO_FIRST_VALVE",
+            "answered_by": "agent-v2t",
+            "outcome": "ANSWERED",
+            "final_answer": {
+              "answer": [
+                "GTV-129003"
+              ],
+              "not_present": false
+            }
+          },
+          "live": {
+            "need_label": "UPSTREAM_TO_FIRST_VALVE",
+            "answered_by": "agent-v2t",
+            "outcome": "ANSWERED",
+            "final_answer": {
+              "answer": [
+                "GTV-129003"
+              ],
+              "not_present": false
+            }
+          }
+        },
+        {
+          "question_id": "H1000g21p1:UPSTREAM_ISOLATION:D-13801",
+          "routed": true,
+          "agreement": "agree",
+          "differs": [],
+          "missing_tier": null,
+          "live_policy_evaluated": true,
+          "offline": {
+            "need_label": "UPSTREAM_TO_FIRST_VALVE",
+            "answered_by": "agent-v2t",
+            "outcome": "ANSWERED",
+            "final_answer": {
+              "answer": null,
+              "not_present": true
+            }
+          },
+          "live": {
+            "need_label": "UPSTREAM_TO_FIRST_VALVE",
+            "answered_by": "agent-v2t",
+            "outcome": "ANSWERED",
+            "final_answer": {
+              "answer": null,
+              "not_present": true
+            }
+          }
+        },
+        {
+          "question_id": "H1000g21p1:UPSTREAM_ISOLATION:E-2301",
+          "routed": true,
+          "agreement": "agree",
+          "differs": [],
+          "missing_tier": null,
+          "live_policy_evaluated": true,
+          "offline": {
+            "need_label": "UPSTREAM_TO_FIRST_VALVE",
+            "answered_by": "agent-v2t",
+            "outcome": "ANSWERED",
+            "final_answer": {
+              "answer": null,
+              "not_present": true
+            }
+          },
+          "live": {
+            "need_label": "UPSTREAM_TO_FIRST_VALVE",
+            "answered_by": "agent-v2t",
+            "outcome": "ANSWERED",
+            "final_answer": {
+              "answer": null,
+              "not_present": true
+            }
+          }
+        },
+        {
+          "question_id": "H1000g21p1:UPSTREAM_ISOLATION:V-55801",
+          "routed": true,
+          "agreement": "agree",
+          "differs": [],
+          "missing_tier": null,
+          "live_policy_evaluated": true,
+          "offline": {
+            "need_label": "UPSTREAM_TO_FIRST_VALVE",
+            "answered_by": "agent-v2t",
+            "outcome": "ANSWERED",
+            "final_answer": {
+              "answer": [
+                "GTV-556004",
+                "SWV-557001",
+                "GTV-558001"
+              ],
+              "not_present": false
+            }
+          },
+          "live": {
+            "need_label": "UPSTREAM_TO_FIRST_VALVE",
+            "answered_by": "agent-v2t",
+            "outcome": "ANSWERED",
+            "final_answer": {
+              "answer": [
+                "GTV-556004",
+                "SWV-557001",
+                "GTV-558001"
+              ],
+              "not_present": false
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
