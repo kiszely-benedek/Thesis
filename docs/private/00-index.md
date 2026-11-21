@@ -50,6 +50,8 @@ Note also that the title does **not** mention the retrieval-inversion claim. Tha
 
 **2026-11-06: EXP-0004 P4 done ($1.94) and reported (X-T8, uncommitted; `30-experiments/EXP-0004-E2E.md`): acc@120 on H1000g2V D0 0.766, D2 0.859, D4 0.798 vs R5 0.891; E1, E2 pass, E3, E4 fail; D4's false merges cost questions the variants do not touch. Next: commit, code freeze for the user's review, demo v2.**
 
+**2026-11-20: EXP-0008 clean v2 re-run done and pushed (`6955036`, `e54546e`, `e54a495`; `30-experiments/EXP-0008-v2-rerun.md`). Five plants per scale: cascade_v4_iso 0.914 / 0.908 at S100 / S1000 (Q4 PASS). The ladder's X1 and X2 FAIL: ContextRAG trails from one sheet (0.779 vs 0.985). E2E: D0 0.823, D2 0.856, D4 0.830 vs R5 0.908. Audit kappa 0.889. These numbers supersede EXP-0007 and EXP-0004 P4. Study map updated. Next: the user's review through the study map, then demo v2.**
+
 **2026-10-16: demo polish ADR-0055: DP-T1…T4 committed, DP-T5 uncommitted, DP-T6…T10 next.**
 
 **2026-10-11: sealed test run done (EXP-0002, ADR-0053): frozen cascade_v3 (GPT-6 Luna, ADR-0050/0052) on held-out H100/H1000 — headline acc@120 0.937 / 0.917, $0.00065 / $0.00071 per question, primary claim Q4 PASS, K1 FAIL on headline; infra cost measured (INFRA-1, ADR-0051). EXP-0001 done (ladder 1–30 sheets: ContextRAG 0.824 → 0.658 vs cascade 0.941 → 0.947, X1 PASS, X2 FAIL — no single-sheet crossing; EX01 0–1/5). Next: the clickable results UI.**
@@ -126,7 +128,9 @@ Note also that the title does **not** mention the retrieval-inversion claim. Tha
 
 ## Next action
 
-**Updated 2026-10-23.** User-facing status: `ALLAPOT.md`. Latest log: `50-progress/2026-W43.md`.
+**Updated 2026-11-20.** User-facing status: `ALLAPOT.md`. Latest log: `50-progress/2026-W47.md`.
+
+0. **Now:** the user reviews the project through the study map (https://claude.ai/artifact/4B5CtZjxe677rbkqDNTV9b), then demo v2 (ADR-0064). Earlier items below are kept for the record.
 **The chat is the user's single source of truth** (CLAUDE.md). **The thesis is written in English** (2026-11-05); the chat stays Hungarian.
 
 1. The user commits the README and the tooling/`docs/` publication (commands in the 10-23 chat).

@@ -1,5 +1,5 @@
 {
- "commit": "ca3a85485ed393a953367fb3c00e4d0a91e3a3f6",
+ "commit": "e54a495",
  "repo": "https://github.com/kiszely-benedek/Thesis",
  "artifact_url": "https://claude.ai/artifact/4B5CtZjxe677rbkqDNTV9b",
  "adr_files": {
@@ -122,13 +122,13 @@
    }
   ],
   "claim": "A GraphRAG legjobb lekérési stratégiája mérnöki rajzokon a korpusz méretétől függ. A publikált optimum, vagyis egy tömörített egylapos gráf beírása a promptba (ChatP&ID, 0,91 pontosság), az egylapos kiértékelés mellékterméke, és üzemi léptékben megfordul.",
-  "headline": "Az érvényes v1 eredmény: a lezárt teszten a kaszkád acc@120 értéke 0.937 [0.911, 0.956] (H100) és 0.917 [0.889, 0.939] (H1000), vagyis tízszeres méretnél a pontosság alig esik (Q4 PASS); a lapszám-létrán a ContextRAG 0.824-ről 0.658-ra esik 1→30 lap között, a kaszkád 0.941 és 0.974 között marad (forrás: docs/private/30-experiments/_results.md, EXP-0002-H100, EXP-0002-H1000, SEALED-CLAIMS, EXP-0001-LADDER). Az első v2 mérésben a cascade_v4_iso 0.911 (H100g2) és 0.891 (H1000g2) lett (első mérés, felülírja az EXP-0008; _results.md, EXP-0007-R5).",
+  "headline": "Az érvényes eredmény az EXP-0008 tiszta újramérése (2026-11-17), öt-öt üzemen skálánként: a kaszkád acc@120 értéke 0.914 [0.895, 0.932] kb. 100 lapon és 0.908 [0.885, 0.932] kb. 1000 lapon, a különbség −0.005 [−0.035, +0.025] (Q4 PASS); a költség kérdésenként 0.00140 → 0.00155 $. A létrán a ContextRAG már egy lapon is gyengébb (0.779 vs 0.985), 3 és 11 lapon 0.566 és 0.592 a kaszkád 0.921 és 0.855 értékével szemben, és 67 lap fölött nem fér a modell ablakába (forrás: docs/private/30-experiments/EXP-0008-v2-rerun.md).",
   "howto": [
    "Az állomások sorrendje a tanulás sorrendje. Az alapokkal kezdődik (mi a P&ID, hogyan generálunk üzemet), a gráfon és a kérdéseken át eljut a válaszolásig, végül a kísérletekig és a demóig. Minden állomás csak a korábbiakra épít; az „Előtte” sor mondja meg, melyikekre.",
    "Minden állomás hét részből áll (lent). A lényeg a „Miért” és a „Hogyan”. A „Bizonyíték” minden száma egy fájlból jön, és a tétel megnevezi ezt a fájlt.",
    "Pipáld ki, amit megnéztél: tételenként a jelölőnégyzettel, egy egész állomást a „Megnéztem” gombbal. A „Csak a hátralévők” kapcsoló elrejti a kipipáltakat. A pipák mentődnek, és Claude is látja őket, így tudja, hol tartasz.",
    "A 0. és az 1. állomás mélyebben járja be ugyanezt a terepet. Ez a bevezető csak belépő, nem pótolja őket.",
-   "Az első v2-mérés (EXP-0007, EXP-0004 P4) számait az EXP-0008 tiszta újramérése váltja fel, mert a kódátnézés hibákat talált. A térkép ezeket „első mérés” jelöléssel mutatja. Az EXP-0008 még nem futott.",
+   "Az EXP-0008 2026-11-17-én lefutott, minden szakasza kész. Az első v2-mérés (EXP-0007, EXP-0004 P4) számait felülírta; a térkép ezeket „első mérés, felülírta az EXP-0008” jelöléssel még mutatja, hogy látszódjon, mi változott.",
    "Ha egy tételt nem akarsz végigolvasni, kérd meg Claude-ot, hogy foglalja össze a chatben. A fájlnevek a GitHubra mutatnak, a térkép commitjánál, így pontosan azt a kódot látod, amelyet a térkép leír."
   ]
  },
@@ -138,7 +138,7 @@
    "title": "Probléma és állítás",
    "minutes": 60,
    "prerequisites": [],
-   "headline": "Az érvényes v1 eredmény: a lezárt teszten a kaszkád acc@120 értéke 0.937 [0.911, 0.956] (H100) és 0.917 [0.889, 0.939] (H1000), vagyis tízszeres méretnél a pontosság alig esik (Q4 PASS); a lapszám-létrán a ContextRAG 0.824-ről 0.658-ra esik 1→30 lap között, a kaszkád 0.941 és 0.974 között marad (forrás: docs/private/30-experiments/_results.md, EXP-0002-H100, EXP-0002-H1000, SEALED-CLAIMS, EXP-0001-LADDER). Az első v2 mérésben a cascade_v4_iso 0.911 (H100g2) és 0.891 (H1000g2) lett (első mérés, felülírja az EXP-0008; _results.md, EXP-0007-R5).",
+   "headline": "Az érvényes v1 eredmény: a lezárt teszten a kaszkád acc@120 értéke 0.937 [0.911, 0.956] (H100) és 0.917 [0.889, 0.939] (H1000), vagyis tízszeres méretnél a pontosság alig esik (Q4 PASS); a lapszám-létrán a ContextRAG 0.824-ről 0.658-ra esik 1→30 lap között, a kaszkád 0.941 és 0.974 között marad (forrás: docs/private/30-experiments/_results.md, EXP-0002-H100, EXP-0002-H1000, SEALED-CLAIMS, EXP-0001-LADDER). Az első v2 mérésben a cascade_v4_iso 0.911 (H100g2) és 0.891 (H1000g2) lett (első mérés, felülírta az EXP-0008; _results.md, EXP-0007-R5).",
    "summary": "A projekt egyetlen mérhető állítást vizsgál: a GraphRAG legjobb visszakeresési módja a P&ID-korpusz méretétől függ, és a ChatP&ID egylapos optimuma (az egész gráf a promptban, 0.91) nem marad optimum üzemi méretben. Ehhez nincs nyilvános, sok összefüggő lapból álló P&ID-adat, ezért a munka egy szintetikus, ismert megoldókulcsú benchmarkkal indul (generálás, majd lapokra vágás), erre épül a tudásgráf és a kérdés-válasz rendszer. A hivatalos feladat ~100 és ~1 000 lapos kiértékelést kér pontosságra, infrastruktúra- és tokenköltségre és késleltetésre, valamint annak elemzését, hogyan változik az optimális stratégia a mérettel. A keretezés (2026-09-20): mérnöki munka, amelyben a módszer és a működő rendszer vezet, a méretfüggés pedig a tervezési döntések bizonyítéka. Amit nem állítunk: valósághűséget, valódi gyári dokumentumon mért teljesítményt, adatlap-kérdések megválaszolását.",
    "why": [
     {
@@ -232,6 +232,16 @@
    ],
    "proof": [
     {
+     "claim": "EXP-0008 (érvényes): a ContextRAG egy lapon sem nyer, ezért a regisztrált „megfordulás” állítások elbuknak; a költség és a késleltetés a mérettel fordul a ContextRAG ellen.",
+     "number": "X2 FAIL: H1g21 ContextRAG − cascade −0.206 [−0.309, −0.118]; X1 FAIL slope −0.048 [−0.190, +0.096]; $/q ratio 3.22 / 8.91 / 23.22 at 1 / 3 / 11 sheets; wall 67 sheets",
+     "source": "docs/private/30-experiments/EXP-0008-v2-rerun.md"
+    },
+    {
+     "claim": "EXP-0008 (érvényes): a kaszkád pontossága tízszeres méretnél sem romlik, öt-öt üzemen skálánként; a költség alig nő.",
+     "number": "cascade_v4_iso 0.914 [0.895, 0.932] (S100), 0.908 [0.885, 0.932] (S1000); Δ −0.005 [−0.035, +0.025]; $/q 0.00140 → 0.00155, elasticity 0.044 [−0.016, 0.103]",
+     "source": "docs/private/30-experiments/_results.md (EXP-0008)"
+    },
+    {
      "claim": "A ChatP&ID egylapos optimuma: az egész sűrített gráf a promptban, egyetlen lapon mérve (212 csomópont, 53-ra sűrítve).",
      "number": "0.91; 212 → 53",
      "source": "docs/private/20-decisions/ADR-0001-scope-multipage-scalability.md"
@@ -267,12 +277,12 @@
      "source": "docs/private/30-experiments/_results.md (PROMPT-04)"
     },
     {
-     "claim": "Első v2 mérés, lezárt teszt (első mérés, felülírja az EXP-0008).",
+     "claim": "Első v2 mérés, lezárt teszt (első mérés, felülírta az EXP-0008).",
      "number": "cascade_v4_iso 401/440 0.911 [0.881, 0.934] (H100g2), 392/440 0.891 [0.858, 0.917] (H1000g2)",
      "source": "docs/private/30-experiments/_results.md (EXP-0007-R5)"
     },
     {
-     "claim": "Első v2 mérés, létra (első mérés, felülírja az EXP-0008): a ContextRAG itt is esik, a fal 62 lapnál.",
+     "claim": "Első v2 mérés, létra (első mérés, felülírta az EXP-0008): a ContextRAG itt is esik, a fal 62 lapnál.",
      "number": "ContextRAG high 0.686 / 0.654 / 0.614 at 1 / 3 / 11; cascade_v4_iso 0.957 / 0.885 / 0.909 / 0.924 at 1 / 3 / 11 / 30; wall 62 sheets",
      "source": "docs/private/30-experiments/_results.md (EXP-0007-R4)"
     },
@@ -305,6 +315,10 @@
     }
    ],
    "check": [
+    {
+     "q": "Az állításod szerint a ChatP&ID optimuma nagy léptéknél megfordul. A méréseid szerint egy lapon sem optimum. Akkor mi az állítás?",
+     "a": "A mi kérdéseinken a gráflekérdezés (kaszkád) minden mért méretnél pontosabb, egy lapon is (0.985 vs 0.779). A méret azt változtatja meg, mennyibe kerül és mennyi ideig tart a ContextRAG: 10 lapon 23-szor drágább, 67 lap fölött nem is fér el. A pontossági optimum tehát nem mozdul, a költség- és késleltetési oldal fordul. Az X1 és X2 előre rögzített állítás ezért FAIL, és ezt nyíltan kimondjuk."
+    },
     {
      "q": "Miért nem valódi gyári dokumentáción méred a rendszert?",
      "a": "Nincs nyilvános, sok összefüggő lapból álló P&ID-csomag megoldókulccsal, és a professzor nem küld dokumentumot. A professzor elfogadta, hogy módszert mutassunk be generált üzemeken; az egyetlen valódi több lapos anyag az OPEN100 12 lapja (egy atomerőmű), ez csak a lapösszekötő ellenőrzésére jó. A külső érvényesség ezért kimondott korlát."
@@ -1893,6 +1907,16 @@
    ],
    "proof": [
     {
+     "claim": "EXP-0008: a D4 az érintett (exposed) kérdéseken sokat segít, de hamis összevonásai az érintetlen kérdéseken rontanak.",
+     "number": "exposed R5 0.836, D0 0.226, D2 0.452, D4 0.712; unexposed D0 0.914, D4 0.848; NO_PATH 50/50 → 34/50 (D4)",
+     "source": "docs/private/30-experiments/EXP-0008-v2-rerun.md"
+    },
+    {
+     "claim": "EXP-0008 M8b (érvényes): a különbözően írt tagek 8,5 pontot visznek el; a D2 szabály ebből 3,4-et visszahoz, a D4 modell nettó nem segít.",
+     "number": "acc@120 R5 0.908, D0 0.823, D2 0.856, D4 0.830; E1 PASS −0.085 [−0.108, −0.065], E2 PASS +0.034 [+0.018, +0.050], E3 FAIL +0.007 [−0.023, +0.037], E4 FAIL (D2 −0.052, D4 −0.078)",
+     "source": "docs/private/30-experiments/EXP-0008-v2-rerun.md"
+    },
+    {
      "claim": "OPEN100 kézi megoldókulcs a 2026-09-05-i döntések után; mind a 96 csatlakozó sorsa rögzített.",
      "number": "Manifest: 23 pairs, 8 unresolved.",
      "source": "docs/private/40-design/open100-annotation.md"
@@ -1923,77 +1947,77 @@
      "source": "docs/private/40-design/exp0004-v2.md"
     },
     {
-     "claim": "P3 feloldási eredmény a H1000g2d100V korpuszon, pár-F1 összes / formátum / elnevezés (első mérés, felülírja az EXP-0008).",
+     "claim": "P3 feloldási eredmény a H1000g2d100V korpuszon, pár-F1 összes / formátum / elnevezés (első mérés, felülírta az EXP-0008).",
      "number": "D0 0 / 0 / 0, D1 0.542 / 0.871 / 0.000, D2 0.736 / 0.993 / 0.347, D4 0.950 [0.936, 0.962] / 0.962 / 0.983 [0.973, 0.992]",
      "source": "docs/private/50-progress/2026-W45.md"
     },
     {
-     "claim": "P3: az I0–I3 állítások teljesültek; a modell az elnevezés-családon jóval jobb a szabálynál (első mérés, felülírja az EXP-0008).",
+     "claim": "P3: az I0–I3 állítások teljesültek; a modell az elnevezés-családon jóval jobb a szabálynál (első mérés, felülírta az EXP-0008).",
      "number": "I0–I3 pass (I3: D4 − D2 naming +0.636 [0.583, 0.691])",
      "source": "docs/private/50-progress/2026-W45.md"
     },
     {
-     "claim": "P3 pontosság a 0.25-ös variánskorpuszon: a D4 gyakrabban von össze különböző tárgyakat (első mérés, felülírja az EXP-0008).",
+     "claim": "P3 pontosság a 0.25-ös variánskorpuszon: a D4 gyakrabban von össze különböző tárgyakat (első mérés, felülírta az EXP-0008).",
      "number": "`H1000g2V` was 0.828, D2's 0.993",
      "source": "docs/private/30-experiments/EXP-0004-E2E.md"
     },
     {
-     "claim": "P4 E1: címkevariánsokkal, a pontos feloldó mellett a pontosság szignifikánsan esik 1000 lapon (első mérés, felülírja az EXP-0008).",
+     "claim": "P4 E1: címkevariánsokkal, a pontos feloldó mellett a pontosság szignifikánsan esik 1000 lapon (első mérés, felülírta az EXP-0008).",
      "number": "−0.125 [−0.159, −0.091]",
      "source": "docs/private/30-experiments/EXP-0004-E2E.md"
     },
     {
-     "claim": "P4 E2: a D2 szabálydöntő pontosságot nyer vissza (első mérés, felülírja az EXP-0008).",
+     "claim": "P4 E2: a D2 szabálydöntő pontosságot nyer vissza (első mérés, felülírta az EXP-0008).",
      "number": "+0.093 [+0.064, +0.123]",
      "source": "docs/private/30-experiments/EXP-0004-E2E.md"
     },
     {
-     "claim": "P4 E3: a D4 modelldöntő nem nyer vissza szignifikánsan (első mérés, felülírja az EXP-0008).",
+     "claim": "P4 E3: a D4 modelldöntő nem nyer vissza szignifikánsan (első mérés, felülírta az EXP-0008).",
      "number": "+0.032 [−0.005, +0.068]",
      "source": "docs/private/30-experiments/EXP-0004-E2E.md"
     },
     {
-     "claim": "P4 E4 (D2): a −0.03-as nem-rosszabbsági határon szűken elbukik (első mérés, felülírja az EXP-0008).",
+     "claim": "P4 E4 (D2): a −0.03-as nem-rosszabbsági határon szűken elbukik (első mérés, felülírta az EXP-0008).",
      "number": "−0.032 [−0.055, −0.009]",
      "source": "docs/private/30-experiments/EXP-0004-E2E.md"
     },
     {
-     "claim": "P4 pontosság a 440 kérdéses fő körön, alapvonal: az R5 pontos címkékkel (első mérés, felülírja az EXP-0008).",
+     "claim": "P4 pontosság a 440 kérdéses fő körön, alapvonal: az R5 pontos címkékkel (első mérés, felülírta az EXP-0008).",
      "number": "| R5 (H1000g2) | 392/440 | 0.891 [0.858, 0.917] | 1.3735 |",
      "source": "docs/private/30-experiments/EXP-0004-E2E.md"
     },
     {
-     "claim": "P4: címkevariánsok, pontos feloldó (D0) (első mérés, felülírja az EXP-0008).",
+     "claim": "P4: címkevariánsok, pontos feloldó (D0) (első mérés, felülírta az EXP-0008).",
      "number": "| V-d0 | 337/440 | 0.766 [0.724, 0.803] | 0.5730 |",
      "source": "docs/private/30-experiments/EXP-0004-E2E.md"
     },
     {
-     "claim": "P4: címkevariánsok, D2 szabálydöntő (első mérés, felülírja az EXP-0008).",
+     "claim": "P4: címkevariánsok, D2 szabálydöntő (első mérés, felülírta az EXP-0008).",
      "number": "| V-d2 | 378/440 | 0.859 [0.823, 0.889] | 0.5366 |",
      "source": "docs/private/30-experiments/EXP-0004-E2E.md"
     },
     {
-     "claim": "P4: címkevariánsok, D4 modelldöntő (első mérés, felülírja az EXP-0008).",
+     "claim": "P4: címkevariánsok, D4 modelldöntő (első mérés, felülírta az EXP-0008).",
      "number": "| V-d4 | 351/440 | 0.798 [0.758, 0.833] | 0.8351 |",
      "source": "docs/private/30-experiments/EXP-0004-E2E.md"
     },
     {
-     "claim": "P4: az érintett kérdéseken (a válasz többször rajzolt tárgyon át lép laphatárt) a D0 összeomlik, a D2 és a D4 részben visszanyer; sorrend R5 / V-d0 / V-d2 / V-d4 (első mérés, felülírja az EXP-0008).",
+     "claim": "P4: az érintett kérdéseken (a válasz többször rajzolt tárgyon át lép laphatárt) a D0 összeomlik, a D2 és a D4 részben visszanyer; sorrend R5 / V-d0 / V-d2 / V-d4 (első mérés, felülírta az EXP-0008).",
      "number": "| exposed (93) | 74 (0.796) | 21 (0.226) | 58 (0.624) | 55 (0.591) |",
      "source": "docs/private/30-experiments/EXP-0004-E2E.md"
     },
     {
-     "claim": "P4: a nem érintett kérdéseken a D0 és a D2 az R5 szintjén marad, a D4 hamis összevonásai miatt veszít (első mérés, felülírja az EXP-0008).",
+     "claim": "P4: a nem érintett kérdéseken a D0 és a D2 az R5 szintjén marad, a D4 hamis összevonásai miatt veszít (első mérés, felülírta az EXP-0008).",
      "number": "| unexposed (347) | 318 (0.916) | 316 (0.911) | 320 (0.922) | 296 (0.853) |",
      "source": "docs/private/30-experiments/EXP-0004-E2E.md"
     },
     {
-     "claim": "P4: a D4 hamis összevonásai a rajzon nem létező utat teremtenek; NO_PATH család, 20-ból helyes, R5 / V-d0 / V-d2 / V-d4 (első mérés, felülírja az EXP-0008).",
+     "claim": "P4: a D4 hamis összevonásai a rajzon nem létező utat teremtenek; NO_PATH család, 20-ból helyes, R5 / V-d0 / V-d2 / V-d4 (első mérés, felülírta az EXP-0008).",
      "number": "NO_PATH | 20 | 20 | 20 | 7",
      "source": "docs/private/30-experiments/EXP-0004-E2E.md"
     },
     {
-     "claim": "P4 teljes költsége (első mérés, felülírja az EXP-0008).",
+     "claim": "P4 teljes költsége (első mérés, felülírta az EXP-0008).",
      "number": "P4 total $1.9447 (bound $4.44)",
      "source": "docs/private/30-experiments/EXP-0004-E2E.md"
     }
@@ -2287,6 +2311,16 @@
    ],
    "proof": [
     {
+     "claim": "EXP-0008: a hangolásban nem látott (held-out) kérdéscsaládokon a pontosság jóval alacsonyabb; ez a fő általánosítási korlát.",
+     "number": "cascade_v4_iso held-out 0.792 (S100), 0.784 (S1000) vs headline 0.914 / 0.908; dev − held-out gap +0.089 … +0.207 per plant",
+     "source": "docs/private/30-experiments/EXP-0008-v2-rerun.md"
+    },
+    {
+     "claim": "EXP-0008 M10a pontozó-audit: egy független bíró modell nagyrészt egyetért a determinisztikus pontozóval.",
+     "number": "right sample 84.3 % (89 rows), wrong rows 86.1 % (144 rows); Cohen's kappa 0.889; system right, scorer wrong in 4 rows; LOOPS_NEAR_ITEM 10 ambiguous",
+     "source": "data/runs/exp0008/audit/main/report.md"
+    },
+    {
      "claim": "A k-binek jelöltszámai a v1 fő korpuszokon (0/1/2/3–4/5–8/9–16/17–32/33+/megválaszolhatatlan): a hosszú átlépések ritkák, ezért kellett a duplázódó bin-szélesség és a ≥ 97 jelöltes 'powered' küszöb.",
      "number": "H100: 12,241 / 1,344 / 585 / 449 / 317 / 25 / 0 / 0 / 5,544; H1000: 123,747 / 12,955 / 5,223 / 4,493 / 2,877 / 359 / 41 / 0 / 54,963",
      "source": "docs/private/30-experiments/_results.md"
@@ -2307,17 +2341,17 @@
      "source": "docs/private/30-experiments/_results.md"
     },
     {
-     "claim": "Első v2 mérés, R5 (első mérés, felülírja az EXP-0008): a held-out családokon jóval kisebb a pontosság; a rés szinte teljesen a DOWNSTREAM_ISOLATION családból jön.",
+     "claim": "Első v2 mérés, R5 (első mérés, felülírta az EXP-0008): a held-out családokon jóval kisebb a pontosság; a rés szinte teljesen a DOWNSTREAM_ISOLATION családból jön.",
      "number": "held-out 0.770 / 0.740; gap dev − held-out +0.195 [+0.108, +0.288] at H1000g2; DOWNSTREAM_ISOLATION 2/20 and 2/20",
      "source": "docs/private/30-experiments/EXP-0007-R5-sealed.md"
     },
     {
-     "claim": "Az izolációs arany definíció vitatható (első mérés, felülírja az EXP-0008): ha a szabályozószelep nem számít elzárási pontnak, az UPSTREAM_ISOLATION pontszám tovább esik.",
+     "claim": "Az izolációs arany definíció vitatható (első mérés, felülírta az EXP-0008): ha a szabályozószelep nem számít elzárási pontnak, az UPSTREAM_ISOLATION pontszám tovább esik.",
      "number": "UPSTREAM_ISOLATION is 15/30 and 16/30 … (control valves do not isolate) … 12/30 and 11/30",
      "source": "docs/private/30-experiments/EXP-0007-R5-sealed.md"
     },
     {
-     "claim": "A held-out átfogalmazásokon (ugyanaz a tétel, más szöveg) alig van veszteség (első mérés, felülírja az EXP-0008).",
+     "claim": "A held-out átfogalmazásokon (ugyanaz a tétel, más szöveg) alig van veszteség (első mérés, felülírta az EXP-0008).",
      "number": "held-out-wording (90) 0.878 / 0.889",
      "source": "docs/private/30-experiments/EXP-0007-R5-sealed.md"
     },
@@ -2701,6 +2735,16 @@
    ],
    "proof": [
     {
+     "claim": "EXP-0008 Q5 (érvényes): az ügynök (tipizált plant API) a szabad Cypher fölött, mindkét skálán és a held-out családokon is.",
+     "number": "Q5 PASS +0.087 [+0.057, +0.117] (headline), +0.156 [+0.092, +0.220] (held-out); agent 0.898 vs Cypher 0.811 at both scales",
+     "source": "docs/private/30-experiments/EXP-0008-v2-rerun.md"
+    },
+    {
+     "claim": "EXP-0008 létra (érvényes): ContextRAG kontra a fokok 1, 3, 11 és 32 lapon (közös családok).",
+     "number": "ContextRAG high 0.779 / 0.566 / 0.592; agent 0.985 / 0.934 / 0.882 / 0.895; Cypher 0.824 / 0.789 / 0.763 / 0.868; cascade 0.985 / 0.921 / 0.855 / 0.908",
+     "source": "docs/private/30-experiments/EXP-0008-v2-rerun.md"
+    },
+    {
      "claim": "A ContextRAG promptja a lapszámmal arányosan nő: egy lapon kicsi, üzemi méretben semmilyen ablakba nem fér.",
      "number": "EX01: 36 nodes → 17,693 context / 18,461 prompt chars; H100 … 1,648,683 / 1,649,451; H1000 … 16,746,349 / 16,747,117",
      "source": "docs/private/30-experiments/_results.md"
@@ -2711,7 +2755,7 @@
      "source": "docs/private/30-experiments/_results.md"
     },
     {
-     "claim": "v2 létra (első mérés, felülírja az EXP-0008): ugyanez a kép, a ContextRAG 11 lapnál 0.614-ig esik, a fal 62 lapnál.",
+     "claim": "v2 létra (első mérés, felülírta az EXP-0008): ugyanez a kép, a ContextRAG 11 lapnál 0.614-ig esik, a fal 62 lapnál.",
      "number": "cascade_v4_iso 0.957 / 0.885 / 0.909 / 0.924 at 1 / 3 / 11 / 30 sheets; ContextRAG high 0.686 / 0.654 / 0.614 at 1 / 3 / 11 … wall 62 sheets",
      "source": "docs/private/30-experiments/_results.md"
     },
@@ -2751,12 +2795,12 @@
      "source": "docs/private/30-experiments/_results.md"
     },
     {
-     "claim": "A V2T hangolás a két foknak külön-külön sokat adott a lefagyasztott F1-hez képest, hangolástól független üzemeken (első mérés, felülírja az EXP-0008).",
+     "claim": "A V2T hangolás a két foknak külön-külön sokat adott a lefagyasztott F1-hez képest, hangolástól független üzemeken (első mérés, felülírta az EXP-0008).",
      "number": "V2T Cypher 128 / 139, agent 152 / 153; F1 Cypher 96 / 88, agent 133 / 135 (of 163)",
      "source": "docs/private/30-experiments/EXP-0007-V2T-validation.md"
     },
     {
-     "claim": "Q5: a tipizált plant API (ügynök) a szabad Cypher fölött (első mérés, felülírja az EXP-0008); a held-out családokon az intervallum a 0-t is tartalmazza.",
+     "claim": "Q5: a tipizált plant API (ügynök) a szabad Cypher fölött (első mérés, felülírta az EXP-0008); a held-out családokon az intervallum a 0-t is tartalmazza.",
      "number": "Q5 PASS +0.075 [+0.039, +0.111]; held-out FAIL +0.090 [−0.010, +0.180]",
      "source": "docs/private/30-experiments/EXP-0007-R5-sealed.md"
     }
@@ -3087,6 +3131,16 @@
    ],
    "proof": [
     {
+     "claim": "EXP-0008: a régi F1 (cascade_v3) ugyanazokon a kérdéseken gyengébb.",
+     "number": "F1 cascade_v3 0.817 (S100), 0.827 (S1000) vs cascade_v4_iso 0.914 / 0.908; F1 K3 FAIL (11.3 / 62.9 s)",
+     "source": "data/runs/exp0008/reports/f1_baseline/report.md"
+    },
+    {
+     "claim": "EXP-0008 kaszkád-állítások (érvényes): az önjelzés jobb a véletlen továbbadásnál, a kaszkád olcsóbb a csak-ügynöknél, de nem gyorsabb; a held-out kérdéseken a késleltetési korlát nem teljesül.",
+     "number": "K2 PASS +0.072 [+0.055, +0.089], 5 of 5 plants; K1 FAIL ($ −0.00042 ok, latency +1.91 s [−3.48, +6.04]); K3 headline PASS 9.3 / 51.7 s, held-out FAIL 21.1 / 120.6 s",
+     "source": "docs/private/30-experiments/EXP-0008-v2-rerun.md"
+    },
+    {
      "claim": "Az erőfeszítés tengely (ugyanaz a modell) nem üres, de kis minta: a default effort 4 kérdéssel jobb, kb. 5× lassabb; az erős modell még 2-vel jobb kb. 15× költségen.",
      "number": "glm-5.3-flash low 27/36 $0.050 3.8 s; default 31/36 $0.0795 18.5 s; claude-sonnet-5.5 33/36 $1.211 3.7 s",
      "source": "docs/private/20-decisions/ADR-0042-jev-effort-routing.md"
@@ -3122,17 +3176,17 @@
      "source": "docs/private/20-decisions/ADR-0061-v2-tuned-system-v2t-accuracy-first.md"
     },
     {
-     "claim": "V2T hangolás és validáció (első mérés, felülírja az EXP-0008): a hangolás után a soha nem látott két üzemen a V2T kaszkád jobb az F1-nél, és nem romlik 100-ról 1 000 lapra.",
+     "claim": "V2T hangolás és validáció (első mérés, felülírta az EXP-0008): a hangolás után a soha nem látott két üzemen a V2T kaszkád jobb az F1-nél, és nem romlik 100-ról 1 000 lapra.",
      "number": "V2T-A cascade_v4_iso 154 (94.5 %) and 156 (95.7 %); F1 cascade_v3 145 (89.0 %) and 144 (88.3 %)",
      "source": "docs/private/30-experiments/EXP-0007-V2T-validation.md"
     },
     {
-     "claim": "R5 fő eredmény (első mérés, felülírja az EXP-0008): a primer szabály 100 és 1 000 lapon, és a Q4 skálaállítás teljesül.",
+     "claim": "R5 fő eredmény (első mérés, felülírta az EXP-0008): a primer szabály 100 és 1 000 lapon, és a Q4 skálaállítás teljesül.",
      "number": "cascade_v4_iso 401/440 0.911 [0.881, 0.934] (H100g2), 392/440 0.891 [0.858, 0.917] (H1000g2); Q4 PASS −0.020 [−0.059, +0.018]; e 0.033",
      "source": "docs/private/30-experiments/EXP-0007-R5-sealed.md"
     },
     {
-     "claim": "R5 kaszkád-állítások (első mérés, felülírja az EXP-0008): az önjelzés jobb a véletlennél, a késleltetési korlát teljesül, de a kaszkád nem gyorsabb a csak-ügynöknél (K1 elbukik).",
+     "claim": "R5 kaszkád-állítások (első mérés, felülírta az EXP-0008): az önjelzés jobb a véletlennél, a késleltetési korlát teljesül, de a kaszkád nem gyorsabb a csak-ügynöknél (K1 elbukik).",
      "number": "K1 FAIL acc +0.020 ok, $ −0.00041 ok, latency +3.21 s [+1.33, +5.25]; K2 PASS +0.076 [+0.055, +0.098]; K3 PASS 7.5 s / 40.8 s",
      "source": "docs/private/30-experiments/EXP-0007-R5-sealed.md"
     },
@@ -3555,6 +3609,21 @@
    ],
    "proof": [
     {
+     "claim": "EXP-0008 leíró ellenőrzések: a duplikáció és a párhuzamosság nem mozgatja az eredményt.",
+     "number": "duplication 0 / 25 / 50 %: 0.919 / 0.923 / 0.909; concurrency 1 vs 4: verdicts agree on 45/46",
+     "source": "docs/private/30-experiments/EXP-0008-v2-rerun.md"
+    },
+    {
+     "claim": "EXP-0008 teljes költés a kemény plafonon belül.",
+     "number": "runs $26.56 of $30, audit $5.23 of $10",
+     "source": "docs/private/30-experiments/EXP-0008-v2-rerun.md"
+    },
+    {
+     "claim": "EXP-0008 M7 infrastruktúra (érvényes): 100 → 1000 lap.",
+     "number": "nodes 9,449 → 93,171; ingest 9.38 → 427.27 s (generation 390.99 s); store 6.6 → 56.2 MiB; Neo4j RSS 1,143 → 1,258 MiB; app peak 341 → 1,743 MiB; Cypher DB time p90 0.88 → 31.6 s; agent local median 0.0016 s; M1 FAIL (agent rows from source runs)",
+     "source": "data/runs/exp0008/infra/report.md"
+    },
+    {
      "claim": "A modellválogatás nyertese a GPT-6 Luna (alacsony effort) volt 90 fejlesztői kérdésen: a legtöbb helyes, a legrövidebb farok, a legolcsóbb.",
      "number": "86/90, median 8.3 s, p90 19.8 s, $0.00054/q (GLM rögzítés nélkül: 85/90, p90 41.0 s, 2 TIMED_OUT)",
      "source": "docs/private/20-decisions/ADR-0050-model-switch-gpt6-luna.md"
@@ -3575,12 +3644,12 @@
      "source": "docs/private/30-experiments/_results.md"
     },
     {
-     "claim": "INFRA-2 (v2) lábnyom H100g2 / H1000g2 mellett (első mérés, felülírja az EXP-0008).",
+     "claim": "INFRA-2 (v2) lábnyom H100g2 / H1000g2 mellett (első mérés, felülírta az EXP-0008).",
      "number": "store on disk 6.3 / 55.4 MiB; Neo4j RSS 1,270 / 1,370 MiB; app peak 330 / 1,720 MiB; agent median 0.0011 / 0.0013 s",
      "source": "docs/private/30-experiments/EXP-0007-INFRA-2.md"
     },
     {
-     "claim": "INFRA-2: a Cypher adatbázis-idő aránya a késleltetésben (első mérés, felülírja az EXP-0008); a review szerint a DB-only replay kihagyta az időtúllépéses első kísérleteket, ezért a valós arány nagyobb.",
+     "claim": "INFRA-2: a Cypher adatbázis-idő aránya a késleltetésben (első mérés, felülírta az EXP-0008); a review szerint a DB-only replay kihagyta az időtúllépéses első kísérleteket, ezért a valós arány nagyobb.",
      "number": "8.9 % / 29.8 % mérve; becslés H1000g2-n: DB share ≈ 49 % rather than 29.8 %, p90 ≈ 30 s rather than 7.54 s",
      "source": "docs/private/40-design/review-fixes.md"
     },
@@ -3595,7 +3664,7 @@
      "source": "docs/private/30-experiments/_results.md"
     },
     {
-     "claim": "Az R5 egyszálas kontrollja: 4 szál nem rontotta az ágens pontosságát és késleltetését (első mérés, felülírja az EXP-0008).",
+     "claim": "Az R5 egyszálas kontrollja: 4 szál nem rontotta az ágens pontosságát és késleltetését (első mérés, felülírta az EXP-0008).",
      "number": "42/46 correct in both runs, verdict agrees on 44/46; latency median 2.5 s vs 2.4 s",
      "source": "docs/private/30-experiments/EXP-0007-R5-sealed.md"
     },
@@ -3664,6 +3733,18 @@
      "fix": "R1: a `JudgeInput` egyetlen `raw_reply`-t tartalmaz (ANSWERED sornál a kanonikus `{\"answer\": ..., \"not_present\": ...}`); hívásonkénti legrosszabb-eset őr a promptméretből; pilot-plafon $1.50 → $2.50; az ítéletek hordozzák a `template_sha256`-ot. R3: az eldobott kísérletek is a naplóba kerülnek.",
      "effect": "A bíró promptjának hash-e megváltozott (a régi 091e5863… elavult); a PREREG_A az új prompt-hash-t rögzíti.",
      "commit": "9011ade"
+    },
+    {
+     "finding": "Az EXP-0008 M8b-ben a futásonkénti költségplafon (hiányok × költségkulcs × 1,5) túl alacsony volt a d2/d4 Cypher-körökhöz: a harness a legdrágább kérdést foglalja le mind a 4 párhuzamos tételre, így a futás újraindításonként csak 3–4 sort haladt.",
+     "fix": "A felhasználó engedélyével egy felügyelő szkript a futást ugyanazzal a harness-paranccsal, csak emelt `--max-spend-usd` értékkel ($1 Cypher, $3 ügynök) fejezte be; minden eset a `manual_cap_overrides.log`-ban és a `review-fixes.md`-ben.",
+     "effect": "8 futás érintett; válaszok, promptok és pontozás változatlanok, csak pénzügyi őr. Eltérésként kimondandó.",
+     "commit": "6955036"
+    },
+    {
+     "finding": "Az EXP-0008 alatt egy mérés közben elaludt a gép (M6b), két Cypher-mérés akkumulátoron futott (kb. 3× lassabb gép), egy visszajátszás pedig a 30 s-os határ szélén időzött ki.",
+     "fix": "Az elalvásos futás teljes újramérése; az akkumulátoros visszajátszás megismétlése és egy kör újramérése töltőn; a határ közeli visszajátszás megismétlése. Az első kísérletek `superseded/` mappákban megmaradtak.",
+     "effect": "Mind a 15 M8b kör visszajátszása egyezik; kézzel egyetlen visszajátszást sem kellett elfogadni.",
+     "commit": "6955036"
     }
    ],
    "check": [
@@ -3706,7 +3787,7 @@
     "8",
     "9"
    ],
-   "summary": "Itt áll össze, mit mértünk, milyen sorrendben és miért. Az EXP-0001 a skála egyszeres-lapos végét méri (ContextRAG kontra kaszkád 1–30 lapon), az EXP-0002 a lezárt, egyszer futtatott teszt 100 és 1000 lapon (v1). Az EXP-0007 ugyanezt megismételte a valószerűbb v2 üzemeken (V2T hangolás és validálás, R4 létra, R5 lezárt teszt, INFRA-2), az EXP-0004 pedig a lapok közötti azonosságot (P3, P4). A kódellenőrzés négy eredményt mozgató hibát talált, ezért az első v2 mérést az EXP-0008 tiszta újrafuttatása váltja: öt-öt üzem skálánként, $40 plafon, G1/G2 kapuk, pontozó-audit, egyetlen indítóval. Az EXP-0008 még nem futott; a v1 eredmények v1 rekordként érvényesek.",
+   "summary": "Itt áll össze, mit mértünk, milyen sorrendben és miért. Az EXP-0001 a skála egylapos végét méri (ContextRAG kontra kaszkád 1–30 lapon), az EXP-0002 a lezárt, egyszer futtatott teszt 100 és 1000 lapon (v1). Az EXP-0007 ezt megismételte a valószerűbb v2 üzemeken (V2T, R4 létra, R5 lezárt teszt, INFRA-2), az EXP-0004 pedig a lapok közötti azonosságot mérte (P3, P4). A kódátnézés eredményt mozgató hibákat talált, ezért az első v2 mérést az EXP-0008 tiszta újrafuttatása váltotta: öt-öt üzem skálánként, egyetlen indító, G1/G2 kapuk, pontozó-audit. Az EXP-0008 2026-11-17-én lefutott ($26.56 + $5.23): a kaszkád 0.914 / 0.908 kb. 100 / 1000 lapon, a ContextRAG egy lapon is gyengébb.",
    "why": [
     {
      "adr": "ADR-0053",
@@ -3775,6 +3856,10 @@
     {
      "design": "docs/private/40-design/review-fixes.md",
      "gist": "A kódellenőrzés kb. 45 lelete, a négy eredményt mozgató (1, 2, 5, 10) mért mérettel, a javító feladatok (F1–F15), és az EXP-0008 lépései M0-tól M10-ig: üzemterv (B változat), összesítés üzemek felett, pontozó-audit, az indító szabályai, költség- és időterv (kb. $31 becslés, $40 plafon, kb. 72 óra gépidő)."
+    },
+    {
+     "design": "docs/private/30-experiments/EXP-0008-v2-rerun.md",
+     "gist": "Az EXP-0008 eredményjegyzete: beállítás, minden eredménytábla, értelmezés és korlátok."
     }
    ],
    "how": [
@@ -3903,6 +3988,11 @@
    ],
    "proof": [
     {
+     "claim": "EXP-0008 lezárt teszt, öt-öt üzem skálánként (érvényes).",
+     "number": "cascade_v4_iso 1005/1100 0.914 (S100), 999/1100 0.908 (S1000); agent 0.898 / 0.898; Cypher 0.811 / 0.811; held-out 0.792 / 0.784",
+     "source": "docs/private/30-experiments/_results.md (EXP-0008)"
+    },
+    {
      "claim": "EXP-0001 létra (v1 rekord): a kaszkád már egy lapon jobb a ContextRAG-nál, és a rés nő a mérettel.",
      "number": "ctx-high 0.824 / 0.789 / 0.750 / 0.658 vs cascade_v3 0.941 / 0.974 / 0.947 / 0.947 (H1/H3/H10/H30)",
      "source": "docs/private/30-experiments/EXP-0001-single-sheet.md"
@@ -3938,47 +4028,47 @@
      "source": "docs/private/30-experiments/_results.md"
     },
     {
-     "claim": "V2T validálás két, a hangolás által nem látott üzemen (első mérés, felülírja az EXP-0008).",
+     "claim": "V2T validálás két, a hangolás által nem látott üzemen (első mérés, felülírta az EXP-0008).",
      "number": "V2T-A cascade_v4_iso 154/163 (94.5 %) és 156/163 (95.7 %); F1 cascade_v3 145 (89.0 %) és 144 (88.3 %)",
      "source": "docs/private/30-experiments/EXP-0007-V2T-validation.md"
     },
     {
-     "claim": "R4 létra v2-n (első mérés, felülírja az EXP-0008): a kaszkád itt is az első laptól vezet.",
+     "claim": "R4 létra v2-n (első mérés, felülírta az EXP-0008): a kaszkád itt is az első laptól vezet.",
      "number": "cascade_v4_iso 0.957 / 0.885 / 0.909 / 0.924 at 1 / 3 / 11 / 30 sheets; ContextRAG high 0.686 / 0.654 / 0.614 at 1 / 3 / 11",
      "source": "docs/private/30-experiments/EXP-0007-R4-ladder.md"
     },
     {
-     "claim": "R4 állítások (első mérés, felülírja az EXP-0008).",
+     "claim": "R4 állítások (első mérés, felülírta az EXP-0008).",
      "number": "X1 FAIL (slope −0.071 [−0.218, +0.074]); X2 FAIL (−0.271 [−0.386, −0.157]); wall 62 sheets",
      "source": "docs/private/30-experiments/EXP-0007-R4-ladder.md"
     },
     {
-     "claim": "R5 lezárt v2 teszt (első mérés, felülírja az EXP-0008).",
+     "claim": "R5 lezárt v2 teszt (első mérés, felülírta az EXP-0008).",
      "number": "cascade_v4_iso 401/440 0.911 [0.881, 0.934] (H100g2), 392/440 0.891 [0.858, 0.917] (H1000g2); $/q 0.00137 → 0.00148",
      "source": "docs/private/30-experiments/EXP-0007-R5-sealed.md"
     },
     {
-     "claim": "R5 állítások (első mérés, felülírja az EXP-0008).",
+     "claim": "R5 állítások (első mérés, felülírta az EXP-0008).",
      "number": "Q4 PASS (−0.020 [−0.059, +0.018], e 0.033); K1 FAIL (latency +3.21 s); K2 PASS (+0.076); K3 PASS (7.5 s / 40.8 s); Q5 PASS (+0.075)",
      "source": "docs/private/30-experiments/EXP-0007-R5-sealed.md"
     },
     {
-     "claim": "R5 gyenge pontja a held-out izolációs család (első mérés, felülírja az EXP-0008).",
+     "claim": "R5 gyenge pontja a held-out izolációs család (első mérés, felülírta az EXP-0008).",
      "number": "held-out 0.770 / 0.740; DOWNSTREAM_ISOLATION 2/20 és 2/20",
      "source": "docs/private/30-experiments/EXP-0007-R5-sealed.md"
     },
     {
-     "claim": "R5 duplikációs kar: a duplikáció 0–50 % között nem mozgatja a pontosságot (első mérés, felülírja az EXP-0008).",
+     "claim": "R5 duplikációs kar: a duplikáció 0–50 % között nem mozgatja a pontosságot (első mérés, felülírta az EXP-0008).",
      "number": "0.919 / 0.911 / 0.916 at 0 / 25 / 50 %; paired +0.000 [−0.012, +0.012] and −0.004 [−0.013, +0.000]",
      "source": "docs/private/30-experiments/EXP-0007-R5-sealed.md"
     },
     {
-     "claim": "EXP-0004 P3: az azonosság-feloldók pár-F1-e (első mérés, felülírja az EXP-0008).",
+     "claim": "EXP-0004 P3: az azonosság-feloldók pár-F1-e (első mérés, felülírta az EXP-0008).",
      "number": "H1000g2d100V pair F1 D2 0.736, D4 0.950 [0.936, 0.962]; naming family D2 0.347, D4 0.983; I0–I3 pass",
      "source": "docs/private/30-experiments/_results.md"
     },
     {
-     "claim": "EXP-0004 P4: a tag-változatok pontosságot vesznek el, a szabály-alapú D2 visszaad belőle (első mérés, felülírja az EXP-0008).",
+     "claim": "EXP-0004 P4: a tag-változatok pontosságot vesznek el, a szabály-alapú D2 visszaad belőle (első mérés, felülírta az EXP-0008).",
      "number": "E1 −0.125 [−0.159, −0.091] PASS; E2 +0.093 [+0.064, +0.123] PASS; E3 FAIL; E4 (D2) −0.032 [−0.055, −0.009] FAIL",
      "source": "docs/private/30-experiments/EXP-0004-E2E.md"
     },
@@ -4056,6 +4146,12 @@
      "fix": "R3: P3 csak a pontozott teszt-korpuszokat kapja; kulcsonkénti ár (P4 karonként, ContextRAG méretenként); a passzolt replay jelölőfájlt kap és kimarad; M10b-ben F1-alapvonal jelentés és egyszálas kontroll-jelentés.",
      "effect": "A teljes `run_all.sh --smoke` M0-tól M10b-ig lefutott, `SMOKE PASSED`, nulla valódi hívás; a kikényszerített kapu- és korlát-hibák mind folytatási ponttal álltak meg.",
      "commit": "9011ade"
+    },
+    {
+     "finding": "Az EXP-0008 első G2 bíró-pilotja hamis PASS-t adott: a bíró a JSON-t a válasza végére írta, ezért 41 válasz elutasítódott; a kapu csak a megítélt sorokat számolta; a VALVES_ON_PATH kérdések útvonalai nem fértek a kivonatba.",
+     "fix": "A bíró utolsó JSON-objektumát olvassuk; a kapu minden pilot-sort számol; a kivonat elején az útvonalak állnak; új PREREG part A.",
+     "effect": "Az újrafuttatott pilot után a G2 kapu érvényes; az M10a audit κ = 0.889.",
+     "commit": "476499d"
     }
    ],
    "check": [
@@ -4119,7 +4215,7 @@
      "date": "2026-10-27",
      "question": "Hogyan teljesít a befagyasztott F1 a valószerűbb v2 fejlesztői üzemen?",
      "result": "Cypher 0.595, agent 0.840, cascade_v3 0.896 @120 s (v1 D100: Cypher 0.733, agent 0.972) – ezért készült a V2T (forrás: docs/private/30-experiments/_results.md)",
-     "status": "első v2 mérés, felülírja az EXP-0008"
+     "status": "első v2 mérés, felülírta az EXP-0008"
     },
     {
      "exp": "EXP-0007 R0",
@@ -4133,49 +4229,49 @@
      "date": "2026-10-29",
      "question": "A hangolt V2T jobb-e az F1-nél két, a hangolás által nem látott v2 üzemen?",
      "result": "V2T-A cascade_v4_iso 154/163 és 156/163; F1 cascade_v3 145 és 144; költés $1.32 (forrás: docs/private/30-experiments/EXP-0007-V2T-validation.md)",
-     "status": "első v2 mérés, felülírja az EXP-0008 (M1, G1 kapu)"
+     "status": "első v2 mérés, felülírta az EXP-0008 (M1, G1 kapu)"
     },
     {
      "exp": "EXP-0007 R4",
      "date": "2026-10-29",
      "question": "Megismétlődik-e az egylapos vég a v2 üzemeken a befagyasztott V2T-A-val?",
      "result": "cascade_v4_iso 0.957 / 0.885 / 0.909 / 0.924 (1/3/11/30 lap); ContextRAG high 0.686 / 0.654 / 0.614; X1 FAIL, X2 FAIL; fal 62 lap; költés $3.25 (forrás: docs/private/30-experiments/EXP-0007-R4-ladder.md)",
-     "status": "első v2 mérés, felülírja az EXP-0008 (M5)"
+     "status": "első v2 mérés, felülírta az EXP-0008 (M5)"
     },
     {
      "exp": "EXP-0007 R5",
      "date": "2026-10-31",
      "question": "A lezárt v2 teszten megtartja-e a V2T-A pontosságát és költségét 100-ról 1000 lapra?",
      "result": "cascade_v4_iso 401/440 0.911 (H100g2), 392/440 0.891 (H1000g2); Q4 PASS (−0.020 [−0.059, +0.018], e 0.033), K1 FAIL, K2/K3/Q5 PASS; held-out 0.770 / 0.740; F1 alapvonal 0.868 / 0.832; teljes költés $6.17 (forrás: docs/private/30-experiments/EXP-0007-R5-sealed.md)",
-     "status": "első v2 mérés, felülírja az EXP-0008 (M6)"
+     "status": "első v2 mérés, felülírta az EXP-0008 (M6)"
     },
     {
      "exp": "INFRA-2",
      "date": "2026-11-04",
      "question": "Mennyi gépi erőforrást használ a V2T-A 100 és 1000 lapon?",
      "result": "tár 6.3 / 55.4 MiB, Neo4j RSS 1,270 / 1,370 MiB, app csúcs 330 / 1,720 MiB; ágens helyi számítás medián 0.0011 / 0.0013 s; Cypher DB-idő p90 0.61 / 7.54 s (forrás: docs/private/30-experiments/EXP-0007-INFRA-2.md)",
-     "status": "első v2 mérés, felülírja az EXP-0008 (M7); a DB-arányt az 5. lelet torzította"
+     "status": "első v2 mérés, felülírta az EXP-0008 (M7); a DB-arányt az 5. lelet torzította"
     },
     {
      "exp": "EXP-0004 P3",
      "date": "2026-11-05",
      "question": "Mennyire jól kapcsolják össze a feloldók (D2 szabály, D4 modell) a különbözően írt tageket?",
      "result": "H1000g2d100V pár-F1 D2 0.736, D4 0.950 [0.936, 0.962]; névadás-család D2 0.347, D4 0.983; I0–I3 átment (forrás: docs/private/30-experiments/_results.md)",
-     "status": "első v2 mérés, felülírja az EXP-0008 (M8a)"
+     "status": "első v2 mérés, felülírta az EXP-0008 (M8a)"
     },
     {
      "exp": "EXP-0004 P4",
      "date": "2026-11-06",
      "question": "Visszaadja-e egy tag-változat feloldó az üzemszintű pontosságot a végponttól végpontig?",
      "result": "acc@120 D0 0.766, D2 0.859, D4 0.798 vs R5 0.891; E1 PASS (−0.125), E2 PASS (+0.093), E3 FAIL, E4 FAIL (D2 −0.032 [−0.055, −0.009]); költés $1.94 (forrás: docs/private/30-experiments/EXP-0004-E2E.md)",
-     "status": "első v2 mérés, felülírja az EXP-0008 (M8b)"
+     "status": "első v2 mérés, felülírta az EXP-0008 (M8b)"
     },
     {
      "exp": "EXP-0008",
-     "date": "2026-11-10 (PREREG_A rögzítve)",
+     "date": "2026-11-10 → 2026-11-17",
      "question": "Minden lelet javítása után, öt-öt friss üzemen skálánként: érvényesek-e ugyanazok a regisztrált állítások?",
-     "result": "Még nem futott. Terv: M0–M10, $40 kemény plafon (futások ≤ $30, audit ≤ $10), becslés ≈ $31 és ≈ 72 óra gépidő, G1 és G2 kapu, magok: pl. sealed 1000 p1 = 5214 (forrás: data/runs/exp0008/prereg/PREREG_A.md, docs/private/40-design/review-fixes.md)",
-     "status": "tervezett, a felhasználó „mehet”-jére vár"
+     "result": "Lefutott, M0–M10b. Lezárt teszt: kaszkád 0.914 / 0.908 (S100 / S1000), Q4, K2, Q5 PASS, K1 FAIL, K3 headline PASS / held-out FAIL. Létra: ContextRAG 0.779 / 0.566 / 0.592 vs kaszkád 0.985 / 0.921 / 0.855 (1 / 3 / 11 lap), X1, X2 FAIL, fal 67 lap. Azonosság: R5 0.908, D0 0.823, D2 0.856, D4 0.830 (E1, E2 PASS; E3, E4 FAIL). Audit κ 0.889. Költés $26.56 + $5.23 (forrás: docs/private/30-experiments/EXP-0008-v2-rerun.md)",
+     "status": "érvényes; eltérések: 1 elalvás miatti újramérés, 8 plafon-felülírás, akkumulátor és határ közeli visszajátszás-ismétlések (review-fixes.md)"
     }
    ]
   },
@@ -4428,7 +4524,7 @@
      "source": "docs/private/20-decisions/ADR-0064-demo-v2-need-routing-and-plants.md"
     },
     {
-     "claim": "Az élő alkalmazás indulása a regenerálással és nélküle H1000g2-n (első mérés, felülírja az EXP-0008).",
+     "claim": "Az élő alkalmazás indulása a regenerálással és nélküle H1000g2-n (első mérés, felülírta az EXP-0008).",
      "number": "408.3 s with regeneration, 5.31 s without",
      "source": "docs/private/30-experiments/EXP-0007-INFRA-2.md"
     },
