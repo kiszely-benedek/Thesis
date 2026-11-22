@@ -275,6 +275,13 @@ def _add_synthetic_subparser(
         "retired and undrawn test seeds are refused",
     )
     parser.add_argument(
+        "--generator",
+        choices=("v2.1", "v2.2"),
+        default="v2.1",
+        help="--headline-v2 only: the generator version; v2.2 adds the handbook rules "
+        "(corpus ids end g22)",
+    )
+    parser.add_argument(
         "--headline-duplication-rate",
         type=float,
         default=0.25,

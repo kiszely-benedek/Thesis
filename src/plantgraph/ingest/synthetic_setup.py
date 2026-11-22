@@ -22,6 +22,7 @@ from plantgraph.ingest.headline_v2 import (
     headline_corpus_id_v2,
     smallest_n_units_v2,
 )
+from plantgraph.ingest.headline_v22 import HeadlinePresetV22
 from plantgraph.ingest.seed_plan import load_seed_plan, require_drawn_test_seed
 
 
@@ -77,7 +78,8 @@ def _headline_setup(args: argparse.Namespace) -> SyntheticSetup:
 
 
 def _headline_v2_setup(args: argparse.Namespace) -> SyntheticSetup:
-    preset = HeadlinePresetV2(duplication_rate=args.headline_duplication_rate)
+    preset_class = HeadlinePresetV22 if args.generator == "v2.2" else HeadlinePresetV2
+    preset = preset_class(duplication_rate=args.headline_duplication_rate)
     seed_plan = load_seed_plan()
     # a retired or undrawn test seed stops here, before any size search or generation
     try:
@@ -98,7 +100,9 @@ def _headline_v2_setup(args: argparse.Namespace) -> SyntheticSetup:
         preset.generator_config(search.n_units, args.seed),
         preset.split_config(args.seed),
         search,
-        headline_corpus_id_v2(args.target_sheets, args.seed, preset.duplication_rate, seed_plan),
+        headline_corpus_id_v2(
+            args.target_sheets, args.seed, preset.duplication_rate, seed_plan, preset.generation
+        ),
     )
 
 
@@ -106,6 +110,8 @@ def _check_size_flags(args: argparse.Namespace) -> None:
     """Exactly one of --n-units/--target-sheets; the search and the eq range follow the preset."""
     if args.headline and args.headline_v2:
         raise SystemExit("error: --headline and --headline-v2 are two different presets; give one")
+    if args.generator != "v2.1" and not args.headline_v2:
+        raise SystemExit(f"error: --generator {args.generator} needs --headline-v2")
     has_preset = args.headline or args.headline_v2
     if (args.n_units is None) == (args.target_sheets is None):
         raise SystemExit("error: give exactly one of --n-units and --target-sheets")

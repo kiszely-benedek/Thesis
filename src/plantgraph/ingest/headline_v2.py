@@ -75,6 +75,8 @@ class HeadlinePresetV2(BaseModel):
     sheet_equipment_budget: int = 16
     connector_label_detail: ConnectorLabelDetail = ConnectorLabelDetail.DRAWING_ONLY
     exact_match_tags: bool = True
+    #: the generation tag in corpus ids: `g21` for v2.1 (`HeadlinePresetV22` says `g22`)
+    generation: str = "g21"
 
     def generator_config(self, n_units: int, seed: int) -> GeneratorConfigV2:
         """The generator settings for a plant of `n_units` units."""
@@ -146,8 +148,9 @@ def headline_corpus_id_v2(
     seed: int,
     duplication_rate: float = _PRESET_DUPLICATION_RATE,
     seed_plan: SeedPlan | None = None,
+    generation: str = "g21",
 ) -> str:
-    """The id of a v2.1 headline corpus, `<role letter><sheets>g21[...]`.
+    """The id of a headline corpus, `<role letter><sheets>g21[...]` (`generation="g22"` for v2.2).
 
     - `D100g21` the dev seed; `X100g21s211` any other tuning seed (seed spelled out).
     - `H100g21p3` the third drawn sealed plant of that size; `H3g21` / `H10g21` / `H30g21` the
@@ -160,28 +163,30 @@ def headline_corpus_id_v2(
     rate = (
         "" if duplication_rate == _PRESET_DUPLICATION_RATE else f"d{round(duplication_rate * 100)}"
     )
-    return f"{_role_stem(target_sheets, seed, seed_plan)}{rate}"
+    return f"{_role_stem(target_sheets, seed, seed_plan, generation)}{rate}"
 
 
-def _role_stem(target_sheets: int, seed: int, seed_plan: SeedPlan | None) -> str:
+def _role_stem(target_sheets: int, seed: int, seed_plan: SeedPlan | None, generation: str) -> str:
     if seed == DEV_SEED:
-        return f"D{target_sheets}g21"
+        return f"D{target_sheets}{generation}"
     if seed not in TEST_SEED_RANGE:
-        return f"X{target_sheets}g21s{seed}"
-    return _test_role_stem(target_sheets, seed, seed_plan)
+        return f"X{target_sheets}{generation}s{seed}"
+    return _test_role_stem(target_sheets, seed, seed_plan, generation)
 
 
-def _test_role_stem(target_sheets: int, seed: int, seed_plan: SeedPlan | None) -> str:
+def _test_role_stem(
+    target_sheets: int, seed: int, seed_plan: SeedPlan | None, generation: str
+) -> str:
     require_drawn_test_seed(seed, seed_plan)
     assert seed_plan is not None  # require_drawn_test_seed raised otherwise
     index = seed_plan.plant_index(target_sheets, seed)
     if index is not None:
-        return f"H{target_sheets}g21p{index}"
+        return f"H{target_sheets}{generation}p{index}"
     if seed_plan.validation.get(target_sheets) == seed:
-        return f"VAL{target_sheets}g21"
+        return f"VAL{target_sheets}{generation}"
     is_ladder = target_sheets in (3, 10, 30) and seed == seed_plan.ladder_seed
     if is_ladder or (target_sheets == 1 and seed in seed_plan.single_sheet_candidates):
-        return f"H{target_sheets}g21"
+        return f"H{target_sheets}{generation}"
     raise ValueError(
         f"expected seed {seed} to be drawn for {target_sheets} sheets, found it is not"
     )

@@ -1,8 +1,9 @@
-"""The one place that tells the v1 generator from the v2 one (design generator-v2-realism 2).
+"""The one place that tells the v1, v2.1 and v2.2 generators apart (design v2-realism 2, v2-2 9).
 
 Every corpus ever stored (`ingest.json`) records its generator config. v1 configs have no
-`generator_version` key; v2 configs say `"v2"` (the first measurement, refused now) or `"v2.1"`. A
-stored config is read back as v2 only when it says so, and every existing file keeps meaning v1.
+`generator_version` key; v2 configs say `"v2"` (the first measurement, refused now), `"v2.1"` or
+`"v2.2"`. A stored config is read back as v2 only when it says so, and every existing file keeps
+meaning v1.
 Callers never branch on the version themselves: they read a config with
 `generator_config_from_json` and build a plant with `generate_plant_graph_any`.
 """
@@ -23,44 +24,58 @@ from plantgraph.adapters.pydexpi_adapter import (
 from plantgraph.adapters.pydexpi_builder import generate_plant
 from plantgraph.benchmark.generator_models import GeneratorConfig
 from plantgraph.benchmark.v2.config import SUPERSEDED_VERSION, GeneratorConfigV2
+from plantgraph.benchmark.v2.config_v22 import GeneratorConfigV22
 from plantgraph.benchmark.v2.generate import generate_plant_v2
 
-_V2 = "v2"
-#: the version strings of the v2 line: `"v2"` reaches `GeneratorConfigV2`, which refuses it by name
+_V2 = "v2.1"  # the tag of `GeneratorConfigV2`; the superseded "v2" is routed there to be refused
+_V22 = "v2.2"
+#: version strings that reach `GeneratorConfigV2`: `"v2"` is refused by name in its validator
 _V2_VERSIONS = frozenset({SUPERSEDED_VERSION, "v2.1"})
+
+#: any config of the three generators
+AnyConfig = GeneratorConfig | GeneratorConfigV2 | GeneratorConfigV22
 
 
 def _version_of(config: object) -> str:
-    """`"v2"` iff the config (a dict from JSON, or a model) names a v2-line version; else v1."""
+    """The tag `"v1"`, `"v2.1"` or `"v2.2"` of a config (a dict from JSON, or a model)."""
     if isinstance(config, Mapping):
         version = config.get("generator_version")
     else:
         version = getattr(config, "generator_version", None)
+    if version == _V22:
+        return _V22
     return _V2 if version in _V2_VERSIONS else "v1"
 
 
-#: A v1 or v2 config as a Pydantic field type: the callable discriminator picks the class, so a v1
-#: dict without the key can never validate as v2 through v2's default `generator_version`.
+#: A v1, v2.1 or v2.2 config as a Pydantic field type: the callable discriminator picks the class,
+#: so a v1 dict without the key can never validate as v2 through v2's default `generator_version`.
 AnyGeneratorConfig = Annotated[
-    Annotated[GeneratorConfig, Tag("v1")] | Annotated[GeneratorConfigV2, Tag("v2")],
+    Annotated[GeneratorConfig, Tag("v1")]
+    | Annotated[GeneratorConfigV2, Tag("v2.1")]
+    | Annotated[GeneratorConfigV22, Tag("v2.2")],
     Discriminator(_version_of),
 ]
 
 
-def generator_config_from_json(data: Mapping[str, Any]) -> GeneratorConfig | GeneratorConfigV2:
-    """Read a stored generator config: v2.1 iff it says so, else v1.
+def generator_config_from_json(data: Mapping[str, Any]) -> AnyConfig:
+    """Read a stored generator config: v2.2 or v2.1 iff it says so, else v1.
 
     Raises:
         ValueError: the config says `"v2"` (the superseded generator).
     """
-    if _version_of(data) == _V2:
+    version = _version_of(data)
+    if version == _V22:
+        return GeneratorConfigV22.model_validate(data)
+    if version == _V2:
         return GeneratorConfigV2.model_validate(data)
     return GeneratorConfig.model_validate(data)
 
 
-def generate_plant_graph_any(config: GeneratorConfig | GeneratorConfigV2) -> nx.DiGraph[str]:
-    """The ground-truth plant graph of either generator's config."""
-    if isinstance(config, GeneratorConfigV2):
+def generate_plant_graph_any(config: AnyConfig) -> nx.DiGraph[str]:
+    """The ground-truth plant graph of any generator's config."""
+    if isinstance(
+        config, GeneratorConfigV2
+    ):  # GeneratorConfigV22 is a subclass, built the same way
         graph, _conversion = generate_plant_v2(config).graph()
         return graph
     return _generate_plant_graph_v1(config)

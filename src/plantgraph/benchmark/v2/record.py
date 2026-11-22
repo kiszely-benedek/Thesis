@@ -6,6 +6,7 @@ for every node its role and where it is drawn.
 
 from __future__ import annotations
 
+from plantgraph.benchmark.v2.config_v22 import GeneratorConfigV22
 from plantgraph.benchmark.v2.patterns.ports import PatternInstance
 from plantgraph.benchmark.v2.plan_models import (
     GenerationRecordV2,
@@ -15,14 +16,21 @@ from plantgraph.benchmark.v2.plan_models import (
     UnitRecord,
 )
 from plantgraph.benchmark.v2.planner import PlannedUnit, PlantPlanV2
+from plantgraph.benchmark.v2.record_v22 import GenerationRecordV22
 from plantgraph.benchmark.v2.symbols import plan_node_classes
 from plantgraph.benchmark.v2.tags import parse_tag
 from plantgraph.benchmark.v2.vocabulary import ItemKind, item_kind
 
 
 def build_record(plan: PlantPlanV2, pydexpi_version: str) -> GenerationRecordV2:
-    """The record of `plan`; `pydexpi_version` is the backend's `backend_version`."""
-    return GenerationRecordV2(
+    """The record of `plan`; `pydexpi_version` is the backend's `backend_version`.
+
+    A v2.2 config gets the `GenerationRecordV22` subclass, with its (still empty) hidden state.
+    """
+    record_class = (
+        GenerationRecordV22 if isinstance(plan.config, GeneratorConfigV22) else GenerationRecordV2
+    )
+    return record_class(
         plant_id=plan.config.plant_id,
         seed=plan.config.seed,
         generator_config=plan.config.model_dump_json(),
