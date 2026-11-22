@@ -15,11 +15,17 @@ from pathlib import Path
 import pytest
 from instrument_everything import build_instrumented_plant
 from instrument_harness import solenoids
-from instrument_invariants import check_s4, check_s7, check_s8, check_s9, check_s22
 from trim_everything import ALL_ON
 from trim_harness import TrimHarness, assert_round_trip
 
 from plantgraph.benchmark.v2.config import TrimConvention
+from plantgraph.benchmark.v2.rules.checks_v21 import (
+    check_s4,
+    check_s7,
+    check_s8,
+    check_s9,
+    check_s22,
+)
 from plantgraph.benchmark.v2.tags import parse_tag
 
 #: the letters of every instrument template, base 4.4 and pid-vocabulary 5.3 (split range is off)

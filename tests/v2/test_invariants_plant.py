@@ -1,8 +1,7 @@
 """Structural invariants S1-S12, S19 and S21-S24 on whole v2 plants of seeds 1-5 (design 12.2).
 
-Each test names its rule. The checks are in `plant_invariants.py` (S1-S3, S5, S6, S10-S12),
-`plant_invariants_naming.py` (S21, S23, S24), `instrument_invariants.py` (S4, S7, S8, S9, S22)
-and `machine_checks.py` (S19). Two invariants live elsewhere: S17 (the v1 goldens) in
+Each test names its rule. The checks are in `plantgraph.benchmark.v2.rules.checks_v21` (moved
+there from this folder). Two invariants live elsewhere: S17 (the v1 goldens) in
 `tests/test_v1_goldens.py` and S18 in `tests/test_schema_vocabulary.py`; S13-S16 and S20 are in
 `test_invariants_corpus.py`.
 """
@@ -12,22 +11,28 @@ from __future__ import annotations
 from dataclasses import replace
 
 import pytest
-from instrument_invariants import check_s4, check_s7, check_s8, check_s9, check_s22
-from machine_checks import check_s19
-from plant_invariants import (
-    PlantView,
+from plant_invariants import plant_view
+
+from plantgraph.benchmark.v2.rules.checks_v21 import (
     check_s1,
     check_s2,
     check_s3,
+    check_s4,
     check_s5,
     check_s6,
+    check_s7,
+    check_s8,
+    check_s9,
     check_s10,
     check_s11,
     check_s12,
-    plant_view,
+    check_s19,
+    check_s21,
+    check_s22,
+    check_s23,
+    check_s24,
 )
-from plant_invariants_naming import check_s21, check_s23, check_s24
-
+from plantgraph.benchmark.v2.rules.view import RuleView
 from plantgraph.ingest.headline_v2 import HeadlinePresetV2, smallest_n_units_v2
 
 SEEDS = [1, 2, 3, 4, 5]
@@ -39,11 +44,11 @@ def _units(seed: int) -> int:
 
 
 @pytest.fixture(scope="module", params=SEEDS, ids=[f"seed{s}" for s in SEEDS])
-def view(request: pytest.FixtureRequest) -> PlantView:
+def view(request: pytest.FixtureRequest) -> RuleView:
     return plant_view(request.param, _units(request.param))
 
 
-def _solenoids(view: PlantView) -> dict[str, str | None]:
+def _solenoids(view: RuleView) -> dict[str, str | None]:
     """On-off valve id -> the sub-tag of its solenoid, read from the DEXPI model."""
     systems = view.model.conceptualModel.actuatingSystems  # type: ignore[union-attr]
     return {
@@ -54,75 +59,75 @@ def _solenoids(view: PlantView) -> dict[str, str | None]:
     }
 
 
-def test_s1_a_centrifugal_pump_draws_through_a_block_valve_then_a_strainer(view: PlantView) -> None:
+def test_s1_a_centrifugal_pump_draws_through_a_block_valve_then_a_strainer(view: RuleView) -> None:
     assert check_s1(view) > 0
 
 
 def test_s2_every_discharge_has_gauge_tap_then_check_valve_then_block_valve(
-    view: PlantView,
+    view: RuleView,
 ) -> None:
     assert check_s2(view) > 0
 
 
-def test_s3_every_positive_displacement_pump_has_a_relief_to_its_suction(view: PlantView) -> None:
+def test_s3_every_positive_displacement_pump_has_a_relief_to_its_suction(view: RuleView) -> None:
     check_s3(view)  # a seed may draw no PD pump at 30 sheets: the all-seeds test counts them
 
 
-def test_s4_every_actuator_drives_a_valve_with_its_loops_number(view: PlantView) -> None:
+def test_s4_every_actuator_drives_a_valve_with_its_loops_number(view: RuleView) -> None:
     assert check_s4(view.graph) > 0
 
 
-def test_s5_every_control_valve_station_is_two_blocks_and_a_bypass(view: PlantView) -> None:
+def test_s5_every_control_valve_station_is_two_blocks_and_a_bypass(view: RuleView) -> None:
     assert check_s5(view) > 0
 
 
-def test_s6_every_pressure_vessel_reaches_a_safety_valve_but_the_drain_pot(view: PlantView) -> None:
+def test_s6_every_pressure_vessel_reaches_a_safety_valve_but_the_drain_pot(view: RuleView) -> None:
     assert check_s6(view) > 0
 
 
-def test_s7_every_on_off_valve_has_a_driver_and_a_solenoid(view: PlantView) -> None:
+def test_s7_every_on_off_valve_has_a_driver_and_a_solenoid(view: RuleView) -> None:
     assert check_s7(view.graph, _solenoids(view)) > 0
 
 
-def test_s8_every_loop_has_one_sensor_one_bubble_and_one_number(view: PlantView) -> None:
+def test_s8_every_loop_has_one_sensor_one_bubble_and_one_number(view: RuleView) -> None:
     assert check_s8(view.graph) > 0
 
 
-def test_s9_every_tag_is_unique_parses_and_fits_its_class(view: PlantView) -> None:
+def test_s9_every_tag_is_unique_parses_and_fits_its_class(view: RuleView) -> None:
     assert check_s9(view.graph) > 0
 
 
-def test_s10_line_numbers_parse_are_unique_and_change_at_every_spec_break(view: PlantView) -> None:
+def test_s10_line_numbers_parse_are_unique_and_change_at_every_spec_break(view: RuleView) -> None:
     assert check_s10(view) > 0
 
 
-def test_s11_spare_set_members_are_alike_and_parallel(view: PlantView) -> None:
+def test_s11_spare_set_members_are_alike_and_parallel(view: RuleView) -> None:
     assert check_s11(view) > 0
 
 
-def test_s12_gas_does_not_meet_liquid_and_no_pump_feeds_its_own_suction(view: PlantView) -> None:
+def test_s12_gas_does_not_meet_liquid_and_no_pump_feeds_its_own_suction(view: RuleView) -> None:
     check_s12(view)
 
 
 def test_s19_control_into_equipment_comes_from_an_actuating_electrical_function(
-    view: PlantView,
+    view: RuleView,
 ) -> None:
     assert check_s19(view.graph) > 0
 
 
-def test_s21_every_motor_driven_machine_has_one_motor_with_its_number(view: PlantView) -> None:
+def test_s21_every_motor_driven_machine_has_one_motor_with_its_number(view: RuleView) -> None:
     assert check_s21(view) > 0
 
 
-def test_s22_a_cascade_slave_has_one_sensor_and_one_master(view: PlantView) -> None:
+def test_s22_a_cascade_slave_has_one_sensor_and_one_master(view: RuleView) -> None:
     check_s22(view.graph)
 
 
-def test_s23_on_off_letter_and_spare_naming_are_constant_within_a_train(view: PlantView) -> None:
+def test_s23_on_off_letter_and_spare_naming_are_constant_within_a_train(view: RuleView) -> None:
     check_s23(view)
 
 
-def test_s24_only_the_77_classes_no_custom_classes_and_two_parents(view: PlantView) -> None:
+def test_s24_only_the_77_classes_no_custom_classes_and_two_parents(view: RuleView) -> None:
     assert check_s24(view) > 50
 
 

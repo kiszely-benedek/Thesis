@@ -10,11 +10,17 @@ from collections import deque
 
 import networkx as nx
 from instrument_harness import solenoids
-from instrument_invariants import check_s4, check_s7, check_s8, check_s9, check_s22
 from pattern_harness import PatternHarness
 from trim_harness import assert_round_trip
 
 from plantgraph.benchmark.v2.plan_models import LineSpec
+from plantgraph.benchmark.v2.rules.checks_v21 import (
+    check_s4,
+    check_s7,
+    check_s8,
+    check_s9,
+    check_s22,
+)
 from plantgraph.benchmark.v2.tags import parse_line_number
 from plantgraph.graph.schema import EQUIPMENT_CLASSES, Relation
 

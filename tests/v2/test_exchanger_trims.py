@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import networkx as nx
 import pytest
-from instrument_invariants import check_s22
 from pattern_checks import assert_pattern_invariants, flow_graph, located_on, nodes_with_letters
 from pattern_harness import PatternHarness
 from test_column import sensor_location
@@ -22,6 +21,7 @@ from plantgraph.benchmark.v2.patterns.exchanger import (
     exchanger_trims,
     utility_for,
 )
+from plantgraph.benchmark.v2.rules.checks_v21 import check_s22
 from plantgraph.benchmark.v2.trims_utility import (
     steam_stub_relief,
     utility_supply_stub,

@@ -1,6 +1,7 @@
 """Checks for motor-driven machines: S19, S20 and the agitator (pid-vocabulary section 8).
 
-Not a test module (no `test_` prefix). `check_s19` reads a graph; `check_s20` reads an instance.
+Moved here from `tests/v2/` (v2.2 design 3.3); the code is unchanged. `check_s19` reads a graph;
+`check_s20` reads an instance.
 """
 
 from __future__ import annotations

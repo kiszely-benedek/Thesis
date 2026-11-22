@@ -45,6 +45,8 @@ TripLevel = Literal["HH", "LL"]
 
 def _loop_number(ctx: TrimContext, valve: LineItemSpec, wanted: ItemKind) -> int:
     """The loop number of `valve`, after checking it is the kind of valve the template drives."""
+    # rule LIP1-1.1-SHARED-LOOP-NUMBER: valve shares its loop's number (Liptak §1.1 PDF p.76)
+    # rule TOG113-AUTOMATIC-VALVE-LETTERS: the drive fixes the xV or XV kind (Toghraei p.113)
     parsed = parsed_tag_of(valve, ctx.unit_no)
     if item_kind(valve.node_class, parsed.letters) is not wanted:
         raise ValueError(

@@ -1,8 +1,9 @@
 """Invariants S4, S7, S8, S9, S22 (design realism 12.2, pid-vocabulary 8) as graph checks.
 
-Not a test module (no `test_` prefix). Each `check_*` takes the plant graph and raises
-`AssertionError` naming the offending node, so a failure says what to look at. They read only the
-graph (tags, classes, `loop_tag`, edges), as a question about the drawing would.
+Moved here from `tests/v2/` (v2.2 design 3.3); the code is unchanged. Each `check_*` takes the
+plant graph and raises `AssertionError` naming the offending node, so a failure says what to look
+at. They read only the graph (tags, classes, `loop_tag`, edges), as a question about the
+drawing would.
 """
 
 from __future__ import annotations
@@ -120,7 +121,8 @@ def check_s9(graph: nx.DiGraph[str]) -> int:
     Also: a PCF's letters end in `C`. Returns the number of tags checked.
     """
     seen: set[str] = set()
-    for node_id, data in sorted(graph.nodes(data=True)):
+    for node_id in sorted(graph.nodes):
+        data = graph.nodes[node_id]
         tag = data.get("tag")
         if tag is None:
             continue

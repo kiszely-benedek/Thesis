@@ -213,6 +213,7 @@ def waiting_streams(open_outs: tuple[OpenOut, ...], train_no: int) -> int:
 
 def _latest_to_take(pool: list[OpenOut], in_port: Port, train_no: int | None) -> OpenOut | None:
     """The most recently opened out-port with the in-port's phase (of `train_no`, if given)."""
+    # rule PLT-PHASE: a port only takes a stream of its own phase (DESIGN S12)
     matching = [
         out for out in pool if out.port.phase is in_port.phase and train_no in (None, out.train_no)
     ]

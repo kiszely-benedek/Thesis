@@ -321,6 +321,7 @@ class TrainConventions(BaseModel):
 
 def draw_train_conventions(rng: random.Random) -> TrainConventions:
     """Draw one train's conventions; call once per train, from that train's own stream."""
+    # rule TOG28-SPARE-NAMING: one spare-naming convention per train (Toghraei 2019 p.28)
     letter = rng.choices(V21_ON_OFF_LETTERS, weights=V21_ON_OFF_LETTER_WEIGHTS)[0]
     naming = rng.choices(V21_SPARE_NAMINGS, weights=V21_SPARE_NAMING_WEIGHTS)[0]
     return TrainConventions(on_off_letter=OnOffLetter(letter), spare_naming=SpareNaming(naming))

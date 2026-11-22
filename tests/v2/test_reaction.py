@@ -10,8 +10,6 @@ from __future__ import annotations
 import networkx as nx
 import pytest
 from instrument_harness import sources, targets
-from instrument_invariants import check_s22
-from machine_checks import check_s19, check_s20
 from pattern_checks import (
     assert_line_numbers_unique_and_valid,
     assert_pattern_invariants,
@@ -28,6 +26,7 @@ from trim_harness import ids_with_role
 from plantgraph.benchmark.v2.config import GENERATED_EQUIPMENT_CLASSES
 from plantgraph.benchmark.v2.patterns.ports import PatternInstance, Phase, PortDirection, PortKind
 from plantgraph.benchmark.v2.patterns.reaction import build_reactor_system
+from plantgraph.benchmark.v2.rules.checks_v21 import check_s19, check_s20, check_s22
 from plantgraph.graph.schema import Relation
 
 _PLAIN = {"U3.reactor": ("plain",)}

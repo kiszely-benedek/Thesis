@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import networkx as nx
-from instrument_invariants import check_s4, check_s7, check_s8, check_s9
 from pattern_checks import assert_line_numbers_unique_and_valid
 from plant_v2 import generated, graph_of
 from trim_harness import TeeBuilder, project
@@ -12,6 +11,7 @@ from graph_plant_builder_v2 import GraphPlantBuilderV2
 from plantgraph.adapters.pydexpi_builder_v2 import DexpiPlantBuilderV2
 from plantgraph.benchmark.v2.flowsheet import Slot
 from plantgraph.benchmark.v2.plan_models import StreamKindV2
+from plantgraph.benchmark.v2.rules.checks_v21 import check_s4, check_s7, check_s8, check_s9
 from plantgraph.graph import validation
 from plantgraph.graph.schema import EQUIPMENT_CLASSES, Relation
 

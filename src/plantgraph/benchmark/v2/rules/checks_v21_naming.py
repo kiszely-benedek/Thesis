@@ -1,17 +1,17 @@
 """Invariants S21, S23 and S24 over a whole v2 plant: motors, train conventions, the class list.
 
-Not a test module (no `test_` prefix). Same shape as `plant_invariants.py`, which holds the
-`PlantView` these checks read: each `check_*` raises `AssertionError` naming the offender and
-returns how many things it checked.
+Moved here from `tests/v2/` (v2.2 design 3.3); the code is unchanged. Same shape as
+`checks_v21_plant.py`: each `check_*` takes a `RuleView`, raises `AssertionError` naming the
+offender and returns how many things it checked.
 """
 
 from __future__ import annotations
 
-from plant_invariants import PlantView
 from pydantic import BaseModel
 
 from plantgraph.adapters.pydexpi_builder_v2_equipment import motor_tag
 from plantgraph.benchmark.v2.coverage import GENERATED_CLASSES
+from plantgraph.benchmark.v2.rules.view import RuleView
 from plantgraph.benchmark.v2.symbols import plan_node_classes
 from plantgraph.benchmark.v2.tags import parse_tag
 from plantgraph.benchmark.v2.vocabulary import ItemKind, SpareNaming, item_kind
@@ -20,13 +20,13 @@ from plantgraph.graph import schema
 # ---- S21, S23, S24 -------------------------------------------------------------------------------
 
 
-def check_s21(view: PlantView) -> int:
+def check_s21(view: RuleView) -> int:
     """S21: a motor-driven machine has exactly one motor, sub-tagged with the machine's number."""
     machines = {m.id: m for m in view.model.conceptualModel.taggedPlantItems}  # type: ignore[union-attr]
     checked = 0
     for unit in view.generated.plan.units:
         for spec in unit.instance.plan.equipment:
-            motors = machines[spec.node_id].motors  # type: ignore[attr-defined]
+            motors = machines[spec.node_id].motors  # type: ignore[union-attr]
             if not spec.has_motor:
                 assert motors == [], f"{spec.tag} has a motor but is not motor-driven"
                 continue
@@ -35,7 +35,7 @@ def check_s21(view: PlantView) -> int:
     return checked
 
 
-def check_s23(view: PlantView) -> int:
+def check_s23(view: RuleView) -> int:
     """S23: within a train the on-off letter and the spare naming do not change (read from tags)."""
     plan, checked = view.generated.plan, 0
     for train in plan.trains:
@@ -51,7 +51,7 @@ def check_s23(view: PlantView) -> int:
     return checked
 
 
-def _on_off_letters(view: PlantView, unit_nos: list[int]) -> set[str]:
+def _on_off_letters(view: RuleView, unit_nos: list[int]) -> set[str]:
     letters: set[str] = set()
     for _, data in view.graph.nodes(data=True):
         parsed = parse_tag(data.get("tag") or "")
@@ -82,7 +82,7 @@ def _check_spare_tags(
         assert numbers == list(range(numbers[0], numbers[0] + len(members))), numbers
 
 
-def check_s24(view: PlantView) -> int:
+def check_s24(view: RuleView) -> int:
     """S24: only the 77 generated classes, no `Custom*` in the DEXPI model, two parent classes."""
     used: set[str] = set()
     for unit in view.generated.plan.units:

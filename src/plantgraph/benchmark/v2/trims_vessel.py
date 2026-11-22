@@ -41,6 +41,7 @@ def vessel_psv(ctx: TrimContext, style: LineStyle, vessel_id: str) -> TrimPlan:
     Both blocks come together with chance `p_psv_blocks` (car-sealed open: locked so nobody
     shuts the safety path by mistake); the drain with `p_psv_drain`.
     """
+    # rule TOG219-VESSEL-PSV: every pressure vessel reaches a safety valve (Toghraei 2019 p.219)
     draft = TrimDraft(ctx, style)
     blocks = ctx.chance(ctx.config.p_psv_blocks)
     inlet = [draft.dealt_part("block_valve", "psv_inlet_block")] if blocks else []

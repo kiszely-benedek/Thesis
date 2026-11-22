@@ -9,7 +9,6 @@ from __future__ import annotations
 import networkx as nx
 import pytest
 from instrument_harness import sources
-from instrument_invariants import check_s22
 from pattern_checks import (
     assert_line_numbers_unique_and_valid,
     assert_pattern_invariants,
@@ -23,6 +22,7 @@ from trim_harness import ids_with_role, send_to_path
 
 from plantgraph.benchmark.v2.patterns.ports import PatternInstance, Phase, PortDirection
 from plantgraph.benchmark.v2.patterns.separation import build_flash_drum
+from plantgraph.benchmark.v2.rules.checks_v21 import check_s22
 from plantgraph.graph.schema import Relation
 
 _TWO_PUMPS = {"p_single_pump": 0.0, "p_triple_pump_set": 0.0}

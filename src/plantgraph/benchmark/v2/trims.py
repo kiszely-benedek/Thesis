@@ -86,6 +86,7 @@ def _suction(
     strainer_group: tuple[LineItemSpec, ...],
     relief_return: bool,
 ) -> TrimPlan:
+    # rule TOG175-PUMP-TRIM: a centrifugal pump draws through a block valve (Toghraei 2019 p.175)
     block = draft.dealt_part("block_valve", "suction_block")
     run = [block, *strainer_group]
     ports = {"block": block, "strainer": strainer}
@@ -122,6 +123,7 @@ def pump_discharge(
         ports["pressure_gauge"] = pressure_tap(draft, gauge_tee.node_id, "discharge_pi")
     if relief_tap:
         ports["relief_tee"] = _append_tee(draft, run, "relief_tee")
+    # rule TOG175-PUMP-TRIM: discharge gauge, check valve, block valve (Toghraei 2019 p.84)
     check = draft.part(PUMP_CHECK, "discharge_check")
     run.append(check)
     if min_flow_tap:
@@ -162,6 +164,7 @@ def pd_pump_relief(
 ) -> TrimPlan:
     """6.5: a relief valve from the discharge tee, before the check, to the suction tee (L5)."""
     draft = TrimDraft(ctx, style)
+    # rule TOG219-PD-RELIEF: a positive-displacement pump has a relief path (Toghraei 2019 p.219)
     valve = draft.part(PD_RELIEF, "pd_relief_valve")
     draft.line(discharge_tee_id, [valve], suction_tee_id, style=style.branch())
     return draft.finish(relief_valve=valve)

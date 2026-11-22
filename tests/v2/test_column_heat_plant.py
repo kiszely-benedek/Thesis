@@ -16,7 +16,6 @@ from pathlib import Path
 
 import pytest
 from instrument_harness import solenoids
-from instrument_invariants import check_s4, check_s7, check_s8, check_s9, check_s22
 from pattern_checks import assert_line_numbers_unique_and_valid, reaches_a_safety_device
 from pattern_harness import PatternHarness
 from patterns_columns_heat import build_column_heat_plant
@@ -26,6 +25,13 @@ from trim_harness import assert_round_trip
 from plantgraph.benchmark.split_models import SplitConfig
 from plantgraph.benchmark.v2.config import GENERATED_EQUIPMENT_CLASSES
 from plantgraph.benchmark.v2.patterns.ports import PatternInstance, PortDirection
+from plantgraph.benchmark.v2.rules.checks_v21 import (
+    check_s4,
+    check_s7,
+    check_s8,
+    check_s9,
+    check_s22,
+)
 from plantgraph.benchmark.v2.split_by_sheet_group import by_sheet_group
 from plantgraph.graph import validation
 
