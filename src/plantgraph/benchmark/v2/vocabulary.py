@@ -20,6 +20,12 @@ from enum import Enum
 
 from pydantic import BaseModel, ConfigDict
 
+from plantgraph.benchmark.v2.v21_pins import (
+    V21_ON_OFF_LETTER_WEIGHTS,
+    V21_ON_OFF_LETTERS,
+    V21_SPARE_NAMING_WEIGHTS,
+    V21_SPARE_NAMINGS,
+)
 from plantgraph.graph.schema import (
     CLASS_SPECS,
     CONTROL_VALVE_BODY_CLASSES,
@@ -289,8 +295,9 @@ class SpareNaming(str, Enum):
 
 
 #: Declared draw weights (design 7.1): letters 1 : 1, spare naming 3 : 2. Not frequency claims.
-ON_OFF_LETTER_WEIGHTS: tuple[int, int] = (1, 1)
-SPARE_NAMING_WEIGHTS: tuple[int, int] = (3, 2)
+#: `draw_train_conventions` reads the `V21_*` pins in `v21_pins.py`, so these two can grow for v2.2.
+ON_OFF_LETTER_WEIGHTS = V21_ON_OFF_LETTER_WEIGHTS
+SPARE_NAMING_WEIGHTS = V21_SPARE_NAMING_WEIGHTS
 
 
 class TrainConventions(BaseModel):
@@ -314,9 +321,9 @@ class TrainConventions(BaseModel):
 
 def draw_train_conventions(rng: random.Random) -> TrainConventions:
     """Draw one train's conventions; call once per train, from that train's own stream."""
-    letter = rng.choices(list(OnOffLetter), weights=ON_OFF_LETTER_WEIGHTS)[0]
-    naming = rng.choices(list(SpareNaming), weights=SPARE_NAMING_WEIGHTS)[0]
-    return TrainConventions(on_off_letter=letter, spare_naming=naming)
+    letter = rng.choices(V21_ON_OFF_LETTERS, weights=V21_ON_OFF_LETTER_WEIGHTS)[0]
+    naming = rng.choices(V21_SPARE_NAMINGS, weights=V21_SPARE_NAMING_WEIGHTS)[0]
+    return TrainConventions(on_off_letter=OnOffLetter(letter), spare_naming=SpareNaming(naming))
 
 
 class SpareMember(BaseModel):

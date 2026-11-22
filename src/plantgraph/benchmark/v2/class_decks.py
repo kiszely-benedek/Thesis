@@ -10,23 +10,12 @@ rarer classes turn up regularly in a corpus.
 
 from __future__ import annotations
 
+from plantgraph.benchmark.v2.v21_pins import V21_PURGE_METER_DECK, V21_ROLE_CLASSES
 from plantgraph.graph.schema import CONTROL_VALVE_BODY_CLASSES, PIPING_CLASSES
 
 #: role -> {class: how many times it is in the deck}. Table 13.4 of the design note.
-ROLE_CLASSES: dict[str, dict[str, int]] = {
-    "block_valve": {"GateValve": 2, "ButterflyValve": 1},
-    "vent_drain_valve": {"GateValve": 2, "BallValve": 1},
-    "tank_bottom_drain": {"GateValve": 2, "AngleBallValve": 1},
-    "control_valve_body": {"GlobeValve": 2, "BallValve": 1, "ButterflyValve": 1},
-    "letdown_control_valve_body": {"AngleValve": 2, "AngleGlobeValve": 1, "AngleBallValve": 1},
-    "pressure_tap_root": {"BallValve": 2, "NeedleValve": 1},
-    "dosing_isolation": {"GateValve": 2, "StraightwayValve": 1},
-    "vessel_psv": {"SpringLoadedGlobeSafetyValve": 2, "SpringLoadedAngleGlobeSafetyValve": 1},
-    "flow_element_liquid": {"FlowMeasuringElement": 2, "ElectromagneticFlowMeter": 1},
-    "flow_element_gas": {"FlowMeasuringElement": 2, "VenturiTube": 1, "FlowNozzle": 1},
-    "sight_glass": {"SightGlass": 2, "IlluminatedSightGlass": 1},
-    "skillet": {"PipeFlangeSpade": 1, "PipeFlangeSpacer": 1},
-}
+#: Read-only: it is the v2.1 pin, so v2.2 grows a copy of it and never edits it in place.
+ROLE_CLASSES = V21_ROLE_CLASSES
 
 #: Roles whose class is fixed by a rule, not dealt (table 13.4, "fixed" rows).
 COMPRESSOR_SUCTION_BLOCK = "ButterflyValve"
@@ -40,17 +29,20 @@ PLUG_DRAIN = "AnglePlugValve"  # tank bottom drain on rotary-pump farms
 TEMPERATURE_TAP_ROOT = "BlindFlange"
 
 #: The purge-connection meter is a deck over "none" and the rotameter (13.4), so it is not a class.
-PURGE_METER_DECK: tuple[str, ...] = ("plain", "plain", "VariableAreaFlowMeter")
+PURGE_METER_DECK = V21_PURGE_METER_DECK
 PURGE_METER_ROLE = "purge_meter"
 
 
 def role_deck_variants() -> dict[str, tuple[str, ...]]:
-    """The deck contents for `VariantDecks`, keyed `role:<name>`, in a fixed order."""
+    """The v2.1 deck contents for `VariantDecks`, keyed `role:<name>`, in a fixed order.
+
+    Reads the `V21_*` pins, not the live names, so growing a live table cannot change v2.1 draws.
+    """
     decks = {
         f"role:{role}": tuple(name for name, count in classes.items() for _ in range(count))
-        for role, classes in sorted(ROLE_CLASSES.items())
+        for role, classes in sorted(V21_ROLE_CLASSES.items())
     }
-    decks[f"role:{PURGE_METER_ROLE}"] = PURGE_METER_DECK
+    decks[f"role:{PURGE_METER_ROLE}"] = V21_PURGE_METER_DECK
     return decks
 
 

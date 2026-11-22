@@ -12,42 +12,11 @@ from collections.abc import Mapping
 
 from plantgraph.benchmark.v2.class_decks import role_deck_variants
 from plantgraph.benchmark.v2.config import PatternKnobs, TrimConvention
+from plantgraph.benchmark.v2.v21_pins import V21_PATTERN_DECKS
 
-#: deck key -> {card: copies}; the cards of one axis, table 13.3 of the design
-PATTERN_DECKS: dict[str, dict[str, int]] = {
-    "U4.tank_count": {"2": 1, "3": 1, "4": 1},
-    "U4.transfer_pump": {"CentrifugalPump": 2, "RotaryPump": 1},
-    "U4.metering": {
-        "none": 4,
-        "MassFlowMeasuringElement": 1,
-        "PositiveDisplacementFlowMeter": 1,
-        "TurbineFlowMeter": 1,
-        "VolumeFlowMeasuringElement": 1,
-    },
-    "U4.manifold": {"GateValve": 2, "PlugValve": 1},
-    "U4.tank_service": {"flammable": 1, "non_flammable": 1},
-    "U6.vessel": {"PressureVessel": 2, "GravitationalSeparator": 1},
-    "U1.vacuum": {"none": 2, "air_ejector": 1, "liquid_ring": 1},
-    "U1.condenser": {"TubularHeatExchanger": 2, "AirCoolingSystem": 1},
-    "U1.feed_preheater": {"absent": 1, "present": 1},
-    "U1.reflux_sight_glass": {"absent": 1, "present": 1},
-    "U5.exchanger_count": {"2": 1, "3": 1, "4": 1},
-    "U5.exchanger": {"TubularHeatExchanger": 2, "PlateHeatExchanger": 1},
-    "U5.trim_heater": {"absent": 1, "ElectricHeater": 1},
-    "U5.utility": {"steam": 1, "cooling_water": 1},
-    "U2.compressor": {
-        "CentrifugalCompressor": 2,
-        "ReciprocatingCompressor": 1,
-        "RotaryCompressor": 1,
-    },
-    "U2.aftercooler": {"TubularHeatExchanger": 2, "AirCoolingSystem": 1},
-    "U2.suction_filter": {"absent": 1, "present": 1},
-    "U2.discharge_ko_drum": {"absent": 1, "present": 1},
-    "U3.reactor": {"plain": 2, "agitated": 1},
-    "U8.mixer": {"StaticMixer": 2, "RotaryMixer": 1, "EjectorPump": 1},
-    "U8.agitated_vessel": {"absent": 1, "present": 1},
-    "U8.additive_injection": {"plain": 1, "InLineMixer": 1},
-}
+#: deck key -> {card: copies}; the cards of one axis, table 13.3 of the design. Read-only: it is the
+#: v2.1 pin, so v2.2 grows a copy of it and never edits it in place.
+PATTERN_DECKS = V21_PATTERN_DECKS
 
 PUMP_SET_GROUP_DECK = "pump_set.group"
 PUMP_SET_PRESSURE_DECK = "pump_set.pressure"
@@ -70,12 +39,12 @@ def _cards(counts: Mapping[str, int]) -> tuple[str, ...]:
 def pattern_deck_variants(
     knobs: PatternKnobs | None = None, trims: TrimConvention | None = None
 ) -> dict[str, tuple[str, ...]]:
-    """The pattern decks for `VariantDecks`, in a fixed order."""
+    """The v2.1 pattern decks for `VariantDecks`, in a fixed order (read from the `V21_*` pin)."""
     knobs = knobs or PatternKnobs()
     trims = trims or TrimConvention()
     group = deck_from_weights(knobs.pump_set_group_weights, "pump_set_group_weights")
     pressure = deck_from_weights(trims.pump_pressure_mode_weights, "pump_pressure_mode_weights")
-    counts = {**PATTERN_DECKS, PUMP_SET_GROUP_DECK: group, PUMP_SET_PRESSURE_DECK: pressure}
+    counts = {**V21_PATTERN_DECKS, PUMP_SET_GROUP_DECK: group, PUMP_SET_PRESSURE_DECK: pressure}
     return {key: _cards(cards) for key, cards in sorted(counts.items())}
 
 
