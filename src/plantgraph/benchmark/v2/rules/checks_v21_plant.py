@@ -109,11 +109,23 @@ def check_s1(view: RuleView) -> int:
     return checked
 
 
+def _has_internal_check(view: RuleView, pump: str) -> bool:
+    """True for a reciprocating pump of a v2.2 plant: its check valves are inside (TOG192)."""
+    return view.handbook_enabled and view.graph.nodes[pump]["node_class"] == "ReciprocatingPump"
+
+
 def check_s2(view: RuleView) -> int:
-    """S2: every pump's discharge runs gauge tap, check valve, block valve (rules L1, L3)."""
+    """S2: every pump's discharge runs gauge tap, check valve, block valve (rules L1, L3).
+
+    Version-scoped: on a v2.2 plant a reciprocating pump has no external check, only the block.
+    """
     piping, checked = flow(view.graph), 0
     for pump in _pumps(view, _PUMPS):
         downstream, _ = reach(piping, view.graph, pump, up=False)
+        if _has_internal_check(view, pump):
+            assert _with_role(view, downstream, "discharge_block"), f"{pump}: no block valve"
+            checked += 1
+            continue
         (check,) = _with_role(view, downstream, "discharge_check")
         assert view.graph.nodes[check]["node_class"] in _CHECK_VALVES, pump
         blocks = _with_role(view, downstream, "discharge_block")
@@ -133,8 +145,11 @@ def check_s3(view: RuleView) -> int:
         (relief,) = _with_role(view, upstream & downstream, "pd_relief_valve")
         (start,) = piping.predecessors(relief)
         (end,) = piping.successors(relief)
-        (check,) = _with_role(view, downstream, "discharge_check")
-        assert start in downstream and not comes_before(piping, view.graph, check, start), pump
+        checks = _with_role(view, downstream, "discharge_check")
+        assert len(checks) <= 1, f"{pump}: {len(checks)} check valves on the discharge"
+        # without an external check (v2.2 reciprocating pump) the relief taps before the block
+        (anchor,) = checks or _with_role(view, downstream, "discharge_block")
+        assert start in downstream and not comes_before(piping, view.graph, anchor, start), pump
         assert end in upstream, f"{pump}: the relief does not return to the suction line"
         checked += 1
     return checked

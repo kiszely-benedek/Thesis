@@ -107,12 +107,16 @@ def pump_discharge(
     pressure_gauge: bool,
     relief_tap: bool,
     min_flow_tap: bool,
+    external_check: bool = True,
+    min_flow_before_check: bool = False,
 ) -> TrimPlan:
     """6.3: nozzle, [gauge tap], [relief tap], check valve, [min-flow tap], block valve (L1, L3).
 
     The gauge tap is a `PipeTee` whose branch ends in a root valve and a blind flange carrying a
     local `PI`; it comes before the check. The relief and min-flow taps are bare `PipeTee`s for
-    6.5 and 6.6 (ports `relief_tee`, `min_flow_tee`); the min-flow tee is after the check.
+    6.5 and 6.6 (ports `relief_tee`, `min_flow_tee`). The min-flow tee is after the check, or
+    before it with `min_flow_before_check`. v2.2 also lets a pump go without `external_check`
+    (a reciprocating pump has an internal one); the run then has no `check` port.
     """
     draft = TrimDraft(ctx, style)
     run = list(flex_connector_items(draft))
@@ -123,14 +127,19 @@ def pump_discharge(
         ports["pressure_gauge"] = pressure_tap(draft, gauge_tee.node_id, "discharge_pi")
     if relief_tap:
         ports["relief_tee"] = _append_tee(draft, run, "relief_tee")
-    # rule TOG175-PUMP-TRIM: discharge gauge, check valve, block valve (Toghraei 2019 p.84)
-    check = draft.part(PUMP_CHECK, "discharge_check")
-    run.append(check)
-    if min_flow_tap:
+    if min_flow_tap and min_flow_before_check:
+        # rule TOG177-MINFLOW-TAKEOFF: min-flow leaves upstream of the check (Toghraei 2019 p.177)
+        ports["min_flow_tee"] = _append_tee(draft, run, "min_flow_tee")
+    if external_check:
+        # rule TOG175-PUMP-TRIM: discharge gauge, check valve, block valve (Toghraei 2019 p.84)
+        check = draft.part(PUMP_CHECK, "discharge_check")
+        run.append(check)
+        ports["check"] = check
+    if min_flow_tap and not min_flow_before_check:
         ports["min_flow_tee"] = _append_tee(draft, run, "min_flow_tee")
     block = draft.dealt_part("block_valve", "discharge_block")
     run.append(block)
-    return draft.finish_with_ports({"check": check, "block": block, **ports}, tuple(run))
+    return draft.finish_with_ports({"block": block, **ports}, tuple(run))
 
 
 def _append_tee(draft: TrimDraft, run: list[LineItemSpec], role: str) -> LineItemSpec:
@@ -185,6 +194,14 @@ def min_flow_bypass(
     return draft.finish()
 
 
+def _has_external_check(ctx: TrimContext, pump_class: str) -> bool:
+    """False for a v2.2 reciprocating pump: it carries its own check valves inside."""
+    if ctx.handbook and pump_class == NodeClass.RECIPROCATING_PUMP.value:
+        # rule TOG192-RECIP-NO-CHECK: no external check on a recip. pump (Toghraei 2019 p.192)
+        return False
+    return True
+
+
 # ---- the whole pump -----------------------------------------------------------------------------
 
 
@@ -210,9 +227,20 @@ def pump_trims(
     `vessel_id`.
     """
     pd_pump = needs_external_relief(pump_class)
-    min_flow = ctx.chance(ctx.config.p_min_flow)
+    min_flow = ctx.chance(ctx.config.p_min_flow)  # always drawn: the v2.1 stream stays aligned
+    if ctx.handbook and pd_pump:
+        # rule TOG192-PD-NO-MINFLOW: no min-flow line on a PD pump (Toghraei 2019 p.192)
+        min_flow = False
     suction = suction_for(pump_class)(ctx, style, pd_pump)
-    discharge = pump_discharge(ctx, style, pressure_mode == "per_pump_pi", pd_pump, min_flow)
+    discharge = pump_discharge(
+        ctx,
+        style,
+        pressure_mode == "per_pump_pi",
+        pd_pump,
+        min_flow,
+        external_check=_has_external_check(ctx, pump_class),
+        min_flow_before_check=ctx.handbook,
+    )
     suction_run = (*suction_head, *suction.run)
     suction_line = main_line(ctx, style, suction_src_id or vessel_id, suction_run, pump_id)
     discharge_line = main_line(ctx, style, pump_id, (*discharge.run, *discharge_tail), dst_id)

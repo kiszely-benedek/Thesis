@@ -38,6 +38,7 @@ from plantgraph.benchmark.v2.patterns.compression_parts import (
     machine_instruments,
     outlet_lines,
     recycle_line,
+    spillback_capacity_loop,
     suction_lines,
 )
 from plantgraph.benchmark.v2.patterns.context import PatternContext
@@ -52,6 +53,7 @@ from plantgraph.benchmark.v2.patterns.ports import (
 )
 from plantgraph.benchmark.v2.patterns.variants import variant_label
 from plantgraph.benchmark.v2.patterns.vessel_parts import level_instruments
+from plantgraph.benchmark.v2.trim_context import LineStyle
 from plantgraph.benchmark.v2.trim_plan import TrimPlan, combine
 from plantgraph.graph.schema import NodeClass
 
@@ -114,7 +116,7 @@ def build_compressor_stage(ctx: PatternContext) -> PatternInstance:
     second_id = second_eq[0].ports["equipment"] if second_eq else None
 
     inlet, return_tee = inlet_line(ctx, style, drum)
-    element, recycle_valve = anti_surge(ctx, style)
+    element, recycle_valve = _recycle_loop(ctx, style, choices.compressor, cooler)
     suction = suction_lines(ctx, style, drum, filter_id, machine, element, choices.speed_drive)
     discharge = discharge_line(ctx, style, machine, cooler)
     outlet = outlet_lines(ctx, style, cooler, second_id)
@@ -152,6 +154,16 @@ def build_compressor_stage(ctx: PatternContext) -> PatternInstance:
         drawing_group_of=groups.group_of,
         pinned_groups=groups.pinned,
     )
+
+
+def _recycle_loop(
+    ctx: PatternContext, style: LineStyle, compressor_class: str, cooler_id: str
+) -> tuple[TrimPlan, TrimPlan]:
+    """The recycle valve and loop: anti-surge for a dynamic machine, pressure for a PD one."""
+    if ctx.trim.handbook and compressor_class != NodeClass.CENTRIFUGAL_COMPRESSOR.value:
+        # rule TOG319-ANTISURGE-DYNAMIC: anti-surge only when dynamic (Toghraei 2019 p.319)
+        return spillback_capacity_loop(ctx, style, cooler_id)
+    return anti_surge(ctx, style)
 
 
 def _optional_equipment(

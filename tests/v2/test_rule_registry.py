@@ -31,9 +31,9 @@ _DEFERRED = rules_with_status(RuleStatus.DEFERRED)
 _V2_SOURCE_DIR = Path(v2_package.__file__).parent
 _RULE_COMMENT = re.compile(r"^\s*# rule ([A-Z0-9][A-Z0-9.-]*): (.*)$")
 
-#: the checks still owed, by the task that builds them (design 13); T1 removes none of them
+#: the checks still owed, by the task that builds them (design 13); T1 removes none, T3 its seven
 _PENDING_BY_TASK = {
-    "T3": 7, "T4": 2, "T5": 5, "T6": 1, "T7": 5, "T8": 6, "T9": 8, "T10": 4, "T11": 6,
+    "T4": 2, "T5": 5, "T6": 1, "T7": 5, "T8": 6, "T9": 8, "T10": 4, "T11": 6,
     "unassigned": 4,
 }  # fmt: skip
 
@@ -46,11 +46,13 @@ def test_rule_ids_are_unique() -> None:
     assert len(ids) == len(set(ids)), [i for i, n in Counter(ids).items() if n > 1]
 
 
-def test_the_catalogue_has_55_encoded_rules_19_of_them_plant_level_and_14_deferred_groups() -> None:
-    assert len(_ENCODED) == 55
+def test_the_catalogue_has_54_encoded_rules_19_of_them_plant_level_and_15_deferred_groups() -> None:
+    """The design has 55 and 14; T3 deferred TOG73 (`test_tog73_line_view.py`)."""
+    assert len(_ENCODED) == 54
     assert sum(rule.kind is RuleKind.PLANT for rule in _ENCODED) == 19
-    assert len(_ENCODED) - 19 == 36
-    assert len(_DEFERRED) == 14
+    assert len(_ENCODED) - 19 == 35
+    assert len(_DEFERRED) == 15
+    assert "TOG73-UNTAGGED-BRANCH-PIPES" in {rule.rule_id for rule in _DEFERRED}
 
 
 def test_a_malformed_rule_is_refused() -> None:
@@ -93,7 +95,7 @@ def test_every_encoded_rule_has_a_check_and_every_deferred_rule_a_reason() -> No
 
 def test_every_wired_check_resolves_to_a_function() -> None:
     wired = wired_rules()
-    assert len(wired) == 7
+    assert len(wired) == 13
     assert all(callable(resolve_check(rule)) for rule in wired)
 
 
@@ -160,6 +162,6 @@ def test_the_table_prints_one_row_per_rule_and_the_counts(
     table_main(["--table"])
     lines = capsys.readouterr().out.splitlines()
     rows = [line for line in lines if line.startswith("| ") and not line.startswith("| Id")]
-    assert len(rows) == 55 + 14
+    assert len(rows) == 54 + 15
     assert any(line.startswith("| TOG192-RECIP-NO-CHECK |") for line in rows)
-    assert lines[-1] == "55 encoded rules (7 with a wired check), 14 deferred groups."
+    assert lines[-1] == "54 encoded rules (13 with a wired check), 15 deferred groups."

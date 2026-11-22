@@ -116,8 +116,11 @@ class TrimContext:
         conventions: TrainConventions,
         decks: VariantDecks,
         numbering: UnitNumbering | None = None,
+        handbook: bool = False,
     ) -> None:
         self.unit_no = unit_no
+        #: True on a v2.2 plant with the handbook rules on: trims then follow them (design 9)
+        self.handbook = handbook
         self.rng = rng
         self.config = config
         self.conventions = conventions

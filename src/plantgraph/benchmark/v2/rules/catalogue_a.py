@@ -1,4 +1,4 @@
-"""Rules of design 4.1 to 4.3: identification, valve positions, pumps (21 rules)."""
+"""Rules of design 4.1 to 4.3: identification, valve positions, pumps (20 rules)."""
 
 from __future__ import annotations
 
@@ -27,15 +27,6 @@ IDENTIFICATION = (
         sampling_unit="train",
         declared_parameters=("handbook.p_untagged_manual_train",),
         check=pending("T6"),
-    ),
-    HandbookRule(
-        rule_id="TOG73-UNTAGGED-BRANCH-PIPES",
-        title="No line number on short branch pipes",
-        statement="No line number on a short pipe to a plugged or blinded vent or drain valve, "
-        "nor on a control-valve bypass pipe (Table 6.3).",
-        sources=(tog("p.73"),),
-        kind=RuleKind.FORBID,
-        check=pending("T3"),
     ),
     HandbookRule(
         rule_id="LIP1-1.1-SHARED-LOOP-NUMBER",
@@ -127,7 +118,7 @@ PUMPS = (
             choice="follow Toghraei 2019, the later source; API 14C (2001) says all pumps",
         ),
         kind=RuleKind.FORBID,
-        check=pending("T3"),
+        check=wired("check_recip_no_check", "checks_pumps"),
     ),
     HandbookRule(
         rule_id="TOG192-PD-NO-MINFLOW",
@@ -135,7 +126,7 @@ PUMPS = (
         statement="No min-flow line on reciprocating or rotary pumps.",
         sources=(tog("p.192"), tog("p.193")),
         kind=RuleKind.FORBID,
-        check=pending("T3"),
+        check=wired("check_pd_no_minflow", "checks_pumps"),
     ),
     HandbookRule(
         rule_id="TOG177-MINFLOW-TAKEOFF",
@@ -144,7 +135,7 @@ PUMPS = (
         "isolation valve, never between them.",
         sources=(tog("p.177"),),
         kind=RuleKind.PLACE,
-        check=pending("T3"),
+        check=wired("check_minflow_takeoff", "checks_pumps"),
     ),
     HandbookRule(
         rule_id="TOG177-MINFLOW-NEED",
@@ -186,7 +177,7 @@ PUMPS = (
         "line with a control valve.",
         sources=(tog("p.314"),),
         kind=RuleKind.FORBID,
-        check=pending("T3"),
+        check=wired("check_pd_no_throttle", "checks_pumps"),
     ),
     HandbookRule(
         rule_id="TOG270-PUMP-FLOW-CONTROLLED",

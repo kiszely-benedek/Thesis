@@ -4,8 +4,9 @@ from __future__ import annotations
 
 from plantgraph.benchmark.v2.rules.registry import PENDING_PREFIX, BookId, SourceRef
 
-#: module of the checks that wrap the v2.1 invariants; `wired("x")` is its function `x`
-_WIRED_MODULE = "plantgraph.benchmark.v2.rules.checks_rules"
+#: package of the check modules; `wired("x")` is the function `x` of `checks_rules`, and
+#: `wired("x", "checks_pumps")` the function `x` of another module of the package
+_CHECKS_PACKAGE = "plantgraph.benchmark.v2.rules"
 
 
 def _ref(book: BookId, locator: str, page_checked: bool) -> SourceRef:
@@ -42,6 +43,6 @@ def pending(task: str) -> str:
     return f"{PENDING_PREFIX}{task}"
 
 
-def wired(function_name: str) -> str:
-    """The dotted path of a check in `checks_rules.py`."""
-    return f"{_WIRED_MODULE}.{function_name}"
+def wired(function_name: str, module: str = "checks_rules") -> str:
+    """The dotted path of a check function; by default in `checks_rules.py`."""
+    return f"{_CHECKS_PACKAGE}.{module}.{function_name}"

@@ -1,4 +1,4 @@
-"""Rules read from the handbooks but not encoded: the 14 deferred groups of design 4.9.
+"""Rules read from the handbooks but not encoded: 14 groups of design 4.9, and TOG73 (T3).
 
 A deferred entry still has a rule id, a source and a reason, so the thesis can say what was read
 and left out. Its `kind` is nominal (the closest of the four); it has no check.
@@ -25,6 +25,15 @@ def _deferred(
 
 
 DEFERRED = (
+    _deferred(
+        "TOG73-UNTAGGED-BRANCH-PIPES",
+        "No line number on short branch pipes",
+        (tog("p.73"),),
+        "the frozen DEXPI builder refuses a run without a parseable line number "
+        "(adapters/pydexpi_builder_v2_lines.py `line_list_fields`) and the adapter keys stream "
+        "kinds by it; the frozen line view itself folds such branches correctly "
+        "(tests/v2/test_tog73_line_view.py)",
+    ),
     _deferred(
         "LIP1-1.1-GAUGE-FUNCTIONAL-ONLY",
         "Functional-only identification for local gauges (no loop number)",

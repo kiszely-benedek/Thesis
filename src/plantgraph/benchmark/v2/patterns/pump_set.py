@@ -104,9 +104,10 @@ def build_pump_set(
         *[extra.with_port_prefix("header") for extra in header_extra],
     )
     plan = with_stream_kinds(plan)
-    first_discharge_check = plan.ports["pump0.discharge.check"]
+    # the block valve, not the check: a v2.2 reciprocating pump has no external check valve
+    first_discharge_block = plan.ports["pump0.discharge.block"]
     discharge = open_end_port(
-        "discharge", PortDirection.OUT, Phase.LIQUID, line_containing(plan, first_discharge_check)
+        "discharge", PortDirection.OUT, Phase.LIQUID, line_containing(plan, first_discharge_block)
     )
     return PumpSet(
         plan=plan,

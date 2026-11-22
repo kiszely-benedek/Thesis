@@ -75,7 +75,10 @@ def build_blending(ctx: PatternContext) -> PatternInstance:
     mixer_class = ctx.deal("U8.mixer")
     with_vessel = ctx.deal("U8.agitated_vessel") == "present"
     injection = ctx.deal("U8.additive_injection")
-    speed_drive = ctx.chance(ctx.density.p_vfd)
+    speed_drive = ctx.chance(ctx.density.p_vfd)  # always drawn: the v2.1 stream stays aligned
+    if ctx.trim.handbook:
+        # rule TOG314-PD-NO-THROTTLE: dosing pumps are PD, so no ratio valve (Toghraei 2019 p.314)
+        speed_drive = True
     analyser = ctx.chance(ctx.density.p_optional_instrument)
     dosing = dataclasses.replace(ctx, style=ctx.style.branch())  # the additive lines are smaller
 

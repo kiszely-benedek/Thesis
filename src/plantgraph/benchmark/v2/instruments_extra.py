@@ -86,11 +86,19 @@ def machine_start_stop(
 
 
 def speed_control_loop(
-    ctx: TrimContext, style: LineStyle, machine_id: str, location_id: str, variable: str
+    ctx: TrimContext,
+    style: LineStyle,
+    machine_id: str,
+    location_id: str,
+    variable: str,
+    number: int | None = None,
 ) -> TrimPlan:
-    """`xT -> xIC -> AEF -> machine`: a variable-speed drive follows a pressure or flow loop."""
+    """`xT -> xIC -> AEF -> machine`: a variable-speed drive follows a pressure or flow loop.
+
+    `number` is the loop number: a fresh one unless the caller shares a flow element's.
+    """
     draft = InstrumentDraft(ctx, style)
-    number = draft.new_number()
+    number = draft.new_number() if number is None else number
     sensor, controller = draft.sensor_and_bubble(
         f"{variable}T", f"{variable}IC", number, location_id, "speed_loop", controller=True
     )

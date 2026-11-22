@@ -127,6 +127,22 @@ def anti_surge(ctx: PatternContext, style: LineStyle) -> tuple[TrimPlan, TrimPla
     return renumbered, combine(valve, loop)
 
 
+def spillback_capacity_loop(
+    ctx: PatternContext, style: LineStyle, cooler_id: str
+) -> tuple[TrimPlan, TrimPlan]:
+    """A positive-displacement compressor's capacity loop `PT -> PIC -> PV` on the recycle line.
+
+    A PD machine moves a fixed volume per stroke, so it cannot surge and needs no anti-surge flow
+    loop. Its capacity is set by spilling gas back to the inlet: the valve opens when the
+    discharge pressure (read at the aftercooler) rises. Same two parts as `anti_surge`: an empty
+    plan where the flow element would sit, and the valve with its loop.
+    """
+    # rule TOG316-PD-COMP-CAPACITY: the spillback stays, its loop is pressure (Toghraei 2019 p.316)
+    valve = control_valve(ctx.trim, style, "P")
+    loop = control_loop(ctx.trim, style, part_of(valve, "body"), cooler_id)
+    return combine(), combine(valve, loop)
+
+
 def suction_lines(
     ctx: PatternContext,
     style: LineStyle,

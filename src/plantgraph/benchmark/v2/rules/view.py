@@ -13,6 +13,7 @@ from dataclasses import dataclass
 import networkx as nx
 from pydexpi.dexpi_classes.pydantic_classes import DexpiModel
 
+from plantgraph.benchmark.v2.config_v22 import GeneratorConfigV22
 from plantgraph.benchmark.v2.generate import GeneratedPlantV2
 from plantgraph.benchmark.v2.planner import PlantPlanV2
 from plantgraph.benchmark.v2.rules.oracle_graph import GraphPlantBuilderV2
@@ -30,6 +31,12 @@ class RuleView:
     def plan(self) -> PlantPlanV2:
         """The plan the plant was built from."""
         return self.generated.plan
+
+    @property
+    def handbook_enabled(self) -> bool:
+        """True for a v2.2 plant drawn with the handbook rules on; v2.1 plants are always False."""
+        config = self.plan.config
+        return isinstance(config, GeneratorConfigV22) and config.handbook.enabled
 
     @property
     def model(self) -> DexpiModel:

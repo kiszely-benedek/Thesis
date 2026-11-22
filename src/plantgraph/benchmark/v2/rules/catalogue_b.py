@@ -15,7 +15,7 @@ COMPRESSORS = (
         "positive-displacement gas movers.",
         sources=(tog("p.319"),),
         kind=RuleKind.FORBID,
-        check=pending("T3"),
+        check=wired("check_antisurge_dynamic", "checks_compressors"),
     ),
     HandbookRule(
         rule_id="TOG316-PD-COMP-CAPACITY",
@@ -24,7 +24,7 @@ COMPRESSORS = (
         "variable-speed drive; never discharge throttling (Table 15.10).",
         sources=(tog("p.316"), tog("p.317")),
         kind=RuleKind.PLACE,
-        check=pending("T3"),
+        check=wired("check_pd_compressor_capacity", "checks_compressors"),
     ),
     HandbookRule(
         rule_id="API14C-A8-FSV",

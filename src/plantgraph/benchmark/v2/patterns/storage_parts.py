@@ -6,7 +6,7 @@ make lines return them with the main line first (see `assembly.close_run`).
 
 from __future__ import annotations
 
-from plantgraph.benchmark.v2.instrument_draft import part_of
+from plantgraph.benchmark.v2.instrument_draft import parsed_tag_of, part_of
 from plantgraph.benchmark.v2.instruments import (
     flow_control_loop,
     hand_switch,
@@ -15,9 +15,14 @@ from plantgraph.benchmark.v2.instruments import (
     totaliser,
     transmitter_with_bubble,
 )
-from plantgraph.benchmark.v2.instruments_extra import alarm_side, point_level_alarm
+from plantgraph.benchmark.v2.instruments_extra import (
+    alarm_side,
+    point_level_alarm,
+    speed_control_loop,
+)
 from plantgraph.benchmark.v2.patterns.assembly import local_gauge, part_plan, quiet
 from plantgraph.benchmark.v2.patterns.context import PatternContext
+from plantgraph.benchmark.v2.plan_models import LineItemSpec
 from plantgraph.benchmark.v2.trim_plan import TrimDraft, TrimPlan, combine
 from plantgraph.benchmark.v2.trims_extra import tank_bottom_drain
 from plantgraph.benchmark.v2.trims_valves import (
@@ -81,7 +86,42 @@ def transfer_header(ctx: PatternContext, metering_class: str) -> TrimPlan:
     """
     element = flow_element(ctx.trim, ctx.style, "liquid")
     loop = flow_control_loop(ctx.trim, ctx.style, element, control_valve(ctx.trim, ctx.style, "F"))
-    parts = [loop]
+    return _header_with(ctx, loop, metering_class)
+
+
+def transfer_header_for_speed_drive(
+    ctx: PatternContext, metering_class: str
+) -> tuple[TrimPlan, LineItemSpec]:
+    """The same header with no control valve: the flow element only, read by the pumps' loops.
+
+    Returns the header and the flow element, which `transfer_speed_loops` needs.
+    """
+    element_plan = flow_element(ctx.trim, ctx.style, "liquid")
+    return _header_with(ctx, quiet(element_plan), metering_class), part_of(element_plan, "element")
+
+
+def transfer_speed_loops(
+    ctx: PatternContext, element: LineItemSpec, pump_ids: tuple[str, ...]
+) -> TrimPlan:
+    """One flow loop `FT -> FIC -> AEF` per transfer pump, each setting its pump's speed.
+
+    A positive-displacement pump's flow follows its speed; a valve in series would not change it
+    (Toghraei 2019 p.314). One controller drives one machine (S8), so every pump has its own; the
+    first takes the flow element's loop number.
+    """
+    first = parsed_tag_of(element, ctx.unit_no).sequence
+    loops = [
+        speed_control_loop(
+            ctx.trim, ctx.style, pump_id, element.node_id, "F", first if index == 0 else None
+        )
+        for index, pump_id in enumerate(pump_ids)
+    ]
+    return combine(*(quiet(loop) for loop in loops))
+
+
+def _header_with(ctx: PatternContext, control: TrimPlan, metering_class: str) -> TrimPlan:
+    """`control`, then the optional metering element, then the battery limit, ports dropped."""
+    parts = [control]
     if metering_class != "none":
         parts.append(_metering(ctx, metering_class))
     parts.append(battery_limit(ctx.trim, ctx.style))

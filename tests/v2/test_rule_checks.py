@@ -30,7 +30,8 @@ from plantgraph.graph.schema import CONTROL_VALVE_BODY_CLASSES
 from plantgraph.ingest.headline_v2 import HeadlinePresetV2, smallest_n_units_v2
 
 SEEDS = [1, 2, 3, 4, 5]
-_WIRED = [rule.rule_id for rule in wired_rules()]
+_WIRED = [rule.rule_id for rule in wired_rules() if rule.since == "v2.1"]  # v2.2 rules: next file
+_ALL_WIRED = [rule.rule_id for rule in wired_rules()]
 
 
 def _view(seed: int) -> RuleView:
@@ -180,7 +181,7 @@ def test_a_wired_rule_catches_a_plant_broken_on_purpose(rule_id: str) -> None:
 def test_verify_plant_reports_every_wired_rule_without_violations() -> None:
     report = verify_plant(_view(1).generated)
     assert report.generator_version == "v2.1"
-    assert [row.rule_id for row in report.rows] == _WIRED
+    assert [row.rule_id for row in report.rows] == _ALL_WIRED
     assert all(row.violations == 0 and row.checked >= 0 for row in report.rows)
     raise_on_violations(report)
 

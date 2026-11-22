@@ -42,6 +42,8 @@ from plantgraph.benchmark.v2.patterns.storage_parts import (
     tank_fittings,
     tank_inlet_chain,
     transfer_header,
+    transfer_header_for_speed_drive,
+    transfer_speed_loops,
 )
 from plantgraph.benchmark.v2.patterns.variants import variant_label
 from plantgraph.benchmark.v2.trim_plan import TrimPlan, combine
@@ -105,18 +107,24 @@ def build_tank_farm(ctx: PatternContext) -> PatternInstance:
     ]
     tanks = [plan.ports["equipment"] for plan in tank_plans]
     inlets = _inlet_network(ctx, tanks, choices)
+    speed_drive = _throttles_a_pd_pump(ctx, choices.pump_class)
+    if speed_drive:
+        header, element = transfer_header_for_speed_drive(ctx, choices.metering)
+    else:
+        header, element = transfer_header(ctx, choices.metering), None
     pumps = build_pump_set(
         ctx,
         tanks[-1],  # the pumps draw from the last tank; the others feed the suction header
         choices.pump_class,
         "transfer_pump",
-        header=transfer_header(ctx, choices.metering),
+        header=header,
         feed_count=len(tanks) - 1,
     )
+    speed_loops = [transfer_speed_loops(ctx, element, pumps.pump_ids)] if element else []
     viscous = choices.pump_class == NodeClass.ROTARY_PUMP.value
     fittings = [tank_fittings(ctx, tank, choices.flammable, viscous) for tank in tanks]
     outlets = _outlet_lines(ctx, tanks[:-1], pumps.feed_tee_ids, choices.manifold_class)
-    parts = [*tank_plans, inlets, pumps.plan, outlets, *fittings]
+    parts = [*tank_plans, inlets, pumps.plan, *speed_loops, outlets, *fittings]
     plan = with_stream_kinds(combine(*(quiet(part) for part in parts)))
     groups = _drawing_groups(tanks, pumps.pump_ids, pumps.own_sheet)
     return PatternInstance(
@@ -131,6 +139,12 @@ def build_tank_farm(ctx: PatternContext) -> PatternInstance:
         drawing_group_of=groups.group_of,
         pinned_groups=groups.pinned,
     )
+
+
+def _throttles_a_pd_pump(ctx: PatternContext, pump_class: str) -> bool:
+    """True when the v2.1 flow valve would throttle a rotary pump's discharge (v2.2 drops it)."""
+    # rule TOG314-PD-NO-THROTTLE: no flow valve in series on a PD pump (Toghraei 2019 p.314)
+    return ctx.trim.handbook and pump_class == NodeClass.ROTARY_PUMP.value
 
 
 def _tank_groups(tanks: list[str], receipts: int) -> list[list[str]]:
