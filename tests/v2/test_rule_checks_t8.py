@@ -20,9 +20,7 @@ from plantgraph.benchmark.v2.config_v22 import GeneratorConfigV22, HandbookKnobs
 from plantgraph.benchmark.v2.generate import generate_plant_v2
 from plantgraph.benchmark.v2.hidden_state import PressureLevel
 from plantgraph.benchmark.v2.plan_models import LineSpec
-from plantgraph.benchmark.v2.pressure_levels import VESSEL_CLASSES
 from plantgraph.benchmark.v2.rules.catalogue import rule_by_id
-from plantgraph.benchmark.v2.rules.checks_overpressure import reaches_relief
 from plantgraph.benchmark.v2.rules.checks_pressure import edge_level, line_number_of
 from plantgraph.benchmark.v2.rules.registry import CheckResult, resolve_check
 from plantgraph.benchmark.v2.rules.view import RuleView, build_rule_view
@@ -152,7 +150,7 @@ def test_the_merge_and_overpressure_checks_meet_the_cases_they_are_for() -> None
     for seed in SEEDS:
         view = _view22(seed)
         lower_streams += len(_lower_streams_into_merges(view))
-        tolerated += _run("API14C-A4-OVERPRESSURE", view).exceptions.get("source_cannot_exceed", 0)
+        tolerated += _run("API14C-A4-OVERPRESSURE", view).exceptions.get("scope:non_hydrocarbon", 0)
     assert lower_streams > 0 and tolerated > 0
 
 
@@ -260,27 +258,13 @@ def test_plt_recycle_closure_leaves_a_reactors_recycle_gas_loop_alone() -> None:
     assert _run("PLT-RECYCLE-CLOSURE", view).violations == ()
 
 
-def _unprotected_vessel(view: RuleView) -> str:
-    """A vessel with no safety device on it: it passes only because nothing overfeeds it."""
-    return next(
-        n
-        for n in sorted(view.piping)
-        if _class(view, n) in VESSEL_CLASSES and not reaches_relief(view, n)
-    )
-
-
-def test_api14c_a4_catches_an_unprotected_vessel_fed_from_a_higher_level() -> None:
-    view = next(v for v in map(_view22, SEEDS) if _run("API14C-A4-OVERPRESSURE", v).exceptions)
-    vessel = _unprotected_vessel(view)
-    feed = next(iter(view.piping.predecessors(vessel)))
-    number = line_number_of(view, feed, vessel)
-    overfed = _with_levels(view, lambda lv: lv.__setitem__(number, PressureLevel.HP))
-    _expect_violation("API14C-A4-OVERPRESSURE", overfed, vessel)
-
-
-def test_api14c_a4_catches_an_unprotected_vessel_fed_by_a_pd_pump() -> None:
-    view = next(v for v in map(_view22, SEEDS) if _run("API14C-A4-OVERPRESSURE", v).exceptions)
-    vessel = _unprotected_vessel(view)
-    feed = next(iter(view.piping.predecessors(vessel)))  # draw the part that feeds it as a pump
-    pd_fed = _with_class(view, feed, "ReciprocatingPump")
-    _expect_violation("API14C-A4-OVERPRESSURE", pd_fed, vessel)
+def test_api14c_a4_catches_a_vessel_whose_safety_valve_is_gone() -> None:
+    """Draw every safety valve as a gate valve: each A.4 vessel then has none (T10 re-cite, R5)."""
+    view = _view22(1)
+    graph = view.graph.copy()
+    for _, data in graph.nodes(data=True):
+        if str(data["node_class"]).endswith("SafetyValve"):
+            data["node_class"] = "GateValve"
+    result = _run("API14C-A4-OVERPRESSURE", replace(view, graph=graph))
+    assert result.violations
+    assert all(v.rule_id == "API14C-A4-OVERPRESSURE" and v.detail for v in result.violations)

@@ -13,6 +13,13 @@ a **vessel** (its own level). Rules, in the order the flow meets them:
 - a vessel lets the stream down one level at its inlet (a feed is never at the vessel's own
   pressure), exchangers, filters and mixers keep it, and a letdown break lowers it by one;
 - the pipe pulled by a vacuum machine is at vacuum.
+
+**What a level means (design 17.13 R1).** Levels are a *relative order along the flow*, not
+service or design pressures. Every vessel therefore ends at ATM, because the vessel rule never goes
+below the floor: on a vessel, ATM is the model's floor, not atmospheric service. No exception may
+be derived from a vessel's level value. "Atmospheric service" has two sources only: the class
+`Tank` and the declared utility levels above. Codes that need it or a design pressure (MAWP) are
+declared conventions (`hidden_state.py`) or deferred rows.
 """
 
 from __future__ import annotations

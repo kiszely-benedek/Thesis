@@ -72,13 +72,21 @@ def _first_at_least(target: int, sheets_of: Callable[[int], int]) -> int:
 
 
 def _nearest(target: int, first_at_least: int, sheets_of: Callable[[int], int]) -> int:
-    """Of the first size at or above the target and the one below it, the nearer (a tie: below)."""
+    """Of the first size at or above the target and the one below it, the nearer (a tie: below).
+
+    Only sizes inside the target's band compete, so a total just outside the band edge (899 for a
+    target of 900) loses to the neighbour inside it. With neither inside, the plain nearest is
+    returned and the caller raises.
+    """
     below = first_at_least - 1
     if below < 1:
         return first_at_least
-    if target - sheets_of(below) <= sheets_of(first_at_least) - target:
-        return _fewest_with_same_total(below, sheets_of)
-    return first_at_least
+    band = sheet_band_of(target)
+    sizes = [below, first_at_least]
+    inside = [n for n in sizes if band is None or band[0] <= sheets_of(n) <= band[1]]
+    competing = inside or sizes
+    best = min(competing, key=lambda n: (abs(sheets_of(n) - target), n))
+    return _fewest_with_same_total(best, sheets_of) if best == below else best
 
 
 def _fewest_with_same_total(n_units: int, sheets_of: Callable[[int], int]) -> int:

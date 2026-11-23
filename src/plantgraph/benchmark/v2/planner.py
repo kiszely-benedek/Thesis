@@ -43,6 +43,7 @@ from plantgraph.benchmark.v2.patterns.ports import PatternInstance
 from plantgraph.benchmark.v2.patterns.registry import available_patterns, build_pattern
 from plantgraph.benchmark.v2.patterns.variants import all_deck_variants
 from plantgraph.benchmark.v2.plan_models import PlantBuilderV2, TrainRecord, draw_train_records
+from plantgraph.benchmark.v2.protection import add_protection
 from plantgraph.benchmark.v2.sheets import UnitSheets, assign_unit_sheets
 from plantgraph.benchmark.v2.streams import unit_rng
 from plantgraph.benchmark.v2.trim_context import LineStyle, TrimContext
@@ -144,6 +145,8 @@ def plan_plant(config: GeneratorConfigV2) -> PlantPlanV2:
     if _is_handbook(config):
         # the joins are final only now, so this is the first moment a plant-boundary end is known
         instances = close_plant_boundary(instances, trims, MAIN_LINE_STYLE)
+        # before the networks: a new relief valve ends open on a flare line the ties must pick up
+        instances = add_protection(instances, trims, MAIN_LINE_STYLE)
         instances, network_units = _with_networks(
             config, slots, instances, trims, trains, documents, decks
         )

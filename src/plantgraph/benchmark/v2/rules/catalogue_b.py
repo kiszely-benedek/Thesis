@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-from plantgraph.benchmark.v2.rules.catalogue_support import api, lip1, pending, tog, wired
+from plantgraph.benchmark.v2.rules.catalogue_support import api, lip1, tog, wired
 from plantgraph.benchmark.v2.rules.registry import HandbookRule, RuleKind
+from plantgraph.benchmark.v2.rules.sac import SAC_EXCEPTION_CODES
 
 COMPRESSORS = (
     HandbookRule(
@@ -173,7 +174,7 @@ PROTECTION = (
         title="Every pressure vessel reaches a PSV",
         statement="Every pressure vessel reaches a pressure safety valve (fire case), except "
         "the declared condensate pot.",
-        sources=(tog("p.219"), api("A.4.2.2.1 p.26")),
+        sources=(tog("p.219"), api("A.4.2.2.1 c p.27")),
         kind=RuleKind.PLACE,
         since="v2.1",
         exception_codes=("condensate_drain_pot",),
@@ -182,19 +183,23 @@ PROTECTION = (
     HandbookRule(
         rule_id="TOG207-HX-PSD-BOTH-SIDES",
         title="Pressure safety device on each exchanger side",
-        statement="Each exchanger enclosure has a pressure safety device, or a pressure-model "
-        "exception.",
+        statement="Each exchanger side that can be shut in at every nozzle has a pressure safety "
+        "device, or an exception: a valve-free vessel with its own safety valve relieves it.",
         sources=(tog("p.207"),),
         kind=RuleKind.PLANT,
-        check=pending("T10"),
+        exception_codes=("side_not_blockable", "relief_present", "derived:A-10.2 c.4"),
+        check=wired("check_exchanger_psd", "checks_protection"),
     ),
     HandbookRule(
         rule_id="TOG236-TANK-EMERGENCY-VENT",
         title="Atmospheric tank breather and emergency vent",
-        statement="An atmospheric tank has a normal breather and an emergency vent.",
+        statement="An atmospheric tank has a normal vent (a breather valve, or a plain vent) and "
+        "an emergency vent: a safety valve to the air. A non-flammable farm's tanks are outside "
+        "the rule (scope code non_hydrocarbon).",
         sources=(tog("p.236"), lip1("§7.7 PDF p.968")),
         kind=RuleKind.PLACE,
-        check=pending("T10"),
+        exception_codes=("scope:non_hydrocarbon",),
+        check=wired("check_tank_emergency_vent", "checks_protection"),
     ),
     HandbookRule(
         rule_id="API14C-3.4-TWO-LEVELS",
@@ -203,16 +208,28 @@ PROTECTION = (
         "plus a sensor trip), or a safety analysis checklist exception.",
         sources=(api("§3.4 b p.7"),),
         kind=RuleKind.PLANT,
-        check=pending("T10"),
+        exception_codes=("derived:A-4.2 a.4", "deferred:valve_band", "scope:non_hydrocarbon"),
+        check=wired("check_two_levels", "checks_protection"),
     ),
     HandbookRule(
         rule_id="API14C-SAC",
         title="Safety analysis checklist devices present",
         statement="Per component (A.4 pressure vessel, A.5 atmospheric vessel, A.6 fired, A.7 "
         "pump, A.8 compressor, A.10 exchanger), each checklist device is present or carries an "
-        "omission code. Items without a derivable exception are deferred one by one.",
-        sources=(api("App. A", checked=False),),
+        "omission code of API's own: derived from structure, declared once in the hidden state, "
+        "or a scope exclusion. Items without a code are deferred one by one (the API14C-SAC-* "
+        "deferred rows). Sensors are drawn as a switch with an alarm, without the shut-in "
+        "action.",
+        sources=(
+            api("A-4.2 p.29"),
+            api("A-5.2 p.31"),
+            api("A-6.2 p.38"),
+            api("A-7.2 p.44"),
+            api("A-8.2 p.47"),
+            api("A-10.2 p.53"),
+        ),
         kind=RuleKind.PLANT,
-        check=pending("T10"),
+        exception_codes=SAC_EXCEPTION_CODES,
+        check=wired("check_sac", "checks_sac"),
     ),
 )

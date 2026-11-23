@@ -82,11 +82,12 @@ NETWORKS_AND_PRESSURE = (
         rule_id="PLT-RECYCLE-CLOSURE",
         title="A recycle returns inside its unit through a reducing element",
         statement="A spillback, min-flow or anti-surge recycle returns inside its unit, from a "
-        "higher to a lower pressure level, through a reducing element (an orifice, a control "
-        "valve, or the on-off valve of a switching min-flow line). A reactor's recycle-gas loop "
-        "is driven by its own compressor and is not one (design 17.12).",
-        sources=(tog("p.317"),),
+        "higher to a lower pressure level, through an RO, a CV, or the on-off valve of the "
+        "switching min-flow method (TOG p.179, p.313). A reactor's recycle-gas loop is driven by "
+        "its own compressor and is not one (design 17.12).",
+        sources=(tog("p.317"), tog("p.179"), tog("p.313")),
         kind=RuleKind.PLANT,
+        exception_codes=("switching_valve",),
         check=wired("check_recycle_closure", "checks_pressure"),
     ),
     HandbookRule(
@@ -129,12 +130,13 @@ NETWORKS_AND_PRESSURE = (
     ),
     HandbookRule(
         rule_id="API14C-A4-OVERPRESSURE",
-        title="Overpressure protection of an enclosure",
-        statement="An enclosure fed from a higher level, or by a positive-displacement mover, "
-        "has a pressure safety device; otherwise the exception comes from the pressure model.",
-        sources=(api("A.4.2.2.1 a p.26"),),
+        title="Overpressure protection of an A.4 vessel",
+        statement="Every A.4 vessel reaches a PSV, unless c.3 or c.4 holds from structure. The "
+        "steam condensate pots are outside A.4, which covers vessels handling hydrocarbon "
+        "(scope code non_hydrocarbon).",
+        sources=(api("A.4.2.2.1 c p.27"), api("A-4.2 c p.29"), api("A.4.1 p.26")),
         kind=RuleKind.PLANT,
-        exception_codes=("source_cannot_exceed",),
+        exception_codes=("scope:non_hydrocarbon",),
         check=wired("check_overpressure", "checks_overpressure"),
     ),
 )

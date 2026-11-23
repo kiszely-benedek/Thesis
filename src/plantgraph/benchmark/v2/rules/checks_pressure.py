@@ -248,6 +248,13 @@ def _reduces(view: RuleView, node: str) -> bool:
     )
 
 
+def _relies_on_switching_valve(view: RuleView, line: LineSpec) -> bool:
+    """True when the on-off valve of the switching method is the line's only reducing part."""
+    nodes = [item.node_id for item in line.items]
+    only_switch = [n for n in nodes if _reduces(view, n)]
+    return bool(only_switch) and all(view.roles.get(n) == SWITCH_VALVE_ROLE for n in only_switch)
+
+
 def _recycle_problem(view: RuleView, line: LineSpec) -> str | None:
     if line.src_id is None or line.dst_id is None:
         return "expected a recycle that starts and ends inside the drawing, found an open end"
@@ -274,4 +281,11 @@ def check_recycle_closure(view: RuleView) -> CheckResult:
         for line in lines
         if (why := _recycle_problem(view, line))
     ]
-    return CheckResult(checked=len(lines), violations=tuple(violations))
+    # element code `switching_valve`: how often the on-off valve of the switching method is the
+    # only reducer, so the reader sees how much the reading carries (design 17.13 R3)
+    switching = sum(_relies_on_switching_valve(view, line) for line in lines)
+    return CheckResult(
+        checked=len(lines),
+        violations=tuple(violations),
+        exceptions={"switching_valve": switching} if switching else {},
+    )

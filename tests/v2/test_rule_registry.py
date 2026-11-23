@@ -33,8 +33,8 @@ _RULE_COMMENT = re.compile(r"^\s*# rule ([A-Z0-9][A-Z0-9.-]*): (.*)$")
 
 #: the checks still owed, by the task that builds them (design 13); T3 removed its seven, T4 its
 #: two, T9 its eight and two of the unassigned (TOG207, TOG326), T9b the API14C-A8 pair, T11 its
-#: six, T5 its five, T8 its six, T7 its five
-_PENDING_BY_TASK = {"T10": 4}
+#: six, T5 its five, T8 its six, T7 its five, T10 its four
+_PENDING_BY_TASK: dict[str, int] = {}
 
 
 # ---- ids, counts -------------------------------------------------------------------------------
@@ -45,12 +45,13 @@ def test_rule_ids_are_unique() -> None:
     assert len(ids) == len(set(ids)), [i for i, n in Counter(ids).items() if n > 1]
 
 
-def test_the_catalogue_has_54_encoded_rules_19_of_them_plant_level_and_15_deferred_groups() -> None:
-    """The design has 55 and 14; T3 deferred TOG73 (`test_tog73_line_view.py`)."""
+def test_the_catalogue_has_54_encoded_rules_19_of_them_plant_level_and_24_deferred_rows() -> None:
+    """The design has 55 rules; T3 deferred TOG73 (`test_tog73_line_view.py`). T10 swapped the one
+    generic SAC row for ten item rows (14 groups + TOG73 - 1 + 10 = 24)."""
     assert len(_ENCODED) == 54
     assert sum(rule.kind is RuleKind.PLANT for rule in _ENCODED) == 19
     assert len(_ENCODED) - 19 == 35
-    assert len(_DEFERRED) == 15
+    assert len(_DEFERRED) == 24
     assert "TOG73-UNTAGGED-BRANCH-PIPES" in {rule.rule_id for rule in _DEFERRED}
 
 
@@ -94,7 +95,7 @@ def test_every_encoded_rule_has_a_check_and_every_deferred_rule_a_reason() -> No
 
 def test_every_wired_check_resolves_to_a_function() -> None:
     wired = wired_rules()
-    assert len(wired) == 50
+    assert len(wired) == 54
     assert all(callable(resolve_check(rule)) for rule in wired)
 
 
@@ -106,7 +107,12 @@ def test_the_pending_checks_are_exactly_the_ones_each_later_task_owes() -> None:
 
 
 def test_resolving_a_pending_check_is_refused() -> None:
-    pending = next(rule for rule in _ENCODED if is_pending(rule))
+    source = SourceRef(book="TOG2019", locator="p.1", page_checked=True)
+    pending = HandbookRule(
+        rule_id="TOG1-X", title="t", statement="s", sources=(source,), kind=RuleKind.PLACE,
+        check="pending:T3",
+    )  # fmt: skip
+    assert is_pending(pending)
     with pytest.raises(ValueError, match="expected a wired check"):
         resolve_check(pending)
 
@@ -161,6 +167,6 @@ def test_the_table_prints_one_row_per_rule_and_the_counts(
     table_main(["--table"])
     lines = capsys.readouterr().out.splitlines()
     rows = [line for line in lines if line.startswith("| ") and not line.startswith("| Id")]
-    assert len(rows) == 54 + 15
+    assert len(rows) == 54 + 24
     assert any(line.startswith("| TOG192-RECIP-NO-CHECK |") for line in rows)
-    assert lines[-1] == "54 encoded rules (50 with a wired check), 15 deferred groups."
+    assert lines[-1] == "54 encoded rules (54 with a wired check), 24 deferred groups."

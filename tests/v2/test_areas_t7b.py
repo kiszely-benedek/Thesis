@@ -233,6 +233,8 @@ def test_the_process_draws_other_than_the_document_ones_are_those_of_t7(
         return list(instances), []
 
     monkeypatch.setattr(planner, "add_networks", grab)
+    # T10 only adds devices after this point; without them every plan is the one of T7
+    monkeypatch.setattr(planner, "add_protection", lambda instances, trims, style: list(instances))
     monkeypatch.setattr(planner, "draw_documents", _legacy_documents)
     knobs = HandbookKnobs(trains_per_area=1, p_pump_reducers=0.5)
     plan_plant(GeneratorConfigV22(seed=seed, n_units=n_units, handbook=knobs))

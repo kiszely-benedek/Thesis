@@ -18,7 +18,14 @@ from plantgraph.benchmark.v2.trim_plan import TrimPlan
 
 #: the roles of the parts that end a relief line: a PSV or its outlet block, a rupture disc
 RELIEF_ROLES = frozenset(
-    {"psv", "psv_outlet_block", "compressor_discharge_psv", "reactor_rupture_disc"}
+    {
+        "psv",
+        "psv_outlet_block",
+        "compressor_discharge_psv",
+        "reactor_rupture_disc",
+        "compressor_suction_psv",
+        "heater_tube_psv",
+    }
 )
 
 

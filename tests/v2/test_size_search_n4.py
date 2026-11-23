@@ -21,12 +21,13 @@ from plantgraph.ingest.size_search_networked import (
 def _assert_inside(target: int, seed: int) -> None:
     found = smallest_n_units_v2(target, HeadlinePresetV22(), seed)
     low, high = sheet_band_of(target) or (0, 10**9)
-    assert abs(found.predicted_sheets - target) <= 3
+    # +-5: an area's header sheets arrive together, and the band edge outranks the nearest total
+    assert abs(found.predicted_sheets - target) <= 5
     assert low <= found.predicted_sheets <= high
 
 
 @pytest.mark.parametrize("target", [90, 100, 110])
-def test_the_hundred_scale_lands_within_three_sheets_and_in_the_band(target: int) -> None:
+def test_the_hundred_scale_lands_within_five_sheets_and_in_the_band(target: int) -> None:
     _assert_inside(target, 7)
 
 
@@ -36,7 +37,7 @@ def test_the_hundred_target_holds_on_seeds_one_to_five(seed: int) -> None:
 
 
 @pytest.mark.parametrize("target", [900, 1000, 1100])
-def test_the_thousand_scale_lands_within_three_sheets_and_in_the_band(target: int) -> None:
+def test_the_thousand_scale_lands_within_five_sheets_and_in_the_band(target: int) -> None:
     _assert_inside(target, 7)
 
 
@@ -97,3 +98,17 @@ def test_a_total_outside_the_band_raises() -> None:
 def test_the_v21_search_keeps_at_least_semantics() -> None:
     found = smallest_n_units_v2(30, HeadlinePresetV2(), 1)
     assert found.predicted_sheets >= 30 > found.predicted_sheets_one_unit_fewer
+
+
+def test_at_the_lower_band_edge_the_first_total_inside_the_band_beats_a_nearer_one_outside() -> (
+    None
+):
+    # target 900: 899 is nearer than 903 but outside the band
+    totals = _totals(*range(880, 899), 899, 903, 907, 911)
+    assert _search(totals, 900) == (21, 903)
+
+
+def test_at_the_upper_band_edge_the_last_total_inside_the_band_beats_a_nearer_one_outside() -> None:
+    # target 1,100: 1,101 is nearer than 1,097 but above the ceiling
+    totals = _totals(*range(1080, 1090), 1094, 1097, 1101, 1105)
+    assert _search(totals, 1100) == (12, 1097)

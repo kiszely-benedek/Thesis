@@ -9,7 +9,12 @@ from __future__ import annotations
 from typing import Any
 
 from plantgraph.benchmark.v2.config_v22 import GeneratorConfigV22
-from plantgraph.benchmark.v2.hidden_state import HiddenDesignState, PumpPowerBand, RefluxClass
+from plantgraph.benchmark.v2.hidden_state import (
+    FluidClass,
+    HiddenDesignState,
+    PumpPowerBand,
+    RefluxClass,
+)
 from plantgraph.benchmark.v2.network_models import NetworkUnit
 from plantgraph.benchmark.v2.plan_models import (
     GenerationRecordV2,
@@ -20,6 +25,7 @@ from plantgraph.benchmark.v2.plan_models import (
 )
 from plantgraph.benchmark.v2.planner import PlannedUnit, PlantPlanV2
 from plantgraph.benchmark.v2.pressure_levels import assign_pressure_levels
+from plantgraph.benchmark.v2.protection_scope import tank_fluids
 from plantgraph.benchmark.v2.record_v22 import GenerationRecordV22
 from plantgraph.benchmark.v2.symbols import plan_node_classes
 from plantgraph.benchmark.v2.tags import parse_tag
@@ -48,7 +54,13 @@ def _hidden_state(plan: PlantPlanV2, config: GeneratorConfigV22) -> HiddenDesign
         pump_power.update(unit.instance.plan.pump_power)
         reflux.update(unit.instance.plan.reflux)
     levels = assign_pressure_levels(plan) if config.handbook.enabled else {}
-    return HiddenDesignState(pump_power=pump_power, reflux=reflux, segment_level=levels)
+    tanks: dict[str, FluidClass] = {}
+    for unit in plan.units:
+        if config.handbook.enabled:  # a knobs-off plant declares nothing, like its levels
+            tanks.update(tank_fluids(unit.instance))
+    return HiddenDesignState(
+        pump_power=pump_power, reflux=reflux, segment_level=levels, fluid_of_tank=tanks
+    )
 
 
 def _common_fields(plan: PlantPlanV2, pydexpi_version: str) -> dict[str, Any]:

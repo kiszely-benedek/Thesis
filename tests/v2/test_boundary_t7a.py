@@ -49,6 +49,17 @@ def _networks_off() -> Iterator[None]:
 
 
 @contextmanager
+def _protection_off() -> Iterator[None]:
+    """The planner without the T10 safety-device pass, which numbers parts after the boundary's."""
+    original = planner.add_protection
+    planner.add_protection = lambda instances, trims, style: list(instances)
+    try:
+        yield
+    finally:
+        planner.add_protection = original
+
+
+@contextmanager
 def _boundary_off() -> Iterator[None]:
     """The planner without the boundary pass: what T9c left, the baseline of the 'before' counts."""
     original = planner.close_plant_boundary
@@ -122,7 +133,7 @@ def test_a_paired_recycle_port_keeps_its_recycle_roles_and_kind() -> None:
 def test_the_pass_only_adds_parts_so_every_existing_part_keeps_its_id_tag_and_order(
     seed: int,
 ) -> None:
-    with _networks_off():
+    with _networks_off(), _protection_off():
         with _boundary_off():
             before = _plan(seed)
         after = _plan(seed)
@@ -139,9 +150,10 @@ def test_the_pass_only_adds_parts_so_every_existing_part_keeps_its_id_tag_and_or
 
 @pytest.mark.parametrize("seed", [1, 4, 5])
 def test_a_line_that_ends_at_a_vent_fitting_gets_no_battery_limit(seed: int) -> None:
-    with _boundary_off():
-        before = _plan(seed)
-    after = _plan(seed)
+    with _protection_off():
+        with _boundary_off():
+            before = _plan(seed)
+        after = _plan(seed)
     vents = 0
     for old, new in zip(before.units, after.units, strict=True):
         for old_line, new_line in zip(

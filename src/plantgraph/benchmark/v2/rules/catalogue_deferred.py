@@ -1,4 +1,4 @@
-"""Rules read from the handbooks but not encoded: 14 groups of design 4.9, and TOG73 (T3).
+"""Rules read from the handbooks but not encoded: design 4.9, TOG73 (T3), SAC items (T10).
 
 A deferred entry still has a rule id, a source and a reason, so the thesis can say what was read
 and left out. Its `kind` is nominal (the closest of the four); it has no check.
@@ -23,6 +23,78 @@ def _deferred(
         deferral_reason=reason,
     )
 
+
+#: the checklist items with no device drawn and no code to derive, declare or scope (design 17.13
+#: R6, R7, R8): one row each, so the registry says what was read and left out
+_SAC_DEFERRED = (
+    _deferred(
+        "API14C-SAC-A4-PSL",
+        "Vessel pressure switch low (A-4.2 b)",
+        (api("A-4.2 b p.29"),),
+        "no derivable omission code for most vessels (b.2 'atmospheric in service' must not be "
+        "read from the ordinal level, 17.13 R1); +0.94 instruments per sheet",
+    ),
+    _deferred(
+        "API14C-SAC-A4-FSV",
+        "Vessel outlet check valve (A-4.2 f)",
+        (api("A-4.2 f p.29"),),
+        "f.3 holds only where a control valve stands on the outlet; a check valve on a column "
+        "overhead or a reboiler circuit is not how engineers draw it",
+    ),
+    _deferred(
+        "API14C-SAC-A4-FILTER-PSV",
+        "Safety valve on a filter (A-4.2 c)",
+        (api("A-4.2 c p.29"),),
+        "a filter is an A.4 vessel (17.13 R7 f) but has no c.3 or c.4 from structure; one valve "
+        "per filter would press on the valve band (code deferred:valve_band)",
+    ),
+    _deferred(
+        "API14C-SAC-A6-HEATER-CHECK",
+        "Check valve on the heater outlet (A-6.2 m)",
+        (api("A-6.2 m p.38"),),
+        "m.2 (backflow volume insignificant) is a judgement for a hydrocarbon feed; left to a "
+        "process engineer (17.13 R8)",
+    ),
+    _deferred(
+        "API14C-SAC-A6-STACK-TSH",
+        "Stack temperature switch high (A-6.2 b)",
+        (api("A-6.2 b p.38"),),
+        "the model draws no stack: the furnace allowlist has no stack class or nozzle",
+    ),
+    _deferred(
+        "API14C-SAC-A6-AIR-INTAKE-ARRESTOR",
+        "Flame arrestor on the air intake (A-6.2 j)",
+        (api("A-6.2 j p.38"),),
+        "no air-intake line is modelled; drawing one needs a new furnace port",
+    ),
+    _deferred(
+        "API14C-SAC-A6-STACK-ARRESTOR",
+        "Stack arrestor (A-6.2 k)",
+        (api("A-6.2 k p.38"),),
+        "no stack is modelled",
+    ),
+    _deferred(
+        "API14C-SAC-A7-PSH-PSL",
+        "Pump discharge pressure switches high and low (A-7.2 b, d)",
+        (api("A-7.2 b p.44"), api("A-7.2 d p.44")),
+        "the omission b.2 needs a design pressure the ordinal model lacks; 154 pumps would add "
+        "+3.95 instruments per sheet and a switch on every process pump is offshore practice",
+    ),
+    _deferred(
+        "API14C-SAC-A8-SDV-BDV-ASH",
+        "Shut-down and blowdown valves, gas detection at a compressor",
+        (api("A.8.2.2.3 p.45"), api("A.8.3.5 p.45")),
+        "not SAC items (17.13 R6): they come from the text and Figure A-8; gas detection needs an "
+        "enclosed building the model lacks, and the valves would press on the valve band",
+    ),
+    _deferred(
+        "API14C-SAC-A10-PROCESS-SECTION",
+        "Exchanger process-section pressure switches (A-10.2 a, b)",
+        (api("A-10.2 a p.53"), api("A-10.2 b p.53")),
+        "no omission code remains where no valve-free vessel carries a PSH: a.2 needs a design "
+        "pressure, b.2 must not be read off the ordinal ATM level",
+    ),
+)
 
 DEFERRED = (
     _deferred(
@@ -102,13 +174,7 @@ DEFERRED = (
         (tog("p.213–215"),),
         "a new heater pattern variant; large",
     ),
-    _deferred(
-        "API14C-SAC-NO-EXCEPTION",
-        "SAC devices without a derivable exception (compressor PSH/PSL/TSH/BDV, vessel LSL, ...)",
-        (api("A-4.2, A-8.2", checked=False),),
-        "each becomes a deferred row in T10, unless the device is cheap and inside the "
-        "composition bands",
-    ),
+    *_SAC_DEFERRED,
     _deferred(
         "API14C-4.2.3-SHUT-IN-SOURCE",
         "Shut-in at the primary source",
