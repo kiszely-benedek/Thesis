@@ -673,6 +673,12 @@ Rules of scope R:
   **pre-registered unavailable in scope R**, at both scales, before any seed is drawn. Their content is measured in
   scope X instead, by both arms. The data-effect comparison with EXP-0008 uses the families both experiments share.
 - **Not reworded.** No question is reworded (user, natural questions only).
+- **Corrected by §17.15 (2026-11-23).** Three cells of the table above are superseded:
+  - FLOW_PATH and NEIGHBOURS_DOWNSTREAM: untagged valves do **not** drop out of the listing; a candidate whose
+    answer would name one is refused (S2);
+  - the FLOW_PATH tie refusal is withdrawn; F2 stays as in v2.1 (S4);
+  - the isolation families stay unavailable in scope R, but for the reason given in S5 (selection), not "no
+    candidate".
 
 ## 12. EXP-0009: pre-registered re-measurement on v2.2, two arms
 
@@ -817,15 +823,16 @@ unmeasured.
 | 1′ | **T10a** SAC transcription (A-4.2, A-5.2, A-6.2, A-7.2, A-8.2, A-10.2), page-checked | — | researcher | **done** (`2a9da7a`); rulings in §17.13 |
 | 2 | **T7** Networks and interarea: network units, headers, per-sheet sub-headers, network connectors, capacity overflow, splitter grouping, size search on total sheets, composition per sheet kind, TOG32/141/360/33, PLT-NETWORK-CLOSURE; empties `OWED_FIXES`; wires 5 pending rules. **Also R2 of §17.13:** TOG156 narrowed to process services (P, PG) with the `relief_path` exemption, because T7 creates the FL and CHD tees | L | coder | **built, uncommitted**; rulings on its report in §17.14 |
 | 2b | **T7b** T7 fixes (§17.14), acceptance criteria below the table | M | coder | **done** (`3e42a6a`); size search ruled in §17.14 N4 |
-| 3 | **T6** Documents and conventions (§5, §18.2): `DocumentRecord` (a document is T7b's area, `trains_per_document` = `trains_per_area`, §17.14 N2.3); per-document draws of manual-valve tagging (0.75 untagged), spare naming, on-off letter and PV without bypass, from new streams (v2.1 per-train draws taken, values ignored); config override `handbook.document_untagged` for the stratified sealed plants; untagged manual valves (TOG113); `p_pump_reducers` 0.75; gold side of scope R (untagged refusal, FLOW_PATH tie rule, refused-share report; isolation families pre-registered unavailable); v2.1 question hash unchanged | M | coder | T7b |
+| 3 | **T6** (**done**, `cc4d5ef`; gold-side rulings in §17.15) Documents and conventions (§5, §18.2): `DocumentRecord` (a document is T7b's area, `trains_per_document` = `trains_per_area`, §17.14 N2.3); per-document draws of manual-valve tagging (0.75 untagged), spare naming, on-off letter and PV without bypass, from new streams (v2.1 per-train draws taken, values ignored); config override `handbook.document_untagged` for the stratified sealed plants; untagged manual valves (TOG113); `p_pump_reducers` 0.75; gold side of scope R (untagged refusal, FLOW_PATH tie rule, refused-share report; isolation families pre-registered unavailable); v2.1 question hash unchanged | M | coder | T7b |
 | 4 | **T10** In this order (§17.13): **step 0**, the T8 follow-ups: the R1 docstring in `pressure_levels.py`; R3's `switching_valve` element code and restated statement; R5's re-cite of API14C-A4-OVERPRESSURE and TOG219 to A.4.2.2.1 c p.27, with `source_cannot_exceed` deleted and `scope:non_hydrocarbon` added. **Step 1**, `rules/sac.py` from T10a: items, device letters, locations, and exception codes of three kinds, derived (from structure), declared (R7) and scope. **Step 2**, R7's declarations as constants in `hidden_state.py`, plus `FluidClass.NON_FLAMMABLE` for the non-flammable farms. **Step 3**, the switch-plus-alarm additions of T10a §8: vessel PSHH (where a.4 fails), LSHH and LSLL; filter PSHH; compressor suction/discharge PSHH and PSLL, and TSHH; furnace TSHH and fuel PSHH; additive-tank LSHH. **Step 4**, the valve additions in R8's priority order, with R8's measured stop at 27.5 pooled valves per process sheet: TOG236 emergency vents, compressor suction PSV, furnace tube PSV where l.3 fails. **Step 5**, wire API14C-3.4-TWO-LEVELS, API14C-SAC, TOG207-HX-PSD-BOTH-SIDES and TOG236. Every SAC item without an addition or a derivable, declared or scope code becomes a DEFERRED row with its reason: the heater-outlet check, vessel PSL, pump PSH/PSL, stack and air-intake items, and SDV/BDV/ASH | M | coder | T7b |
+| 4b | **T6b** Gold side of scope R, as ruled in §17.15: one printed-name helper and one untagged-refusal filter for every family, `harness/gold.py` skips untagged endpoints, `gold_scope_r.py` moved to `qa/questions/untagged.py` without the tie rule, the LINE-01 gate for v2.2 (`qa/exp0009/line_view_gate.py`), the frozen-A2 smoke on an untagged plant, `validate_plant_graph_v22`, and the per-family availability table. Acceptance criteria below the table | M | coder | T10 (one coder at a time; the availability table must be measured on the final v2.2 generator) |
 | 5 | ~~**T12a** Expert-review package~~ | — | — | **dropped**: no reviewer (§18.8) |
 | — | ~~Expert review and triage~~ | — | — | **dropped** (§18.8) |
-| 6 | **T14** V2T-B system files (`v2t-b-system-revision.md` §3): B store view, VALVE_SET and POSITION types, `scoring_b.py` and its self-tests, `policy_b.py`, the import-isolation test; G0f stays green | M | coder | T6 |
+| 6 | **T14** V2T-B system files (`v2t-b-system-revision.md` §3): B store view, VALVE_SET and POSITION types, `scoring_b.py` and its self-tests, `policy_b.py`, the import-isolation test; G0f stays green | M | coder | T6b |
 | 7 | **T15** Scope X (gold side): OPEN_VALVES_TO_ISOLATE (up, down), UPSTREAM_ISOLATION_X, DOWNSTREAM_ISOLATION_X, POSITION_OF_VALVE, descriptor gold and refusal, the A2 adapter (TAG_SET), discriminating-share report | M | coder | T14 |
 | 8 | **T12b** Composition report per sheet kind; the ch.20 comparison table (the annotation by the main session) | S | coder and main session | T7b |
 | 9 | **T16** Fixes from the review findings, if any (designed by the architect first) | ? | coder | the review |
-| 10 | **T13** EXP-0009 launcher: ledger glob skips `reports/` (with a test on a copied call file); ids `g22` and `…B`; seed draw plus size-target draw in the bands; stratified tagging allocation; two-view ingest; stages P1a–P1d; caps; PREREG A template | L | coder | all of the above |
+| 10 | **T13** EXP-0009 launcher: ledger glob skips `reports/` (with a test on a copied call file); ids `g22` and `…B`; seed draw plus size-target draw in the bands; stratified tagging allocation (§17.15 S9); two-view ingest; the B question files as a corpus-id relabel of A's (§17.15 S3); LINE-01 for v2.2 and `validate_plant_graph_v22` in the plant gates (§17.15 S7, S8); E10 hashes all of `src` again; stages P1a–P1d; caps; PREREG A template | L | coder | all of the above |
 
 **T7b acceptance criteria** (§17.14). Every task rule above applies too.
 1. **Counting (N1).** An open end continued on the same sheet by a sub-header line is not a stub (`sheet_stats.py`).
@@ -862,7 +869,49 @@ unmeasured.
 10. **The report** gives the measured sheet mix against the estimates of §17.14 N2, with measured and estimated
     numbers labelled. It ends with one commit proposal covering T7 and T7b (or two), and nothing is committed.
 
-**Now:** T6 (with step 0, §17.14 N4). Next: T10 (with its step 0), T14, T15, T12b, T13. No coder runs in parallel.
+**T6b acceptance criteria** (§17.15). Every task rule above applies too. No Neo4j, no paid call.
+1. **EXP-0008's questions reproduce.** After the change, regenerate the sealed question files of `H100g21p1`,
+   `H100g21p2` and `H1000g21p1` with the EXP-0008 command (`lib_plants.sh` `sealed_questions`: seed 31, the same
+   bin, family and wording counts, sample seed 20261031) from their stored `ingest.json`. Each `questions.jsonl` is
+   byte-identical to `data/runs/exp0008/questions/<id>/questions.jsonl`. The v1 and v2.1 goldens, the H1g21
+   question hash included, are unchanged.
+2. **One rule, one place (S2).**
+   - Family code reads a printed name only through one helper, which returns the tag or the fixed marker.
+   - One filter after candidate building drops every question whose text, anchors or reference holds the marker,
+     and returns the refused count per family.
+   - `is_path_item` and `next_path_items` are unchanged.
+3. **No family raises.** Every registered family's candidate builder runs without an exception on:
+   - the 100-sheet v2.2 dev plants of seeds 1–5 with every document forced untagged (`handbook.document_untagged`);
+   - the same plants forced tagged;
+   - seed 7 at 1,000 sheets (drawn tagging).
+
+   No kept question holds the marker (test).
+4. **Behaviour tests.**
+   - VALVES_ON_PATH: an untagged valve on the route is counted.
+   - NEIGHBOURS_DOWNSTREAM: an untagged valve directly downstream refuses the candidate; it is not looked through.
+   - FLOW_PATH: a reference path holding an untagged valve refuses the pair; two equal-length, fully tagged routes
+     do not.
+   - `harness/gold.py`: a path answer that skips an untagged valve is invalid; a fully tagged route is valid.
+5. **Module.** `benchmark/v2/gold_scope_r.py` moves to `qa/questions/untagged.py`. `tagged_sequences_differ` and its
+   tests are deleted. `SCOPE_R_UNAVAILABLE_FAMILIES` and `RefusedShare` stay.
+6. **Availability table (S6).** Per family: candidates, refused, kept, on each plant of criterion 3. The report lists
+   every family below 10 kept candidates on any forced-untagged 100-sheet seed. By S6 these are pre-registered
+   unavailable in scope R; the main session copies the list into §11.
+7. **LINE-01 for v2.2 (S7).** `qa/exp0009/line_view_gate.py` passes (precision = recall = 1, 0 key collisions) on
+   the forced-untagged seed-1 plant and on seed 7 at 1,000 sheets. On `D100g21` it gives the same items, edges and
+   verdict as the frozen LINE-01.
+8. **Frozen-A2 smoke (S7).** On the forced-untagged seed-1 plant, the frozen `build_item_graph` over
+   `NetworkxGraphView`, the line view and the schema text run without an exception. If a frozen system module
+   raises, T6b stops and reports; the case returns to the architect.
+9. **Validation (S8).** `validate_plant_graph_v22` gives 0 violations on the plants of criterion 3. The number of
+   violations it removes equals the record's count of untagged manual and check valves. Removing the tag of one
+   control valve or PSV gives exactly one violation.
+10. **G0f.** `git diff --name-only $(cat data/runs/exp0008/prereg/E9.commit) HEAD` over the system-side path list
+    (EXP-0007 plan §2, with ADR-0060's named exceptions) is empty.
+11. **The report** gives the availability table, the refused shares, criterion 1's three `cmp` results and the
+    machine time of the H1000 regeneration. It ends with one commit proposal; nothing is committed.
+
+**Now:** T10 (running). Next: T6b, T14, T15, T12b, T13. No coder runs in parallel.
 
 ## 14. Risks
 
@@ -1743,6 +1792,169 @@ T7b itself is done and committed as `3e42a6a`. On seed 7 it measures:
 | Stubs per sheet, maximum | 12 | 18 |
 
 The chosen k is 10 trains per area.
+
+### 17.15 Rulings on T6 (`cc4d5ef`): the gold side of scope R, 2026-11-23
+
+**Inputs.**
+- The T6 coder's five issues. Its numbers are its own one-off measurements and I did not re-run them: the literal
+  tie rule refuses 54 % of 400 random FLOW_PATH pairs on a fully tagged plant and 72 % on an untagged one; the
+  untagged refusal removes 213 of 262 isolation candidates on an untagged plant; the frozen validator gives 1,175
+  "missing tag" violations there.
+- My read-only reading on 2026-11-23: `qa/questions/{common,families_flow,families_isolation,
+  families_heldout_paths,families_heldout_route,templates}.py`, `qa/harness/{gold,line_view_fidelity}.py`,
+  `qa/scoring.py` (`score_path`), `graph/line_view.py`, `qa/harness/question_set.py`, ADR-0060 and the system-side
+  path list in `30-experiments/EXP-0007-v2-remeasurement-plan.md` §2, and the E9 file list.
+
+**Four facts from the code that decide the rulings.**
+- **F-a.** `qa/questions/` is not on ADR-0060's system-side path list (EXP-0007 plan §2), and §10 already calls it
+  gold side. `E9.sha256` hashes all of `src` only because EXP-0008 froze everything at once. G0f checks the
+  system-side subset.
+- **F-b.** `score_path` marks a FLOW_PATH answer correct when it runs from the source to the target over real flow
+  edges (`_is_valid_ordered_path`). The F2 reference path feeds only the F1 sub-score and the evidence (k, u). A tie
+  between equal-length routes never made a question ambiguous for correctness.
+- **F-c.** The templates ask "Which equipment items and valves receive flow directly from X?" and "List every
+  equipment item and valve in order". The frozen line view (`LINE_ITEM_CLASSES` = equipment | valves) treats every
+  valve as a line item, tagged or not. An untagged gate valve is a valve.
+- **F-d.** `item_valve_counts` (VALVES_ON_PATH) counts only path items. If `is_path_item` returned False for an
+  untagged valve, that valve would be folded away like a tee and not counted.
+
+So §11's "untagged valves drop out of the listing, as fittings do now" was my error. That gold would omit a valve
+the question asks for, and it would disagree with A2's own line view. The coder's smallest fix (`is_path_item`
+False when untagged) would carry the same error, and by F-d it would also break §11's "VALVES_ON_PATH: counted".
+
+#### S1. Question generation is gold side, and it may change for EXP-0009, under three conditions
+
+- No system-side path changes (G0f, F-a).
+- **EXP-0008's own sealed question files regenerate byte for byte** (T6b criterion 1). This is stronger than the
+  H1g21 golden, because a one-sheet plant does not exercise every family.
+- The E10 freeze hashes all of `src` again, so the changed gold files are frozen for EXP-0009.
+
+*Why:* this is ADR-0060 1B's pattern; E7 changed `gold.py`, `family_meta.py` and `need_gold.py` the same way. The
+v2.1 question hash cannot change, because v2.1 plants hold no untagged valve: the frozen validator requires a tag on
+every valve class. *Who:* T6b.
+
+#### S2. One refusal rule for every family, as ADR-0066 decision 5 (S-A) words it
+
+- **Rule.** A candidate is refused when its text, its anchors or its reference would have to name a node that
+  prints no tag. This applies to every family, not only the isolation families.
+- **`is_path_item` and `next_path_items` stay unchanged.** Untagged valves remain items:
+  - they stop the "directly downstream" walk, as in the frozen line view;
+  - they count in VALVES_ON_PATH;
+  - they sit on FLOW_PATH routes, where they refuse the pair.
+- **Mechanism.** Family code reads a printed name through one helper, which returns the tag or a fixed marker. One
+  filter after candidate building drops every question that carries the marker and counts the refusals per family.
+  - One rule, one place, one count.
+  - The random draws are untouched (a refused candidate consumes its draw as before), so on v2.1 the bytes are the
+    same.
+- **`harness/gold.py`.** `_edges_through_fittings` skips untagged endpoints, as `_direct_tag_edges` already does. A
+  path answer that skips an untagged valve is then invalid. That is right, because the question asks for every
+  valve.
+- **Module.** `gold_scope_r.py` moves to `qa/questions/untagged.py`. It is question-generation code, and the
+  generator package should not import `qa`.
+- **Rejected:**
+  - the coder's `is_path_item` change (F-c, F-d);
+  - refusal inside each builder (about 25 tag reads and 25 counters);
+  - drawing another target when one is refused (it prefers tagged routes, shifts the k distribution, and adds code).
+
+*Who:* T6b.
+
+#### S3. How A2 and B answer the same scope-R questions
+
+- **One generation.** The questions are generated once per plant, on the A corpus id, from the gold plant that both
+  views share.
+- **B's file is a relabel.** It changes only the corpus id (the field and the question-id prefix). The frozen
+  `harness/question_set.py` refuses questions of another corpus, so B needs its own id.
+- **Test.** The two files are equal after the corpus id is stripped. SB1 pairs rows by the stripped id. The 40 X
+  questions both arms answer are relabelled the same way.
+- *Why:* the two files are identical by construction, and B needs no second question pool. §12.3 puts the pools of
+  six 1,000-sheet plants at about 14.3 h.
+
+*Who:* T13 (R) and T15 (X).
+
+#### S4. The FLOW_PATH tie rule is withdrawn; F2 stays as in v2.1
+
+- **Why:** by F-b, ties never affected correctness. The literal rule refused 54 % of pairs even on a fully tagged
+  plant, which would have changed R's recipe against EXP-0008.
+- **Untagged valves are handled by S2.** A pair is refused when its F2 reference path holds an untagged valve.
+  `tagged_sequences_differ` is deleted.
+- **A known property, accepted.** In a tie, F2 ranks an untagged node by its node id (`layer_sort_tags`). When a
+  tagged route and a route through an untagged valve tie, node-id order therefore decides whether the pair
+  survives. The order is deterministic and tied to no score. It is documented, not fixed.
+
+*Who:* T6b.
+
+#### S5. The isolation survivors: not used in R; in X they are ordinary members
+
+- **R's two isolation families stay pre-registered unavailable at both scales.** The stated reason is corrected:
+  - It is not "no candidate": 49 of 262 survived on the coder's untagged plant.
+  - The reason is **selection**. A survivor is an item whose first valve on every route is an automatic valve
+    (control or switching), because those keep their tags.
+  - R would then ask about every item on a tagged plant but only about such items on an untagged one. Its question
+    population would depend on the tagging draw, and the data-effect comparison with EXP-0008 would compare
+    different populations.
+- **In X.** The X isolation families are drawn without the refusal, so the survivors are ordinary members of that
+  population. X already reports per question whether the gold holds an untagged valve. That is where the survivors
+  show.
+- **Reported:** R's would-be kept share per plant, descriptively.
+
+*Who:* T6b counts the shares; T15 builds X.
+
+#### S6. Availability of the families S2 now thins, fixed before any seed is drawn
+
+- **Which families.** FLOW_PATH, NEIGHBOURS_DOWNSTREAM and ROUTE_AVOIDING can lose most of their candidates on
+  untagged plants. FIRST_MEETING_POINT is already unavailable on v2 (ADR-0060).
+- **Rule.** T6b counts each family's kept candidates on the 100-sheet dev plants of seeds 1–5 with every document
+  forced untagged. A family below 10 on any of them is pre-registered unavailable in scope R at both scales, for the
+  §11 reason:
+  - four of every five sealed 100-sheet plants are untagged (§18.3);
+  - the weight is not tuned to rescue a family.
+- **Reporting.** Its refused share is reported. No new X family is added for it: ADR-0067 fixes X, and growing it
+  is scope.
+- **G0e** still applies on the sealed plants.
+
+*Who:* T6b measures; the main session copies the resulting list into §11 before PREREG A.
+
+#### S7. LINE-01 on v2.2, and a smoke test of the frozen system on an untagged plant
+
+**The problem.** The frozen `system_line_view` raises on an untagged line item, and `gold_line_view` reads tags.
+EXP-0008's launcher runs LINE-01 on every plant (`lib_plants.sh` `line_view_gate`). The file is on the system-side
+list, so it stays as it is.
+
+**Ruling.**
+- **A new gate, `qa/exp0009/line_view_gate.py`.** It makes the same comparison, but keys untagged line items by their
+  neighbours, as `api_fidelity` already names an untagged item.
+  - Colliding keys are counted and must be 0.
+  - On a v2.1 plant it must reproduce the frozen LINE-01.
+- **A free smoke test.** The frozen A2 layers that use no model (`build_item_graph` over `NetworkxGraphView`, the line
+  view, the schema text) must run on an untagged dev plant without an exception.
+  - D1 = C assumes that A2 can ingest these plants.
+  - If a frozen module raises, T6b stops and the case returns to the architect.
+
+*Who:* T6b builds both; T13 puts the gate into the plant gates.
+
+#### S8. Validation: leave the frozen validator, and add a v2.2 wrapper
+
+- **Leave `graph/validation.py` byte-unchanged.** It is frozen, the Proteus import uses it, and so do the v1 and v2.1
+  tests.
+- **Add `benchmark/v2/validation_v22.py`: `validate_plant_graph_v22(plant, record)`.** It runs the frozen validator
+  and removes exactly the "missing tag" violations on manual and check valves in documents that the record marks
+  untagged. Every other violation stays.
+- **Rejected:**
+  - exempting valve classes inside `validation.py`: it touches a frozen file, and a control valve or PSV could then
+    lose its tag unnoticed;
+  - not validating v2.2: it would lose a free structural check on exactly the plants EXP-0009 measures.
+
+*Who:* T6b builds it; T13 wires it into G0c.
+
+#### S9. The stratified allocation belongs to T13 (confirmed)
+
+`handbook.document_untagged` is only the override that carries the allocation. T13 draws the allocation after the
+size search has landed, because a document is an area (§17.14 N2):
+- **100-sheet plants:** exactly 4 of the 5 sealed plants are untagged. Which four is drawn from the seed tool's
+  stream.
+- **1,000-sheet plants:** each plant leaves round(0.8 × its documents) untagged, rounding half up (7 of 9, 8 of 10,
+  9 of 11). Which documents is drawn from the same stream.
+- The allocation is written into PREREG A before any build, and G0k checks it.
 
 ## 18. The user's decisions of 2026-11-23 and what follows from them
 
