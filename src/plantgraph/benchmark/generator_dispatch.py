@@ -26,6 +26,7 @@ from plantgraph.benchmark.generator_models import GeneratorConfig
 from plantgraph.benchmark.v2.config import SUPERSEDED_VERSION, GeneratorConfigV2
 from plantgraph.benchmark.v2.config_v22 import GeneratorConfigV22
 from plantgraph.benchmark.v2.generate import generate_plant_v2
+from plantgraph.benchmark.v2.rules.registry import RuleReport
 
 _V2 = "v2.1"  # the tag of `GeneratorConfigV2`; the superseded "v2" is routed there to be refused
 _V22 = "v2.2"
@@ -73,12 +74,18 @@ def generator_config_from_json(data: Mapping[str, Any]) -> AnyConfig:
 
 def generate_plant_graph_any(config: AnyConfig) -> nx.DiGraph[str]:
     """The ground-truth plant graph of any generator's config."""
+    return generate_plant_graph_and_rules(config)[0]
+
+
+def generate_plant_graph_and_rules(config: AnyConfig) -> tuple[nx.DiGraph[str], RuleReport | None]:
+    """The plant graph and, for a v2.2 plant, its build-time rule report (else None)."""
     if isinstance(
         config, GeneratorConfigV2
     ):  # GeneratorConfigV22 is a subclass, built the same way
-        graph, _conversion = generate_plant_v2(config).graph()
-        return graph
-    return _generate_plant_graph_v1(config)
+        generated = generate_plant_v2(config)
+        graph, _conversion = generated.graph()
+        return graph, generated.rules
+    return _generate_plant_graph_v1(config), None
 
 
 def _generate_plant_graph_v1(config: GeneratorConfig) -> nx.DiGraph[str]:

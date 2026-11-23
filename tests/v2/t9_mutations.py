@@ -12,6 +12,7 @@ from dataclasses import replace
 import networkx as nx
 
 from plantgraph.benchmark.v2.plan_models import LineSpec
+from plantgraph.benchmark.v2.rules.checks_exchangers import nozzle_runs
 from plantgraph.benchmark.v2.rules.checks_v21_plant import flow, reach
 from plantgraph.benchmark.v2.rules.control_graph import (
     FLOW,
@@ -32,6 +33,7 @@ from plantgraph.graph.schema import EQUIPMENT_CLASSES, Relation
 
 Broken = tuple[RuleView, str]  # the broken view and the node the break is about
 _SEND_TO = Relation.SEND_TO.value
+_TUBULAR = "TubularHeatExchanger"
 _LINE = {"relation": _SEND_TO, "line_number": "x", "fluid_code": "P"}
 
 
@@ -213,18 +215,24 @@ def _is_pipe_part(graph: nx.DiGraph[str], node: str) -> bool:
     return bool(graph.nodes[node]["node_class"] not in EQUIPMENT_CLASSES)
 
 
+def _has_both_process_sides(view: RuleView, exchanger: str) -> bool:
+    runs = nozzle_runs(view, exchanger)
+    return bool(runs.process_in and runs.process_out)
+
+
 def break_hx_isolation_valve(view: RuleView, violating: set[str]) -> Broken:
-    """A gate valve straight in front of an exchanger: it can now be isolated."""
+    """Gate valves on every pipe next to an exchanger: its process side can now be shut in."""
     graph, _ = _copy(view)
-    exchanger = _clean_exchanger(view, violating)
-    before = next(
-        p
-        for p in flow(graph).predecessors(exchanger)
-        if graph.nodes[p]["node_class"] not in EQUIPMENT_CLASSES
-    )
-    _splice_into_pipe(
-        graph, before, exchanger, "mut-block", node_class="GateValve", tag="GTV-99999"
-    )
+    piping = flow(graph)
+    exchangers = [n for n, d in sorted(graph.nodes(data=True)) if d["node_class"] == _TUBULAR]
+    exchanger = next(
+        e for e in exchangers
+        if e not in violating and e in piping and _has_both_process_sides(view, e)
+    )  # fmt: skip
+    for before in [p for p in piping.predecessors(exchanger) if _is_pipe_part(graph, p)]:
+        _splice_into_pipe(graph, before, exchanger, f"mut-in-{before}", node_class="GateValve")
+    for after in [q for q in piping.successors(exchanger) if _is_pipe_part(graph, q)]:
+        _splice_into_pipe(graph, exchanger, after, f"mut-out-{after}", node_class="GateValve")
     return _with_graph(view, graph), exchanger
 
 
@@ -294,27 +302,29 @@ def break_visiting_stream(view: RuleView) -> Broken:
 
 
 def break_stream_closure(view: RuleView) -> Broken:
-    """Cut a process line's sink: it now ends open at a plain pipe part."""
-    for index, unit in enumerate(view.plan.units):
-        for position, line in enumerate(unit.instance.plan.lines):
+    """Cut a process line's sink edge: its last part now ends open, with no declared end."""
+    for unit in view.plan.units:
+        for line in unit.instance.plan.lines:
             if _can_be_left_open(view, line):
-                lines = list(unit.instance.plan.lines)
-                lines[position] = line.model_copy(update={"dst_id": None})
-                plan = unit.instance.plan.model_copy(update={"lines": tuple(lines)})
-                instance = unit.instance.model_copy(update={"plan": plan})
-                return _with_unit(view, index, instance=instance), line.items[-1].node_id
+                graph, _ = _copy(view)
+                last = line.items[-1].node_id
+                graph.remove_edge(last, line.dst_id)
+                return _with_graph(view, graph), last
     raise AssertionError("no process line found to leave open")
 
 
 def _can_be_left_open(view: RuleView, line: LineSpec) -> bool:
-    kind = view.generated.record.stream_kind.get(line.line_number)
+    kind = view.stream_kind_of(line.line_number)
     end = line.items[-1].node_class if line.items else ""
     plain_end = end in ("PipeTee", "GateValve", "ButterflyValve", "BallValve", "GlobeValve")
+    role = view.roles.get(line.items[-1].node_id) if line.items else None
     return bool(
         line.items
         and line.src_id
         and line.dst_id
         and plain_end
-        and kind
+        and role not in ("battery_limit_block", "battery_limit_blind", "battery_limit_check")
+        and kind is not None
         and kind.value == "process"
+        and view.graph.has_edge(line.items[-1].node_id, line.dst_id)
     )

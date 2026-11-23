@@ -40,12 +40,17 @@ from plantgraph.adapters.pydexpi_proteus_import import (
     VocabularyName,
     import_proteus_sheet,
 )
-from plantgraph.benchmark.generator_dispatch import AnyGeneratorConfig, generate_plant_graph_any
+from plantgraph.benchmark.generator_dispatch import (
+    AnyGeneratorConfig,
+    generate_plant_graph_and_rules,
+    generate_plant_graph_any,
+)
 from plantgraph.benchmark.models import SplitManifest
 from plantgraph.benchmark.sheet_graph import SheetGraph
 from plantgraph.benchmark.split_models import SplitConfig
 from plantgraph.benchmark.splitter import split
 from plantgraph.benchmark.tag_variants import VariantConfig, VariantDraw, apply_tag_variants
+from plantgraph.benchmark.v2.rules.registry import RuleReport
 from plantgraph.eval.graph_equality import graph_differences, to_original_ids, visible_view
 from plantgraph.eval.resolution_scoring import ResolutionScore, score_resolution
 from plantgraph.ingest.counts import compute_ingest_counts, compute_layer_counts
@@ -84,6 +89,8 @@ class SyntheticCorpus:
     stage_seconds: dict[str, float]
     #: gold side: what `apply_tag_variants` drew (empty without variants)
     variant_draws: list[VariantDraw] = field(default_factory=list)
+    #: build-time rule report of a v2.2 plant (written as `rules.json`); None for v1 and v2.1
+    rules: RuleReport | None = None
 
 
 @dataclass
@@ -120,7 +127,9 @@ def build_synthetic_corpus(
     """
     stage_seconds: dict[str, float] = {}
 
-    plant, stage_seconds["generate"] = _timed(lambda: generate_plant_graph(generator_config))
+    (plant, rules), stage_seconds["generate"] = _timed(
+        lambda: generate_plant_graph_and_rules(generator_config)
+    )
     (sheets, manifest), stage_seconds["split"] = _timed(lambda: split(plant, split_config))
     draws: list[VariantDraw] = []
     if variants is not None:
@@ -140,6 +149,7 @@ def build_synthetic_corpus(
         resolution=resolution,
         stage_seconds=stage_seconds,
         variant_draws=draws,
+        rules=rules,
     )
 
 
@@ -238,6 +248,7 @@ def run_synthetic(
         neo4j_version=load_report.neo4j_version if load_report else None,
         environment=outcome.environment,
         store_footprint=outcome.footprint,
+        rules=corpus.rules,
     )
 
 

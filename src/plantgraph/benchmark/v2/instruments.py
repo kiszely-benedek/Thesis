@@ -18,6 +18,7 @@ Which loop goes where (the control schemes) is the pattern's choice, not made he
 | `hand_switch` | `HS -> AF -> XV` |
 | `differential_pressure` | `PDT -> PDI` |
 | `totaliser` | `FT -> FQI` |
+| `flow_indicator` | `FT -> FI` |
 | `ratio_control_loop` | `FFT, FT -> FFIC -> AF -> FV` |
 | `analyser_point` | `AT -> AI` |
 | `machine_monitor` | `ST -> SI`, `VT -> VAH`, `TT -> TIAH`, `IT -> II` on a machine |
@@ -242,6 +243,15 @@ def totaliser(ctx: TrimContext, style: LineStyle, element: LineItemSpec) -> Trim
     """
     number = parsed_tag_of(element, ctx.unit_no).sequence
     return transmitter_with_bubble(ctx, style, element.node_id, "FT", "FQI", number)
+
+
+def flow_indicator(ctx: TrimContext, style: LineStyle, element: LineItemSpec) -> TrimPlan:
+    """`FT -> FI`: a transmitter on a flow element and an indicator, with no controller or valve.
+
+    Both take the element's number: `FE-12050`, `FT-12050`, `FI-12050`.
+    """
+    number = parsed_tag_of(element, ctx.unit_no).sequence
+    return transmitter_with_bubble(ctx, style, element.node_id, "FT", "FI", number)
 
 
 def analyser_point(

@@ -8,7 +8,7 @@ the DEXPI model: it still carries each part's role, which the system under test 
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import networkx as nx
 from pydexpi.dexpi_classes.pydantic_classes import DexpiModel
@@ -16,6 +16,7 @@ from pydexpi.dexpi_classes.pydantic_classes import DexpiModel
 from plantgraph.benchmark.v2.config_v22 import GeneratorConfigV22
 from plantgraph.benchmark.v2.generate import GeneratedPlantV2
 from plantgraph.benchmark.v2.hidden_state import HiddenDesignState
+from plantgraph.benchmark.v2.plan_models import StreamKindV2
 from plantgraph.benchmark.v2.planner import PlantPlanV2
 from plantgraph.benchmark.v2.record_v22 import GenerationRecordV22
 from plantgraph.benchmark.v2.rules.oracle_graph import GraphPlantBuilderV2
@@ -28,6 +29,7 @@ class RuleView:
     generated: GeneratedPlantV2
     graph: nx.DiGraph[str]
     roles: dict[str, str]
+    _kind_cache: dict[str, StreamKindV2] = field(default_factory=dict, repr=False, compare=False)
 
     @property
     def plan(self) -> PlantPlanV2:
@@ -47,6 +49,21 @@ class RuleView:
         return (
             record.hidden_state if isinstance(record, GenerationRecordV22) else HiddenDesignState()
         )
+
+    def stream_kind_of(self, line_number: str) -> StreamKindV2 | None:
+        """The kind of the line with this number, or None for a number the plan does not know.
+
+        A line with a spec break has two numbers; both map to the kind the plan recorded for
+        the first. The map is built on first use: a check asks once per pipe or per dead end.
+        """
+        if not self._kind_cache:
+            recorded = self.generated.record.stream_kind
+            for unit in self.plan.units:
+                for line in unit.instance.plan.lines:
+                    kind = recorded.get(line.line_number)
+                    if kind is not None:
+                        self._kind_cache.update({n: kind for n in line.line_numbers})
+        return self._kind_cache.get(line_number)
 
     @property
     def model(self) -> DexpiModel:

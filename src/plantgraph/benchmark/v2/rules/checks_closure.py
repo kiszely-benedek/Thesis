@@ -8,12 +8,14 @@ high, so nothing may stand between enclosure and PSV that could close or throttl
 
 from __future__ import annotations
 
-from plantgraph.benchmark.v2.plan_models import LineItemSpec, LineSpec, StreamKindV2
+import networkx as nx
+
+from plantgraph.benchmark.v2.plan_models import LineSpec, StreamKindV2
 from plantgraph.benchmark.v2.rules.checks_v21_plant import flow
 from plantgraph.benchmark.v2.rules.control_graph import is_control_valve
 from plantgraph.benchmark.v2.rules.registry import CheckResult, Violation
 from plantgraph.benchmark.v2.rules.view import RuleView
-from plantgraph.graph.schema import EQUIPMENT_CLASSES
+from plantgraph.graph.schema import EQUIPMENT_CLASSES, Relation
 
 #: where a line may end with nothing behind it: a blind or cap, an open drain funnel, a vent to
 #: the atmosphere (breather, ventilation device, silencer, flame arrestor), a rupture disc
@@ -28,6 +30,11 @@ _END_FITTINGS = frozenset(
         "FlameArrestor",
         "RuptureDisc",
     }
+)
+
+#: roles of the parts a battery limit is made of (`trims_valves.battery_limit`), a unit's boundary
+_BATTERY_LIMIT_ROLES = frozenset(
+    {"battery_limit_block", "battery_limit_blind", "battery_limit_check"}
 )
 
 
@@ -132,43 +139,66 @@ def check_no_visiting_stream(view: RuleView) -> CheckResult:
 # ---- PLT-STREAM-CLOSURE ------------------------------------------------------------------------
 
 
-def _open_ends(line: LineSpec) -> list[LineItemSpec]:
-    """The last inline part at each end of the line that connects to no item."""
-    ends = []
-    if line.src_id is None:
-        ends.append(line.items[0])
-    if line.dst_id is None:
-        ends.append(line.items[-1])
-    return ends
+def _dead_ends(piping: nx.DiGraph[str], graph: nx.DiGraph[str]) -> list[str]:
+    """The pipe parts where a stream stops (no way on) or starts (no way in), once lines are joined.
+
+    Equipment is no end: a vessel is where a stream is made or used. A line that continues into the
+    next unit has no dead end at the join, which is why this reads the joined graph, not the
+    per-unit lines.
+    """
+    is_end = (n for n in piping if piping.out_degree(n) == 0 or piping.in_degree(n) == 0)
+    return sorted(n for n in is_end if graph.nodes[n]["node_class"] not in EQUIPMENT_CLASSES)
 
 
-def _declared_as(view: RuleView, line: LineSpec, end: LineItemSpec) -> str | None:
-    """The kind of declared end a line stops at, or None when it just stops."""
-    if view.generated.record.stream_kind.get(line.line_number) is StreamKindV2.UTILITY_STUB:
+def _line_number_at(graph: nx.DiGraph[str], end: str) -> str:
+    """The number of the pipe at a dead end; `graph` is needed, `flow` drops the edge data."""
+    pipes = [d for _, _, d in [*graph.in_edges(end, data=True), *graph.out_edges(end, data=True)]
+             if d["relation"] == Relation.SEND_TO.value]  # fmt: skip
+    return str(pipes[0].get("line_number", ""))
+
+
+def _beside(piping: nx.DiGraph[str], end: str) -> list[str]:
+    """The neighbours of the end: the one pipe part (or equipment) it hangs from."""
+    return [*piping.predecessors(end), *piping.successors(end)]
+
+
+def _declared_as(view: RuleView, piping: nx.DiGraph[str], end: str) -> str | None:
+    """The kind of declared end a dead end is, or None when it just stops."""
+    graph = view.graph
+    nearby = [end, *_beside(piping, end)]  # the blind may sit one part inside its block valve
+    if any(view.roles.get(n) in _BATTERY_LIMIT_ROLES for n in nearby):
+        return "battery_limit"  # the unit's boundary toward the rest of the plant
+    kind = view.stream_kind_of(_line_number_at(view.graph, end))
+    if kind is StreamKindV2.UTILITY_STUB:
         return "utility_stub"  # a utility line that continues on the network sheets
-    if end.node_class in _END_FITTINGS or _is_safety_valve(end.node_class):
+    node_class = str(graph.nodes[end]["node_class"])
+    if node_class in _END_FITTINGS or _is_safety_valve(node_class):
         return "end_fitting"  # a cap, drain funnel, vent or relief outlet
     return None
 
 
 def check_stream_closure(view: RuleView) -> CheckResult:
-    """PLT-STREAM-CLOSURE: a line has a source and a sink item, or a declared end."""
+    """PLT-STREAM-CLOSURE: every stream ends at a declared end (a source or sink item, or a stub).
+
+    Runs on the plant flow graph after the flowsheet joins, so a line that continues into the next
+    unit is not an end. `checked` is the number of dead ends found.
+    """
     # rule PLT-STREAM-CLOSURE: a source and a sink item, or a declared end (Toghraei 2019 p.24)
-    lines = _lines(view)
+    piping = flow(view.graph)
+    ends = _dead_ends(piping, view.graph)
     declared: dict[str, int] = {}
     violations = []
-    for line in lines:
-        for end in _open_ends(line):
-            kind = _declared_as(view, line, end)
-            if kind is not None:
-                declared[kind] = declared.get(kind, 0) + 1
-                continue
-            stream = view.generated.record.stream_kind.get(line.line_number)
-            detail = (
-                f"line {line.line_number} ({stream.value if stream else 'unknown kind'}) "
-                f"ends open at a {end.node_class} with no declared end"
-            )
-            violations.append(
-                Violation(rule_id="PLT-STREAM-CLOSURE", node_id=end.node_id, detail=detail)
-            )
-    return CheckResult(checked=len(lines), violations=tuple(violations), exceptions=declared)
+    for end in ends:
+        kind = _declared_as(view, piping, end)
+        if kind is not None:
+            declared[kind] = declared.get(kind, 0) + 1
+            continue
+        number = _line_number_at(view.graph, end)
+        stream = view.stream_kind_of(number)
+        detail = (
+            f"line {number} ({stream.value if stream else 'unknown kind'}) "
+            f"ends open at a {view.graph.nodes[end]['node_class']} "
+            f"(role {view.roles.get(end, '?')}) with no declared end"
+        )
+        violations.append(Violation(rule_id="PLT-STREAM-CLOSURE", node_id=end, detail=detail))
+    return CheckResult(checked=len(ends), violations=tuple(violations), exceptions=declared)

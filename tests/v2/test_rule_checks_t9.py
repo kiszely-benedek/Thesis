@@ -2,9 +2,8 @@
 
 Per rule (design 3.3): (a) no violation on a v2.2 plant, (b) a mutation is caught, (c) the check
 looked at something over the five seeds. Unlike the T3/T4 checks these also run on v2.1 plants.
-Four rules fail on the plants the generator draws today; per the T9 design rule the generator was
-not touched, so their (a) tests are expected failures (`xfail`, strict) that carry the reason and
-one example from `t9_support.KNOWN_FAILURES`.
+What still fails is recorded in `t9_support` (`KNOWN_FAILURES`, `KNOWN_FAILURES_V21`): those (a)
+tests are strict expected failures, so a fix that lands must remove its entry.
 """
 
 from __future__ import annotations
@@ -13,7 +12,7 @@ from collections.abc import Callable
 
 import pytest
 import t9_mutations as mutations
-from t9_support import KNOWN_FAILURES, SEEDS, T9_RULES, view_v21, view_v22
+from t9_support import KNOWN_FAILURES, KNOWN_FAILURES_V21, SEEDS, T9_RULES, view_v21, view_v22
 
 from plantgraph.benchmark.v2.rules.catalogue import rule_by_id
 from plantgraph.benchmark.v2.rules.registry import CheckResult, resolve_check
@@ -24,11 +23,11 @@ def _run(rule_id: str, view: RuleView) -> CheckResult:
     return resolve_check(rule_by_id(rule_id))(view)
 
 
-def _positive_cases() -> list[object]:
+def _positive_cases(known: dict[str, tuple[list[int], str]]) -> list[object]:
     """One (rule, seed) case per T9 rule and seed; a known failure is an expected failure."""
     cases = []
     for rule_id in T9_RULES:
-        seeds, reason = KNOWN_FAILURES.get(rule_id, ([], ""))
+        seeds, reason = known.get(rule_id, ([], ""))
         for seed in SEEDS:
             marks = [pytest.mark.xfail(reason=reason, strict=True)] if seed in seeds else []
             cases.append(pytest.param(rule_id, seed, marks=marks, id=f"{rule_id}-seed{seed}"))
@@ -38,12 +37,12 @@ def _positive_cases() -> list[object]:
 # ---- (a) positive, (c) non-vacuity ---------------------------------------------------------------
 
 
-@pytest.mark.parametrize(("rule_id", "seed"), _positive_cases())
+@pytest.mark.parametrize(("rule_id", "seed"), _positive_cases(KNOWN_FAILURES))
 def test_a_t9_rule_has_no_violation_on_a_v22_plant(rule_id: str, seed: int) -> None:
     assert _run(rule_id, view_v22(seed)).violations == ()
 
 
-@pytest.mark.parametrize(("rule_id", "seed"), _positive_cases())
+@pytest.mark.parametrize(("rule_id", "seed"), _positive_cases(KNOWN_FAILURES_V21))
 def test_a_t9_rule_has_no_violation_on_a_v21_plant(rule_id: str, seed: int) -> None:
     assert _run(rule_id, view_v21(seed)).violations == ()
 
@@ -61,7 +60,7 @@ def test_the_inventory_check_found_the_exceptions_it_allows() -> None:
 
 def test_the_closure_check_counts_the_declared_ends_it_lets_through() -> None:
     kinds = {k for seed in SEEDS for k in _run("PLT-STREAM-CLOSURE", view_v22(seed)).exceptions}
-    assert kinds == {"end_fitting", "utility_stub"}
+    assert kinds == {"battery_limit", "end_fitting", "utility_stub"}
 
 
 # ---- (b) mutations -------------------------------------------------------------------------------

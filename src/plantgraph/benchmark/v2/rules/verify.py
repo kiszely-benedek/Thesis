@@ -1,13 +1,14 @@
 """Run the registry's checks on a generated plant (design 3.3).
 
 Only rules with a wired check run; a rule whose check is still `pending:<task>` is absent from the
-report, and `pending_rules()` lists them. `verify_plant` is not called by `generate_plant_v2` yet:
-v2.1 generation must stay untouched, and the v2.2 generator it guards does not exist (task T2).
+report, and `pending_rules()` lists them. `generate_plant_v2` calls `verify_generated` for a v2.2
+config only: v2.1 generation stays untouched, so v2.1 plants are verified in tests alone.
 """
 
 from __future__ import annotations
 
 from plantgraph.benchmark.v2.generate import GeneratedPlantV2
+from plantgraph.benchmark.v2.rules import owed
 from plantgraph.benchmark.v2.rules.catalogue import rules_with_status
 from plantgraph.benchmark.v2.rules.registry import (
     CheckResult,
@@ -46,6 +47,7 @@ def _row(rule: HandbookRule, result: CheckResult) -> RuleRow:
         checked=result.checked,
         violations=len(result.violations),
         exceptions=result.exceptions,
+        owed_by=owed.OWED_FIXES.get(rule.rule_id) if result.violations else None,
     )
 
 
@@ -62,8 +64,21 @@ def verify_plant(generated: GeneratedPlantV2) -> RuleReport:
 
 
 def raise_on_violations(report: RuleReport) -> None:
-    """Raise `RuleViolationError` when any row has a violation."""
-    broken = [row for row in report.rows if row.violations]
+    """Raise `RuleViolationError` when any row has a violation, an owed rule's included."""
+    _raise_on(report, [row for row in report.rows if row.violations])
+
+
+def verify_generated(generated: GeneratedPlantV2) -> RuleReport:
+    """Verify a freshly generated plant; raise on any violation of a rule that is not owed.
+
+    A violation of an owed rule (`owed.py`) stays in the report, marked with its task.
+    """
+    report = verify_plant(generated)
+    _raise_on(report, [row for row in report.rows if row.violations and row.owed_by is None])
+    return report
+
+
+def _raise_on(report: RuleReport, broken: list[RuleRow]) -> None:
     if broken:
         names = ", ".join(f"{row.rule_id} ({row.violations})" for row in broken[:5])
         raise RuleViolationError(f"expected a plant without rule violations, found: {names}")

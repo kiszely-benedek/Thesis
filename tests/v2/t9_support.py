@@ -1,10 +1,9 @@
 """Shared facts of the task-T9 rule checks: the plants they run on and where they are known to fail.
 
 Not a test module (no `test_` prefix). The T9 checks look at every plant, v2.1 and v2.2 alike, so
-unlike the T3/T4 checks they do not report `checked=0` on v2.1. Four of the ten fail on plants the
-generator draws today. Design rule for T9: a check never changes the generator to make itself
-pass; the failure is recorded here (rule, version, seeds, one example) and the test is an
-expected failure until the architect decides on a fix. `KNOWN_FAILURES` is that record.
+unlike the T3/T4 checks they do not report `checked=0` on v2.1. T9 recorded four failures here as
+expected failures; T9b fixed or restated three of them, so what is left is the closure rule on
+v2.2 (owed to T7) and the two v2.1 properties in `KNOWN_FAILURES_V21`.
 """
 
 from __future__ import annotations
@@ -29,28 +28,25 @@ T9_RULES = [
     "TOG326-STEAM-CONDENSATE",
 ]
 
-#: rule -> (seeds that fail, on v2.1 and on v2.2 alike; why and one example). Counts per seed are in
-#: the report; the examples are node ids of the 30-sheet plant of that seed on v2.2.
+#: v2.2 plants (handbook on): rule -> (seeds that fail, why). Only the closure rule is left; it is
+#: owed to T7 (`rules/owed.py`): 129 open ends over the five seeds, which T7a (71 plant-boundary
+#: ends) and T7 (58 relief outlets and bleeds) close.
 KNOWN_FAILURES: dict[str, tuple[list[int], str]] = {
-    "TOG271-ONE-CV-LIQUID": (
-        SEEDS,
-        "two control valves in series between two vessels: seed 1 u13-t28 (FV, transfer line) "
-        "then u15-t16 (TV, process bypass of the next unit), route u13-t1 to u15-t5",
-    ),
-    "TOG295-INVENTORY-ONCE": (
-        [2, 3, 4],
-        "seed 2: additive tank u2-t2 has a level transmitter but no level loop and is no "
-        "tank-farm tank; blend vessel u11-t3 has gas outlets but no pressure loop",
-    ),
     "PLT-STREAM-CLOSURE": (
         SEEDS,
-        "process lines end open at a plain pipe part, no declared end: seed 1 line "
-        "6-P-20002-A1A-N ends at tee u2-t6 (34 to 41 such open ends per plant)",
+        "owed to T7: relief outlets (psv_outlet_block), fuel-gas bleeds and plant-boundary ends "
+        "have no declared end: seed 1 line 6-P-100003-A1A-N ends at receipt_manifold_valve u10-t48",
     ),
-    "TOG207-HX-NO-ISOLATION": (
-        SEEDS,
-        "block valve on a utility nozzle (utility_supply_block): seed 1 condenser u4-t30 "
-        "with valve u4-t31; seed 5 compressor_discharge_block in front of aftercooler u10-t3",
+}
+
+#: v2.1 plants never get the handbook fixes (v2.1 data is not changed, design 14), so they keep
+#: what T9 found: a filter package after a farm transfer puts two flow valves in series
+KNOWN_FAILURES_V21: dict[str, tuple[list[int], str]] = {
+    **KNOWN_FAILURES,
+    "TOG271-ONE-CV-LIQUID": (
+        [1, 3, 4],
+        "farm-transfer FV, then the optional FV of the filter package (v2.1 draws it), no vessel "
+        "between them",
     ),
 }
 
@@ -70,7 +66,9 @@ def view_v22(seed: int) -> RuleView:
     return plant_view_v22(seed, units_for_30_sheets(seed))
 
 
-def without_known_failures(report: RuleReport) -> RuleReport:
-    """The report minus the `KNOWN_FAILURES` rules, so tests of the others can insist on none."""
-    rows = tuple(row for row in report.rows if row.rule_id not in KNOWN_FAILURES)
+def without_known_failures(
+    report: RuleReport, known: dict[str, tuple[list[int], str]] = KNOWN_FAILURES
+) -> RuleReport:
+    """The report minus the known-failure rules, so tests of the others can insist on none."""
+    rows = tuple(row for row in report.rows if row.rule_id not in known)
     return RuleReport(generator_version=report.generator_version, rows=rows)

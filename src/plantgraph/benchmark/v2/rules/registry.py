@@ -154,10 +154,11 @@ class RuleRow(_Frozen):
     checked: int
     violations: int
     exceptions: dict[str, int] = {}
+    owed_by: str | None = None  # the task that owes the fix of this (still failing) rule
 
 
 class RuleReport(_Frozen):
-    """What `verify_plant` found; written as `<corpus>/rules.json` once v2.2 generation lands."""
+    """What `verify_plant` found; written as `<corpus>/rules.json` for a v2.2 corpus."""
 
     generator_version: str
     rows: tuple[RuleRow, ...]

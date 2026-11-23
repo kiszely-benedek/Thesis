@@ -12,15 +12,19 @@ Like the other plant-level checks these read the plan's graph on v2.1 and v2.2 p
 from __future__ import annotations
 
 from collections.abc import Iterable
+from dataclasses import dataclass
 
 import networkx as nx
 
 from plantgraph.benchmark.v2.rules.checks_v21_plant import flow, reach
 from plantgraph.benchmark.v2.rules.control_graph import (
+    EXCHANGER_CLASSES,
+    HEAT_TRANSFER_CLASSES,
     LEVEL,
     STEAM_SERVICES,
     TEMPERATURE,
     UTILITY_SERVICES,
+    bypassed_items,
     control_loops,
     controller_of,
     controllers_on,
@@ -33,18 +37,14 @@ from plantgraph.benchmark.v2.rules.view import RuleView
 from plantgraph.benchmark.v2.trims_valves import HX_MAIN_VALVE_ROLE
 from plantgraph.graph.schema import EQUIPMENT_CLASSES
 
-#: exchangers proper; an air cooler or furnace also moves heat but has no steam or spare to speak of
-_EXCHANGER_CLASSES = frozenset(
-    {"TubularHeatExchanger", "HeatExchanger", "PlateHeatExchanger", "SpiralHeatExchanger"}
-)
-#: equipment through which a stream is heated or cooled: a bypass around one of these bypasses it
-_HEAT_TRANSFER_CLASSES = _EXCHANGER_CLASSES | {"AirCoolingSystem", "Furnace", "Heater"}
 _BLOCK_VALVES = frozenset({"GateValve", "BallValve", "ButterflyValve", "PlugValve"})
 #: a run of pipe that ends in one of these is a trim branch (vent, drain, tap), not a process line
 _TRIM_END_CLASSES = frozenset({"BlindFlange", "Funnel", "VentilationDevice", "RuptureDisc"})
 #: the hand bypass of a control-valve or trap station belongs to that station, not to the exchanger
 _STATION_BYPASS_ROLES = frozenset({"cv_bypass_valve", "trap_bypass_valve"})
 _CONDENSATE = "CD"
+_FLARE_HEADER = "FL"  # the flare service: a relief line, not the process
+_PSV_INLET_ROLE = "psv_inlet_block"
 
 
 def _service_around(view: RuleView, node: str) -> str:
@@ -85,45 +85,11 @@ def _run_to_junction(
 # ---- TOG320-HX-NONTARGET -----------------------------------------------------------------------
 
 
-def _item_down_the_branch(view: RuleView, start: str) -> str:
-    """The first equipment item along single-file pipe from `start`, else the last part reached.
-
-    A valve between a tee and the exchanger (the main-branch valve of TOG322) is walked past.
-    """
-    piping, graph = flow(view.graph), view.graph
-    node = start
-    while graph.nodes[node]["node_class"] not in EQUIPMENT_CLASSES:
-        following = list(piping.successors(node))
-        if len(following) != 1:
-            break
-        node = following[0]
-    return node
-
-
-def _bypassed_items(view: RuleView, valve: str) -> set[str]:
-    """The exchangers and heaters the branch of `valve` skips (none: it is not on a bypass).
-
-    An item is skipped when a branch from a part before the valve leads to it and returns to a part
-    after the valve.
-    """
-    piping, graph = flow(view.graph), view.graph
-    before, _ = reach(piping, graph, valve, up=True)
-    after, _ = reach(piping, graph, valve, up=False)
-    skipped: set[str] = set()
-    for part in before:
-        for branch in piping.successors(part):
-            item = _item_down_the_branch(view, branch)
-            is_heater = graph.nodes[item]["node_class"] in _HEAT_TRANSFER_CLASSES
-            if is_heater and any(back in after for back in piping.successors(item)):
-                skipped.add(item)
-    return skipped
-
-
 def _nontarget_problem(view: RuleView, valve: str) -> str | None:
     service = _service_around(view, valve)
     if service in UTILITY_SERVICES:
         return None  # directly on the utility stream
-    if _bypassed_items(view, valve):
+    if bypassed_items(view, valve):
         return None  # on a bypass of a process stream
     if view.roles.get(valve) == HX_MAIN_VALVE_ROLE:
         return None  # the exchanger's own branch of a two-valve bypass: TOG322 judges it
@@ -151,14 +117,14 @@ def check_hx_nontarget(view: RuleView) -> CheckResult:
 def temperature_bypass_valves(view: RuleView) -> list[str]:
     """The temperature control valves on a branch that skips an exchanger or heater."""
     loops = [loop for loop in control_loops(view) if loop.variable == TEMPERATURE]
-    return [loop.valve for loop in loops if _bypassed_items(view, loop.valve)]
+    return [loop.valve for loop in loops if bypassed_items(view, loop.valve)]
 
 
 def _heat_transfer_items_beside(view: RuleView, valve: str) -> set[str]:
     """The exchangers and heaters met in series with `valve`, upstream or downstream."""
     piping, graph = flow(view.graph), view.graph
     found = reach(piping, graph, valve, up=True)[1] | reach(piping, graph, valve, up=False)[1]
-    return {n for n in found if graph.nodes[n]["node_class"] in _HEAT_TRANSFER_CLASSES}
+    return {n for n in found if graph.nodes[n]["node_class"] in HEAT_TRANSFER_CLASSES}
 
 
 def _controlled_point(graph: nx.DiGraph[str], valve: str) -> list[str]:
@@ -172,7 +138,7 @@ def _main_valve_problem(view: RuleView, main: str, bypass_valves: list[str]) -> 
     point = _controlled_point(view.graph, main)
     partners = [
         valve for valve in bypass_valves
-        if _bypassed_items(view, valve) & items and _controlled_point(view.graph, valve) == point
+        if bypassed_items(view, valve) & items and _controlled_point(view.graph, valve) == point
     ]  # fmt: skip
     if point and partners:
         return None
@@ -212,19 +178,58 @@ def _is_isolation_valve(graph: nx.DiGraph[str], node: str) -> bool:
     return graph.nodes[node]["node_class"] in _BLOCK_VALVES and not is_control_valve(graph, node)
 
 
-def _isolation_valves(view: RuleView, exchanger: str) -> list[str]:
-    """The block valves on the exchanger's own nozzle lines (vent and drain branches excluded)."""
+@dataclass(frozen=True)
+class NozzleRuns:
+    """The runs of pipe on an exchanger's nozzles, sorted by what they carry."""
+
+    process_in: list[list[str]]
+    process_out: list[list[str]]
+    utility: list[list[str]]
+
+
+def _is_relief_run(view: RuleView, run: list[str]) -> bool:
+    return any(view.roles.get(n) == _PSV_INLET_ROLE for n in run)
+
+
+def nozzle_runs(view: RuleView, exchanger: str) -> NozzleRuns:
+    """Split the single-file pipe on the exchanger's nozzles into process and utility runs.
+
+    Vent and drain branches, relief branches and flare (FL) runs belong to other rules and
+    are left out. Also read by the pressure-safety check (T10) to find utility-side blocks.
+    """
     piping, graph = flow(view.graph), view.graph
-    valves: list[str] = []
+    found = NozzleRuns(process_in=[], process_out=[], utility=[])
     for up, neighbours in (
         (True, piping.predecessors(exchanger)),
         (False, piping.successors(exchanger)),
     ):
         for start in neighbours:
             run = _run_to_junction(piping, graph, start, up)
-            if not _is_trim_run(view, run):
-                valves += [n for n in run if _is_isolation_valve(graph, n)]
-    return sorted(set(valves))
+            if _is_trim_run(view, run) or _is_relief_run(view, run):
+                continue
+            ends = (start, exchanger) if up else (exchanger, start)  # the pipe at the nozzle
+            service = service_of(graph, *ends)
+            if service in UTILITY_SERVICES or service == _FLARE_HEADER:
+                found.utility.append(run)
+            else:
+                (found.process_in if up else found.process_out).append(run)
+    return found
+
+
+def _holds_block(view: RuleView, run: list[str]) -> bool:
+    return any(_is_isolation_valve(view.graph, n) for n in run)
+
+
+def has_utility_side_block(view: RuleView, exchanger: str) -> bool:
+    """True when a block valve stands on a utility nozzle (the usual supply isolation)."""
+    return any(_holds_block(view, run) for run in nozzle_runs(view, exchanger).utility)
+
+
+def _is_process_isolated(view: RuleView, exchanger: str) -> bool:
+    """Every process inlet run and every process outlet run holds a block valve."""
+    runs = nozzle_runs(view, exchanger)
+    sides = (runs.process_in, runs.process_out)
+    return all(side and all(_holds_block(view, run) for run in side) for side in sides)
 
 
 def _line_parts(view: RuleView, neighbours: Iterable[str], up: bool) -> set[str]:
@@ -262,30 +267,35 @@ def _manual_bypass(view: RuleView, exchanger: str) -> bool:
 
 
 def _isolation_problem(view: RuleView, exchanger: str) -> str | None:
-    valves = _isolation_valves(view, exchanger)
-    if valves:
-        roles = sorted({view.roles.get(v, "?") for v in valves})
-        return f"isolation valves {valves} (roles {roles}) around the exchanger"
+    if _is_process_isolated(view, exchanger):
+        return "block valves on every process inlet and outlet, so the exchanger can be shut in"
     if _manual_bypass(view, exchanger):
-        return "a bypass without a control valve around the exchanger"
+        return "a bypass without a control valve around the process side of the exchanger"
     return None
 
 
 def check_hx_no_isolation(view: RuleView) -> CheckResult:
-    """TOG207-HX-NO-ISOLATION: no isolation valves and no bypass, unless a spare is installed."""
-    # rule TOG207-HX-NO-ISOLATION: no isolation valves around an exchanger (Toghraei 2019 p.207)
+    """TOG207-HX-NO-ISOLATION: the process side is not isolated on both sides, has no hand bypass.
+
+    Isolation is company policy (p.207), so v2.2 follows the "none" policy; a spare or a cleaning
+    system would excuse it. Utility-side blocks are outside the rule and only counted.
+    """
+    # rule TOG207-HX-NO-ISOLATION: no isolation on an exchanger's process side (Toghraei 2019 p.207)
     spared = {n for record in view.generated.record.spare_sets for n in record.node_ids}
     graph = view.graph
     exchangers = sorted(
-        n for n, d in graph.nodes(data=True) if d["node_class"] in _EXCHANGER_CLASSES
+        n for n, d in graph.nodes(data=True) if d["node_class"] in EXCHANGER_CLASSES
     )
     violations = [
         Violation(rule_id="TOG207-HX-NO-ISOLATION", node_id=exchanger, detail=problem)
         for exchanger in exchangers
         if exchanger not in spared and (problem := _isolation_problem(view, exchanger))
     ]
-    n_spared = sum(e in spared for e in exchangers)
-    exceptions = {"has_spare": n_spared} if n_spared else {}
+    exceptions = {
+        "has_spare": sum(e in spared for e in exchangers),
+        "utility_side_block": sum(has_utility_side_block(view, e) for e in exchangers),
+    }
+    exceptions = {code: count for code, count in exceptions.items() if count}
     return CheckResult(checked=len(exchangers), violations=tuple(violations), exceptions=exceptions)
 
 
@@ -298,7 +308,7 @@ def _steam_heaters(view: RuleView) -> list[str]:
     return sorted(
         n
         for n, d in view.graph.nodes(data=True)
-        if d["node_class"] in _EXCHANGER_CLASSES
+        if d["node_class"] in EXCHANGER_CLASSES
         and any(service_of(view.graph, a, n) in STEAM_SERVICES for a in piping.predecessors(n))
     )
 

@@ -123,3 +123,42 @@ def check_pd_compressor_capacity(view: RuleView) -> CheckResult:
         if (problem := _capacity_problem(stage))
     ]
     return CheckResult(checked=len(stages), violations=tuple(violations))
+
+
+# ---- API14C-A8: the discharge check valve and relief valve, on every plant ---------------------
+
+
+def _compressors(view: RuleView) -> list[str]:
+    nodes = view.graph.nodes(data=True)
+    return sorted(n for n, d in nodes if str(d["node_class"]).endswith("Compressor"))
+
+
+def _roles_after(view: RuleView, machine: str) -> set[str]:
+    """The roles of the pipe parts downstream of the machine, up to the next equipment."""
+    parts = reach(flow(view.graph), view.graph, machine, up=False)[0]
+    return {view.roles[n] for n in parts if n in view.roles}
+
+
+def _check_discharge_role(view: RuleView, rule_id: str, role: str, what: str) -> CheckResult:
+    """One violation per compressor whose discharge side has no part with `role`."""
+    machines = _compressors(view)
+    violations = [
+        Violation(rule_id=rule_id, node_id=m, detail=f"expected {what} after {m}, found none")
+        for m in machines
+        if role not in _roles_after(view, m)
+    ]
+    return CheckResult(checked=len(machines), violations=tuple(violations))
+
+
+def check_compressor_discharge_check(view: RuleView) -> CheckResult:
+    """API14C-A8-FSV: a check valve on the final discharge of every compressor."""
+    # rule API14C-A8-FSV: a discharge check valve (API 14C A.8.3.2 p.45; Toghraei p.84)
+    role = "compressor_discharge_check"
+    return _check_discharge_role(view, "API14C-A8-FSV", role, "a discharge check valve")
+
+
+def check_compressor_discharge_psv(view: RuleView) -> CheckResult:
+    """API14C-A8-PSV: a pressure safety valve on the discharge of every compressor."""
+    # rule API14C-A8-PSV: a discharge safety valve (API 14C A.8.2.2.1 p.45)
+    role = "compressor_discharge_psv"
+    return _check_discharge_role(view, "API14C-A8-PSV", role, "a discharge safety valve")

@@ -12,7 +12,8 @@ Neo4j load's own verification step fails.
 `--out DIR` additionally writes that same `IngestResult` to `DIR/ingest.json`,
 as UTF-8 with no BOM (design `qa-system.md` §2.1 R6, QA-T0). It is written
 with `Path.write_text`, never a shell redirect: a PowerShell `>` redirect
-writes UTF-16, which `qa/corpus.py` would then fail to parse back.
+writes UTF-16, which `qa/corpus.py` would then fail to parse back. A v2.2 corpus also gets
+`DIR/rules.json`, the build-time rule report of its plant.
 """
 
 from __future__ import annotations
@@ -45,6 +46,7 @@ _CORPUS_ID_UNSAFE_CHARS = re.compile(r"[^A-Za-z0-9_.-]")
 
 #: the file `--out DIR` writes into; `qa/corpus.py` reads the same name back.
 _INGEST_RESULT_FILENAME = "ingest.json"
+_RULES_FILENAME = "rules.json"
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -88,6 +90,10 @@ def _write_result(result: IngestResult, out_dir: Path) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     out_path = out_dir / _INGEST_RESULT_FILENAME
     out_path.write_text(result.model_dump_json(indent=2), encoding="utf-8")
+    if result.rules is not None:  # a v2.2 corpus: the rule report is part of its record
+        (out_dir / _RULES_FILENAME).write_text(
+            result.rules.model_dump_json(indent=2), encoding="utf-8"
+        )
 
 
 def _run_synthetic(

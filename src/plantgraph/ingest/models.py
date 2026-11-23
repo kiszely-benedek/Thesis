@@ -11,6 +11,7 @@ from typing import Any
 from pydantic import BaseModel, Field
 
 from plantgraph.adapters.pydexpi_proteus_import import ImportReport
+from plantgraph.benchmark.v2.rules.registry import RuleReport
 from plantgraph.eval.resolution_scoring import ResolutionScore
 from plantgraph.infra.environment import RunEnvironment
 from plantgraph.infra.store_size import StoreFootprint
@@ -73,3 +74,5 @@ class IngestResult(BaseModel):
     environment: RunEnvironment | None = None
     #: store size after a checkpoint; set only with `--neo4j-home`
     store_footprint: StoreFootprint | None = None
+    #: v2.2 build-time rule report; kept out of `ingest.json` (it is written as `rules.json`)
+    rules: RuleReport | None = Field(default=None, exclude=True)

@@ -4,7 +4,8 @@ A **filter package** is two identical filters in parallel on a liquid line: one 
 is cleaned or stands by, and valves on each filter's inlet and outlet switch between them. The
 pressure drop across a filter (`PDT`/`PDI`) tells the operator when the running one is clogged. No
 control loop is drawn by default; a flow controller on the outlet has chance
-`p_optional_instrument`.
+`p_optional_instrument`. On v2.2 that optional instrument is a flow indicator instead: the package
+has no pump or vessel, so its flow is set upstream and a valve here would be a second one in series.
 
 The package is its own unit and its own drawing group, and it never joins another unit's group
 (pid-vocabulary 13.6 rule 3: one unit per sheet). There is no variant deck; the choices drawn are
@@ -13,7 +14,12 @@ whether the pressure drop is read across each filter or once across the pair, an
 
 from __future__ import annotations
 
-from plantgraph.benchmark.v2.instruments import differential_pressure, flow_control_loop
+from plantgraph.benchmark.v2.instrument_draft import part_of
+from plantgraph.benchmark.v2.instruments import (
+    differential_pressure,
+    flow_control_loop,
+    flow_indicator,
+)
 from plantgraph.benchmark.v2.patterns.assembly import (
     close_run,
     line_between,
@@ -137,6 +143,10 @@ def _outlet_main(
 
 
 def _flow_loop(ctx: PatternContext) -> TrimPlan:
-    """`FE, FT -> FIC -> FV`: the optional flow controller on the outlet."""
+    """`FE, FT -> FIC -> FV`: the optional flow controller on the outlet (v2.2: `FE, FT -> FI`)."""
     element = flow_element(ctx.trim, ctx.style, "liquid")
+    if ctx.trim.handbook:
+        # rule TOG271-ONE-CV-LIQUID: no flow valve here, feed flow is set upstream (Toghraei p.271)
+        indicator = flow_indicator(ctx.trim, ctx.style, part_of(element, "element"))
+        return combine(element, quiet(indicator))
     return flow_control_loop(ctx.trim, ctx.style, element, control_valve(ctx.trim, ctx.style, "F"))

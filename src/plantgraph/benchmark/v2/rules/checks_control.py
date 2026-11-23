@@ -20,6 +20,7 @@ from plantgraph.benchmark.v2.rules.control_graph import (
     routes_between_containers,
     sensed_items,
     service_of,
+    split_valves,
 )
 from plantgraph.benchmark.v2.rules.registry import CheckResult, Violation
 from plantgraph.benchmark.v2.rules.view import RuleView
@@ -33,13 +34,21 @@ def _is_liquid_route(view: RuleView, route: tuple[str, ...]) -> bool:
 
 
 def check_one_cv_liquid(view: RuleView) -> CheckResult:
-    """TOG271-ONE-CV-LIQUID: at most one control valve in series between two containers."""
+    """TOG271-ONE-CV-LIQUID: at most one control valve in series between two containers.
+
+    The valves of a temperature split around an exchanger keep the total flow and do not count;
+    each route where one was left out is counted under the exception `split_valve`.
+    """
     # rule TOG271-ONE-CV-LIQUID: one control valve per liquid line between vessels (Toghraei p.271)
     routes = [r for r in routes_between_containers(view) if _is_liquid_route(view, r)]
+    splits = split_valves(view)
     reported: set[tuple[str, ...]] = set()  # parallel spare pumps repeat the same valve pair
+    split_routes = 0
     violations = []
     for route in routes:
-        valves = tuple(n for n in route[1:-1] if is_control_valve(view.graph, n))
+        throttling = tuple(n for n in route[1:-1] if is_control_valve(view.graph, n))
+        valves = tuple(n for n in throttling if n not in splits)
+        split_routes += len(valves) < len(throttling)
         if len(valves) < 2 or valves in reported:
             continue
         reported.add(valves)
@@ -47,7 +56,8 @@ def check_one_cv_liquid(view: RuleView) -> CheckResult:
         violations.append(
             Violation(rule_id="TOG271-ONE-CV-LIQUID", node_id=valves[0], detail=detail)
         )
-    return CheckResult(checked=len(routes), violations=tuple(violations))
+    exceptions = {"split_valve": split_routes} if split_routes else {}
+    return CheckResult(checked=len(routes), violations=tuple(violations), exceptions=exceptions)
 
 
 # ---- TOG267-FE-UPSTREAM-FV ---------------------------------------------------------------------

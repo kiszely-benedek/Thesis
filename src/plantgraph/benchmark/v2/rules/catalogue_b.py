@@ -5,8 +5,6 @@ from __future__ import annotations
 from plantgraph.benchmark.v2.rules.catalogue_support import api, lip1, pending, tog, wired
 from plantgraph.benchmark.v2.rules.registry import HandbookRule, RuleKind
 
-# `pending("unassigned")`: a v2.1 behaviour to cite and test, which design 13 gives to no task
-
 COMPRESSORS = (
     HandbookRule(
         rule_id="TOG319-ANTISURGE-DYNAMIC",
@@ -33,7 +31,7 @@ COMPRESSORS = (
         sources=(api("A.8.3.2 p.45"), tog("p.84")),
         kind=RuleKind.PLACE,
         since="v2.1",
-        check=pending("unassigned"),
+        check=wired("check_compressor_discharge_check", "checks_compressors"),
     ),
     HandbookRule(
         rule_id="API14C-A8-PSV",
@@ -42,7 +40,7 @@ COMPRESSORS = (
         sources=(api("A.8.2.2.1 p.45"),),
         kind=RuleKind.PLACE,
         since="v2.1",
-        check=pending("unassigned"),
+        check=wired("check_compressor_discharge_psv", "checks_compressors"),
     ),
 )
 
@@ -50,11 +48,14 @@ EXCHANGERS = (
     HandbookRule(
         rule_id="TOG207-HX-NO-ISOLATION",
         title="No isolation valves around an exchanger",
-        statement="No isolation valves and no bypass around an exchanger unless it has a spare "
-        "or a cleaning system.",
+        statement="Isolation at an exchanger is company policy (p.207). v2.2 follows the policy "
+        "with no isolation on the process side: no exchanger has blocks on all of its process "
+        "inlets and outlets, and none has a hand bypass around its process side, unless it has an "
+        "installed spare or a cleaning-in-place system. Utility-side valves are outside the rule.",
         sources=(tog("p.207"),),
         kind=RuleKind.FORBID,
         since="v2.1",
+        exception_codes=("has_spare", "cleaning_system", "utility_side_block"),
         check=wired("check_hx_no_isolation", "checks_exchangers"),
     ),
     HandbookRule(
@@ -107,9 +108,11 @@ CONTROL = (
         rule_id="TOG271-ONE-CV-LIQUID",
         title="One control valve in series on a liquid line",
         statement="At most one control valve in series on a liquid-filled line between two "
-        "containers; a flooded vessel counts as pipe.",
-        sources=(tog("p.271"),),
+        "containers; a flooded vessel counts as pipe. The valves of a temperature split around "
+        "an exchanger (bypass valve, or the TOG322 pair) keep the total flow and do not count.",
+        sources=(tog("p.271"), tog("p.321–322")),
         kind=RuleKind.PLANT,
+        exception_codes=("split_valve",),
         check=wired("check_one_cv_liquid", "checks_control"),
     ),
     HandbookRule(
@@ -123,11 +126,13 @@ CONTROL = (
     HandbookRule(
         rule_id="TOG295-INVENTORY-ONCE",
         title="One loop per inventory",
-        statement="A non-flooded liquid container has exactly one level loop; a gas container "
-        "exactly one pressure loop; a flooded container none (Table 15.1, rule 8 on p.270).",
-        sources=(tog("p.295"), tog("p.270")),
+        statement="A non-flooded liquid container has exactly one level loop (an atmospheric tank "
+        "with a level transmitter may have none); a container a process-gas line touches, or "
+        "whose function depends on pressure, exactly one pressure loop, any other at most one; a "
+        "flooded container none (Table 15.1, rule 8 on p.270).",
+        sources=(tog("p.295"), tog("p.270"), tog("p.305")),
         kind=RuleKind.PLANT,
-        exception_codes=("storage_tank_batch", "pressure_floating_on:<id>"),
+        exception_codes=("storage_tank_batch", "pressure_floating_on:<id>", "pressure_optional"),
         check=wired("check_inventory_once", "checks_inventory"),
     ),
     HandbookRule(

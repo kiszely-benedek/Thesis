@@ -13,7 +13,7 @@ from dataclasses import replace
 import networkx as nx
 import pytest
 from plant_invariants import plant_view
-from t9_support import T9_RULES, without_known_failures
+from t9_support import KNOWN_FAILURES_V21, T9_RULES, without_known_failures
 
 from plantgraph.benchmark.v2.rules import checks_rules
 from plantgraph.benchmark.v2.rules.catalogue import rule_by_id
@@ -155,7 +155,21 @@ def _break_spare_naming(view: RuleView) -> RuleView:
     return replace(view, graph=graph)
 
 
+def _without_role(view: RuleView, role: str) -> RuleView:
+    return replace(view, roles={n: r for n, r in view.roles.items() if r != role})
+
+
+def _break_compressor_check(view: RuleView) -> RuleView:
+    return _without_role(view, "compressor_discharge_check")
+
+
+def _break_compressor_psv(view: RuleView) -> RuleView:
+    return _without_role(view, "compressor_discharge_psv")
+
+
 _MUTATIONS: dict[str, Callable[[RuleView], RuleView]] = {
+    "API14C-A8-FSV": _break_compressor_check,
+    "API14C-A8-PSV": _break_compressor_psv,
     "TOG175-PUMP-TRIM": _break_pump_trim,
     "TOG219-PD-RELIEF": _break_pd_relief,
     "TOG219-VESSEL-PSV": _break_vessel_psv,
@@ -186,10 +200,8 @@ def test_verify_plant_reports_every_wired_rule_without_violations() -> None:
     report = verify_plant(_view(1).generated)
     assert report.generator_version == "v2.1"
     assert [row.rule_id for row in report.rows] == _ALL_WIRED
-    known = {r.rule_id for r in without_known_failures(report).rows}
-    assert all(row.violations == 0 for row in report.rows if row.rule_id in known)
     # the T9 rules that fail on v2.1 plants are expected failures (test_rule_checks_t9.py)
-    raise_on_violations(without_known_failures(report))
+    raise_on_violations(without_known_failures(report, KNOWN_FAILURES_V21))
 
 
 def test_a_report_with_a_violation_raises_naming_the_rule() -> None:
