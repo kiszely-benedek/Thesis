@@ -52,17 +52,18 @@ def check_s23(view: RuleView) -> int:
 
 
 def _on_off_letters(view: RuleView, unit_nos: list[int]) -> set[str]:
-    letters: set[str] = set()
+    by_unit = view.cached("on_off_letters_by_unit", lambda: _on_off_letters_by_unit(view))
+    return set().union(*(by_unit.get(str(n), set()) for n in unit_nos))
+
+
+def _on_off_letters_by_unit(view: RuleView) -> dict[str, set[str]]:
+    """Every unit's on-off valve letters, read from the tags in one pass over the graph."""
+    by_unit: dict[str, set[str]] = {}
     for _, data in view.graph.nodes(data=True):
         parsed = parse_tag(data.get("tag") or "")
-        in_train = data.get("unit_id") in {str(n) for n in unit_nos}
-        if (
-            parsed
-            and in_train
-            and item_kind(data["node_class"], parsed.letters) is ItemKind.ON_OFF_VALVE
-        ):
-            letters.add(parsed.letters)
-    return letters
+        if parsed and item_kind(data["node_class"], parsed.letters) is ItemKind.ON_OFF_VALVE:
+            by_unit.setdefault(str(data.get("unit_id")), set()).add(parsed.letters)
+    return by_unit
 
 
 def _check_spare_tags(

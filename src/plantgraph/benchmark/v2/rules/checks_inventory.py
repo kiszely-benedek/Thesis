@@ -14,7 +14,6 @@ loops on one inventory would fight, none would let it drift. Exceptions the chec
 from __future__ import annotations
 
 from plantgraph.benchmark.v2.plan_models import StreamKindV2
-from plantgraph.benchmark.v2.rules.checks_v21_plant import flow
 from plantgraph.benchmark.v2.rules.control_graph import (
     CONTAINER_CLASSES,
     FLOODED_CONTAINER_ROLES,
@@ -41,7 +40,7 @@ def _attached_services(view: RuleView, container: str, skip_trims: bool = False)
     A trim line (a vent with a cap, a thermometer tee) carries no process stream; `skip_trims`
     leaves those out, so a capped vent does not make a vessel a gas container.
     """
-    piping = flow(view.graph)
+    piping = view.piping
     if container not in piping:
         return set()
     edges = [*piping.in_edges(container), *piping.out_edges(container)]

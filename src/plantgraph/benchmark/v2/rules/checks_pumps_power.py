@@ -15,7 +15,7 @@ import networkx as nx
 
 from plantgraph.benchmark.v2.hidden_state import PumpPowerBand
 from plantgraph.benchmark.v2.rules.checks_pumps import nodes_with_role, pumps_of_classes
-from plantgraph.benchmark.v2.rules.checks_v21_plant import CENTRIFUGAL_PUMP, flow, reach
+from plantgraph.benchmark.v2.rules.checks_v21_plant import CENTRIFUGAL_PUMP, reach
 from plantgraph.benchmark.v2.rules.registry import CheckResult, Violation
 from plantgraph.benchmark.v2.rules.view import RuleView
 from plantgraph.benchmark.v2.tags import parse_tag
@@ -44,7 +44,7 @@ def _band_violation(rule_id: str, pump: str) -> Violation:
 
 def _downstream(view: RuleView, pump: str) -> set[str]:
     """The pipe parts after the pump, up to the next equipment item (includes branch lines)."""
-    return reach(flow(view.graph), view.graph, pump, up=False)[0]
+    return reach(view.piping, view.graph, pump, up=False)[0]
 
 
 # ---- TOG177-MINFLOW-NEED -----------------------------------------------------------------------

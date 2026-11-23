@@ -13,7 +13,6 @@ from __future__ import annotations
 
 import networkx as nx
 
-from plantgraph.benchmark.v2.rules.checks_v21_plant import flow
 from plantgraph.benchmark.v2.rules.control_graph import (
     FLOW,
     LEVEL,
@@ -88,7 +87,7 @@ def _flow_devices(view: RuleView, pump: str, route: tuple[str, ...]) -> list[str
 
 
 def _pump_problem(view: RuleView, pump: str) -> str | None:
-    piping = flow(view.graph)
+    piping = view.piping
     every_route = routes_from(piping, pump, lambda n: _ends_a_process_route(view, piping, n))
     routes = [r for r in every_route if _is_process_route(view, r)]
     if not routes:

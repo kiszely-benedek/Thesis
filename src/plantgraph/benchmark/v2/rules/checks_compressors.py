@@ -15,7 +15,7 @@ import networkx as nx
 
 from plantgraph.benchmark.v2.patterns.ports import PatternInstance
 from plantgraph.benchmark.v2.plan_models import StreamKindV2
-from plantgraph.benchmark.v2.rules.checks_v21_plant import flow, reach
+from plantgraph.benchmark.v2.rules.checks_v21_plant import reach
 from plantgraph.benchmark.v2.rules.registry import CheckResult, Violation
 from plantgraph.benchmark.v2.rules.view import RuleView
 from plantgraph.graph.schema import CONTROL_VALVE_BODY_CLASSES, Relation
@@ -39,7 +39,7 @@ class PdStage:
             if kind is StreamKindV2.RECYCLE
         }
         self.recycle_valves = _valves_on_lines(self.graph, recycle_lines)
-        self.after_machine = reach(flow(self.graph), self.graph, self.machine, up=False)[0]
+        self.after_machine = reach(view.piping, self.graph, self.machine, up=False)[0]
         self.has_speed_drive = _is_driven_by_aef(self.graph, self.machine)
 
     def node_class(self, node: str) -> str:
@@ -135,7 +135,7 @@ def _compressors(view: RuleView) -> list[str]:
 
 def _roles_after(view: RuleView, machine: str) -> set[str]:
     """The roles of the pipe parts downstream of the machine, up to the next equipment."""
-    parts = reach(flow(view.graph), view.graph, machine, up=False)[0]
+    parts = reach(view.piping, view.graph, machine, up=False)[0]
     return {view.roles[n] for n in parts if n in view.roles}
 
 

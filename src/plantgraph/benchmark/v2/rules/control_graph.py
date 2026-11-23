@@ -17,7 +17,7 @@ from dataclasses import dataclass
 
 import networkx as nx
 
-from plantgraph.benchmark.v2.rules.checks_v21_plant import flow, reach
+from plantgraph.benchmark.v2.rules.checks_v21_plant import reach
 from plantgraph.benchmark.v2.rules.view import RuleView
 from plantgraph.graph.schema import CONTROL_VALVE_BODY_CLASSES, EQUIPMENT_CLASSES, Relation
 
@@ -170,7 +170,7 @@ def _item_down_the_branch(view: RuleView, start: str) -> str:
 
     A valve between a tee and the exchanger (the main-branch valve of TOG322) is walked past.
     """
-    piping, graph = flow(view.graph), view.graph
+    piping, graph = view.piping, view.graph
     node = start
     while graph.nodes[node]["node_class"] not in EQUIPMENT_CLASSES:
         following = list(piping.successors(node))
@@ -186,7 +186,7 @@ def bypassed_items(view: RuleView, valve: str) -> set[str]:
     An item is skipped when a branch from a part before the valve leads to it and returns to a part
     after the valve.
     """
-    piping, graph = flow(view.graph), view.graph
+    piping, graph = view.piping, view.graph
     before, _ = reach(piping, graph, valve, up=True)
     after, _ = reach(piping, graph, valve, up=False)
     skipped: set[str] = set()
@@ -246,7 +246,7 @@ def routes_from(
 
 def routes_between_containers(view: RuleView) -> list[tuple[str, ...]]:
     """Every pipe route from a container to the next one; flooded items and pumps count as pipe."""
-    piping = flow(view.graph)
+    piping = view.piping
     starts = [n for n in sorted(piping) if is_container(view, n)]
     found = (routes_from(piping, start, lambda n: is_container(view, n)) for start in starts)
     return [route for routes in found for route in routes]

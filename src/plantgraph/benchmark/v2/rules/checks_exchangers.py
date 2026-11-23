@@ -16,7 +16,7 @@ from dataclasses import dataclass
 
 import networkx as nx
 
-from plantgraph.benchmark.v2.rules.checks_v21_plant import flow, reach
+from plantgraph.benchmark.v2.rules.checks_v21_plant import reach
 from plantgraph.benchmark.v2.rules.control_graph import (
     EXCHANGER_CLASSES,
     HEAT_TRANSFER_CLASSES,
@@ -49,7 +49,7 @@ _PSV_INLET_ROLE = "psv_inlet_block"
 
 def _service_around(view: RuleView, node: str) -> str:
     """The service of the pipe a part sits on (read from either neighbour)."""
-    piping = flow(view.graph)
+    piping = view.piping
     for before in piping.predecessors(node):
         return service_of(view.graph, before, node)
     for after in piping.successors(node):
@@ -122,7 +122,7 @@ def temperature_bypass_valves(view: RuleView) -> list[str]:
 
 def _heat_transfer_items_beside(view: RuleView, valve: str) -> set[str]:
     """The exchangers and heaters met in series with `valve`, upstream or downstream."""
-    piping, graph = flow(view.graph), view.graph
+    piping, graph = view.piping, view.graph
     found = reach(piping, graph, valve, up=True)[1] | reach(piping, graph, valve, up=False)[1]
     return {n for n in found if graph.nodes[n]["node_class"] in HEAT_TRANSFER_CLASSES}
 
@@ -197,7 +197,7 @@ def nozzle_runs(view: RuleView, exchanger: str) -> NozzleRuns:
     Vent and drain branches, relief branches and flare (FL) runs belong to other rules and
     are left out. Also read by the pressure-safety check (T10) to find utility-side blocks.
     """
-    piping, graph = flow(view.graph), view.graph
+    piping, graph = view.piping, view.graph
     found = NozzleRuns(process_in=[], process_out=[], utility=[])
     for up, neighbours in (
         (True, piping.predecessors(exchanger)),
@@ -234,12 +234,24 @@ def _is_process_isolated(view: RuleView, exchanger: str) -> bool:
 
 def _line_parts(view: RuleView, neighbours: Iterable[str], up: bool) -> set[str]:
     """The pipe parts of the lines that touch an item: each neighbour and what lies beyond it."""
-    piping, graph = flow(view.graph), view.graph
+    piping, graph = view.piping, view.graph
     parts: set[str] = set()
     for node in neighbours:
         if graph.nodes[node]["node_class"] not in EQUIPMENT_CLASSES:
             parts |= {node, *reach(piping, graph, node, up)[0]}
     return parts
+
+
+def _open_pipe_graph(view: RuleView) -> nx.DiGraph[str]:
+    """The piping without equipment, control valves and station bypasses: hand pipe only."""
+    graph = view.graph
+    open_pipe = [
+        n for n in view.piping
+        if graph.nodes[n]["node_class"] not in EQUIPMENT_CLASSES
+        and not is_control_valve(graph, n)
+        and view.roles.get(n) not in _STATION_BYPASS_ROLES
+    ]  # fmt: skip
+    return view.piping.subgraph(open_pipe)
 
 
 def _manual_bypass(view: RuleView, exchanger: str) -> bool:
@@ -249,21 +261,14 @@ def _manual_bypass(view: RuleView, exchanger: str) -> bool:
     that crosses no equipment skips the exchanger. A control valve on it (the temperature bypass
     of TOG320) makes it a control branch, not an isolation bypass.
     """
-    piping, graph = flow(view.graph), view.graph
+    piping = view.piping
     feeding = _line_parts(view, piping.predecessors(exchanger), up=True)
     fed = _line_parts(view, piping.successors(exchanger), up=False)
-    open_pipe = [
-        n for n in piping
-        if graph.nodes[n]["node_class"] not in EQUIPMENT_CLASSES
-        and not is_control_valve(graph, n)
-        and view.roles.get(n) not in _STATION_BYPASS_ROLES
-    ]  # fmt: skip
-    around = piping.subgraph(open_pipe)
-    return any(
-        nx.has_path(around, start, end)
-        for start in feeding & set(around)
-        for end in (fed & set(around)) - {start}
-    )
+    around = view.cached("open_pipe_graph", lambda: _open_pipe_graph(view))
+    # `n in around` is O(1); `set(around)` would walk the whole plant for every exchanger
+    starts = {n for n in feeding if n in around}
+    ends = {n for n in fed if n in around}
+    return any(nx.has_path(around, start, end) for start in starts for end in ends - {start})
 
 
 def _isolation_problem(view: RuleView, exchanger: str) -> str | None:
@@ -304,7 +309,7 @@ def check_hx_no_isolation(view: RuleView) -> CheckResult:
 
 def _steam_heaters(view: RuleView) -> list[str]:
     """Exchangers a steam pipe feeds directly."""
-    piping = flow(view.graph)
+    piping = view.piping
     return sorted(
         n
         for n, d in view.graph.nodes(data=True)
@@ -315,7 +320,7 @@ def _steam_heaters(view: RuleView) -> list[str]:
 
 def _condensate_mode(view: RuleView, heater: str) -> str | None:
     """How the heater's condensate line ends: `trap`, `trap_station`, `drain_pot`, or None."""
-    piping, graph = flow(view.graph), view.graph
+    piping, graph = view.piping, view.graph
     starts = [b for b in piping.successors(heater) if service_of(graph, heater, b) == _CONDENSATE]
     for start in starts:
         parts, equipment = reach(piping, graph, start, up=False)

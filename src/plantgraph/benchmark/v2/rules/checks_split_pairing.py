@@ -24,7 +24,7 @@ import networkx as nx
 
 from plantgraph.benchmark.v2.hidden_state import RefluxClass
 from plantgraph.benchmark.v2.rules.checks_pumps import nodes_with_role
-from plantgraph.benchmark.v2.rules.checks_v21_plant import flow, reach
+from plantgraph.benchmark.v2.rules.checks_v21_plant import reach
 from plantgraph.benchmark.v2.rules.control_graph import FLOW, LEVEL, loop_of
 from plantgraph.benchmark.v2.rules.registry import CheckResult, Violation
 from plantgraph.benchmark.v2.rules.view import RuleView
@@ -67,7 +67,7 @@ def _stream_control(view: RuleView, parts: set[str]) -> str | None:
 
 
 def _split_problem(view: RuleView, split: str) -> str | None:
-    piping, graph = flow(view.graph), view.graph
+    piping, graph = view.piping, view.graph
     streams = {}  # first part of each branch -> (parts of the branch, equipment it reaches)
     for first in piping.successors(split):
         parts, equipment = reach(piping, graph, first, up=False)

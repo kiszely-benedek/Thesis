@@ -11,7 +11,6 @@ from __future__ import annotations
 import networkx as nx
 
 from plantgraph.benchmark.v2.plan_models import LineSpec, StreamKindV2
-from plantgraph.benchmark.v2.rules.checks_v21_plant import flow
 from plantgraph.benchmark.v2.rules.control_graph import is_control_valve
 from plantgraph.benchmark.v2.rules.registry import CheckResult, Violation
 from plantgraph.benchmark.v2.rules.view import RuleView
@@ -51,7 +50,7 @@ def _is_safety_valve(node_class: str) -> bool:
 
 def _pipe_to_enclosure(view: RuleView, psv: str) -> list[str]:
     """The parts between the PSV and the item or tee it is tapped from, nearest the PSV first."""
-    piping, graph = flow(view.graph), view.graph
+    piping, graph = view.piping, view.graph
     between: list[str] = []
     node = psv
     while True:
@@ -184,7 +183,7 @@ def check_stream_closure(view: RuleView) -> CheckResult:
     unit is not an end. `checked` is the number of dead ends found.
     """
     # rule PLT-STREAM-CLOSURE: a source and a sink item, or a declared end (Toghraei 2019 p.24)
-    piping = flow(view.graph)
+    piping = view.piping
     ends = _dead_ends(piping, view.graph)
     declared: dict[str, int] = {}
     violations = []

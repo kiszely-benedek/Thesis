@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import networkx as nx
 
-from plantgraph.benchmark.v2.rules.checks_v21_plant import comes_before, flow
+from plantgraph.benchmark.v2.rules.checks_v21_plant import comes_before
 from plantgraph.benchmark.v2.rules.control_graph import (
     FLOW,
     LIQUID_SERVICES,
@@ -69,7 +69,7 @@ def _has_path(piping: nx.DiGraph[str], source: str, target: str) -> bool:
 
 def _is_upstream(view: RuleView, element: str, valve: str) -> bool:
     """A pipe path leads from the element to the valve, and none leads back without equipment."""
-    piping = flow(view.graph)
+    piping = view.piping
     leads_to_valve = _has_path(piping, element, valve)
     return leads_to_valve and not comes_before(piping, view.graph, valve, element)
 

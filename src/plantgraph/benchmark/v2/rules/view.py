@@ -8,7 +8,9 @@ the DEXPI model: it still carries each part's role, which the system under test 
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
+from typing import Any, TypeVar, cast
 
 import networkx as nx
 from pydexpi.dexpi_classes.pydantic_classes import DexpiModel
@@ -20,6 +22,9 @@ from plantgraph.benchmark.v2.plan_models import StreamKindV2
 from plantgraph.benchmark.v2.planner import PlantPlanV2
 from plantgraph.benchmark.v2.record_v22 import GenerationRecordV22
 from plantgraph.benchmark.v2.rules.oracle_graph import GraphPlantBuilderV2
+from plantgraph.graph.schema import Relation
+
+T = TypeVar("T")
 
 
 @dataclass(frozen=True)
@@ -30,6 +35,30 @@ class RuleView:
     graph: nx.DiGraph[str]
     roles: dict[str, str]
     _kind_cache: dict[str, StreamKindV2] = field(default_factory=dict, repr=False, compare=False)
+    # init=False: `replace(view, graph=...)` (the mutation tests) must start with an empty memo,
+    # not inherit one built from the old graph
+    _memo: dict[str, Any] = field(default_factory=dict, init=False, repr=False, compare=False)
+
+    def cached(self, key: str, build: Callable[[], T]) -> T:
+        """Build a derived structure once per view; a check that needs it per node asks here.
+
+        The view's graph is never changed after it is built, so the first result stays valid.
+        """
+        if key not in self._memo:
+            self._memo[key] = build()
+        return cast(T, self._memo[key])
+
+    @property
+    def piping(self) -> nx.DiGraph[str]:
+        """Only the piping edges (`send_to`), built once per view."""
+        return self.cached("piping", self._build_piping)
+
+    def _build_piping(self) -> nx.DiGraph[str]:
+        return nx.DiGraph(
+            (s, t)
+            for s, t, d in self.graph.edges(data=True)
+            if d["relation"] == Relation.SEND_TO.value
+        )
 
     @property
     def plan(self) -> PlantPlanV2:

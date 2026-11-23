@@ -18,7 +18,6 @@ from plantgraph.benchmark.v2.rules.checks_v21_plant import (
     CENTRIFUGAL_PUMP,
     POSITIVE_DISPLACEMENT_PUMPS,
     comes_before,
-    flow,
     reach,
 )
 from plantgraph.benchmark.v2.rules.registry import CheckResult, Violation
@@ -38,7 +37,7 @@ def pumps_of_classes(view: RuleView, classes: Iterable[str]) -> list[str]:
 
 def _downstream(view: RuleView, pump: str) -> set[str]:
     """The pipe parts after the pump, up to the next equipment item."""
-    return reach(flow(view.graph), view.graph, pump, up=False)[0]
+    return reach(view.piping, view.graph, pump, up=False)[0]
 
 
 def nodes_with_role(view: RuleView, nodes: Iterable[str], roles: Iterable[str]) -> list[str]:
@@ -124,7 +123,7 @@ def check_pd_no_throttle(view: RuleView) -> CheckResult:
 
 def _takeoff_problems(view: RuleView, pump: str) -> list[str]:
     """One text per min-flow tee that lies between the pump's check valve and its block valve."""
-    piping, graph = flow(view.graph), view.graph
+    piping, graph = view.piping, view.graph
     parts = _downstream(view, pump)
     checks = nodes_with_role(view, parts, ["discharge_check"])
     blocks = nodes_with_role(view, parts, ["discharge_block"])

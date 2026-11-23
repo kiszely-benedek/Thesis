@@ -18,7 +18,7 @@ import re
 from collections import Counter
 
 from plantgraph.benchmark.v2.rules.checks_pumps import nodes_with_role, pumps_of_classes
-from plantgraph.benchmark.v2.rules.checks_v21_plant import CENTRIFUGAL_PUMP, flow, reach
+from plantgraph.benchmark.v2.rules.checks_v21_plant import CENTRIFUGAL_PUMP, reach
 from plantgraph.benchmark.v2.rules.registry import CheckResult, Violation
 from plantgraph.benchmark.v2.rules.view import RuleView
 from plantgraph.benchmark.v2.tags import parse_tag
@@ -45,7 +45,7 @@ _BATTERY_LIMIT_ARRANGEMENTS = (
 
 def _battery_limit_roles(view: RuleView, blind: str) -> Counter[str]:
     """The roles of the blind and of the battery-limit valves in the pipe run just before it."""
-    piping = flow(view.graph)
+    piping = view.piping
     roles = Counter([_BLIND])
     node = blind
     while len(preds := list(piping.predecessors(node))) == 1:
@@ -81,7 +81,7 @@ _PUMP_CLASSES = (CENTRIFUGAL_PUMP, "ReciprocatingPump", "RotaryPump")
 
 def _nozzle_parts(view: RuleView, pump: str) -> tuple[bool, bool]:
     """(has a suction reducer, has a discharge enlarger) next to the pump's nozzles."""
-    piping = flow(view.graph)
+    piping = view.piping
     before = nodes_with_role(view, piping.predecessors(pump), [_SUCTION_REDUCER])
     after = nodes_with_role(view, piping.successors(pump), [_DISCHARGE_ENLARGER])
     return bool(before), bool(after)
@@ -133,7 +133,7 @@ _STATION_INNER_ROLES = frozenset({"cv_reducer", "cv_drain_tee"})
 
 def _station_block(view: RuleView, body: str) -> str | None:
     """The upstream block valve of the station around control valve `body`; None if it is bare."""
-    piping = flow(view.graph)
+    piping = view.piping
     node = body
     while len(preds := list(piping.predecessors(node))) == 1:
         node = preds[0]
@@ -162,7 +162,7 @@ def _train_of(view: RuleView, node: str) -> int:
 
 def _has_bypass(view: RuleView, block: str) -> bool:
     """True when the station's block valve hangs off the tee that starts a bypass."""
-    piping = flow(view.graph)
+    piping = view.piping
     return any(view.roles.get(pred) == "cv_tee_in" for pred in piping.predecessors(block))
 
 
@@ -218,7 +218,7 @@ def _valve_problem(view: RuleView, valve: str) -> str | None:
 
 
 def _fuel_problem(view: RuleView, furnace: str) -> str | None:
-    upstream, _ = reach(flow(view.graph), view.graph, furnace, up=True)
+    upstream, _ = reach(view.piping, view.graph, furnace, up=True)
     valves = nodes_with_role(view, upstream, FUEL_SWITCHING_ROLES)
     if len(valves) not in (1, 2):
         return f"expected one or two switching valves on the fuel line, found {len(valves)}"

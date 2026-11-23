@@ -15,7 +15,7 @@ flow, so a pump's discharge is downstream of it and its suction upstream.
 from __future__ import annotations
 
 from collections import deque
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 
 import networkx as nx
 
@@ -93,7 +93,7 @@ def _with_role(view: RuleView, nodes: Iterable[str], role: str) -> list[str]:
 
 def check_s1(view: RuleView) -> int:
     """S1: a centrifugal pump draws through a block valve, then a strainer (rule L2)."""
-    piping, checked = flow(view.graph), 0
+    piping, checked = view.piping, 0
     for pump in _pumps(view, [CENTRIFUGAL_PUMP]):
         upstream, vessels = reach(piping, view.graph, pump, up=True)
         if not vessels:
@@ -119,7 +119,7 @@ def check_s2(view: RuleView) -> int:
 
     Version-scoped: on a v2.2 plant a reciprocating pump has no external check, only the block.
     """
-    piping, checked = flow(view.graph), 0
+    piping, checked = view.piping, 0
     for pump in _pumps(view, _PUMPS):
         downstream, _ = reach(piping, view.graph, pump, up=False)
         if _has_internal_check(view, pump):
@@ -138,7 +138,7 @@ def check_s2(view: RuleView) -> int:
 
 def check_s3(view: RuleView) -> int:
     """S3: a positive-displacement pump has a relief from before its check valve to its suction."""
-    piping, checked = flow(view.graph), 0
+    piping, checked = view.piping, 0
     for pump in _pumps(view, POSITIVE_DISPLACEMENT_PUMPS):
         upstream, _ = reach(piping, view.graph, pump, up=True)
         downstream, _ = reach(piping, view.graph, pump, up=False)
@@ -160,7 +160,7 @@ def check_s3(view: RuleView) -> int:
 
 def check_s5(view: RuleView) -> int:
     """S5: a control-valve station is two block valves and a bypass between two tees (rule L9)."""
-    piping, checked = flow(view.graph), 0
+    piping, checked = view.piping, 0
     for bypass in sorted(n for n, r in view.roles.items() if r == "cv_bypass_valve"):
         (tee_in,) = piping.predecessors(bypass)
         (tee_out,) = piping.successors(bypass)
@@ -178,7 +178,7 @@ def check_s5(view: RuleView) -> int:
 
 def check_s6(view: RuleView) -> int:
     """S6: a vessel or column reaches a safety valve over pipes alone (L11); drain pot exempt."""
-    piping, checked = flow(view.graph), 0
+    piping, checked = view.piping, 0
     for vessel in sorted(view.graph.nodes):
         data = view.graph.nodes[vessel]
         if data["node_class"] not in PSV_VESSEL_CLASSES or view.roles.get(vessel) == S6_EXEMPT_ROLE:
@@ -226,7 +226,7 @@ def check_s11(view: RuleView) -> int:
     Parallel: each member has the same equipment next to it on both sides, and none is fed by
     another. The minimum-flow recycle of the duty pump is left out: only that pump has one.
     """
-    piping = _without_recycles(view, flow(view.graph))
+    piping = _without_recycles(view, view.piping)
     records = view.generated.record.spare_sets
     for record in records:
         members = record.node_ids
@@ -271,13 +271,19 @@ def _check_phases(view: RuleView) -> int:
     return checked
 
 
+def _not_in(blocked: set[str]) -> Callable[[str], bool]:
+    return lambda node: node not in blocked
+
+
 def _check_no_pump_loops(view: RuleView) -> int:
-    piping, checked = flow(view.graph), 0
+    piping, checked = view.piping, 0
     only_pipes = _without_recycles(view, piping)
+    equipment = {n for n in only_pipes if _is_equipment(view.graph, n)}  # once, not per pair
     for pump in _pumps(view, _PUMPS):
         for vessel in reach(piping, view.graph, pump, up=True)[1] - {pump}:
-            blocked = {n for n in only_pipes if _is_equipment(view.graph, n)} - {pump, vessel}
-            rest = only_pipes.subgraph(set(only_pipes) - blocked)
+            blocked = equipment - {pump, vessel}
+            # a lazy view (no copy): the graph is large and this runs once per pump and vessel
+            rest = nx.subgraph_view(only_pipes, filter_node=_not_in(blocked))
             assert not nx.has_path(rest, pump, vessel), f"{pump} discharges to its suction {vessel}"
             checked += 1
     return checked
