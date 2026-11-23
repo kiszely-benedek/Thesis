@@ -14,6 +14,7 @@ from collections.abc import Sequence
 
 from plantgraph.benchmark.v2.config_v22 import GeneratorConfigV22
 from plantgraph.benchmark.v2.deck import VariantDecks
+from plantgraph.benchmark.v2.documents import DocumentRecord
 from plantgraph.benchmark.v2.flowsheet import UnitSlot
 from plantgraph.benchmark.v2.network_models import (
     INTERAREA,
@@ -41,6 +42,7 @@ def add_networks(
     instances: Sequence[PatternInstance],
     trims: Sequence[TrimContext],
     trains: Sequence[TrainRecord],
+    documents: Sequence[DocumentRecord],
     decks: VariantDecks,
 ) -> tuple[list[PatternInstance], list[NetworkUnit]]:
     """The instances with their tie-ins, and the network and interarea units, by unit number."""
@@ -48,11 +50,11 @@ def add_networks(
     tied, crossings = add_network_ties(
         instances, trims, train_nos, config.handbook.network_services, config.sheets
     )
-    headers = build_network_units(config, trains, decks, crossings)
+    headers = build_network_units(config, trains, documents, decks, crossings)
     if "FL" in config.handbook.network_services:
         every_plan = [*(instance.plan for instance in tied), *(unit.plan for unit in headers)]
         assert_no_open_relief(every_plan)
-    opened, interarea = _add_interarea(config, tied, train_nos, trains, decks)
+    opened, interarea = _add_interarea(config, tied, train_nos, trains, documents, decks)
     return opened, sorted([*headers, *interarea], key=lambda unit: unit.unit_no)
 
 
@@ -61,6 +63,7 @@ def _add_interarea(
     instances: Sequence[PatternInstance],
     train_nos: Sequence[int],
     trains: Sequence[TrainRecord],
+    documents: Sequence[DocumentRecord],
     decks: VariantDecks,
 ) -> tuple[list[PatternInstance], list[NetworkUnit]]:
     per_area = config.handbook.trains_per_area
@@ -73,7 +76,7 @@ def _add_interarea(
     if not joins:  # one area (a ~100-sheet plant): no border, no interarea sheet
         return list(instances), []
     ctx = network_context(
-        config, trains, decks, 1, network_unit_no(PLANT_INTERAREA_AREA, INTERAREA)
+        config, trains, documents, decks, 1, network_unit_no(PLANT_INTERAREA_AREA, INTERAREA)
     )
     capacity = config.handbook.max_tie_ins_per_network_sheet
     unit = interarea_unit(ctx, 1, joins, capacity)

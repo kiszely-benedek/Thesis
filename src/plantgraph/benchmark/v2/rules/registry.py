@@ -78,7 +78,7 @@ class HandbookRule(_Frozen):
     status: RuleStatus = RuleStatus.ENCODED
     since: Literal["v2.1", "v2.2"] = "v2.2"  # v2.1: already true, now cited and tested
     conflict: ConflictNote | None = None
-    sampling_unit: Literal["train", "item"] | None = None  # ALTERNATIVE rules only
+    sampling_unit: Literal["document", "item"] | None = None  # ALTERNATIVE rules only
     declared_parameters: tuple[str, ...] = ()  # config paths of the declared weights
     exception_codes: tuple[str, ...] = ()  # the only allowed reasons for the rule to be absent
     check: str | None = None  # dotted path, or `pending:<task>`; None iff DEFERRED

@@ -161,7 +161,7 @@ def test_generation_raises_on_an_open_end_now_that_nothing_is_owed(
     monkeypatch.setattr(
         planner,
         "add_networks",
-        lambda config, slots, instances, trims, trains, decks: (instances, []),
+        lambda config, slots, instances, trims, trains, documents, decks: (instances, []),
     )
     with pytest.raises(RuleViolationError, match="PLT-STREAM-CLOSURE"):
         generate_plant_v2(_config_with_open_ends())

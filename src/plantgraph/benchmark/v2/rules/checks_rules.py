@@ -13,6 +13,7 @@ import re
 from collections.abc import Callable
 
 from plantgraph.benchmark.v2.rules import checks_v21
+from plantgraph.benchmark.v2.rules.checks_documents import check_document_conventions
 from plantgraph.benchmark.v2.rules.registry import CheckResult, Violation
 from plantgraph.benchmark.v2.rules.view import RuleView
 
@@ -96,5 +97,5 @@ def check_automatic_valve_letters(view: RuleView) -> CheckResult:
 
 
 def check_spare_naming(view: RuleView) -> CheckResult:
-    """TOG28-SPARE-NAMING: S23, one naming convention per train."""
-    return _run("TOG28-SPARE-NAMING", view, checks_v21.check_s23)
+    """TOG28-SPARE-NAMING: S23 per train, and every train keeps its document's convention."""
+    return _run("TOG28-SPARE-NAMING", view, checks_v21.check_s23, check_document_conventions)

@@ -37,7 +37,10 @@ def test_a_v22_plant_with_every_knob_off_equals_the_v21_plant_of_the_same_seed(s
     assert serializer.export_to_bytes(v22.model) == serializer.export_to_bytes(v21.model)
     # the record differs in the config JSON (version, handbook group) and the added hidden state
     same_gold = v21.record.model_dump(exclude={"generator_config"})
-    assert v22.record.model_dump(exclude={"generator_config", "hidden_state"}) == same_gold
+    assert (
+        v22.record.model_dump(exclude={"generator_config", "hidden_state", "documents"})
+        == same_gold
+    )
     assert v22.record.seed == v21.record.seed
     assert isinstance(v22.record, GenerationRecordV22)
     assert v22.record.hidden_state == HiddenDesignState()

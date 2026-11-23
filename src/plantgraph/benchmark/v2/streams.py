@@ -36,6 +36,15 @@ def handbook_train_rng(seed: int, train_no: int, rule: str) -> random.Random:
     return random.Random(f"{seed}:train{train_no}:handbook:{rule}")
 
 
+def handbook_document_rng(seed: int, document_no: int, rule: str) -> random.Random:
+    """One company convention's stream for a whole document (design 5), from the document alone.
+
+    The name has no train or unit in it, so a document's draws never depend on how many trains
+    the plant has, and no v2.1 stream is read.
+    """
+    return random.Random(f"{seed}:document{document_no}:handbook:{rule}")
+
+
 def train_rng(seed: int, train_no: int) -> random.Random:
     """One train's conventions (on-off letter, spare naming)."""
     return random.Random(f"{seed}:train:{train_no}")

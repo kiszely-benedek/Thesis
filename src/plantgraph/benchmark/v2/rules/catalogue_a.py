@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from plantgraph.benchmark.v2.rules.catalogue_support import api, lip1, pending, tog, wired
+from plantgraph.benchmark.v2.rules.catalogue_support import api, lip1, tog, wired
 from plantgraph.benchmark.v2.rules.registry import ConflictNote, HandbookRule, RuleKind
 
 IDENTIFICATION = (
@@ -10,23 +10,26 @@ IDENTIFICATION = (
         rule_id="TOG28-SPARE-NAMING",
         title="Spare naming convention",
         statement="Installed spares are tagged P-125A/B, or as unrelated numbers P-125/P-126; "
-        "one convention per train.",
+        "one convention per document (a contractor's drawing set).",
         sources=(tog("p.28"), lip1("§1.1 PDF p.76")),
         kind=RuleKind.ALTERNATIVE,
         since="v2.1",
-        sampling_unit="train",
+        sampling_unit="document",
         check=wired("check_spare_naming"),
     ),
     HandbookRule(
         rule_id="TOG113-MANUAL-VALVE-TAGS",
-        title="Manual valves tagged or untagged per train",
-        statement="Within a train, either every manual valve carries a tag or none does; "
+        title="Manual valves tagged or untagged per document",
+        statement="Within a document, either every manual valve carries a tag or none does; "
         "automatic valves, safety valves and instruments are always tagged.",
         sources=(tog("p.113"),),
         kind=RuleKind.ALTERNATIVE,
-        sampling_unit="train",
-        declared_parameters=("handbook.p_untagged_manual_train",),
-        check=pending("T6"),
+        sampling_unit="document",
+        declared_parameters=(
+            "handbook.p_untagged_manual_document",
+            "handbook.document_untagged",
+        ),
+        check=wired("check_manual_valve_tags", "checks_documents"),
     ),
     HandbookRule(
         rule_id="LIP1-1.1-SHARED-LOOP-NUMBER",

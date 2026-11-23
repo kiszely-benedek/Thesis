@@ -38,7 +38,10 @@ def _plan(seed: int) -> PlantPlanV2:
 def _networks_off() -> Iterator[None]:
     """The planner without the network pass: the plan the boundary pass left (T7a's state)."""
     original = planner.add_networks
-    planner.add_networks = lambda config, slots, instances, trims, trains, decks: (instances, [])
+    planner.add_networks = lambda config, slots, instances, trims, trains, documents, decks: (
+        instances,
+        [],
+    )
     try:
         yield
     finally:

@@ -58,8 +58,12 @@ PRESSURE_VESSEL_ROLE_CODES: dict[str, str] = {"drum": "V", "reactor": "R", "refl
 EQUIPMENT_TYPE_CODES: frozenset[str] = _prefixes(EQUIPMENT_CLASSES) | frozenset(
     PRESSURE_VESSEL_ROLE_CODES.values()
 )
+#: The valve classes a hand operates or that check flow. A loop valve shares a body class with a
+#: manual one, so this is "classes that may be manual"; the trims that draw a loop valve tag it
+#: themselves and never ask whether a document leaves its manual valves untagged.
+MANUAL_VALVE_CLASSES: frozenset[str] = OPERATED_VALVE_CLASSES | _CHECK_CLASSES
 #: Manual valves and check valves: `GTV`, `GV`, `BV`, `CHV`, ...
-VALVE_CODES: frozenset[str] = _prefixes(OPERATED_VALVE_CLASSES | _CHECK_CLASSES)
+VALVE_CODES: frozenset[str] = _prefixes(MANUAL_VALVE_CLASSES)
 #: Safety devices: `PSV`, `PSE`, `PVSV`, `FA`.
 SAFETY_CODES: frozenset[str] = _prefixes(VALVE_CLASSES - OPERATED_VALVE_CLASSES - _CHECK_CLASSES)
 #: Tagged fittings that are not drawn as instruments: `STR`, `FO`, `ST`, `SG`, `MX`, `SB`, `SL`.
@@ -302,7 +306,11 @@ SPARE_NAMING_WEIGHTS = V21_SPARE_NAMING_WEIGHTS
 
 
 class TrainConventions(BaseModel):
-    """The two naming conventions of one train; every tag of the train follows them."""
+    """The two naming conventions of one train; every tag of the train follows them.
+
+    On a v2.2 plant they are the train's document's (`documents.py`): the v2.1 draw per train is
+    still taken, but its value is replaced.
+    """
 
     model_config = ConfigDict(frozen=True)
 

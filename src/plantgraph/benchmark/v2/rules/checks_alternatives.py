@@ -14,9 +14,9 @@ when the flame sensor sees no flame.
 
 from __future__ import annotations
 
-import re
 from collections import Counter
 
+from plantgraph.benchmark.v2.rules.checks_documents import document_of_node
 from plantgraph.benchmark.v2.rules.checks_pumps import nodes_with_role, pumps_of_classes
 from plantgraph.benchmark.v2.rules.checks_v21_plant import CENTRIFUGAL_PUMP, reach
 from plantgraph.benchmark.v2.rules.registry import CheckResult, Violation
@@ -126,7 +126,6 @@ def check_pump_reducers(view: RuleView) -> CheckResult:
 
 # ---- TOG122-PV-NO-BYPASS -----------------------------------------------------------------------
 
-_UNIT_OF_NODE = re.compile(r"^u(\d+)-")
 #: parts that may sit between a station's upstream block valve and its control valve
 _STATION_INNER_ROLES = frozenset({"cv_reducer", "cv_drain_tee"})
 
@@ -152,45 +151,37 @@ def _pv_bodies(view: RuleView) -> list[str]:
     return [n for n, parsed in tags.items() if parsed is not None and parsed.letters == wanted]
 
 
-def _train_of(view: RuleView, node: str) -> int:
-    match = _UNIT_OF_NODE.match(node)
-    if match is None:
-        raise ValueError(f"expected a node id with a unit prefix like 'u3-t12', got {node!r}")
-    unit_no = int(match.group(1))
-    return next(unit.train_no for unit in view.generated.record.units if unit.unit_no == unit_no)
-
-
 def _has_bypass(view: RuleView, block: str) -> bool:
     """True when the station's block valve hangs off the tee that starts a bypass."""
     piping = view.piping
     return any(view.roles.get(pred) == "cv_tee_in" for pred in piping.predecessors(block))
 
 
-def pv_stations_by_train(view: RuleView) -> dict[int, dict[bool, list[str]]]:
-    """Train -> has a bypass -> the control valves of its pressure-control stations."""
+def pv_stations_by_document(view: RuleView) -> dict[int, dict[bool, list[str]]]:
+    """Document -> has a bypass -> the control valves of its pressure-control stations."""
     stations: dict[int, dict[bool, list[str]]] = {}
     for body in _pv_bodies(view):
         block = _station_block(view, body)
         if block is not None:  # a bare valve is not a station
-            in_train = stations.setdefault(_train_of(view, body), {True: [], False: []})
-            in_train[_has_bypass(view, block)].append(body)
+            in_document = stations.setdefault(document_of_node(view, body), {True: [], False: []})
+            in_document[_has_bypass(view, block)].append(body)
     return stations
 
 
 def check_pv_no_bypass(view: RuleView) -> CheckResult:
-    """TOG122-PV-NO-BYPASS: within a train every pressure-control station has a bypass, or none."""
+    """TOG122-PV-NO-BYPASS: within a document every PV station has a bypass, or none does."""
     if not view.handbook_enabled:
         return _NOT_APPLICABLE
     # rule TOG122-PV-NO-BYPASS: a company may give PV stations no bypass (Toghraei 2019 p.122)
-    stations = pv_stations_by_train(view)
+    stations = pv_stations_by_document(view)
     violations = [
         _violation(
             "TOG122-PV-NO-BYPASS",
             split[False][0],
-            f"expected train {train} to draw its PV stations all with or all without a bypass, "
-            f"found {len(split[True])} with and {len(split[False])} without",
+            f"expected document {document} to draw its PV stations all with or all without a "
+            f"bypass, found {len(split[True])} with and {len(split[False])} without",
         )
-        for train, split in sorted(stations.items())
+        for document, split in sorted(stations.items())
         if split[True] and split[False]
     ]
     checked = sum(len(split[True]) + len(split[False]) for split in stations.values())

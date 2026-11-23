@@ -19,6 +19,12 @@ from plantgraph.benchmark.v2.boundary import close_plant_boundary
 from plantgraph.benchmark.v2.config import GeneratorConfigV2
 from plantgraph.benchmark.v2.config_v22 import GeneratorConfigV22
 from plantgraph.benchmark.v2.deck import VariantDecks
+from plantgraph.benchmark.v2.documents import (
+    DocumentRecord,
+    document_of_train,
+    draw_documents,
+    trains_with_document_conventions,
+)
 from plantgraph.benchmark.v2.flowsheet import (
     SLOT_TITLES,
     OpenOut,
@@ -74,6 +80,8 @@ class PlantPlanV2(BaseModel):
     #: v2.2 only: the network header units and interarea units, written after every process unit.
     #: Left out of dumps so a v2.1 plan digest stays byte-identical (design 9)
     network_units: tuple[NetworkUnit, ...] = Field(default=(), exclude=True)
+    #: v2.2 only: the conventions of each document; left out of dumps for the same reason
+    documents: tuple[DocumentRecord, ...] = Field(default=(), exclude=True)
 
     def write(self, builder: PlantBuilderV2) -> None:
         """Add every unit, in unit order, so a joined line finds its source already written."""
@@ -116,13 +124,17 @@ class PlantPlanV2(BaseModel):
 def plan_plant(config: GeneratorConfigV2) -> PlantPlanV2:
     """Plan a plant of `config.n_units` units; same config, same plan."""
     slots = draw_flowsheet(config.seed, config.n_units, config.flowsheet, available_patterns())
+    # the v2.1 per-train draws are always taken; a v2.2 plant then ignores their values (design 5)
     trains = draw_train_records(config.seed, slots[-1].train_no)
+    documents = _draw_documents(config, slots[-1].train_no)
+    if documents:
+        trains = trains_with_document_conventions(trains, documents, _per_document(config))
     decks = VariantDecks(config.seed, all_deck_variants(config.patterns, config.trims))
     open_outs: tuple[OpenOut, ...] = ()
     instances: list[PatternInstance] = []
     trims: list[TrimContext] = []
     for position, slot in enumerate(slots):
-        built, trim = _build_unit(config, slot, trains, decks, open_outs)
+        built, trim = _build_unit(config, slot, trains, documents, decks, open_outs)
         wired, open_outs = wire(built, slot.unit_no, open_outs, slot.train_no)
         if _closes_core_loop(config, slot, slots[position - 1] if position else None):
             wired, open_outs = close_recycle_loop(instances[-1], wired, slot.unit_no, open_outs)
@@ -132,7 +144,9 @@ def plan_plant(config: GeneratorConfigV2) -> PlantPlanV2:
     if _is_handbook(config):
         # the joins are final only now, so this is the first moment a plant-boundary end is known
         instances = close_plant_boundary(instances, trims, MAIN_LINE_STYLE)
-        instances, network_units = _with_networks(config, slots, instances, trims, trains, decks)
+        instances, network_units = _with_networks(
+            config, slots, instances, trims, trains, documents, decks
+        )
         # last, so the battery-limit and make-up valves the boundary pass added are positioned too
         instances = _with_valve_positions(config, instances)
         network_units = _with_unit_positions(config, network_units)
@@ -150,6 +164,7 @@ def plan_plant(config: GeneratorConfigV2) -> PlantPlanV2:
         units=tuple(units),
         open_stub_count=len(open_outs),
         network_units=tuple(network_units),
+        documents=documents,
     )
 
 
@@ -158,17 +173,31 @@ def _is_handbook(config: GeneratorConfigV2) -> bool:
     return isinstance(config, GeneratorConfigV22) and config.handbook.enabled
 
 
+def _draw_documents(config: GeneratorConfigV2, n_trains: int) -> tuple[DocumentRecord, ...]:
+    """The documents of a v2.2 plant with the handbook on; none for v2.1 and knobs-off plants."""
+    if not isinstance(config, GeneratorConfigV22) or not config.handbook.enabled:
+        return ()
+    return draw_documents(config, n_trains)
+
+
+def _per_document(config: GeneratorConfigV2) -> int:
+    if not isinstance(config, GeneratorConfigV22):  # unreachable: only v2.2 has documents
+        raise ValueError(f"expected a v2.2 config for documents, got {type(config).__name__}")
+    return config.handbook.trains_per_document
+
+
 def _with_networks(
     config: GeneratorConfigV2,
     slots: Sequence[UnitSlot],
     instances: list[PatternInstance],
     trims: list[TrimContext],
     trains: tuple[TrainRecord, ...],
+    documents: tuple[DocumentRecord, ...],
     decks: VariantDecks,
 ) -> tuple[list[PatternInstance], list[NetworkUnit]]:
     if not isinstance(config, GeneratorConfigV22):  # unreachable: only handbook plants call this
         raise ValueError(f"expected a v2.2 config for networks, got {type(config).__name__}")
-    return add_networks(config, slots, instances, trims, trains, decks)
+    return add_networks(config, slots, instances, trims, trains, documents, decks)
 
 
 def _with_unit_positions(config: GeneratorConfigV2, units: list[NetworkUnit]) -> list[NetworkUnit]:
@@ -197,6 +226,7 @@ def _build_unit(
     config: GeneratorConfigV2,
     slot: UnitSlot,
     trains: tuple[TrainRecord, ...],
+    documents: tuple[DocumentRecord, ...],
     decks: VariantDecks,
     open_outs: tuple[OpenOut, ...],
 ) -> tuple[PatternInstance, TrimContext]:
@@ -212,6 +242,15 @@ def _build_unit(
         decks,
         MAIN_LINE_STYLE,
         waiting_streams=waiting,
-        train_no=slot.train_no,
+        document=_document_of(config, documents, slot.train_no),
     )
     return build_pattern(slot.pattern_id, ctx), ctx.trim
+
+
+def _document_of(
+    config: GeneratorConfigV2, documents: tuple[DocumentRecord, ...], train_no: int
+) -> DocumentRecord | None:
+    """The document a train belongs to; None on a plant without documents (v2.1)."""
+    if not documents:
+        return None
+    return documents[document_of_train(train_no, _per_document(config)) - 1]

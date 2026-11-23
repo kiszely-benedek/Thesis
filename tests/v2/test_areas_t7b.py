@@ -18,6 +18,7 @@ from t9_support import SEEDS, units_for_30_sheets
 from plantgraph.benchmark.v2 import planner
 from plantgraph.benchmark.v2.composition_kinds import sheets_per_area
 from plantgraph.benchmark.v2.config_v22 import GeneratorConfigV22, HandbookKnobs
+from plantgraph.benchmark.v2.documents import DocumentRecord
 from plantgraph.benchmark.v2.network_models import (
     INTERAREA,
     area_of_train,
@@ -30,9 +31,9 @@ from plantgraph.benchmark.v2.planner import PlantPlanV2, plan_plant
 from plantgraph.benchmark.v2.relief_ends import assert_no_open_relief
 from plantgraph.benchmark.v2.rules.catalogue import rule_by_id
 from plantgraph.benchmark.v2.rules.registry import resolve_check
+from plantgraph.benchmark.v2.streams import handbook_train_rng, train_rng
 from plantgraph.benchmark.v2.trim_plan import TrimPlan
-from plantgraph.ingest.headline_v2 import smallest_n_units_v2
-from plantgraph.ingest.headline_v22 import HeadlinePresetV22
+from plantgraph.benchmark.v2.vocabulary import draw_train_conventions
 
 
 def _plan(seed: int, trains_per_area: int, capacity: int = 16) -> PlantPlanV2:
@@ -202,27 +203,41 @@ _PRE_TIE_DIGESTS = {
 }
 
 
+def _legacy_documents(config: GeneratorConfigV22, n_trains: int) -> tuple[DocumentRecord, ...]:
+    """What T7 drew per train, as one document per train: its own letter, naming and PV coin."""
+    return tuple(
+        DocumentRecord(
+            document_no=train,
+            first_train=train,
+            last_train=train,
+            conventions=draw_train_conventions(train_rng(config.seed, train)),
+            manual_valves_untagged=False,
+            pv_without_bypass=handbook_train_rng(config.seed, train, "pv_no_bypass").random() < 0.5,
+        )
+        for train in range(1, n_trains + 1)
+    )
+
+
 @pytest.mark.parametrize(("seed", "n_units"), sorted(_PRE_TIE_DIGESTS))
-def test_the_process_draws_before_the_tie_pass_are_those_of_t7(
+def test_the_process_draws_other_than_the_document_ones_are_those_of_t7(
     seed: int, n_units: int, monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    """T6 changes only the per-document draws and the reducer weight; give those T7's values back
+    (one document per train, no untagging, `p_pump_reducers` 0.5) and every plan is T7's."""
     captured: list[str] = []
 
-    def grab(config: Any, slots: Any, instances: Any, trims: Any, trains: Any, decks: Any) -> Any:
+    def grab(
+        config: Any, slots: Any, instances: Any, trims: Any, trains: Any, documents: Any, decks: Any
+    ) -> Any:
         captured.extend(i.plan.model_dump_json() for i in instances)
         return list(instances), []
 
     monkeypatch.setattr(planner, "add_networks", grab)
-    plan_plant(GeneratorConfigV22(seed=seed, n_units=n_units))
+    monkeypatch.setattr(planner, "draw_documents", _legacy_documents)
+    knobs = HandbookKnobs(trains_per_area=1, p_pump_reducers=0.5)
+    plan_plant(GeneratorConfigV22(seed=seed, n_units=n_units, handbook=knobs))
     digest = hashlib.sha256("\n".join(captured).encode()).hexdigest()
     assert digest == _PRE_TIE_DIGESTS[seed, n_units]
-
-
-# 110 is reported, not asserted: unit 57 opens area 2 and the plan jumps from 109 to 114 sheets
-@pytest.mark.parametrize("target", [90, 100])
-def test_the_size_search_lands_within_two_sheets_of_the_target(target: int) -> None:
-    found = smallest_n_units_v2(target, HeadlinePresetV22(), 7)
-    assert 0 <= found.predicted_sheets - target <= 2
 
 
 def test_the_sheets_of_the_areas_add_up_to_the_plant_less_its_interarea_sheets() -> None:

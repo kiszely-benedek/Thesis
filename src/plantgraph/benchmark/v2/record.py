@@ -34,7 +34,9 @@ def build_record(plan: PlantPlanV2, pydexpi_version: str) -> GenerationRecordV2:
     """
     common = _common_fields(plan, pydexpi_version)
     if isinstance(plan.config, GeneratorConfigV22):
-        return GenerationRecordV22(**common, hidden_state=_hidden_state(plan, plan.config))
+        return GenerationRecordV22(
+            **common, documents=plan.documents, hidden_state=_hidden_state(plan, plan.config)
+        )
     return GenerationRecordV2(**common)
 
 

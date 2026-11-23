@@ -18,7 +18,7 @@ from plantgraph.benchmark.v2.config_v22 import GeneratorConfigV22, HandbookKnobs
 from plantgraph.benchmark.v2.generate import generate_plant_v2
 from plantgraph.benchmark.v2.hidden_state import RefluxClass
 from plantgraph.benchmark.v2.rules.catalogue import rule_by_id
-from plantgraph.benchmark.v2.rules.checks_alternatives import pv_stations_by_train
+from plantgraph.benchmark.v2.rules.checks_alternatives import pv_stations_by_document
 from plantgraph.benchmark.v2.rules.checks_exchangers import temperature_bypass_valves
 from plantgraph.benchmark.v2.rules.checks_v21_plant import flow
 from plantgraph.benchmark.v2.rules.registry import CheckResult, resolve_check
@@ -158,19 +158,19 @@ def test_tog309_both_reflux_classes_are_drawn() -> None:
     assert classes == set(RefluxClass)
 
 
-def test_tog122_trains_are_drawn_with_and_without_a_pv_bypass() -> None:
+def test_tog122_documents_are_drawn_with_and_without_a_pv_bypass() -> None:
     flags: set[bool] = set()
     for seed in SEEDS:
-        for split in pv_stations_by_train(_view22(seed)).values():
+        for split in pv_stations_by_document(_view22(seed)).values():
             flags |= {has for has, bodies in split.items() if bodies}
     assert flags == {True, False}
 
 
 @pytest.mark.parametrize("p_no_bypass", [0.0, 1.0])
 def test_tog122_the_declared_probability_forces_the_alternative(p_no_bypass: float) -> None:
-    knobs = HandbookKnobs(p_pv_no_bypass_train=p_no_bypass)
+    knobs = HandbookKnobs(p_pv_no_bypass_document=p_no_bypass)
     config = GeneratorConfigV22(seed=1, n_units=_units(1), handbook=knobs)
-    stations = pv_stations_by_train(build_rule_view(generate_plant_v2(config)))
+    stations = pv_stations_by_document(build_rule_view(generate_plant_v2(config)))
     drawn_with = sum(len(split[True]) for split in stations.values())
     drawn_without = sum(len(split[False]) for split in stations.values())
     assert drawn_with + drawn_without > 0
@@ -232,13 +232,13 @@ def test_tog173_catches_a_spare_set_whose_pumps_differ() -> None:
     _expect_violation("TOG173-PUMP-REDUCERS", _without_nodes(view, reducers))  # one pump bare
 
 
-def test_tog122_catches_a_train_with_a_bypassed_and_an_unbypassed_station() -> None:
-    def two_bypassed_in_a_train(view: RuleView) -> bool:
-        return any(len(split[True]) >= 2 for split in pv_stations_by_train(view).values())
+def test_tog122_catches_a_document_with_a_bypassed_and_an_unbypassed_station() -> None:
+    def two_bypassed_in_a_document(view: RuleView) -> bool:
+        return any(len(split[True]) >= 2 for split in pv_stations_by_document(view).values())
 
-    view = _first_view(two_bypassed_in_a_train)
-    train = next(t for t, split in pv_stations_by_train(view).items() if len(split[True]) >= 2)
-    body = pv_stations_by_train(view)[train][True][0]
+    view = _first_view(two_bypassed_in_a_document)
+    train = next(t for t, split in pv_stations_by_document(view).items() if len(split[True]) >= 2)
+    body = pv_stations_by_document(view)[train][True][0]
     tee_in = _upstream_role(view, body, "cv_tee_in")
     roles = {**view.roles, tee_in: "not_a_station_tee"}
     _expect_violation("TOG122-PV-NO-BYPASS", replace(view, roles=roles))

@@ -152,8 +152,8 @@ CONTROL = (
         statement="Some companies give pressure-control valve stations no bypass.",
         sources=(tog("p.122"),),
         kind=RuleKind.ALTERNATIVE,
-        sampling_unit="train",
-        declared_parameters=("handbook.p_pv_no_bypass_train",),
+        sampling_unit="document",
+        declared_parameters=("handbook.p_pv_no_bypass_document",),
         check=wired("check_pv_no_bypass", "checks_alternatives"),
     ),
 )

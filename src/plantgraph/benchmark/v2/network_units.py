@@ -24,6 +24,7 @@ from collections.abc import Sequence
 
 from plantgraph.benchmark.v2.config_v22 import GeneratorConfigV22
 from plantgraph.benchmark.v2.deck import VariantDecks
+from plantgraph.benchmark.v2.documents import DocumentRecord, document_of_train
 from plantgraph.benchmark.v2.network_models import (
     INTERAREA,
     PLANT_INTERAREA_AREA,
@@ -59,10 +60,15 @@ _HEADER_SIZE, _FEEDER_SIZE = 8, 4
 
 
 def network_context(
-    config: GeneratorConfigV22, trains: Sequence[TrainRecord], decks: VariantDecks,
-    train_no: int, unit_no: int,
+    config: GeneratorConfigV22, trains: Sequence[TrainRecord],
+    documents: Sequence[DocumentRecord], decks: VariantDecks, train_no: int, unit_no: int,
 ) -> TrimContext:  # fmt: skip
-    """The trim context of a network unit: its own stream and counters, the train's conventions."""
+    """The trim context of a network unit: its own stream and counters.
+
+    It takes the conventions of the document of `train_no` (the area's first train), manual valve
+    tagging included.
+    """
+    document = documents[document_of_train(train_no, config.handbook.trains_per_document) - 1]
     return TrimContext(
         unit_no,
         random.Random(f"{config.seed}:network:{unit_no}"),
@@ -72,12 +78,14 @@ def network_context(
         handbook=True,
         handbook_knobs=config.handbook,
         seed=config.seed,
+        manual_valves_untagged=document.manual_valves_untagged,
     )
 
 
 def build_network_units(
     config: GeneratorConfigV22,
     trains: Sequence[TrainRecord],
+    documents: Sequence[DocumentRecord],
     decks: VariantDecks,
     crossings: Sequence[Crossing],
 ) -> list[NetworkUnit]:
@@ -91,7 +99,7 @@ def build_network_units(
     for (area_no, service), members in sorted(groups.items(), key=lambda g: network_unit_no(*g[0])):
         unit_no = network_unit_no(area_no, service)
         train_no = first_train_of_area(area_no, per_area)
-        ctx = network_context(config, trains, decks, train_no, unit_no)
+        ctx = network_context(config, trains, documents, decks, train_no, unit_no)
         units.append(_header_unit(ctx, area_no, train_no, service, members, config))
     return units
 

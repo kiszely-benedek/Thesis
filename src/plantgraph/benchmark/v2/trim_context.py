@@ -124,6 +124,7 @@ class TrimContext:
         handbook_rng: random.Random | None = None,
         seed: int = 0,
         pv_without_bypass: bool = False,
+        manual_valves_untagged: bool = False,
     ) -> None:
         self.unit_no = unit_no
         #: True on a v2.2 plant with the handbook rules on: trims then follow them (design 9)
@@ -134,8 +135,11 @@ class TrimContext:
         #: one stream per handbook alternative, made on first use (`handbook_rule_rng`)
         self._seed = seed
         self._rule_streams: dict[str, random.Random] = {}
-        #: the train's company style: pressure-control stations are drawn without a bypass (TOG122)
+        #: the document's company style: pressure-control stations are drawn without a bypass
+        #: (TOG122)
         self.pv_without_bypass = pv_without_bypass
+        #: the document's company style: manual and check valves print no tag (TOG113)
+        self.manual_valves_untagged = manual_valves_untagged
         self.rng = rng
         self.config = config
         self.conventions = conventions

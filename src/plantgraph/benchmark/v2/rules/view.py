@@ -16,6 +16,7 @@ import networkx as nx
 from pydexpi.dexpi_classes.pydantic_classes import DexpiModel
 
 from plantgraph.benchmark.v2.config_v22 import GeneratorConfigV22
+from plantgraph.benchmark.v2.documents import DocumentRecord
 from plantgraph.benchmark.v2.generate import GeneratedPlantV2
 from plantgraph.benchmark.v2.hidden_state import HiddenDesignState
 from plantgraph.benchmark.v2.plan_models import StreamKindV2
@@ -78,6 +79,20 @@ class RuleView:
         return (
             record.hidden_state if isinstance(record, GenerationRecordV22) else HiddenDesignState()
         )
+
+    @property
+    def documents(self) -> tuple[DocumentRecord, ...]:
+        """The documents of a v2.2 plant, in order; empty on a v2.1 plant."""
+        record = self.generated.record
+        return record.documents if isinstance(record, GenerationRecordV22) else ()
+
+    @property
+    def trains_per_document(self) -> int:
+        """How many consecutive trains a document holds (v2.2 plants only)."""
+        config = self.plan.config
+        if not isinstance(config, GeneratorConfigV22):
+            raise ValueError(f"expected a v2.2 plant with documents, got {type(config).__name__}")
+        return config.handbook.trains_per_document
 
     def stream_kind_of(self, line_number: str) -> StreamKindV2 | None:
         """The kind of the line with this number, or None for a number the plan does not know.

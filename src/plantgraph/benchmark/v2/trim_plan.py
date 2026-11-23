@@ -29,7 +29,7 @@ from plantgraph.benchmark.v2.plan_models import (
     StreamKindV2,
 )
 from plantgraph.benchmark.v2.trim_context import LineStyle, TrimContext
-from plantgraph.benchmark.v2.vocabulary import LINE_SPECS
+from plantgraph.benchmark.v2.vocabulary import LINE_SPECS, MANUAL_VALVE_CLASSES
 from plantgraph.graph.schema import NodeClass, Relation
 
 _PSGF = NodeClass.PROCESS_SIGNAL_GENERATING_FUNCTION.value
@@ -219,7 +219,14 @@ class TrimDraft:
     # ---- parts ----------------------------------------------------------------------------------
 
     def part(self, node_class: str, role: str) -> LineItemSpec:
-        """An inline part with the tag its class prints (None for a tee, flange, reducer)."""
+        """An inline part with the tag its class prints (None for a tee, flange, reducer).
+
+        In a document that leaves manual valves untagged, a manual or check valve prints none
+        either, and no number is taken from the valve counter (design 8).
+        """
+        if self.ctx.manual_valves_untagged and node_class in MANUAL_VALVE_CLASSES:
+            # rule TOG113-MANUAL-VALVE-TAGS: this document prints no tag on manual valves (p.113)
+            return self.tagged_part(node_class, role, None)
         return self.tagged_part(node_class, role, self.ctx.numbering.part_tag(node_class))
 
     def tagged_part(self, node_class: str, role: str, tag: str | None) -> LineItemSpec:

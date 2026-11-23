@@ -34,7 +34,7 @@ _RULE_COMMENT = re.compile(r"^\s*# rule ([A-Z0-9][A-Z0-9.-]*): (.*)$")
 #: the checks still owed, by the task that builds them (design 13); T3 removed its seven, T4 its
 #: two, T9 its eight and two of the unassigned (TOG207, TOG326), T9b the API14C-A8 pair, T11 its
 #: six, T5 its five, T8 its six, T7 its five
-_PENDING_BY_TASK = {"T6": 1, "T10": 4}
+_PENDING_BY_TASK = {"T10": 4}
 
 
 # ---- ids, counts -------------------------------------------------------------------------------
@@ -94,7 +94,7 @@ def test_every_encoded_rule_has_a_check_and_every_deferred_rule_a_reason() -> No
 
 def test_every_wired_check_resolves_to_a_function() -> None:
     wired = wired_rules()
-    assert len(wired) == 49
+    assert len(wired) == 50
     assert all(callable(resolve_check(rule)) for rule in wired)
 
 
@@ -163,4 +163,4 @@ def test_the_table_prints_one_row_per_rule_and_the_counts(
     rows = [line for line in lines if line.startswith("| ") and not line.startswith("| Id")]
     assert len(rows) == 54 + 15
     assert any(line.startswith("| TOG192-RECIP-NO-CHECK |") for line in rows)
-    assert lines[-1] == "54 encoded rules (49 with a wired check), 15 deferred groups."
+    assert lines[-1] == "54 encoded rules (50 with a wired check), 15 deferred groups."

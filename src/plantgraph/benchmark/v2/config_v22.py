@@ -62,12 +62,17 @@ class HandbookKnobs(BaseModel):
 
     #: master switch: False makes every v2.2 behaviour inert, so the plant equals the v2.1 plant
     enabled: bool = True
-    #: per train: manual valves are drawn without a tag (Toghraei p.113)
-    p_untagged_manual_train: Probability = 0.5
-    #: per train: pressure-control stations are drawn without a bypass
-    p_pv_no_bypass_train: Probability = 0.5
-    #: per pump set: nozzle reducers on the pump's suction and discharge
-    p_pump_reducers: Probability = 0.5
+    #: per document: manual valves are drawn without a tag (Toghraei p.113); 9 of 12 real drawing
+    #: sets are untagged (design 18.2)
+    p_untagged_manual_document: Probability = 0.75
+    #: per document: the plant's stratified allocation, one flag per document in order (True =
+    #: manual valves untagged); replaces the draw above, which is still taken (design 5, 18.3)
+    document_untagged: tuple[bool, ...] | None = None
+    #: per document: pressure-control stations are drawn without a bypass
+    p_pv_no_bypass_document: Probability = 0.5
+    #: per pump set: nozzle reducers on the pump's suction and discharge; 3 of the 4 real sets
+    #: that draw pump trims have them (design 18.2)
+    p_pump_reducers: Probability = 0.75
     #: per pump set: the hidden power band, from which the min-flow method follows
     pump_power_weights: dict[PumpPowerBand, float] = Field(
         default_factory=lambda: _even_weights(*PumpPowerBand)
@@ -93,6 +98,11 @@ class HandbookKnobs(BaseModel):
     #: (design 17.14 N2.1). Fixed by the rule that makes the median area nearest 100 sheets
     trains_per_area: int = Field(default=10, ge=1)
 
+    @property
+    def trains_per_document(self) -> int:
+        """A document is an area (design 17.14 N2.3): one knob, one meaning."""
+        return self.trains_per_area
+
     @field_validator(
         "pump_power_weights",
         "battery_limit_variant_weights",
@@ -112,8 +122,8 @@ class HandbookKnobs(BaseModel):
         """Every knob at its off position: no v2.2 behaviour, so the plant equals v2.1."""
         return cls(
             enabled=False,
-            p_untagged_manual_train=0.0,
-            p_pv_no_bypass_train=0.0,
+            p_untagged_manual_document=0.0,
+            p_pv_no_bypass_document=0.0,
             p_pump_reducers=0.0,
         )
 
