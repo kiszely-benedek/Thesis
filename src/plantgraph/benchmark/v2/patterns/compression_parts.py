@@ -25,6 +25,7 @@ from plantgraph.benchmark.v2.instruments_extra import (
     speed_control_loop,
 )
 from plantgraph.benchmark.v2.patterns.assembly import (
+    close_machine_discharge,
     close_run,
     pressure_gauge_tap,
     quiet,
@@ -185,7 +186,9 @@ def discharge_line(
     ctx: PatternContext, style: LineStyle, machine_id: str, cooler_id: str
 ) -> TrimPlan:
     """Compressor to aftercooler: safety valve tee, check valve, block valve (L16)."""
-    return close_run(ctx, compressor_discharge(ctx.trim, style), machine_id, cooler_id, style=style)
+    return close_machine_discharge(
+        ctx, compressor_discharge(ctx.trim, style), machine_id, cooler_id, style=style
+    )
 
 
 # ---- drums and the machine -------------------------------------------------------------------

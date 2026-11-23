@@ -22,7 +22,7 @@ from plantgraph.benchmark.v2.class_decks import (
 )
 from plantgraph.benchmark.v2.config import PumpPressureMode
 from plantgraph.benchmark.v2.hidden_state import PumpPowerBand
-from plantgraph.benchmark.v2.plan_models import LineItemSpec, StreamKindV2
+from plantgraph.benchmark.v2.plan_models import LineItemSpec, LineSpec, StreamKindV2
 from plantgraph.benchmark.v2.trim_context import LineStyle, TrimContext
 from plantgraph.benchmark.v2.trim_plan import TrimDraft, TrimPlan, combine, main_line
 from plantgraph.benchmark.v2.trims_extra import (
@@ -34,6 +34,7 @@ from plantgraph.benchmark.v2.trims_extra import (
     removable_spool_items,
     tee_part,
 )
+from plantgraph.benchmark.v2.trims_machine import break_after_machine, heavier_spec
 from plantgraph.benchmark.v2.trims_min_flow import min_flow_line
 from plantgraph.graph.schema import NodeClass
 
@@ -243,9 +244,11 @@ def pump_trims(
         # rule TOG177-MINFLOW-NEED: a spillback only from 5 hp up (Toghraei 2019 p.177)
         min_flow = band is not PumpPowerBand.BELOW_5
     suction = suction_for(pump_class)(ctx, style, pd_pump)
+    # rule TOG82-SPEC-BREAK: the discharge pipe is a heavier class than suction (Toghraei 2019 p.82)
+    discharge_style = heavier_spec(style) if ctx.handbook else style
     discharge = pump_discharge(
         ctx,
-        style,
+        discharge_style,
         pressure_mode == "per_pump_pi",
         pd_pump,
         min_flow,
@@ -258,26 +261,51 @@ def pump_trims(
     )
     suction_run = (*suction_head, *suction.run, *suction_reducer)
     suction_line = main_line(ctx, style, suction_src_id or vessel_id, suction_run, pump_id)
-    discharge_run = (*discharge_enlarger, *discharge.run, *discharge_tail)
-    discharge_line = main_line(ctx, style, pump_id, discharge_run, dst_id)
-    parts = [  # the two main lines come first: every branch below starts at one of their tees
-        suction.with_main_line(suction_line).with_port_prefix("suction"),
-        discharge.with_main_line(discharge_line).with_port_prefix("discharge"),
-    ]
+    parts = [suction.with_main_line(suction_line).with_port_prefix("suction")]
+    discharge_line, nozzle_break = _discharge_line(
+        ctx, style, pump_id, discharge_enlarger, discharge, discharge_tail, dst_id
+    )
+    parts += nozzle_break  # before the main line: it starts at the break
+    # the main lines come first: every branch below starts at one of their tees
+    parts.append(discharge.with_main_line(discharge_line).with_port_prefix("discharge"))
     if pd_pump:
         relief_taps = (discharge.ports["relief_tee"], suction.ports["relief_return_tee"])
         parts.append(pd_pump_relief(ctx, style, *relief_taps))
     if min_flow:
         tee_id = discharge.ports["min_flow_tee"]
         if power_band is None:  # v2.1 and knobs-off v2.2: the one orifice line
-            parts.append(min_flow_bypass(ctx, style, tee_id, vessel_id))
+            parts.append(min_flow_bypass(ctx, discharge_style, tee_id, vessel_id))
         else:
-            parts.append(min_flow_line(ctx, style, power_band, tee_id, vessel_id))
+            parts.append(min_flow_line(ctx, discharge_style, power_band, tee_id, vessel_id))
     parts.append(reducer_draft.finish())  # carries the reducers' roles
     parts.append(pump_vent_drain(ctx, style, pump_id))
     parts.append(flush_connection(ctx, style, pump_id))
     plan = combine(*parts)
     return plan.model_copy(update={"pump_power": {pump_id: power_band}}) if power_band else plan
+
+
+def _discharge_line(
+    ctx: TrimContext,
+    style: LineStyle,
+    pump_id: str,
+    enlarger: tuple[LineItemSpec, ...],
+    discharge: TrimPlan,
+    tail: tuple[LineItemSpec, ...],
+    dst_id: str | None,
+) -> tuple[LineSpec, list[TrimPlan]]:
+    """The pump's main discharge line, and the plans that must be added before it.
+
+    On v2.2 the line starts at a spec break behind the nozzle parts and is the next heavier class
+    than the suction line. A run that holds a letdown break already steps up by itself (its part
+    before the break is the heavier class), so it keeps the suction class for the part behind it.
+    """
+    run = (*discharge.run, *tail)
+    if not ctx.handbook:
+        return main_line(ctx, style, pump_id, (*enlarger, *run), dst_id), []
+    stub, break_id = break_after_machine(ctx, style, pump_id, enlarger)
+    has_letdown = any(part.node_class == NodeClass.PROPERTY_BREAK.value for part in run)
+    line_style = style if has_letdown else heavier_spec(style)
+    return main_line(ctx, line_style, break_id, run, dst_id), [stub]
 
 
 def _nozzle_reducers(

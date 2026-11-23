@@ -1,0 +1,170 @@
+"""Checks of the two pressure rules about what feeds an item: a check valve, a safety device.
+
+Both read the hidden pressure levels (`checks_pressure.py`, `pressure_levels.py`). A **merge tee**
+is a tee where two streams join. A **pressure safety device** (PSD) is a part that opens to
+relieve an enclosure that is too full: a safety valve, a rupture disc, a tank's breather valve or
+open vent. An **enclosure** is a vessel, tank or column. A **positive-displacement (PD) mover**
+pushes a fixed volume per stroke, so it can build up any pressure against a closed outlet.
+"""
+
+from __future__ import annotations
+
+from collections import deque
+
+from plantgraph.benchmark.v2.hidden_state import PressureLevel
+from plantgraph.benchmark.v2.pressure_levels import VESSEL_CLASSES
+from plantgraph.benchmark.v2.rules.checks_pressure import (
+    NOT_APPLICABLE,
+    edge_level,
+    is_equipment,
+    line_number_of,
+    node_class,
+)
+from plantgraph.benchmark.v2.rules.registry import CheckResult, Violation
+from plantgraph.benchmark.v2.rules.view import RuleView
+
+#: a PD mover: a reciprocating or rotary pump or compressor (a centrifugal one cannot overpressure)
+_PD_MOVER_CLASSES = frozenset(
+    {"ReciprocatingPump", "RotaryPump", "ReciprocatingCompressor", "RotaryCompressor"}
+)
+_RELIEVING_CLASSES = frozenset({"RuptureDisc", "BreatherValve", "VentilationDevice"})
+_CODE_SOURCE_CANNOT_EXCEED = "source_cannot_exceed"
+
+
+# ---- TOG156-MERGE-CHECK ------------------------------------------------------------------------
+
+
+def _has_check_valve_behind(view: RuleView, tee: str, source: str) -> bool:
+    """True when a check valve stands on the run that arrives at `tee` from `source`."""
+    piping = view.piping
+    number = line_number_of(view, source, tee)
+    node, seen = source, set()
+    while node not in seen and not is_equipment(view, node):
+        if "CheckValve" in node_class(view, node):
+            return True
+        seen.add(node)
+        before = [p for p in piping.predecessors(node) if line_number_of(view, p, node) == number]
+        if len(before) != 1:
+            return False
+        node = before[0]
+    return False
+
+
+def _merge_problems(view: RuleView, tee: str) -> list[Violation]:
+    """The streams into `tee` that arrive below its level and have no check valve."""
+    piping = view.piping
+    (after,) = list(piping.successors(tee))
+    carried = edge_level(view, tee, after)
+    arriving = {source: edge_level(view, source, tee) for source in piping.predecessors(tee)}
+    return [
+        Violation(
+            rule_id="TOG156-MERGE-CHECK",
+            node_id=tee,
+            detail=f"expected a check valve on the {level.name} stream from {source} tying into "
+            f"the {carried.name} line at {tee}, found none",
+        )
+        for source, level in sorted(arriving.items())
+        if level < carried and not _has_check_valve_behind(view, tee, source)
+    ]
+
+
+def check_merge_check(view: RuleView) -> CheckResult:
+    """TOG156-MERGE-CHECK: the lower-level stream into a merge tee has a check valve."""
+    if not view.handbook_enabled:
+        return NOT_APPLICABLE
+    # rule TOG156-MERGE-CHECK: a lower stream tying in has a check valve (Toghraei 2019 p.156)
+    piping = view.piping
+    merges = sorted(
+        n
+        for n in piping
+        if piping.in_degree(n) >= 2 and piping.out_degree(n) == 1 and not is_equipment(view, n)
+    )
+    violations = [v for tee in merges for v in _merge_problems(view, tee)]
+    return CheckResult(checked=len(merges), violations=tuple(violations))
+
+
+# ---- API14C-A4-OVERPRESSURE --------------------------------------------------------------------
+
+
+def _is_relieving(view: RuleView, node: str) -> bool:
+    name = node_class(view, node)
+    return name.endswith("SafetyValve") or name in _RELIEVING_CLASSES
+
+
+def reaches_relief(view: RuleView, enclosure: str) -> bool:
+    """True when a safety device hangs on the enclosure, over pipe parts only."""
+    piping = view.piping
+    seen, queue = {enclosure}, deque([enclosure])
+    while queue:
+        for nxt in piping.successors(queue.popleft()):
+            if _is_relieving(view, nxt):
+                return True
+            if nxt not in seen and not is_equipment(view, nxt):
+                seen.add(nxt)
+                queue.append(nxt)
+    return False
+
+
+def _feeds_of(view: RuleView, enclosure: str) -> tuple[list[PressureLevel], bool]:
+    """The levels that can reach the enclosure, and whether a PD mover feeds it.
+
+    Walks every inlet upstream over pipe parts, up to the equipment item that feeds it. A path
+    that crosses a safety device is protected on its own and does not count.
+    """
+    piping = view.piping
+    levels: list[PressureLevel] = []
+    pd_fed = False
+    for first in piping.predecessors(enclosure):
+        levels.append(edge_level(view, first, enclosure))
+        node, seen = first, {enclosure}
+        queue = deque([node])
+        while queue:
+            node = queue.popleft()
+            if node in seen or _is_relieving(view, node):
+                continue
+            seen.add(node)
+            if is_equipment(view, node):
+                pd_fed = pd_fed or node_class(view, node) in _PD_MOVER_CLASSES
+                continue
+            queue.extend(piping.predecessors(node))
+    return levels, pd_fed
+
+
+def check_overpressure(view: RuleView) -> CheckResult:
+    """API14C-A4-OVERPRESSURE: an enclosure that can be overfed has a safety device.
+
+    An enclosure needs one when a feed arrives at a higher level than its own, or a PD mover feeds
+    it. One that needs none and has none is let through with the code `source_cannot_exceed`.
+    """
+    if not view.handbook_enabled:
+        return NOT_APPLICABLE
+    # rule API14C-A4-OVERPRESSURE: an overfed enclosure has a PSD (API 14C A.4.2.2.1 a p.26)
+    enclosures = sorted(n for n in view.piping if node_class(view, n) in VESSEL_CLASSES)
+    violations: list[Violation] = []
+    exceptions = 0
+    for enclosure in enclosures:
+        levels, pd_fed = _feeds_of(view, enclosure)
+        own = view.hidden.segment_level[enclosure]
+        can_exceed = pd_fed or any(level > own for level in levels)
+        if reaches_relief(view, enclosure):
+            continue
+        if can_exceed:
+            violations.append(_unprotected(enclosure, own, levels, pd_fed))
+        else:
+            exceptions += 1
+    return CheckResult(
+        checked=len(enclosures),
+        violations=tuple(violations),
+        exceptions={_CODE_SOURCE_CANNOT_EXCEED: exceptions} if exceptions else {},
+    )
+
+
+def _unprotected(
+    enclosure: str, own: PressureLevel, levels: list[PressureLevel], pd_fed: bool
+) -> Violation:
+    cause = "a PD mover feeds it" if pd_fed else f"a feed arrives at {max(levels).name}"
+    return Violation(
+        rule_id="API14C-A4-OVERPRESSURE",
+        node_id=enclosure,
+        detail=f"expected a safety device on the enclosure at {own.name}, found none, and {cause}",
+    )

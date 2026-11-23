@@ -6,7 +6,8 @@ cause** and derives the visible consequence (a min-flow line, a relief valve siz
 
 The state lives in `GenerationRecordV22` and is read by the rule checks. It is never written to the
 DEXPI model, the graph under retrieval, a prompt or a question's gold (ADR-0021: no value, no unit
-reaches the data). In this first version the maps are empty; later tasks fill them.
+reaches the data). `pump_power`, `reflux` and `segment_level` are filled; the other maps stay empty
+until their tasks.
 """
 
 from __future__ import annotations
@@ -54,7 +55,8 @@ class FluidClass(str, Enum):
 class HiddenDesignState(BaseModel):
     """Design quantities no drawing shows; the maps stay empty until later tasks draw them."""
 
-    segment_level: dict[str, PressureLevel] = Field(default_factory=dict)  # by piping segment id
+    #: by run (a line number) or by vessel (a node id); see `pressure_levels.py`
+    segment_level: dict[str, PressureLevel] = Field(default_factory=dict)
     pump_power: dict[str, PumpPowerBand] = Field(default_factory=dict)  # by pump set id
     reflux: dict[str, RefluxClass] = Field(default_factory=dict)  # by column id
     fluid_of_service: dict[str, FluidClass] = Field(default_factory=dict)  # by line service code

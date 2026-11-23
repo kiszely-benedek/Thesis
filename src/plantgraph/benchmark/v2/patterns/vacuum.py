@@ -23,6 +23,7 @@ from plantgraph.benchmark.v2.instruments import machine_monitor
 from plantgraph.benchmark.v2.instruments_extra import machine_start_stop, monitor_points
 from plantgraph.benchmark.v2.patterns.assembly import (
     block_valve_plan,
+    close_machine_discharge,
     close_run,
     equipment_plan,
     part_plan,
@@ -82,7 +83,7 @@ def _liquid_ring_system(
         pump.node_id,
         style=style,
     )
-    discharge = close_run(
+    discharge = close_machine_discharge(
         ctx, compressor_discharge(ctx.trim, style), pump.node_id, None, style=style
     )
     parts = [machine, suction, discharge, *_pump_instruments(ctx, style, pump.node_id)]

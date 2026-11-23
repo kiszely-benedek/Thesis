@@ -148,7 +148,11 @@ def _open_ends(
     ends = []
     if line.src_id is None:
         ends.append(_End.SOURCE)
-    if line.dst_id is None and not _declared_end(line, out_ports, joined):
+    if (
+        line.dst_id is None
+        and not _declared_end(line, out_ports, joined)
+        and not _continued(line, plan)
+    ):
         ends.append(_End.SINK)
     return [end for end in ends if not _has_battery_limit(line, end, plan.roles)]
 
@@ -159,6 +163,12 @@ def _declared_end(line: LineSpec, out_ports: dict[str, Port], joined: frozenset[
         return True  # a vacuum pump's discharge silencer: vented to the atmosphere, not a crossing
     port = out_ports.get(line.line_number)
     return port is not None and port.node_id in joined
+
+
+def _continued(line: LineSpec, plan: TrimPlan) -> bool:
+    """True when another line starts at this line's last part (a machine's spec-break stub)."""
+    last = line.items[-1].node_id
+    return any(other.src_id == last for other in plan.lines)
 
 
 def _has_battery_limit(line: LineSpec, end: _End, roles: dict[str, str]) -> bool:

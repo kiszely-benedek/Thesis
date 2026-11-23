@@ -79,11 +79,13 @@ NETWORKS_AND_PRESSURE = (
     HandbookRule(
         rule_id="PLT-RECYCLE-CLOSURE",
         title="A recycle returns inside its unit through a reducing element",
-        statement="A recycle returns inside its unit, from a higher to a lower pressure level, "
-        "through a reducing element (orifice or control valve).",
+        statement="A spillback, min-flow or anti-surge recycle returns inside its unit, from a "
+        "higher to a lower pressure level, through a reducing element (an orifice, a control "
+        "valve, or the on-off valve of a switching min-flow line). A reactor's recycle-gas loop "
+        "is driven by its own compressor and is not one (design 17.12).",
         sources=(tog("p.317"),),
         kind=RuleKind.PLANT,
-        check=pending("T8"),
+        check=wired("check_recycle_closure", "checks_pressure"),
     ),
     HandbookRule(
         rule_id="PRS-MONOTONE",
@@ -92,7 +94,7 @@ NETWORKS_AND_PRESSURE = (
         "compressor or ejector.",
         sources=(design("§6.2"),),
         kind=RuleKind.PLANT,
-        check=pending("T8"),
+        check=wired("check_monotone", "checks_pressure"),
     ),
     HandbookRule(
         rule_id="TOG82-SPEC-BREAK",
@@ -101,7 +103,7 @@ NETWORKS_AND_PRESSURE = (
         "the level, or a pump or compressor raises it (Table 6.5).",
         sources=(tog("p.82"),),
         kind=RuleKind.PLANT,
-        check=pending("T8"),
+        check=wired("check_spec_break", "checks_pressure"),
     ),
     HandbookRule(
         rule_id="PRS-SPEC-CLASS",
@@ -109,7 +111,7 @@ NETWORKS_AND_PRESSURE = (
         statement="The heavier pipe class is on the higher-level side of a spec break.",
         sources=(design("ADR-0065 F8c"),),
         kind=RuleKind.PLANT,
-        check=pending("T8"),
+        check=wired("check_spec_class", "checks_pressure"),
     ),
     HandbookRule(
         rule_id="TOG156-MERGE-CHECK",
@@ -117,7 +119,7 @@ NETWORKS_AND_PRESSURE = (
         statement="A low-pressure or intermittent stream tying into another has a check valve.",
         sources=(tog("p.156"),),
         kind=RuleKind.PLANT,
-        check=pending("T8"),
+        check=wired("check_merge_check", "checks_overpressure"),
     ),
     HandbookRule(
         rule_id="API14C-A4-OVERPRESSURE",
@@ -127,6 +129,6 @@ NETWORKS_AND_PRESSURE = (
         sources=(api("A.4.2.2.1 a p.26"),),
         kind=RuleKind.PLANT,
         exception_codes=("source_cannot_exceed",),
-        check=pending("T8"),
+        check=wired("check_overpressure", "checks_overpressure"),
     ),
 )

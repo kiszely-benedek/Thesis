@@ -19,6 +19,7 @@ from plantgraph.benchmark.v2.plan_models import (
     UnitRecord,
 )
 from plantgraph.benchmark.v2.planner import PlannedUnit, PlantPlanV2
+from plantgraph.benchmark.v2.pressure_levels import assign_pressure_levels
 from plantgraph.benchmark.v2.record_v22 import GenerationRecordV22
 from plantgraph.benchmark.v2.symbols import plan_node_classes
 from plantgraph.benchmark.v2.tags import parse_tag
@@ -32,18 +33,19 @@ def build_record(plan: PlantPlanV2, pydexpi_version: str) -> GenerationRecordV2:
     """
     common = _common_fields(plan, pydexpi_version)
     if isinstance(plan.config, GeneratorConfigV22):
-        return GenerationRecordV22(**common, hidden_state=_hidden_state(plan))
+        return GenerationRecordV22(**common, hidden_state=_hidden_state(plan, plan.config))
     return GenerationRecordV2(**common)
 
 
-def _hidden_state(plan: PlantPlanV2) -> HiddenDesignState:
-    """The design quantities the units drew and no drawing shows (design 6.1)."""
+def _hidden_state(plan: PlantPlanV2, config: GeneratorConfigV22) -> HiddenDesignState:
+    """The design quantities no drawing shows (design 6.1): drawn by units, or derived (levels)."""
     pump_power: dict[str, PumpPowerBand] = {}
     reflux: dict[str, RefluxClass] = {}
     for unit in plan.units:
         pump_power.update(unit.instance.plan.pump_power)
         reflux.update(unit.instance.plan.reflux)
-    return HiddenDesignState(pump_power=pump_power, reflux=reflux)
+    levels = assign_pressure_levels(plan) if config.handbook.enabled else {}
+    return HiddenDesignState(pump_power=pump_power, reflux=reflux, segment_level=levels)
 
 
 def _common_fields(plan: PlantPlanV2, pydexpi_version: str) -> dict[str, Any]:

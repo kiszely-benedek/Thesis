@@ -14,6 +14,7 @@ from plantgraph.benchmark.v2.plan_models import EquipmentSpec, LineSpec, StreamK
 from plantgraph.benchmark.v2.trim_context import LineStyle
 from plantgraph.benchmark.v2.trim_plan import TrimDraft, TrimPlan, combine, main_line
 from plantgraph.benchmark.v2.trims_extra import pressure_tap, tee_part, temperature_tap
+from plantgraph.benchmark.v2.trims_machine import break_after_machine, heavier_spec
 from plantgraph.benchmark.v2.trims_valves import flow_element
 from plantgraph.benchmark.v2.vocabulary import SpareNaming, spare_members
 
@@ -138,6 +139,26 @@ def close_run(
     closed = plan.with_main_line(line)
     kinds = {**closed.stream_kinds, **{number: kind for number in line.line_numbers}}
     return closed.model_copy(update={"stream_kinds": kinds})
+
+
+def close_machine_discharge(
+    ctx: PatternContext,
+    plan: TrimPlan,
+    machine_id: str,
+    dst_id: str | None,
+    style: LineStyle | None = None,
+) -> TrimPlan:
+    """`close_run` for a compressor's discharge: on v2.2 the line starts at a spec break.
+
+    The break stands one part after the machine and the line behind it is a heavier piping class
+    (`trims_machine.py`); v2.1 and a v2.2 plant with the handbook off close the run unchanged.
+    """
+    style = style or ctx.style
+    if not ctx.trim.handbook:
+        return close_run(ctx, plan, machine_id, dst_id, style=style)
+    nozzle_break, break_id = break_after_machine(ctx.trim, style, machine_id)
+    closed = close_run(ctx, plan, break_id, dst_id, style=heavier_spec(style))
+    return combine(nozzle_break, closed)
 
 
 def line_containing(plan: TrimPlan, node_id: str) -> LineSpec:
