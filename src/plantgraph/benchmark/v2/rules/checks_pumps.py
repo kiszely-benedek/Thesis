@@ -20,13 +20,12 @@ from plantgraph.benchmark.v2.rules.checks_v21_plant import (
     comes_before,
     reach,
 )
+from plantgraph.benchmark.v2.rules.control_graph import FLOW, loop_of
 from plantgraph.benchmark.v2.rules.registry import CheckResult, Violation
 from plantgraph.benchmark.v2.rules.view import RuleView
-from plantgraph.graph.schema import CONTROL_VALVE_BODY_CLASSES
 
 _PUMP_CLASSES = POSITIVE_DISPLACEMENT_PUMPS | {CENTRIFUGAL_PUMP}
 _MIN_FLOW_ROLES = ("min_flow_tee", "min_flow_check", "min_flow_block")
-_FLOW_VALVE = "FV-"  # the tag prefix of a flow control valve
 
 
 def pumps_of_classes(view: RuleView, classes: Iterable[str]) -> list[str]:
@@ -102,12 +101,8 @@ def check_pd_no_minflow(view: RuleView) -> CheckResult:
 
 
 def _throttle_problem(view: RuleView, pump: str) -> str | None:
-    valves = sorted(
-        n
-        for n in _downstream(view, pump)
-        if view.graph.nodes[n]["node_class"] in CONTROL_VALVE_BODY_CLASSES
-        and str(view.graph.nodes[n].get("tag", "")).startswith(_FLOW_VALVE)
-    )
+    loops = (loop_of(view.graph, node) for node in sorted(_downstream(view, pump)))
+    valves = [loop.valve for loop in loops if loop is not None and loop.variable == FLOW]
     return f"flow control valve {valves[0]} throttles a PD pump discharge" if valves else None
 
 

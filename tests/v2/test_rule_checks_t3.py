@@ -20,6 +20,7 @@ from plantgraph.benchmark.v2.rules import checks_compressors, checks_pumps
 from plantgraph.benchmark.v2.rules.catalogue import rule_by_id
 from plantgraph.benchmark.v2.rules.checks_compressors import pd_stages
 from plantgraph.benchmark.v2.rules.checks_v21_plant import flow, reach
+from plantgraph.benchmark.v2.rules.control_graph import controller_of
 from plantgraph.benchmark.v2.rules.registry import CheckResult, resolve_check
 from plantgraph.benchmark.v2.rules.verify import raise_on_violations, verify_plant
 from plantgraph.benchmark.v2.rules.view import RuleView, build_rule_view
@@ -162,9 +163,28 @@ def _mutate_takeoff(view: RuleView) -> RuleView:
     return replace(mutated, roles={**mutated.roles, "mutant-tee": "min_flow_tee"})
 
 
+def _with_flow_loop(view: RuleView, valve: str) -> RuleView:
+    """A copy of the view in which `valve` is driven by a new flow controller (a real FIC loop)."""
+    graph = view.graph.copy()
+    unit_id, plant_id = graph.nodes[valve]["unit_id"], graph.nodes[valve]["plant_id"]
+    graph.add_node(
+        "mutant-fic",
+        node_class="ProcessControlFunction",
+        measured_variable="F",
+        unit_id=unit_id,
+        plant_id=plant_id,
+    )
+    graph.add_node("mutant-act", node_class="ActuatingFunction", unit_id=unit_id, plant_id=plant_id)
+    graph.add_edge("mutant-fic", "mutant-act", relation=Relation.SEND_SIGNAL_TO.value)
+    graph.add_edge("mutant-act", valve, relation=Relation.CONTROL.value)
+    return replace(view, graph=graph)
+
+
 def _mutate_throttle(view: RuleView) -> RuleView:
+    """A valve on a PD pump's discharge, throttled by a flow loop (the check reads the loop)."""
     _, block = _with_role_of(view, _PD_PUMPS, "discharge_block")
-    return _insert_after(view, block, "mutant-valve", "GlobeValve", "FV-99999")
+    inserted = _insert_after(view, block, "mutant-valve", "GlobeValve", "FV-99999")
+    return _with_flow_loop(inserted, "mutant-valve")
 
 
 def _a_pd_stage_valve(view: RuleView) -> tuple[str, str]:
@@ -173,10 +193,12 @@ def _a_pd_stage_valve(view: RuleView) -> tuple[str, str]:
 
 
 def _mutate_antisurge(view: RuleView) -> RuleView:
-    """Turn a PD compressor's pressure recycle valve back into an anti-surge flow valve."""
+    """Turn a PD compressor's pressure recycle loop back into an anti-surge flow loop."""
     _, valve = _a_pd_stage_valve(view)
     graph = view.graph.copy()
-    graph.nodes[valve]["tag"] = "FV-" + str(graph.nodes[valve]["tag"])[3:]
+    controller = controller_of(graph, valve)
+    assert controller is not None, f"expected a controller on the recycle valve {valve}"
+    graph.nodes[controller]["measured_variable"] = "F"
     return replace(view, graph=graph)
 
 

@@ -96,10 +96,13 @@ def test_the_inventory_check_catches_the_t9b_breaks(break_it: Callable[[RuleView
 # ---- PLT-STREAM-CLOSURE on the joined graph ------------------------------------------------------
 
 
-def test_the_closure_check_finds_the_129_ends_the_design_predicted() -> None:
-    """T7a closes 71 of them and T7 the other 58 (design 17.4): update this when they land."""
+def test_the_closure_check_finds_the_127_ends_left_after_the_recycle_loops_close() -> None:
+    """129 (design 17.4) minus the 2 reactor recycle ports T9c closes (design 17.12).
+
+    T7a closes 69 of them and T7 the other 58: update this when they land.
+    """
     found = [len(_run("PLT-STREAM-CLOSURE", view_v22(seed)).violations) for seed in SEEDS]
-    assert sum(found) == 129
+    assert sum(found) == 127
 
 
 def test_a_relief_outlet_is_an_open_end_the_closure_check_reports() -> None:

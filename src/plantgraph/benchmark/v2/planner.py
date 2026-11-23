@@ -14,12 +14,15 @@ from __future__ import annotations
 from pydantic import BaseModel, ConfigDict
 
 from plantgraph.benchmark.v2.config import GeneratorConfigV2
+from plantgraph.benchmark.v2.config_v22 import GeneratorConfigV22
 from plantgraph.benchmark.v2.deck import VariantDecks
 from plantgraph.benchmark.v2.flowsheet import (
     SLOT_TITLES,
     OpenOut,
     Slot,
     UnitSlot,
+    close_recycle_loop,
+    closes_recycle_loop,
     draw_flowsheet,
     waiting_streams,
     wire,
@@ -81,14 +84,24 @@ def plan_plant(config: GeneratorConfigV2) -> PlantPlanV2:
     decks = VariantDecks(config.seed, all_deck_variants(config.patterns, config.trims))
     units: list[PlannedUnit] = []
     open_outs: tuple[OpenOut, ...] = ()
-    for slot in slots:
+    for position, slot in enumerate(slots):
         built = _build_unit(config, slot, trains, decks, open_outs)
         wired, open_outs = wire(built, slot.unit_no, open_outs, slot.train_no)
+        if _closes_core_loop(config, slot, slots[position - 1] if position else None):
+            wired, open_outs = close_recycle_loop(
+                units[-1].instance, wired, slot.unit_no, open_outs
+            )
         sheets = assign_unit_sheets(slot.unit_no, wired, config.sheets)
         units.append(PlannedUnit(slot=slot, instance=wired, sheets=sheets))
     return PlantPlanV2(
         config=config, trains=trains, units=tuple(units), open_stub_count=len(open_outs)
     )
+
+
+def _closes_core_loop(config: GeneratorConfigV2, slot: UnitSlot, previous: UnitSlot | None) -> bool:
+    """v2.2 with the handbook on only: v2.1 keeps its open recycle ports (goldens are pinned)."""
+    is_handbook = isinstance(config, GeneratorConfigV22) and config.handbook.enabled
+    return is_handbook and closes_recycle_loop(slot, previous)
 
 
 def _build_unit(

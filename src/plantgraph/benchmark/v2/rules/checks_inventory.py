@@ -22,17 +22,20 @@ from plantgraph.benchmark.v2.rules.control_graph import (
     LIQUID_SERVICES,
     PRESSURE,
     PRESSURE_DEPENDENT_ROLES,
+    UTILITY_SERVICES,
     controllers_on,
     is_control_valve,
     routes_between_containers,
     sensors_on,
     service_of,
+    split_valves,
 )
 from plantgraph.benchmark.v2.rules.registry import CheckResult, Violation
 from plantgraph.benchmark.v2.rules.view import RuleView
 from plantgraph.graph.schema import EQUIPMENT_CLASSES
 
 _ATMOSPHERIC_CLASS = "Tank"  # vents through a breather: no pressure loop to look for
+_MACHINE_SUFFIXES = ("Pump", "Compressor")  # the schema classes of the machines that add pressure
 
 
 def _attached_services(view: RuleView, container: str, skip_trims: bool = False) -> set[str]:
@@ -64,10 +67,15 @@ def _is_gas_route_without_valve(view: RuleView, route: tuple[str, ...]) -> bool:
 def _floats_on(view: RuleView, container: str, routes: list[tuple[str, ...]]) -> str | None:
     """An item with a pressure loop, joined to `container` by gas pipe and no control valve.
 
-    First another container along a flow route; failing that any equipment item (an aftercooler
-    whose pressure loop holds the discharge drum's gas too, Toghraei p.295 and p.316).
+    First another container along a flow route; then any equipment item joined by gas pipe (an
+    aftercooler whose pressure loop holds the discharge drum's gas too, Toghraei p.295 and p.316);
+    last the nearest pressure loop downstream, gas or liquid (a recycle joining the reactor feed).
     """
-    return _floats_on_container(view, container, routes) or _floats_on_item(view, container)
+    return (
+        _floats_on_container(view, container, routes)
+        or _floats_on_item(view, container)
+        or _floats_downstream(view, container)
+    )
 
 
 def _gas_neighbours(view: RuleView, node: str) -> list[str]:
@@ -94,6 +102,48 @@ def _floats_on_item(view: RuleView, container: str) -> str | None:
             elif not is_control_valve(graph, nxt):
                 queue.append(nxt)
     return min(partners, default=None)
+
+
+def _passes_pressure(view: RuleView, node: str) -> bool:
+    """False for a part that breaks the link to the pressure downstream: a throttle or a machine.
+
+    A split valve (TOG322) only divides the flow between two branches, so it is no throttle. A
+    flooded item has no free surface and counts as pipe (p.271).
+    """
+    graph = view.graph
+    if graph.nodes[node]["node_class"].endswith(_MACHINE_SUFFIXES):
+        return False  # a pump or compressor sets its own discharge pressure
+    split = view.cached("split_valves", lambda: split_valves(view))
+    return node in split or not is_control_valve(graph, node)
+
+
+def _process_successors(view: RuleView, node: str) -> list[str]:
+    """The parts one process pipe downstream of `node` (utility pipes lead to other networks)."""
+    return [
+        following
+        for following in view.piping.successors(node)
+        if service_of(view.graph, node, following) not in UTILITY_SERVICES
+    ]
+
+
+def _floats_downstream(view: RuleView, container: str) -> str | None:
+    """The nearest pressure loop on process pipe downstream, with no throttling valve between.
+
+    Breadth first, so the nearest wins; the route need not be gas all the way: a liquid-full
+    stretch passes the pressure on as well (Toghraei p.271, p.295).
+    """
+    graph = view.graph
+    seen, queue = {container}, [container]
+    for node in queue:  # the list grows while it is walked: a first-in first-out queue
+        for following in sorted(_process_successors(view, node)):
+            if following in seen:
+                continue
+            seen.add(following)
+            if controllers_on(graph, following, PRESSURE):
+                return following
+            if _passes_pressure(view, following):
+                queue.append(following)
+    return None
 
 
 def _floats_on_container(

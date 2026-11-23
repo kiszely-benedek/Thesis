@@ -65,19 +65,19 @@ def test_the_discharge_drum_floats_on_an_exchanger_that_holds_the_pressure() -> 
     assert any(view.graph.nodes[p]["node_class"] in EQUIPMENT_CLASSES for p in partners)
 
 
-def test_the_discharge_drum_is_a_violation_when_its_partner_loses_the_pressure_loop() -> None:
+def test_the_discharge_drum_is_a_violation_when_no_item_around_it_holds_the_pressure() -> None:
+    """Since T9c it has two ways to a partner (upstream aftercooler, downstream reactor loop)."""
     view = _view_100_sheets()
     drum = _discharge_drum(view)
-    partners = [c.split(":")[1] for c in check_inventory_once(view).exceptions if ":" in c]
-    broken_for = [
-        p for p in sorted(partners) if drum in _violators(_without_pressure_loop(view, p))
-    ]
-    assert len(broken_for) == 1, f"expected one partner holding {drum}, found {broken_for}"
+    assert drum not in _violators(view)
+    items = [n for n in view.graph if sensors_on(view.graph, n, PRESSURE)]
+    assert drum in _violators(_without_pressure_loop(view, items))
 
 
-def _without_pressure_loop(view: RuleView, item: str) -> RuleView:
+def _without_pressure_loop(view: RuleView, items: list[str]) -> RuleView:
     # drop the pressure transmitter, not the controller: the controller still drives the spillback
     # valve, which must stay a control valve or the drum would find another way to a partner
     graph = view.graph.copy()
-    graph.remove_nodes_from(sensors_on(graph, item, PRESSURE))
+    for item in items:
+        graph.remove_nodes_from(sensors_on(graph, item, PRESSURE))
     return replace(view, graph=graph)

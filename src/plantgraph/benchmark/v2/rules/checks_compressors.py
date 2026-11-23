@@ -16,14 +16,13 @@ import networkx as nx
 from plantgraph.benchmark.v2.patterns.ports import PatternInstance
 from plantgraph.benchmark.v2.plan_models import StreamKindV2
 from plantgraph.benchmark.v2.rules.checks_v21_plant import reach
-from plantgraph.benchmark.v2.rules.control_graph import is_control_valve
+from plantgraph.benchmark.v2.rules.control_graph import FLOW, PRESSURE, is_control_valve, loop_of
 from plantgraph.benchmark.v2.rules.registry import CheckResult, Violation
 from plantgraph.benchmark.v2.rules.view import RuleView
 from plantgraph.graph.schema import CONTROL_VALVE_BODY_CLASSES, Relation
 
 _STAGE_PATTERN = "U2"
 _DYNAMIC = "CentrifugalCompressor"
-_FLOW_VALVE, _PRESSURE_VALVE = "FV-", "PV-"  # tag prefixes of a flow and a pressure control valve
 _AEF = "ActuatingElectricalFunction"  # the variable-speed drive of a machine
 
 
@@ -47,9 +46,10 @@ class PdStage:
         """The schema class of a graph node."""
         return str(self.graph.nodes[node]["node_class"])
 
-    def tag(self, node: str) -> str:
-        """The printed tag of a graph node, empty when it has none."""
-        return str(self.graph.nodes[node].get("tag", ""))
+    def recycle_valves_of(self, variable: str) -> list[str]:
+        """The recycle valves whose loop controls `variable` (FLOW or PRESSURE)."""
+        found = (loop_of(self.graph, valve) for valve in self.recycle_valves)
+        return [loop.valve for loop in found if loop is not None and loop.variable == variable]
 
 
 def _valves_on_lines(graph: nx.DiGraph[str], line_numbers: set[str]) -> list[str]:
@@ -95,15 +95,13 @@ def check_antisurge_dynamic(view: RuleView) -> CheckResult:
     violations = [
         _violation("TOG319-ANTISURGE-DYNAMIC", stage, f"anti-surge recycle valve {valve}")
         for stage in stages
-        for valve in stage.recycle_valves
-        if stage.tag(valve).startswith(_FLOW_VALVE)
+        for valve in stage.recycle_valves_of(FLOW)
     ]
     return CheckResult(checked=len(stages), violations=tuple(violations))
 
 
 def _capacity_problem(stage: PdStage) -> str | None:
-    pressure_valves = [v for v in stage.recycle_valves if stage.tag(v).startswith(_PRESSURE_VALVE)]
-    if not pressure_valves and not stage.has_speed_drive:
+    if not stage.recycle_valves_of(PRESSURE) and not stage.has_speed_drive:
         return "expected a pressure-controlled spillback or a variable-speed drive, found neither"
     # a valve driven by a controller (or an HCV): a hand block drawn as a butterfly body is not one
     throttles = sorted(n for n in stage.after_machine if is_control_valve(stage.graph, n))

@@ -45,11 +45,13 @@ from plantgraph.benchmark.v2.patterns.ports import (
     PortDirection,
     PortKind,
     with_in_port_source,
+    with_out_port_destination,
 )
 from plantgraph.benchmark.v2.streams import master_rng
 
 _FARM = "U4"
 _COMPOSITE_SEPARATOR = "+"  # a weight key `U3+U2` is two units drawn together
+_REACTOR, _RECYCLE_COMPRESSOR = "U3", "U2"
 
 
 class Slot(str, Enum):
@@ -198,6 +200,42 @@ def wire(
         if port.direction is PortDirection.OUT
     )
     return instance, remaining + own
+
+
+def closes_recycle_loop(slot: UnitSlot, previous: UnitSlot | None) -> bool:
+    """True for the compressor half of a `U3+U2` core: it sits right behind its reactor."""
+    return (
+        slot.pattern_id == _RECYCLE_COMPRESSOR
+        and previous is not None
+        and previous.pattern_id == _REACTOR
+        and previous.train_no == slot.train_no
+    )
+
+
+def close_recycle_loop(
+    reactor: PatternInstance,
+    compressor: PatternInstance,
+    compressor_unit_no: int,
+    open_outs: tuple[OpenOut, ...],
+) -> tuple[PatternInstance, tuple[OpenOut, ...]]:
+    """Return the compressor's gas to the reactor's `recycle_gas` in-port (v2.2, handbook on).
+
+    The compressor's `compressed` line ends at the first part of the reactor's `recycle_gas` line,
+    and that out-port stops being an open stub. No random draw is made, so no stream shifts.
+    """
+    # rule PLT-STREAM-CLOSURE: recycle loop closed per the grammar (Toghraei 2019 p.24; DESIGN)
+    # the join is stored on the compressor's line: it is the later unit, and a backend may only
+    # name parts that were written before (the reactor's line cannot name a part of the compressor)
+    compressed = compressor.port("compressed")
+    closed = with_out_port_destination(
+        compressor, compressed.name, reactor.port("recycle_gas").node_id
+    )
+    still_open = tuple(
+        out
+        for out in open_outs
+        if not (out.unit_no == compressor_unit_no and out.port.name == compressed.name)
+    )
+    return closed, still_open
 
 
 def waiting_streams(open_outs: tuple[OpenOut, ...], train_no: int) -> int:

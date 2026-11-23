@@ -29,7 +29,7 @@ T9_RULES = [
 ]
 
 #: v2.2 plants (handbook on): rule -> (seeds that fail, why). Only the closure rule is left; it is
-#: owed to T7 (`rules/owed.py`): 129 open ends over the five seeds, which T7a (71 plant-boundary
+#: owed to T7 (`rules/owed.py`): 127 open ends over the five seeds, which T7a (69 plant-boundary
 #: ends) and T7 (58 relief outlets and bleeds) close.
 KNOWN_FAILURES: dict[str, tuple[list[int], str]] = {
     "PLT-STREAM-CLOSURE": (

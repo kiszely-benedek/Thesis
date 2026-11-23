@@ -199,3 +199,25 @@ def with_in_port_source(
     kinds = {**instance.plan.stream_kinds, port.line_number: kind}
     plan = instance.plan.model_copy(update={"lines": lines, "stream_kinds": kinds})
     return instance.model_copy(update={"plan": plan})
+
+
+def with_out_port_destination(
+    instance: PatternInstance, port_name: str, dst_id: str
+) -> PatternInstance:
+    """The instance with its out-port line ending at `dst_id`, a part of an *earlier* unit.
+
+    The mirror of `with_in_port_source`, for a join that runs backwards in unit order (a recycle
+    compressor returns gas to the reactor built before it). A backend adds units in order and a
+    line may only name parts already added, so the later unit's line has to carry the join.
+    """
+    port = instance.port(port_name)
+    if port.direction is not PortDirection.OUT:
+        raise ValueError(
+            f"expected an out-port, but {port_name!r} of {instance.pattern} is an in-port"
+        )
+    lines = tuple(
+        line.model_copy(update={"dst_id": dst_id}) if line.line_number == port.line_number else line
+        for line in instance.plan.lines
+    )
+    plan = instance.plan.model_copy(update={"lines": lines})
+    return instance.model_copy(update={"plan": plan})
