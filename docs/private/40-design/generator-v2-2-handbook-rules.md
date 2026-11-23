@@ -816,11 +816,11 @@ unmeasured.
 | 1 | **T8** Pressure-level model and PRS-*, TOG82 (pump spec breaks), TOG156, PLT-RECYCLE-CLOSURE, API14C-A4-OVERPRESSURE | M | coder | **done** (`6ae1d0c`); rulings on its report in §17.13 |
 | 1′ | **T10a** SAC transcription (A-4.2, A-5.2, A-6.2, A-7.2, A-8.2, A-10.2), page-checked | — | researcher | **done** (`2a9da7a`); rulings in §17.13 |
 | 2 | **T7** Networks and interarea: network units, headers, per-sheet sub-headers, network connectors, capacity overflow, splitter grouping, size search on total sheets, composition per sheet kind, TOG32/141/360/33, PLT-NETWORK-CLOSURE; empties `OWED_FIXES`; wires 5 pending rules. **Also R2 of §17.13:** TOG156 narrowed to process services (P, PG) with the `relief_path` exemption, because T7 creates the FL and CHD tees | L | coder | **built, uncommitted**; rulings on its report in §17.14 |
-| 2b | **T7b** T7 fixes (§17.14), acceptance criteria below the table | M | coder | T7 |
+| 2b | **T7b** T7 fixes (§17.14), acceptance criteria below the table | M | coder | **done** (`3e42a6a`); size search ruled in §17.14 N4 |
 | 3 | **T6** Documents and conventions (§5, §18.2): `DocumentRecord` (a document is T7b's area, `trains_per_document` = `trains_per_area`, §17.14 N2.3); per-document draws of manual-valve tagging (0.75 untagged), spare naming, on-off letter and PV without bypass, from new streams (v2.1 per-train draws taken, values ignored); config override `handbook.document_untagged` for the stratified sealed plants; untagged manual valves (TOG113); `p_pump_reducers` 0.75; gold side of scope R (untagged refusal, FLOW_PATH tie rule, refused-share report; isolation families pre-registered unavailable); v2.1 question hash unchanged | M | coder | T7b |
 | 4 | **T10** In this order (§17.13): **step 0**, the T8 follow-ups: the R1 docstring in `pressure_levels.py`; R3's `switching_valve` element code and restated statement; R5's re-cite of API14C-A4-OVERPRESSURE and TOG219 to A.4.2.2.1 c p.27, with `source_cannot_exceed` deleted and `scope:non_hydrocarbon` added. **Step 1**, `rules/sac.py` from T10a: items, device letters, locations, and exception codes of three kinds, derived (from structure), declared (R7) and scope. **Step 2**, R7's declarations as constants in `hidden_state.py`, plus `FluidClass.NON_FLAMMABLE` for the non-flammable farms. **Step 3**, the switch-plus-alarm additions of T10a §8: vessel PSHH (where a.4 fails), LSHH and LSLL; filter PSHH; compressor suction/discharge PSHH and PSLL, and TSHH; furnace TSHH and fuel PSHH; additive-tank LSHH. **Step 4**, the valve additions in R8's priority order, with R8's measured stop at 27.5 pooled valves per process sheet: TOG236 emergency vents, compressor suction PSV, furnace tube PSV where l.3 fails. **Step 5**, wire API14C-3.4-TWO-LEVELS, API14C-SAC, TOG207-HX-PSD-BOTH-SIDES and TOG236. Every SAC item without an addition or a derivable, declared or scope code becomes a DEFERRED row with its reason: the heater-outlet check, vessel PSL, pump PSH/PSL, stack and air-intake items, and SDV/BDV/ASH | M | coder | T7b |
-| 5 | **T12a** Expert-review package (§18.5): the 12 sheets drawn by the fixed rule, exported with the demo drawing export plus a legend sheet; the checklist printed from the registry | S | coder | T6, T7, T10 (the plants are complete) |
-| — | Expert review and triage | — | the user's reviewer; architect triages | T12a |
+| 5 | ~~**T12a** Expert-review package~~ | — | — | **dropped**: no reviewer (§18.8) |
+| — | ~~Expert review and triage~~ | — | — | **dropped** (§18.8) |
 | 6 | **T14** V2T-B system files (`v2t-b-system-revision.md` §3): B store view, VALVE_SET and POSITION types, `scoring_b.py` and its self-tests, `policy_b.py`, the import-isolation test; G0f stays green | M | coder | T6 |
 | 7 | **T15** Scope X (gold side): OPEN_VALVES_TO_ISOLATE (up, down), UPSTREAM_ISOLATION_X, DOWNSTREAM_ISOLATION_X, POSITION_OF_VALVE, descriptor gold and refusal, the A2 adapter (TAG_SET), discriminating-share report | M | coder | T14 |
 | 8 | **T12b** Composition report per sheet kind; the ch.20 comparison table (the annotation by the main session) | S | coder and main session | T7b |
@@ -862,7 +862,7 @@ unmeasured.
 10. **The report** gives the measured sheet mix against the estimates of §17.14 N2, with measured and estimated
     numbers labelled. It ends with one commit proposal covering T7 and T7b (or two), and nothing is committed.
 
-**Now:** T7b. Next: T6, then T10 (with its step 0). No coder runs in parallel.
+**Now:** T6 (with step 0, §17.14 N4). Next: T10 (with its step 0), T14, T15, T12b, T13. No coder runs in parallel.
 
 ## 14. Risks
 
@@ -1711,6 +1711,38 @@ For comparison: v2.1 had about 100 / 1,000 process sheets (EXP-0008), and T7 as 
 | 4 | TOG207 and TOG270 treat sub-header and header tees as non-process paths | **accepted**, by role (`sub_header_tee`, `header_tee`), never by position | Consistent with R2 (process services only). A pump is not "flow-controlled" through a flare header, and an exchanger is not "isolated" by a network tee |
 | 5 | A machine's `ActuatingElectricalFunction` is drawn on the machine's sheet (`sheets.py`) | **accepted** | Motor control sits at the motor (TOG pp.351–356), and a control edge is never cut (S20). **Condition:** the v1 and v2.1 goldens stay byte-identical, which proves the coder's "v2.1 already agrees" |
 | 6 | Network root valves are NO and take the generic tag convention until T6 | **accepted** | Root valves are manual isolation valves at the start of sub-headers and branches (p.362), normally open. Only distribution headers get them: p.368 says manual valves on the flare network should be eliminated or locked open. After T6 they follow their area's document convention (N2.3) |
+
+#### N4. The size search after T7b (main session, 2026-11-23)
+
+T7b's report (committed `3e42a6a`) measured the following on seed 7. Every unit step that opens a new area adds that area's header sheets at once, so the total sheet count jumps:
+
+| From | To |
+|---|---|
+| 56 units, 109 sheets | 57 units, 114 sheets |
+| 1,099 sheets | 549 units, 1,103 sheets |
+
+As a result, "the fewest units whose total is at least the target" overshoots by +4 at a target of 110 and by +3 at 1,100. Seed 5 at a target of 100 lands at 103. The +4 at 110 leaves the user's band of 90–110.
+
+**Ruling.**
+- The v2.2 size search returns the unit count whose total is **nearest** the target. A tie goes to the fewer units.
+- The landed total must lie inside the user's band: 90–110 for the 100-sheet scale and 900–1,100 for the 1,000-sheet scale. A total outside the band raises.
+- Acceptance criterion 6 of T7b becomes "within ±3 of the target, and inside the band". It is checked at 90, 100, 110, 900, 1,000 and 1,100 on seed 7, and at 100 on seeds 1–5.
+- The v2.1 search keeps its "at least" semantics, so the v2.1 goldens do not change.
+- Reason: the band, not the exact target, is what the user fixed (D5). Nearest-total halves the worst miss, and it never leaves the band at the band edges.
+- This change is step 0 of T6.
+
+T7b itself is done and committed as `3e42a6a`. On seed 7 it measures:
+
+| Measure | 100-sheet plant | 1,000-sheet plant |
+|---|---|---|
+| Total sheets | 100 | 1,000 |
+| Process sheets | 84 | 836 |
+| Header sheets | 16 | 163 |
+| Interarea sheets | 0 | 1 |
+| Network share | 16.0% | 16.4% |
+| Stubs per sheet, maximum | 12 | 18 |
+
+The chosen k is 10 trains per area.
 
 ## 18. The user's decisions of 2026-11-23 and what follows from them
 
