@@ -21,6 +21,11 @@ def unit_rng(seed: int, unit_no: int) -> random.Random:
     return random.Random(f"{seed}:unit:{unit_no}")
 
 
+def handbook_unit_rng(seed: int, unit_no: int) -> random.Random:
+    """The v2.2 handbook draws of one unit (hidden pump power band); v2.1 never touches it."""
+    return random.Random(f"{seed}:unit{unit_no}:handbook")
+
+
 def train_rng(seed: int, train_no: int) -> random.Random:
     """One train's conventions (on-off letter, spare naming)."""
     return random.Random(f"{seed}:train:{train_no}")

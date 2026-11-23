@@ -14,7 +14,9 @@ from collections import Counter
 from pydantic import BaseModel, ConfigDict
 
 from plantgraph.benchmark.v2.config import TrimConvention
+from plantgraph.benchmark.v2.config_v22 import HandbookKnobs
 from plantgraph.benchmark.v2.deck import VariantDecks
+from plantgraph.benchmark.v2.hidden_state import PumpPowerBand
 from plantgraph.benchmark.v2.tags import (
     format_equipment_tag,
     format_fitting_tag,
@@ -117,10 +119,15 @@ class TrimContext:
         decks: VariantDecks,
         numbering: UnitNumbering | None = None,
         handbook: bool = False,
+        handbook_knobs: HandbookKnobs | None = None,
+        handbook_rng: random.Random | None = None,
     ) -> None:
         self.unit_no = unit_no
         #: True on a v2.2 plant with the handbook rules on: trims then follow them (design 9)
         self.handbook = handbook
+        #: the declared weights of the handbook choices, and the stream they are drawn from
+        self.handbook_knobs = handbook_knobs or HandbookKnobs()
+        self._handbook_rng = handbook_rng or random.Random(f"handbook:{unit_no}")
         self.rng = rng
         self.config = config
         self.conventions = conventions
@@ -134,6 +141,14 @@ class TrimContext:
     def chance(self, probability: float) -> bool:
         """True with the given probability, drawn from the unit's stream."""
         return self.rng.random() < probability
+
+    def draw_pump_power_band(self) -> PumpPowerBand:
+        """A hidden power band for one pump set, by `handbook.pump_power_weights`.
+
+        Drawn from the unit's own handbook stream, so the v2.1 draws of the unit are not shifted.
+        """
+        weights = self.handbook_knobs.pump_power_weights
+        return self._handbook_rng.choices(list(weights), weights=list(weights.values()))[0]
 
     def deal_class(self, role: str) -> str:
         """The next class of the role's deck (see `class_decks.py`)."""

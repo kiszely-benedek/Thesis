@@ -19,6 +19,7 @@ from typing import cast, get_args
 from pydantic import BaseModel, ConfigDict
 
 from plantgraph.benchmark.v2.config import PumpPressureMode
+from plantgraph.benchmark.v2.hidden_state import PumpPowerBand
 from plantgraph.benchmark.v2.instruments import machine_monitor
 from plantgraph.benchmark.v2.instruments_extra import machine_start_stop
 from plantgraph.benchmark.v2.patterns.assembly import (
@@ -86,11 +87,13 @@ def build_pump_set(
     count = _draw_pump_count(ctx)
     group = ctx.deal(PUMP_SET_GROUP_DECK) if count > 1 else "with_suction_vessel"
     pressure = _deal_pressure(ctx)
+    # one hidden power band per set: the pumps of a set are identical (A/B spares)
+    band = ctx.trim.draw_pump_power_band() if ctx.trim.handbook else None
     pumps = spared_set(ctx, pump_class, _PUMP_TYPE_CODE, count, has_motor=True)
     manifold = _manifold(ctx, count, feed_count, with_header_tee=pressure == "header_pt")
     header_run = header.run if header is not None else ()
     pump_plans = [
-        _pump_plan(ctx, pump, index, vessel_id, manifold, pressure, header_run)
+        _pump_plan(ctx, pump, index, vessel_id, manifold, pressure, header_run, band)
         for index, pump in enumerate(pumps)
     ]
     # the header's valve branches start at tees of the first pump's discharge line: they come last
@@ -156,6 +159,7 @@ def _pump_plan(
     manifold: _Manifold,
     pressure: PumpPressureMode,
     header_run: tuple[LineItemSpec, ...],
+    band: PumpPowerBand | None,
 ) -> TrimPlan:
     """The lines, trims and instruments of pump `index`; pump 0 carries the manifold tees."""
     is_first = index == 0
@@ -170,6 +174,7 @@ def _pump_plan(
         suction_head=(*manifold.feeds, *manifold.splits) if is_first else (),
         suction_src_id=None if is_first else manifold.splits[index - 1].node_id,
         discharge_tail=_first_pump_tail(manifold, header_run) if is_first else (),
+        power_band=band,
     )
     return combine(trims, _pump_instruments(ctx, pump.node_id)).with_port_prefix(f"pump{index}")
 

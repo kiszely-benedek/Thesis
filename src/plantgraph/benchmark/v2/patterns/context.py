@@ -24,6 +24,7 @@ from plantgraph.benchmark.v2.config import (
 )
 from plantgraph.benchmark.v2.config_v22 import GeneratorConfigV22
 from plantgraph.benchmark.v2.deck import VariantDecks
+from plantgraph.benchmark.v2.streams import handbook_unit_rng
 from plantgraph.benchmark.v2.trim_context import LineStyle, TrimContext, UnitNumbering
 from plantgraph.benchmark.v2.vocabulary import TrainConventions
 
@@ -55,7 +56,18 @@ class PatternContext:
     ) -> PatternContext:
         """The context of unit `unit_no`, its knobs read from `config`."""
         handbook = isinstance(config, GeneratorConfigV22) and config.handbook.enabled
-        trim = TrimContext(unit_no, rng, config.trims, conventions, decks, numbering, handbook)
+        knobs = config.handbook if isinstance(config, GeneratorConfigV22) else None
+        trim = TrimContext(
+            unit_no,
+            rng,
+            config.trims,
+            conventions,
+            decks,
+            numbering,
+            handbook,
+            knobs,
+            handbook_unit_rng(config.seed, unit_no),
+        )
         return cls(
             trim,
             config.instruments,

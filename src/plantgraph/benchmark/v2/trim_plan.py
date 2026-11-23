@@ -18,6 +18,7 @@ from collections.abc import Mapping
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from plantgraph.benchmark.v2.hidden_state import PumpPowerBand
 from plantgraph.benchmark.v2.plan_models import (
     EquipmentSpec,
     InstrumentSpec,
@@ -54,6 +55,9 @@ class TrimPlan(BaseModel):
     #: kept here. Left out of dumps on purpose: the frozen plan digest (design 14.2) hashes only
     #: what is drawn.
     spare_sets: tuple[tuple[str, ...], ...] = Field(default=(), exclude=True)
+    #: gold: the hidden power band of each pump (`HiddenDesignState.pump_power`, v2.2 only); a
+    #: declared parameter of the design, so it is left out of dumps and never reaches the model
+    pump_power: dict[str, PumpPowerBand] = Field(default_factory=dict, exclude=True)
 
     def write(self, builder: PlantBuilderV2) -> None:
         """Send the plan to `builder`: equipment, lines, instruments, links, in that order.
@@ -125,6 +129,7 @@ def combine(*plans: TrimPlan) -> TrimPlan:
         stream_kinds=_merge_keyed([plan.stream_kinds for plan in plans], "stream kind"),
         ports=_merge_keyed([plan.ports for plan in plans], "port"),
         spare_sets=tuple(spare for plan in plans for spare in plan.spare_sets),
+        pump_power=_merge_keyed([plan.pump_power for plan in plans], "pump power band"),
     )
 
 

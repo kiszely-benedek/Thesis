@@ -6,7 +6,10 @@ for every node its role and where it is drawn.
 
 from __future__ import annotations
 
+from typing import Any
+
 from plantgraph.benchmark.v2.config_v22 import GeneratorConfigV22
+from plantgraph.benchmark.v2.hidden_state import HiddenDesignState, PumpPowerBand
 from plantgraph.benchmark.v2.patterns.ports import PatternInstance
 from plantgraph.benchmark.v2.plan_models import (
     GenerationRecordV2,
@@ -25,12 +28,24 @@ from plantgraph.benchmark.v2.vocabulary import ItemKind, item_kind
 def build_record(plan: PlantPlanV2, pydexpi_version: str) -> GenerationRecordV2:
     """The record of `plan`; `pydexpi_version` is the backend's `backend_version`.
 
-    A v2.2 config gets the `GenerationRecordV22` subclass, with its (still empty) hidden state.
+    A v2.2 config gets the `GenerationRecordV22` subclass, with the hidden state the units drew.
     """
-    record_class = (
-        GenerationRecordV22 if isinstance(plan.config, GeneratorConfigV22) else GenerationRecordV2
-    )
-    return record_class(
+    common = _common_fields(plan, pydexpi_version)
+    if isinstance(plan.config, GeneratorConfigV22):
+        return GenerationRecordV22(**common, hidden_state=_hidden_state(plan))
+    return GenerationRecordV2(**common)
+
+
+def _hidden_state(plan: PlantPlanV2) -> HiddenDesignState:
+    """The design quantities the units drew and no drawing shows (design 6.1)."""
+    pump_power: dict[str, PumpPowerBand] = {}
+    for unit in plan.units:
+        pump_power.update(unit.instance.plan.pump_power)
+    return HiddenDesignState(pump_power=pump_power)
+
+
+def _common_fields(plan: PlantPlanV2, pydexpi_version: str) -> dict[str, Any]:
+    return dict(
         plant_id=plan.config.plant_id,
         seed=plan.config.seed,
         generator_config=plan.config.model_dump_json(),

@@ -3,7 +3,7 @@
 It is built from a generated plant alone, so a check needs no test helper. The graph is the plan
 written straight into a schema graph (the oracle, `oracle_graph.py`), not the graph read back from
 the DEXPI model: it still carries each part's role, which the system under test never sees.
-`HiddenDesignState` (design 6.1) is added by task T2; until then a view has no `hidden` field.
+`HiddenDesignState` (design 6.1) is read from the plant's record: empty for a v2.1 plant.
 """
 
 from __future__ import annotations
@@ -15,7 +15,9 @@ from pydexpi.dexpi_classes.pydantic_classes import DexpiModel
 
 from plantgraph.benchmark.v2.config_v22 import GeneratorConfigV22
 from plantgraph.benchmark.v2.generate import GeneratedPlantV2
+from plantgraph.benchmark.v2.hidden_state import HiddenDesignState
 from plantgraph.benchmark.v2.planner import PlantPlanV2
+from plantgraph.benchmark.v2.record_v22 import GenerationRecordV22
 from plantgraph.benchmark.v2.rules.oracle_graph import GraphPlantBuilderV2
 
 
@@ -37,6 +39,14 @@ class RuleView:
         """True for a v2.2 plant drawn with the handbook rules on; v2.1 plants are always False."""
         config = self.plan.config
         return isinstance(config, GeneratorConfigV22) and config.handbook.enabled
+
+    @property
+    def hidden(self) -> HiddenDesignState:
+        """The design quantities no drawing shows; empty on a v2.1 plant, which draws none."""
+        record = self.generated.record
+        return (
+            record.hidden_state if isinstance(record, GenerationRecordV22) else HiddenDesignState()
+        )
 
     @property
     def model(self) -> DexpiModel:

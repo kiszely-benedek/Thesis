@@ -21,6 +21,7 @@ from plantgraph.benchmark.v2.class_decks import (
     PUMP_CHECK,
 )
 from plantgraph.benchmark.v2.config import PumpPressureMode
+from plantgraph.benchmark.v2.hidden_state import PumpPowerBand
 from plantgraph.benchmark.v2.plan_models import LineItemSpec, StreamKindV2
 from plantgraph.benchmark.v2.trim_context import LineStyle, TrimContext
 from plantgraph.benchmark.v2.trim_plan import TrimDraft, TrimPlan, combine, main_line
@@ -33,6 +34,7 @@ from plantgraph.benchmark.v2.trims_extra import (
     removable_spool_items,
     tee_part,
 )
+from plantgraph.benchmark.v2.trims_min_flow import min_flow_line
 from plantgraph.graph.schema import NodeClass
 
 #: pumps that push a fixed volume per stroke; they need the relief path of 6.5
@@ -216,6 +218,7 @@ def pump_trims(
     suction_head: tuple[LineItemSpec, ...] = (),
     suction_src_id: str | None = None,
     discharge_tail: tuple[LineItemSpec, ...] = (),
+    power_band: PumpPowerBand | None = None,
 ) -> TrimPlan:
     """Every trim of one pump, with its suction and discharge lines: vessel -> pump -> `dst_id`.
 
@@ -224,13 +227,19 @@ def pump_trims(
     the set: `suction_head` parts come first on the suction line, `suction_src_id` replaces the
     vessel as its source (a pump that branches off a header tee), and `discharge_tail` parts
     close the discharge line (the header's merge tees). The min-flow line still returns to
-    `vessel_id`.
+    `vessel_id`. On a v2.2 plant the pump's hidden `power_band` decides whether it has a min-flow
+    line and which method the line uses (`trims_min_flow.py`); it is required for a centrifugal
+    pump there and recorded in the plan's `pump_power`.
     """
     pd_pump = needs_external_relief(pump_class)
     min_flow = ctx.chance(ctx.config.p_min_flow)  # always drawn: the v2.1 stream stays aligned
     if ctx.handbook and pd_pump:
         # rule TOG192-PD-NO-MINFLOW: no min-flow line on a PD pump (Toghraei 2019 p.192)
         min_flow = False
+    if ctx.handbook and not pd_pump:
+        band = _required_band(power_band, pump_id)
+        # rule TOG177-MINFLOW-NEED: a spillback only from 5 hp up (Toghraei 2019 p.177)
+        min_flow = band is not PumpPowerBand.BELOW_5
     suction = suction_for(pump_class)(ctx, style, pd_pump)
     discharge = pump_discharge(
         ctx,
@@ -252,10 +261,21 @@ def pump_trims(
         relief_taps = (discharge.ports["relief_tee"], suction.ports["relief_return_tee"])
         parts.append(pd_pump_relief(ctx, style, *relief_taps))
     if min_flow:
-        parts.append(min_flow_bypass(ctx, style, discharge.ports["min_flow_tee"], vessel_id))
+        tee_id = discharge.ports["min_flow_tee"]
+        if power_band is None:  # v2.1 and knobs-off v2.2: the one orifice line
+            parts.append(min_flow_bypass(ctx, style, tee_id, vessel_id))
+        else:
+            parts.append(min_flow_line(ctx, style, power_band, tee_id, vessel_id))
     parts.append(pump_vent_drain(ctx, style, pump_id))
     parts.append(flush_connection(ctx, style, pump_id))
-    return combine(*parts)
+    plan = combine(*parts)
+    return plan.model_copy(update={"pump_power": {pump_id: power_band}}) if power_band else plan
+
+
+def _required_band(power_band: PumpPowerBand | None, pump_id: str) -> PumpPowerBand:
+    if power_band is None:
+        raise ValueError(f"expected a hidden power band for centrifugal pump {pump_id!r} on v2.2")
+    return power_band
 
 
 # ---- 6.16 compressor --------------------------------------------------------------------------

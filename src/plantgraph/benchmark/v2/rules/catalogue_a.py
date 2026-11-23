@@ -146,7 +146,7 @@ PUMPS = (
         sources=(tog("p.177"),),
         kind=RuleKind.PLACE,
         declared_parameters=("handbook.pump_power_weights",),
-        check=pending("T4"),
+        check=wired("check_minflow_need", "checks_pumps_power"),
     ),
     HandbookRule(
         rule_id="TOG313-MINFLOW-METHOD",
@@ -157,7 +157,7 @@ PUMPS = (
         kind=RuleKind.ALTERNATIVE,
         sampling_unit="item",
         declared_parameters=("handbook.pump_power_weights",),
-        check=pending("T4"),
+        check=wired("check_minflow_method", "checks_pumps_power"),
     ),
     HandbookRule(
         rule_id="TOG219-PD-RELIEF",
