@@ -7,9 +7,10 @@ beside the bands, with no verdict.
 
 from __future__ import annotations
 
+from collections import Counter
 from collections.abc import Sequence
 
-from plantgraph.benchmark.v2.network_models import is_network_unit_no
+from plantgraph.benchmark.v2.network_models import area_of_train, is_network_unit_no
 from plantgraph.benchmark.v2.planner import PlantPlanV2
 from plantgraph.benchmark.v2.sheet_stats import SheetStats, spread
 
@@ -40,6 +41,21 @@ def kind_values(plan: PlantPlanV2, stats: Sequence[SheetStats]) -> list[tuple[st
         ("connectors per network sheet, mean", stubs.mean),
         ("connectors per network sheet, max", float(stubs.high)),
     ]
+
+
+def sheets_per_area(plan: PlantPlanV2, trains_per_area: int) -> dict[int, int]:
+    """Area -> its sheets: the process sheets of its trains plus its header sheets.
+
+    The plant interarea sheets belong to no area. The last area may hold fewer trains than the
+    others, so its total is smaller; the choice of `trains_per_area` is made on the median.
+    """
+    totals: Counter[int] = Counter()
+    for unit in plan.units:
+        totals[area_of_train(unit.slot.train_no, trains_per_area)] += unit.sheets.sheet_count
+    for network in plan.network_units:
+        if not network.is_interarea:
+            totals[network.area_no] += network.sheets.sheet_count
+    return dict(sorted(totals.items()))
 
 
 def _tie_ins_of(plan: PlantPlanV2, sheet_group: str) -> int:

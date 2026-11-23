@@ -3,10 +3,12 @@
 A **network** is a pipe system the whole plant shares: the flare header, the closed drain, the
 cooling-water and steam mains, the fuel-gas main. Toghraei 2019 pp.32-34 draws them on their own
 P&IDs, mostly pipes, so a process sheet shows only a short stub that ends at a connector. An
-**interarea** sheet carries the lines between two areas (here: two trains). A **tie-in** is one
-place where a process line joins a header. **Distribution** services flow from the header to the
-process (cooling water supply, steam, fuel gas); **collection** services flow from the process
-into the header (flare, closed drain, cooling water return, condensate).
+**area** is a run of consecutive trains: the plant region one document covers (design 17.14 N2),
+and the unit a header serves. An **interarea** sheet carries a line that crosses the border between
+two areas. A **tie-in** is one place where a process line joins a header. **Distribution**
+services flow from the header to the process (cooling water supply, steam, fuel gas);
+**collection** services flow from the process into the header (flare, closed drain, cooling water
+return, condensate).
 """
 
 from __future__ import annotations
@@ -24,6 +26,8 @@ from plantgraph.benchmark.v2.trim_plan import TrimPlan
 NETWORK_UNIT_BASE = 9000
 INTERAREA = "INTERAREA"  # the "service" of an interarea unit
 _INTERAREA_INDEX = len(NETWORK_SERVICES)
+#: the plant has one interconnecting unit, in area slot 0 (`9000 + 10 * 0 + 8`)
+PLANT_INTERAREA_AREA = 0
 
 
 class TieDirection(str, Enum):
@@ -62,10 +66,20 @@ FLUID_CLASS_OF_SERVICE: dict[str, FluidClass] = {
 }
 
 
-def network_unit_no(train_no: int, service: str) -> int:
-    """`9000 + 10 * train + service index`; the interarea unit of a train is index 8."""
+def area_of_train(train_no: int, trains_per_area: int) -> int:
+    """The area (from 1) of a train: train t lies in area ceil(t / k), a function of t alone."""
+    return (train_no - 1) // trains_per_area + 1
+
+
+def first_train_of_area(area_no: int, trains_per_area: int) -> int:
+    """The first train of an area; its header units take that train's conventions (17.14 N2.2)."""
+    return (area_no - 1) * trains_per_area + 1
+
+
+def network_unit_no(area_no: int, service: str) -> int:
+    """`9000 + 10 * area + service index`; the plant interarea unit is 9008 (area 0, index 8)."""
     index = _INTERAREA_INDEX if service == INTERAREA else NETWORK_SERVICES.index(service)
-    return NETWORK_UNIT_BASE + 10 * train_no + index
+    return NETWORK_UNIT_BASE + 10 * area_no + index
 
 
 def is_network_unit_no(unit_no: int) -> bool:
@@ -79,6 +93,8 @@ class NetworkUnit(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     unit_no: int
+    area_no: int  # `PLANT_INTERAREA_AREA` (0) for the plant interarea unit
+    #: the train whose conventions the unit's parts follow: the area's first, area 1's for interarea
     train_no: int
     service: str  # a network service code, or `INTERAREA`
     title: str
@@ -110,3 +126,19 @@ class Crossing(BaseModel):
     def direction(self) -> TieDirection:
         """The way this crossing's service flows."""
         return SERVICE_DIRECTION[self.service]
+
+
+class Join(BaseModel):
+    """A line that leaves one train for another: where it starts, where it lands, what it carries.
+
+    `source` is the last part of the line in the first train, `destination` the in-port part of
+    the second one.
+    """
+
+    model_config = ConfigDict(frozen=True)
+
+    source_train: int
+    destination_train: int
+    source: str
+    destination: str
+    fluid_code: str

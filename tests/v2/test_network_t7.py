@@ -12,6 +12,7 @@ from collections import Counter
 from dataclasses import replace
 
 import pytest
+from network_support import view_one_train_per_area
 from t9_support import SEEDS, view_v21, view_v22
 
 from plantgraph.benchmark.v2.config_v22 import GeneratorConfigV22, HandbookKnobs
@@ -64,11 +65,18 @@ def _header_tees(view: RuleView, service: str) -> set[str]:
 @pytest.mark.parametrize("rule_id", _RULES)
 def test_a_network_rule_has_no_violation_on_a_v22_plant(rule_id: str, seed: int) -> None:
     assert _run(rule_id, view_v22(seed)).violations == ()
+    assert _run(rule_id, view_one_train_per_area(seed)).violations == ()
 
 
-@pytest.mark.parametrize("rule_id", _RULES)
+@pytest.mark.parametrize("rule_id", [r for r in _RULES if r != "TOG33-INTERAREA"])
 def test_a_network_rule_looks_at_something_on_every_plant(rule_id: str) -> None:
     assert all(_run(rule_id, view_v22(seed)).checked > 0 for seed in SEEDS)
+
+
+def test_tog33_has_no_instance_on_a_one_area_plant_and_some_with_several_areas() -> None:
+    """A plant of one area has no border (17.14 N2.6): 0 instances is reported, not a failure."""
+    assert all(_run("TOG33-INTERAREA", view_v22(seed)).checked == 0 for seed in SEEDS)
+    assert all(_run("TOG33-INTERAREA", view_one_train_per_area(s)).checked > 0 for s in SEEDS)
 
 
 @pytest.mark.parametrize("seed", SEEDS)
@@ -81,8 +89,11 @@ def test_the_whole_report_is_clean_and_nothing_is_owed(seed: int) -> None:
 @pytest.mark.parametrize("seed", SEEDS)
 def test_every_network_service_and_the_interarea_sheet_appear_on_some_plant(seed: int) -> None:
     services = Counter(unit.service for unit in view_v22(seed).plan.network_units)
-    assert {"FL", "CHD", "INTERAREA"} <= set(services)
-    assert sum(services.values()) > 8  # several (train, service) units, not one
+    assert {"FL", "CHD"} <= set(services)
+    assert "INTERAREA" not in services  # one area: no border
+    several = Counter(unit.service for unit in view_one_train_per_area(seed).plan.network_units)
+    assert {"FL", "CHD", "INTERAREA"} <= set(several)
+    assert sum(several.values()) > 8  # several (area, service) units, not one
 
 
 # ---- structure: unit numbers, capacity, one connector per service per sheet -----------------
@@ -96,7 +107,7 @@ def test_network_unit_numbers_come_from_the_reserved_block_and_are_unique(seed: 
     assert all(n >= NETWORK_UNIT_BASE for n in numbers)
     assert all(unit.slot.unit_no < NETWORK_UNIT_BASE for unit in plan.units)
     for unit in plan.network_units:
-        assert unit.unit_no == network_unit_no(unit.train_no, unit.service)
+        assert unit.unit_no == network_unit_no(unit.area_no, unit.service)
 
 
 @pytest.mark.parametrize("seed", SEEDS)
@@ -207,8 +218,8 @@ def test_tog360_catches_a_utility_stub_with_no_header() -> None:
     assert _run("TOG360-UTILITY-NETWORKS", cut).violations
 
 
-def test_tog33_catches_a_direct_pipe_between_two_trains() -> None:
-    view = view_v22(1)
+def test_tog33_catches_a_direct_pipe_between_two_areas() -> None:
+    view = view_one_train_per_area(1)
     first = next(u for u in view.plan.units if u.slot.train_no == 1)
     last = next(u for u in view.plan.units if u.slot.train_no == 2)
     a = next(iter(first.sheets.sheet_of))

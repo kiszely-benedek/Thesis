@@ -116,23 +116,39 @@ def _chain(line: LineSpec) -> list[str]:
     return [node for node in nodes if node is not None]
 
 
-def _owned_lines(plan: PlantPlanV2) -> list[tuple[int, LineSpec]]:
-    """Every line of the plant with the number of the unit that owns it (process units first)."""
-    owned = [(u.slot.unit_no, line) for u in plan.units for line in u.instance.plan.lines]
-    return owned + [(n.unit_no, line) for n in plan.network_units for line in n.plan.lines]
+def _owned_lines(plan: PlantPlanV2) -> list[tuple[int, LineSpec, int]]:
+    """Every line of the plant: (owning unit, the line, the unit it counts for when it joins).
+
+    Process units come first, then network and interarea units.
+    """
+    owned = []
+    for unit in plan.units:
+        unit_plan = unit.instance.plan
+        owned += [
+            (unit.slot.unit_no, line, _joining_unit(unit.slot.unit_no, line, unit_plan.roles))
+            for line in unit_plan.lines
+        ]
+    for network in plan.network_units:
+        owned += [(network.unit_no, line, network.unit_no) for line in network.plan.lines]
+    return owned
 
 
 _BARE_JOIN = -1  # stands for "another unit" in `wired_out_ends` and `fed_start_ends`
+_SUB_HEADER_ROLE = "sub_header_tee"
 
 
-def _joining_unit(unit_no: int, line: LineSpec) -> int:
+def _joining_unit(unit_no: int, line: LineSpec, roles: Mapping[str, str]) -> int:
     """The unit a joining line counts for: its own, or `_BARE_JOIN` for a network tie-in line.
 
-    A line with no part of its own (v2.2 only) is a bare join between two parts of one unit, a
-    sub-header branch. It does continue the line it starts from, which a branch off a tee (a trim)
-    does not, so it counts like a line of another unit.
+    Two kinds of line (v2.2 only) continue the line they start from or end at, though they belong
+    to the same unit, so they count like a line of another unit:
+    - a bare join, a line with no part of its own: a sub-header branch;
+    - the sub-header line itself, whose first part is a `sub_header_tee`. Its crossing is counted
+      already, so the open end it continues must not be counted a second time (design 17.14 N1).
     """
-    return unit_no if line.items else _BARE_JOIN
+    if not line.items or roles.get(line.items[0].node_id) == _SUB_HEADER_ROLE:
+        return _BARE_JOIN
+    return unit_no
 
 
 def fed_start_ends(plan: PlantPlanV2) -> frozenset[str]:
@@ -142,11 +158,11 @@ def fed_start_ends(plan: PlantPlanV2) -> frozenset[str]:
     so the open start is no stub: the crossing is counted instead.
     """
     enders: dict[str, set[int]] = {}
-    for unit_no, line in _owned_lines(plan):
+    for _, line, joining in _owned_lines(plan):
         if line.dst_id is not None:
-            enders.setdefault(line.dst_id, set()).add(_joining_unit(unit_no, line))
+            enders.setdefault(line.dst_id, set()).add(joining)
     fed: set[str] = set()
-    for unit_no, line in _owned_lines(plan):
+    for unit_no, line, _ in _owned_lines(plan):
         if line.src_id is None and line.items:
             if enders.get(line.items[0].node_id, set()) - {unit_no}:
                 fed.add(line.items[0].node_id)
@@ -162,11 +178,11 @@ def wired_out_ends(plan: PlantPlanV2) -> frozenset[str]:
     """
     # part id -> the units that start a line from it
     starters: dict[str, set[int]] = {}
-    for unit_no, line in _owned_lines(plan):
+    for _, line, joining in _owned_lines(plan):
         if line.src_id is not None:
-            starters.setdefault(line.src_id, set()).add(_joining_unit(unit_no, line))
+            starters.setdefault(line.src_id, set()).add(joining)
     wired: set[str] = set()
-    for unit_no, line in _owned_lines(plan):
+    for unit_no, line, _ in _owned_lines(plan):
         end = _chain(line)[-1]
         if line.dst_id is None and starters.get(end, set()) - {unit_no}:
             wired.add(end)

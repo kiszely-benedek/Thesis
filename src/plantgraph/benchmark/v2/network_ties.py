@@ -30,6 +30,7 @@ from plantgraph.benchmark.v2.network_models import (
 from plantgraph.benchmark.v2.patterns.ports import PatternInstance
 from plantgraph.benchmark.v2.plan_models import LineItemSpec, LineSpec, StreamKindV2
 from plantgraph.benchmark.v2.pressure_levels import assign_levels_of_plans
+from plantgraph.benchmark.v2.relief_ends import RELIEF_ROLES
 from plantgraph.benchmark.v2.sheets import assign_unit_sheets
 from plantgraph.benchmark.v2.trim_context import LineStyle, TrimContext
 from plantgraph.benchmark.v2.trim_plan import TrimDraft, TrimPlan
@@ -37,8 +38,9 @@ from plantgraph.benchmark.v2.trims_extra import tee_part
 from plantgraph.benchmark.v2.trims_utility import utility_style
 from plantgraph.graph.schema import NodeClass
 
-#: the line ends that relieve to the flare: a PSV outlet (with or without its outlet block)
-_FLARE_END_ROLES = frozenset({"psv_outlet_block", "psv", "compressor_discharge_psv"})
+#: the line ends that relieve to the flare: a PSV outlet (with or without its outlet block) or a
+#: rupture disc (design 17.14 N3.1: its FL line is "to the flare", so it ties in like a PSV)
+_FLARE_END_ROLES = RELIEF_ROLES
 _BLEED_ROLE = "dbb_bleed_valve"  # the bleed of a fuel-gas double block and bleed: hydrocarbon
 _DRAIN_CAP_ROLE = re.compile(r"_drain_(cap|open_drain)$")
 _UTILITY_RETURNS = frozenset({"CWR", "CD"})  # stubs that end open and flow out of the process

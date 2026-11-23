@@ -15,15 +15,18 @@ from collections.abc import Iterable
 
 import networkx as nx
 
-from plantgraph.benchmark.v2.config_v22 import GeneratorConfigV22
+from plantgraph.benchmark.v2.config_v22 import GeneratorConfigV22, HandbookKnobs
 from plantgraph.benchmark.v2.hidden_state import FluidClass, PressureLevel
 from plantgraph.benchmark.v2.network_models import (
     FLUID_CLASS_OF_SERVICE,
     SERVICE_DIRECTION,
     NetworkUnit,
     TieDirection,
+    area_of_train,
+    is_network_unit_no,
 )
 from plantgraph.benchmark.v2.plan_models import StreamKindV2
+from plantgraph.benchmark.v2.relief_ends import RELIEF_ROLES
 from plantgraph.benchmark.v2.rules.control_graph import service_of
 from plantgraph.benchmark.v2.rules.registry import CheckResult, Violation
 from plantgraph.benchmark.v2.rules.view import RuleView
@@ -32,7 +35,7 @@ from plantgraph.benchmark.v2.trims_valves import BATTERY_LIMIT_ROLES
 _NOT_APPLICABLE = CheckResult(checked=0)
 _DRAIN_VALVE_ROLE = re.compile(r"_drain_valve$")
 _HEADER_TEE = "header_tee"
-_FLARE_ROLES = frozenset({"psv", "psv_outlet_block", "compressor_discharge_psv"})
+_FLARE_ROLES = RELIEF_ROLES  # PSVs and rupture discs (N3.1)
 _BLEED_ROLE = "dbb_bleed_valve"
 
 
@@ -217,13 +220,17 @@ def _utility_stub_ends(view: RuleView) -> list[tuple[str, str, TieDirection]]:
 
 
 def check_interarea(view: RuleView) -> CheckResult:
-    """TOG33-INTERAREA: trains meet only over an interarea sheet, with a battery limit in it."""
+    """TOG33-INTERAREA: areas meet only over an interarea sheet, with a battery limit in it.
+
+    An area is a run of trains (design 17.14 N2); two trains of one area may be joined directly. A
+    plant of one area has no interarea sheet, so the count of checked lines is then 0, reported
+    and no failure.
+    """
     if not view.handbook_enabled:
         return _NOT_APPLICABLE
     # rule TOG33-INTERAREA: lines between areas run over an interarea sheet (Toghraei p.33)
-    train_of = _train_of_nodes(view)
+    area_of = _area_of_process_nodes(view)
     straight = [unit for unit in _networks(view) if unit.is_interarea]
-    interarea_nodes = {n for unit in straight for n in unit.sheets.sheet_of}
     direct = [
         _violation(
             "TOG33-INTERAREA",
@@ -231,7 +238,7 @@ def check_interarea(view: RuleView) -> CheckResult:
             f"expected an interarea sheet between {u} and {v}, found a direct pipe",
         )
         for u, v in sorted(view.piping.edges)
-        if train_of[u] != train_of[v] and not {u, v} & interarea_nodes
+        if u in area_of and v in area_of and area_of[u] != area_of[v]
     ]
     unguarded = [
         _violation("TOG33-INTERAREA", min(unit.sheets.sheet_of), "expected a battery limit")
@@ -242,9 +249,26 @@ def check_interarea(view: RuleView) -> CheckResult:
     return CheckResult(checked=lines, violations=tuple([*direct, *unguarded]))
 
 
-def _train_of_nodes(view: RuleView) -> dict[str, int]:
-    train_of_unit = {str(u.unit_no): u.train_no for u in view.generated.record.units}
-    return {n: train_of_unit[str(d["unit_id"])] for n, d in view.graph.nodes(data=True)}
+def _area_of_process_nodes(view: RuleView) -> dict[str, int]:
+    """Node -> area, for the parts of process units only (header and interarea parts left out)."""
+    per_area = _handbook(view).trains_per_area
+    area_of_unit = {
+        str(u.unit_no): area_of_train(u.train_no, per_area)
+        for u in view.generated.record.units
+        if not is_network_unit_no(u.unit_no)
+    }
+    return {
+        n: area_of_unit[str(d["unit_id"])]
+        for n, d in view.graph.nodes(data=True)
+        if str(d["unit_id"]) in area_of_unit
+    }
+
+
+def _handbook(view: RuleView) -> HandbookKnobs:
+    config = view.plan.config
+    if not isinstance(config, GeneratorConfigV22):  # unreachable: only v2.2 plants have networks
+        raise ValueError(f"expected a v2.2 config, got {type(config).__name__}")
+    return config.handbook
 
 
 # ---- PLT-NETWORK-CLOSURE -----------------------------------------------------------------------
@@ -294,10 +318,7 @@ def _crossing_problems(view: RuleView) -> list[Violation]:
 
 
 def _capacity_problems(view: RuleView) -> list[Violation]:
-    config = view.plan.config
-    if not isinstance(config, GeneratorConfigV22):  # unreachable: only v2.2 plants have networks
-        raise ValueError(f"expected a v2.2 config, got {type(config).__name__}")
-    capacity = config.handbook.max_tie_ins_per_network_sheet
+    capacity = _handbook(view).max_tie_ins_per_network_sheet
     found = []
     for unit in _networks(view):
         tees_per_sheet: dict[str, int] = defaultdict(int)

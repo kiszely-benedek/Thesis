@@ -89,6 +89,9 @@ class HandbookKnobs(BaseModel):
     #: tie-ins one network sheet holds before the header continues on the next (design 7)
     max_tie_ins_per_network_sheet: int = Field(default=16, ge=1)
     network_services: tuple[str, ...] = NETWORK_SERVICES
+    #: consecutive trains per area: the run of trains one header serves and one document covers
+    #: (design 17.14 N2.1). Fixed by the rule that makes the median area nearest 100 sheets
+    trains_per_area: int = Field(default=10, ge=1)
 
     @field_validator(
         "pump_power_weights",
