@@ -972,7 +972,7 @@ check only recognises a blind as the last part.
 |---|---|---|---|
 | Unjoined process out-ports at the plant boundary: flash-drum vapour (28), reactor gas (6) and liquid (2), column vapour (9), distillate, bottoms and side draw (6); non-port process ends: vacuum liquid-ring pump discharge (4), compressor suction KO-drum liquid (2) | 57 | **T7a** (new) | TOG34 battery-limit group on the open end; declared `battery_limit` ("leaves the modelled region") |
 | Unjoined in-ports without a battery limit: farm receipts (4), additive fill (2) | 6 | **T7a** | the same, forced at the plant boundary (the `p_battery_limit` coin is still drawn; its value is ignored there) |
-| Reactor `recycle_gas` in-port with no paired compressor (core `U3` without `U2`) | 8 | **T7a** | becomes makeup gas over a battery limit: stream kind PROCESS, roles `makeup_gas_block` / `makeup_gas_check`. Dropping the line was rejected: it would remove v2.1 draws (§5 randomness rule), and a reactor fed with gas from outside is ordinary |
+| Reactor `recycle_gas` in-port with no paired compressor (core `U3` without `U2`). *Corrected in §17.12:* 2 of the 8 are U3+U2 cores whose compressor is never joined back, which is a wiring bug fixed in T9c; 6 stay for T7a | 8 | **T7a** | becomes makeup gas over a battery limit: stream kind PROCESS, roles `makeup_gas_block` / `makeup_gas_check`. Dropping the line was rejected: it would remove v2.1 draws (§5 randomness rule), and a reactor fed with gas from outside is ordinary |
 | PSV outlets (`psv_outlet_block`) | 50 | **T7** | tie-in to the unit's FL sub-header (TOG32–34) |
 | Fuel-gas double-block-and-bleed bleeds (`dbb_bleed_valve`) | 8 | **T7** | tie-in to FL: hydrocarbon, so never open to the atmosphere (fluid class §6.1) |
 
@@ -1176,3 +1176,79 @@ coder's reading.**
 
 **Order.** The cache and the F1/F2 check fixes go in before T7a. The 100- and 1,000-sheet dev plants must build
 without a non-owed violation before T7a starts.
+
+### 17.12 The discharge KO drum behind a centrifugal stage (1,000-sheet seed 7, after `4d534dc`)
+
+**The case.**
+- **What is drawn.** Drum u101-t5 (V-10102, `discharge_ko_drum`) sits behind CentrifugalCompressor u101-t2 and air
+  cooler u101-t3. The stage's recycle carries only the anti-surge FIC, and TOG295 finds no pressure loop to float on.
+- **What I verified on seeds 3 and 5.** The case is general, not a one-off. In every U3+U2 core the stage's
+  `compressed` out-port and the reactor's `recycle_gas` in-port both stay **open**. `flowsheet.wire` joins only a
+  unit's first in-port (or a `collects` port), and U3 is wired before its U2 exists. The grammar says
+  `Core := U3 [U2 on its gas outlet]`, and the reactor's port is named `recycle_gas`. Both state the intent of a
+  recycle-gas loop that the wiring never closes.
+- **Not verified on the 1,000-sheet plant.** U2 occurs only inside U3+U2, so u101 is such a core. T9c confirms it.
+
+**The page (re-read, p.316–319).**
+- p.316: "for centrifugal gas movers, there are two control systems needed: capacity control, and anti-surge
+  control".
+- Table 15.11 (p.317) gives suction throttling as "common" for centrifugal machines, and VSD as a general method.
+- p.318: the capacity loop may be a flow or a pressure loop.
+
+**What the stage already has.** Both systems:
+- **anti-surge:** FE → FIC → FV on the recycle;
+- **capacity:** a suction pressure loop PT → PIC → PV on the suction drum (`compression_parts._suction_pressure_valve`)
+  or, with a VSD, PT → PIC → AEF (`machine_instruments`).
+
+So the stage's capacity is already controlled, and its discharge pressure is set by the system it delivers into.
+
+**Verdict: (d). Close the recycle loop in the wiring; the drum then floats on the reactor loop's pressure control.**
+- **(a) rejected.** A discharge or load PIC would be a second capacity manipulator on a machine that already has one
+  (p.316 asks for one capacity control and one anti-surge). Liptak's load loop with anti-surge decoupling is the
+  1995 volume, which has no text layer and could not be page-checked (§16).
+- **(b) rejected.** A PIC on the drum would be a second pressure loop on the reactor loop's gas inventory (Table 15.1,
+  p.295).
+- **(c) is right in principle but has nothing to find.** The discharge has no downstream today; the stream ends open.
+
+**Generator change (v2.2 only, new task T9c, size S, decision-independent).**
+- **Where.** `src/plantgraph/benchmark/v2/flowsheet.py` (`wire`, or the planner step that builds a composite core).
+- **What.** When a U2 is built as the second half of a U3+U2 core, set the U3 instance's `recycle_gas` in-port source
+  to the U2's `compressed` out-port (`with_in_port_source`), and drop that out-port from the open outs.
+- **What it does not touch.** It adds no draw, so the randomness rule (§5) holds.
+- **Rule comment:**
+  `# rule PLT-STREAM-CLOSURE: the recycle compressor returns its gas to its reactor (Toghraei 2019 p.24)`
+  There is no checked page for the loop itself; the basis is the grammar's own intent (DESIGN).
+- **Prefix stability.** A plant cut between U3 and U2 keeps the reactor port open, and T7a's makeup gas closes it.
+  S15 is restated as for boundary groups (§17.4).
+
+**Check change (TOG295 `_floats_on`, same task).**
+- The partner is the nearest pressure loop reachable from the container along **process pipe, in the flow
+  direction, without a throttling control valve**.
+- Flooded items count as pipe (p.271), and split valves (§17.2) do not count as throttling.
+- The route need not be gas all the way: a liquid-full stretch passes the pressure too. Here the recycle joins the
+  liquid reactor feed.
+- The partner is then the reactor section's separator loop (or the item it floats on in turn), and the exception
+  code stays `pressure_floating_on:<id>`.
+
+**Knock-on effects.**
+- **T8, PLT-RECYCLE-CLOSURE.** The rule says "a recycle returns inside its unit through an RO or a CV". That is
+  stated for spillbacks (p.317). The rule's scope becomes: spillback and min-flow recycles return inside their unit
+  through a reducing element. A reactor recycle-gas loop returns inside its **core** (U3+U2) and is driven by its own
+  compressor, so it needs no reducing element.
+- **§17.4 counts.** 2 of the 8 open `recycle_gas` ends on seeds 1–5 are U3+U2 cores. T9c closes them, and T7a's
+  makeup gas is left with 6. The open `compressed` ends (2) also close; they had been counted among the boundary
+  ends.
+- **If the build still raises.** If the partner search still finds nothing on the 1,000-sheet plant, the case
+  returns with the route printed. Nothing beyond that is pre-decided.
+
+**Class-only control-valve tests listed by the coder.**
+
+| Place | Verdict |
+|---|---|
+| `checks_compressors.py` `_valves_on_lines` (class + `PV-`) | correct today: a manual valve never carries a `PV-` tag, and an untagged one (T6) has none. Switch to `loop_of(...).variable == PRESSURE` in T9c so the check does not depend on tag letters |
+| `checks_pumps.py` `_throttle_problem` (class + `FV-`) | the same: switch to `loop_of(...).variable == FLOW` in T9c; no result changes |
+| `checks_v21_instruments.py` S4 | no change. It starts from the actuator and asserts what it drives, so it is not a class-only CV test |
+| `checks_v21_instruments.py` S7 | no change. It selects on-off valves by tag letters, which is what the invariant is about; untagged valves fall out |
+
+**Order.** T9c goes next, then T7a. The 1,000-sheet seed-7 dev plant must build with only PLT-STREAM-CLOSURE owed
+before T7a starts.
