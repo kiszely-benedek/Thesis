@@ -1,7 +1,7 @@
 ---
 adr: 0066
 title: Build generator v2.2 beside a pinned v2.1, with a cited rule registry and a plant-level correctness layer verified on every built plant, and measure it in EXP-0009 with the frozen V2T-A2 and the revision V2T-B on the same plants (stage P1 under $37.50)
-status: proposed
+status: accepted (user, 2026-11-23)
 date: 2026-11-22 (amended 2026-11-23 with the user's decisions D1–D8)
 supersedes: none. Clarifies ADR-0021 (hidden ordinal design state is not equipment data). Amends ADR-0059 (composition bands judged on process sheets; network and interarea sheets reported apart) and the S15 invariant of generator-v2-realism.md §12.2 (network sheets and boundary groups are not prefix-stable). ADR-0053, ADR-0060 and ADR-0065 protocols carry over. The B arm is decided in ADR-0067.
 design: 40-design/generator-v2-2-handbook-rules.md (decisions in §15, worked out in §18); 40-design/v2t-b-system-revision.md

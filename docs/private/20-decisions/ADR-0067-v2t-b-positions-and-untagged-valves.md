@@ -1,7 +1,7 @@
 ---
 adr: 0067
 title: Add V2T-B, an additive revision of V2T-A2 that reads valve positions and names untagged valves by a descriptor, and run it paired with the frozen V2T-A2 on the same v2.2 plants (freeze E10)
-status: proposed
+status: accepted (user, 2026-11-23)
 date: 2026-11-23
 supersedes: none. Leaves ADR-0061's V2T-A2 and its freeze E9 unchanged; extends ADR-0060's gold-side/system-side split to a second system.
 design: 40-design/v2t-b-system-revision.md

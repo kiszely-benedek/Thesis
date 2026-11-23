@@ -1971,3 +1971,15 @@ a comment.
 5. **The reviewer:** background, consent to be named, and when the review can happen (it is most useful before the
    freeze).
 6. **The top-up:** P1 needs up to $37.50 (estimate $24.95); P2 later up to $13.50.
+
+### 18.8 The user's answers of 2026-11-23, second round
+
+- **Item 1:** ADR-0066 and ADR-0067 are accepted.
+- **Item 2:** 5 + 5 plants per scale.
+- **Item 3:** yes. The document unit (the area of §17.14 N2) also applies to spare naming and to the XV/YV letter.
+- **Item 5: there will be no expert reviewer.**
+  - T12a (the review package) and the review half of T16 are dropped.
+  - The thesis states plainly that no practising engineer reviewed the generated sheets. It lists this as a limitation beside the unmodelled chemistry, sizing, set points and frequencies.
+  - The rules are book-cited and machine-checked, but they are not externally reviewed.
+  - The 25-item checklist of §18.5 stays in the record as the map from plain questions to rule ids. Items 1–23 are each covered by an automatic check, item 24 by the composition bands, and item 25 is not covered.
+- **Items 4 and 6** are still open. They were explained to the user again.
