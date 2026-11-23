@@ -824,7 +824,7 @@ unmeasured.
 | 2 | **T7** Networks and interarea: network units, headers, per-sheet sub-headers, network connectors, capacity overflow, splitter grouping, size search on total sheets, composition per sheet kind, TOG32/141/360/33, PLT-NETWORK-CLOSURE; empties `OWED_FIXES`; wires 5 pending rules. **Also R2 of §17.13:** TOG156 narrowed to process services (P, PG) with the `relief_path` exemption, because T7 creates the FL and CHD tees | L | coder | **built, uncommitted**; rulings on its report in §17.14 |
 | 2b | **T7b** T7 fixes (§17.14), acceptance criteria below the table | M | coder | **done** (`3e42a6a`); size search ruled in §17.14 N4 |
 | 3 | **T6** (**done**, `cc4d5ef`; gold-side rulings in §17.15) Documents and conventions (§5, §18.2): `DocumentRecord` (a document is T7b's area, `trains_per_document` = `trains_per_area`, §17.14 N2.3); per-document draws of manual-valve tagging (0.75 untagged), spare naming, on-off letter and PV without bypass, from new streams (v2.1 per-train draws taken, values ignored); config override `handbook.document_untagged` for the stratified sealed plants; untagged manual valves (TOG113); `p_pump_reducers` 0.75; gold side of scope R (untagged refusal, FLOW_PATH tie rule, refused-share report; isolation families pre-registered unavailable); v2.1 question hash unchanged | M | coder | T7b |
-| 4 | **T10** In this order (§17.13): **step 0**, the T8 follow-ups: the R1 docstring in `pressure_levels.py`; R3's `switching_valve` element code and restated statement; R5's re-cite of API14C-A4-OVERPRESSURE and TOG219 to A.4.2.2.1 c p.27, with `source_cannot_exceed` deleted and `scope:non_hydrocarbon` added. **Step 1**, `rules/sac.py` from T10a: items, device letters, locations, and exception codes of three kinds, derived (from structure), declared (R7) and scope. **Step 2**, R7's declarations as constants in `hidden_state.py`, plus `FluidClass.NON_FLAMMABLE` for the non-flammable farms. **Step 3**, the switch-plus-alarm additions of T10a §8: vessel PSHH (where a.4 fails), LSHH and LSLL; filter PSHH; compressor suction/discharge PSHH and PSLL, and TSHH; furnace TSHH and fuel PSHH; additive-tank LSHH. **Step 4**, the valve additions in R8's priority order, with R8's measured stop at 27.5 pooled valves per process sheet: TOG236 emergency vents, compressor suction PSV, furnace tube PSV where l.3 fails. **Step 5**, wire API14C-3.4-TWO-LEVELS, API14C-SAC, TOG207-HX-PSD-BOTH-SIDES and TOG236. Every SAC item without an addition or a derivable, declared or scope code becomes a DEFERRED row with its reason: the heater-outlet check, vessel PSL, pump PSH/PSL, stack and air-intake items, and SDV/BDV/ASH | M | coder | T7b |
+| 4 | **T10** In this order (§17.13): **step 0**, the T8 follow-ups: the R1 docstring in `pressure_levels.py`; R3's `switching_valve` element code and restated statement; R5's re-cite of API14C-A4-OVERPRESSURE and TOG219 to A.4.2.2.1 c p.27, with `source_cannot_exceed` deleted and `scope:non_hydrocarbon` added. **Step 1**, `rules/sac.py` from T10a: items, device letters, locations, and exception codes of three kinds, derived (from structure), declared (R7) and scope. **Step 2**, R7's declarations as constants in `hidden_state.py`, plus `FluidClass.NON_FLAMMABLE` for the non-flammable farms. **Step 3**, the switch-plus-alarm additions of T10a §8: vessel PSHH (where a.4 fails), LSHH and LSLL; filter PSHH; compressor suction/discharge PSHH and PSLL, and TSHH; furnace TSHH and fuel PSHH; additive-tank LSHH. **Step 4**, the valve additions in R8's priority order, with R8's measured stop at 27.5 pooled valves per process sheet: TOG236 emergency vents, compressor suction PSV, furnace tube PSV where l.3 fails. **Step 5**, wire API14C-3.4-TWO-LEVELS, API14C-SAC, TOG207-HX-PSD-BOTH-SIDES and TOG236. Every SAC item without an addition or a derivable, declared or scope code becomes a DEFERRED row with its reason: the heater-outlet check, vessel PSL, pump PSH/PSL, stack and air-intake items, and SDV/BDV/ASH | M | coder | **done** (`8b34921`), with the main-session rulings of §17.16 |
 | 4b | **T6b** Gold side of scope R, as ruled in §17.15: one printed-name helper and one untagged-refusal filter for every family, `harness/gold.py` skips untagged endpoints, `gold_scope_r.py` moved to `qa/questions/untagged.py` without the tie rule, the LINE-01 gate for v2.2 (`qa/exp0009/line_view_gate.py`), the frozen-A2 smoke on an untagged plant, `validate_plant_graph_v22`, and the per-family availability table. Acceptance criteria below the table | M | coder | T10 (one coder at a time; the availability table must be measured on the final v2.2 generator) |
 | 5 | ~~**T12a** Expert-review package~~ | — | — | **dropped**: no reviewer (§18.8) |
 | — | ~~Expert review and triage~~ | — | — | **dropped** (§18.8) |
@@ -911,7 +911,7 @@ unmeasured.
 11. **The report** gives the availability table, the refused shares, criterion 1's three `cmp` results and the
     machine time of the H1000 regeneration. It ends with one commit proposal; nothing is committed.
 
-**Now:** T10 (running). Next: T6b, T14, T15, T12b, T13. No coder runs in parallel.
+**Now:** T6b. Next: T14, T15, T12b, T13. No coder runs in parallel.
 
 ## 14. Risks
 
@@ -1955,6 +1955,29 @@ size search has landed, because a document is an area (§17.14 N2):
 - **1,000-sheet plants:** each plant leaves round(0.8 × its documents) untagged, rounding half up (7 of 9, 8 of 10,
   9 of 11). Which documents is drawn from the same stream.
 - The allocation is written into PREREG A before any build, and G0k checks it.
+
+### 17.16 Main-session rulings on the T10 report, 2026-11-24 (committed `8b34921`)
+
+1. **Size search at the band edge.** T10's added instruments moved the sheet totals. For seed 7 at target 900, the total nearest the target became 899, which is outside the band.
+   - **Amendment to N4:** only totals inside the target's band compete. A tie goes to the fewer units. The search raises only if no total lands in the band.
+   - The headers of a new area arrive about five sheets at a time, so the spot-check tolerance is now **±5 inside the band**, not ±3. The band is the binding constraint.
+   - Seed 7, measured: 90 → 91, 100 → 100, 110 → 110, 900 → 904, 1,000 → 999, 1,100 → 1,100. Seeds 1–5 at 100 land at 99–100.
+2. **The fuel PSHH sits after the last regulator.** API 14C A.6.3.3, p.33, puts it on a new `fuel_gas_psh_tee` between the PV and the TV station. The existing `fuel_gas_pressure_tee` no longer carries the switch.
+3. **The coder's choices, all accepted.**
+   - Compressor sensors sit on `compressor_suction_tee` and on `discharge_psv_tee`.
+   - TOG236 covers every hydrocarbon tank. The emergency vent stays outside `RELIEF_ROLES`.
+   - No new random streams: every addition is structural.
+   - TOG207-HX-PSD-BOTH-SIDES adds nothing, because every side is `side_not_blockable` (D8).
+4. **Counts after T10.** All 54 encoded rules are wired. There are now **24 deferred rows**, not 15, because the generic SAC deferral was split into 10 item rows.
+5. **Composition after T10, measured (all bands pass):**
+
+   | Run | Valves per process sheet | Instruments per process sheet | Instruments : valves |
+   |---|---|---|---|
+   | Seeds 1–5 pooled | 24.54 | 34.52 | 1.41 |
+   | Seed 7, 100 sheets | 23.16 | 35.80 | 1.55 |
+   | Seed 7, 1,000 sheets | 25.00 | 36.47 | 1.46 |
+
+   Seed 2 alone measures 37.19 instruments per sheet, against a band top of 38. Any later addition must re-check that headroom.
 
 ## 18. The user's decisions of 2026-11-23 and what follows from them
 
