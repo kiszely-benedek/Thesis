@@ -13,7 +13,7 @@ from pathlib import Path
 import pytest
 import t9b_mutations
 from t9_mutations import Broken
-from t9_support import SEEDS, view_v21, view_v22
+from t9_support import SEEDS, units_for_30_sheets, view_v21, view_v22
 
 from plantgraph.benchmark.split_models import SplitConfig
 from plantgraph.benchmark.v2.config import GeneratorConfigV2
@@ -96,13 +96,13 @@ def test_the_inventory_check_catches_the_t9b_breaks(break_it: Callable[[RuleView
 # ---- PLT-STREAM-CLOSURE on the joined graph ------------------------------------------------------
 
 
-def test_the_closure_check_finds_the_127_ends_left_after_the_recycle_loops_close() -> None:
-    """129 (design 17.4) minus the 2 reactor recycle ports T9c closes (design 17.12).
+def test_the_closure_check_finds_the_58_ends_left_after_the_plant_boundary_closes() -> None:
+    """127 after T9c (28, 26, 27, 22, 24), minus the 69 boundary ends T7a closes (design 17.4).
 
-    T7a closes 69 of them and T7 the other 58: update this when they land.
+    The 58 left are relief outlets and fuel-gas bleeds; T7 closes them: update this when it lands.
     """
     found = [len(_run("PLT-STREAM-CLOSURE", view_v22(seed)).violations) for seed in SEEDS]
-    assert sum(found) == 127
+    assert found == [10, 13, 12, 9, 14]
 
 
 def test_a_relief_outlet_is_an_open_end_the_closure_check_reports() -> None:
@@ -132,9 +132,14 @@ def test_every_compressor_has_its_discharge_check_valve_and_safety_valve(rule_id
 # ---- build-time verification, the owed list, rules.json ------------------------------------------
 
 
+def _config_with_open_ends() -> GeneratorConfigV22:
+    """A plant that still has relief outlets open: after T7a a 6-unit plant has none."""
+    return GeneratorConfigV22(seed=1, n_units=units_for_30_sheets(1))
+
+
 def test_the_only_owed_fix_is_the_closure_rule_and_it_is_not_raised() -> None:
     assert owed.OWED_FIXES == {"PLT-STREAM-CLOSURE": "T7"}
-    report = generate_plant_v2(GeneratorConfigV22(seed=1, n_units=6)).rules
+    report = generate_plant_v2(_config_with_open_ends()).rules
     assert report is not None
     rows = {row.rule_id: row for row in report.rows}
     assert rows["PLT-STREAM-CLOSURE"].violations > 0
@@ -147,7 +152,7 @@ def test_generation_raises_once_the_owed_rule_is_no_longer_owed(
 ) -> None:
     monkeypatch.setattr(owed, "OWED_FIXES", {})
     with pytest.raises(RuleViolationError, match="PLT-STREAM-CLOSURE"):
-        generate_plant_v2(GeneratorConfigV22(seed=1, n_units=6))
+        generate_plant_v2(_config_with_open_ends())
 
 
 def test_the_generated_report_equals_the_one_verify_plant_gives() -> None:

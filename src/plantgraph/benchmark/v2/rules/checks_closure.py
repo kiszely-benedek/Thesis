@@ -10,31 +10,13 @@ from __future__ import annotations
 
 import networkx as nx
 
+from plantgraph.benchmark.v2.boundary import END_FITTINGS
 from plantgraph.benchmark.v2.plan_models import LineSpec, StreamKindV2
 from plantgraph.benchmark.v2.rules.control_graph import is_control_valve
 from plantgraph.benchmark.v2.rules.registry import CheckResult, Violation
 from plantgraph.benchmark.v2.rules.view import RuleView
+from plantgraph.benchmark.v2.trims_valves import BATTERY_LIMIT_ROLES
 from plantgraph.graph.schema import EQUIPMENT_CLASSES, Relation
-
-#: where a line may end with nothing behind it: a blind or cap, an open drain funnel, a vent to
-#: the atmosphere (breather, ventilation device, silencer, flame arrestor), a rupture disc
-_END_FITTINGS = frozenset(
-    {
-        "BlindFlange",
-        "LineBlind",
-        "Funnel",
-        "VentilationDevice",
-        "BreatherValve",
-        "Silencer",
-        "FlameArrestor",
-        "RuptureDisc",
-    }
-)
-
-#: roles of the parts a battery limit is made of (`trims_valves.battery_limit`), a unit's boundary
-_BATTERY_LIMIT_ROLES = frozenset(
-    {"battery_limit_block", "battery_limit_blind", "battery_limit_check"}
-)
 
 
 def _lines(view: RuleView) -> list[LineSpec]:
@@ -165,13 +147,13 @@ def _declared_as(view: RuleView, piping: nx.DiGraph[str], end: str) -> str | Non
     """The kind of declared end a dead end is, or None when it just stops."""
     graph = view.graph
     nearby = [end, *_beside(piping, end)]  # the blind may sit one part inside its block valve
-    if any(view.roles.get(n) in _BATTERY_LIMIT_ROLES for n in nearby):
+    if any(view.roles.get(n) in BATTERY_LIMIT_ROLES for n in nearby):
         return "battery_limit"  # the unit's boundary toward the rest of the plant
     kind = view.stream_kind_of(_line_number_at(view.graph, end))
     if kind is StreamKindV2.UTILITY_STUB:
         return "utility_stub"  # a utility line that continues on the network sheets
     node_class = str(graph.nodes[end]["node_class"])
-    if node_class in _END_FITTINGS or _is_safety_valve(node_class):
+    if node_class in END_FITTINGS or _is_safety_valve(node_class):
         return "end_fitting"  # a cap, drain funnel, vent or relief outlet
     return None
 

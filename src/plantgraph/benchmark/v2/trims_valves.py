@@ -171,14 +171,15 @@ def _add_limit_switches(draft: TrimDraft, valve: LineItemSpec) -> None:
 # ---- 6.17 battery limit, 6.18 flow measurement, double block and bleed --------------------------
 
 
-def battery_limit(ctx: TrimContext, style: LineStyle) -> TrimPlan:
+def battery_limit(ctx: TrimContext, style: LineStyle, forced: bool = False) -> TrimPlan:
     """6.17: a block valve then a line blind at a unit's first inlet or last outlet.
 
     Drawn with chance `p_battery_limit`; the planner calls it once per unit end. A v2.2 plant
     draws one of the three arrangements of Toghraei p.34 for each crossing (`_variant`).
+    `forced` skips the coin: the plant boundary pass (`boundary.py`) needs the group, always.
     """
     draft = TrimDraft(ctx, style)
-    if not ctx.chance(ctx.config.p_battery_limit):
+    if not forced and not ctx.chance(ctx.config.p_battery_limit):
         return draft.finish()
     variant = _battery_limit_variant(ctx)
     block_class = ctx.deal_class("block_valve")  # dealt in every variant: the deck stays aligned
@@ -192,6 +193,11 @@ def battery_limit(ctx: TrimContext, style: LineStyle) -> TrimPlan:
         return draft.finish(run=(block, check, blind), block=block, check=check, blind=blind)
     return draft.finish(run=(block, blind), block=block, blind=blind)
 
+
+#: roles of the parts a battery limit is made of, whichever arrangement was drawn
+BATTERY_LIMIT_ROLES = frozenset(
+    {"battery_limit_block", "battery_limit_blind", "battery_limit_check"}
+)
 
 #: the three battery-limit arrangements, numbered as in `battery_limit_variant_weights`
 BLIND_ONLY, VALVE_AND_BLIND, VALVE_BLIND_CHECK = 1, 2, 3

@@ -13,6 +13,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict
 
+from plantgraph.benchmark.v2.boundary import close_plant_boundary
 from plantgraph.benchmark.v2.config import GeneratorConfigV2
 from plantgraph.benchmark.v2.config_v22 import GeneratorConfigV22
 from plantgraph.benchmark.v2.deck import VariantDecks
@@ -34,7 +35,7 @@ from plantgraph.benchmark.v2.patterns.variants import all_deck_variants
 from plantgraph.benchmark.v2.plan_models import PlantBuilderV2, TrainRecord, draw_train_records
 from plantgraph.benchmark.v2.sheets import UnitSheets, assign_unit_sheets
 from plantgraph.benchmark.v2.streams import unit_rng
-from plantgraph.benchmark.v2.trim_context import LineStyle
+from plantgraph.benchmark.v2.trim_context import LineStyle, TrimContext
 
 #: the nominal size (inches) of every unit's main process lines; the trims derive smaller branches
 MAIN_LINE_STYLE = LineStyle(size=6)
@@ -82,26 +83,40 @@ def plan_plant(config: GeneratorConfigV2) -> PlantPlanV2:
     slots = draw_flowsheet(config.seed, config.n_units, config.flowsheet, available_patterns())
     trains = draw_train_records(config.seed, slots[-1].train_no)
     decks = VariantDecks(config.seed, all_deck_variants(config.patterns, config.trims))
-    units: list[PlannedUnit] = []
     open_outs: tuple[OpenOut, ...] = ()
+    instances: list[PatternInstance] = []
+    trims: list[TrimContext] = []
     for position, slot in enumerate(slots):
-        built = _build_unit(config, slot, trains, decks, open_outs)
+        built, trim = _build_unit(config, slot, trains, decks, open_outs)
         wired, open_outs = wire(built, slot.unit_no, open_outs, slot.train_no)
         if _closes_core_loop(config, slot, slots[position - 1] if position else None):
-            wired, open_outs = close_recycle_loop(
-                units[-1].instance, wired, slot.unit_no, open_outs
-            )
-        sheets = assign_unit_sheets(slot.unit_no, wired, config.sheets)
-        units.append(PlannedUnit(slot=slot, instance=wired, sheets=sheets))
+            wired, open_outs = close_recycle_loop(instances[-1], wired, slot.unit_no, open_outs)
+        instances.append(wired)
+        trims.append(trim)
+    if _is_handbook(config):
+        # the joins are final only now, so this is the first moment a plant-boundary end is known
+        instances = close_plant_boundary(instances, trims, MAIN_LINE_STYLE)
+    units = [
+        PlannedUnit(
+            slot=slot,
+            instance=instance,
+            sheets=assign_unit_sheets(slot.unit_no, instance, config.sheets),
+        )
+        for slot, instance in zip(slots, instances, strict=True)
+    ]
     return PlantPlanV2(
         config=config, trains=trains, units=tuple(units), open_stub_count=len(open_outs)
     )
 
 
+def _is_handbook(config: GeneratorConfigV2) -> bool:
+    """True for a v2.2 plant with the handbook rules on; v2.1 and knobs-off plants are pinned."""
+    return isinstance(config, GeneratorConfigV22) and config.handbook.enabled
+
+
 def _closes_core_loop(config: GeneratorConfigV2, slot: UnitSlot, previous: UnitSlot | None) -> bool:
     """v2.2 with the handbook on only: v2.1 keeps its open recycle ports (goldens are pinned)."""
-    is_handbook = isinstance(config, GeneratorConfigV22) and config.handbook.enabled
-    return is_handbook and closes_recycle_loop(slot, previous)
+    return _is_handbook(config) and closes_recycle_loop(slot, previous)
 
 
 def _build_unit(
@@ -110,7 +125,8 @@ def _build_unit(
     trains: tuple[TrainRecord, ...],
     decks: VariantDecks,
     open_outs: tuple[OpenOut, ...],
-) -> PatternInstance:
+) -> tuple[PatternInstance, TrimContext]:
+    """The unit's pattern and the trim context it was built with (the boundary pass reuses it)."""
     conventions = trains[slot.train_no - 1].conventions
     # only a product farm reads this: it needs a receipt line for every stream waiting for a tank
     waiting = waiting_streams(open_outs, slot.train_no) if slot.slot is Slot.PRODUCT_FARM else 0
@@ -124,4 +140,4 @@ def _build_unit(
         waiting_streams=waiting,
         train_no=slot.train_no,
     )
-    return build_pattern(slot.pattern_id, ctx)
+    return build_pattern(slot.pattern_id, ctx), ctx.trim

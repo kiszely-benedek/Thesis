@@ -29,13 +29,13 @@ T9_RULES = [
 ]
 
 #: v2.2 plants (handbook on): rule -> (seeds that fail, why). Only the closure rule is left; it is
-#: owed to T7 (`rules/owed.py`): 127 open ends over the five seeds, which T7a (69 plant-boundary
-#: ends) and T7 (58 relief outlets and bleeds) close.
+#: owed to T7 (`rules/owed.py`): 58 open ends over the five seeds, all relief outlets and fuel-gas
+#: bleeds (T7a closed the 69 plant-boundary ends of the 127 left after T9c).
 KNOWN_FAILURES: dict[str, tuple[list[int], str]] = {
     "PLT-STREAM-CLOSURE": (
         SEEDS,
-        "owed to T7: relief outlets (psv_outlet_block), fuel-gas bleeds and plant-boundary ends "
-        "have no declared end: seed 1 line 6-P-100003-A1A-N ends at receipt_manifold_valve u10-t48",
+        "owed to T7: relief outlets (psv_outlet_block) and fuel-gas bleeds (dbb_bleed_valve) "
+        "have no declared end",
     ),
 }
 

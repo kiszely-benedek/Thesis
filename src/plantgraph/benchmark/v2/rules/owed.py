@@ -10,7 +10,7 @@ from __future__ import annotations
 
 #: rule id -> the task that owes its fix
 OWED_FIXES: dict[str, str] = {
-    # 71 plant-boundary ends belong to T7a and 58 relief outlets and bleeds to T7; T7a is a
-    # separate task, so the whole rule is owed to T7 until both have landed (design 17.4)
+    # T7a closed the plant-boundary ends; what is left (58 over seeds 1-5) is relief outlets and
+    # fuel-gas bleeds, which T7 closes (design 17.4)
     "PLT-STREAM-CLOSURE": "T7",
 }
