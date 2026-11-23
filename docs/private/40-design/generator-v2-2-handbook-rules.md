@@ -98,15 +98,17 @@ is wrong as a whole:
 | Layer | Guarantees on every built plant | Does not guarantee |
 |---|---|---|
 | L1 local rules (35) | no encoded local pattern is violated; every sampled alternative is one a book names | anything across trims |
-| L2 plant-level checks (19) | flow closure, phase compatibility, closed recycles; a consistent ordinal pressure order with movers, letdowns, check valves, spec breaks and PSD need; control structure (each inventory controlled once, ≤ 1 CV in series on a liquid line, FE before FV, every pump's flow controlled); protection present or excepted per API 14C; network closure | the real pressures, the hp, whether the chemistry makes sense |
+| L2 plant-level checks (19) | flow closure, phase compatibility, closed recycles; a consistent **relative** ordinal pressure order with movers, letdowns, check valves, spec breaks and PSD need (§17.13 R1); control structure (each inventory controlled once, ≤ 1 CV in series on a liquid line, FE before FV, every pump's flow controlled); protection present or excepted per API 14C; network closure | the real pressures, which vessel is atmospheric, design pressures (MAWP), the hp, whether the chemistry makes sense |
 | L3 external checks | composition inside the OPEN100 bands (process sheets); a reported comparison with the 34 example sheets of Toghraei ch.20; an optional expert review sample | that the plants match any real plant |
 | Not covered | process chemistry, mass and energy balance, sizing, set points, real frequencies, rules deferred or never read, company style beyond the sampled alternatives, drawing layout | — |
 
 **The claim the thesis can make**, then:
 
 > v2.2's rules are derived from published practitioner handbooks, cited per rule, and checked by tests on every
-> generated plant. In addition, every plant is checked for plant-level consistency of flow, ordinal pressure,
-> control and protection structure.
+> generated plant. In addition, every plant is checked for plant-level consistency of flow, a relative ordinal
+> pressure order, control and protection structure. The pressure levels are ranks along the flow, not service or
+> design pressures. Where API RP 14C's omissions need a design pressure or atmospheric service, the plants use a
+> stated convention or leave the item deferred (§17.13).
 
 The thesis must also state the encoded and deferred counts, and must not say "realistic" without the composition
 bands.
@@ -290,7 +292,7 @@ Legend:
 | Id | Rule | Sources | v2.1 | v2.2 | Kind |
 |---|---|---|---|---|---|
 | TOG224-PSV-PIPE-CLEAN | No check valve and no control valve between an enclosure and its PSV | TOG p.224 (Table 12.8) | not checked | check | PLANT |
-| TOG219-VESSEL-PSV | Every pressure vessel reaches a PSV (fire case), except the declared condensate pot | TOG p.219; API 14C A.4.2.2.1 p.26 | ok (S6) | cite, test | PLACE |
+| TOG219-VESSEL-PSV | Every pressure vessel reaches a PSV (fire case), except the declared condensate pot | TOG p.219; API 14C A.4.2.2.1 c p.27 (re-cited §17.13 R5) | ok (S6) | cite, test | PLACE |
 | TOG207-HX-PSD-BOTH-SIDES | Each exchanger enclosure has a pressure safety device, or a pressure-model exception | TOG p.207 | partial | new | PLANT |
 | TOG236-TANK-EMERGENCY-VENT | An atmospheric tank has a normal breather and an emergency vent | TOG p.236; LIP1 §7.7 PDF p.968 | breather only | new | PLACE |
 | API14C-3.4-TWO-LEVELS | A pressure vessel has two independent levels of protection (PSV plus a sensor trip), or a SAC exception | API 14C §3.4 b p.7 | partial | new (with T10) | PLANT |
@@ -308,12 +310,12 @@ Legend:
 | PLT-NETWORK-CLOSURE | Every network connector has a partner; every header ends at a declared end | from TOG p.32–34 | — | new | PLANT |
 | PLT-STREAM-CLOSURE | Every line has a source and a sink item, or a declared end (battery limit, network end, vent to atmosphere, capped maintenance drain) | from TOG p.24 | not checked | check | PLANT |
 | PLT-PHASE | A gas port never meets a liquid port (S12) | DESIGN (S12) | ok | cite, test | PLANT |
-| PLT-RECYCLE-CLOSURE | A recycle returns inside its unit, from a higher to a lower pressure level, through a reducing element (RO, CV) | TOG p.317 (spillback discharge → suction) | not checked | check | PLANT |
+| PLT-RECYCLE-CLOSURE | A recycle returns inside its unit, from a higher to a lower pressure level, through a reducing element: an RO, a CV, or the on-off valve of the switching min-flow method (§17.13 R3) | TOG p.317 (spillback discharge → suction); p.179, p.313 (switching method) | not checked | check | PLANT |
 | PRS-MONOTONE | Along the flow the pressure level never rises except across a pump, compressor or ejector | DESIGN (§6.2) | — | new | PLANT |
 | TOG82-SPEC-BREAK | A spec break where a CV or RO lowers the level, or a pump or compressor raises it | TOG p.82 (Table 6.5) | compressor discharge and letdown only | extend to pumps | PLANT |
 | PRS-SPEC-CLASS | The heavier pipe class is on the higher-level side of a break | DESIGN (follows ADR-0065 F8c) | ok at breaks | check | PLANT |
-| TOG156-MERGE-CHECK | A low-pressure or intermittent stream tying into another has a check valve | TOG p.156 | not checked | check | PLANT |
-| API14C-A4-OVERPRESSURE | An enclosure fed from a higher level, or by a PD mover, has a PSD; otherwise exception `source_cannot_exceed` comes from the pressure model | API 14C A.4.2.2.1 a p.26 | partial | new | PLANT |
+| TOG156-MERGE-CHECK | A process stream (P, PG) that arrives below the level its merge tee carries has a check valve on its own run; relief paths exempt (`relief_path`); the intermittent half is not checked (§17.13 R2) | TOG p.156 | not checked | check | PLANT |
+| API14C-A4-OVERPRESSURE | Every A.4 vessel (hydrocarbon pressure vessel, filters included) reaches a PSV, unless SAC c.3 or c.4 holds from structure; non-hydrocarbon vessels are `scope:non_hydrocarbon`. *Restated 2026-11-23 (§17.13 R5): `source_cannot_exceed` removed* | API 14C A.4.2.2.1 c p.27; SAC A-4.2 c; A.4.1 p.26 (scope) | partial | new | PLANT |
 
 **Count:** §4.1 5, §4.2 6, §4.3 10, §4.4 4, §4.5 5, §4.6 5, §4.7 6, §4.8 14 rows, which made 55 rules; TOG73 was
 deferred in T3, so **54 rules are encoded** (35 local, 19 plant-level). The 19 plant-level rules are those of kind
@@ -338,7 +340,7 @@ before the freeze; otherwise it stays deferred. **Out** = not in this thesis.
 | 9 | Tank blanketing and VRU | TOG ch.9, ch.15 (note, not re-verified) | needs split-range PCVs and a VRU network | **If flagged** (it would also close the §17.3 vapour gap); size L |
 | 10 | Double block and bleed; blinds at pump isolation valves | TOG ch.8, p.175 (note) | changes isolation answers; low value | **Out**: it changes what "the valves to close" means for both arms' isolation gold |
 | 11 | Fired heater passes, pilot gas line, snuffing steam | TOG p.213–215 | new heater pattern variant; large | **If flagged**; size L |
-| 12 | Compressor PSH/PSL/TSH/BDV, vessel LSL and the other SAC devices without a derivable exception | API 14C SAC A-4.2, A-8.2 (T10) | each becomes a DEFERRED SAC row, unless the device is cheap and inside the composition bands | **Now: T10** decides device by device |
+| 12 | SAC devices without a derivable exception: compressor PSH/PSL/TSH and suction PSV (A-8.2 a–e, h), vessel PSL/LSL, pump PSH/PSL and the rest of T10a §8. *Corrected 2026-11-23 (§17.13 R6):* SDV, BDV and ASH are not SAC items (A.8.2.2.3, A.8.3.3, A.8.3.5 p.45, Fig. A-8) and stay out | API 14C SAC A-4.2, A-5.2, A-6.2, A-7.2, A-8.2, A-10.2 (T10a transcription) | each becomes a DEFERRED SAC row, unless the device is cheap and inside the composition bands | **Now: T10** decides device by device |
 | 13 | Shut-in at the primary source | API 14C §4.2.3 p.14 | needs trip → motor interlock edges across sheets, which S19/S20 forbid; v2.2 reports the share of trips that act at the source | **Out**: changes the signal model; reported as a share |
 | 14 | Interlock-diamond drawing style; multi-stage compressors; lube-oil and seal systems | TOG ch.16, ch.10 (note) | drawing style, or detail P&IDs | **Out**: style is not in the graph; seal and lube systems are vendor detail sheets |
 | 15 | TOG73 untagged branch pipes (was encoded; deferred in T3) | TOG p.73 (Table 6.3) | the frozen line view (`graph/line_view.py`) cannot take unnumbered branches | **Out**: under D1 = C the A2 arm must ingest the same plants (v2t-b note §1) |
@@ -423,7 +425,10 @@ class HiddenDesignState(BaseModel):
 - a pump or compressor discharge is its suction level plus a draw of 1 or 2 (capped at HP);
 - an ejector raises VAC to ATM;
 - a CV or RO keeps or lowers the level, and a letdown into a lower vessel lowers it;
-- exchangers, filters, mixers and pipes keep it.
+- exchangers, filters, mixers and pipes keep it;
+- *added 2026-11-23 (§17.13 R1):* a vessel stands one level below its lowest process feed, never below ATM. Levels
+  are therefore a **relative order along the flow**, not service pressures; on a vessel, ATM is the model's floor.
+  No exception may be derived from a vessel's level value.
 
 **Exchangers.** An exchanger is one node in the graph (pyDEXPI abstraction, `generator-v2-realism.md` §3), so the
 model keys levels on **segments and service families**, not on nodes. The utility side and the process side of one
@@ -438,9 +443,9 @@ exchanger have their own levels.
 | PRS-MONOTONE | for every `send_to` edge u → v, level(v) ≤ level(u) unless u is a mover's suction side and v its discharge side |
 | TOG82-SPEC-BREAK | every segment boundary with a level change has a `PropertyBreak` (pump discharges included, new in v2.2) |
 | PRS-SPEC-CLASS | across a break, the spec class on the higher side is the heavier one (ADR-0065 F8c ordering) |
-| TOG156-MERGE-CHECK | at a merge tee, if the incoming levels differ, the lower branch carries a check valve before the tee |
-| PLT-RECYCLE-CLOSURE | every RECYCLE line goes from a higher to a lower level and holds an RO or a CV |
-| API14C-A4-OVERPRESSURE | every enclosure whose feeding level, over any path without an intervening PSD, exceeds its own, or that a PD mover feeds, reaches a PSD; otherwise its exception code is `source_cannot_exceed` |
+| TOG156-MERGE-CHECK | at a merge tee of process runs (P, PG), a run arriving below the tee's level carries a check valve before the tee; relief paths are exempt (`relief_path`) (§17.13 R2) |
+| PLT-RECYCLE-CLOSURE | every spillback or min-flow RECYCLE line goes from a higher to a lower level and holds an RO, a CV or a switching min-flow valve (counted as `switching_valve`); a reactor recycle-gas loop returns inside its core (§17.12, §17.13 R3) |
+| API14C-A4-OVERPRESSURE | every A.4 vessel reaches a PSV, or SAC c.3/c.4 holds from structure; non-hydrocarbon vessels are out of scope (§17.13 R5) |
 
 **Visible effect.** None, except where the books say it shows: spec breaks and pipe classes are already visible line
 number fields. So the model makes visible data *consistent* without adding visible data.
@@ -797,19 +802,19 @@ scaled by the question counts above:
 - builds no EXP-0009 data and makes no paid call;
 - ends with one commit proposal (files listed, one-line message), with nothing committed without the user's order.
 
-**Done** (2026-11-23): T0, T1, T2, T3, T4, T9, T9b, T9c, T11, T7a, and T5's plan and DEXPI part (`cf2eddb`).
-38 of 54 rules are wired.
+**Done** (2026-11-23): T0, T1, T2, T3, T4, T9, T9b, T9c, T11, T7a, T5's plan and DEXPI part (`cf2eddb`), T10a
+(`2a9da7a`) and T8 (`6ae1d0c`). 44 of 54 rules are wired.
 
 **Remaining, in order** (revised 2026-11-23 after D1–D8). Sizes S/M/L follow the previous notes' scale; coder pace is
 unmeasured.
 
 | Order | Task | Size | Who | Waits for |
 |---|---|---|---|---|
-| 1 | **T8** Pressure-level model and PRS-*, TOG82 (pump spec breaks), TOG156, PLT-RECYCLE-CLOSURE (scope of §17.12), API14C-A4-OVERPRESSURE; wires 6 pending rules | M | coder | **nothing** (D3 = yes); uncommitted T8 files are already in the working tree on 2026-11-23 (`pressure_levels.py`, `checks_pressure.py`, `checks_overpressure.py`, tests) |
-| 1′ | **T10a** SAC transcription (A-4.2, A-5.2, A-6.2, A-7.2, A-8.2, A-10.2), page-checked against the API text layer | — | researcher | **nothing: start now**, in parallel (not a coder) |
-| 2 | **T7** Networks and interarea: network units, headers, per-sheet sub-headers, network connectors, capacity overflow, splitter grouping, size search on total sheets, composition per sheet kind, TOG32/141/360/33, PLT-NETWORK-CLOSURE; empties `OWED_FIXES`; wires 5 pending rules | L | coder | T8 (one coder at a time; D4 = as proposed) |
+| 1 | **T8** Pressure-level model and PRS-*, TOG82 (pump spec breaks), TOG156, PLT-RECYCLE-CLOSURE, API14C-A4-OVERPRESSURE | M | coder | **done** (`6ae1d0c`); rulings on its report in §17.13 |
+| 1′ | **T10a** SAC transcription (A-4.2, A-5.2, A-6.2, A-7.2, A-8.2, A-10.2), page-checked | — | researcher | **done** (`2a9da7a`); rulings in §17.13 |
+| 2 | **T7** Networks and interarea: network units, headers, per-sheet sub-headers, network connectors, capacity overflow, splitter grouping, size search on total sheets, composition per sheet kind, TOG32/141/360/33, PLT-NETWORK-CLOSURE; empties `OWED_FIXES`; wires 5 pending rules. **Also R2 of §17.13:** TOG156 narrowed to process services (P, PG) with the `relief_path` exemption, because T7 creates the FL and CHD tees | L | coder | **starting now** (one coder at a time: nothing runs beside it) |
 | 3 | **T6** Documents and conventions (§5, §18.2): `DocumentRecord` (runs of consecutive trains, `trains_per_document` declared from the median trains per 100 total sheets on v2.2 dev plants after T7); per-document draws of manual-valve tagging (0.75 untagged), spare naming, on-off letter and PV without bypass, from new streams (v2.1 per-train draws taken, values ignored); config override `handbook.document_untagged` for the stratified sealed plants; untagged manual valves (TOG113); `p_pump_reducers` 0.75; gold side of scope R (untagged refusal, FLOW_PATH tie rule, refused-share report; isolation families pre-registered unavailable); v2.1 question hash unchanged | M | coder | T7 |
-| 4 | **T10** `rules/sac.py` from T10a; API14C-3.4-TWO-LEVELS, API14C-SAC, TOG207-HX-PSD-BOTH-SIDES, TOG236; cheap SAC devices added, the rest DEFERRED one by one; wires 4 pending rules | M | coder | T10a, T8 |
+| 4 | **T10** In this order (§17.13): **step 0**, the T8 follow-ups: the R1 docstring in `pressure_levels.py`; R3's `switching_valve` element code and restated statement; R5's re-cite of API14C-A4-OVERPRESSURE and TOG219 to A.4.2.2.1 c p.27, with `source_cannot_exceed` deleted and `scope:non_hydrocarbon` added. **Step 1**, `rules/sac.py` from T10a: items, device letters, locations, and exception codes of three kinds, derived (from structure), declared (R7) and scope. **Step 2**, R7's declarations as constants in `hidden_state.py`, plus `FluidClass.NON_FLAMMABLE` for the non-flammable farms. **Step 3**, the switch-plus-alarm additions of T10a §8: vessel PSHH (where a.4 fails), LSHH and LSLL; filter PSHH; compressor suction/discharge PSHH and PSLL, and TSHH; furnace TSHH and fuel PSHH; additive-tank LSHH. **Step 4**, the valve additions in R8's priority order, with R8's measured stop at 27.5 pooled valves per process sheet: TOG236 emergency vents, compressor suction PSV, furnace tube PSV where l.3 fails. **Step 5**, wire API14C-3.4-TWO-LEVELS, API14C-SAC, TOG207-HX-PSD-BOTH-SIDES and TOG236. Every SAC item without an addition or a derivable, declared or scope code becomes a DEFERRED row with its reason: the heater-outlet check, vessel PSL, pump PSH/PSL, stack and air-intake items, and SDV/BDV/ASH | M | coder | T7 |
 | 5 | **T12a** Expert-review package (§18.5): the 12 sheets drawn by the fixed rule, exported with the demo drawing export plus a legend sheet; the checklist printed from the registry | S | coder | T6, T7, T10 (the plants are complete) |
 | — | Expert review and triage | — | the user's reviewer; architect triages | T12a |
 | 6 | **T14** V2T-B system files (`v2t-b-system-revision.md` §3): B store view, VALVE_SET and POSITION types, `scoring_b.py` and its self-tests, `policy_b.py`, the import-isolation test; G0f stays green | M | coder | T6 |
@@ -818,7 +823,7 @@ unmeasured.
 | 9 | **T16** Fixes from the review findings, if any (designed by the architect first) | ? | coder | the review |
 | 10 | **T13** EXP-0009 launcher: ledger glob skips `reports/` (with a test on a copied call file); ids `g22` and `…B`; seed draw plus size-target draw in the bands; stratified tagging allocation; two-view ingest; stages P1a–P1d; caps; PREREG A template | L | coder | all of the above |
 
-**A coder can start now:** T8 (or finish it: its files are already in the working tree, uncommitted), then T7. The researcher can start T10a at the same time.
+**Now:** the T7 coder (R2 included). Next: T6, then T10 (with its step 0). No coder runs in parallel.
 
 ## 14. Risks
 
@@ -1324,6 +1329,187 @@ So the stage's capacity is already controlled, and its discharge pressure is set
 **Order.** T9c goes next, then T7a. The 1,000-sheet seed-7 dev plant must build with only PLT-STREAM-CLOSURE owed
 before T7a starts.
 
+### 17.13 Rulings on T8 (`6ae1d0c`) and on the SAC transcription (T10a, `2a9da7a`), 2026-11-23
+
+**Inputs.**
+- The T8 coder's report: 6 rules at 0 violations on seeds 1–5 and on both seed-7 dev plants; 44 of 54 rules wired.
+- The researcher's transcription `10-literature/api-rp-14c-2001-sac-transcription.md` (pages printed = PDF − 8,
+  each checked).
+- My own re-read of Toghraei p.156 (PDF 175) and p.179 (PDF 197), and p.313 (PDF 329), on 2026-11-23.
+
+#### R1. Vessel levels: keep the relative model, and say what it means
+
+**What T8 does.**
+- Each vessel stands one level below its lowest process feed, never below ATM.
+- Every vessel therefore sits at ATM, columns and reactors included. Pipe runs carry the rest: ATM ≈ 260–354,
+  LP ≈ 293–349, MP 8–20, VAC 3–11, HP never.
+
+**The options:**
+- **(a) Keep the relative model.** Levels are an order along the flow: a mover lifts, a letdown or a vessel inlet
+  lowers. They are not service pressures.
+- **(b) Declare a level per vessel role** (for example reactor HP, flash drum MP, column LP), with the lowering
+  control valve on each vessel feed drawn as a spec break. Then TOG82 needs a break at every lowering control valve.
+
+**Ruling: (a).**
+- **(b) buys almost nothing for T10.**
+  - API's MAWP exceptions (A-4.2 a.2, A-7.2 f.2, A-10.2 a.2) compare a source with a **design** pressure. Neither
+    model holds a design pressure, so both leave them underivable.
+  - The "operates at atmospheric" codes (A-4.2 a.6, b.2; A-10.2 b.2) would apply under (b) only to vessels declared
+    ATM, and no A.4 pressure vessel would be declared ATM.
+  - (b) also adds a role table with no page behind it, and a spec break per lowering valve, which moves the valve
+    band.
+- **(a) already supports what the six checks need:** an order, rises only at movers, breaks where the order changes,
+  recycles that run downhill, and check valves where a lower stream joins.
+
+**Consequences, binding on T10 and later tasks:**
+- **No exception may be derived from a vessel's level value.** On a vessel, ATM is the model's floor, not
+  atmospheric service.
+- **"Atmospheric service" has two sources only:** the class `Tank` (API A.5, the atmospheric vessel) and the
+  declared utility levels (§6.2).
+- **Codes that need atmospheric service or a MAWP** become either a declared convention, stated as one (R7), or a
+  DEFERRED SAC row.
+- **§6.2 is amended** to state the vessel rule, and `pressure_levels.py`'s docstring must say the same (T10 step 0).
+
+**What the thesis may claim:**
+
+> Every plant is checked for a consistent **relative** pressure order: no rise without a pump, compressor or
+> ejector; a spec break wherever the order changes; recycles running from a higher to a lower level through a
+> reducing element; check valves where a lower process stream joins another. The levels are ordinal ranks along the
+> flow, not service or design pressures. The plants make no statement about which vessel operates at atmospheric
+> pressure, nor about design pressures.
+
+#### R2. TOG156: confirm the coder's reading, and narrow it to process streams
+
+**The page (p.156, re-read).** The passage sits in §9.9.4, on tying several streams into one nozzle of a container:
+"If there is a chance of intermittent flow in one of the tying streams, or the chance of dropping pressure in any of
+these streams, a check valve should be installed on the intermittent or low pressure stream."
+
+**Ruling.**
+- **Confirmed:** a process stream that arrives below the level its merge tee carries needs a check valve on its own
+  run, upstream of the tee.
+- **Scope: process services only** (P, PG), which is the page's context.
+- **Relief paths are exempt,** under exception code `relief_path`, counted in `rules.json`:
+  - PSV outlets;
+  - PD-pump relief returns;
+  - FL tie-ins.
+
+  A check valve in a relief path could block relief. This is a design reading (DESIGN), not a page.
+- **Collection headers are out of scope:** the closed-drain (CHD) and utility collection headers.
+- **Not checked, and recorded:** the "intermittent" half. The plan does not know which streams flow intermittently.
+- **Timing.** The T7 coder applies the narrowing in T7, because T7 creates the FL and CHD tees that the present check
+  would flag.
+
+#### R3. PLT-RECYCLE-CLOSURE: confirm the switching valve, as a declared reading
+
+**The pages.**
+- p.179 (Fig. 10.9) and p.313 (Fig. 15.36) describe the 20–35 hp method as a flow sensor and an on-off valve that
+  "will be opened to recirculate some flow". Neither text mentions an orifice beside it.
+- p.313 calls an RO "a frozen control valve".
+
+**Ruling.**
+- **Confirmed:** the switching valve of that method counts as the recycle's reducing element.
+- **Counted apart:** the check counts it under element code `switching_valve` in `rules.json`, so the reader sees how
+  often the reading carries a recycle.
+- **Registry:** the statement becomes "…through an RO, a CV, or the on-off valve of the switching min-flow method
+  (TOG p.179, p.313)".
+
+#### R4. Pump and compressor discharge spec breaks: accepted
+
+**Ruling.**
+- Every pump and compressor discharge starts at a `discharge_spec_break`, and the discharge is the next heavier class.
+- **Why it is right:**
+  - Table 6.5 (p.82) puts a spec break where a pump or compressor raises the pressure.
+  - The ordering follows ADR-0065 F8c (PRS-SPEC-CLASS).
+- **One step heavier is enough,** even where the mover lifts two levels: only the order is checked, never the size of
+  the step.
+- **It also carries R7's shut-off declaration** for centrifugal pumps.
+
+#### R5. `source_cannot_exceed`: remove it; condensate pots become a scope exclusion
+
+**The finding (T10a §9, accepted).**
+- SAC A-4.2 c (the vessel PSV) has no "source cannot exceed" exception; that condition exists only for the PSH
+  (a.2).
+- A.4.2.2.1 c (p.27) says a vessel should always have a PSV.
+- A.4 covers vessels that handle hydrocarbons under pressure (A.4.1, p.26).
+
+**Ruling (in T10, step 0):**
+- **API14C-A4-OVERPRESSURE** is re-cited to **A.4.2.2.1 c p.27 / SAC A-4.2 c**. Its statement becomes: "every A.4
+  vessel reaches a PSV, unless c.3 or c.4 holds from structure".
+  - `source_cannot_exceed` is deleted.
+  - The rule keeps its id (an id is a name, not a claim).
+- **TOG219-VESSEL-PSV** cites "API 14C A.4.2.2.1 c p.27", replacing "p.26".
+- **The steam condensate pots** (12 on seeds 1–5, 47 on the 1,000-sheet plant) carry `scope:non_hydrocarbon`. That is
+  a scope exclusion with the page (A.4.1 p.26), not an SAC omission. TOG219 already excepts them as the declared
+  condensate pot.
+
+#### R6. A-8.2: SDV, BDV and ASH are not SAC items
+
+**Correction:** §4.9 #12 and §18.4 #12 named a blowdown valve among the SAC devices. It is not one.
+- A-8.2 has items a–h: suction and discharge PSH and PSL, suction and discharge PSV, the final-discharge check valve,
+  and the TSH.
+- The SDV on inflow and fuel-gas lines, the blowdown valve on the final discharge, and gas detection (ASH) in
+  enclosed buildings come from the text (A.8.2.2.3, A.8.3.3, A.8.3.5, p.45) and Figure A-8 only.
+
+**Ruling:** SDV, BDV and ASH stay **out**.
+- They are not SAC items.
+- ASH needs an enclosed building that is not modelled.
+- SDV and BDV would add valves against the tight valve band (R8).
+
+§4.9 #12 is corrected in place.
+
+#### R7. Declared conventions and scope
+
+Each item is declared once in `hidden_state.py` (a constant, never drawn), listed in the registry with its own
+exception code, and named in the thesis limitations as a convention.
+
+| # | Question | Ruling | Exception code (where it applies) |
+|---|---|---|---|
+| a | U3 furnace natural draft | **yes**. The model draws no blower or fan (the allowlist has none), so natural draft is the only consistent reading. Forced draft would make d, f and i required with no class to draw them | `declared:natural_draft` (A-6.2 d.2, f.2, i.2) |
+| b | Centrifugal pump discharge piping rated for shut-off | **yes, for centrifugal pumps only**, tied to R4's heavier discharge class. PD pumps keep their relief valve (A-7.2 f.1) | `declared:discharge_rated_for_shutoff` (A-7.2 f.2) |
+| c | Utility side designed for its header pressure | **yes, for the PSH item only** (A-10.2 a.2). Not for the PSV: c.6 also needs "no overpressure from the other section" (tube rupture), which no declaration covers; cooling-water thermal relief stays as drawn | `declared:utility_designed_for_header` |
+| d | A switch with an alarm as the drawn form of an SAC sensor | **yes.** It is the form the generator already draws (`LSHH → LAHH`) and it passes S7 and S8. The shut-in action at the source stays deferred (§4.9 #13), and the thesis says the sensors are drawn without their shutdown action | — |
+| e | Steam condensate pots | **out of A.4** (R5) | `scope:non_hydrocarbon` |
+| f | Filters (`LiquidFilter`, `GasFilter`) | **in A.4** (API p.28 names fuel-gas filters among pressure vessels; per the transcription). Items: a PSH as a cheap switch; d LSH by d.3 (no separated phases); e LSL by e.2 (no level loop, no heater); c PSV by c.3 or c.4 from structure where it holds, otherwise a DEFERRED row per filter (valve band, R8) | `derived:…`, `deferred:valve_band` |
+| g | Liquid-ring vacuum pumps | **out of A.8.** They draw below atmospheric and discharge near it, so A-8.2's suction PSH and PSV serve no purpose there | `scope:vacuum_service` |
+| h | A pump that sends product over the battery limit | **not a pipeline pump.** The region's battery limit is not a pipeline leaving a platform (A.7.1), so A-7.2 a, c and e do not apply | — |
+| i | U4 "non_flammable" tanks against the plant-wide hydrocarbon declaration | a new `FluidClass.NON_FLAMMABLE` for the tanks of a farm drawn non-flammable, and their own trims. A.5 then does not cover them (A.5.1, p.30: chemical storage is not covered). TOG141 treats them as non-innocent, so their drains still go to the closed drain. The farm's flag overrides the plant-wide declaration for that farm's items only. A non-flammable farm feeding a hydrocarbon train is a chemistry inconsistency, recorded under "chemistry not modelled" | `scope:non_hydrocarbon` |
+
+#### R8. Valve headroom: priorities and a measured stop
+
+**The facts.**
+- The ADR-0059 valve band is 15–28 valves per sheet, judged on the **pooled mean** per scale on process sheets
+  (G0d).
+- Seed 2 alone measures 27.23 (T10a).
+- EXP-0008's D100g21 pooled 24.11.
+- The T10a arithmetic puts all the proposed valve additions at about +0.12 per sheet, before TOG236.
+
+**Ruling.**
+1. **Only these valve additions, in this priority order:**
+   - (1) TOG236's emergency vent on every atmospheric tank (an encoded rule; drawn as §6.4 says);
+   - (2) the compressor suction PSV (A-8.2 e);
+   - (3) the furnace tube PSV, only where l.3 does not hold from structure.
+2. **Deferred:**
+   - the heater-outlet check valve (A-6.2 m): m.2 is a judgement, and a check valve at a heater outlet is the kind of
+     thing the expert should call;
+   - every SDV and BDV (R6).
+3. **The measured stop.** After each addition, T10 measures the pooled mean valves per process sheet over seeds 1–5,
+   and on each seed-7 dev plant (100 and 1,000 sheets).
+   - If a mean exceeds **27.5** (half a valve under the band's top, a margin for the spread of sealed plants), the
+     lowest-priority addition still in is withdrawn, and its rows become `deferred:valve_band`.
+   - If TOG236 itself does not fit, T10 stops and reports. An encoded rule is not dropped silently.
+4. **Instruments.** The switch-plus-alarm package adds about +2.2 instruments per sheet (T10a). T10 measures the
+   pooled instrument mean and the instrument : valve ratio against 20–38 and 1–1.8, with the same report-and-stop
+   rule.
+5. **Order.** T7 runs before T10, so T10 measures on plants that already carry the network sheets.
+
+#### R9. Who does what, and whether T7 runs beside T8 follow-ups
+
+- **One coder at a time** (ADR-0006, CLAUDE.md). T7 does not run in parallel with any other coder task.
+- **No T8 follow-up blocks T7, except the TOG156 narrowing (R2).** T7 creates the FL and CHD tees, so the T7 coder
+  does R2.
+- **The other follow-ups go into T10 as its step 0.** They are R1's docstring, R3's element code and statement, and
+  R5's re-cite and code removal. They touch the same files T10 works in (`checks_overpressure.py`, the catalogue).
+
 ## 18. The user's decisions of 2026-11-23 and what follows from them
 
 ### 18.1 D1 = C: two systems on the same plants
@@ -1483,7 +1669,7 @@ One line each, for relay. The full table is §4.9.
 
 | # | What it is | Bin | Why |
 |---|---|---|---|
-| 12 | Extra protection devices from API 14C (compressor PSH/PSL/TSH, blowdown valve, vessel low-level switch) | **now, in T10** | cheap devices are added where the composition bands allow; the rest are listed one by one as deferred |
+| 12 | Extra protection devices from API 14C (compressor pressure and temperature switches, vessel level and pressure switches; corrected: the blowdown valve is not an API table item and stays out) | **now, in T10** | cheap devices are added where the composition bands allow; the rest are listed one by one as deferred |
 | 9 | Nitrogen blanketing of tanks and vapour recovery | **if the expert flags it**, before the freeze | big job (split-range control and a new network); it would also close the "where does a closed vessel's vapour go" gap |
 | 11 | Fired-heater detail: burner passes, pilot gas, snuffing steam | **if the expert flags it**, before the freeze | big job; a new heater variant |
 | 1 | Local gauges with only a function label (just "PI", no number) | out | identical labels would break tag identity in the frozen system both arms share |
