@@ -13,10 +13,11 @@ pipe tee on another line (a branch or a merge), or open (a stub that leaves the 
 from __future__ import annotations
 
 from enum import Enum
-from typing import Protocol
+from typing import Literal, Protocol
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from plantgraph.benchmark.v2.config_v22 import FailAction
 from plantgraph.benchmark.v2.streams import train_rng
 from plantgraph.benchmark.v2.vocabulary import ItemKind, TrainConventions, draw_train_conventions
 from plantgraph.graph.schema import NodeClass, Relation
@@ -31,6 +32,11 @@ class StreamKindV2(str, Enum):
     TRIM = "trim"  # vents, drains, bypasses, taps, relief lines
     UTILITY_STUB = "utility_stub"  # a utility line that ends at the sheet edge
 
+
+#: a blocking valve's position in normal operation: normally open / closed, locked open / closed,
+#: car-sealed open / closed (a seal that stops anyone moving it without a record). v2.2 draws the
+#: first two and CSO; LO and LC are allowed by the type, never drawn (design 8)
+OperatingPosition = Literal["NO", "NC", "LO", "LC", "CSO", "CSC"]
 
 _BREAK = NodeClass.PROPERTY_BREAK.value
 
@@ -50,11 +56,17 @@ class EquipmentSpec(_Spec):
 
 
 class LineItemSpec(_Spec):
-    """One inline part of a line; `tag` is None for untagged parts (tee, reducer, flange)."""
+    """One inline part of a line; `tag` is None for untagged parts (tee, reducer, flange).
+
+    `operating_position` is set only on a v2.2 plant, on a valve. Like `TrimPlan.spare_sets` it is
+    left out of dumps: v2.1 plan digests must stay byte-identical, and the system under test must
+    not see it (design 10, decision D1 = A).
+    """
 
     node_id: str
     node_class: str
     tag: str | None = None
+    operating_position: OperatingPosition | None = Field(default=None, exclude=True)
 
 
 class LineRun(_Spec):
@@ -154,6 +166,8 @@ class InstrumentSpec(_Spec):
 
     `tag` is None for an actuator (drawn as part of its valve). `loop_tag` is the tag of the
     loop's controller bubble; `measured_variable` is the first ISA letter (`F`, `T`, ...).
+    `fail_action` is what a valve's actuator does when its signal or air is lost; set only on a
+    v2.2 plant and left out of dumps, for the same reason as `LineItemSpec.operating_position`.
     """
 
     node_id: str
@@ -162,6 +176,7 @@ class InstrumentSpec(_Spec):
     tag: str | None
     loop_tag: str
     measured_variable: str
+    fail_action: FailAction | None = Field(default=None, exclude=True)
 
 
 #: The edges a planner may add between existing nodes; `send_to` edges come from `LineSpec`.

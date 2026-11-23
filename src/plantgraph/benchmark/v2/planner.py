@@ -36,6 +36,7 @@ from plantgraph.benchmark.v2.plan_models import PlantBuilderV2, TrainRecord, dra
 from plantgraph.benchmark.v2.sheets import UnitSheets, assign_unit_sheets
 from plantgraph.benchmark.v2.streams import unit_rng
 from plantgraph.benchmark.v2.trim_context import LineStyle, TrimContext
+from plantgraph.benchmark.v2.valve_positions import with_valve_positions
 
 #: the nominal size (inches) of every unit's main process lines; the trims derive smaller branches
 MAIN_LINE_STYLE = LineStyle(size=6)
@@ -96,6 +97,8 @@ def plan_plant(config: GeneratorConfigV2) -> PlantPlanV2:
     if _is_handbook(config):
         # the joins are final only now, so this is the first moment a plant-boundary end is known
         instances = close_plant_boundary(instances, trims, MAIN_LINE_STYLE)
+        # last, so the battery-limit and make-up valves the boundary pass added are positioned too
+        instances = _with_valve_positions(config, instances)
     units = [
         PlannedUnit(
             slot=slot,
@@ -112,6 +115,14 @@ def plan_plant(config: GeneratorConfigV2) -> PlantPlanV2:
 def _is_handbook(config: GeneratorConfigV2) -> bool:
     """True for a v2.2 plant with the handbook rules on; v2.1 and knobs-off plants are pinned."""
     return isinstance(config, GeneratorConfigV22) and config.handbook.enabled
+
+
+def _with_valve_positions(
+    config: GeneratorConfigV2, instances: list[PatternInstance]
+) -> list[PatternInstance]:
+    if not isinstance(config, GeneratorConfigV22):  # unreachable: only handbook plants call this
+        raise ValueError(f"expected a v2.2 config for valve positions, got {type(config).__name__}")
+    return [with_valve_positions(instance, config.handbook) for instance in instances]
 
 
 def _closes_core_loop(config: GeneratorConfigV2, slot: UnitSlot, previous: UnitSlot | None) -> bool:

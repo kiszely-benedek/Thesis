@@ -16,11 +16,13 @@ from pydexpi.dexpi_classes.pydantic_classes import DexpiModel
 from plantgraph.adapters.pydexpi_adapter import ConversionReport
 from plantgraph.adapters.pydexpi_adapter_v2 import plant_graph_v2
 from plantgraph.adapters.pydexpi_builder_v2 import DexpiPlantBuilderV2
+from plantgraph.adapters.pydexpi_valve_attributes import annotate_valves
 from plantgraph.benchmark.v2.config import GeneratorConfigV2
 from plantgraph.benchmark.v2.config_v22 import GeneratorConfigV22
 from plantgraph.benchmark.v2.plan_models import GenerationRecordV2
 from plantgraph.benchmark.v2.planner import PlantPlanV2, plan_plant
 from plantgraph.benchmark.v2.record import build_record
+from plantgraph.benchmark.v2.valve_positions import fail_actions_of, positions_of
 
 if TYPE_CHECKING:  # `rules/view.py` imports this module, so the rules package is imported lazily
     from plantgraph.benchmark.v2.rules.registry import RuleReport
@@ -51,11 +53,20 @@ def generate_plant_v2(config: GeneratorConfigV2) -> GeneratedPlantV2:
     builder = DexpiPlantBuilderV2(config.plant_id)
     plan.write(builder)
     model = builder.build()
+    handbook = isinstance(config, GeneratorConfigV22) and config.handbook.enabled
+    if handbook:
+        _write_valve_attributes(model, plan)
     generated = GeneratedPlantV2(
         model=model, record=build_record(plan, builder.backend_version), plan=plan
     )
-    if not (isinstance(config, GeneratorConfigV22) and config.handbook.enabled):
+    if not handbook:
         return generated  # v2.1 is never verified here: its output must stay byte-identical
     from plantgraph.benchmark.v2.rules.verify import verify_generated  # lazy: see TYPE_CHECKING
 
     return replace(generated, rules=verify_generated(generated))
+
+
+def _write_valve_attributes(model: DexpiModel, plan: PlantPlanV2) -> None:
+    """Add the positions and fail actions the v2.2 plan drew; the builder knows nothing of them."""
+    plans = [unit.instance.plan for unit in plan.units]
+    annotate_valves(model, positions_of(plans), fail_actions_of(plans))

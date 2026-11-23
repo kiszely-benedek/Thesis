@@ -28,7 +28,11 @@ NETWORK_SERVICES: tuple[str, ...] = ("FL", "CHD", "CWS", "CWR", "LPS", "MPS", "C
 
 
 def _default_fail_actions() -> dict[str, FailAction]:
-    """Design 8: only the min-flow row has a source (Toghraei 2019 p.115); the rest is declared."""
+    """Design 8: only the min-flow row has a source (Toghraei 2019 p.115); the rest is declared.
+
+    `hx_main_cv` is the exchanger-branch valve of a TOG322 pair; it must differ from `other`, the
+    entry of its partner on the bypass, so the two valves move in opposite directions.
+    """
     return {
         "min_flow_fv": "FO",
         "anti_surge_fv": "FO",
@@ -36,6 +40,7 @@ def _default_fail_actions() -> dict[str, FailAction]:
         "fuel_xv": "FC",
         "cooling_water_tv": "FO",
         "steam_tv": "FC",
+        "hx_main_cv": "FO",
         "other": "FC",
     }
 

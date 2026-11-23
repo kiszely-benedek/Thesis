@@ -213,7 +213,8 @@ def _main_valve(ctx: PatternContext, tees: _Tees, outlet_id: str) -> TrimPlan | 
     """The temperature valve on the exchanger's own branch, when the bypass has two valves.
 
     It is a second `TT -> TIC -> TV` loop on the same outlet as the bypass valve's. The two valves
-    are meant to fail in opposite directions; that attribute is the valve-position task's (T5).
+    fail in opposite directions: `valve_positions.py` gives this valve's role its own row in the
+    fail-action table (`hx_main_cv`), which differs from its bypass partner's.
     """
     if tees.split is None or not wants_main_branch_valve(ctx.trim):
         return None

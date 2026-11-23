@@ -56,7 +56,7 @@ VALVE_POSITIONS = (
         statement="A blocking valve is normally open unless marked otherwise.",
         sources=(tog("p.114"),),
         kind=RuleKind.PLACE,
-        check=pending("T5"),
+        check=wired("check_block_default_no", "checks_positions"),
     ),
     HandbookRule(
         rule_id="TOG114-VENT-DRAIN-NC",
@@ -64,7 +64,7 @@ VALVE_POSITIONS = (
         statement="Vent and drain valves are normally closed.",
         sources=(tog("p.114"),),
         kind=RuleKind.PLACE,
-        check=pending("T5"),
+        check=wired("check_vent_drain_nc", "checks_positions"),
     ),
     HandbookRule(
         rule_id="TOG120-CV-BYPASS-NC",
@@ -72,7 +72,7 @@ VALVE_POSITIONS = (
         statement="The bypass valve of a control-valve station is closed in normal operation.",
         sources=(tog("p.120"),),
         kind=RuleKind.PLACE,
-        check=pending("T5"),
+        check=wired("check_cv_bypass_nc", "checks_positions"),
     ),
     HandbookRule(
         rule_id="TOG224-PSV-BLOCKS-CSO",
@@ -81,7 +81,7 @@ VALVE_POSITIONS = (
         "car-sealed open (Table 12.8, Fig. 12.9).",
         sources=(tog("p.224"),),
         kind=RuleKind.PLACE,
-        check=pending("T5"),
+        check=wired("check_psv_blocks_cso", "checks_positions"),
     ),
     HandbookRule(
         rule_id="TOG114-FAIL-ACTION",
@@ -91,7 +91,7 @@ VALVE_POSITIONS = (
         sources=(tog("p.114–115"),),
         kind=RuleKind.PLACE,
         declared_parameters=("handbook.fail_action_table",),
-        check=pending("T5"),
+        check=wired("check_fail_action", "checks_positions"),
     ),
     HandbookRule(
         rule_id="TOG34-BL-ISOLATION",
