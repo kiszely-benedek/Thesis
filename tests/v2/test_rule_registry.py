@@ -31,10 +31,11 @@ _DEFERRED = rules_with_status(RuleStatus.DEFERRED)
 _V2_SOURCE_DIR = Path(v2_package.__file__).parent
 _RULE_COMMENT = re.compile(r"^\s*# rule ([A-Z0-9][A-Z0-9.-]*): (.*)$")
 
-#: the checks still owed, by the task that builds them (design 13); T3 removed its seven, T4 its two
+#: the checks still owed, by the task that builds them (design 13); T3 removed its seven, T4 its
+#: two, T9 its eight and two of the unassigned (TOG207, TOG326; the API14C-A8 pair waits for T10)
 _PENDING_BY_TASK = {
-    "T5": 5, "T6": 1, "T7": 5, "T8": 6, "T9": 8, "T10": 4, "T11": 6,
-    "unassigned": 4,
+    "T5": 5, "T6": 1, "T7": 5, "T8": 6, "T10": 4, "T11": 6,
+    "unassigned": 2,
 }  # fmt: skip
 
 
@@ -95,7 +96,7 @@ def test_every_encoded_rule_has_a_check_and_every_deferred_rule_a_reason() -> No
 
 def test_every_wired_check_resolves_to_a_function() -> None:
     wired = wired_rules()
-    assert len(wired) == 15
+    assert len(wired) == 25
     assert all(callable(resolve_check(rule)) for rule in wired)
 
 
@@ -164,4 +165,4 @@ def test_the_table_prints_one_row_per_rule_and_the_counts(
     rows = [line for line in lines if line.startswith("| ") and not line.startswith("| Id")]
     assert len(rows) == 54 + 15
     assert any(line.startswith("| TOG192-RECIP-NO-CHECK |") for line in rows)
-    assert lines[-1] == "54 encoded rules (15 with a wired check), 15 deferred groups."
+    assert lines[-1] == "54 encoded rules (25 with a wired check), 15 deferred groups."

@@ -186,7 +186,7 @@ PUMPS = (
         "variable-speed drive, or a level loop's valve on its discharge.",
         sources=(tog("p.270"),),
         kind=RuleKind.PLANT,
-        check=pending("T9"),
+        check=wired("check_pump_flow_controlled", "checks_pump_flow"),
     ),
     HandbookRule(
         rule_id="TOG175-PUMP-TRIM",

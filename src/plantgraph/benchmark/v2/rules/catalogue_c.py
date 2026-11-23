@@ -47,7 +47,7 @@ NETWORKS_AND_PRESSURE = (
         statement="Every line on a sheet connects to an item on that sheet.",
         sources=(tog("p.24"),),
         kind=RuleKind.PLANT,
-        check=pending("T9"),
+        check=wired("check_no_visiting_stream", "checks_closure"),
     ),
     HandbookRule(
         rule_id="PLT-NETWORK-CLOSURE",
@@ -64,7 +64,7 @@ NETWORKS_AND_PRESSURE = (
         "network end, vent to atmosphere, capped maintenance drain).",
         sources=(tog("p.24"),),
         kind=RuleKind.PLANT,
-        check=pending("T9"),
+        check=wired("check_stream_closure", "checks_closure"),
     ),
     HandbookRule(
         rule_id="PLT-PHASE",

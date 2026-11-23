@@ -55,7 +55,7 @@ EXCHANGERS = (
         sources=(tog("p.207"),),
         kind=RuleKind.FORBID,
         since="v2.1",
-        check=pending("unassigned"),
+        check=wired("check_hx_no_isolation", "checks_exchangers"),
     ),
     HandbookRule(
         rule_id="TOG320-HX-NONTARGET",
@@ -64,7 +64,7 @@ EXCHANGERS = (
         "utility, by a bypass on a process stream.",
         sources=(tog("p.320–321"),),
         kind=RuleKind.PLANT,
-        check=pending("T9"),
+        check=wired("check_hx_nontarget", "checks_exchangers"),
     ),
     HandbookRule(
         rule_id="TOG322-HX-BYPASS-VARIANT",
@@ -86,7 +86,7 @@ EXCHANGERS = (
         since="v2.1",
         sampling_unit="item",
         declared_parameters=("trims.condensate_mode_weights",),
-        check=pending("unassigned"),
+        check=wired("check_steam_condensate", "checks_exchangers"),
     ),
     HandbookRule(
         rule_id="TOG214-FUEL-SWITCHING-VALVES",
@@ -108,7 +108,7 @@ CONTROL = (
         "containers; a flooded vessel counts as pipe.",
         sources=(tog("p.271"),),
         kind=RuleKind.PLANT,
-        check=pending("T9"),
+        check=wired("check_one_cv_liquid", "checks_control"),
     ),
     HandbookRule(
         rule_id="TOG267-FE-UPSTREAM-FV",
@@ -116,7 +116,7 @@ CONTROL = (
         statement="A flow element sits upstream of the flow valve of its loop.",
         sources=(tog("p.267"),),
         kind=RuleKind.PLANT,
-        check=pending("T9"),
+        check=wired("check_fe_upstream_fv", "checks_control"),
     ),
     HandbookRule(
         rule_id="TOG295-INVENTORY-ONCE",
@@ -126,7 +126,7 @@ CONTROL = (
         sources=(tog("p.295"), tog("p.270")),
         kind=RuleKind.PLANT,
         exception_codes=("storage_tank_batch", "pressure_floating_on:<id>"),
-        check=pending("T9"),
+        check=wired("check_inventory_once", "checks_inventory"),
     ),
     HandbookRule(
         rule_id="TOG309-SPLIT-PAIRING",
@@ -158,7 +158,7 @@ PROTECTION = (
         "safety valve (Table 12.8).",
         sources=(tog("p.224"),),
         kind=RuleKind.PLANT,
-        check=pending("T9"),
+        check=wired("check_psv_pipe_clean", "checks_closure"),
     ),
     HandbookRule(
         rule_id="TOG219-VESSEL-PSV",
