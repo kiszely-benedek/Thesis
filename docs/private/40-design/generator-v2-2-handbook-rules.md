@@ -869,9 +869,10 @@ very rare. On gas pipes there may be more than one control valve, but they canno
 - **Check change** (in `rules/control_graph.py`, used by `checks_control.py`):
   - Move `_bypasses_a_heat_transfer_item` from `checks_exchangers.py` to `control_graph.py`, unchanged, as
     `bypasses_a_heat_transfer_item`.
-  - Add `split_valves(view) -> frozenset[str]`. It returns every valve of a TEMPERATURE loop where at least one valve
-    of the same controller bypasses a heat-transfer item. That covers the bypass TV alone and the TOG322 pair, whose
-    main-branch valve (`hx_main_control_valve`, already drawn on v2.2) shares the controller.
+  - Add `split_valves(view) -> frozenset[str]`. It returns every valve of a TEMPERATURE loop whose controller
+    senses the same point as a temperature loop whose valve bypasses a heat-transfer item. That covers the bypass TV
+    alone and the TOG322 pair. *Corrected 2026-11-23 (§17.11):* the pair is drawn as two independent TT → TIC → TV
+    loops on one sensed point, not one controller with two valves, so T9b groups the valves by sensed point.
   - `check_one_cv_liquid` counts only control valves that are not split valves. Each route where it discounted one
     is counted under the exception `split_valve` in the result, so `rules.json` shows how often it happens.
   - Registry: TOG271 sources gain `tog("p.321–322")`, page-checked.
@@ -1124,3 +1125,54 @@ in the gold and in the store alike.
    do not name it. The coder reports which roles exist, and the architect decides in review.
 3. **ADR-0066** (proposed) still says "55 encoded rules (36 local, 19 plant-level) and 14 deferred groups" (line 98).
    It must read 54 / 35 / 19 / 15 before acceptance.
+
+### 17.11 After T9b (`3ea62cb`): two dev-plant findings, one correction, and the verification time
+
+**Status.** On seeds 1–5, TOG271, TOG295 and TOG207 have 0 violations. PLT-STREAM-CLOSURE has 129, owed to T7, as
+§17.4 predicted. The 100-sheet v2.2 dev plant of seed 7 raises on two rules. I re-read both cases on that plant
+with verification stubbed out.
+
+**F1. TOG295 on discharge KO drum u11-t5 (V-1102, `ScrubbingSeparator`). Verdict: a floating exception, no PIC.**
+- **What is drawn.** The drum sits on unit 11's compressor discharge (a `RotaryCompressor`, so PD). Its inlet comes
+  from the aftercooler's `recycle_takeoff_tee`, its gas leaves through `top_outlet_tee`, and its liquid leaves
+  through LV-11017. No valve stands between it and the aftercooler.
+- **What holds its pressure already.** The PD spillback loop PT → PIC → PV of TOG316 (p.316, Table 15.10) senses the
+  aftercooler and holds that discharge pressure. The drum is the same gas inventory as the aftercooler.
+- **Why no PIC.** A PIC of its own would be a second pressure loop on one inventory. Table 15.1 (p.295) and the rule
+  itself forbid that. p.270 says the same for compressors: control either flow or pressure.
+- **Check change.** `_floats_on` accepts as a partner any item whose **pressure loop senses an item joined to the
+  container by gas pipe with no control valve between**, an exchanger included, not only a container. The code
+  stays `pressure_floating_on:<id>`, here `pressure_floating_on:<aftercooler id>`. Sources: p.295 and p.316.
+- **Role set.** Add `discharge_ko_drum` to `PRESSURE_DEPENDENT_ROLES` all the same. It is a two-phase separator,
+  which rule 8 on p.270 names, and the set should list it like `suction_ko_drum`. It changes nothing here, because
+  process gas touches the drum anyway.
+- **What remains open.** A discharge drum behind a *dynamic* stage (an anti-surge FIC, no pressure loop) may find no
+  partner. If the build raises on one, it returns to the architect. It is not pre-decided here.
+
+**F2. TOG316 on "control valve" u29-t48. Verdict: a check bug, not a generator bug. This does not confirm the
+coder's reading.**
+- **What u29-t48 is.** It is BFV-29002, a `ButterflyValve` with the role `compressor_discharge_block`. That is the
+  manual discharge block between the check valve and the aftercooler of reciprocating compressor K-2901. No
+  controller drives it.
+- **Why the check flagged it.** `checks_compressors._capacity_problem` counts any node whose class is in
+  `CONTROL_VALVE_BODY_CLASSES`. A butterfly valve can be a control-valve body, so a block valve that happens to be
+  drawn as one matches.
+- **Fix.** Use `control_graph.is_control_valve` (driven by a controller, or an HCV) in `_capacity_problem`, which is
+  the same rule every T9 check uses.
+- **Audit.** Do the same search over the T3/T4 checks for any other class-only CV test, and report it.
+- **The generator** is right here. T3's fix did not miss a path.
+
+**F3. Correction to §17.2.** The TOG322 pair is two independent TT → TIC → TV loops on the same sensed point (p.322,
+"parallel control"), not one controller. T9b groups split valves by sensed point. §17.2 is corrected in place.
+
+**F4. The verification time (fact, from the coder's T9b profiling).**
+- **Measurement.** Verification at 1,000 sheets is too slow. The cause is **not** route enumeration, as §17.7
+  feared. It is `flow(graph)` in `rules/checks_v21_plant.py`, which rebuilds the piping graph on every call: 654
+  calls of about 42 ms each on a 100-sheet plant, about 27 s.
+- **Fix, now with a coder:** build the piping graph once per `RuleView` and cache it there. The checks keep their
+  signatures.
+- **After the fix,** T9b's timing on one 1,000-sheet dev plant is re-measured against the 390.99 s generation
+  yardstick of §17.7. Only if it is still too slow is route enumeration looked at.
+
+**Order.** The cache and the F1/F2 check fixes go in before T7a. The 100- and 1,000-sheet dev plants must build
+without a non-owed violation before T7a starts.
