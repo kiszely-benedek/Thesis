@@ -6,9 +6,11 @@ repository; the command tests replace python with a script that only records its
 
 from __future__ import annotations
 
+import hashlib
 import os
 import subprocess
 import sys
+from collections.abc import Iterator
 from pathlib import Path
 
 import pytest
@@ -26,10 +28,11 @@ def _sh(
     )
 
 
-def _libs() -> str:
-    """Shell text that sources the helper files `run_e2e.sh` sources."""
-    names = [RUNS / "exp0007" / n for n in ("lib.sh", "tune_lib.sh", "v2t_lib.sh")]
-    return " ".join(f". '{p.as_posix()}';" for p in [*names, E2E / "e2e_lib.sh"])
+def _libs(root: Path = ROOT) -> str:
+    """Shell text that sources the helper files `run_e2e.sh` sources, as found under `root`."""
+    runs = root / "data" / "runs"
+    names = [runs / "exp0007" / n for n in ("lib.sh", "tune_lib.sh", "v2t_lib.sh")]
+    return " ".join(f". '{p.as_posix()}';" for p in [*names, runs / "exp0004" / "e2e_lib.sh"])
 
 
 def _script(*args: str) -> subprocess.CompletedProcess[str]:
@@ -123,11 +126,79 @@ def test_the_preregistration_must_hold_and_be_committed(frozen: Path) -> None:
     assert "a pre-registered file changed" in _call(frozen, "require_prereg_holds").stderr
 
 
-def test_the_real_repository_passes_both_checks() -> None:
-    env = {**os.environ}
-    done = _sh(f"{_libs()} E=data/runs/exp0004; require_e8_freeze; require_prereg_holds", ROOT, env)
+# The commit the EXP-0004 end-to-end runs were made on ("Run EXP-0004 P4 end to end", X-T8).
+# E8 itself (4dfad69) predates the record files the checks read, so they run where those first
+# coexist with the frozen system. The live tree cannot pass: E9 (ADR-0065) re-froze it for EXP-0008.
+E2E_RUN_COMMIT = "d877ac0"
+
+
+def _git(repo: Path, *args: str) -> str:
+    done = subprocess.run(["git", *args], cwd=repo, capture_output=True, text=True, check=False)
+    assert done.returncode == 0, f"git {' '.join(args)}: {done.stderr}"
+    return done.stdout
+
+
+def _line_ending_forms(data: bytes) -> list[bytes]:
+    """Forms a file took in the author's tree: all LF, all CRLF, or LF with a CRLF last line."""
+    all_lf = data.replace(b"\r\n", b"\n")
+    all_crlf = all_lf.replace(b"\n", b"\r\n")
+    last_crlf = all_lf[:-1] + b"\r\n" if all_lf.endswith(b"\n") else all_lf
+    return [all_lf, all_crlf, last_crlf]
+
+
+def _restore_recorded_line_endings(tree: Path, hash_list: Path) -> None:
+    """Rewrite each hashed file in the line-ending form its recorded hash was taken in.
+
+    E8.sha256 hashes the author's Windows working tree, where files had CRLF, LF or (two JSON files)
+    a CRLF only on the last line, so a fresh checkout differs in line endings only. A file whose
+    hash matches no form is left as it is, and the check reports it.
+    """
+    for line in hash_list.read_text().splitlines():
+        recorded, name = line.split(" *", 1)
+        path = tree / name
+        if not path.is_file():
+            continue
+        for form in _line_ending_forms(path.read_bytes()):
+            if hashlib.sha256(form).hexdigest() == recorded:
+                path.write_bytes(form)
+                break
+
+
+@pytest.fixture
+def tree_at_e2e_run(tmp_path: Path) -> Iterator[Path]:
+    """A throw-away checkout of the commit the EXP-0004 runs were made on."""
+    if subprocess.run(["git", "cat-file", "-e", E2E_RUN_COMMIT], cwd=ROOT).returncode != 0:
+        pytest.skip(f"commit {E2E_RUN_COMMIT} is not in this clone (shallow history?)")
+    tree = tmp_path / "at_e2e_run"
+    _git(ROOT, "worktree", "add", "--detach", str(tree), E2E_RUN_COMMIT)
+    try:
+        _restore_recorded_line_endings(tree, tree / "data/runs/exp0004/E8.sha256")
+        _restore_recorded_line_endings(tree, tree / "data/runs/exp0004/prereg/PREREG.sha256")
+        # Rewritten files look modified to `git status` (stale stat data): re-index them. A file
+        # whose content really differs from the commit stays reported by status and diff.
+        _git(tree, "add", "--update")
+        yield tree
+    finally:
+        _git(ROOT, "worktree", "remove", "--force", str(tree))
+
+
+def test_the_e8_freeze_and_preregistration_hold_at_the_commit_the_runs_were_made_on(
+    tree_at_e2e_run: Path,
+) -> None:
+    script = (
+        f"{_libs(tree_at_e2e_run)} E=data/runs/exp0004; require_e8_freeze; require_prereg_holds"
+    )
+    done = _sh(script, tree_at_e2e_run, dict(os.environ))
 
     assert done.returncode == 0, done.stderr
+
+
+def test_the_live_tree_is_no_longer_at_e8() -> None:
+    """E9 re-froze the system (ADR-0065); if this ever passes, the checkout above is not needed."""
+    script = f"{_libs()} E=data/runs/exp0004; require_e8_freeze"
+    done = _sh(script, ROOT, dict(os.environ))
+
+    assert done.returncode == 1 and "differs from E8" in done.stderr
 
 
 # ---- the commands of the dry mode (python replaced by a recorder) -------------------------------
