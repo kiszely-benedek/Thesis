@@ -101,7 +101,8 @@ VALVE_POSITIONS = (
         sources=(tog("p.34"),),
         kind=RuleKind.ALTERNATIVE,
         sampling_unit="item",
-        check=pending("T11"),
+        declared_parameters=("handbook.battery_limit_variant_weights",),
+        check=wired("check_battery_limit_variants", "checks_alternatives"),
     ),
 )
 
@@ -207,6 +208,6 @@ PUMPS = (
         kind=RuleKind.ALTERNATIVE,
         sampling_unit="item",
         declared_parameters=("handbook.p_pump_reducers",),
-        check=pending("T11"),
+        check=wired("check_pump_reducers", "checks_alternatives"),
     ),
 )

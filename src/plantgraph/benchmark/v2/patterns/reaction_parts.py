@@ -37,13 +37,18 @@ from plantgraph.benchmark.v2.patterns.assembly import (
 )
 from plantgraph.benchmark.v2.patterns.context import PatternContext
 from plantgraph.benchmark.v2.plan_models import StreamKindV2
+from plantgraph.benchmark.v2.trim_context import LineStyle
 from plantgraph.benchmark.v2.trim_plan import TrimDraft, TrimPlan, combine
 from plantgraph.benchmark.v2.trims_extra import skillet_blind, spec_break
 from plantgraph.benchmark.v2.trims_valves import (
     battery_limit,
     control_valve,
     double_block_and_bleed,
+    fuel_switching_valve,
+    main_branch_valve,
     on_off_valve,
+    wants_main_branch_valve,
+    wants_second_switching_valve,
 )
 from plantgraph.benchmark.v2.trims_vessel import vessel_trims
 from plantgraph.graph.schema import NodeClass
@@ -73,7 +78,8 @@ def feed_side(ctx: PatternContext, exchanger_id: str, furnace_id: str, reactor_i
         for role in ("recycle_merge_tee", "feed_thermometer_tee", "bypass_split_tee")
     )
     merge, outlet = tee_plan(ctx, "bypass_merge_tee"), tee_plan(ctx, "exchanger_outlet_tee")
-    feed_run = run_of(battery_limit(ctx.trim, ctx.style), recycle, thermometer, split)
+    main_valve = _main_branch_valve(ctx, reactor_id)
+    feed_run = run_of(battery_limit(ctx.trim, ctx.style), recycle, thermometer, split, *main_valve)
     to_furnace = run_of(merge, outlet, skillet_blind(ctx.trim, ctx.style))
     mains = [
         close_run(ctx, feed_run, None, exchanger_id),
@@ -85,6 +91,15 @@ def feed_side(ctx: PatternContext, exchanger_id: str, furnace_id: str, reactor_i
     ]
     bypass = _bypass_line(ctx, split.ports["tee"], merge.ports["tee"], reactor_id)
     return FeedSide(plan=combine(*mains, *taps, bypass), recycle_tee=recycle.ports["tee"])
+
+
+def _main_branch_valve(ctx: PatternContext, reactor_id: str) -> list[TrimPlan]:
+    """The exchanger's own temperature valve (a second loop on the reactor inlet) or nothing."""
+    if not wants_main_branch_valve(ctx.trim):
+        return []
+    valve = main_branch_valve(ctx.trim, ctx.style)
+    loop = control_loop(ctx.trim, ctx.style, part_of(valve, "body"), reactor_id)
+    return [quiet(combine(quiet(valve), quiet(loop)))]
 
 
 def _bypass_line(ctx: PatternContext, split_id: str, merge_id: str, reactor_id: str) -> TrimPlan:
@@ -141,15 +156,28 @@ def fuel_gas_line(ctx: PatternContext, furnace_id: str, outlet_tee_id: str) -> T
     temperature = control_valve(ctx.trim, style, "T")
     temperature_loop = control_loop(ctx.trim, style, part_of(temperature, "body"), outlet_tee_id)
     dbb = double_block_and_bleed(ctx.trim, style)
+    second_valve = _second_switching_valve(ctx, style, furnace_id)
     drivers = [
         flame_failure_trip(ctx.trim, style, part_of(dbb, "first"), furnace_id),
         hand_switch(ctx.trim, style, part_of(dbb, "second")),
         hand_switch(ctx.trim, style, part_of(dbb, "bleed")),
     ]
     run = run_of(
-        block, sensor_tee, pressure, pressure_loop, temperature, temperature_loop, dbb, *drivers
-    )
+        block, sensor_tee, pressure, pressure_loop, temperature, temperature_loop,
+        *second_valve, dbb, *drivers,
+    )  # fmt: skip
     return close_run(ctx, run, None, furnace_id, StreamKindV2.UTILITY_STUB, style)
+
+
+def _second_switching_valve(
+    ctx: PatternContext, style: LineStyle, furnace_id: str
+) -> list[TrimPlan]:
+    """A second flame-failure shut-off valve in series, when the furnace is drawn with two."""
+    if not wants_second_switching_valve(ctx.trim):
+        return []
+    valve = fuel_switching_valve(ctx.trim, style)
+    trip = flame_failure_trip(ctx.trim, style, part_of(valve, "valve"), furnace_id)
+    return [valve, trip]
 
 
 # ---- reactor ---------------------------------------------------------------------------------

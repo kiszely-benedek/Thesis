@@ -109,5 +109,6 @@ def _build_unit(
         decks,
         MAIN_LINE_STYLE,
         waiting_streams=waiting,
+        train_no=slot.train_no,
     )
     return build_pattern(slot.pattern_id, ctx)

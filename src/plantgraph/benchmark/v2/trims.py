@@ -219,6 +219,7 @@ def pump_trims(
     suction_src_id: str | None = None,
     discharge_tail: tuple[LineItemSpec, ...] = (),
     power_band: PumpPowerBand | None = None,
+    nozzle_reducers: bool = False,
 ) -> TrimPlan:
     """Every trim of one pump, with its suction and discharge lines: vessel -> pump -> `dst_id`.
 
@@ -229,7 +230,8 @@ def pump_trims(
     close the discharge line (the header's merge tees). The min-flow line still returns to
     `vessel_id`. On a v2.2 plant the pump's hidden `power_band` decides whether it has a min-flow
     line and which method the line uses (`trims_min_flow.py`); it is required for a centrifugal
-    pump there and recorded in the plan's `pump_power`.
+    pump there and recorded in the plan's `pump_power`. With `nozzle_reducers` a centrifugal pump
+    has a reducer on its suction nozzle and an enlarger on its discharge nozzle (TOG173).
     """
     pd_pump = needs_external_relief(pump_class)
     min_flow = ctx.chance(ctx.config.p_min_flow)  # always drawn: the v2.1 stream stays aligned
@@ -250,9 +252,14 @@ def pump_trims(
         external_check=_has_external_check(ctx, pump_class),
         min_flow_before_check=ctx.handbook,
     )
-    suction_run = (*suction_head, *suction.run)
+    reducer_draft = TrimDraft(ctx, style)
+    suction_reducer, discharge_enlarger = _nozzle_reducers(
+        reducer_draft, nozzle_reducers and not pd_pump
+    )
+    suction_run = (*suction_head, *suction.run, *suction_reducer)
     suction_line = main_line(ctx, style, suction_src_id or vessel_id, suction_run, pump_id)
-    discharge_line = main_line(ctx, style, pump_id, (*discharge.run, *discharge_tail), dst_id)
+    discharge_run = (*discharge_enlarger, *discharge.run, *discharge_tail)
+    discharge_line = main_line(ctx, style, pump_id, discharge_run, dst_id)
     parts = [  # the two main lines come first: every branch below starts at one of their tees
         suction.with_main_line(suction_line).with_port_prefix("suction"),
         discharge.with_main_line(discharge_line).with_port_prefix("discharge"),
@@ -266,10 +273,23 @@ def pump_trims(
             parts.append(min_flow_bypass(ctx, style, tee_id, vessel_id))
         else:
             parts.append(min_flow_line(ctx, style, power_band, tee_id, vessel_id))
+    parts.append(reducer_draft.finish())  # carries the reducers' roles
     parts.append(pump_vent_drain(ctx, style, pump_id))
     parts.append(flush_connection(ctx, style, pump_id))
     plan = combine(*parts)
     return plan.model_copy(update={"pump_power": {pump_id: power_band}}) if power_band else plan
+
+
+def _nozzle_reducers(
+    draft: TrimDraft, wanted: bool
+) -> tuple[tuple[LineItemSpec, ...], tuple[LineItemSpec, ...]]:
+    """The parts at the pump's two nozzles: (suction reducer, discharge enlarger), or empty ones."""
+    if not wanted:
+        return (), ()
+    # rule TOG173-PUMP-REDUCERS: suction reducer, discharge enlarger (Toghraei p.173–175)
+    reducer = draft.part(NodeClass.PIPE_REDUCER.value, "pump_suction_reducer")
+    enlarger = draft.part(NodeClass.PIPE_REDUCER.value, "pump_discharge_enlarger")
+    return (reducer,), (enlarger,)
 
 
 def _required_band(power_band: PumpPowerBand | None, pump_id: str) -> PumpPowerBand:

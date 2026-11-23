@@ -9,7 +9,7 @@ from __future__ import annotations
 from typing import Any
 
 from plantgraph.benchmark.v2.config_v22 import GeneratorConfigV22
-from plantgraph.benchmark.v2.hidden_state import HiddenDesignState, PumpPowerBand
+from plantgraph.benchmark.v2.hidden_state import HiddenDesignState, PumpPowerBand, RefluxClass
 from plantgraph.benchmark.v2.patterns.ports import PatternInstance
 from plantgraph.benchmark.v2.plan_models import (
     GenerationRecordV2,
@@ -39,9 +39,11 @@ def build_record(plan: PlantPlanV2, pydexpi_version: str) -> GenerationRecordV2:
 def _hidden_state(plan: PlantPlanV2) -> HiddenDesignState:
     """The design quantities the units drew and no drawing shows (design 6.1)."""
     pump_power: dict[str, PumpPowerBand] = {}
+    reflux: dict[str, RefluxClass] = {}
     for unit in plan.units:
         pump_power.update(unit.instance.plan.pump_power)
-    return HiddenDesignState(pump_power=pump_power)
+        reflux.update(unit.instance.plan.reflux)
+    return HiddenDesignState(pump_power=pump_power, reflux=reflux)
 
 
 def _common_fields(plan: PlantPlanV2, pydexpi_version: str) -> dict[str, Any]:

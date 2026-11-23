@@ -74,7 +74,8 @@ EXCHANGERS = (
         sources=(tog("p.322"),),
         kind=RuleKind.ALTERNATIVE,
         sampling_unit="item",
-        check=pending("T11"),
+        declared_parameters=("handbook.exchanger_bypass_weights",),
+        check=wired("check_hx_bypass_variant", "checks_exchangers"),
     ),
     HandbookRule(
         rule_id="TOG326-STEAM-CONDENSATE",
@@ -96,7 +97,8 @@ EXCHANGERS = (
         sources=(tog("p.214"),),
         kind=RuleKind.ALTERNATIVE,
         sampling_unit="item",
-        check=pending("T11"),
+        declared_parameters=("handbook.fuel_switching_weights",),
+        check=wired("check_fuel_switching_valves", "checks_alternatives"),
     ),
 )
 
@@ -136,7 +138,8 @@ CONTROL = (
         sources=(tog("p.309"),),
         kind=RuleKind.ALTERNATIVE,
         sampling_unit="item",
-        check=pending("T11"),
+        declared_parameters=("handbook.reflux_class_weights",),
+        check=wired("check_split_pairing", "checks_split_pairing"),
     ),
     HandbookRule(
         rule_id="TOG122-PV-NO-BYPASS",
@@ -146,7 +149,7 @@ CONTROL = (
         kind=RuleKind.ALTERNATIVE,
         sampling_unit="train",
         declared_parameters=("handbook.p_pv_no_bypass_train",),
-        check=pending("T11"),
+        check=wired("check_pv_no_bypass", "checks_alternatives"),
     ),
 )
 

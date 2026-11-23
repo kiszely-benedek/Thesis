@@ -14,7 +14,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from plantgraph.benchmark.v2.class_decks import CV_STATION_BYPASS
+from plantgraph.benchmark.v2.class_decks import BATTERY_LIMIT_CHECK, CV_STATION_BYPASS
 from plantgraph.benchmark.v2.plan_models import LineItemSpec
 from plantgraph.benchmark.v2.tags import format_instrument_tag, parse_tag
 from plantgraph.benchmark.v2.trim_context import LineStyle, TrimContext
@@ -22,6 +22,9 @@ from plantgraph.benchmark.v2.trim_plan import TrimDraft, TrimPlan
 from plantgraph.benchmark.v2.trims_extra import capped_branch, on_off_valve_part, tee_part
 from plantgraph.benchmark.v2.vocabulary import ItemKind, item_kind
 from plantgraph.graph.schema import NodeClass
+
+#: the first ISA letter of a pressure loop
+PRESSURE_LETTER = "P"
 
 # ---- 6.7 control-valve station, 6.8 bare control valve ----------------------------------------
 
@@ -41,11 +44,15 @@ def control_valve(
 
 
 def bare_control_valve(
-    ctx: TrimContext, style: LineStyle, variable: str, letdown: bool = False
+    ctx: TrimContext,
+    style: LineStyle,
+    variable: str,
+    letdown: bool = False,
+    role: str = "control_valve_body",
 ) -> TrimPlan:
     """6.8: the control valve body inline with no blocks (L9 says "in general", not always)."""
     draft = TrimDraft(ctx, style)
-    body = _body(draft, variable, letdown)
+    body = _body(draft, variable, letdown, role)
     return draft.finish(run=(body,), body=body)
 
 
@@ -56,37 +63,39 @@ def control_valve_station(
 
     The bypass is a branch from the first tee to the second one. The two reducers come as a pair
     (the valve is a size smaller than the line), chance `p_cv_reducers`; the drain between the
-    upstream block and the body has chance `p_cv_drain`.
+    upstream block and the body has chance `p_cv_drain`. A pressure-control station of a train
+    whose company style leaves the bypass out (TOG122) has no bypass and no tees for it; its other
+    draws are taken as usual, so the unit's stream stays aligned with the v2.1 plant.
     """
     draft = TrimDraft(ctx, style)
-    tee_in = tee_part(draft, "cv_tee_in")
+    # rule TOG122-PV-NO-BYPASS: some companies give a PV station no bypass (Toghraei 2019 p.122)
+    with_bypass = not (ctx.handbook and ctx.pv_without_bypass and variable == PRESSURE_LETTER)
+    tee_in = tee_part(draft, "cv_tee_in") if with_bypass else None
     block_in = draft.dealt_part("block_valve", "cv_block_in")
     drain_tee = tee_part(draft, "cv_drain_tee") if ctx.chance(ctx.config.p_cv_drain) else None
     reducers = ctx.chance(ctx.config.p_cv_reducers)
     body = _body(draft, variable, letdown)
     block_out = draft.dealt_part("block_valve", "cv_block_out")
-    tee_out = tee_part(draft, "cv_tee_out")
+    tee_out = tee_part(draft, "cv_tee_out") if with_bypass else None
 
-    run = [tee_in, block_in]
+    run = [block_in]
     run += [drain_tee] if drain_tee is not None else []
     run += _reducer_pair(draft, body, reducers)
-    run += [block_out, tee_out]
-    bypass = draft.part(CV_STATION_BYPASS, "cv_bypass_valve")
-    draft.line(tee_in.node_id, [bypass], tee_out.node_id, style=style.branch())
+    run += [block_out]
+    ports: dict[str, LineItemSpec] = {"body": body, "block_in": block_in, "block_out": block_out}
+    if tee_in is not None and tee_out is not None:
+        run = [tee_in, *run, tee_out]
+        bypass = draft.part(CV_STATION_BYPASS, "cv_bypass_valve")
+        draft.line(tee_in.node_id, [bypass], tee_out.node_id, style=style.branch())
+        ports |= {"tee_in": tee_in, "tee_out": tee_out, "bypass_valve": bypass}
     if drain_tee is not None:
         capped_branch(draft, drain_tee.node_id, "drain", "cv_drain")
-    return draft.finish(
-        run=tuple(run),
-        body=body,
-        tee_in=tee_in,
-        tee_out=tee_out,
-        block_in=block_in,
-        block_out=block_out,
-        bypass_valve=bypass,
-    )
+    return draft.finish(run=tuple(run), **ports)
 
 
-def _body(draft: TrimDraft, variable: str, letdown: bool) -> LineItemSpec:
+def _body(
+    draft: TrimDraft, variable: str, letdown: bool, role: str = "control_valve_body"
+) -> LineItemSpec:
     """The valve body, tagged `<variable>V-n` and checked to be a control valve."""
     deck = "letdown_control_valve_body" if letdown else "control_valve_body"
     body_class = draft.ctx.deal_class(deck)
@@ -96,7 +105,7 @@ def _body(draft: TrimDraft, variable: str, letdown: bool) -> LineItemSpec:
         raise ValueError(
             f"expected a control-valve tag such as FV-12014 for {body_class}, got {tag!r}"
         )
-    return draft.tagged_part(body_class, "control_valve_body", tag)
+    return draft.tagged_part(body_class, role, tag)
 
 
 def _reducer_pair(draft: TrimDraft, body: LineItemSpec, reducers: bool) -> list[LineItemSpec]:
@@ -106,6 +115,31 @@ def _reducer_pair(draft: TrimDraft, body: LineItemSpec, reducers: bool) -> list[
     narrow = draft.part(NodeClass.PIPE_REDUCER.value, "cv_reducer")
     widen = draft.part(NodeClass.PIPE_REDUCER.value, "cv_reducer")
     return [narrow, body, widen]
+
+
+# ---- the main-branch valve of a two-valve exchanger bypass (TOG322) -----------------------------
+
+#: role of the control valve on the exchanger's own branch; the bypass branch keeps its valve's role
+HX_MAIN_VALVE_ROLE = "hx_main_control_valve"
+
+
+def wants_main_branch_valve(ctx: TrimContext) -> bool:
+    """True when this exchanger bypass has control valves on both branches (drawn per bypass).
+
+    A temperature controller can hold the outlet by splitting flow between the exchanger and its
+    bypass: one valve on each branch, the two moving in opposite directions. The alternative is the
+    bypass valve alone (the v2.1 shape).
+    """
+    if not ctx.handbook:
+        return False
+    # rule TOG322-HX-BYPASS-VARIANT: bypass valve alone, or valves on both branches (Toghraei p.322)
+    weights = ctx.handbook_knobs.exchanger_bypass_weights
+    return ctx.handbook_choice("exchanger_bypass", weights) == "two_control_valves"
+
+
+def main_branch_valve(ctx: TrimContext, style: LineStyle) -> TrimPlan:
+    """A bare temperature control valve for the exchanger's own branch (open run, port `body`)."""
+    return bare_control_valve(ctx, style, "T", role=HX_MAIN_VALVE_ROLE)
 
 
 # ---- 6.9 on-off valve -------------------------------------------------------------------------
@@ -140,14 +174,35 @@ def _add_limit_switches(draft: TrimDraft, valve: LineItemSpec) -> None:
 def battery_limit(ctx: TrimContext, style: LineStyle) -> TrimPlan:
     """6.17: a block valve then a line blind at a unit's first inlet or last outlet.
 
-    Drawn with chance `p_battery_limit`; the planner calls it once per unit end.
+    Drawn with chance `p_battery_limit`; the planner calls it once per unit end. A v2.2 plant
+    draws one of the three arrangements of Toghraei p.34 for each crossing (`_variant`).
     """
     draft = TrimDraft(ctx, style)
     if not ctx.chance(ctx.config.p_battery_limit):
         return draft.finish()
-    block = draft.dealt_part("block_valve", "battery_limit_block")
+    variant = _battery_limit_variant(ctx)
+    block_class = ctx.deal_class("block_valve")  # dealt in every variant: the deck stays aligned
+    if variant == BLIND_ONLY:
+        blind = draft.part(NodeClass.LINE_BLIND.value, "battery_limit_blind")
+        return draft.finish(run=(blind,), blind=blind)
+    block = draft.part(block_class, "battery_limit_block")
     blind = draft.part(NodeClass.LINE_BLIND.value, "battery_limit_blind")
+    if variant == VALVE_BLIND_CHECK:
+        check = draft.part(BATTERY_LIMIT_CHECK, "battery_limit_check")
+        return draft.finish(run=(block, check, blind), block=block, check=check, blind=blind)
     return draft.finish(run=(block, blind), block=block, blind=blind)
+
+
+#: the three battery-limit arrangements, numbered as in `battery_limit_variant_weights`
+BLIND_ONLY, VALVE_AND_BLIND, VALVE_BLIND_CHECK = 1, 2, 3
+
+
+def _battery_limit_variant(ctx: TrimContext) -> int:
+    """The v2.1 arrangement (valve and blind) unless the handbook rules are on."""
+    if not ctx.handbook:
+        return VALVE_AND_BLIND
+    # rule TOG34-BL-ISOLATION: a blind; or valve and blind; or valve, blind, check (Toghraei p.34)
+    return ctx.handbook_choice("battery_limit", ctx.handbook_knobs.battery_limit_variant_weights)
 
 
 def flow_element(ctx: TrimContext, style: LineStyle, service: Literal["liquid", "gas"]) -> TrimPlan:
@@ -175,3 +230,25 @@ def double_block_and_bleed(ctx: TrimContext, style: LineStyle) -> TrimPlan:
     bleed = on_off_valve_part(draft, "dbb_bleed_valve")
     draft.line(tee.node_id, [bleed], None, style=style.branch())
     return draft.finish(run=(first, tee, second), first=first, second=second, bleed=bleed)
+
+
+# ---- the second fuel switching valve (TOG214) -------------------------------------------------
+
+#: roles of the valves a flame-failure trip shuts; the fuel rule counts them per furnace
+FUEL_SWITCHING_ROLES = ("dbb_block_first", "fuel_second_switching_valve")
+
+
+def wants_second_switching_valve(ctx: TrimContext) -> bool:
+    """True when this furnace's fuel line has two switching valves in series (drawn per furnace)."""
+    if not ctx.handbook:
+        return False
+    # rule TOG214-FUEL-SWITCHING-VALVES: one switching valve, or two in series (Toghraei p.214)
+    weights = ctx.handbook_knobs.fuel_switching_weights
+    return ctx.handbook_choice("fuel_switching", weights) == "two_in_series"
+
+
+def fuel_switching_valve(ctx: TrimContext, style: LineStyle) -> TrimPlan:
+    """The extra shut-off valve: a tagged on-off valve (port `valve`), no limit switches."""
+    draft = TrimDraft(ctx, style)
+    valve = on_off_valve_part(draft, FUEL_SWITCHING_ROLES[1])
+    return draft.finish(run=(valve,), valve=valve)

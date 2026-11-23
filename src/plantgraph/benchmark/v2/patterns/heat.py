@@ -49,7 +49,12 @@ from plantgraph.benchmark.v2.patterns.ports import (
 )
 from plantgraph.benchmark.v2.patterns.variants import variant_label
 from plantgraph.benchmark.v2.trim_plan import TrimPlan, combine
-from plantgraph.benchmark.v2.trims_valves import battery_limit, control_valve
+from plantgraph.benchmark.v2.trims_valves import (
+    battery_limit,
+    control_valve,
+    main_branch_valve,
+    wants_main_branch_valve,
+)
 from plantgraph.graph.schema import NodeClass
 
 PATTERN_ID = "U5"
@@ -190,11 +195,13 @@ def _process_lines(
     Segment `j` enters exchanger `j`; the last leaves the train.
     """
     count = len(ids)
+    main_valve = _main_valve(ctx, tees, outlet_tee)
     mains = []
     for j in range(count + 1):
         src = ids[j - 1] if j > 0 else None
         dst = ids[j] if j < count else None
-        mains.append(close_run(ctx, run_of(*_segment(ctx, tees, j, count, controlled)), src, dst))
+        segment = _segment(ctx, tees, j, count, controlled, main_valve)
+        mains.append(close_run(ctx, run_of(*segment), src, dst))
     taps = [thermometer_tap(ctx, tee.ports["tee"], "exchanger_outlet_ti") for tee in tees.after]
     taps.append(pressure_gauge_tap(ctx, tees.inlet.ports["tee"], "inlet_pi"))
     taps.append(pressure_gauge_tap(ctx, tees.outlet.ports["tee"], "outlet_pi"))
@@ -202,8 +209,26 @@ def _process_lines(
     return quiet(combine(*mains, *taps, *bypass_line))
 
 
+def _main_valve(ctx: PatternContext, tees: _Tees, outlet_id: str) -> TrimPlan | None:
+    """The temperature valve on the exchanger's own branch, when the bypass has two valves.
+
+    It is a second `TT -> TIC -> TV` loop on the same outlet as the bypass valve's. The two valves
+    are meant to fail in opposite directions; that attribute is the valve-position task's (T5).
+    """
+    if tees.split is None or not wants_main_branch_valve(ctx.trim):
+        return None
+    valve = main_branch_valve(ctx.trim, ctx.style)
+    loop = control_loop(ctx.trim, ctx.style, part_of(valve, "body"), outlet_id)
+    return quiet(combine(quiet(valve), quiet(loop)))
+
+
 def _segment(
-    ctx: PatternContext, tees: _Tees, j: int, count: int, controlled: int
+    ctx: PatternContext,
+    tees: _Tees,
+    j: int,
+    count: int,
+    controlled: int,
+    main_valve: TrimPlan | None,
 ) -> list[TrimPlan]:
     """The parts of segment `j` in flow order."""
     parts: list[TrimPlan] = []
@@ -216,7 +241,7 @@ def _segment(
     if j == count:
         parts += [tees.outlet, battery_limit(ctx.trim, ctx.style)]
     elif tees.split is not None and j == controlled:
-        parts.append(tees.split)
+        parts += [tees.split, *([main_valve] if main_valve is not None else [])]
     return parts
 
 

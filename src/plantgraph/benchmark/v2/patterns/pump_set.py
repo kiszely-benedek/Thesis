@@ -89,11 +89,12 @@ def build_pump_set(
     pressure = _deal_pressure(ctx)
     # one hidden power band per set: the pumps of a set are identical (A/B spares)
     band = ctx.trim.draw_pump_power_band() if ctx.trim.handbook else None
+    reducers = _draw_nozzle_reducers(ctx)
     pumps = spared_set(ctx, pump_class, _PUMP_TYPE_CODE, count, has_motor=True)
     manifold = _manifold(ctx, count, feed_count, with_header_tee=pressure == "header_pt")
     header_run = header.run if header is not None else ()
     pump_plans = [
-        _pump_plan(ctx, pump, index, vessel_id, manifold, pressure, header_run, band)
+        _pump_plan(ctx, pump, index, vessel_id, manifold, pressure, header_run, band, reducers)
         for index, pump in enumerate(pumps)
     ]
     # the header's valve branches start at tees of the first pump's discharge line: they come last
@@ -120,6 +121,13 @@ def build_pump_set(
         feed_tee_ids=tuple(tee.node_id for tee in manifold.feeds),
         variant=variant_label(pumps=count, group=group, pressure=pressure),
     )
+
+
+def _draw_nozzle_reducers(ctx: PatternContext) -> bool:
+    """Whether the set's pumps have nozzle reducers (TOG173); one draw per set on a v2.2 plant."""
+    if not ctx.trim.handbook:
+        return False
+    return ctx.trim.handbook_chance("pump_reducers", ctx.trim.handbook_knobs.p_pump_reducers)
 
 
 def _draw_pump_count(ctx: PatternContext) -> int:
@@ -160,6 +168,7 @@ def _pump_plan(
     pressure: PumpPressureMode,
     header_run: tuple[LineItemSpec, ...],
     band: PumpPowerBand | None,
+    reducers: bool,
 ) -> TrimPlan:
     """The lines, trims and instruments of pump `index`; pump 0 carries the manifold tees."""
     is_first = index == 0
@@ -175,6 +184,7 @@ def _pump_plan(
         suction_src_id=None if is_first else manifold.splits[index - 1].node_id,
         discharge_tail=_first_pump_tail(manifold, header_run) if is_first else (),
         power_band=band,
+        nozzle_reducers=reducers,
     )
     return combine(trims, _pump_instruments(ctx, pump.node_id)).with_port_prefix(f"pump{index}")
 

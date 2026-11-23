@@ -18,7 +18,7 @@ from collections.abc import Mapping
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from plantgraph.benchmark.v2.hidden_state import PumpPowerBand
+from plantgraph.benchmark.v2.hidden_state import PumpPowerBand, RefluxClass
 from plantgraph.benchmark.v2.plan_models import (
     EquipmentSpec,
     InstrumentSpec,
@@ -58,6 +58,8 @@ class TrimPlan(BaseModel):
     #: gold: the hidden power band of each pump (`HiddenDesignState.pump_power`, v2.2 only); a
     #: declared parameter of the design, so it is left out of dumps and never reaches the model
     pump_power: dict[str, PumpPowerBand] = Field(default_factory=dict, exclude=True)
+    #: gold: the hidden reflux class of each column (`HiddenDesignState.reflux`, v2.2 only)
+    reflux: dict[str, RefluxClass] = Field(default_factory=dict, exclude=True)
 
     def write(self, builder: PlantBuilderV2) -> None:
         """Send the plan to `builder`: equipment, lines, instruments, links, in that order.
@@ -130,6 +132,7 @@ def combine(*plans: TrimPlan) -> TrimPlan:
         ports=_merge_keyed([plan.ports for plan in plans], "port"),
         spare_sets=tuple(spare for plan in plans for spare in plan.spare_sets),
         pump_power=_merge_keyed([plan.pump_power for plan in plans], "pump power band"),
+        reflux=_merge_keyed([plan.reflux for plan in plans], "reflux class"),
     )
 
 

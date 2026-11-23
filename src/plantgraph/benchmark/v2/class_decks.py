@@ -23,6 +23,7 @@ CV_STATION_BYPASS = "GlobeValve"
 ON_OFF_VALVE = "BallValve"
 PUMP_CHECK = "SwingCheckValve"
 MIN_FLOW_CHECK = "GlobeCheckValve"
+BATTERY_LIMIT_CHECK = "SwingCheckValve"  # v2.2: the check valve of a battery limit (TOG34)
 COMPRESSOR_CHECK = "CheckValve"
 PD_RELIEF = "SpringLoadedAngleGlobeSafetyValve"
 PLUG_DRAIN = "AnglePlugValve"  # tank bottom drain on rotary-pump farms
@@ -50,7 +51,8 @@ def _check_tables() -> None:
     """Fail at import when a class in the tables is not a schema piping class."""
     named = {name for classes in ROLE_CLASSES.values() for name in classes}
     named |= {COMPRESSOR_SUCTION_BLOCK, CV_STATION_BYPASS, ON_OFF_VALVE, PUMP_CHECK}
-    named |= {MIN_FLOW_CHECK, COMPRESSOR_CHECK, PD_RELIEF, PLUG_DRAIN, TEMPERATURE_TAP_ROOT}
+    named |= {MIN_FLOW_CHECK, BATTERY_LIMIT_CHECK, COMPRESSOR_CHECK, PD_RELIEF}
+    named |= {PLUG_DRAIN, TEMPERATURE_TAP_ROOT}
     unknown = sorted(named - PIPING_CLASSES)
     if unknown:
         raise ImportError(f"class_decks names classes that are not piping classes: {unknown}")

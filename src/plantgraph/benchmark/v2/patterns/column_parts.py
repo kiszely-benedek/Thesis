@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict
 
+from plantgraph.benchmark.v2.hidden_state import RefluxClass
 from plantgraph.benchmark.v2.instrument_draft import part_of
 from plantgraph.benchmark.v2.instruments import (
     analyser_point,
@@ -126,29 +127,70 @@ def reflux_set(
 ) -> tuple[PumpSet, TrimPlan]:
     """Reflux pumps; their discharge splits into reflux (to the column) and distillate (out).
 
-    The distillate leaves through the level valve (a flow cascade with `p_cascade`) and, with
-    `p_optional_instrument`, an analyser tap. Returns the pump set (its `discharge` is the
-    distillate port) and the plan of the branch lines, to be written after the pump set.
+    Which of the two streams is flow-controlled and which holds the drum level follows the hidden
+    reflux class (`_reflux_class`). By default the distillate leaves through the level valve (a
+    flow cascade with `p_cascade`) and, with `p_optional_instrument`, an analyser tap. Returns the
+    pump set (its `discharge` is the distillate port) and the plan of the branch lines, to be
+    written after the pump set.
     """
+    reflux_class = _reflux_class(ctx)
     split = tee_plan(ctx, "reflux_split_tee")
     analyser = tee_plan(ctx, "distillate_analyser_tee") if _optional(ctx) else None
     taps = [quiet(analyser)] if analyser is not None else []
-    header = combine(quiet(split), *taps, liquid_outlet_header(ctx, drum_id))
+    distillate = _distillate_header(ctx, drum_id, reflux_class)
+    header = combine(quiet(split), *taps, distillate)
     pumps = build_pump_set(ctx, drum_id, "CentrifugalPump", "reflux_pump", header=header)
-    branches = [_reflux_line(ctx, split.ports["tee"], column_id, with_sight_glass)]
+    branches = [
+        _reflux_line(ctx, split.ports["tee"], column_id, with_sight_glass, drum_id, reflux_class)
+    ]
     if analyser is not None:
         branches.append(quiet(analyser_point(ctx.trim, ctx.style, analyser.ports["tee"])))
-    return pumps, combine(*branches)
+    hidden = {column_id: reflux_class} if ctx.trim.handbook else {}
+    return pumps, combine(*branches).model_copy(update={"reflux": hidden})
+
+
+def _reflux_class(ctx: PatternContext) -> RefluxClass:
+    """The column's hidden reflux class; v2.1 and knobs-off plants always draw the low class."""
+    if not ctx.trim.handbook:
+        return RefluxClass.LOW
+    # rule TOG309-SPLIT-PAIRING: flow on the smaller stream, level on the other (Toghraei p.309)
+    weights = ctx.trim.handbook_knobs.reflux_class_weights
+    return ctx.trim.handbook_choice("reflux_class", weights)
+
+
+def _distillate_header(ctx: PatternContext, drum_id: str, reflux_class: RefluxClass) -> TrimPlan:
+    """The distillate's valve and battery limit: the drum level valve, or a flow loop (high reflux).
+
+    With a low reflux ratio the distillate is the larger stream, so it takes the level valve; with a
+    high ratio it is the smaller one and takes flow control.
+    """
+    if reflux_class is RefluxClass.LOW:
+        return liquid_outlet_header(ctx, drum_id)
+    ctx.chance(ctx.instruments.p_cascade)  # drawn and ignored: the unit's stream stays aligned
+    element = flow_element(ctx.trim, ctx.style, "liquid")
+    valve = control_valve(ctx.trim, ctx.style, "F", letdown=True)
+    loop = flow_control_loop(ctx.trim, ctx.style, element, valve)
+    return quiet(combine(quiet(loop), quiet(battery_limit(ctx.trim, ctx.style))))
 
 
 def _reflux_line(
-    ctx: PatternContext, split_id: str, column_id: str, with_sight_glass: bool
+    ctx: PatternContext,
+    split_id: str,
+    column_id: str,
+    with_sight_glass: bool,
+    drum_id: str,
+    reflux_class: RefluxClass,
 ) -> TrimPlan:
-    """`FE, FT -> FIC -> FV` and an optional sight glass, from the split tee to the column."""
-    element = flow_element(ctx.trim, ctx.style, "liquid")
-    loop = flow_control_loop(ctx.trim, ctx.style, element, control_valve(ctx.trim, ctx.style, "F"))
+    """`FE, FT -> FIC -> FV` (low reflux) or `LT -> LIC -> LV` (high); optional sight glass."""
+    if reflux_class is RefluxClass.LOW:
+        element = flow_element(ctx.trim, ctx.style, "liquid")
+        valve = control_valve(ctx.trim, ctx.style, "F")
+        control = flow_control_loop(ctx.trim, ctx.style, element, valve)
+    else:
+        valve = control_valve(ctx.trim, ctx.style, "L")
+        control = combine(valve, control_loop(ctx.trim, ctx.style, part_of(valve, "body"), drum_id))
     glass = [quiet(sight_glass(ctx.trim, ctx.style))] if with_sight_glass else []
-    return quiet(close_run(ctx, combine(loop, *glass), split_id, column_id))
+    return quiet(close_run(ctx, combine(control, *glass), split_id, column_id))
 
 
 def bottoms_set(ctx: PatternContext, column_id: str) -> PumpSet:

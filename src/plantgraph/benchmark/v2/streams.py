@@ -26,6 +26,16 @@ def handbook_unit_rng(seed: int, unit_no: int) -> random.Random:
     return random.Random(f"{seed}:unit{unit_no}:handbook")
 
 
+def handbook_rule_rng(seed: int, unit_no: int, rule: str) -> random.Random:
+    """One alternative's own stream inside a unit, so adding a rule never shifts another's draws."""
+    return random.Random(f"{seed}:unit{unit_no}:handbook:{rule}")
+
+
+def handbook_train_rng(seed: int, train_no: int, rule: str) -> random.Random:
+    """One alternative's stream for a whole train (a company-style choice, same for every unit)."""
+    return random.Random(f"{seed}:train{train_no}:handbook:{rule}")
+
+
 def train_rng(seed: int, train_no: int) -> random.Random:
     """One train's conventions (on-off letter, spare naming)."""
     return random.Random(f"{seed}:train:{train_no}")

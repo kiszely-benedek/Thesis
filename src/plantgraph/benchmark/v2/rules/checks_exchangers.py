@@ -22,12 +22,15 @@ from plantgraph.benchmark.v2.rules.control_graph import (
     TEMPERATURE,
     UTILITY_SERVICES,
     control_loops,
+    controller_of,
     controllers_on,
     is_control_valve,
+    sensed_items,
     service_of,
 )
 from plantgraph.benchmark.v2.rules.registry import CheckResult, Violation
 from plantgraph.benchmark.v2.rules.view import RuleView
+from plantgraph.benchmark.v2.trims_valves import HX_MAIN_VALVE_ROLE
 from plantgraph.graph.schema import EQUIPMENT_CLASSES
 
 #: exchangers proper; an air cooler or furnace also moves heat but has no steam or spare to speak of
@@ -82,28 +85,48 @@ def _run_to_junction(
 # ---- TOG320-HX-NONTARGET -----------------------------------------------------------------------
 
 
-def _bypasses_a_heat_transfer_item(view: RuleView, valve: str) -> bool:
-    """True when the valve sits on a branch that skips an exchanger or heater.
+def _item_down_the_branch(view: RuleView, start: str) -> str:
+    """The first equipment item along single-file pipe from `start`, else the last part reached.
 
-    The exchanger then hangs off a part before the valve and returns to a part after it.
+    A valve between a tee and the exchanger (the main-branch valve of TOG322) is walked past.
+    """
+    piping, graph = flow(view.graph), view.graph
+    node = start
+    while graph.nodes[node]["node_class"] not in EQUIPMENT_CLASSES:
+        following = list(piping.successors(node))
+        if len(following) != 1:
+            break
+        node = following[0]
+    return node
+
+
+def _bypassed_items(view: RuleView, valve: str) -> set[str]:
+    """The exchangers and heaters the branch of `valve` skips (none: it is not on a bypass).
+
+    An item is skipped when a branch from a part before the valve leads to it and returns to a part
+    after the valve.
     """
     piping, graph = flow(view.graph), view.graph
     before, _ = reach(piping, graph, valve, up=True)
     after, _ = reach(piping, graph, valve, up=False)
+    skipped: set[str] = set()
     for part in before:
-        for item in piping.successors(part):
+        for branch in piping.successors(part):
+            item = _item_down_the_branch(view, branch)
             is_heater = graph.nodes[item]["node_class"] in _HEAT_TRANSFER_CLASSES
             if is_heater and any(back in after for back in piping.successors(item)):
-                return True
-    return False
+                skipped.add(item)
+    return skipped
 
 
 def _nontarget_problem(view: RuleView, valve: str) -> str | None:
     service = _service_around(view, valve)
     if service in UTILITY_SERVICES:
         return None  # directly on the utility stream
-    if _bypasses_a_heat_transfer_item(view, valve):
+    if _bypassed_items(view, valve):
         return None  # on a bypass of a process stream
+    if view.roles.get(valve) == HX_MAIN_VALVE_ROLE:
+        return None  # the exchanger's own branch of a two-valve bypass: TOG322 judges it
     return (
         f"temperature valve {valve} sits on a {service or 'unknown'} process line in series, "
         "not on a utility line or on a bypass around an exchanger"
@@ -122,6 +145,59 @@ def check_hx_nontarget(view: RuleView) -> CheckResult:
     return CheckResult(checked=len(loops), violations=tuple(violations))
 
 
+# ---- TOG322-HX-BYPASS-VARIANT ------------------------------------------------------------------
+
+
+def temperature_bypass_valves(view: RuleView) -> list[str]:
+    """The temperature control valves on a branch that skips an exchanger or heater."""
+    loops = [loop for loop in control_loops(view) if loop.variable == TEMPERATURE]
+    return [loop.valve for loop in loops if _bypassed_items(view, loop.valve)]
+
+
+def _heat_transfer_items_beside(view: RuleView, valve: str) -> set[str]:
+    """The exchangers and heaters met in series with `valve`, upstream or downstream."""
+    piping, graph = flow(view.graph), view.graph
+    found = reach(piping, graph, valve, up=True)[1] | reach(piping, graph, valve, up=False)[1]
+    return {n for n in found if graph.nodes[n]["node_class"] in _HEAT_TRANSFER_CLASSES}
+
+
+def _controlled_point(graph: nx.DiGraph[str], valve: str) -> list[str]:
+    controller = controller_of(graph, valve)
+    return sensed_items(graph, controller) if controller is not None else []
+
+
+def _main_valve_problem(view: RuleView, main: str, bypass_valves: list[str]) -> str | None:
+    """A valve on the exchanger's own branch needs a partner valve on the bypass, same sensor."""
+    items = _heat_transfer_items_beside(view, main)
+    point = _controlled_point(view.graph, main)
+    partners = [
+        valve for valve in bypass_valves
+        if _bypassed_items(view, valve) & items and _controlled_point(view.graph, valve) == point
+    ]  # fmt: skip
+    if point and partners:
+        return None
+    return (
+        f"expected the main-branch valve {main} to be driven by a temperature loop and to pair "
+        "with a bypass valve of the same loop point around the same exchanger, found "
+        f"{len(partners)} partners (measuring {point})"
+    )
+
+
+def check_hx_bypass_variant(view: RuleView) -> CheckResult:
+    """TOG322-HX-BYPASS-VARIANT: a bypass valve alone, or paired with one on the main branch."""
+    if not view.handbook_enabled:
+        return CheckResult(checked=0)
+    # rule TOG322-HX-BYPASS-VARIANT: bypass valve alone, or valves on both branches (Toghraei p.322)
+    bypass_valves = temperature_bypass_valves(view)
+    mains = sorted(n for n, role in view.roles.items() if role == HX_MAIN_VALVE_ROLE)
+    violations = [
+        Violation(rule_id="TOG322-HX-BYPASS-VARIANT", node_id=main, detail=problem)
+        for main in mains
+        if (problem := _main_valve_problem(view, main, bypass_valves))
+    ]
+    return CheckResult(checked=len(bypass_valves), violations=tuple(violations))
+
+
 # ---- TOG207-HX-NO-ISOLATION --------------------------------------------------------------------
 
 
@@ -129,6 +205,11 @@ def _is_trim_run(view: RuleView, run: list[str]) -> bool:
     """A run with a safety valve, or ending in a cap, funnel or vent, is a branch (a trim)."""
     classes = [str(view.graph.nodes[n]["node_class"]) for n in run]
     return classes[-1] in _TRIM_END_CLASSES or any(c.endswith("SafetyValve") for c in classes)
+
+
+def _is_isolation_valve(graph: nx.DiGraph[str], node: str) -> bool:
+    """A block valve; a ball or butterfly body that a controller throttles is a control valve."""
+    return graph.nodes[node]["node_class"] in _BLOCK_VALVES and not is_control_valve(graph, node)
 
 
 def _isolation_valves(view: RuleView, exchanger: str) -> list[str]:
@@ -142,7 +223,7 @@ def _isolation_valves(view: RuleView, exchanger: str) -> list[str]:
         for start in neighbours:
             run = _run_to_junction(piping, graph, start, up)
             if not _is_trim_run(view, run):
-                valves += [n for n in run if graph.nodes[n]["node_class"] in _BLOCK_VALVES]
+                valves += [n for n in run if _is_isolation_valve(graph, n)]
     return sorted(set(valves))
 
 

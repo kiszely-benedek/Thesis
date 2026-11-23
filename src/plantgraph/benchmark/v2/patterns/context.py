@@ -24,7 +24,7 @@ from plantgraph.benchmark.v2.config import (
 )
 from plantgraph.benchmark.v2.config_v22 import GeneratorConfigV22
 from plantgraph.benchmark.v2.deck import VariantDecks
-from plantgraph.benchmark.v2.streams import handbook_unit_rng
+from plantgraph.benchmark.v2.streams import handbook_train_rng, handbook_unit_rng
 from plantgraph.benchmark.v2.trim_context import LineStyle, TrimContext, UnitNumbering
 from plantgraph.benchmark.v2.vocabulary import TrainConventions
 
@@ -53,8 +53,9 @@ class PatternContext:
         style: LineStyle,
         numbering: UnitNumbering | None = None,
         waiting_streams: int = 0,
+        train_no: int | None = None,
     ) -> PatternContext:
-        """The context of unit `unit_no`, its knobs read from `config`."""
+        """The context of unit `unit_no` (of train `train_no`), its knobs read from `config`."""
         handbook = isinstance(config, GeneratorConfigV22) and config.handbook.enabled
         knobs = config.handbook if isinstance(config, GeneratorConfigV22) else None
         trim = TrimContext(
@@ -67,6 +68,8 @@ class PatternContext:
             handbook,
             knobs,
             handbook_unit_rng(config.seed, unit_no),
+            config.seed,
+            handbook and _train_has_no_pv_bypass(config, train_no),
         )
         return cls(
             trim,
@@ -91,3 +94,15 @@ class PatternContext:
     def deal(self, deck_key: str) -> str:
         """The next card of the variant deck `deck_key` (see `variants.py`)."""
         return self.trim.decks.deal(deck_key)
+
+
+def _train_has_no_pv_bypass(config: GeneratorConfigV2, train_no: int | None) -> bool:
+    """The train's company style: pressure-control stations without a bypass (TOG122).
+
+    One draw per train from its own stream, so every unit of the train agrees and no other
+    draw moves. A unit built without a train number (a test harness) keeps the bypass.
+    """
+    if train_no is None or not isinstance(config, GeneratorConfigV22):
+        return False
+    rng = handbook_train_rng(config.seed, train_no, "pv_no_bypass")
+    return rng.random() < config.handbook.p_pv_no_bypass_train

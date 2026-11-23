@@ -17,6 +17,7 @@ from plantgraph.benchmark.v2.config import TrimConvention
 from plantgraph.benchmark.v2.config_v22 import HandbookKnobs
 from plantgraph.benchmark.v2.deck import VariantDecks
 from plantgraph.benchmark.v2.hidden_state import PumpPowerBand
+from plantgraph.benchmark.v2.streams import handbook_rule_rng
 from plantgraph.benchmark.v2.tags import (
     format_equipment_tag,
     format_fitting_tag,
@@ -121,6 +122,8 @@ class TrimContext:
         handbook: bool = False,
         handbook_knobs: HandbookKnobs | None = None,
         handbook_rng: random.Random | None = None,
+        seed: int = 0,
+        pv_without_bypass: bool = False,
     ) -> None:
         self.unit_no = unit_no
         #: True on a v2.2 plant with the handbook rules on: trims then follow them (design 9)
@@ -128,6 +131,11 @@ class TrimContext:
         #: the declared weights of the handbook choices, and the stream they are drawn from
         self.handbook_knobs = handbook_knobs or HandbookKnobs()
         self._handbook_rng = handbook_rng or random.Random(f"handbook:{unit_no}")
+        #: one stream per handbook alternative, made on first use (`handbook_rule_rng`)
+        self._seed = seed
+        self._rule_streams: dict[str, random.Random] = {}
+        #: the train's company style: pressure-control stations are drawn without a bypass (TOG122)
+        self.pv_without_bypass = pv_without_bypass
         self.rng = rng
         self.config = config
         self.conventions = conventions
@@ -149,6 +157,19 @@ class TrimContext:
         """
         weights = self.handbook_knobs.pump_power_weights
         return self._handbook_rng.choices(list(weights), weights=list(weights.values()))[0]
+
+    def handbook_chance(self, rule: str, probability: float) -> bool:
+        """True with `probability`, drawn from the unit's own stream for the alternative `rule`."""
+        return self._rule_stream(rule).random() < probability
+
+    def handbook_choice[K](self, rule: str, weights: dict[K, float]) -> K:
+        """One key of `weights`, drawn by weight from the unit's own stream for `rule`."""
+        return self._rule_stream(rule).choices(list(weights), weights=list(weights.values()))[0]
+
+    def _rule_stream(self, rule: str) -> random.Random:
+        if rule not in self._rule_streams:
+            self._rule_streams[rule] = handbook_rule_rng(self._seed, self.unit_no, rule)
+        return self._rule_streams[rule]
 
     def deal_class(self, role: str) -> str:
         """The next class of the role's deck (see `class_decks.py`)."""
