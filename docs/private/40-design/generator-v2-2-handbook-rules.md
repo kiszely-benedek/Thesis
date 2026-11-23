@@ -1983,4 +1983,5 @@ a comment.
   - The rules are book-cited and machine-checked, but they are not externally reviewed.
   - The 25-item checklist of §18.5 stays in the record as the map from plain questions to rule ids. Items 1–23 are each covered by an automatic check, item 24 by the composition bands, and item 25 is not covered.
 - **Item 4:** no margin. SB1 is reported descriptively, as B − A2 on R with its interval.
+- **Measurement record (user, 2026-11-23; T13 acceptance).** EXP-0009 keeps EXP-0008's record format for both arms. For each model call, `calls.jsonl` holds the tokens, cost, latency and provider id. For each answer, `answers.jsonl` holds the final answer, correctness, tokens, cost, latency and the retrieval trace. Each run also writes `timings.jsonl` and `environment.jsonl`. With these records and the gold answers, precision, recall and F1 can be recomputed after the run without paying for new model calls. A T13 test asserts that every scored answer has a matching call record with cost and token fields filled in.
 - **Item 6:** the user tops up about $25. With the roughly $17 already on the account, P1 fits even at its $37.50 cap.
