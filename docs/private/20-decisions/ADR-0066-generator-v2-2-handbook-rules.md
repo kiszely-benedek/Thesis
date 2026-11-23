@@ -156,6 +156,10 @@ design: 40-design/generator-v2-2-handbook-rules.md (decisions in §15, worked ou
      $7.83 without F1, hard cap $13.50.
 7. **Network and interarea sheets** (D4) count toward the sheet targets. Each process sheet sends one network
    connector per service, through a local sub-header. A network sheet holds at most 16 tie-ins.
+   - **Amended 2026-11-23 (design §17.14):** headers are drawn per plant **area**, one per service, as Toghraei p.34
+     says network P&IDs follow the plot plan. An area is a run of about 10 consecutive trains and is also the
+     convention document. Interconnecting sheets carry only lines between areas. A train-sized grouping made 41–45 %
+     of all sheets network sheets; per area the estimate is 16–17 %.
 8. **External checks:** an expert review of 12 dev-plant sheets against a 25-item checklist keyed to rule ids (D7;
    design §18.5), triaged before the EXP-0009 freeze.
 

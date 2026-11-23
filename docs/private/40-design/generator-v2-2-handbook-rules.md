@@ -516,6 +516,9 @@ number fields. So the model makes visible data *consistent* without adding visib
 Blanket gas and VRU are deferred (§4.9).
 
 **Structure:**
+- **Revised by §17.14 N2 (2026-11-23):** headers are per (area, service), where an area is a run of 10 consecutive
+  trains and is also T6's document. Interarea sheets carry only lines between areas, on one plant interconnecting
+  unit. The two bullets below on network units and interarea describe T7 as first built.
 - **Network unit.** Each (train, service) has a network unit. Its unit number comes from a reserved block,
   `9000 + 10·train + service index`, so it cannot collide with a process unit number below 9000 (H1000g21p1 has 608
   units). It holds one header made of `PipeTee`s.
@@ -812,18 +815,54 @@ unmeasured.
 |---|---|---|---|---|
 | 1 | **T8** Pressure-level model and PRS-*, TOG82 (pump spec breaks), TOG156, PLT-RECYCLE-CLOSURE, API14C-A4-OVERPRESSURE | M | coder | **done** (`6ae1d0c`); rulings on its report in §17.13 |
 | 1′ | **T10a** SAC transcription (A-4.2, A-5.2, A-6.2, A-7.2, A-8.2, A-10.2), page-checked | — | researcher | **done** (`2a9da7a`); rulings in §17.13 |
-| 2 | **T7** Networks and interarea: network units, headers, per-sheet sub-headers, network connectors, capacity overflow, splitter grouping, size search on total sheets, composition per sheet kind, TOG32/141/360/33, PLT-NETWORK-CLOSURE; empties `OWED_FIXES`; wires 5 pending rules. **Also R2 of §17.13:** TOG156 narrowed to process services (P, PG) with the `relief_path` exemption, because T7 creates the FL and CHD tees | L | coder | **starting now** (one coder at a time: nothing runs beside it) |
-| 3 | **T6** Documents and conventions (§5, §18.2): `DocumentRecord` (runs of consecutive trains, `trains_per_document` declared from the median trains per 100 total sheets on v2.2 dev plants after T7); per-document draws of manual-valve tagging (0.75 untagged), spare naming, on-off letter and PV without bypass, from new streams (v2.1 per-train draws taken, values ignored); config override `handbook.document_untagged` for the stratified sealed plants; untagged manual valves (TOG113); `p_pump_reducers` 0.75; gold side of scope R (untagged refusal, FLOW_PATH tie rule, refused-share report; isolation families pre-registered unavailable); v2.1 question hash unchanged | M | coder | T7 |
-| 4 | **T10** In this order (§17.13): **step 0**, the T8 follow-ups: the R1 docstring in `pressure_levels.py`; R3's `switching_valve` element code and restated statement; R5's re-cite of API14C-A4-OVERPRESSURE and TOG219 to A.4.2.2.1 c p.27, with `source_cannot_exceed` deleted and `scope:non_hydrocarbon` added. **Step 1**, `rules/sac.py` from T10a: items, device letters, locations, and exception codes of three kinds, derived (from structure), declared (R7) and scope. **Step 2**, R7's declarations as constants in `hidden_state.py`, plus `FluidClass.NON_FLAMMABLE` for the non-flammable farms. **Step 3**, the switch-plus-alarm additions of T10a §8: vessel PSHH (where a.4 fails), LSHH and LSLL; filter PSHH; compressor suction/discharge PSHH and PSLL, and TSHH; furnace TSHH and fuel PSHH; additive-tank LSHH. **Step 4**, the valve additions in R8's priority order, with R8's measured stop at 27.5 pooled valves per process sheet: TOG236 emergency vents, compressor suction PSV, furnace tube PSV where l.3 fails. **Step 5**, wire API14C-3.4-TWO-LEVELS, API14C-SAC, TOG207-HX-PSD-BOTH-SIDES and TOG236. Every SAC item without an addition or a derivable, declared or scope code becomes a DEFERRED row with its reason: the heater-outlet check, vessel PSL, pump PSH/PSL, stack and air-intake items, and SDV/BDV/ASH | M | coder | T7 |
+| 2 | **T7** Networks and interarea: network units, headers, per-sheet sub-headers, network connectors, capacity overflow, splitter grouping, size search on total sheets, composition per sheet kind, TOG32/141/360/33, PLT-NETWORK-CLOSURE; empties `OWED_FIXES`; wires 5 pending rules. **Also R2 of §17.13:** TOG156 narrowed to process services (P, PG) with the `relief_path` exemption, because T7 creates the FL and CHD tees | L | coder | **built, uncommitted**; rulings on its report in §17.14 |
+| 2b | **T7b** T7 fixes (§17.14), acceptance criteria below the table | M | coder | T7 |
+| 3 | **T6** Documents and conventions (§5, §18.2): `DocumentRecord` (a document is T7b's area, `trains_per_document` = `trains_per_area`, §17.14 N2.3); per-document draws of manual-valve tagging (0.75 untagged), spare naming, on-off letter and PV without bypass, from new streams (v2.1 per-train draws taken, values ignored); config override `handbook.document_untagged` for the stratified sealed plants; untagged manual valves (TOG113); `p_pump_reducers` 0.75; gold side of scope R (untagged refusal, FLOW_PATH tie rule, refused-share report; isolation families pre-registered unavailable); v2.1 question hash unchanged | M | coder | T7b |
+| 4 | **T10** In this order (§17.13): **step 0**, the T8 follow-ups: the R1 docstring in `pressure_levels.py`; R3's `switching_valve` element code and restated statement; R5's re-cite of API14C-A4-OVERPRESSURE and TOG219 to A.4.2.2.1 c p.27, with `source_cannot_exceed` deleted and `scope:non_hydrocarbon` added. **Step 1**, `rules/sac.py` from T10a: items, device letters, locations, and exception codes of three kinds, derived (from structure), declared (R7) and scope. **Step 2**, R7's declarations as constants in `hidden_state.py`, plus `FluidClass.NON_FLAMMABLE` for the non-flammable farms. **Step 3**, the switch-plus-alarm additions of T10a §8: vessel PSHH (where a.4 fails), LSHH and LSLL; filter PSHH; compressor suction/discharge PSHH and PSLL, and TSHH; furnace TSHH and fuel PSHH; additive-tank LSHH. **Step 4**, the valve additions in R8's priority order, with R8's measured stop at 27.5 pooled valves per process sheet: TOG236 emergency vents, compressor suction PSV, furnace tube PSV where l.3 fails. **Step 5**, wire API14C-3.4-TWO-LEVELS, API14C-SAC, TOG207-HX-PSD-BOTH-SIDES and TOG236. Every SAC item without an addition or a derivable, declared or scope code becomes a DEFERRED row with its reason: the heater-outlet check, vessel PSL, pump PSH/PSL, stack and air-intake items, and SDV/BDV/ASH | M | coder | T7b |
 | 5 | **T12a** Expert-review package (§18.5): the 12 sheets drawn by the fixed rule, exported with the demo drawing export plus a legend sheet; the checklist printed from the registry | S | coder | T6, T7, T10 (the plants are complete) |
 | — | Expert review and triage | — | the user's reviewer; architect triages | T12a |
 | 6 | **T14** V2T-B system files (`v2t-b-system-revision.md` §3): B store view, VALVE_SET and POSITION types, `scoring_b.py` and its self-tests, `policy_b.py`, the import-isolation test; G0f stays green | M | coder | T6 |
 | 7 | **T15** Scope X (gold side): OPEN_VALVES_TO_ISOLATE (up, down), UPSTREAM_ISOLATION_X, DOWNSTREAM_ISOLATION_X, POSITION_OF_VALVE, descriptor gold and refusal, the A2 adapter (TAG_SET), discriminating-share report | M | coder | T14 |
-| 8 | **T12b** Composition report per sheet kind; the ch.20 comparison table (the annotation by the main session) | S | coder and main session | T7 |
+| 8 | **T12b** Composition report per sheet kind; the ch.20 comparison table (the annotation by the main session) | S | coder and main session | T7b |
 | 9 | **T16** Fixes from the review findings, if any (designed by the architect first) | ? | coder | the review |
 | 10 | **T13** EXP-0009 launcher: ledger glob skips `reports/` (with a test on a copied call file); ids `g22` and `…B`; seed draw plus size-target draw in the bands; stratified tagging allocation; two-view ingest; stages P1a–P1d; caps; PREREG A template | L | coder | all of the above |
 
-**Now:** the T7 coder (R2 included). Next: T6, then T10 (with its step 0). No coder runs in parallel.
+**T7b acceptance criteria** (§17.14). Every task rule above applies too.
+1. **Counting (N1).** An open end continued on the same sheet by a sub-header line is not a stub (`sheet_stats.py`).
+   - A unit test covers a 2-tie collection sub-header and a 2-tie distribution sub-header: one connector each, 0
+     open-end stubs.
+   - v2.1 composition numbers are unchanged.
+2. **Areas (N2.1–2).**
+   - `HandbookKnobs.trains_per_area`.
+   - One header unit per (area, service), numbered 9000 + 10·area + the service index.
+   - The network context takes the area's first train's conventions.
+3. **k (N2.1).** For k = 8…12 on seed 7 at the 1,000-sheet target, report the median, min and max of total sheets
+   per area (process plus header). The default is the k whose median is nearest 100, the smaller k on a tie. The
+   table goes into the report.
+4. **Interarea (N2.4).**
+   - Only lines between areas pass the plant's interconnecting unit (9008), at most 16 lines per sheet.
+   - A join inside one area is drawn as in v2.1.
+   - TOG33 reports its instance count; 0 at 100 sheets is not a failure.
+5. **Relief (N3.1–2).**
+   - `reactor_rupture_disc` ties into the FL sub-header and is in TOG32's relief set.
+   - A plan check raises if a relief device (PSV, rupture disc, PSV outlet block) on a HYDROCARBON-class line ends
+     open.
+6. **Size search.** It lands within +2 of the target on seed 7 at 100 and 1,000 sheets, and on a spot check at 90,
+   110, 900 and 1,100.
+7. **Composition.** Run on seed 7 (100 and 1,000 sheets) and pooled over seeds 1–5 at 100.
+   - Every process-sheet band passes, in particular stubs mean 5–11 and max ≤ 21.
+   - The kind rows give sheets by kind, the share, and tie-ins and connectors per header sheet (mean, max).
+   - On a failed band: stop and report, with no knob moved.
+8. **Rules and goldens.**
+   - Every wired rule is at 0 violations on seeds 1–5 and on both seed-7 dev plants.
+   - The rule report lists the instance counts of TOG32, TOG33, TOG141, TOG360 and PLT-NETWORK-CLOSURE.
+   - The v1 and v2.1 goldens are byte-identical (this also proves N3.5).
+9. **Process draws unchanged.** A test shows that every process unit's plan before the tie pass is identical to T7's
+   for the same seed and unit count.
+10. **The report** gives the measured sheet mix against the estimates of §17.14 N2, with measured and estimated
+    numbers labelled. It ends with one commit proposal covering T7 and T7b (or two), and nothing is committed.
+
+**Now:** T7b. Next: T6, then T10 (with its step 0). No coder runs in parallel.
 
 ## 14. Risks
 
@@ -1509,6 +1548,169 @@ exception code, and named in the thesis limitations as a convention.
   does R2.
 - **The other follow-ups go into T10 as its step 0.** They are R1's docstring, R3's element code and statement, and
   R5's re-cite and code removal. They touch the same files T10 works in (`checks_overpressure.py`, the catalogue).
+
+### 17.14 Rulings on T7 (networks and interarea, uncommitted), 2026-11-23
+
+**Inputs.**
+- **The T7 coder's report (seed 7):**
+  - 100 sheets: 37 units, 102 sheets = 60 process + 36 network + 6 interarea.
+  - 1,000 sheets: 330 units, 1,000 sheets = 555 process + 383 network + 62 interarea.
+  - Off-page stubs per process sheet: mean 9.13 / 9.49, max 16 / **22**, against the ≤ 21 band.
+- **My re-read of Toghraei on 2026-11-23:**
+  - pp.32–34 (PDF 51–53);
+  - pp.360–362 (PDF 375–377);
+  - p.368 (PDF 383);
+  - the two ch.20 network sheets, "Relief Flare Header" (PDF 441) and "Glycol Distribution Header" (PDF 442), which
+    carry no printed page number.
+- **Page offsets.** Printed = PDF − 16 holds up to p.349. From p.359 it is **− 15** (p.360 = PDF 375).
+- **Read-only probes** on the T7 plans (seed 7; the scripts are in the session scratchpad, not committed):
+  - the stub breakdown per sheet;
+  - a what-if of the header grouping.
+- **Where the stub bands come from** (`generator-v2-pid-vocabulary.md` §7.1):
+  - **≤ 21** is the top of the hand-counted real sheets (1–21: HW1 ≈ 21, D1 16, F2 13;
+    `real-pid-samples-2026-10.md` §5).
+  - **5–11** brackets the OPEN100 mean of 8.0.
+  - On those real sheets every utility is already an off-sheet arrow (same note, §6), so the band counts network
+    connectors.
+
+#### N1. The max-stub failure is a counting defect: correct the count, change neither the generator nor the band
+
+**Finding.** A sub-header with two or more tie-ins is counted twice on its sheet:
+- once as its connector (a crossing, correctly);
+- once more as an "open end".
+
+The open end is:
+- the first tie-in of a collection sub-header (the sub-header line starts from its last part);
+- or the last tie-in of a distribution sub-header (the sub-header line ends at its first part).
+
+`wired_out_ends` and `fed_start_ends` accept as a continuation only a line of another unit or a bare join. The
+sub-header line has parts and belongs to the same unit, so the continuation is missed.
+- **Sheet 296:1** shows FL, CHD, CD, CWR and LPS each as one crossing **and** one open end.
+- **The corpus already counts correctly.** Its pipe connectors equal the plan's crossings (`composition_corpus.py`),
+  so only the plan-level stub count is wrong.
+
+**Measured with the corrected count** (probe, same plans):
+
+| Plant | Stubs per process sheet, as counted (mean / max) | Corrected (mean / max) | Sheets > 21 |
+|---|---|---|---|
+| seed 7, 100 sheets (37 units) | 9.13 / 16 | **7.75 / 12** | 0 |
+| seed 7, 1,000 sheets (330 units) | 9.49 / 22 | **8.19 / 18** (63:1, 296:1, 328:1) | 0 |
+
+**Ruling.**
+- **Correct the counting rule.** An open end that a sub-header line continues on the same sheet is not a stub.
+  - This is the same kind of fix as the PCF counting correction of ADR-0059 round 1: the rule is restored, not
+    tuned.
+  - No draw moves.
+  - v2.1 counts are unchanged, because v2.1 has no sub-headers.
+
+**Why not the offered options:**
+- **(a) One shared sub-header for several services.** Physically wrong: flare, closed drain, cooling water and steam
+  are different pipes and different specs. Even a multiple-commodity network sheet draws one pipe per commodity (p.34;
+  the glycol sheet, PDF 442, draws GLS and GLR apart).
+- **(b) Relax ≤ 21 on sheets with network connectors.** The band's source already counts utility arrows, so there is
+  no evidence for a higher ceiling.
+- **(c) Split the heavy U1 sheets.** It moves the sample-grounded combined layout (D1, FB&D) and v2.2's process sheet
+  assignment away from v2.1's, and it is not needed.
+- **(d) Cap the connectors per sheet and push the overflow to a neighbouring sheet.** The overflow line still leaves
+  the sheet, so the count does not fall. It also adds a process-to-process crossing that a real sheet would not have.
+
+**If a sheet still exceeds 21 after T7b** (larger unit counts after N2): T7b stops and reports (the U4 rule of
+ADR-0065), and the architect rules. No knob is pre-tuned.
+
+#### N2. Headers per area (the document's run of trains), not per train
+
+**What Toghraei says.**
+- **p.34:** network P&IDs "are generally drawn to follow the plot plan". They are organised by plant area.
+- **p.34:** utility network P&IDs are single- or multiple-commodity. "The tendency is toward developing
+  single-commodity P&IDs when the plant is huge and the utility users are large."
+- **p.32:** a network P&ID is "mainly pipes and does not have equipment".
+- **pp.33–34:** interconnecting P&IDs show process pipes passing the **internal borders between areas**. Their pipes
+  are straight.
+- **p.362:** root valves, manual isolation (gate) valves, sit at the start of sub-headers and branches.
+- **Ch.20, Relief Flare Header (PDF 441):** 7 tie-ins from several drawings join one header that leaves "To Flare
+  Header", so the sheet has 8 connectors.
+- **Ch.20, Glycol Distribution Header (PDF 442):** supply and return on one sheet, 4 users, 10 connectors.
+
+**What T7 built.**
+- One header unit per (train, service).
+- A train is about 9 process sheets (seed 7, 1,000 sheets: median 9, range 3–15, 63 trains).
+- So a header sheet holds 3.3 tie-ins on average, and the 8 services give about 6 header sheets per train.
+- The result:
+  - network and interarea sheets are 41–45 % of all sheets;
+  - process sheets fall to 60 / 555, against v2.1's about 100 / 1,000.
+- A train-sized plot area has no support in the books or the samples, and it nearly halves the process content the
+  questions are drawn from.
+
+**Options.** A what-if on the seed-7 plans with T7's tie-ins per (train, service) and capacity 16. Unless marked, the
+numbers come from the probe.
+
+| Option | Network + interarea share | Process sheets at ~1,000 total | Tie-ins per header sheet | Verdict |
+|---|---|---|---|---|
+| T7 as built: per (train, service), one interarea sheet per train join | 44.5 % (measured) | 555 (measured) | 3.3 | no |
+| Multiple-commodity, per train: one relief/drain sheet and one utility sheet, plus the interarea sheet | ≈ 25 % (arithmetic: 63 × 2 + 62 sheets; not simulated) | ≈ 750 (arithmetic) | ≈ 10 | no: still train-sized areas, and p.34 says big plants tend to single-commodity |
+| Per area of 4 trains | 24.4 % | ≈ 755 | 7.8 | no: an area of about 35 process sheets matches no document unit |
+| **Per area of 10 trains, single-commodity, interarea only between areas** | **17.2 % / 17.0 %** (490 / 505 units: 989 / 1,022 sheets) | **819 / 848** | **11.8 / 11.9** | **chosen** |
+| Per plant: one header per service | 13.1 % | ≈ 870 | 15.2 | no: a ~10-document region has no single plant-wide flare drawing, and every interarea sheet is lost |
+
+**Ruling.**
+1. **Area.** An area is a run of `trains_per_area` = k consecutive trains: train t lies in area ⌈t / k⌉.
+   - **Declared k = 10, by definition.** The area is the ~100-sheet document of §18.2. At k = 10 the what-if gives
+     about 88 process sheets and 16 header sheets per area.
+   - **T7b measures it and applies a fixed rule.** It measures the median area's total sheets for k = 8–12 on the
+     seed-7 1,000-sheet dev plant, and sets k to the integer whose median is nearest 100 (on a tie, the smaller k).
+   - This fixes what a document is (the thesis scope's ~100 pages). It is fitted to no score.
+2. **Header units.** One header unit per (area, service), numbered 9000 + 10·area + the service index.
+   - Single-commodity (p.34).
+   - The capacity of 16 and the continuation connector are unchanged.
+   - Until T6, the conventions are those of the area's first train.
+3. **T6's document is this area.** `trains_per_document` is `trains_per_area`. T7b does T6's step "declared from the
+   median trains per 100 total sheets after T7": one knob, one meaning.
+4. **Interarea sheets.**
+   - **Which lines.** Only a line whose two trains lie in different areas passes an interconnecting sheet
+     (pp.33–34: area borders). A join inside one area stays as v2.1 drew it, a process-to-process off-page pair.
+   - **One unit for the plant.** All inter-area lines go on one interconnecting unit, numbered 9008 (area slot 0,
+     interarea index).
+     - At most 16 lines per sheet, in area order, with overflow on the next sheet.
+     - Its conventions are area 1's.
+     - On seed 7 every train join runs from train t to t + 1, so each area border carries one line. One sheet per
+       border would be a sheet holding one straight pipe, which the ch.20 interconnection sheets are not.
+5. **Prefix stability.**
+   - The area of train t depends on t alone.
+   - Total sheets stay monotone in n: a new unit adds tie-ins to the last area's headers, or opens a new area and
+     one inter-area line.
+   - The S15 restatement of §7 holds unchanged.
+6. **What changes with scale.**
+   - A 100-sheet plant is one area: no interconnecting sheet, and TOG33 has 0 instances there (reported, not a
+     failure).
+   - A 1,000-sheet plant has about 10 areas and one interconnecting sheet.
+   - So only at 1,000 sheets does a line between areas gain a sheet crossing. Like the per-document conventions
+     (§18.2), this is a real property of plant scale, and it is reported, not hidden.
+7. **Header sheet density.** About 12 tie-ins per header sheet is denser than the two ch.20 sheets (7 and 8) but
+   inside the capacity and the stub ceiling. T12b reports the comparison.
+
+**Expected sheet mix after T7b.** Estimates from the what-if at k = 10; T7b measures them.
+
+| | 100-sheet target | 1,000-sheet target |
+|---|---|---|
+| units | ≈ 48–50 | ≈ 490–505 |
+| process sheets | ≈ 81–86 | ≈ 820–845 |
+| network (header) sheets | ≈ 14–15 | ≈ 160–165 |
+| interarea sheets | 0 | 1 |
+| network + interarea share | ≈ 15–16 % | ≈ 16–17 % |
+| tie-ins per header sheet, mean | ≈ 11–13 | ≈ 12 |
+
+For comparison: v2.1 had about 100 / 1,000 process sheets (EXP-0008), and T7 as built 60 / 555 (measured).
+
+#### N3. The T7 coder's assumptions
+
+| # | Assumption | Ruling | Reason |
+|---|---|---|---|
+| 1 | Rupture-disc outlets stay end fittings | **overruled** | The reactor rupture-disc line is drawn in service FL and documented "to the flare" (`patterns/reaction_parts.py`). Yet 39 of them end open on the seed-7 1,000-sheet plan. Relief devices discharge into the emergency release collection network (p.368). T7b ties `reactor_rupture_disc` into the FL sub-header like a PSV and adds it to TOG32's relief set. TOG156 exempts it as `relief_path` (R2) |
+| 2 | Non-FL thermal PSV outlets (on CWR, 103 on that plan) and steam-stub PSV outlets (on MPS, 68) stay end fittings | **accepted** | Water and steam are innocent fluids: their vents go to atmosphere (TOG Table 8.9, pp.140–141). The real WTP sheet discharges its CW thermal PSVs "TO SAFE LOCATION" (`real-pid-samples-2026-10.md` §6 #1). **Condition:** T7b asserts that no relief device on a HYDROCARBON-class line ends open |
+| 3 | Vacuum-line drains stay capped (`vacuum_drain`) | **accepted**, as a DESIGN reading with no page | Nothing flows from vacuum into the closed-drain header, so the cap is a maintenance end. The count is reported, and checklist item 18 lets the expert call it |
+| 4 | TOG207 and TOG270 treat sub-header and header tees as non-process paths | **accepted**, by role (`sub_header_tee`, `header_tee`), never by position | Consistent with R2 (process services only). A pump is not "flow-controlled" through a flare header, and an exchanger is not "isolated" by a network tee |
+| 5 | A machine's `ActuatingElectricalFunction` is drawn on the machine's sheet (`sheets.py`) | **accepted** | Motor control sits at the motor (TOG pp.351–356), and a control edge is never cut (S20). **Condition:** the v1 and v2.1 goldens stay byte-identical, which proves the coder's "v2.1 already agrees" |
+| 6 | Network root valves are NO and take the generic tag convention until T6 | **accepted** | Root valves are manual isolation valves at the start of sub-headers and branches (p.362), normally open. Only distribution headers get them: p.368 says manual valves on the flare network should be eliminated or locked open. After T6 they follow their area's document convention (N2.3) |
 
 ## 18. The user's decisions of 2026-11-23 and what follows from them
 
