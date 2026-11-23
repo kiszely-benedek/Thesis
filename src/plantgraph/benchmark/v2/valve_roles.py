@@ -79,6 +79,7 @@ BLOCKING_ROLES = frozenset(
         "compressor_suction_block",
         "compressor_discharge_block",
         "dosing_isolation_valve",
+        "network_root_block",
     }
 )
 

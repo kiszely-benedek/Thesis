@@ -2,7 +2,7 @@
 
 Design 17.4. The plants are the 30-sheet plants of seeds 1-5. Before T7a the closure check found 127
 open ends there (28, 26, 27, 22, 24); 69 were plant-boundary ends and 58 relief outlets and
-fuel-gas bleeds. The 69 are closed here, so what the check still reports is T7's.
+fuel-gas bleeds. The 69 are closed here; T7 closed the 58 (`test_network_t7.py`).
 """
 
 from __future__ import annotations
@@ -26,13 +26,23 @@ from plantgraph.benchmark.v2.rules.checks_closure import check_stream_closure
 from plantgraph.benchmark.v2.trim_context import LineStyle, TrimContext
 from plantgraph.benchmark.v2.trims_valves import BATTERY_LIMIT_ROLES
 
-#: what T7 still owes: relief outlets and fuel-gas bleeds, which are not process lines
+#: what T7a left to T7: relief outlets and fuel-gas bleeds (10, 13, 12, 9, 14 open ends, 58 in all)
 _T7_ROLES = {"psv_outlet_block", "dbb_bleed_valve"}
-_REMAINING = [10, 13, 12, 9, 14]  # closure violations per seed after T7a (58 in all)
 
 
 def _plan(seed: int) -> PlantPlanV2:
     return plan_plant(GeneratorConfigV22(seed=seed, n_units=units_for_30_sheets(seed)))
+
+
+@contextmanager
+def _networks_off() -> Iterator[None]:
+    """The planner without the network pass: the plan the boundary pass left (T7a's state)."""
+    original = planner.add_networks
+    planner.add_networks = lambda config, slots, instances, trims, trains, decks: (instances, [])
+    try:
+        yield
+    finally:
+        planner.add_networks = original
 
 
 @contextmanager
@@ -50,15 +60,16 @@ def _boundary_off() -> Iterator[None]:
 
 
 @pytest.mark.parametrize("seed", SEEDS)
-def test_only_relief_outlets_and_bleeds_are_left_open(seed: int) -> None:
+def test_no_open_end_is_left_but_if_one_were_it_is_a_relief_outlet_or_bleed(seed: int) -> None:
     view = view_v22(seed)
     roles = {view.roles.get(v.node_id) for v in check_stream_closure(view).violations}
     assert roles <= _T7_ROLES
 
 
-def test_the_five_seeds_keep_58_open_ends_for_t7() -> None:
+def test_t7_closed_the_58_open_ends_t7a_left() -> None:
+    """The 58 relief outlets and bleeds now tie into network headers: the check finds none."""
     found = [len(check_stream_closure(view_v22(seed)).violations) for seed in SEEDS]
-    assert found == _REMAINING
+    assert found == [0, 0, 0, 0, 0]
 
 
 def test_every_process_line_end_is_a_battery_limit_a_vent_or_joined() -> None:
@@ -108,9 +119,10 @@ def test_a_paired_recycle_port_keeps_its_recycle_roles_and_kind() -> None:
 def test_the_pass_only_adds_parts_so_every_existing_part_keeps_its_id_tag_and_order(
     seed: int,
 ) -> None:
-    with _boundary_off():
-        before = _plan(seed)
-    after = _plan(seed)
+    with _networks_off():
+        with _boundary_off():
+            before = _plan(seed)
+        after = _plan(seed)
     for old, new in zip(before.units, after.units, strict=True):
         assert [e.node_id for e in old.instance.plan.equipment] == [
             e.node_id for e in new.instance.plan.equipment
@@ -162,7 +174,8 @@ def test_the_new_parts_are_on_sheets() -> None:
 
 def test_closing_an_already_closed_plant_adds_nothing() -> None:
     """The second pass sees a limit at every end and draws nothing (a None trim would crash)."""
-    instances = [unit.instance for unit in _plan(1).units]
+    with _networks_off():
+        instances = [unit.instance for unit in _plan(1).units]
     nothing = cast(list[TrimContext], [None] * len(instances))
     again = close_plant_boundary(instances, nothing, LineStyle(size=6))
     assert again == instances

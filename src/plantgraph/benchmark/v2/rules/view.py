@@ -87,8 +87,8 @@ class RuleView:
         """
         if not self._kind_cache:
             recorded = self.generated.record.stream_kind
-            for unit in self.plan.units:
-                for line in unit.instance.plan.lines:
+            for unit_plan in self.plan.unit_plans:
+                for line in unit_plan.lines:
                     kind = recorded.get(line.line_number)
                     if kind is not None:
                         self._kind_cache.update({n: kind for n in line.line_numbers})
@@ -105,6 +105,6 @@ def build_rule_view(generated: GeneratedPlantV2) -> RuleView:
     oracle = GraphPlantBuilderV2(generated.plan.config.plant_id)
     generated.plan.write(oracle)
     roles: dict[str, str] = {}
-    for unit in generated.plan.units:
-        roles.update(unit.instance.plan.roles)
+    for unit_plan in generated.plan.unit_plans:
+        roles.update(unit_plan.roles)
     return RuleView(generated=generated, graph=oracle.graph, roles=roles)

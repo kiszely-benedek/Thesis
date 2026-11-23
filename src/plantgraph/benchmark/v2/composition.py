@@ -6,7 +6,7 @@ number is counted on the **plan** (`sheet_stats`), the one counting rule; `compo
 adds the checks that need the split sheet graphs. Each row is `(quantity, value, band, verdict)`.
 
     python -m plantgraph.benchmark.v2.composition --target-sheets 100 --seeds 1 2 3 [--corpus]
-        [--coverage] [--pool] [--json PATH]
+        [--coverage] [--pool] [--json PATH] [--generator v2.2]
 
 By default every plant (seed) is judged against the bands on its own, for tuning. With `--pool`
 the plants of the scale are judged together: each band is checked on the mean over the `--seeds`
@@ -36,6 +36,7 @@ from plantgraph.benchmark.v2.composition_bands import (
     Verdict,
 )
 from plantgraph.benchmark.v2.composition_corpus import corpus_rows, split_sheets
+from plantgraph.benchmark.v2.composition_kinds import is_process_sheet, kind_values
 from plantgraph.benchmark.v2.coverage import coverage_report, render_coverage
 from plantgraph.benchmark.v2.planner import PlantPlanV2, plan_plant
 from plantgraph.benchmark.v2.sheet_stats import SheetStats, share_at_most, sheet_stats, spread
@@ -44,6 +45,7 @@ from plantgraph.ingest.headline_v2 import (
     headline_corpus_id_v2,
     smallest_n_units_v2,
 )
+from plantgraph.ingest.headline_v22 import HeadlinePresetV22
 from plantgraph.ingest.seed_plan import (
     TEST_SEED_RANGE,
     SeedPlan,
@@ -102,6 +104,9 @@ class CompositionReport(BaseModel):
     plan_rows: tuple[CompositionRow, ...]
     corpus_rows: tuple[CompositionRow, ...] = ()
     per_pattern: tuple[PatternRow, ...] = ()
+    #: v2.2 only: the sheets by kind (process, network, interarea) and the network sheets' own
+    #: statistics. Reported, never judged: the bands are for process sheets (design 6.6, ADR-0066)
+    kind_rows: tuple[CompositionRow, ...] = ()
 
     @property
     def failures(self) -> tuple[CompositionRow, ...]:
@@ -212,9 +217,10 @@ def build_report(
     preset: HeadlinePresetV2 | None = None,
 ) -> CompositionReport:
     """The report of `plan`; pass a `preset` to add the corpus rows (builds the sheet graphs)."""
-    stats = sheet_stats(plan)
+    every_stats = sheet_stats(plan)
+    stats = [s for s in every_stats if is_process_sheet(s.sheet_group)]
     rows = tuple(make_row(name, value, PLAN_BANDS) for name, value in plan_values(plan, stats))
-    extra = _corpus_report_rows(plan, stats, preset) if preset is not None else ()
+    extra = _corpus_report_rows(plan, every_stats, preset) if preset is not None else ()
     return CompositionReport(
         corpus_id=corpus_id,
         seed=plan.config.seed,
@@ -223,6 +229,14 @@ def build_report(
         plan_rows=rows,
         corpus_rows=extra,
         per_pattern=pattern_rows(plan, stats),
+        kind_rows=_kind_rows(plan, every_stats),
+    )
+
+
+def _kind_rows(plan: PlantPlanV2, stats: Sequence[SheetStats]) -> tuple[CompositionRow, ...]:
+    return tuple(
+        CompositionRow(quantity=q, value=v, band="reported", verdict=Verdict.REPORTED)
+        for q, v in kind_values(plan, stats)
     )
 
 
@@ -244,6 +258,8 @@ def render_report(report: CompositionReport) -> str:
         f"{report.corpus_id}: seed {report.seed}, {report.n_units} units, {report.n_sheets} sheets",
         _table("plan (the counting rule)", report.plan_rows),
     ]
+    if report.kind_rows:
+        lines.append(_table("sheets by kind (reported, not judged)", report.kind_rows))
     if report.corpus_rows:
         lines.append(_table("corpus (sheet graphs)", report.corpus_rows))
     lines.append(_pattern_table(report.per_pattern))
@@ -302,6 +318,7 @@ def _parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
     )
     parser.add_argument("--json", type=Path, default=None, help="write the reports as JSON")
     parser.add_argument("--allow-test-seed", action="store_true")
+    parser.add_argument("--generator", choices=["v2.1", "v2.2"], default="v2.1")
     return parser.parse_args(argv)
 
 
@@ -312,7 +329,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         require_no_test_seeds(args.seeds, args.allow_test_seed)
     except ValueError as error:
         raise SystemExit(f"error: {error}") from error
-    preset = HeadlinePresetV2()
+    preset = HeadlinePresetV22() if args.generator == "v2.2" else HeadlinePresetV2()
     seed_plan = load_seed_plan()
     try:
         for seed in args.seeds:

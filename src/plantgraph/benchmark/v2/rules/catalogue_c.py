@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from plantgraph.benchmark.v2.rules.catalogue_support import api, design, pending, tog, wired
+from plantgraph.benchmark.v2.rules.catalogue_support import api, design, tog, wired
 from plantgraph.benchmark.v2.rules.registry import HandbookRule, RuleKind
 
 NETWORKS_AND_PRESSURE = (
@@ -13,7 +13,7 @@ NETWORKS_AND_PRESSURE = (
         "pipes), reached through off-page connectors.",
         sources=(tog("p.32–34"),),
         kind=RuleKind.PLACE,
-        check=pending("T7"),
+        check=wired("check_network_sheets", "checks_network"),
     ),
     HandbookRule(
         rule_id="TOG141-DRAIN-DESTINATION",
@@ -22,7 +22,8 @@ NETWORKS_AND_PRESSURE = (
         "(innocent) drains go to an open drain.",
         sources=(tog("p.141"),),
         kind=RuleKind.PLACE,
-        check=pending("T7"),
+        exception_codes=("vacuum_drain",),
+        check=wired("check_drain_destination", "checks_network"),
     ),
     HandbookRule(
         rule_id="TOG360-UTILITY-NETWORKS",
@@ -31,7 +32,7 @@ NETWORKS_AND_PRESSURE = (
         "have a collection network (Fig. 17.1).",
         sources=(tog("p.360"),),
         kind=RuleKind.PLACE,
-        check=pending("T7"),
+        check=wired("check_utility_networks", "checks_network"),
     ),
     HandbookRule(
         rule_id="TOG33-INTERAREA",
@@ -39,7 +40,7 @@ NETWORKS_AND_PRESSURE = (
         statement="Lines between areas (trains) run over an interarea P&ID with straight pipes.",
         sources=(tog("p.33"),),
         kind=RuleKind.PLACE,
-        check=pending("T7"),
+        check=wired("check_interarea", "checks_network"),
     ),
     HandbookRule(
         rule_id="TOG24-NO-VISITING-STREAM",
@@ -47,6 +48,7 @@ NETWORKS_AND_PRESSURE = (
         statement="Every line on a sheet connects to an item on that sheet.",
         sources=(tog("p.24"),),
         kind=RuleKind.PLANT,
+        exception_codes=("interarea_straight_pipe",),
         check=wired("check_no_visiting_stream", "checks_closure"),
     ),
     HandbookRule(
@@ -55,7 +57,7 @@ NETWORKS_AND_PRESSURE = (
         statement="Every network connector has a partner; every header ends at a declared end.",
         sources=(tog("p.32–34"),),
         kind=RuleKind.PLANT,
-        check=pending("T7"),
+        check=wired("check_network_closure", "checks_network"),
     ),
     HandbookRule(
         rule_id="PLT-STREAM-CLOSURE",
@@ -116,9 +118,13 @@ NETWORKS_AND_PRESSURE = (
     HandbookRule(
         rule_id="TOG156-MERGE-CHECK",
         title="Check valve where a low-pressure stream ties in",
-        statement="A low-pressure or intermittent stream tying into another has a check valve.",
+        statement="A process stream (P, PG) that arrives below the level its merge tee carries "
+        "has a check valve on its own run. Relief paths are exempt (`relief_path`); closed-drain "
+        "and utility collection headers are out of scope; the intermittent half is not checked "
+        "(design 17.13 R2).",
         sources=(tog("p.156"),),
         kind=RuleKind.PLANT,
+        exception_codes=("relief_path",),
         check=wired("check_merge_check", "checks_overpressure"),
     ),
     HandbookRule(

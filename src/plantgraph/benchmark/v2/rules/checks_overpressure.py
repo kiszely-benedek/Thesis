@@ -22,6 +22,7 @@ from plantgraph.benchmark.v2.rules.checks_pressure import (
 )
 from plantgraph.benchmark.v2.rules.registry import CheckResult, Violation
 from plantgraph.benchmark.v2.rules.view import RuleView
+from plantgraph.benchmark.v2.tags import parse_line_number
 
 #: a PD mover: a reciprocating or rotary pump or compressor (a centrifugal one cannot overpressure)
 _PD_MOVER_CLASSES = frozenset(
@@ -29,6 +30,11 @@ _PD_MOVER_CLASSES = frozenset(
 )
 _RELIEVING_CLASSES = frozenset({"RuptureDisc", "BreatherValve", "VentilationDevice"})
 _CODE_SOURCE_CANNOT_EXCEED = "source_cannot_exceed"
+_CODE_RELIEF_PATH = "relief_path"
+#: TOG156 speaks of process streams tying into a container: process liquid and process gas
+_SCOPE = frozenset({"P", "PG"})
+_FLARE_SERVICE = "FL"
+_PD_RELIEF_ROLE = "pd_relief_valve"
 
 
 # ---- TOG156-MERGE-CHECK ------------------------------------------------------------------------
@@ -50,37 +56,93 @@ def _has_check_valve_behind(view: RuleView, tee: str, source: str) -> bool:
     return False
 
 
-def _merge_problems(view: RuleView, tee: str) -> list[Violation]:
-    """The streams into `tee` that arrive below its level and have no check valve."""
-    piping = view.piping
-    (after,) = list(piping.successors(tee))
+def _service(view: RuleView, upstream: str, downstream: str) -> str:
+    """The service code (`P`, `FL`, `CHD`...) in the line number between two parts."""
+    number = line_number_of(view, upstream, downstream)
+    parsed = parse_line_number(number)
+    if parsed is None:
+        raise ValueError(f"expected a line number of the v2 grammar, got {number!r}")
+    return parsed.service
+
+
+def _is_relief_path(view: RuleView, tee: str, source: str) -> bool:
+    """True when the stream into `tee` is a relief path: a flare line, or a PSV or PD relief.
+
+    A check valve in a relief path could block the relief, so the rule leaves these alone (design
+    17.13 R2; a design reading, not a page).
+    """
+    if _service(view, source, tee) == _FLARE_SERVICE:
+        return True
+    piping, number = view.piping, line_number_of(view, source, tee)
+    node, seen = source, set()
+    while node not in seen and not is_equipment(view, node):
+        if (
+            node_class(view, node).endswith("SafetyValve")
+            or view.roles.get(node) == _PD_RELIEF_ROLE
+        ):
+            return True
+        seen.add(node)
+        before = [p for p in piping.predecessors(node) if line_number_of(view, p, node) == number]
+        if len(before) != 1:
+            return False
+        node = before[0]
+    return False
+
+
+def _lower_streams(view: RuleView, tee: str) -> list[str]:
+    """The streams into `tee` that arrive below the level it carries on."""
+    (after,) = list(view.piping.successors(tee))
     carried = edge_level(view, tee, after)
-    arriving = {source: edge_level(view, source, tee) for source in piping.predecessors(tee)}
-    return [
-        Violation(
-            rule_id="TOG156-MERGE-CHECK",
-            node_id=tee,
-            detail=f"expected a check valve on the {level.name} stream from {source} tying into "
-            f"the {carried.name} line at {tee}, found none",
-        )
-        for source, level in sorted(arriving.items())
-        if level < carried and not _has_check_valve_behind(view, tee, source)
-    ]
+    return [s for s in sorted(view.piping.predecessors(tee)) if edge_level(view, s, tee) < carried]
+
+
+def _merge_problems(view: RuleView, tee: str) -> tuple[list[Violation], int]:
+    """The lower streams into `tee` with no check valve, and how many relief paths were let by."""
+    violations: list[Violation] = []
+    relief_paths = 0
+    for source in _lower_streams(view, tee):
+        if _is_relief_path(view, tee, source):
+            relief_paths += 1
+        elif not _has_check_valve_behind(view, tee, source):
+            level = edge_level(view, source, tee).name
+            violations.append(
+                Violation(
+                    rule_id="TOG156-MERGE-CHECK",
+                    node_id=tee,
+                    detail=f"expected a check valve on the {level} stream from {source} tying "
+                    f"into the line at {tee}, found none",
+                )
+            )
+    return violations, relief_paths
 
 
 def check_merge_check(view: RuleView) -> CheckResult:
-    """TOG156-MERGE-CHECK: the lower-level stream into a merge tee has a check valve."""
+    """TOG156-MERGE-CHECK: the lower-level process stream into a merge tee has a check valve.
+
+    Only process lines (P, PG) are in scope, the page's context. Relief paths are counted under
+    the exception code `relief_path`; closed-drain and utility collection headers are not checked.
+    """
     if not view.handbook_enabled:
         return NOT_APPLICABLE
-    # rule TOG156-MERGE-CHECK: a lower stream tying in has a check valve (Toghraei 2019 p.156)
+    # rule TOG156-MERGE-CHECK: a lower process stream tying in has a check valve (Toghraei p.156)
     piping = view.piping
     merges = sorted(
         n
         for n in piping
         if piping.in_degree(n) >= 2 and piping.out_degree(n) == 1 and not is_equipment(view, n)
     )
-    violations = [v for tee in merges for v in _merge_problems(view, tee)]
-    return CheckResult(checked=len(merges), violations=tuple(violations))
+    scope = [t for t in merges if _service(view, t, next(iter(piping.successors(t)))) in _SCOPE]
+    violations: list[Violation] = []
+    relief_paths = 0
+    for tee in scope:
+        found, let_by = _merge_problems(view, tee)
+        violations += found
+        relief_paths += let_by
+    return CheckResult(
+        checked=len(scope),
+        violations=tuple(violations),
+        exceptions={_CODE_RELIEF_PATH: relief_paths} if relief_paths else {},
+    )
 
 
 # ---- API14C-A4-OVERPRESSURE --------------------------------------------------------------------

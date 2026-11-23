@@ -20,7 +20,7 @@ from plantgraph.graph.schema import EQUIPMENT_CLASSES, Relation
 
 
 def _lines(view: RuleView) -> list[LineSpec]:
-    return [line for unit in view.plan.units for line in unit.instance.plan.lines]
+    return [line for plan in view.plan.unit_plans for line in plan.lines]
 
 
 def _is_safety_valve(node_class: str) -> bool:
@@ -78,10 +78,7 @@ def check_psv_pipe_clean(view: RuleView) -> CheckResult:
 
 def _sheet_of_every_node(view: RuleView) -> dict[str, str]:
     """Node id -> sheet, over all units (a cross-unit line names a node of another unit)."""
-    sheets: dict[str, str] = {}
-    for unit in view.plan.units:
-        sheets.update(unit.sheets.sheet_of)
-    return sheets
+    return view.plan.sheet_of
 
 
 def _visiting_sheets(line: LineSpec, sheet_of: dict[str, str]) -> set[str]:
@@ -92,7 +89,8 @@ def _visiting_sheets(line: LineSpec, sheet_of: dict[str, str]) -> set[str]:
         raise ValueError(
             f"expected a sheet for every node of line {line.line_number}, no sheet for {missing}"
         )
-    end_sheets = {sheet_of[end] for end in ends}
+    # a header line has no end part of its own, so it touches the sheet of its own first part
+    end_sheets = {sheet_of[end] for end in ends} or {sheet_of[line.items[0].node_id]}
     return {sheet_of[item.node_id] for item in line.items} - end_sheets
 
 
@@ -101,9 +99,19 @@ def check_no_visiting_stream(view: RuleView) -> CheckResult:
     # rule TOG24-NO-VISITING-STREAM: every line touches an item on its sheet (Toghraei 2019 p.24)
     sheet_of = _sheet_of_every_node(view)
     lines = _lines(view)
+    # an interarea sheet shows straight pipes between two other sheets (TOG p.33): by design
+    straight = {n.unit_no for n in view.plan.network_units if n.is_interarea}
     violations = []
+    exempt = 0
     for line in lines:
-        visiting = _visiting_sheets(line, sheet_of)
+        if line.unit_no in straight:
+            exempt += 1
+            continue
+        # a header sheet is touched by the tees of the header's own line, which tie in a pipe
+        tees = {
+            sheet_of[i.node_id] for i in line.items if view.roles.get(i.node_id) == "header_tee"
+        }
+        visiting = _visiting_sheets(line, sheet_of) - tees
         if visiting:
             detail = (
                 f"line {line.line_number} runs over sheets {sorted(visiting)} "
@@ -114,7 +122,11 @@ def check_no_visiting_stream(view: RuleView) -> CheckResult:
                     rule_id="TOG24-NO-VISITING-STREAM", node_id=line.items[0].node_id, detail=detail
                 )
             )
-    return CheckResult(checked=len(lines), violations=tuple(violations))
+    return CheckResult(
+        checked=len(lines) - exempt,
+        violations=tuple(violations),
+        exceptions={"interarea_straight_pipe": exempt} if exempt else {},
+    )
 
 
 # ---- PLT-STREAM-CLOSURE ------------------------------------------------------------------------

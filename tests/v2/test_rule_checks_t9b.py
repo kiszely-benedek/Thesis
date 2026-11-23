@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Callable
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -16,6 +17,7 @@ from t9_mutations import Broken
 from t9_support import SEEDS, units_for_30_sheets, view_v21, view_v22
 
 from plantgraph.benchmark.split_models import SplitConfig
+from plantgraph.benchmark.v2 import planner
 from plantgraph.benchmark.v2.config import GeneratorConfigV2
 from plantgraph.benchmark.v2.config_v22 import GeneratorConfigV22
 from plantgraph.benchmark.v2.generate import generate_plant_v2
@@ -96,17 +98,25 @@ def test_the_inventory_check_catches_the_t9b_breaks(break_it: Callable[[RuleView
 # ---- PLT-STREAM-CLOSURE on the joined graph ------------------------------------------------------
 
 
-def test_the_closure_check_finds_the_58_ends_left_after_the_plant_boundary_closes() -> None:
-    """127 after T9c (28, 26, 27, 22, 24), minus the 69 boundary ends T7a closes (design 17.4).
-
-    The 58 left are relief outlets and fuel-gas bleeds; T7 closes them: update this when it lands.
-    """
+def test_the_closure_check_finds_no_open_end_now_the_58_are_tied_into_networks() -> None:
+    """127 after T9c, minus the 69 boundary ends T7a closed, minus the 58 relief outlets and
+    fuel-gas bleeds that T7 ties into the flare header (design 17.4)."""
     found = [len(_run("PLT-STREAM-CLOSURE", view_v22(seed)).violations) for seed in SEEDS]
-    assert found == [10, 13, 12, 9, 14]
+    assert found == [0, 0, 0, 0, 0]
 
 
-def test_a_relief_outlet_is_an_open_end_the_closure_check_reports() -> None:
-    details = [v.detail for v in _run("PLT-STREAM-CLOSURE", view_v22(1)).violations]
+def test_a_relief_outlet_is_an_open_end_again_when_its_flare_header_is_cut() -> None:
+    view = view_v22(1)
+    header = {
+        n
+        for unit in view.plan.network_units
+        if unit.service == "FL"
+        for n, role in unit.plan.roles.items()
+        if role == "header_tee"
+    }
+    graph = view.graph.copy()
+    graph.remove_nodes_from(header)
+    details = [v.detail for v in _run("PLT-STREAM-CLOSURE", replace(view, graph=graph)).violations]
     assert any("psv_outlet_block" in d for d in details)
 
 
@@ -133,24 +143,26 @@ def test_every_compressor_has_its_discharge_check_valve_and_safety_valve(rule_id
 
 
 def _config_with_open_ends() -> GeneratorConfigV22:
-    """A plant that still has relief outlets open: after T7a a 6-unit plant has none."""
+    """A plant that has relief outlets open once the network pass is switched off."""
     return GeneratorConfigV22(seed=1, n_units=units_for_30_sheets(1))
 
 
-def test_the_only_owed_fix_is_the_closure_rule_and_it_is_not_raised() -> None:
-    assert owed.OWED_FIXES == {"PLT-STREAM-CLOSURE": "T7"}
+def test_no_fix_is_owed_any_more_and_every_row_of_a_plant_is_clean() -> None:
+    assert owed.OWED_FIXES == {}  # gate G0c: empty before any corpus of the experiment is built
     report = generate_plant_v2(_config_with_open_ends()).rules
     assert report is not None
-    rows = {row.rule_id: row for row in report.rows}
-    assert rows["PLT-STREAM-CLOSURE"].violations > 0
-    assert rows["PLT-STREAM-CLOSURE"].owed_by == "T7"
-    assert all(row.owed_by is None for row in report.rows if row.violations == 0)
+    assert all(row.violations == 0 and row.owed_by is None for row in report.rows)
 
 
-def test_generation_raises_once_the_owed_rule_is_no_longer_owed(
+def test_generation_raises_on_an_open_end_now_that_nothing_is_owed(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setattr(owed, "OWED_FIXES", {})
+    """Mutation: without the network pass the relief outlets end open, and the build refuses."""
+    monkeypatch.setattr(
+        planner,
+        "add_networks",
+        lambda config, slots, instances, trims, trains, decks: (instances, []),
+    )
     with pytest.raises(RuleViolationError, match="PLT-STREAM-CLOSURE"):
         generate_plant_v2(_config_with_open_ends())
 

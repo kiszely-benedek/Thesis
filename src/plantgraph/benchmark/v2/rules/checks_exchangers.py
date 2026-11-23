@@ -42,8 +42,13 @@ _BLOCK_VALVES = frozenset({"GateValve", "BallValve", "ButterflyValve", "PlugValv
 _TRIM_END_CLASSES = frozenset({"BlindFlange", "Funnel", "VentilationDevice", "RuptureDisc"})
 #: the hand bypass of a control-valve or trap station belongs to that station, not to the exchanger
 _STATION_BYPASS_ROLES = frozenset({"cv_bypass_valve", "trap_bypass_valve"})
+#: the tees of a sub-header or a network header: a path through them is no bypass of the exchanger
+_NETWORK_TEE_ROLES = frozenset({"sub_header_tee", "header_tee"})
 _CONDENSATE = "CD"
 _FLARE_HEADER = "FL"  # the flare service: a relief line, not the process
+_CLOSED_DRAIN = (
+    "CHD"  # a drain hard-piped to the closed drain network (v2.2): a trim, not the process
+)
 _PSV_INLET_ROLE = "psv_inlet_block"
 
 
@@ -205,10 +210,10 @@ def nozzle_runs(view: RuleView, exchanger: str) -> NozzleRuns:
     ):
         for start in neighbours:
             run = _run_to_junction(piping, graph, start, up)
-            if _is_trim_run(view, run) or _is_relief_run(view, run):
-                continue
             ends = (start, exchanger) if up else (exchanger, start)  # the pipe at the nozzle
             service = service_of(graph, *ends)
+            if _is_trim_run(view, run) or _is_relief_run(view, run) or service == _CLOSED_DRAIN:
+                continue
             if service in UTILITY_SERVICES or service == _FLARE_HEADER:
                 found.utility.append(run)
             else:
@@ -249,7 +254,7 @@ def _open_pipe_graph(view: RuleView) -> nx.DiGraph[str]:
         n for n in view.piping
         if graph.nodes[n]["node_class"] not in EQUIPMENT_CLASSES
         and not is_control_valve(graph, n)
-        and view.roles.get(n) not in _STATION_BYPASS_ROLES
+        and view.roles.get(n) not in _STATION_BYPASS_ROLES | _NETWORK_TEE_ROLES
     ]  # fmt: skip
     return view.piping.subgraph(open_pipe)
 

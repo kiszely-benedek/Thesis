@@ -17,13 +17,18 @@ a **vessel** (its own level). Rules, in the order the flow meets them:
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from plantgraph.benchmark.v2.hidden_state import PressureLevel
 from plantgraph.benchmark.v2.plan_models import LineSpec, StreamKindV2
-from plantgraph.benchmark.v2.planner import PlantPlanV2
+from plantgraph.benchmark.v2.trim_plan import TrimPlan
 from plantgraph.benchmark.v2.trims_machine import DISCHARGE_BREAK_ROLE
 from plantgraph.graph.schema import NodeClass
+
+if TYPE_CHECKING:  # the planner imports the network pass, which imports this module
+    from plantgraph.benchmark.v2.planner import PlantPlanV2
 
 #: declared levels of the utility networks (design 6.2); every other service is a process line
 UTILITY_LEVEL: dict[str, PressureLevel] = {
@@ -102,19 +107,18 @@ class _Run:
 class _PlanIndex:
     """The plan's runs, with the lookups the assignment needs (by node, by item)."""
 
-    def __init__(self, plan: PlantPlanV2) -> None:
+    def __init__(self, plans: Sequence[TrimPlan]) -> None:
         self.runs: list[_Run] = []
         self.class_of: dict[str, str] = {}
         self.role_of: dict[str, str] = {}
-        for unit in plan.units:
-            inner = unit.instance.plan
+        for inner in plans:
             self.role_of.update(inner.roles)
             self.class_of.update({e.node_id: e.node_class for e in inner.equipment})
             for line in inner.lines:
                 self.class_of.update({i.node_id: i.node_class for i in line.items})
                 self.runs += self._runs_of(line, inner.stream_kinds)
         #: every piece of equipment in plan order (a set would make the assignment order vary)
-        self.equipment_ids = [e.node_id for u in plan.units for e in u.instance.plan.equipment]
+        self.equipment_ids = [e.node_id for p in plans for e in p.equipment]
         self.equipment = set(self.equipment_ids)
         self.run_of_item = {item: run for run in self.runs for item in run.items}
         self.into: dict[str, list[_Run]] = {}  # equipment id -> the runs that end at it
@@ -319,4 +323,12 @@ def assign_pressure_levels(plan: PlantPlanV2) -> dict[str, PressureLevel]:
         ValueError: a run could not be given a level (a line with an unknown service code).
     """
     # rule PRS-MONOTONE: pumps and compressors lift the level, nothing else does (design §6.2)
-    return _Assigner(_PlanIndex(plan)).assign()
+    return assign_levels_of_plans(plan.unit_plans)
+
+
+def assign_levels_of_plans(plans: Sequence[TrimPlan]) -> dict[str, PressureLevel]:
+    """The levels of the runs and vessels of the given unit plans (see `assign_pressure_levels`).
+
+    The network pass uses it before the plant plan exists, to see which drains sit at vacuum.
+    """
+    return _Assigner(_PlanIndex(plans)).assign()

@@ -22,10 +22,12 @@ from pydantic import BaseModel, ConfigDict, Field, field_serializer
 
 from plantgraph.benchmark.split_models import ConnectorLabelDetail, SplitConfig
 from plantgraph.benchmark.v2.config import GeneratorConfigV2
+from plantgraph.benchmark.v2.config_v22 import GeneratorConfigV22
 from plantgraph.benchmark.v2.planner import plan_plant
 from plantgraph.graph import schema
 from plantgraph.ingest.headline import SizeSearchResult
 from plantgraph.ingest.seed_plan import TEST_SEED_RANGE, SeedPlan, require_drawn_test_seed
+from plantgraph.ingest.size_search_networked import smallest_n_units_total_sheets
 
 #: the dev corpora use this seed; every other seed is a test corpus (ADR-0045's rule)
 DEV_SEED = 1
@@ -109,6 +111,10 @@ def smallest_n_units_v2(
     """
     if target_sheets < 1:
         raise ValueError(f"expected target_sheets >= 1, found {target_sheets}")
+    if _counts_network_sheets(preset, seed):
+        return smallest_n_units_total_sheets(
+            target_sheets, lambda n_units: preset.generator_config(n_units, seed), seed
+        )
     big_plan = plan_plant(preset.generator_config(target_sheets, seed))
     total = 0
     for n_units, unit in enumerate(big_plan.units, start=1):
@@ -118,6 +124,12 @@ def smallest_n_units_v2(
                 target_sheets, n_units, total, total - unit.sheets.sheet_count, preset, seed
             )
     raise ValueError(f"{target_sheets} units plan only {total} sheets, not {target_sheets}")
+
+
+def _counts_network_sheets(preset: HeadlinePresetV2, seed: int) -> bool:
+    """True for a v2.2 preset with the handbook on: its plants have network and interarea sheets."""
+    config = preset.generator_config(1, seed)
+    return isinstance(config, GeneratorConfigV22) and config.handbook.enabled
 
 
 def _confirmed(

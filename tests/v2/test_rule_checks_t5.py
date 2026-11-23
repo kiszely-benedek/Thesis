@@ -58,7 +58,7 @@ def _run(rule_id: str, view: RuleView) -> CheckResult:
 
 
 def _plans(view: RuleView) -> list[TrimPlan]:
-    return [unit.instance.plan for unit in view.plan.units]
+    return list(view.plan.unit_plans)
 
 
 def _first_node(view: RuleView, roles: frozenset[str] | set[str]) -> str:

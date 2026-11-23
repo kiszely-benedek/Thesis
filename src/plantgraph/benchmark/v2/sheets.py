@@ -29,7 +29,7 @@ from plantgraph.benchmark.v2.patterns.ports import PatternInstance
 from plantgraph.benchmark.v2.plan_models import LineSpec
 from plantgraph.benchmark.v2.symbols import SymbolKind, is_symbol, plan_node_classes, symbol_kind
 from plantgraph.benchmark.v2.trim_plan import TrimPlan
-from plantgraph.graph.schema import Relation
+from plantgraph.graph.schema import NodeClass, Relation
 
 
 class GroupSize(BaseModel):
@@ -147,7 +147,25 @@ def _loop_groups(plan: TrimPlan, group: Mapping[str, str]) -> dict[str, str]:
             f"loops {unanchored} have no sensing location and control nothing; every loop needs "
             "a measured_by or a control link to be placed on a sheet"
         )
-    return {node_id: anchor[loop_tag] for node_id, loop_tag in loop_of.items()}
+    groups = {node_id: anchor[loop_tag] for node_id, loop_tag in loop_of.items()}
+    groups.update(_motor_function_groups(plan, group))
+    return groups
+
+
+def _motor_function_groups(plan: TrimPlan, group: Mapping[str, str]) -> dict[str, str]:
+    """A machine's motor function (start/stop, speed) is drawn on the machine's own sheet.
+
+    Its `control` edge to the machine is never cut (S20). A speed loop senses a flow elsewhere, so
+    its sensor and bubble may sit on another sheet, but the actuator that drives the motor stays
+    with the machine. The v2.1 loops all agree already, so this changes nothing there.
+    """
+    motor_function = NodeClass.ACTUATING_ELECTRICAL_FUNCTION.value
+    function_ids = {i.node_id for i in plan.instruments if i.node_class == motor_function}
+    return {
+        link.source_id: group[link.target_id]
+        for link in plan.links
+        if link.relation is Relation.CONTROL and link.source_id in function_ids
+    }
 
 
 # ---- step 3: the merge ---------------------------------------------------------------------------

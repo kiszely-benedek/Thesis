@@ -40,13 +40,15 @@ _ACTUATOR = NodeClass.ACTUATING_FUNCTION.value
 
 def with_valve_positions(instance: PatternInstance, knobs: HandbookKnobs) -> PatternInstance:
     """The instance with every valve positioned and every valve actuator given a fail action."""
-    plan = instance.plan
+    return instance.model_copy(update={"plan": with_plan_positions(instance.plan, knobs)})
+
+
+def with_plan_positions(plan: TrimPlan, knobs: HandbookKnobs) -> TrimPlan:
+    """The plan with every valve positioned and every valve actuator given a fail action."""
     lines = tuple(_positioned_line(line, plan.roles) for line in plan.lines)
     positioned = plan.model_copy(update={"lines": lines})
     instruments = _actuators_with_fail_action(positioned, knobs.fail_action_table)
-    return instance.model_copy(
-        update={"plan": positioned.model_copy(update={"instruments": instruments})}
-    )
+    return positioned.model_copy(update={"instruments": instruments})
 
 
 # ---- normal positions ---------------------------------------------------------------------------

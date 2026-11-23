@@ -2,8 +2,8 @@
 
 Not a test module (no `test_` prefix). The T9 checks look at every plant, v2.1 and v2.2 alike, so
 unlike the T3/T4 checks they do not report `checked=0` on v2.1. T9 recorded four failures here as
-expected failures; T9b fixed or restated three of them, so what is left is the closure rule on
-v2.2 (owed to T7) and the two v2.1 properties in `KNOWN_FAILURES_V21`.
+expected failures; T9b fixed or restated three of them, so what is left is the two v2.1
+properties in `KNOWN_FAILURES_V21` (T7 closed the closure rule on v2.2).
 """
 
 from __future__ import annotations
@@ -28,21 +28,18 @@ T9_RULES = [
     "TOG326-STEAM-CONDENSATE",
 ]
 
-#: v2.2 plants (handbook on): rule -> (seeds that fail, why). Only the closure rule is left; it is
-#: owed to T7 (`rules/owed.py`): 58 open ends over the five seeds, all relief outlets and fuel-gas
-#: bleeds (T7a closed the 69 plant-boundary ends of the 127 left after T9c).
-KNOWN_FAILURES: dict[str, tuple[list[int], str]] = {
-    "PLT-STREAM-CLOSURE": (
-        SEEDS,
-        "owed to T7: relief outlets (psv_outlet_block) and fuel-gas bleeds (dbb_bleed_valve) "
-        "have no declared end",
-    ),
-}
+#: v2.2 plants (handbook on): rule -> (seeds that fail, why). Empty since T7 tied the relief
+#: outlets, bleeds and utility stubs into network headers (`rules/owed.py` is empty too).
+KNOWN_FAILURES: dict[str, tuple[list[int], str]] = {}
 
 #: v2.1 plants never get the handbook fixes (v2.1 data is not changed, design 14), so they keep
 #: what T9 found: a filter package after a farm transfer puts two flow valves in series
 KNOWN_FAILURES_V21: dict[str, tuple[list[int], str]] = {
     **KNOWN_FAILURES,
+    "PLT-STREAM-CLOSURE": (
+        SEEDS,
+        "v2.1 plants keep their relief outlets and bleeds open: the network pass is v2.2 only",
+    ),
     "TOG271-ONE-CV-LIQUID": (
         [1, 3, 4],
         "farm-transfer FV, then the optional FV of the filter package (v2.1 draws it), no vessel "

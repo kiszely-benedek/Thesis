@@ -48,17 +48,17 @@ class SheetStats(BaseModel):
 
 def sheet_stats(plan: PlantPlanV2) -> list[SheetStats]:
     """The stats of every sheet of the plant, in unit order then sheet order."""
-    sheet_of = {node: sheet for unit in plan.units for node, sheet in unit.sheets.sheet_of.items()}
+    sheet_of = plan.sheet_of
     classes: dict[str, str] = {}
     open_ends: Counter[str] = Counter()
     crossings: Counter[str] = Counter()
     signal_cuts: Counter[str] = Counter()
     wired = wired_out_ends(plan)
-    for unit in plan.units:
-        unit_plan = unit.instance.plan
+    fed = fed_start_ends(plan)
+    for unit_plan in plan.unit_plans:
         classes.update(plan_node_classes(unit_plan))
         for line in unit_plan.lines:
-            open_ends.update(open_end_stubs(line, sheet_of, classes, wired))
+            open_ends.update(open_end_stubs(line, sheet_of, classes, wired, fed))
             crossings.update(_crossing_stubs(line, sheet_of))
         signal_cuts.update(_signal_cuts(unit_plan, sheet_of))
     counts = _kind_counts(sheet_of, classes)
@@ -116,6 +116,43 @@ def _chain(line: LineSpec) -> list[str]:
     return [node for node in nodes if node is not None]
 
 
+def _owned_lines(plan: PlantPlanV2) -> list[tuple[int, LineSpec]]:
+    """Every line of the plant with the number of the unit that owns it (process units first)."""
+    owned = [(u.slot.unit_no, line) for u in plan.units for line in u.instance.plan.lines]
+    return owned + [(n.unit_no, line) for n in plan.network_units for line in n.plan.lines]
+
+
+_BARE_JOIN = -1  # stands for "another unit" in `wired_out_ends` and `fed_start_ends`
+
+
+def _joining_unit(unit_no: int, line: LineSpec) -> int:
+    """The unit a joining line counts for: its own, or `_BARE_JOIN` for a network tie-in line.
+
+    A line with no part of its own (v2.2 only) is a bare join between two parts of one unit, a
+    sub-header branch. It does continue the line it starts from, which a branch off a tee (a trim)
+    does not, so it counts like a line of another unit.
+    """
+    return unit_no if line.items else _BARE_JOIN
+
+
+def fed_start_ends(plan: PlantPlanV2) -> frozenset[str]:
+    """The first part of every line whose open start a line of ANOTHER unit ends at (v2.2).
+
+    That line feeds it (a distribution header, an interarea pipe, a recycle compressor's return),
+    so the open start is no stub: the crossing is counted instead.
+    """
+    enders: dict[str, set[int]] = {}
+    for unit_no, line in _owned_lines(plan):
+        if line.dst_id is not None:
+            enders.setdefault(line.dst_id, set()).add(_joining_unit(unit_no, line))
+    fed: set[str] = set()
+    for unit_no, line in _owned_lines(plan):
+        if line.src_id is None and line.items:
+            if enders.get(line.items[0].node_id, set()) - {unit_no}:
+                fed.add(line.items[0].node_id)
+    return frozenset(fed)
+
+
 def wired_out_ends(plan: PlantPlanV2) -> frozenset[str]:
     """The last part of every line whose open end a line of ANOTHER unit starts from (v2.1).
 
@@ -125,26 +162,28 @@ def wired_out_ends(plan: PlantPlanV2) -> frozenset[str]:
     """
     # part id -> the units that start a line from it
     starters: dict[str, set[int]] = {}
-    for unit in plan.units:
-        for line in unit.instance.plan.lines:
-            if line.src_id is not None:
-                starters.setdefault(line.src_id, set()).add(unit.slot.unit_no)
+    for unit_no, line in _owned_lines(plan):
+        if line.src_id is not None:
+            starters.setdefault(line.src_id, set()).add(_joining_unit(unit_no, line))
     wired: set[str] = set()
-    for unit in plan.units:
-        for line in unit.instance.plan.lines:
-            end = _chain(line)[-1]
-            if line.dst_id is None and starters.get(end, set()) - {unit.slot.unit_no}:
-                wired.add(end)
+    for unit_no, line in _owned_lines(plan):
+        end = _chain(line)[-1]
+        if line.dst_id is None and starters.get(end, set()) - {unit_no}:
+            wired.add(end)
     return frozenset(wired)
 
 
 def open_end_stubs(
-    line: LineSpec, sheet_of: Mapping[str, str], classes: Mapping[str, str], wired: frozenset[str]
+    line: LineSpec,
+    sheet_of: Mapping[str, str],
+    classes: Mapping[str, str],
+    wired: frozenset[str],
+    fed: frozenset[str] = frozenset(),
 ) -> list[str]:
     """The sheets that get a stub from the line's open ends (a wired end is a crossing instead)."""
     chain = _chain(line)
     stubs = []
-    if line.src_id is None and classes[chain[0]] not in CLOSED_END_CLASSES:
+    if line.src_id is None and chain[0] not in fed and classes[chain[0]] not in CLOSED_END_CLASSES:
         stubs.append(sheet_of[chain[0]])
     leaves = line.dst_id is None and chain[-1] not in wired
     if leaves and classes[chain[-1]] not in CLOSED_END_CLASSES:

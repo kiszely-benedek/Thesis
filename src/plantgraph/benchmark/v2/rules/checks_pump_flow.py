@@ -38,6 +38,8 @@ _SIDE_ROUTE_ROLES = frozenset(
         "restriction_orifice",
         "pd_relief_valve",
         "cv_bypass_valve",
+        "sub_header_tee",  # a drain, vent or relief that leaves for a network is no process route
+        "header_tee",
     }
 )
 #: where a trim branch (vent, drain, tap, relief) ends; a main line never ends in one of these

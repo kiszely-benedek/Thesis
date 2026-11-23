@@ -39,15 +39,11 @@ _HAND_CONTROL_LETTERS = ("HV", "HCV")  # an operator throttles it, so it has no 
 
 
 def _positions(view: RuleView) -> dict[str, OperatingPosition]:
-    return view.cached(
-        "valve_positions", lambda: positions_of(u.instance.plan for u in view.plan.units)
-    )
+    return view.cached("valve_positions", lambda: positions_of(view.plan.unit_plans))
 
 
 def _fail_actions(view: RuleView) -> dict[str, FailAction]:
-    return view.cached(
-        "valve_fail_actions", lambda: fail_actions_of(u.instance.plan for u in view.plan.units)
-    )
+    return view.cached("valve_fail_actions", lambda: fail_actions_of(view.plan.unit_plans))
 
 
 def _nodes_with_roles(view: RuleView, roles: frozenset[str]) -> list[str]:

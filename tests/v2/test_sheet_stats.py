@@ -121,7 +121,8 @@ def _fake_plan(units: dict[int, list[LineSpec]]) -> Any:
         units=[
             SimpleNamespace(slot=SimpleNamespace(unit_no=no), instance=SimpleNamespace(plan=plan))
             for no, plan in ((no, SimpleNamespace(lines=lines)) for no, lines in units.items())
-        ]
+        ],
+        network_units=[],
     )
 
 

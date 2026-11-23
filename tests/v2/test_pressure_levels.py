@@ -82,8 +82,8 @@ def test_every_run_and_every_vessel_has_a_level(seed: int) -> None:
     levels = view.hidden.segment_level
     numbers = {
         n
-        for unit in view.plan.units
-        for line in unit.instance.plan.lines
+        for unit_plan in view.plan.unit_plans
+        for line in unit_plan.lines
         for n in line.line_numbers
     }
     vessels = {n for n in view.graph if _class(view, n) in VESSEL_CLASSES}

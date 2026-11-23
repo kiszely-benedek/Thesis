@@ -68,5 +68,5 @@ def generate_plant_v2(config: GeneratorConfigV2) -> GeneratedPlantV2:
 
 def _write_valve_attributes(model: DexpiModel, plan: PlantPlanV2) -> None:
     """Add the positions and fail actions the v2.2 plan drew; the builder knows nothing of them."""
-    plans = [unit.instance.plan for unit in plan.units]
+    plans = plan.unit_plans
     annotate_valves(model, positions_of(plans), fail_actions_of(plans))

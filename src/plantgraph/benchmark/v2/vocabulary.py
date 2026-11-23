@@ -109,7 +109,7 @@ AMBIGUOUS_LETTERS: frozenset[str] = frozenset(
 #: Nominal pipe size in inches.
 LINE_SIZES: tuple[int, ...] = (1, 2, 3, 4, 6, 8, 10, 12, 16, 20, 24)
 #: Service: process liquid / gas, cooling water supply / return, low / medium pressure steam,
-#: condensate, fuel gas, flare, instrument air, nitrogen.
+#: condensate, fuel gas, flare, closed drain, instrument air, nitrogen.
 LINE_SERVICES: tuple[str, ...] = (
     "P",
     "PG",
@@ -120,6 +120,7 @@ LINE_SERVICES: tuple[str, ...] = (
     "CD",
     "FG",
     "FL",
+    "CHD",  # closed drain, v2.2 only: v2.1 plants draw no line of it
     "IA",
     "N",
 )

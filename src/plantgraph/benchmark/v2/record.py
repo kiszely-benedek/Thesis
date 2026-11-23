@@ -10,7 +10,7 @@ from typing import Any
 
 from plantgraph.benchmark.v2.config_v22 import GeneratorConfigV22
 from plantgraph.benchmark.v2.hidden_state import HiddenDesignState, PumpPowerBand, RefluxClass
-from plantgraph.benchmark.v2.patterns.ports import PatternInstance
+from plantgraph.benchmark.v2.network_models import NetworkUnit
 from plantgraph.benchmark.v2.plan_models import (
     GenerationRecordV2,
     NodeGold,
@@ -23,6 +23,7 @@ from plantgraph.benchmark.v2.pressure_levels import assign_pressure_levels
 from plantgraph.benchmark.v2.record_v22 import GenerationRecordV22
 from plantgraph.benchmark.v2.symbols import plan_node_classes
 from plantgraph.benchmark.v2.tags import parse_tag
+from plantgraph.benchmark.v2.trim_plan import TrimPlan
 from plantgraph.benchmark.v2.vocabulary import ItemKind, item_kind
 
 
@@ -55,7 +56,10 @@ def _common_fields(plan: PlantPlanV2, pydexpi_version: str) -> dict[str, Any]:
         generator_config=plan.config.model_dump_json(),
         pydexpi_version=pydexpi_version,
         trains=plan.trains,
-        units=tuple(_unit_record(unit) for unit in plan.units),
+        units=(
+            *(_unit_record(unit) for unit in plan.units),
+            *(_network_record(unit) for unit in plan.network_units),
+        ),
         stream_kind=_stream_kinds(plan),
         item_kind=_item_kinds(plan),
         node_gold=_node_gold(plan),
@@ -74,26 +78,32 @@ def _unit_record(unit: PlannedUnit) -> UnitRecord:
     )
 
 
+def _network_record(unit: NetworkUnit) -> UnitRecord:
+    """A network or interarea unit; its `pattern` is `NET-<service>` (`NET-INTERAREA`)."""
+    return UnitRecord(
+        unit_no=unit.unit_no, train_no=unit.train_no, pattern=f"NET-{unit.service}", variant=""
+    )
+
+
 def _stream_kinds(plan: PlantPlanV2) -> dict[str, StreamKindV2]:
     kinds: dict[str, StreamKindV2] = {}
-    for unit in plan.units:
-        clash = sorted(set(kinds) & set(unit.instance.plan.stream_kinds))
+    for unit_plan in plan.unit_plans:
+        clash = sorted(set(kinds) & set(unit_plan.stream_kinds))
         if clash:
             raise ValueError(f"line numbers {clash} occur in two units; expected one per plant")
-        kinds.update(unit.instance.plan.stream_kinds)
+        kinds.update(unit_plan.stream_kinds)
     return kinds
 
 
 def _item_kinds(plan: PlantPlanV2) -> dict[str, ItemKind]:
     kinds: dict[str, ItemKind] = {}
-    for unit in plan.units:
-        kinds.update(_unit_item_kinds(unit.instance))
+    for unit_plan in plan.unit_plans:
+        kinds.update(_unit_item_kinds(unit_plan))
     return kinds
 
 
-def _unit_item_kinds(instance: PatternInstance) -> dict[str, ItemKind]:
+def _unit_item_kinds(plan: TrimPlan) -> dict[str, ItemKind]:
     """Item kind by tag, for every node that prints a tag."""
-    plan = instance.plan
     tagged: list[tuple[str, str | None]] = [(item.node_id, item.tag) for item in plan.equipment]
     tagged += [(item.node_id, item.tag) for line in plan.lines for item in line.items]
     tagged += [(item.node_id, item.tag) for item in plan.instruments]
@@ -122,6 +132,13 @@ def _node_gold(plan: PlantPlanV2) -> dict[str, NodeGold]:
                 role=roles[node_id],
                 drawing_group=f"{unit_no}:{group}",
                 sheet_group=unit.sheets.sheet_of[node_id],
+            )
+    for network in plan.network_units:
+        for node_id, group in network.sheets.group_of.items():
+            gold[node_id] = NodeGold(
+                role=network.plan.roles[node_id],
+                drawing_group=f"{network.unit_no}:{group}",
+                sheet_group=network.sheets.sheet_of[node_id],
             )
     return gold
 

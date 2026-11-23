@@ -60,7 +60,8 @@ def test_the_inventory_check_found_the_exceptions_it_allows() -> None:
 
 def test_the_closure_check_counts_the_declared_ends_it_lets_through() -> None:
     kinds = {k for seed in SEEDS for k in _run("PLT-STREAM-CLOSURE", view_v22(seed)).exceptions}
-    assert kinds == {"battery_limit", "end_fitting", "utility_stub"}
+    # every utility stub now joins a header (T7), so no end is declared a `utility_stub` any more
+    assert kinds == {"battery_limit", "end_fitting"}
 
 
 # ---- (b) mutations -------------------------------------------------------------------------------

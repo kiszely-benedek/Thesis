@@ -11,7 +11,9 @@ identical to the *n*-unit plant.
 
 from __future__ import annotations
 
-from pydantic import BaseModel, ConfigDict
+from collections.abc import Sequence
+
+from pydantic import BaseModel, ConfigDict, Field
 
 from plantgraph.benchmark.v2.boundary import close_plant_boundary
 from plantgraph.benchmark.v2.config import GeneratorConfigV2
@@ -28,6 +30,8 @@ from plantgraph.benchmark.v2.flowsheet import (
     waiting_streams,
     wire,
 )
+from plantgraph.benchmark.v2.network_models import NetworkUnit
+from plantgraph.benchmark.v2.networks import add_networks
 from plantgraph.benchmark.v2.patterns.context import PatternContext
 from plantgraph.benchmark.v2.patterns.ports import PatternInstance
 from plantgraph.benchmark.v2.patterns.registry import available_patterns, build_pattern
@@ -36,7 +40,8 @@ from plantgraph.benchmark.v2.plan_models import PlantBuilderV2, TrainRecord, dra
 from plantgraph.benchmark.v2.sheets import UnitSheets, assign_unit_sheets
 from plantgraph.benchmark.v2.streams import unit_rng
 from plantgraph.benchmark.v2.trim_context import LineStyle, TrimContext
-from plantgraph.benchmark.v2.valve_positions import with_valve_positions
+from plantgraph.benchmark.v2.trim_plan import TrimPlan
+from plantgraph.benchmark.v2.valve_positions import with_plan_positions, with_valve_positions
 
 #: the nominal size (inches) of every unit's main process lines; the trims derive smaller branches
 MAIN_LINE_STYLE = LineStyle(size=6)
@@ -66,17 +71,46 @@ class PlantPlanV2(BaseModel):
     trains: tuple[TrainRecord, ...]
     units: tuple[PlannedUnit, ...]
     open_stub_count: int  # out-ports no later unit took: they leave the drawing
+    #: v2.2 only: the network header units and interarea units, written after every process unit.
+    #: Left out of dumps so a v2.1 plan digest stays byte-identical (design 9)
+    network_units: tuple[NetworkUnit, ...] = Field(default=(), exclude=True)
 
     def write(self, builder: PlantBuilderV2) -> None:
         """Add every unit, in unit order, so a joined line finds its source already written."""
         for unit in self.units:
             builder.add_section(unit.slot.unit_no, unit.title)
             unit.instance.plan.write(builder)
+        for network in self.network_units:  # their lines name parts of the process units
+            builder.add_section(network.unit_no, network.title)
+            network.plan.write(builder)
 
     @property
     def sheet_count(self) -> int:
-        """The number of sheets the plant is drawn on."""
+        """The number of sheets the plant is drawn on: process, network and interarea sheets."""
+        return self.process_sheet_count + sum(n.sheets.sheet_count for n in self.network_units)
+
+    @property
+    def process_sheet_count(self) -> int:
+        """The sheets of the process units alone."""
         return sum(unit.sheets.sheet_count for unit in self.units)
+
+    @property
+    def unit_plans(self) -> tuple[TrimPlan, ...]:
+        """The plan of every unit, process units first, then network and interarea units."""
+        return (
+            *(unit.instance.plan for unit in self.units),
+            *(network.plan for network in self.network_units),
+        )
+
+    @property
+    def sheet_of(self) -> dict[str, str]:
+        """Every drawn node and the sheet (`3:1`) it is on, over all units."""
+        sheets = {
+            node: sheet for unit in self.units for node, sheet in unit.sheets.sheet_of.items()
+        }
+        for network in self.network_units:
+            sheets.update(network.sheets.sheet_of)
+        return sheets
 
 
 def plan_plant(config: GeneratorConfigV2) -> PlantPlanV2:
@@ -94,11 +128,14 @@ def plan_plant(config: GeneratorConfigV2) -> PlantPlanV2:
             wired, open_outs = close_recycle_loop(instances[-1], wired, slot.unit_no, open_outs)
         instances.append(wired)
         trims.append(trim)
+    network_units: list[NetworkUnit] = []
     if _is_handbook(config):
         # the joins are final only now, so this is the first moment a plant-boundary end is known
         instances = close_plant_boundary(instances, trims, MAIN_LINE_STYLE)
+        instances, network_units = _with_networks(config, slots, instances, trims, trains, decks)
         # last, so the battery-limit and make-up valves the boundary pass added are positioned too
         instances = _with_valve_positions(config, instances)
+        network_units = _with_unit_positions(config, network_units)
     units = [
         PlannedUnit(
             slot=slot,
@@ -108,13 +145,39 @@ def plan_plant(config: GeneratorConfigV2) -> PlantPlanV2:
         for slot, instance in zip(slots, instances, strict=True)
     ]
     return PlantPlanV2(
-        config=config, trains=trains, units=tuple(units), open_stub_count=len(open_outs)
+        config=config,
+        trains=trains,
+        units=tuple(units),
+        open_stub_count=len(open_outs),
+        network_units=tuple(network_units),
     )
 
 
 def _is_handbook(config: GeneratorConfigV2) -> bool:
     """True for a v2.2 plant with the handbook rules on; v2.1 and knobs-off plants are pinned."""
     return isinstance(config, GeneratorConfigV22) and config.handbook.enabled
+
+
+def _with_networks(
+    config: GeneratorConfigV2,
+    slots: Sequence[UnitSlot],
+    instances: list[PatternInstance],
+    trims: list[TrimContext],
+    trains: tuple[TrainRecord, ...],
+    decks: VariantDecks,
+) -> tuple[list[PatternInstance], list[NetworkUnit]]:
+    if not isinstance(config, GeneratorConfigV22):  # unreachable: only handbook plants call this
+        raise ValueError(f"expected a v2.2 config for networks, got {type(config).__name__}")
+    return add_networks(config, slots, instances, trims, trains, decks)
+
+
+def _with_unit_positions(config: GeneratorConfigV2, units: list[NetworkUnit]) -> list[NetworkUnit]:
+    if not isinstance(config, GeneratorConfigV22):  # unreachable: only handbook plants call this
+        raise ValueError(f"expected a v2.2 config for valve positions, got {type(config).__name__}")
+    return [
+        unit.model_copy(update={"plan": with_plan_positions(unit.plan, config.handbook)})
+        for unit in units
+    ]
 
 
 def _with_valve_positions(
