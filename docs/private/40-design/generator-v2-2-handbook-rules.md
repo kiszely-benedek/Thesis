@@ -1,8 +1,8 @@
 ---
 component: benchmark/generator v2.2 — handbook rule registry, plant-level correctness layer, valve positions, untagged manual valves, network and interarea sheets; EXP-0009 re-measurement plan
-status: draft — awaiting review (ADR-0066 proposed)
-date: 2026-11-22
-related: [ADR-0066 (proposed), ADR-0016, ADR-0021, ADR-0027, ADR-0029, ADR-0053, ADR-0057, ADR-0058, ADR-0059, ADR-0060, ADR-0065,
+status: draft — user decisions D1–D8 of 2026-11-23 folded in (§18); ADR-0066 and ADR-0067 proposed, awaiting acceptance
+date: 2026-11-22 (decisions folded in 2026-11-23)
+related: [ADR-0066 (proposed), ADR-0067 (proposed), 40-design/v2t-b-system-revision.md, ADR-0016, ADR-0021, ADR-0027, ADR-0029, ADR-0053, ADR-0057, ADR-0058, ADR-0059, ADR-0060, ADR-0065,
           10-literature/toghraei-2019-vs-generator.md, 10-literature/api-rp-14c-2001-vs-generator.md,
           10-literature/liptak-2003-vol1-vs-generator.md, 10-literature/liptak-1995-process-control-vs-generator.md,
           40-design/generator-v2-realism.md, 40-design/generator-v2-pid-vocabulary.md, 40-design/review-fixes.md,
@@ -27,19 +27,30 @@ changes. v2.2 does four things:
    every generated plant" literally true, not only true for test seeds.
 3. **The new content the user chose** (scope b, 2026-11-22):
    - valve positions: NO/NC/CSO and fail actions;
-   - tagged or untagged manual valves, per train;
+   - tagged or untagged manual valves, drawn **per document** (a contractor's ~100-sheet drawing set) at
+     **0.75 untagged**, the share measured on 12 real drawing sets (D2, §18.2);
    - network and interarea sheets reached through network off-page connectors;
    - the verified fixes;
    - the cheap gaps.
    No new node class is added. Everything stays inside the 77-class allowlist (ADR-0016).
-4. **EXP-0009 measures v2.2 with the frozen system V2T-A2 (freeze E9)** as a pure data replication. It runs free
-   gates first, then the paid stage P1: one validation pair, five sealed plants per scale and the scorer audit. P1 is
-   estimated at **$11.46** from EXP-0008's measured spend, under a hard ledger cap of **$16.50**, so it fits the
-   $17 credit the user has now. The ladder and the identity arm (P2) wait for a top-up (§12).
+4. **EXP-0009 runs two systems on the same v2.2 plants** (D1 = C, §18.1):
+   - the frozen **V2T-A2** (freeze E9), as a pure data replication;
+   - a documented revision **V2T-B** (`40-design/v2t-b-system-revision.md`, ADR-0067), which sees valve positions
+     and names untagged valves, frozen as **E10**.
+
+   It runs free gates first, then the paid stage P1:
+   - B's tuning;
+   - one validation pair per arm;
+   - five sealed plants per scale, with sizes drawn in the bands 90–110 and 900–1,100 sheets (D5, §18.3);
+   - the scorer audit.
+
+   P1 is estimated at **$24.95** from EXP-0008's measured spend, under a hard ledger cap of **$37.50** (§12). The
+   ladder and the identity arm (P2) follow, on V2T-A2 only.
 
 What this buys the thesis claim: if the scale result (Q4) holds on plants whose rules are cited and checked, then
-the examiner's "toy topology" objection is answered with a stronger generator. Nothing in the retrieval system
-changes, so any difference against EXP-0008 comes from the data.
+the examiner's "toy topology" objection is answered with a stronger generator. The A2 arm changes nothing in the
+retrieval system, so its difference against EXP-0008 comes from the data. The B arm, paired with A2 on the same
+questions, measures what a system gains by reading the new content, and tests Q4 a second time.
 
 ## 1. Inputs and what is already decided
 
@@ -59,6 +70,9 @@ changes, so any difference against EXP-0008 comes from the data.
     external check valve (Toghraei 2019 over API 14C 2001);
   - the thesis claim: "derived from published practitioner handbooks, cited per rule, checked by tests on every
     generated plant". It is not "tested on real diagrams".
+- **User decisions, 2026-11-23 (D1–D8):** D1 = C (two arms), D2 = calibrate from evidence, D3 = yes, D4 = as
+  proposed, D5 = P1 now (shape analysed in §18.3), D6 = re-triage, D7 = yes (reviewer to be found), D8 = A. §15 lists
+  them; §18 works out each one.
 
 ## 2. The central question: do correct rules guarantee a correct plant?
 
@@ -73,8 +87,9 @@ is wrong as a whole:
   vessel needs a PSV depends on what can feed it. Whether a level is controlled once depends on every loop around the
   vessel. A local rule cannot see any of these.
 - **Omission.** A rule that was never encoded is never violated. The four books contain far more than we encode.
-- **Frequency.** Every weight is declared, because no per-class frequency is published
-  (`generator-v2-realism.md` §0). A plant can be correct and still be statistically unlike real plants.
+- **Frequency.** No per-class frequency is published (`generator-v2-realism.md` §0). Two weights now rest on counts
+  over 12 real drawing sets (§18.2), which is a small convenience sample; every other weight is declared. A plant can
+  be correct and still be statistically unlike real plants, and the thesis must not claim real frequencies.
 - **Physics we do not model.** We model no chemistry, mass or energy balance, sizing, set pressures or temperatures
   (ADR-0021).
 
@@ -125,7 +140,7 @@ class HandbookRule(BaseModel):
     kind: RuleKind
     status: RuleStatus
     since: Literal["v2.1", "v2.2"]   # v2.1 = already true, now cited and tested
-    sampling_unit: Literal["train", "item"] | None   # ALTERNATIVE only
+    sampling_unit: Literal["document", "train", "item"] | None   # ALTERNATIVE only; "document" since D2 (§18.2)
     declared_parameters: tuple[str, ...]             # config paths, e.g. "handbook.pump_power_weights"
     exception_codes: tuple[str, ...]                 # the only allowed reasons for absence
     check: str | None                # dotted path of the check; None iff DEFERRED
@@ -168,8 +183,8 @@ class RuleReport(BaseModel): generator_version: str; rows: tuple[RuleRow, ...]  
 - **On every plant.** `generate_plant_v2` calls `verify_plant` for every v2.2 config and raises
   `RuleViolationError` on any violation. `ingest synthetic` writes `rules.json`.
   - Every plant of EXP-0009 is therefore verified, the 1,000-sheet sealed plants included.
-  - Run time is a measured quantity of the first coder task on a 1,000-sheet dev plant. EXP-0008 measured
-    generation at 390.99 s on H1000g21p1 (`EXP-0008-v2-rerun.md`, infrastructure table).
+  - Run time: verification of a 1,000-sheet v2.2 dev plant takes **11.9 s** after the piping-graph cache
+    (`e5b987b`, §17.11 F4), against 390.99 s of generation on H1000g21p1 (`EXP-0008-v2-rerun.md`).
 - **Tests per encoded rule:**
   - (a) a positive test, parametrised over seeds 1–5 at about 30 sheets, that asserts 0 violations;
   - (b) a mutation test that breaks the plant on purpose and asserts the check fails;
@@ -189,8 +204,8 @@ class RuleReport(BaseModel): generator_version: str; rows: tuple[RuleRow, ...]  
 
 - **Rules:** 54 encoded (35 local, 19 plant-level) and 15 deferred entries (the 14 groups of §4.9 and TOG73, which
   T3 deferred because the frozen line view could not take unnumbered branches).
-- **Wired today (after T9, 2026-11-23):** 25 of the 54 have a check that runs. The other 29 are `pending:<task>`
-  (T11 6, T8 6, T5 5, T7 5, T10 4, T6 1, and 2 marked `unassigned`, which §17.8 gives to T9b).
+- **Wired today (after `cf2eddb`, 2026-11-23):** 38 of the 54 have a check that runs. The other 16 are
+  `pending:<task>`: T8 6, T7 5, T10 4, T6 1 (counted with `grep pending(` over `rules/`).
 - **Tests:** 54 positive tests (270 parametrised cases over 5 seeds), 54 mutation tests, the non-vacuity tests and
   4 registry tests (ids unique and well-formed, every encoded rule has a check and a comment, comments resolve, the
   registry is printed into the thesis appendix table by a CLI).
@@ -209,8 +224,8 @@ Legend:
 
 | Id | Rule | Sources | v2.1 | v2.2 | Kind |
 |---|---|---|---|---|---|
-| TOG28-SPARE-NAMING | Installed spares are tagged P-125A/B, or as unrelated numbers P-125/P-126; one convention per train | TOG p.28; LIP1 §1.1 PDF p.76 (A/B suffix on spares' instruments) | ok: already drawn per train, suffix : consecutive = 3 : 2 (`vocabulary.py` `SPARE_NAMING_WEIGHTS`) | cite, test | ALT, train |
-| TOG113-MANUAL-VALVE-TAGS | Within a train, either every manual valve carries a tag or none does; automatic valves, safety valves and instruments are always tagged | TOG p.113 | every manual valve tagged | new | ALT, train |
+| TOG28-SPARE-NAMING | Installed spares are tagged P-125A/B, or as unrelated numbers P-125/P-126; one convention per document (was per train in v2.1; §18.2) | TOG p.28; LIP1 §1.1 PDF p.76 (A/B suffix on spares' instruments) | ok: already drawn per train, suffix : consecutive = 3 : 2 (`vocabulary.py` `SPARE_NAMING_WEIGHTS`) | cite, test; v2.2 draws it per document | ALT, document |
+| TOG113-MANUAL-VALVE-TAGS | Within a document (one contractor's drawing set), either every manual valve carries a tag or none does; automatic valves, safety valves and instruments are always tagged | TOG p.113; unit and share from 12 real drawing sets (§18.2) | every manual valve tagged | new | ALT, document |
 | TOG73-UNTAGGED-BRANCH-PIPES | No line number on a short pipe to a plugged or blinded vent or drain valve, nor on a control-valve bypass pipe | TOG p.73 (Table 6.3) | branches numbered (`trim_plan.py`) | **DEFERRED in T3** (§10: the frozen line view fails on the fixture); counted in §4.9 | FORBID |
 | LIP1-1.1-SHARED-LOOP-NUMBER | All members of a loop share its number | LIP1 §1.1 PDF p.76 | ok (S4, S8) | cite, test | PLACE |
 | TOG113-AUTOMATIC-VALVE-LETTERS | A control valve is the loop's xV; a switching valve is XV/UV; a hand control valve is HCV | TOG p.113 (Table 7.9) | ok (S4, S7) | cite, test | PLACE |
@@ -268,7 +283,7 @@ Legend:
 | TOG267-FE-UPSTREAM-FV | A flow element sits upstream of the FV of its loop | TOG p.267 | not checked | check | PLANT |
 | TOG295-INVENTORY-ONCE | A non-flooded liquid container has exactly one level loop; a container a process gas line passes through, or whose function depends on pressure, exactly one pressure loop; any other container at most one; a flooded container none. Exception codes (derived by the check, §17.3): `storage_tank_batch`, `pressure_floating_on:<id>`, `pressure_optional` | TOG p.295 (Table 15.1), p.270 (rule 8; "may choose to control both"), p.305 (flows to storage and intermittent flows) | fails before §17.3 (additive day tanks, one blend vessel) | check | PLANT |
 | TOG309-SPLIT-PAIRING | At a drum split, flow control goes on the smaller stream and level control on the other | TOG p.309 | fixed: reflux FIC, distillate LV | new; the hidden reflux class decides | ALT, item |
-| TOG122-PV-NO-BYPASS | Some companies give pressure-control valve stations no bypass | TOG p.122 | always a bypass | new | ALT, train |
+| TOG122-PV-NO-BYPASS | Some companies give pressure-control valve stations no bypass | TOG p.122 | always a bypass | new; per document (company policy, §18.2) | ALT, document |
 
 ### 4.7 Protection
 
@@ -302,61 +317,68 @@ Legend:
 
 **Count:** §4.1 5, §4.2 6, §4.3 10, §4.4 4, §4.5 5, §4.6 5, §4.7 6, §4.8 14 rows, which made 55 rules; TOG73 was
 deferred in T3, so **54 rules are encoded** (35 local, 19 plant-level). The 19 plant-level rules are those of kind
-PLANT. 25 of the 54 are wired after T9 (§3.4).
+PLANT. 38 of the 54 are wired after `cf2eddb` (§3.4).
 
 ### 4.9 Read but deferred (status DEFERRED, in the registry with a reason)
 
-| Group | Sources | Why deferred |
-|---|---|---|
-| Functional-only identification for local gauges (no loop number) | LIP1 §1.1 PDF p.56 | gauges would share tags like `PI`; this breaks S9 and identity by tag in the frozen resolver |
-| Parallel loop numbering | LIP1 §1.1 PDF p.58 | FIC-101 and LIC-101 would share a loop number, which collides with the ADR-0027 signal-connector key |
-| Gaps in tag sequences | LIP1 §1.1 PDF p.58, p.76 | no effect on what the thesis measures |
-| API "S" device letters (PSH/LSH meaning "safety") | API 14C §2 (section) | the same letters mean different things in ISA; the frozen primer (ADR-0041) explains ISA |
-| Trip by a solenoid on the control valve | LIP1995 §8.19 (section, not re-verified) | one valve with two drivers breaks S7 and LOOP_ACTUATED_VALVE |
-| Min-flow by a PCV kickback or an FSL pump trip | LIP1995 §8.23 (section, not re-verified) | page not verifiable; the FSL trip is a new motor-trip shape |
-| 3-way exchanger valve | TOG p.322 | needs a new class (ADR-0016) |
-| Pulsation dampener; back-pressure regulator on dosing pumps; self-acting regulators | TOG p.192, p.195 | no fitting class for a dampener; a one-member regulator loop breaks S8 |
-| Tank blanketing and VRU | TOG ch.9, ch.15 (note, not re-verified) | needs split-range PCVs and a VRU network; for later |
-| Double block and bleed; blinds at pump isolation valves | TOG ch.8, p.175 (note) | changes isolation answers; low value |
-| Fired heater passes, pilot gas line, snuffing steam | TOG p.213–215 | new heater pattern variant; large |
-| Compressor PSH/PSL/TSH/BDV, vessel LSL and the other SAC devices without a derivable exception | API 14C SAC A-4.2, A-8.2 (T10) | each becomes a DEFERRED SAC row, unless the device is cheap and inside the composition bands |
-| Shut-in at the primary source | API 14C §4.2.3 p.14 | needs trip → motor interlock edges across sheets, which S19/S20 forbid; v2.2 reports the share of trips that act at the source |
-| Interlock-diamond drawing style; multi-stage compressors; lube-oil and seal systems | TOG ch.16, ch.10 (note) | drawing style, or detail P&IDs |
-| TOG73 untagged branch pipes (was encoded; deferred in T3) | TOG p.73 (Table 6.3) | the frozen line view (`graph/line_view.py`) cannot take unnumbered branches; §10 says defer rather than change a frozen file |
+The last column is the user's triage request D6 (2026-11-23), re-done after D1 = C (§18.4). **Now** = done in a v2.2
+task before EXP-0009's data freeze. **If flagged** = done only if the expert review (T12, D7) flags it and it fits
+before the freeze; otherwise it stays deferred. **Out** = not in this thesis.
 
-**Count:** 14 groups plus TOG73 = **15 deferred entries** in the registry.
+| # | Group | Sources | Why deferred | Bin (D6) |
+|---|---|---|---|---|
+| 1 | Functional-only identification for local gauges (no loop number) | LIP1 §1.1 PDF p.56 | gauges would share tags like `PI`; this breaks S9 and identity by tag in the frozen resolver | **Out**: both arms share the resolver, and A2's is frozen |
+| 2 | Parallel loop numbering | LIP1 §1.1 PDF p.58 | FIC-101 and LIC-101 would share a loop number, which collides with the ADR-0027 signal-connector key | **Out**: store key change shared by both arms |
+| 3 | Gaps in tag sequences | LIP1 §1.1 PDF p.58, p.76 | no effect on what the thesis measures | **Out**: no question or check can see it |
+| 4 | API "S" device letters (PSH/LSH meaning "safety") | API 14C §2 (section) | the same letters mean different things in ISA; the frozen primer (ADR-0041) explains ISA | **Out**: the shared data would contradict A2's frozen primer |
+| 5 | Trip by a solenoid on the control valve | LIP1995 §8.19 (section, not re-verified) | one valve with two drivers breaks S7 and LOOP_ACTUATED_VALVE | **Out**: changes a registered family's answer; source not page-checkable |
+| 6 | Min-flow by a PCV kickback or an FSL pump trip | LIP1995 §8.23 (section, not re-verified) | page not verifiable; the FSL trip is a new motor-trip shape | **Out**: no page-checkable source |
+| 7 | 3-way exchanger valve | TOG p.322 | needs a new class (ADR-0016) | **Out**: a new class changes the schema text of every corpus |
+| 8 | Pulsation dampener; back-pressure regulator on dosing pumps; self-acting regulators | TOG p.192, p.195 | no fitting class for a dampener; a one-member regulator loop breaks S8 | **Out**: new class and a new loop shape |
+| 9 | Tank blanketing and VRU | TOG ch.9, ch.15 (note, not re-verified) | needs split-range PCVs and a VRU network | **If flagged** (it would also close the §17.3 vapour gap); size L |
+| 10 | Double block and bleed; blinds at pump isolation valves | TOG ch.8, p.175 (note) | changes isolation answers; low value | **Out**: it changes what "the valves to close" means for both arms' isolation gold |
+| 11 | Fired heater passes, pilot gas line, snuffing steam | TOG p.213–215 | new heater pattern variant; large | **If flagged**; size L |
+| 12 | Compressor PSH/PSL/TSH/BDV, vessel LSL and the other SAC devices without a derivable exception | API 14C SAC A-4.2, A-8.2 (T10) | each becomes a DEFERRED SAC row, unless the device is cheap and inside the composition bands | **Now: T10** decides device by device |
+| 13 | Shut-in at the primary source | API 14C §4.2.3 p.14 | needs trip → motor interlock edges across sheets, which S19/S20 forbid; v2.2 reports the share of trips that act at the source | **Out**: changes the signal model; reported as a share |
+| 14 | Interlock-diamond drawing style; multi-stage compressors; lube-oil and seal systems | TOG ch.16, ch.10 (note) | drawing style, or detail P&IDs | **Out**: style is not in the graph; seal and lube systems are vendor detail sheets |
+| 15 | TOG73 untagged branch pipes (was encoded; deferred in T3) | TOG p.73 (Table 6.3) | the frozen line view (`graph/line_view.py`) cannot take unnumbered branches | **Out**: under D1 = C the A2 arm must ingest the same plants (v2t-b note §1) |
+
+**Count:** 14 groups plus TOG73 = **15 deferred entries** in the registry. Triage: 1 now, 2 if flagged, 12 out.
 
 ## 5. Sampled alternatives and their sampling unit
 
-**Principle.**
-- **Identification conventions** are a company standard, so they are drawn **per train**. A train is "one design
-  contractor's area" (`TrainRecord`, `vocabulary.TrainConventions`), and the existing `on_off_letter` and
-  `spare_naming` already set the precedent.
+**Principle** (*revised 2026-11-23, D2, §18.2*).
+- **Company conventions** (manual-valve tagging, spare naming, on-off valve letter, pressure-control stations
+  without a bypass) are drawn **per document**.
+  - A document is one contractor's drawing set. In the generator it is a run of consecutive trains, about 100 sheets
+    long (`DocumentRecord`, task T6).
+  - The evidence: every real multi-sheet set we hold keeps one convention on all its sheets, and a v2.1 train is only
+    about 9 sheets (§18.2). v2.1 drew `on_off_letter` and `spare_naming` per train; v2.2 takes those draws and
+    ignores their values (randomness rule below), drawing the conventions again per document.
 - **Engineering arrangements** are a choice per item, so they are drawn **per item**.
 - **Coupled choices come from one hidden cause.** Where a choice has a cause the books name (hp, reflux ratio), the
   generator samples the **hidden cause** and derives the visible consequence. Independent coins for coupled features
   are avoided.
 
-| Alternative | Unit | Driver (declared) | Included |
-|---|---|---|---|
-| Spare naming: suffix or consecutive | train | weights 3 : 2 (unchanged from v2.1) | yes (exists) |
-| Manual valves tagged or untagged | train | `p_untagged_manual_train` = 0.5 | yes |
-| Pressure-control stations without a bypass | train | `p_pv_no_bypass_train` = 0.5 | yes |
-| Min-flow method | pump set | hidden power band, weights `<5 : 5–20 : 20–35 : >35` = 1 : 1 : 1 : 1 | yes |
-| Battery-limit isolation, 3 variants | item | 1 : 1 : 1 | yes |
-| Pump nozzle reducers | pump set | `p_pump_reducers` = 0.5 | yes |
-| Exchanger bypass: TV alone, or two CVs | item | 1 : 1 | yes |
-| Steam heater condensate mode | item | 2 : 1 : 1 (unchanged) | yes (exists) |
-| Fuel switching valves: one, or two in series | furnace | 1 : 1 | yes |
-| Accumulator split pairing | column | hidden reflux class low : high = 1 : 1 | yes |
-| The deferred list of §4.9 | — | — | no |
+| Alternative | Unit | Driver | Basis (§18.2) | Included |
+|---|---|---|---|---|
+| Manual valves tagged or untagged | **document** | `p_untagged_manual_document` = **0.75** | **measured**: 9 of 12 real drawing sets untagged | yes |
+| Spare naming: suffix or consecutive | **document** | 3 : 2 (unchanged) | 4 : 2 sets; 0.6 lies inside the interval | yes (exists) |
+| On-off valve letter X or Y | **document** | 1 : 1 (unchanged) | 2 : 2 sets | yes (exists) |
+| Pressure-control stations without a bypass | **document** | `p_pv_no_bypass_document` = 0.5 | no count; neutral | yes |
+| Min-flow method | pump set | hidden power band, `<5 : 5–20 : 20–35 : >35` = 1 : 1 : 1 : 1 | none (power is datasheet data) | yes |
+| Battery-limit isolation, 3 variants | item | 1 : 1 : 1 | one sheet only | yes |
+| Pump nozzle reducers | pump set | `p_pump_reducers` = **0.75** | **measured**: 3 of 4 sets that draw pump trims | yes |
+| Exchanger bypass: TV alone, or two CVs | item | 1 : 1 | no count | yes |
+| Steam heater condensate mode | item | 2 : 1 : 1 (unchanged) | existence only | yes (exists) |
+| Fuel switching valves: one, or two in series | furnace | 1 : 1 | one sheet | yes |
+| Accumulator split pairing | column | hidden reflux class low : high = 1 : 1 | none (L/D is datasheet data) | yes |
+| The deferred list of §4.9 | — | — | — | no |
 
-- **The weights are neutral declared values.** No source gives a frequency (the same stance as
-  `generator-v2-pid-vocabulary.md` §13.1).
-- **Two changes of declared weight are not made.**
-  - Toghraei p.28 calls consecutive spare numbering "the current trend". Flipping 3 : 2 to 2 : 3 would be a
-    frequency claim the book does not quantify.
-  - The untagged share stays 1 : 1 for the same reason.
+- **Measured where we can, declared where we cannot.** Two weights now rest on counts from real drawing sets
+  (untagged share, pump reducers). The rest stay neutral declared values, and §18.2 gives the reason per weight.
+- **The sealed plants are stratified on the tagging convention** (§18.3). Their untagged share is fixed at 0.8 per
+  scale instead of being drawn, so the two scales carry the same mix.
 
 **Randomness rule.** v2.2 never removes or reorders a v2.1 draw:
 - where a rule replaces a coin (for example `p_min_flow`), the draw is still taken and its value ignored;
@@ -389,7 +411,8 @@ class HiddenDesignState(BaseModel):
 - **Where it never goes.** It is never written to the DEXPI model, the graph the store loads, the drawing export, a
   prompt or a question's gold.
 - **ADR-0021.** This is not equipment or datasheet data in ADR-0021's sense: no value, no unit, nothing shown,
-  nothing asked. ADR-0066 records this as a clarification of ADR-0021, not a supersession (decision D3 confirms it).
+  nothing asked. ADR-0066 records this as a clarification of ADR-0021, not a supersession. **The user confirmed it
+  on 2026-11-23 (D3 = yes), so T8 is unblocked.**
 - **Fluid classes.** The plant is declared a hydrocarbon plant. Process services are HYDROCARBON, CWS/CWR are
   WATER, LPS/MPS/CD are STEAM, N2 is INERT. That is the only basis for drain and relief destinations.
 
@@ -472,12 +495,12 @@ number fields. So the model makes visible data *consistent* without adding visib
 |---|---|---|
 | Composition bands (ADR-0059) | judged on **process sheets**; network and interarea sheets reported apart. A network sheet has no equipment by design (TOG ch.20 shows such sheets), so "equipment per sheet ≥ 1" would fail on it | yes: U4-style stop |
 | Toghraei ch.20 comparison | the 34 example sheets (TOG p.417–452) annotated by hand: equipment per sheet, off-page connectors by target kind (process / network / utility / signal), share of sheets without equipment, into `10-literature/toghraei-2019-ch20-sheet-counts.md`; v2.2 values per sheet kind beside them | no: textbook examples are single-item illustrations, not a sample of plants |
-| Expert review | a fixed sample of 12 dev-plant sheets (one per pattern U1–U8, one network, one interarea, one pump set, one furnace), drawn with the demo export, reviewed against a checklist printed from the registry, plus "anything that looks wrong"; each finding becomes a rule, a fix or a recorded limitation | no; only if a reviewer is available (D7) |
+| Expert review | 12 dev-plant sheets reviewed by a P&ID engineer against a 25-item checklist keyed to rule ids, plus "anything that looks wrong"; each finding becomes a fix before the freeze, a rule change or a recorded limitation. The user is finding the reviewer (D7 = yes); the plan is §18.5 | no gate; findings are triaged before the EXP-0009 freeze |
 | Rule report | per rule: instances checked, 0 violations, exceptions by code; the encoded / deferred counts | yes (build refuses on a violation) |
 
 ## 7. Network and interarea sheets
 
-**Which networks** (D4, recommended set):
+**Which networks** (D4, decided by the user on 2026-11-23 as proposed; T7 is unblocked):
 - relief/flare `FL`;
 - closed drain `CHD`;
 - cooling water `CWS`/`CWR`;
@@ -499,7 +522,7 @@ Blanket gas and VRU are deferred (§4.9).
   - The free gate measures v2.2.
 - **Network sheet capacity.** At most `max_tie_ins_per_network_sheet` = 16 (declared, under the stub band's maximum
   of 21). Overflow continues on the next network sheet through a header continuation connector.
-- **Root valves.** Distribution tie-ins get a root block valve on the network sheet (NO; tagged by the train's
+- **Root valves.** Distribution tie-ins get a root block valve on the network sheet (NO; tagged by the document's
   manual-valve convention). Collection tie-ins get none.
 - **Interarea.** A line from train t's product farm to train t+1's feed farm passes one interarea sheet. On it there
   are a straight pipe, the battery-limit isolation of TOG34, and two connectors. Each such line gains one sheet
@@ -532,10 +555,10 @@ Blanket gas and VRU are deferred (§4.9).
   fail retain position). I checked that it exists in pyDEXPI 1.2.0 (`pydantic_classes.py`).
 - The normal position has no native attribute, so it is a `CustomStringAttribute` named `OperatingPosition` on the
   `PipingComponent`, which is a `CustomAttributeOwner`. Custom attributes are not custom classes, so S24 holds.
-- The adapter drops both before the store, under D1 = A (§10).
+- The A-view adapter drops both before the store (V2T-A2). The B view keeps `operating_position` on the valve node and still drops the fail action (D1 = C; `v2t-b-system-revision.md` §2).
 
 **Untagged manual valves.**
-- In a train drawn "untagged", `format_valve_tag` is not called for manual valve roles. The node has no `tag`, like
+- In a document drawn "untagged" (§5, §18.2), `format_valve_tag` is not called for manual valve roles. The node has no `tag`, like
   a `PipeTee` today.
 - Check valves follow the manual convention. PSVs, rupture discs, control and switching valves, and instruments keep
   their tags (TOG p.113).
@@ -571,26 +594,31 @@ Blanket gas and VRU are deferred (§4.9).
    - validation `VAL100g22`, `VAL1000g22`;
    - sealed `H100g22p1..p5`, `H1000g22p1..p5`;
    - ladder `H1g22`, `H3g22`, `H10g22`, `H30g22`;
-   - identity arm `H1000g22pkV`.
+   - identity arm `H1000g22pkV`;
+   - the B view of each sealed or validation plant: the same id with `B` appended (`H1000g22p1B`, D1 = C).
 
    Fresh test seeds are drawn by the `draw_seeds` tool (F12). The EXP-0008 test seeds are retired.
 5. **Every coder task** keeps the full suite green and the v1 and v2.1 goldens unchanged. A failing golden means the
    change is wrong, never the constant.
 
-## 10. Impact on the frozen system (V2T-A2, freeze E9)
+## 10. Impact on the frozen system (V2T-A2, freeze E9) and the B arm
 
-| Component | What v2.2 touches | Under D1 = A (recommended) |
-|---|---|---|
-| Schema text (`qa/schema_text.py`, built from `graph.schema.VISIBLE_NODE_PROPERTIES`) | a visible `operating_position` would change the text of **every** corpus, v1's goldens included | not added; positions stay out of the store |
-| Resolver (identity by tag; ADR-0027 connector key) | untagged valves cannot merge by tag; network connectors pair by number | unchanged: untagged valves are single-occurrence items, as fittings are now; network pairs are ordinary pairs |
-| Line view (`graph/line_view.py`, frozen) | branches without a line number (TOG73) | must handle them already (v1 corpora have no line numbers); T3 proves it on a fixture with the frozen module; if it fails, TOG73 is DEFERRED rather than the frozen file changed |
-| Prompts, primer, Cypher, agent tools | none | unchanged |
-| CLASS_NAME instruction (ADR-0058 point 5) | lists the classes present | no new class, so the same list |
-| Question generation and gold (`qa/questions/*`, gold side under ADR-0060) | untagged answers; networks change reach | gold-side changes only (§11); v2.1 question sets byte-identical (T0 hash) |
-| Scorer | none | unchanged |
-| Demo | none | stays on H1000g21p1 (one corpus in Neo4j) |
+**Decision D1 = C (user, 2026-11-23).** Both arms run on the same v2.2 plants: the frozen V2T-A2 and the documented
+revision V2T-B. V2T-B is designed in `40-design/v2t-b-system-revision.md` and recorded in ADR-0067 (proposed). The
+user will top up the credit, so cost does not block the B arm. The table shows what each arm sees.
 
-**Options for D1.**
+| Component | What v2.2 touches | V2T-A2 (frozen, E9) | V2T-B (revision, E10) |
+|---|---|---|---|
+| Schema text (`qa/schema_text.py`, built from `graph.schema.VISIBLE_NODE_PROPERTIES`) | a visible `operating_position` would change the text of **every** corpus, v1's goldens included | not added; positions stay out of the A store | one added paragraph, only on B corpora (`qa/v2tb/schema_text_b.py`) |
+| Resolver (identity by tag; ADR-0027 connector key) | untagged valves cannot merge by tag; network connectors pair by number | unchanged: untagged valves are single-occurrence items, as fittings are now; network pairs are ordinary pairs | the same, shared |
+| Line view (`graph/line_view.py`, frozen) | branches without a line number (TOG73) | T3 showed the frozen module fails on them, so TOG73 is DEFERRED | the same: the plants are shared |
+| Prompts, primer, Cypher, agent tools | none | unchanged | primer paragraph on positions and untagged valves; `operating_position` among the item properties |
+| CLASS_NAME instruction (ADR-0058 point 5) | lists the classes present | no new class, so the same list | the same |
+| Question generation and gold (`qa/questions/*`, gold side under ADR-0060) | untagged answers; networks change reach | scope R (§11) | scope R plus scope X |
+| Scorer | none | unchanged | `qa/v2tb/scoring_b.py` for VALVE_SET and POSITION |
+| Demo | none | stays on H1000g21p1 (one corpus in Neo4j) | no demo |
+
+**The options for D1, as they were put to the user.**
 - **A. Frozen V2T-A2, data replication (recommended).** Positions are drawn into DEXPI and the hidden record, not
   the store. Gold stays topological, and isolation-family candidates whose answer contains an untagged valve are
   refused on the gold side, with the refused share reported.
@@ -602,15 +630,20 @@ Blanket gas and VRU are deferred (§4.9).
   - Requires a new freeze, a re-validation and a paired V2T-A2 arm on the same plants to separate the effect of the
     data from that of the system.
   - Costs about one extra sealed arm ($6.69 basis, §12.3) plus development.
-- **C. Both arms on the same v2.2 plants.** The most informative and the dearest: B plus A.
+- **C. Both arms on the same v2.2 plants.** The most informative and the dearest: B plus A. **Chosen by the user.**
 
-**Recommendation: A for EXP-0009.** B is reconsidered only if EXP-0009 shows a large drop that the rows trace to
-positions or to untagged items.
+The architect had recommended A. The user chose C, and the design follows C. The B arm's estimated cost is in §12.3.
 
 ## 11. Question validity
 
-All gold stays **topological** (any piping path, whatever the valve positions), as in v2.1. The table says what
-changes.
+**Two scopes since D1 = C** (`v2t-b-system-revision.md` §4):
+- **Scope R (replication),** the EXP-0008 recipe, is answered by both arms. Its gold stays **topological** (any
+  piping path, whatever the valve positions), as in v2.1. The table below gives its rules.
+- **Scope X (extension)** holds the position-aware family OPEN_VALVES_TO_ISOLATE (up and down) and isolation
+  questions whose answers may name untagged valves. Both arms answer its isolation families; only B answers
+  POSITION_OF_VALVE.
+
+Rules of scope R:
 
 | Family | Untagged manual valves | Network / interarea sheets | Action (gold side) |
 |---|---|---|---|
@@ -622,37 +655,58 @@ changes.
 | LOOKUP_*, SHEETS_OF_TAG, INSTRUMENTS_OF_ITEM, UNANSWERABLE_TAG, SAME_UNIT, COUNT_IN_UNIT, DOWNSTREAM_IN_UNIT, ROUTE_AVOIDING | fewer valve anchors | network units appear as units | none |
 
 - **What "topological" means for the reader.** "Which valves must be closed" includes a bypass valve that is
-  normally closed, and an isolation list in practice includes verifying NC valves. The thesis states that EXP-0009
-  questions do not use positions.
+  normally closed, and an isolation list in practice includes verifying NC valves. The thesis states that scope R
+  does not use positions; only scope X's new family does.
 - **Availability (ADR-0029 and ADR-0053's fixed n).** Each family needs at least 10 candidates on every sealed plant
   (10 per family per plant, as EXP-0008). A family below that on any plant is pre-registered as unavailable on v2.2.
   It is not rescued by changing the untagged weight, because that would tune the data to the questions.
+- **A known consequence of the document unit (D2).** A 100-sheet plant is one document. On an untagged 100-sheet
+  plant, UPSTREAM_ISOLATION and DOWNSTREAM_ISOLATION have no candidate in scope R. Both are therefore
+  **pre-registered unavailable in scope R**, at both scales, before any seed is drawn. Their content is measured in
+  scope X instead, by both arms. The data-effect comparison with EXP-0008 uses the families both experiments share.
 - **Not reworded.** No question is reworded (user, natural questions only).
 
-## 12. EXP-0009: pre-registered re-measurement on v2.2
+## 12. EXP-0009: pre-registered re-measurement on v2.2, two arms
 
-### 12.1 Claims
+### 12.1 Claims (pre-registered; revised 2026-11-23 for D1 = C)
 
-- **Primary: Q4 on v2.2** (cascade_v4_iso, S1000 − S100, pooled over five plants per scale, two-stage cluster
-  bootstrap). Pass if the interval contains 0 or lies above, as in ADR-0053 and ADR-0065.
-- **Carried over:** K1, K2, K3, Q5, unchanged.
-- **Descriptive:** the "realism effect", v2.2 − v2.1 per scale on the cascade (unpaired, different plants, the same
-  bootstrap); refused-candidate shares; network-touching shares; `rules.json` summaries.
-- **In P2:** X1/X2 (ladder) and E1–E4 (identity), as registered.
+| Claim | Arm and scope | Pass |
+|---|---|---|
+| **Q4 (primary)** | V2T-A2, scope R, cascade_v4_iso, S1000 − S100, two-stage cluster bootstrap | the interval contains 0 or lies above (ADR-0053, ADR-0065) |
+| Q4-B | V2T-B, scope R ∪ X | the same rule |
+| SB1 no harm | V2T-B − V2T-A2, scope R, paired on the same questions | the lower bound is above −0.03 (declared margin) |
+| SB2 content value | V2T-B − V2T-A2, scope X isolation families, paired | the interval lies above 0 |
+| K1, K2, K3, Q5 | V2T-A2, scope R | as EXP-0008 |
+| Descriptive | data effect: V2T-A2 on v2.2 − V2T-A2 on v2.1 (EXP-0008) per scale, on the families both share (unpaired, the same bootstrap); X sub-scopes (untagged gold, discriminating share); POSITION_OF_VALVE accuracy; refused shares; network-touching shares; `rules.json` summaries | — |
+| In P2 | X1/X2 (ladder) and E1–E4 (identity), on V2T-A2, as registered | — |
 
-### 12.2 Free gates (all before the first paid call; $0)
+### 12.2 Gates
+
+**Free gates (all before the first paid call; $0).**
 
 | Gate | Pass |
 |---|---|
 | G0a goldens | v1 and v2.1 goldens unchanged; full suite green |
 | G0b rule suite | every positive and mutation test passes; every rule and alternative non-vacuous over the 5 seeds |
-| G0c build verification | every EXP-0009 plant built with 0 violations; `rules.json` hashed into the freeze |
+| G0c build verification | `OWED_FIXES == {}`; every EXP-0009 plant built with 0 violations; `rules.json` hashed into the freeze |
 | G0d composition | ADR-0059 bands pooled per scale on process sheets; network sheet statistics reported |
-| G0e availability | ≥ 10 candidates per family per sealed plant, else pre-registered unavailable |
-| G0f frozen system | E9 system-side paths unchanged; one cache-only replay per tier byte-identical (ADR-0060 1B) |
-| G0g resolution | pair precision = recall = 1.0 at exact tags (network connectors included) |
-| G0h prompt size | every prompt fits, as in EXP-0008 M4 |
+| G0e availability | ≥ 10 candidates per family, per scope and per sealed plant, else pre-registered unavailable; R's two isolation families are pre-registered unavailable by design (§11) |
+| G0f frozen system | E9 system-side paths unchanged; one cache-only replay per A2 tier byte-identical (ADR-0060 1B) |
+| G0g resolution | pair precision = recall = 1.0 at exact tags, network connectors included, on the A view and on the B view |
+| G0h prompt size | every prompt of both arms fits, as in EXP-0008 M4 |
 | G0i v2.1 → v2.2 diff | the same dev seeds built both ways; descriptive table of what changed (counts per rule, sheet kinds); no gate |
+| G0j scorer B | the self-tests of `v2t-b-system-revision.md` §5 pass |
+| G0k allocation and size | each sealed plant's documents carry the tagging written in PREREG A; each plant's total sheets lie in its band (90–110 or 900–1,100) and within 2 of its drawn target |
+| G0l descriptors | per X family and plant, the share of candidates refused for a non-unique descriptor ≤ 25 %; otherwise the case returns to the architect |
+| G0m expert review | if a review took place before the freeze, every finding is triaged (fix, rule change or recorded limitation; §18.5) |
+
+**Paid gates (in P1, before the sealed plants are built).**
+
+| Gate | Pass |
+|---|---|
+| G1 | V2T-A2 on the validation pair: no dev family below 50 % on both plants (as EXP-0008) |
+| G1-B | the same for V2T-B, on scope R ∪ X |
+| G1-B2 | V2T-B − V2T-A2 on scope R, pooled over the pair, ≥ −0.05 (point estimate); otherwise B is not run sealed and the finding is reported |
 
 ### 12.3 Cost, grounded in EXP-0008's measured spend
 
@@ -673,51 +727,65 @@ audit's **$5.23** is unaffected (own ledger). The ledger glob should skip `repor
 | P3 D4 decisions | $0.33 |
 | M5 ladder (ContextRAG $2.51 of it) | $3.02 |
 | Scorer audit main (pilot $1.62 not repeated) | $3.61 |
+| EXP-0007 V2T tuning, three rounds (`EXP-0007-V2T-validation.md`) | ≈ $1.30 |
 
-**EXP-0009, stage P1 (fits in $17):**
+**Questions per plant.** Scope R holds 280 (the EXP-0008 recipe). Scope X adds 40 for V2T-A2 and 50 for V2T-B
+(`v2t-b-system-revision.md` §4). So A2 answers 320 and B 330 per plant.
+
+**EXP-0009, stage P1 (D5: five plants per scale, both arms):**
 
 | Step | Basis | Estimate | Step cap (1.5×) |
 |---|---|---|---|
-| Validation pair (V2T-A2 only; G1's "no dev family below 50 % on both plants") | M1 | $1.16 | $1.74 |
-| V2T-A2 sealed, 5 + 5 plants × 280 | M6a | $6.69 | $10.04 |
-| Scorer audit (same judge pin and prompt, no pilot) | audit main | $3.61 | $5.00 (hard) |
-| **P1** | | **$11.46** | **ledger hard cap $16.50** |
+| P1a V2T-B tuning, ≤ 3 rounds on D100g22 | V2T tuning | $1.30 | $1.95 |
+| P1b V2T-A2 validation pair, 320 q per plant | M1 × 320/280 | $1.33 | $2.00 |
+| P1b V2T-B validation pair, 330 q per plant | M1 × 330/280 | $1.37 | $2.06 |
+| P1c V2T-A2 sealed, 5 + 5 plants × 320 | M6a × 320/280 | $7.65 | $11.48 |
+| P1c V2T-B sealed, 5 + 5 plants × 330 | M6a × 330/280 | $7.88 | $11.82 |
+| P1d scorer audit: the main sample plus a B stratum half its size (same judge pin and prompt, no pilot) | audit main × 1.5 | $5.42 | $8.13 (hard) |
+| **P1** | | **$24.95** | **ledger hard cap $37.50** |
 
-- **The ledger binds, not the sum of step caps.** The step caps sum to $16.78, but the $16.50 ledger is what stops
-  a run.
-- **Headroom** over the estimate is $5.04. The real step caps come from free dry runs, as in EXP-0008.
-- **Per-question cost is not measured on v2.2.** EXP-0008 measured a cost elasticity of 0.044 per tenfold sheets,
-  which suggests insensitivity. But networks lengthen paths, so the validation pair measures the real $/q before the
-  sealed stage, and the sealed caps are recomputed from it.
+- **Assumptions, stated.** Cost is proportional to the number of questions, at EXP-0008's measured $/q. B's prompt
+  is longer (one schema paragraph and one primer paragraph), which is not measured. The validation pair measures
+  each arm's real $/q on v2.2, and the sealed caps are recomputed from it before the sealed stage.
+- **The ledger binds**, not the sum of the step caps ($37.44).
+- **The size bands do not move the estimate.** EXP-0008 measured a cost elasticity of 0.044 per tenfold sheets, so
+  ±10 % in size changes the cost per question by well under 1 %.
+- **A money stop** (cap or cost guard) is resolved by the main session without asking (user rule, 2026-11-15). A gate
+  stop is not.
 
-**Stage P2 (after a top-up):**
+**Stage P2 (V2T-A2 only, after P1):**
 - ladder $3.02 (cap $4.53);
 - P4 identity $4.48 (cap $6.72), with the D4 decisions $0.33 (cap $0.50);
 - optional F1 baseline $4.44 (cap $6.66).
 
 P2 is estimated at $7.83 without F1 and $12.27 with it, under a ledger hard cap of $13.50.
 
-**Program:** estimate $19.29 without F1, hard cap **$30** (P1 ≤ $16.50, P2 ≤ $13.50).
-
-**What fits in $17:** P1 only (Q4, K1–K3 and Q5 on v2.2, with the audit). Everything else waits for the top-up.
+**Program:** estimate **$32.78** without F1 ($37.22 with it); hard caps P1 $37.50 + P2 $13.50 = **$51**.
 
 **Machine time (P1), from EXP-0008's per-unit figures** (`review-fixes.md` §6: H1000 question pool 8,585 s,
-generation 421.6 s; at 1,000 sheets Cypher 1.44 h + agent 1.70 h per 560 questions, at 100 sheets 0.38 h + 0.50 h):
+generation 421.6 s; at 1,000 sheets Cypher 1.44 h + agent 1.70 h per 560 questions, at 100 sheets 0.38 h + 0.50 h),
+scaled by the question counts above:
 
 | Block | Time |
 |---|---|
-| question pools (6 × 1,000-sheet) | ≈ 14.3 h |
-| builds plus verification | ≈ 2–3 h; verification time unmeasured |
-| validation | ≈ 1.5 h |
-| sealed (5 × 1.57 h + 5 × 0.44 h) | ≈ 10 h |
-| audit | ≈ 1 h |
-| **Total** | **≈ 29–30 h** of machine time |
+| question pools (6 × 1,000-sheet: five sealed and VAL1000g22) | ≈ 14.3 h, plus the X families (unmeasured) |
+| builds plus verification (11.9 s per 1,000-sheet plant, §3.3), two store views per plant | ≈ 2–3 h |
+| B tuning | ≈ 1 h |
+| validation, both arms | ≈ 3.5 h |
+| sealed V2T-A2 (5 × 1.79 h + 5 × 0.50 h) | ≈ 11.5 h |
+| sealed V2T-B (5 × 1.85 h + 5 × 0.52 h) | ≈ 11.8 h |
+| audit | ≈ 1.5 h |
+| **Total** | **≈ 45–47 h** of machine time |
 
 ### 12.4 Protocol
 
-- **Pre-registration.** As EXP-0008: part A (claims, gates, seeds, caps, ledger, judge hashes) is committed before
-  the button; part B and the freeze are written by the launcher after the validation step and before the first test
-  plant.
+- **Pre-registration.** As EXP-0008: part A is committed before the button. It holds the claims, gates, seeds, the
+  drawn size targets, the tagging allocation, caps, ledger and judge hashes. Part B and the E10 freeze are written by
+  the launcher after the validation step and before the first test plant.
+- **Order inside P1:** P1a tuning → E10 candidate → P1b validation (G1, G1-B, G1-B2) → E10 freeze and part B → test
+  plants built → P1c sealed, A2 then B per plant → P1d audit.
+- **Two views per plant.** The launcher loads the A view, runs V2T-A2, wipes Neo4j, loads the B view and runs V2T-B
+  (one corpus in Neo4j at a time).
 - **Launcher.** It reuses the EXP-0008 launcher structure in `data/runs/exp0009/`.
 - **Stops.** The launcher stops only on a gate, a cap or an infrastructure error.
 - **Start.** Nothing starts before the user's word.
@@ -729,55 +797,59 @@ generation 421.6 s; at 1,000 sheets Cypher 1.44 h + agent 1.70 h per 560 questio
 - builds no EXP-0009 data and makes no paid call;
 - ends with one commit proposal (files listed, one-line message), with nothing committed without the user's order.
 
-**Sizes** S/M/L follow the previous notes' scale. Coder pace is unmeasured.
+**Done** (2026-11-23): T0, T1, T2, T3, T4, T9, T9b, T9c, T11, T7a, and T5's plan and DEXPI part (`cf2eddb`).
+38 of 54 rules are wired.
 
-| # | Task | Size | Waits for |
-|---|---|---|---|
-| T0 | v2.1 pins and goldens (§9 point 1); audit shared constants v2.1 draws from; `tests/v2/test_v21_goldens.py` | S | **independent: start now** |
-| T1 | Registry package: `rules/registry.py`, `rules/catalogue.py` (55 + deferred), `rules/view.py`, `rules/verify.py`, move `check_s1..s24` into `rules/checks_v21.py`, registry tests (§3.2–3.3), `python -m plantgraph.benchmark.v2.rules --table` | M | **independent** |
-| T2 | `GeneratorConfigV22`, `HandbookKnobs`, three-way dispatch, `HiddenDesignState` container (empty maps), `--generator v2.2`, `HeadlinePresetV22`; a v2.2 plant with every knob off equals the v2.1 plant of the same seed except the version field | M | **independent** |
-| T3 | Verified fixes, gated on v2.2: TOG192-RECIP-NO-CHECK, TOG192-PD-NO-MINFLOW, TOG177-MINFLOW-TAKEOFF, TOG314-PD-NO-THROTTLE, TOG319/TOG316 compressor capacity, TOG73 (with the frozen line-view fixture first); positive and mutation tests | M | **independent** |
-| T4 | Hidden pump power band; TOG177-MINFLOW-NEED, TOG313-MINFLOW-METHOD (RO / switching valve / FIC loop) | M | **independent** (the user already ruled "declared parameters") |
-| T5 | Valve positions: plan fields, DEXPI fail action and custom attribute, TOG114/120/224/TOG114-FAIL-ACTION, adapter strips them before the store; demo drawing label optional | M | **independent** for plan and DEXPI; store visibility waits for D1 |
-| T6 | Manual-valve tagging per train (TOG113); gold-side refusal of untagged answers, the FLOW_PATH tie rule and the refused-share report; v2.1 question hash unchanged | M | **D1, D2** |
-| T7 | Networks and interarea: network units, headers, per-sheet sub-headers, network connectors, capacity overflow, splitter grouping, size search on total sheets, composition per sheet kind, TOG32/141/360/33, PLT-NETWORK-CLOSURE | L | **D4** |
-| T8 | Pressure-level model and PRS-*, TOG82 (pump spec breaks), TOG156, PLT-RECYCLE-CLOSURE, API14C-A4-OVERPRESSURE | M | **D3** |
-| T9 | Control checks TOG271, TOG267, TOG295, TOG270, TOG320, TOG224-PSV-PIPE-CLEAN, TOG24, PLT-STREAM-CLOSURE; any failure on v2.1 seeds is reported back to the architect before a fix | M | **done** (`6f7f906`); four failures, decided in §17 |
-| T9b | The §17 fixes: TOG271 split valves and the U7 flow indicator; TOG295 derived exceptions; TOG207 restated; PLT-STREAM-CLOSURE on the plant graph; checks for API14C-A8-FSV and API14C-A8-PSV; `verify_plant` wired into v2.2 generation with the owed list; dev-plant verification at 100 and 1,000 sheets with time measured (§17.7–17.8) | M | **independent: next** |
-| T7a | Plant-boundary closure pass: TOG34 battery-limit group on every open process end, and makeup gas for an unpaired reactor recycle port (§17.4) | M | **independent** |
-| T10 | SAC table `rules/sac.py` from the researcher's page-checked transcription; API14C-3.4-TWO-LEVELS, API14C-SAC, TOG207-HX-PSD-BOTH-SIDES, TOG236 | M | **the transcription** (researcher, not coder); D3 for derived exceptions |
-| T11 | Alternatives: TOG34 check variant, TOG173 reducers, TOG322 two-CV bypass, TOG214 double fuel valves, TOG309 reflux class, TOG122 PV without bypass | M | **independent**, unless the user vetoes an alternative |
-| T12 | External checks: composition report per sheet kind, the ch.20 comparison table (the annotation itself by the main session), the review checklist export | S | D7 for the review |
-| T13 | EXP-0009: ledger glob skips `reports/` (fix of the EXP-0008 double count, with a test on a copied call file), ids `g22`, seed draw, launcher stages, PREREG A template | M | **D1, D5** |
+**Remaining, in order** (revised 2026-11-23 after D1–D8). Sizes S/M/L follow the previous notes' scale; coder pace is
+unmeasured.
 
-**Decision-independent now:** T0 → T1 → T2 → T3 → T4 → T9 → T11, then T5's plan and DEXPI part.
-*Revised 2026-11-23 (§17.8):* T0–T4 and T9 are done; next T9b → T7a → T11 → T5 (plan and DEXPI part), all
-decision-independent.
+| Order | Task | Size | Who | Waits for |
+|---|---|---|---|---|
+| 1 | **T8** Pressure-level model and PRS-*, TOG82 (pump spec breaks), TOG156, PLT-RECYCLE-CLOSURE (scope of §17.12), API14C-A4-OVERPRESSURE; wires 6 pending rules | M | coder | **nothing** (D3 = yes); uncommitted T8 files are already in the working tree on 2026-11-23 (`pressure_levels.py`, `checks_pressure.py`, `checks_overpressure.py`, tests) |
+| 1′ | **T10a** SAC transcription (A-4.2, A-5.2, A-6.2, A-7.2, A-8.2, A-10.2), page-checked against the API text layer | — | researcher | **nothing: start now**, in parallel (not a coder) |
+| 2 | **T7** Networks and interarea: network units, headers, per-sheet sub-headers, network connectors, capacity overflow, splitter grouping, size search on total sheets, composition per sheet kind, TOG32/141/360/33, PLT-NETWORK-CLOSURE; empties `OWED_FIXES`; wires 5 pending rules | L | coder | T8 (one coder at a time; D4 = as proposed) |
+| 3 | **T6** Documents and conventions (§5, §18.2): `DocumentRecord` (runs of consecutive trains, `trains_per_document` declared from the median trains per 100 total sheets on v2.2 dev plants after T7); per-document draws of manual-valve tagging (0.75 untagged), spare naming, on-off letter and PV without bypass, from new streams (v2.1 per-train draws taken, values ignored); config override `handbook.document_untagged` for the stratified sealed plants; untagged manual valves (TOG113); `p_pump_reducers` 0.75; gold side of scope R (untagged refusal, FLOW_PATH tie rule, refused-share report; isolation families pre-registered unavailable); v2.1 question hash unchanged | M | coder | T7 |
+| 4 | **T10** `rules/sac.py` from T10a; API14C-3.4-TWO-LEVELS, API14C-SAC, TOG207-HX-PSD-BOTH-SIDES, TOG236; cheap SAC devices added, the rest DEFERRED one by one; wires 4 pending rules | M | coder | T10a, T8 |
+| 5 | **T12a** Expert-review package (§18.5): the 12 sheets drawn by the fixed rule, exported with the demo drawing export plus a legend sheet; the checklist printed from the registry | S | coder | T6, T7, T10 (the plants are complete) |
+| — | Expert review and triage | — | the user's reviewer; architect triages | T12a |
+| 6 | **T14** V2T-B system files (`v2t-b-system-revision.md` §3): B store view, VALVE_SET and POSITION types, `scoring_b.py` and its self-tests, `policy_b.py`, the import-isolation test; G0f stays green | M | coder | T6 |
+| 7 | **T15** Scope X (gold side): OPEN_VALVES_TO_ISOLATE (up, down), UPSTREAM_ISOLATION_X, DOWNSTREAM_ISOLATION_X, POSITION_OF_VALVE, descriptor gold and refusal, the A2 adapter (TAG_SET), discriminating-share report | M | coder | T14 |
+| 8 | **T12b** Composition report per sheet kind; the ch.20 comparison table (the annotation by the main session) | S | coder and main session | T7 |
+| 9 | **T16** Fixes from the review findings, if any (designed by the architect first) | ? | coder | the review |
+| 10 | **T13** EXP-0009 launcher: ledger glob skips `reports/` (with a test on a copied call file); ids `g22` and `…B`; seed draw plus size-target draw in the bands; stratified tagging allocation; two-view ingest; stages P1a–P1d; caps; PREREG A template | L | coder | all of the above |
+
+**A coder can start now:** T8 (or finish it: its files are already in the working tree, uncommitted), then T7. The researcher can start T10a at the same time.
 
 ## 14. Risks
 
 - **Composition drift.** Networks raise stubs per process sheet; FIC min-flow loops and SAC devices raise
   instruments per sheet. Mitigations: per-sheet sub-headers, cheap devices only, and the G0d gate. A failed band
   stops the run (U4 rule of ADR-0065): adjust a declared knob as a recorded generator change, or report the miss.
-- **Availability.** Isolation families may lose about the candidates of untagged trains. This is measured by G0e
-  and is not tuned.
-- **Build time.** Verification on 1,000-sheet plants is unmeasured (T1 measures it).
-- **Plant checks may fail on v2.1 seeds** (TOG271, TOG270, TOG320 are unknown). Each failure is a real finding: it
-  becomes a v2.2 fix, and the v2.1 record gets a note. v2.1 data is never changed.
+- **Availability.** Under the document unit, R's isolation families are unavailable by design (§11). The other
+  families are measured by G0e and are not tuned.
+- **B does not reach G1-B2.** Then B is not run sealed, the money of P1c-B is not spent, and the finding (the
+  revision harms the replication scope) is reported. EXP-0009 still delivers Q4 on A2.
+- **Descriptors are not unique often enough** (G0l). Then the case returns to the architect before E10.
+- **Between-plant spread grows on v2.2.** A 100-sheet plant is now wholly tagged or wholly untagged, which EXP-0008's
+  plants never were. The stratified allocation keeps the mix equal across scales; five plants per scale keep the
+  interval honest (§18.3).
+- **Machine time** of about 45–47 h for P1 (§12.3).
 - **Unverified sources.** Liptak 1995 cannot be page-checked. It supports nothing that is encoded.
 
 ## 15. Decisions for the user
 
-| # | Decision | Options | Recommendation | Consequence |
-|---|---|---|---|---|
-| D1 | System for EXP-0009 | A frozen V2T-A2 · B revision V2T-B · C both | **A** | clean data replication; positions not used by the system; isolation questions from tagged trains only |
-| D2 | Sampling units and weights | train for identification, item for arrangements; untagged 1 : 1 | **as proposed** | half the trains untagged, on average |
-| D3 | Hidden ordinal pressure model allowed under ADR-0021 (clarification) | yes · no (then T8 is dropped and PSD need stays per-pattern) | **yes** | 6 plant-level checks and derived SAC exceptions become possible |
-| D4 | Networks: FL, CHD, CWS/CWR, LPS/MPS/CD, FG plus interarea; counted in the sheet target | this set · fewer · not counted | **this set, counted** | more cross-sheet links, of the kind real sets have; the share is reported |
-| D5 | EXP-0009 scope | P1 now ($11.46, cap $16.50), P2 after a top-up · everything at once | **P1 now** | Q4 on v2.2 inside the current credit |
-| D6 | The deferred list (§4.9) | accept · pull items in | **accept** | the thesis states the encoded and deferred counts |
-| D7 | Expert review sample of 12 sheets | a reviewer exists · not | only if a reviewer is available | otherwise L3 is bands plus the ch.20 comparison |
-| D8 (2026-11-23) | Exchanger isolation policy (TOG207 restated, §17.5) | **A** one fixed policy: no process-side isolation, utility-side blocks allowed (what v2.1 already draws) · **B** sampled per train: in "isolating" trains, block valves on both process nozzles of every exchanger, still no bypass | **A** | A: no generator change, isolation answers as measured in EXP-0008. B: more valves in isolation answers, a new weight with no published frequency, and work in T11. Does not block: T9b builds A; B would be added in T11 |
+**Decided by the user on 2026-11-23.** What each decision changed is in §18.
+
+| # | Decision | Options put | Recommended | **Decided** | What it unblocks |
+|---|---|---|---|---|---|
+| D1 | System for EXP-0009 | A frozen V2T-A2 · B revision V2T-B · C both | A | **C: both arms on the same v2.2 plants** (credit will be topped up) | T14, T15; ADR-0067 |
+| D2 | Sampling units and weights | as proposed (per train, 1 : 1) | as proposed | **"whichever gives the more accurate result"**: calibrated from evidence (§18.2): conventions per document, untagged 0.75, pump reducers 0.75, the rest kept with reasons | T6 |
+| D3 | Hidden ordinal pressure model under ADR-0021 (clarification) | yes · no | yes | **yes** | T8 |
+| D4 | Networks: FL, CHD, CWS/CWR, LPS/MPS/CD, FG plus interarea; counted in the sheet target | this set · fewer · not counted | this set, counted | **as proposed** | T7 |
+| D5 | EXP-0009 scope | P1 now, P2 later · everything at once; the user added 3+3 plants and sheet bands for study | P1 now | **P1 now**, shape after the analysis of §18.3: **5 + 5 plants, size bands 90–110 and 900–1,100, both arms**; $24.95, cap $37.50 | T13 |
+| D6 | The deferred list (§4.9) | accept · pull items in | accept | **re-triage asked** → §4.9 bins, explained in §18.4 | T10 (bin "now") |
+| D7 | Expert review of 12 sheets | a reviewer exists · not | only if available | **yes; the user finds the expert** → plan §18.5 | T12a |
+| D8 | Exchanger isolation policy (§17.5) | A fixed: no process-side isolation, utility blocks allowed · B sampled per train | A | **A** | nothing to build: T9b already built A |
 
 ## 16. Source verification log (2026-11-22, by the architect)
 
@@ -1120,11 +1192,10 @@ in the gold and in the store alike.
 
 ### 17.10 Open questions
 
-1. **D8** (§15): the exchanger isolation policy. It does not block anything; A is built unless the user says B.
+1. **D8** (§15): closed 2026-11-23, the user chose A.
 2. **Column roles.** Should `PRESSURE_DEPENDENT_ROLES` include the column's accumulator? Toghraei's rule-8 examples
    do not name it. The coder reports which roles exist, and the architect decides in review.
-3. **ADR-0066** (proposed) still says "55 encoded rules (36 local, 19 plant-level) and 14 deferred groups" (line 98).
-   It must read 54 / 35 / 19 / 15 before acceptance.
+3. **ADR-0066** counts: closed. The decision text reads 54 / 35 / 19 / 15 (amended 2026-11-23).
 
 ### 17.11 After T9b (`3ea62cb`): two dev-plant findings, one correction, and the verification time
 
@@ -1252,3 +1323,263 @@ So the stage's capacity is already controlled, and its discharge pressure is set
 
 **Order.** T9c goes next, then T7a. The 1,000-sheet seed-7 dev plant must build with only PLT-STREAM-CLOSURE owed
 before T7a starts.
+
+## 18. The user's decisions of 2026-11-23 and what follows from them
+
+### 18.1 D1 = C: two systems on the same plants
+
+- **What it means.** EXP-0009 runs two systems on the same v2.2 plants:
+  - the frozen V2T-A2 (freeze E9), which measures the data;
+  - the revision V2T-B (freeze E10), which sees `operating_position` and names untagged valves.
+
+  The full design is `40-design/v2t-b-system-revision.md`, recorded in ADR-0067 (proposed).
+- **What relaxes for B.** Only system-side things:
+  - the property in B's store;
+  - B's schema-text and primer paragraphs;
+  - the VALVE_SET and POSITION answer types and their scorer;
+  - the new scope X families.
+- **What does not relax.** Anything in the plant data, because A2 must ingest the same plants. So TOG73, the
+  functional-only gauge tags and parallel loop numbering stay deferred (v2t-b note §1).
+- **How the effects are separated:**
+  - **data effect:** V2T-A2 on v2.2 against V2T-A2 on v2.1 (EXP-0008), unpaired;
+  - **system effect:** V2T-B − V2T-A2 on the same questions, paired, in scope R ("no harm") and scope X ("value of
+    the content").
+
+### 18.2 D2: weights and units calibrated from evidence
+
+**How I read the decision.** "The more accurate result" means the generator closest to real drawing sets. It never
+means the weight that gives the retrieval system the higher score. Choosing a weight for the score would tune the
+data to the system, which §11 forbids.
+
+**Manual-valve tagging: the evidence I measured today (2026-11-23, free).** The unit is the drawing set (one
+company's convention). Sets come from `C:/Users/Otthon/Desktop/valos-pid-mintak/` (`real-pid-samples-2026-10.md`)
+and the Toghraei PDF. I rendered the pages with pdftoppm and read them as images; DEXPI C01 I parsed as XML.
+
+| Drawing set | Industry | Manual valves | What I looked at |
+|---|---|---|---|
+| Covestro UER-1234567 / UER-2345678 (DEXPI C08) | chemical | **tagged** (`AB002`…`AB065`, unique numbers) | text layer of both sheets: `AB` numbers 64 and 6 times |
+| Hanford WTP AR-03207 (Bechtel 2019) | nuclear waste | **tagged** (`DEP-V-44353`, `DEP-V-44848`, `DEP-V-00813`) | page 22 |
+| Valdosta WPCP (CDM Smith) | wastewater | **tagged** (`BV-906-1`) | page 3 |
+| DEXPI C01 reference P&ID | demonstrator | **untagged**: only a valve-type code, shared (five ball valves read `73KH12`) | the XML |
+| BASF process column (DEXPI C02) | chemical | **untagged**: type code `H658B1UV` on two valves, `H672B1V` | the PNG |
+| Equinor piping (DEXPI C03) | oil and gas | **untagged**: the manual vent valve has no tag; ESV 3712 has one | the PNG |
+| OPEN100 (12 sheets) | nuclear design | **untagged**: pump isolation and transmitter root valves; MOVs tagged | CVCS and RHR sheets |
+| Hanford HWVP (Fluor 1990) | nuclear | **untagged**: header valves carry line numbers only; FV/YV/TV tagged | page 23 |
+| Wenatchee WWTP (RH2/HDR) | wastewater | **untagged** | page 9 |
+| Southwest Middlesex SPS (Stantec) | wastewater | **untagged** | page 4 |
+| Ford, Bacon & Davis pump template (slide 74) | gas processing | **untagged** | the slide |
+| Toghraei 2019 ch.20 (34 sheets) | textbook | **untagged** | the earlier note (all 34 viewed); the battery-limit sheet (PDF p.454) re-read today |
+
+- **Result:** 9 of 12 sets untagged, **0.75** (Wilson 95 % interval 0.47–0.91). The non-nuclear sets alone give 7 of
+  9 (0.78; 0.45–0.94).
+- **Toghraei p.113 is not borne out as a rule.** It says critical plants, nuclear among them, commonly tag manual
+  valves. Of our three nuclear sets, one tags (WTP) and two do not (OPEN100, HWVP). The convention is
+  company-specific.
+- **Limits:**
+  - twelve sets is a small convenience sample (whatever was public);
+  - wastewater and nuclear are over-represented and refinery sets are thin (the El Paso sheet is too coarse to read);
+  - the three DEXPI files are demonstrators;
+  - reading a shared valve-type code as "untagged" is my interpretation. A code that several valves share cannot
+    name one valve, which is what matters for an answer.
+- **Chosen:** `p_untagged_manual_document` = **0.75**.
+
+**The sampling unit: per train does not match the evidence.**
+- **What the sets show.** Every multi-sheet set I looked at keeps one convention on all its sheets: both Covestro
+  sheets, WTP, two OPEN100 sheets, the 34 Toghraei sheets.
+- **What a train is.** On EXP-0008's sealed plants (counted today with `draw_flowsheet` on their stored configs)
+  there are 10–12 trains per 100-sheet plant and 110–119 per 1,000-sheet plant, so a train is about 9 sheets. A
+  per-train draw mixes conventions about ten times finer than any real set does.
+- **What the thesis scope says.** One ~100-page document; a plant region of ~10 documents.
+- **Chosen: per document.** A document is a run of consecutive trains, about 100 sheets long. It applies to every
+  company convention: tagging, spare naming, on-off letter and PV without bypass.
+- **What the document unit buys the claim.** A 1,000-sheet plant then mixes about ten contractors' styles, while a
+  100-sheet plant has one. That cross-document variety is a real property of plant scale, the very axis the claim is
+  about. Per-train sampling would hide it.
+- **What it costs:**
+  - R's two isolation families are unavailable (§11) and move to scope X;
+  - 100-sheet plants become wholly tagged or wholly untagged, so the sealed plants are stratified (§18.3).
+
+**The other weights.**
+
+| Weight | Evidence | Limits | Chosen |
+|---|---|---|---|
+| Spare naming suffix : consecutive (3 : 2) | 4 sets suffix (WTP, FB&D `P-551A/B`, OPEN100, Toghraei ch.20) : 2 consecutive (Covestro, Wenatchee), from `real-pid-samples-2026-10.md` §5 (earlier hand count, not re-opened); 4/6 = 0.67, interval 0.30–0.90; Toghraei p.28 calls consecutive "the current trend" | six sets | **keep 3 : 2**: 0.6 lies inside the interval, and the book leans the other way |
+| On-off letter X : Y (1 : 1) | X: FB&D fired heater, Toghraei Table 7.9 (p.113); Y: WTP, HWVP | four sets | **keep 1 : 1** |
+| PV station without bypass (0.5) | no count of pressure stations. WTP draws no bypass on any of its 4 control valves (a broader policy); Covestro bypasses 5 of 8 actuated valves, without recording which | none usable | **keep 0.5**. Toghraei's "some companies" (p.122) is no minority signal: his same phrase on p.113 turned out to be 9 of 12 |
+| Pump nozzle reducers (0.5) | reducers on the pump nozzles in 3 of the 4 sets that draw pump trims: FB&D template (read today), Toghraei ch.20 pump sheets and WTP H3 (earlier notes); none on Wenatchee (flexible connectors, read today) | four sets; nozzle size is not modelled | **0.75** |
+| Min-flow power band (1 : 1 : 1 : 1) | none: pump power is datasheet data (ADR-0021) | — | **keep** |
+| Battery-limit isolation, 3 variants (1 : 1 : 1) | Toghraei ch.20 "Plant Battery Limit" (PDF p.454, read today): gate valves at the limit with blinds and drains, no check valve on the part read | one sheet cannot set three weights | **keep** |
+| Exchanger bypass TV alone : two CVs (1 : 1) | no count | — | **keep** |
+| Condensate trap : station : drain pot (2 : 1 : 1) | existence only (El Paso stations, WTP drain pot) | — | **keep** |
+| Fuel valves one : two (1 : 1) | FB&D fired heater draws two in series; p.214 "in some designs" | one sheet | **keep** |
+| Reflux class (1 : 1) | none: L/D is datasheet data | — | **keep** |
+
+### 18.3 D5: 3 + 3 against 5 + 5 plants, and sheet bands
+
+**Data.** These are the per-plant headline counts of cascade_v4_iso in EXP-0008, n = 220 per plant, from the T1
+tables of `data/runs/exp0008/reports/sealed/report.md`:
+- S100: 203, 198, 204, 200, 200;
+- S1000: 199, 198, 195, 200, 207.
+
+I ran the repo's own two-stage bootstrap (`stats_cluster.cluster_unpaired_bootstrap`, 5,000 resamples, seed 1) on
+these counts for free. The script is in the session scratchpad.
+
+| Quantity | Value |
+|---|---|
+| between-plant SD of accuracy, S100 / S1000 | 0.011 / 0.020 |
+| SD expected from question sampling alone (n = 220) | 0.019 / 0.020 |
+| Q4 at 5 + 5 (reproduces EXP-0008's −0.005 [−0.035, +0.025]) | −0.005 [−0.034, +0.025], width **0.059** |
+| Q4 over all 25 subsets of 4 + 4 | width median **0.067** (0.058–0.071) |
+| Q4 over all 100 subsets of 3 + 3 | width median **0.073** (0.064–0.083); estimate −0.023 to +0.012; 100 of 100 pass |
+
+**Reading.**
+1. **On v2.1 the plants differed no more than question sampling explains.** So the precision rests mostly on the
+   total number of questions, and 3 + 3 widens the interval by about a quarter.
+   - The drop the design would catch with 80 % power (normal approximation, 2.8 × width / 3.92) is about 4.2 points
+     at 5 + 5 and 5.2 points at 3 + 3.
+2. **Q4 passes when the interval's upper end is at or above 0.** A wider interval passes more easily: all 100 of the
+   3 + 3 subsets pass. With fewer plants a pass says less.
+3. **v2.2 adds a between-plant factor that EXP-0008 never had.** A 100-sheet plant is wholly tagged or wholly
+   untagged (§18.2), so EXP-0008's near-zero plant spread may not carry over. More plants protect against that.
+4. **Stratification needs enough plants.**
+   - Five plants give 4 untagged + 1 tagged (0.8).
+   - Three give 2 + 1 (0.67).
+   - At 1,000 sheets each plant gets 8 of its about 10 documents untagged (0.8).
+
+   Only five (or four) plants per scale can hold the same mix at both scales. I fix the allocation at **0.8 per
+   scale**: the nearest share to 0.75 that five plants hold exactly. It sits inside the interval of §18.2.
+
+**Cost and time of the shapes** (§12.3 method):
+
+| Shape | P1 estimate | Hard cap (1.5×) | Machine time |
+|---|---|---|---|
+| 3 + 3, both arms | $18.74 | $28.10 | ≈ 31 h |
+| 4 + 4, both arms | $21.85 | $32.80 | ≈ 38 h |
+| A2 on 5 + 5, B on the first 3 + 3 of them | $21.80 | $32.70 | ≈ 41 h |
+| **5 + 5, both arms** | **$24.95** | **$37.50** | **≈ 46 h** |
+
+**Sheet bands (the user's proposal ii).**
+- **The draw.** Each sealed plant draws its target uniformly among the integers 90–110 or 900–1,100 from the seed
+  tool's stream. The target is written into PREREG A before any plant is built. The size search counts network
+  sheets (D4) and lands within +2 of the target, as EXP-0008's plants did (100–101 and 1,000–1,002 sheets).
+- **The effect on the scale claim.** A pair of plants then spans 0.91–1.09 decades instead of exactly 1.0. EXP-0008
+  measured about −0.005 accuracy per decade and a cost elasticity of 0.044, so the band moves accuracy by under
+  0.001 and cost per question by under 1 %. The precision does not change. Reports give the actual mean sheets, and
+  the elasticity uses actual sheets.
+- **What it buys.** No real document has exactly 100 pages, and fixed targets were an artefact.
+
+**Recommendation for P1 (the decision D5):**
+- **5 + 5 plants, both arms, sizes drawn in the bands, the tagging stratified at 0.8;**
+- estimate **$24.95**, ledger hard cap **$37.50**, about 46 h of machine time (§12.3).
+- **Why not 3 + 3:** it saves $6.21 and about 15 h, but it widens Q4 by a quarter, weakens a pass, cannot hold the
+  same mix at both scales, and breaks the comparison with EXP-0008's five-per-scale design.
+- **Why not 4 + 4:** it is the honest middle (exact 0.75 mix, width 0.067). It would be my choice if machine time
+  were the binding constraint. The user said cost must not block, so five plants keep EXP-0008's design.
+- **Why not the hybrid:** Q4-B would rest on three plants with a 2 : 1 mix.
+
+### 18.4 D6: the deferred list in plain words
+
+One line each, for relay. The full table is §4.9.
+
+| # | What it is | Bin | Why |
+|---|---|---|---|
+| 12 | Extra protection devices from API 14C (compressor PSH/PSL/TSH, blowdown valve, vessel low-level switch) | **now, in T10** | cheap devices are added where the composition bands allow; the rest are listed one by one as deferred |
+| 9 | Nitrogen blanketing of tanks and vapour recovery | **if the expert flags it**, before the freeze | big job (split-range control and a new network); it would also close the "where does a closed vessel's vapour go" gap |
+| 11 | Fired-heater detail: burner passes, pilot gas, snuffing steam | **if the expert flags it**, before the freeze | big job; a new heater variant |
+| 1 | Local gauges with only a function label (just "PI", no number) | out | identical labels would break tag identity in the frozen system both arms share |
+| 2 | Parallel loop numbering (FIC-101 and LIC-101 together) | out | it clashes with the key that joins signal connectors in the shared store |
+| 3 | Gaps in tag numbering | out | nothing a question or a check can see |
+| 4 | API's "S" letters (PSH meaning "safety") | out | the same letters mean something else in ISA, so the frozen system would be misled by design |
+| 5 | Trip through a solenoid on the control valve | out | it changes the answer of a registered question family, and its source page cannot be checked |
+| 6 | Minimum flow through a pressure kickback or a low-flow pump trip | out | its source is a scanned book whose pages cannot be checked |
+| 7 | Three-way valve at an exchanger | out | it needs a new component class, which changes every corpus's schema text |
+| 8 | Pulsation dampener, back-pressure and self-acting regulators | out | new class and a new control-loop shape |
+| 10 | Double block and bleed; blinds at pump isolation | out | it changes what "the valves to close" means for both systems' isolation questions |
+| 13 | Shutting in at the primary source (trip stops the pump across sheets) | out | it needs a new kind of signal link; we report how many trips act at the source instead |
+| 14 | Interlock drawing style; multi-stage compressors; lube-oil and seal systems | out | style is not in the graph; lube and seal systems are vendor detail sheets |
+| 15 | Untagged short branch pipes (TOG73) | out | the frozen system cannot read unnumbered branches, and both systems share the plants |
+
+**"Until when":** "now" lands before EXP-0009's data freeze (T10). "If flagged" lands before the freeze only if the
+expert review points at it; otherwise it stays deferred for this thesis. "Out" is listed in the thesis as a
+limitation, with the count (15 deferred, 54 encoded).
+
+### 18.5 D7: the expert review (T12)
+
+**Which 12 sheets, and how they are chosen.**
+- **The plant:** the dev plant `D1000g22`, never an EXP-0009 plant. It has about ten documents, so both tagging
+  conventions are on it.
+- **The rule** is fixed in T12a with a recorded seed; nobody picks sheets by eye.
+  - Sheets 1–8: one per pattern, U1 column, U2 compressor, U3 reactor system (its fired-heater sheet), U4 tank farm, U5
+    exchanger train, U6 flash drum, U7 filter package, U8 blending. Each is the first sheet of a unit drawn
+    uniformly among that pattern's units (for U3, the furnace's own sheet).
+  - Sheet 9: an FL (relief) network sheet. Sheet 10: an interarea sheet. Sheet 11: a pump set on its own sheet.
+    Sheet 12: a steam or cooling-water network sheet.
+  - **Constraint:** at least 4 sheets from tagged and 4 from untagged documents. If it fails, the last slots are
+    redrawn in a fixed order.
+- **Export.** The demo drawing export shows tags, line numbers, NO/NC/CSO and FO/FC labels. One legend page is added,
+  and a one-page cover note says what the generator does **not** model (chemistry, sizing, set points, real
+  frequencies), so that the expert does not judge those.
+
+**The checklist** (plain English). Each item is answered per sheet: OK / Not OK / Not applicable / Can't tell, with
+a comment.
+
+| # | Item | Rule ids |
+|---|---|---|
+| 1 | Each centrifugal pump has a suction block valve and strainer, and a discharge pressure gauge, check valve and block valve | TOG175-PUMP-TRIM |
+| 2 | The check valve on each pump discharge is right for the pump type (none on reciprocating pumps) | TOG192-RECIP-NO-CHECK |
+| 3 | Minimum-flow lines leave at a sensible place and use a sensible method; none on positive-displacement pumps | TOG177-MINFLOW-TAKEOFF, TOG313-MINFLOW-METHOD, TOG192-PD-NO-MINFLOW |
+| 4 | Positive-displacement pumps have a relief path and no throttling valve on the discharge | TOG219-PD-RELIEF, TOG314-PD-NO-THROTTLE |
+| 5 | Compressors: anti-surge only on centrifugal machines; capacity control right for the type; discharge check valve and PSV | TOG319, TOG316, API14C-A8-FSV, API14C-A8-PSV |
+| 6 | No two control valves in series on one liquid line | TOG271-ONE-CV-LIQUID |
+| 7 | Every vessel's level and pressure are controlled once, or plausibly not at all | TOG295-INVENTORY-ONCE |
+| 8 | Every pump's flow is controlled somehow (own loop, speed, or a level valve) | TOG270-PUMP-FLOW-CONTROLLED |
+| 9 | Flow elements sit upstream of their flow control valves | TOG267-FE-UPSTREAM-FV |
+| 10 | Exchanger temperature control moves the right stream; the bypass arrangement is plausible | TOG320-HX-NONTARGET, TOG322-HX-BYPASS-VARIANT |
+| 11 | Exchanger isolation matches a "no process-side isolation" company policy | TOG207-HX-NO-ISOLATION (D8) |
+| 12 | Vessels and exchangers have relief, and pressure vessels a second protection level | TOG219-VESSEL-PSV, TOG207-HX-PSD-BOTH-SIDES, API14C-3.4-TWO-LEVELS |
+| 13 | PSV block valves are car-sealed open, with nothing else between the vessel and its PSV | TOG224-PSV-BLOCKS-CSO, TOG224-PSV-PIPE-CLEAN |
+| 14 | Atmospheric tanks have a breather and an emergency vent | TOG236-TANK-EMERGENCY-VENT |
+| 15 | The normal positions (NO, NC, CSO) and fail actions (FO, FC) shown are plausible | TOG114-*, TOG120-CV-BYPASS-NC, TOG114-FAIL-ACTION |
+| 16 | Manual valves follow one tagging convention on the sheet (all tagged or none) | TOG113-MANUAL-VALVE-TAGS |
+| 17 | Tags, spare naming (A/B or consecutive) and loop numbers read naturally | TOG28-SPARE-NAMING, LIP1-1.1-SHARED-LOOP-NUMBER, TOG113-AUTOMATIC-VALVE-LETTERS |
+| 18 | Relief, drains and utilities leave through connectors to network sheets; drains go to the right system | TOG32-NETWORK-SHEETS, TOG141-DRAIN-DESTINATION, TOG360-UTILITY-NETWORKS |
+| 19 | Network and interarea sheets look like real header and interconnection sheets | TOG32, TOG33-INTERAREA, PLT-NETWORK-CLOSURE |
+| 20 | Battery-limit crossings are plausible | TOG34-BL-ISOLATION |
+| 21 | Spec breaks sit where the pressure changes | TOG82-SPEC-BREAK, PRS-SPEC-CLASS |
+| 22 | Check valves sit where a low-pressure stream joins another | TOG156-MERGE-CHECK |
+| 23 | Every line on the sheet starts and ends somewhere sensible | TOG24-NO-VISITING-STREAM, PLT-STREAM-CLOSURE |
+| 24 | The amount of equipment, valves and instruments on the sheet is believable | composition bands (ADR-0059) |
+| 25 | Anything that looks wrong, or that a real sheet would never show | open |
+
+**How the result enters the thesis.**
+- **A table:** per item, the number of sheets judged OK, Not OK and Not applicable.
+- **Every "Not OK" is triaged by the architect** into:
+  - (a) a fix before the freeze (task T16, under its rule id);
+  - (b) a restated rule;
+  - (c) a recorded limitation.
+- **The wording:** "one practising P&ID engineer reviewed 12 generated sheets against a 25-item checklist". The
+  reviewer's background (years, industry) is given, and the name only with their consent. It is an external check
+  (L3, §2), not a validation of realism.
+- **If the review arrives after the freeze,** it is reported without fixes to the EXP-0009 plants.
+- **The expert's time:** about 2–3 hours by my estimate (12 sheets plus the checklist). Not measured.
+
+### 18.6 D3, D4, D8
+
+- **D3 = yes.** The hidden ordinal pressure levels are a clarification of ADR-0021. T8 is unblocked and is the next
+  coder task.
+- **D4 = as proposed.** The network set plus interarea sheets, counted in the sheet targets. T7 is unblocked.
+- **D8 = A.** One fixed policy: no process-side isolation, utility-side blocks allowed. T9b already built it, so
+  nothing remains to build.
+
+### 18.7 What still needs the user
+
+1. **Accept ADR-0066** (amended) and **ADR-0067** (V2T-B).
+2. **5 + 5 against the user's own 3 + 3** (§18.3). I recommend 5 + 5: about $6.21 and 15 machine hours more.
+3. **The document unit also for spare naming and the on-off letter.** I included them because the same evidence
+   applies. It changes the structure the identity arm (P2) meets: consecutive spare numbering then covers a whole
+   document.
+4. **The SB1 margin of −0.03** (B must not lose more than 3 points on the replication scope), or report B − A2 on R
+   only descriptively.
+5. **The reviewer:** background, consent to be named, and when the review can happen (it is most useful before the
+   freeze).
+6. **The top-up:** P1 needs up to $37.50 (estimate $24.95); P2 later up to $13.50.
