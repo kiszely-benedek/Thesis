@@ -18,8 +18,8 @@ changes. v2.2 does four things:
 
 1. **A rule registry.** Each encoded rule has an id that names the book and page, a paraphrased statement, its
    sources, any conflict and the choice made, its declared parameters, a code comment at the place that applies it,
-   and a check function. The design encodes **55 rules**: 36 local rules and 19 plant-level checks (§4). It records
-   **14 groups of rules that were read but deferred**, each with a reason.
+   and a check function. The design encodes **54 rules**: 35 local rules and 19 plant-level checks (§4). It records
+   **15 deferred entries** (14 groups read but deferred, plus TOG73, deferred in T3), each with a reason.
 2. **A plant-level correctness layer** (§2, §6) on top of the local rules. It checks stream closure, an ordinal
    **pressure-level model** kept as hidden generator state, control structure, protection presence-or-exception
    (API RP 14C), and network closure. **Every v2.2 plant is verified when it is built.** A violation refuses the
@@ -82,7 +82,7 @@ is wrong as a whole:
 
 | Layer | Guarantees on every built plant | Does not guarantee |
 |---|---|---|
-| L1 local rules (36) | no encoded local pattern is violated; every sampled alternative is one a book names | anything across trims |
+| L1 local rules (35) | no encoded local pattern is violated; every sampled alternative is one a book names | anything across trims |
 | L2 plant-level checks (19) | flow closure, phase compatibility, closed recycles; a consistent ordinal pressure order with movers, letdowns, check valves, spec breaks and PSD need; control structure (each inventory controlled once, ≤ 1 CV in series on a liquid line, FE before FV, every pump's flow controlled); protection present or excepted per API 14C; network closure | the real pressures, the hp, whether the chemistry makes sense |
 | L3 external checks | composition inside the OPEN100 bands (process sheets); a reported comparison with the 34 example sheets of Toghraei ch.20; an optional expert review sample | that the plants match any real plant |
 | Not covered | process chemistry, mass and energy balance, sizing, set points, real frequencies, rules deferred or never read, company style beyond the sampled alternatives, drawing layout | — |
@@ -187,8 +187,11 @@ class RuleReport(BaseModel): generator_version: str; rows: tuple[RuleRow, ...]  
 
 ### 3.4 Size
 
-- **Rules:** 55 encoded (36 local, 19 plant-level) and 14 deferred groups.
-- **Tests:** 55 positive tests (275 parametrised cases over 5 seeds), 55 mutation tests, the non-vacuity tests and
+- **Rules:** 54 encoded (35 local, 19 plant-level) and 15 deferred entries (the 14 groups of §4.9 and TOG73, which
+  T3 deferred because the frozen line view could not take unnumbered branches).
+- **Wired today (after T9, 2026-11-23):** 25 of the 54 have a check that runs. The other 29 are `pending:<task>`
+  (T11 6, T8 6, T5 5, T7 5, T10 4, T6 1, and 2 marked `unassigned`, which §17.8 gives to T9b).
+- **Tests:** 54 positive tests (270 parametrised cases over 5 seeds), 54 mutation tests, the non-vacuity tests and
   4 registry tests (ids unique and well-formed, every encoded rule has a check and a comment, comments resolve, the
   registry is printed into the thesis appendix table by a CLI).
 - **Unknown yet:** the API 14C SAC items (PRT rules) are transcribed in T10. Their per-item count is known only
@@ -208,7 +211,7 @@ Legend:
 |---|---|---|---|---|---|
 | TOG28-SPARE-NAMING | Installed spares are tagged P-125A/B, or as unrelated numbers P-125/P-126; one convention per train | TOG p.28; LIP1 §1.1 PDF p.76 (A/B suffix on spares' instruments) | ok: already drawn per train, suffix : consecutive = 3 : 2 (`vocabulary.py` `SPARE_NAMING_WEIGHTS`) | cite, test | ALT, train |
 | TOG113-MANUAL-VALVE-TAGS | Within a train, either every manual valve carries a tag or none does; automatic valves, safety valves and instruments are always tagged | TOG p.113 | every manual valve tagged | new | ALT, train |
-| TOG73-UNTAGGED-BRANCH-PIPES | No line number on a short pipe to a plugged or blinded vent or drain valve, nor on a control-valve bypass pipe | TOG p.73 (Table 6.3) | branches numbered (`trim_plan.py`) | fix | FORBID |
+| TOG73-UNTAGGED-BRANCH-PIPES | No line number on a short pipe to a plugged or blinded vent or drain valve, nor on a control-valve bypass pipe | TOG p.73 (Table 6.3) | branches numbered (`trim_plan.py`) | **DEFERRED in T3** (§10: the frozen line view fails on the fixture); counted in §4.9 | FORBID |
 | LIP1-1.1-SHARED-LOOP-NUMBER | All members of a loop share its number | LIP1 §1.1 PDF p.76 | ok (S4, S8) | cite, test | PLACE |
 | TOG113-AUTOMATIC-VALVE-LETTERS | A control valve is the loop's xV; a switching valve is XV/UV; a hand control valve is HCV | TOG p.113 (Table 7.9) | ok (S4, S7) | cite, test | PLACE |
 
@@ -251,7 +254,7 @@ Legend:
 
 | Id | Rule | Sources | v2.1 | v2.2 | Kind |
 |---|---|---|---|---|---|
-| TOG207-HX-NO-ISOLATION | No isolation valves and no bypass around an exchanger unless it has a spare or a cleaning system | TOG p.207 | ok (`patterns/exchanger.py`) | cite, test | FORBID |
+| TOG207-HX-NO-ISOLATION | **Restated 2026-11-23 (§17.5).** Isolation at an exchanger is company policy ("subjective", p.207); v2.2 follows the no-isolation policy on the **process side**: the process side is never blocked in on both inlet and outlet, and has no hand bypass, unless the exchanger has an installed spare or a cleaning-in-place system. Utility-side valves are outside the rule | TOG p.207 | ok on the restated rule (T9 diagnostic, seeds 1–5) | cite, test | FORBID |
 | TOG320-HX-NONTARGET | The temperature controller moves the non-target stream: directly on a utility, by a bypass on a process stream | TOG p.320–321 | not checked | check | PLANT |
 | TOG322-HX-BYPASS-VARIANT | A bypass TV alone, or control valves on both the main and the bypass branch | TOG p.322 | bypass alone | new | ALT, item |
 | TOG326-STEAM-CONDENSATE | Steam heater condensate: trap, trap station, or a condensate pot with level control | TOG p.326–327 | ok (`CondensateMode`, 2 : 1 : 1) | cite, test | ALT, item |
@@ -261,9 +264,9 @@ Legend:
 
 | Id | Rule | Sources | v2.1 | v2.2 | Kind |
 |---|---|---|---|---|---|
-| TOG271-ONE-CV-LIQUID | At most one control valve in series on a liquid-filled line between two containers; a flooded vessel counts as pipe | TOG p.271 | not checked | check | PLANT |
+| TOG271-ONE-CV-LIQUID | At most one control valve in series on a liquid-filled line between two containers; a flooded vessel counts as pipe; the valves of a temperature split around an exchanger (bypass TV, or the TOG322 valve pair) do not throttle the line and do not count (§17.2) | TOG p.271; p.321–322 (split valves keep the total flow) | **fails** (T9): FV of a farm transfer, then the optional FV of a filter package | check; v2.2 fix in T9b (§17.2) | PLANT |
 | TOG267-FE-UPSTREAM-FV | A flow element sits upstream of the FV of its loop | TOG p.267 | not checked | check | PLANT |
-| TOG295-INVENTORY-ONCE | A non-flooded liquid container has exactly one level loop; a gas container exactly one pressure loop; a flooded container none. Exception codes: `storage_tank_batch`, `pressure_floating_on:<id>` | TOG p.295 (Table 15.1), p.270 (rule 8) | not checked | check | PLANT |
+| TOG295-INVENTORY-ONCE | A non-flooded liquid container has exactly one level loop; a container a process gas line passes through, or whose function depends on pressure, exactly one pressure loop; any other container at most one; a flooded container none. Exception codes (derived by the check, §17.3): `storage_tank_batch`, `pressure_floating_on:<id>`, `pressure_optional` | TOG p.295 (Table 15.1), p.270 (rule 8; "may choose to control both"), p.305 (flows to storage and intermittent flows) | fails before §17.3 (additive day tanks, one blend vessel) | check | PLANT |
 | TOG309-SPLIT-PAIRING | At a drum split, flow control goes on the smaller stream and level control on the other | TOG p.309 | fixed: reflux FIC, distillate LV | new; the hidden reflux class decides | ALT, item |
 | TOG122-PV-NO-BYPASS | Some companies give pressure-control valve stations no bypass | TOG p.122 | always a bypass | new | ALT, train |
 
@@ -297,8 +300,9 @@ Legend:
 | TOG156-MERGE-CHECK | A low-pressure or intermittent stream tying into another has a check valve | TOG p.156 | not checked | check | PLANT |
 | API14C-A4-OVERPRESSURE | An enclosure fed from a higher level, or by a PD mover, has a PSD; otherwise exception `source_cannot_exceed` comes from the pressure model | API 14C A.4.2.2.1 a p.26 | partial | new | PLANT |
 
-**Count:** §4.1 5, §4.2 6, §4.3 10, §4.4 4, §4.5 5, §4.6 5, §4.7 6, §4.8 14, which makes **55 rules**. The 19
-plant-level rules are those of kind PLANT.
+**Count:** §4.1 5, §4.2 6, §4.3 10, §4.4 4, §4.5 5, §4.6 5, §4.7 6, §4.8 14 rows, which made 55 rules; TOG73 was
+deferred in T3, so **54 rules are encoded** (35 local, 19 plant-level). The 19 plant-level rules are those of kind
+PLANT. 25 of the 54 are wired after T9 (§3.4).
 
 ### 4.9 Read but deferred (status DEFERRED, in the registry with a reason)
 
@@ -318,6 +322,9 @@ plant-level rules are those of kind PLANT.
 | Compressor PSH/PSL/TSH/BDV, vessel LSL and the other SAC devices without a derivable exception | API 14C SAC A-4.2, A-8.2 (T10) | each becomes a DEFERRED SAC row, unless the device is cheap and inside the composition bands |
 | Shut-in at the primary source | API 14C §4.2.3 p.14 | needs trip → motor interlock edges across sheets, which S19/S20 forbid; v2.2 reports the share of trips that act at the source |
 | Interlock-diamond drawing style; multi-stage compressors; lube-oil and seal systems | TOG ch.16, ch.10 (note) | drawing style, or detail P&IDs |
+| TOG73 untagged branch pipes (was encoded; deferred in T3) | TOG p.73 (Table 6.3) | the frozen line view (`graph/line_view.py`) cannot take unnumbered branches; §10 says defer rather than change a frozen file |
+
+**Count:** 14 groups plus TOG73 = **15 deferred entries** in the registry.
 
 ## 5. Sampled alternatives and their sampling unit
 
@@ -424,10 +431,11 @@ number fields. So the model makes visible data *consistent* without adding visib
 - **TOG267.** There is a `send_to` path from the FE to its FV, and none from the FV back to the FE except through a
   recycle. This covers the min-flow FIC (FE on the discharge, FV on the spillback) and the anti-surge loop (FE on the
   suction).
-- **TOG295.** The exception codes are written by the pattern that builds the container. Tank-farm tanks are
-  `storage_tank_batch` (Toghraei p.305 says flow to storage is often not controlled; that page is from the note,
-  marked unverified in the registry, so the exception cites p.295 only). A drum that floats on a controlled
-  neighbour with no valve between gets `pressure_floating_on:<id>`.
+- **TOG295.** *Superseded by §17.3 (2026-11-23).* The exception codes are **derived by the check** from the plan's
+  structure, not written by the pattern (T9's choice, accepted: derived, never drawn, as §6.4 asks). An atmospheric
+  tank with a level transmitter and no level loop is `storage_tank_batch` (p.305 is now page-checked). A drum that
+  floats on a controlled neighbour with no valve between gets `pressure_floating_on:<id>`. A container that needs no
+  pressure loop and has none is `pressure_optional`.
 - **No full degrees-of-freedom analysis.** The checks stop at "each inventory controlled once, no stream
   manipulated twice in series, every pump's flow controlled". The thesis says so.
 
@@ -734,13 +742,17 @@ generation 421.6 s; at 1,000 sheets Cypher 1.44 h + agent 1.70 h per 560 questio
 | T6 | Manual-valve tagging per train (TOG113); gold-side refusal of untagged answers, the FLOW_PATH tie rule and the refused-share report; v2.1 question hash unchanged | M | **D1, D2** |
 | T7 | Networks and interarea: network units, headers, per-sheet sub-headers, network connectors, capacity overflow, splitter grouping, size search on total sheets, composition per sheet kind, TOG32/141/360/33, PLT-NETWORK-CLOSURE | L | **D4** |
 | T8 | Pressure-level model and PRS-*, TOG82 (pump spec breaks), TOG156, PLT-RECYCLE-CLOSURE, API14C-A4-OVERPRESSURE | M | **D3** |
-| T9 | Control checks TOG271, TOG267, TOG295, TOG270, TOG320, TOG224-PSV-PIPE-CLEAN, TOG24, PLT-STREAM-CLOSURE; any failure on v2.1 seeds is reported back to the architect before a fix | M | **independent** (checks); fixes may need a decision |
+| T9 | Control checks TOG271, TOG267, TOG295, TOG270, TOG320, TOG224-PSV-PIPE-CLEAN, TOG24, PLT-STREAM-CLOSURE; any failure on v2.1 seeds is reported back to the architect before a fix | M | **done** (`6f7f906`); four failures, decided in §17 |
+| T9b | The §17 fixes: TOG271 split valves and the U7 flow indicator; TOG295 derived exceptions; TOG207 restated; PLT-STREAM-CLOSURE on the plant graph; checks for API14C-A8-FSV and API14C-A8-PSV; `verify_plant` wired into v2.2 generation with the owed list; dev-plant verification at 100 and 1,000 sheets with time measured (§17.7–17.8) | M | **independent: next** |
+| T7a | Plant-boundary closure pass: TOG34 battery-limit group on every open process end, and makeup gas for an unpaired reactor recycle port (§17.4) | M | **independent** |
 | T10 | SAC table `rules/sac.py` from the researcher's page-checked transcription; API14C-3.4-TWO-LEVELS, API14C-SAC, TOG207-HX-PSD-BOTH-SIDES, TOG236 | M | **the transcription** (researcher, not coder); D3 for derived exceptions |
 | T11 | Alternatives: TOG34 check variant, TOG173 reducers, TOG322 two-CV bypass, TOG214 double fuel valves, TOG309 reflux class, TOG122 PV without bypass | M | **independent**, unless the user vetoes an alternative |
 | T12 | External checks: composition report per sheet kind, the ch.20 comparison table (the annotation itself by the main session), the review checklist export | S | D7 for the review |
 | T13 | EXP-0009: ledger glob skips `reports/` (fix of the EXP-0008 double count, with a test on a copied call file), ids `g22`, seed draw, launcher stages, PREREG A template | M | **D1, D5** |
 
 **Decision-independent now:** T0 → T1 → T2 → T3 → T4 → T9 → T11, then T5's plan and DEXPI part.
+*Revised 2026-11-23 (§17.8):* T0–T4 and T9 are done; next T9b → T7a → T11 → T5 (plan and DEXPI part), all
+decision-independent.
 
 ## 14. Risks
 
@@ -765,6 +777,7 @@ generation 421.6 s; at 1,000 sheets Cypher 1.44 h + agent 1.70 h per 560 questio
 | D5 | EXP-0009 scope | P1 now ($11.46, cap $16.50), P2 after a top-up · everything at once | **P1 now** | Q4 on v2.2 inside the current credit |
 | D6 | The deferred list (§4.9) | accept · pull items in | **accept** | the thesis states the encoded and deferred counts |
 | D7 | Expert review sample of 12 sheets | a reviewer exists · not | only if a reviewer is available | otherwise L3 is bands plus the ch.20 comparison |
+| D8 (2026-11-23) | Exchanger isolation policy (TOG207 restated, §17.5) | **A** one fixed policy: no process-side isolation, utility-side blocks allowed (what v2.1 already draws) · **B** sampled per train: in "isolating" trains, block valves on both process nozzles of every exchanger, still no bypass | **A** | A: no generator change, isolation answers as measured in EXP-0008. B: more valves in isolation answers, a new weight with no published frequency, and work in T11. Does not block: T9b builds A; B would be added in T11 |
 
 ## 16. Source verification log (2026-11-22, by the architect)
 
@@ -809,3 +822,305 @@ section only, for deferred or secondary items.
 
 **EXP-0008 spend.** Recomputed with the repo's own ledger functions: the runs ledger is $26.57 including $5.17 of
 copies under `reports/`, so the de-duplicated runs spend is $21.40. The audit is $5.23.
+
+**Addendum 2026-11-23 (T9 findings, by the architect).**
+- **Pages re-read** against the PDF (pdftotext, 1-based PDF page numbers): 207 (PDF 225), 270–271 (PDF 286–287),
+  294–295 (PDF 310–311), 305 (PDF 321), 321–322 (PDF 337–338).
+- **Offset correction.** The offset is −18 up to p.237, −17 from p.243 to p.267 and **−16 from p.270**. The line
+  above ("−17 at p.265–271") is wrong for p.270–271.
+- **p.305 is now page-checked.** "A stream that goes to a large storage tank possibly doesn't need to be flow
+  controlled; an intermittent flow may not need to be flow controlled either." §6.3 had marked it unverified.
+- **p.207 says less than §4.5 claimed.** See §17.5.
+
+## 17. T9 findings and fixes (2026-11-23)
+
+### 17.1 What T9 found
+
+T9 (`6f7f906`) wired ten plant-level checks and changed no generator line. Four checks fail on today's plants
+(30-sheet plants, seeds 1–5). The failures are recorded as strict xfails in `tests/v2/t9_support.py`
+`KNOWN_FAILURES`. I re-ran the four checks for free on 2026-11-23 (scripts in the session scratchpad, not in the repo).
+I classified every violation by pattern and role. The counts below come from that run.
+
+| Rule | v2.2 violations, seeds 1–5 | v2.1 | What they are |
+|---|---|---|---|
+| TOG271-ONE-CV-LIQUID | 3, 1, 4, 6, 3 | 4, 3, 4, 6, 4 | (i) a bypass TV of the next unit's exchanger counted as a second valve in series; (ii) a farm-transfer FV (U4), then the filter package's optional FV (U7), with no container between |
+| TOG295-INVENTORY-ONCE | 0, 3, 1, 1, 0 | same | additive day tanks (U8, `additive_tank`) with an LT and no level loop; one blend vessel (seed 2 V-1101) whose only "gas" lines are its capped vent and thermometer trims |
+| PLT-STREAM-CLOSURE | 39, 40, 38, 35, 40 (192 in all) | similar | see §17.4: 52 are lines the flowsheet join continues, 11 end at a battery-limit valve, 71 are open process ends at the plant boundary, 58 are PSV outlets and fuel-gas bleeds |
+| TOG207-HX-NO-ISOLATION | 2, 4, 2, 1, 5 of 11, 17, 8, 10, 16 exchangers | similar | `utility_supply_block` on a cooling-water or steam nozzle; a compressor's own discharge block upstream of its aftercooler (one side only) |
+
+**Verdicts in short.**
+- TOG271: check (a) and generator (b).
+- TOG295: check (a).
+- PLT-STREAM-CLOSURE: check (a), then a new task T7a (b), then T7 (c).
+- TOG207: check and statement (a), with a policy choice (D8).
+
+### 17.2 TOG271-ONE-CV-LIQUID
+
+**The text (p.271, re-read).** "Don't put more than one control valve on liquid-filled pipelines. A vessel that is
+flooded with liquid is considered as a piece pipe […]. There are a few exceptions to this rule, but these cases are
+very rare. On gas pipes there may be more than one control valve, but they cannot be very close to each other."
+
+**Case (i): too strict, change the check.**
+- **What the book says.** A bypass TV does not throttle the line. Toghraei p.321 says it outright: with the valve on
+  the bypass, "we haven't changed the total flow rate". On p.322 the two-valve variant uses "parallel control […] to
+  maintain a constant flow rate", and a single three-way valve can replace the pair.
+- **Why the series count is wrong.** Two valves fight only when both set the same flow. A split valve sets how the
+  flow divides, not how much flows.
+- **Check change** (in `rules/control_graph.py`, used by `checks_control.py`):
+  - Move `_bypasses_a_heat_transfer_item` from `checks_exchangers.py` to `control_graph.py`, unchanged, as
+    `bypasses_a_heat_transfer_item`.
+  - Add `split_valves(view) -> frozenset[str]`. It returns every valve of a TEMPERATURE loop where at least one valve
+    of the same controller bypasses a heat-transfer item. That covers the bypass TV alone and the TOG322 pair, whose
+    main-branch valve (`hx_main_control_valve`, already drawn on v2.2) shares the controller.
+  - `check_one_cv_liquid` counts only control valves that are not split valves. Each route where it discounted one
+    is counted under the exception `split_valve` in the result, so `rules.json` shows how often it happens.
+  - Registry: TOG271 sources gain `tog("p.321–322")`, page-checked.
+- **Measured effect** (free re-run with the split valves left out): v2.2 drops from 3, 1, 4, 6, 3 to **1, 0, 1, 2, 0**.
+  Every remaining violation is case (ii).
+
+**Case (ii): a real violation, so the generator changes on v2.2.**
+- **The four pairs:** FV-13006 → FV-14002 (seed 1), FV-17008 → FV-18002 (seed 3), FV-1010 → FV-2002 and
+  FV-13010 → FV-14002 (seed 4).
+- **Why the generator is wrong.** In each pair the second FV is the optional outlet flow loop of the filter package
+  (`patterns/filter_package.py` `_flow_loop`, drawn at `p_optional_instrument`). A filter package has no pump and no
+  container, so the flow through it is always set upstream: by the farm's transfer loop, a vessel's LV or a pump.
+  Its own FV is therefore always a second valve on the same liquid line.
+- **Generator fix (v2.2 only, task T9b).**
+  - In `build_filter_package`, `flow_loop = ctx.chance(...)` is still drawn. With `ctx.trim.handbook` on, a true
+    draw builds a **flow indicator** `FE`, `FT → FI` on the outlet instead of `FE`, `FT → FIC → FV`.
+  - Add the helper `flow_indicator(ctx, style, element)` to `instruments.py`, modelled on `totaliser` (one shared
+    number, so S8 holds).
+  - Skipped body and numbering draws inside the trim follow T3's precedent for the TOG314 dosing valve
+    (`blending_parts.dosing_header`).
+  - Rule comment at the branch:
+    `# rule TOG271-ONE-CV-LIQUID: no flow valve on the filter package, its feed's flow is set upstream (Toghraei 2019 p.271)`
+- **What remains:** 0 on seeds 1–5. That is a prediction from the two measurements above, to be confirmed by T9b.
+  Other pairs may exist only on larger plants, which is why T9b also verifies dev plants at 100 and 1,000 sheets
+  (§17.7).
+- **Not checked, and recorded:** p.271's gas half ("not very close to each other") needs distances. A P&ID has none.
+
+### 17.3 TOG295-INVENTORY-ONCE
+
+**The text.**
+- Table 15.1 (p.295): gas container → P-loop; non-flooded liquid container → L-loop; flooded → F-loop.
+- p.270: "In a non-flooded pressurized vessel, both pressure and level may be important parameters and **you may
+  choose** to control both of them. In a storage tank for a liquid we only control level." Rule 8: "Always control
+  the pressure for unit operations […] whose function depends on pressure. Examples are flash drums, two-phase flow
+  separators, and hydrocyclones."
+- p.305 (now checked): flows to a large storage tank and intermittent flows may not need flow control.
+
+**Additive day tanks: too strict, change the check.**
+- **What the generator draws.** The U8 day tank is filled through a manual block valve (`tank_fill_block`), which is
+  an intermittent fill, and drained by metered dosing pumps. Every such tank on seeds 1–5 carries an LT, and most
+  carry LSL switches too.
+- **Reading.** I read p.270's "we only control level" for a storage tank as naming the *variable*: level, not
+  pressure. The operator controls it from the transmitter and its alarms, and p.305 says such flows often need no
+  loop. That is exactly the tank-farm case, which already passes.
+- **Check change.** `storage_tank_batch` is no longer tied to the role `tank`. It applies to any atmospheric `Tank`
+  that has no level loop **and has a level transmitter** (the LT is now required, so the exception cannot hide a
+  tank nobody watches).
+- **Measured on seeds 1–5:** every `Tank` has at least one LT, so no new failure appears.
+- **Registry:** sources gain `tog("p.305")`.
+
+**Blend vessel: too strict, change the check.**
+- **What the generator draws.** V-1101 has no process gas line. Its "gas" lines are trims: a top tee with a blinded
+  thermometer flange and a vent valve with a cap (StreamKind TRIM). It holds a liquid inventory and has its level
+  loop.
+- **Why it is not a violation.** Rule 8 does not require a pressure loop for a blending vessel, and p.270 makes
+  pressure control on other pressurized vessels a choice.
+- **Check change:**
+  - Gas services count only on lines whose `record.stream_kind` is not TRIM.
+  - A pressure loop is **required** (exactly one, or `pressure_floating_on:<id>`) when a non-trim gas line touches
+    the container, or when its role is in a declared `PRESSURE_DEPENDENT_ROLES` in `control_graph.py`. That set is
+    `flash_drum`, `separator` and `suction_ko_drum`, after Toghraei's examples. The coder lists any other role that
+    should join (column accumulators) and reports it.
+  - Otherwise the container may have **at most one** pressure loop. None is the exception `pressure_optional`, which
+    cites p.270.
+- **What remains:** 0 on seeds 1–5 (a prediction; T9b confirms it).
+- **What is still missing, and recorded.** A closed liquid vessel needs somewhere for its vapour to go: a vent,
+  blanketing or a pressure loop. The generator models none of these, and §4.9 already defers blanketing and VRU. The
+  thesis limitations list states it.
+
+**Mutation tests (T9b):**
+- remove the LT from a farm tank, so the check fails;
+- add a second LIC to a drum, so it fails;
+- remove the PIC from a flash drum that has no floating partner, so it fails.
+
+### 17.4 PLT-STREAM-CLOSURE
+
+**The check reads the wrong layer (a).** It walks `unit.instance.plan.lines`, the pattern-level lines. Every port
+line ends open there by construction, even where the flowsheet joins it to the next unit. That accounts for 52 of
+the 192 ends. Another 11 are in-ports that start at a battery-limit block, with the blind one part further in. The
+check only recognises a blind as the last part.
+
+**Check change (T9b).**
+- Find dead ends on the plant flow graph (`flow(view.graph)`, after the joins): a non-equipment node with flow
+  out-degree 0 (a sink end) or in-degree 0 (a source end).
+- Each dead end is declared, tried in this order, as one of:
+  - `battery_limit`: the node's role, or the role of its one neighbour on the line, is a role of the
+    `trims_valves.battery_limit` group (`battery_limit_block`, `battery_limit_blind`, plus the check-valve role T11
+    adds);
+  - `utility_stub`: the node's line is UTILITY_STUB;
+  - `end_fitting`: as today.
+- Otherwise it is a violation. `checked` is the number of dead ends. Each violation's detail names the stream kind,
+  the pattern and the role.
+
+**What then remains: 129 ends over the five seeds.**
+
+| Group | Count | Owner | Fix |
+|---|---|---|---|
+| Unjoined process out-ports at the plant boundary: flash-drum vapour (28), reactor gas (6) and liquid (2), column vapour (9), distillate, bottoms and side draw (6); non-port process ends: vacuum liquid-ring pump discharge (4), compressor suction KO-drum liquid (2) | 57 | **T7a** (new) | TOG34 battery-limit group on the open end; declared `battery_limit` ("leaves the modelled region") |
+| Unjoined in-ports without a battery limit: farm receipts (4), additive fill (2) | 6 | **T7a** | the same, forced at the plant boundary (the `p_battery_limit` coin is still drawn; its value is ignored there) |
+| Reactor `recycle_gas` in-port with no paired compressor (core `U3` without `U2`) | 8 | **T7a** | becomes makeup gas over a battery limit: stream kind PROCESS, roles `makeup_gas_block` / `makeup_gas_check`. Dropping the line was rejected: it would remove v2.1 draws (§5 randomness rule), and a reactor fed with gas from outside is ordinary |
+| PSV outlets (`psv_outlet_block`) | 50 | **T7** | tie-in to the unit's FL sub-header (TOG32–34) |
+| Fuel-gas double-block-and-bleed bleeds (`dbb_bleed_valve`) | 8 | **T7** | tie-in to FL: hydrocarbon, so never open to the atmosphere (fluid class §6.1) |
+
+- **After T7a:** 58 remain, all owed to T7.
+- **After T7:** 0 (a prediction).
+- **If D4 drops FL**, those 58 end at a declared `network_stub:<service>` (the UTILITY_STUB analogue), so closure
+  holds without the network sheets.
+
+**T7a (new task, decision-independent, size M).** The post-join pass that T7 also needs: it adds parts to a unit's
+plan after the flowsheet has decided its joins, and before sheets are assigned.
+- **Placement.** `src/plantgraph/benchmark/v2/boundary.py`, v2.2 only.
+- **Battery limit.** It calls the existing `battery_limit` builder with presence forced, so T11's TOG34 variants apply
+  to these ends unchanged.
+- **Rule comment:**
+  `# rule TOG34-BL-ISOLATION: a plant-boundary crossing gets the battery-limit isolation (Toghraei 2019 p.34)`
+- **Prefix stability.** A port that is open in an n-unit plant may be joined in an (n+1)-unit plant. S15 is therefore
+  restated like the network sheets (§7): "process parts are prefix-stable, boundary groups are a function of the
+  included units". T7a measures it.
+
+**Why a battery limit rather than an FG or flare tie-in for off-gas.**
+- **Alternative:** off-gas and side products could tie into the FG network or the flare.
+- **Rejected because** no checked page says which, and §6.5 already ends every header at a battery limit toward
+  out-of-scope treatment.
+- **The boring option is consistent:** the region's boundary is a battery limit, which is TOG p.34, checked.
+
+### 17.5 TOG207-HX-NO-ISOLATION
+
+**The text (p.207, re-read in full).**
+- "Isolation valves, however, don't exist for all heat exchangers. The requirement […] depends on the service of the
+  heat exchanger and the maintenance policy of the plant. Some companies don't put any isolation valves around their
+  heat exchangers. […] Therefore, placing isolation valves around heat exchangers is **subjective**."
+- On bypass pipes: "the majority of companies don't put bypass pipes around heat exchangers because they cannot
+  afford to send on a stream without its temperature adjusted."
+- "One case in which placing isolation valves and a bypass pipe around a heat exchanger is justifiable is […] an
+  available spare heat exchanger or […] a clean-in-place (CIP) system or […] mechanical-in-place system (MIP)."
+
+**Verdict: the rule as encoded was stronger than the page (a).**
+- **What §4.5 claimed.** It said "no isolation valves […] unless a spare or a cleaning system". The book says
+  isolation is a company policy.
+- **What the argument is about.** The book's argument concerns taking the exchanger out of the **process** stream
+  (the stream goes on "without temperature change"). A block valve on a cooling-water or steam nozzle isolates the
+  utility supply, which is the common battery-limit practice at a consumer. The page does not address it.
+- **One valve is not isolation.** A single block on one side, such as the compressor discharge block before an
+  aftercooler, cannot shut the exchanger in.
+
+**Restated rule** (registry statement, same id; D8 = A):
+> Isolation at an exchanger is company policy (p.207). v2.2 follows the policy with no isolation on the process side:
+> no exchanger has blocks on all of its process inlets and outlets, and none has a hand bypass around its process
+> side, unless it has an installed spare or a cleaning-in-place system. Utility-side valves are outside the rule.
+
+**Check change (T9b, `checks_exchangers.py`).**
+- **Nozzle runs that are skipped:**
+  - a run whose service is in `UTILITY_SERVICES`, counted under the exception `utility_side_block` when it holds a
+    block;
+  - a run whose service is FL, or that holds a `psv_inlet_block` (a relief branch, which belongs to
+    TOG224/TOG207-PSD; seed 5 u3-t1 showed one).
+- **Valves that do not count as blocks:** control-valve bodies (`is_control_valve`). The `hx_main_control_valve` of
+  the TOG322 pair has a ball-valve body.
+- **When it is a violation:**
+  - **isolation:** every process inlet run *and* every process outlet run holds a block valve;
+  - **bypass:** `_manual_bypass`, unchanged.
+- **Exception codes:** `has_spare` (as now) and `cleaning_system`. The second is declared and never drawn, so its
+  count is 0 and the thesis says so.
+
+**Measured on seeds 1–5** (free re-run of the restated logic): no exchanger is isolated on both process sides; no
+hand bypass; utility nozzle runs holding a block: 2, 4, 2, 1, 3; one-sided process blocks only at aftercoolers
+(after control-valve bodies and relief runs are excluded). So the
+restated check passes on today's plants with no generator change. T9b confirms it.
+
+**A link that is easy to miss.** The utility-side blocks now matter for T10: an exchanger side that can be blocked in
+and is fed from a higher level needs its PSD (TOG207-HX-PSD-BOTH-SIDES). T10 reads `utility_side_block` from this
+check's helper rather than finding the blocks again.
+
+### 17.6 The coder's other interpretation choices
+
+| Choice (T9 report) | Verdict |
+|---|---|
+| TOG267: one upstream FE per loop is enough (ratio loops sense two) | accepted |
+| TOG270: counted per discharge route | accepted |
+| TOG271: only routes that are liquid all the way (P, CD, CWS, CWR); reactors count as flooded | accepted. A flooded reactor is a declared assumption (`FLOODED_CONTAINER_ROLES`) and is listed in the limitations |
+| TOG207: any block on a nozzle run counts, utility blocks included | **overturned** (§17.5) |
+| A bypass counts only without a CV | accepted; p.321 confirms the CV bypass is control |
+| `# rule` comments of pure checks sit at the check function | accepted |
+| TOG295 exceptions derived by the check, not written by the pattern | accepted; §6.3 amended |
+
+### 17.7 When `verify_plant` is wired into v2.2 generation
+
+**Recommendation: wire it now (in T9b), with an explicit owed list. Do not wait until T7.**
+- **The owed list.** `rules/owed.py` holds `OWED_FIXES: dict[str, str]`, which maps a rule id to the task that owes
+  its fix. After T9b it is `{"PLT-STREAM-CLOSURE": "T7"}`.
+- **What generation does.** `generate_plant_v2` with a `GeneratorConfigV22` runs `verify_plant` and raises
+  `RuleViolationError` on any violation of a rule **not** in the list. A row of an owed rule is written with
+  `RuleRow.owed_by = "T7"` (new optional field, default None) and does not raise.
+- **Corpus report.** `ingest synthetic --generator v2.2` writes `rules.json`.
+- **Gate G0c** (§12.2) additionally requires `OWED_FIXES == {}`, so no EXP-0009 plant is built while a fix is owed.
+- **Shrinking the list.** T7a and T7 each remove what they close, and each task's tests assert the list shrank.
+- **Why:** every later task then runs under build-time verification. A regression in any of the 25 (then 27) wired
+  rules stops the build at once instead of surfacing at G0c.
+- **The alternative and why it is rejected:** wire it after T7. It is simpler, but four or more tasks would run with
+  verification only in tests on five 30-sheet seeds.
+- **v2.1 generation stays untouched** (goldens); v2.1 is verified only in tests.
+
+**Measured in T9b (owed by T1; I found no recorded figure).**
+- **Verification time.** Measure verification time on one 1,000-sheet v2.2 dev plant. The yardstick is generation
+  time: EXP-0008 measured 390.99 s on H1000g21p1.
+- **Why it may be slow.** `routes_between_containers` enumerates simple paths, and parallel spare pumps multiply
+  them.
+- **Threshold.** If verification takes longer than that generation time, T9b reports and stops. The architect then
+  bounds the route enumeration, for example by collapsing spare sets to one branch.
+- **Dev plants.** Also verify at least one 100-sheet and one 1,000-sheet dev plant (seeds the coder picks and
+  reports, never EXP-0009 seeds; nothing ingested, nothing into Neo4j). This finds violations that five 30-sheet
+  seeds do not reach.
+
+### 17.8 Revised order and how the failures map onto the remaining tasks
+
+| Order | Task | Waits for | What it does about the T9 failures | Owed list after it |
+|---|---|---|---|---|
+| 1 | **T9b** | nothing | TOG271 (check + U7), TOG295, TOG207, the closure check on the graph; wires API14C-A8-FSV and API14C-A8-PSV (the 2 `unassigned`, v2.1 behaviour, cheap); `verify_plant` with the owed list; dev-plant verification and timing | closure → T7 |
+| 2 | **T7a** | nothing | 71 boundary ends get a battery limit; makeup gas for unpaired reactors | closure → T7 (58 ends) |
+| 3 | T11 | nothing (unless the user vetoes an alternative) | TOG322 pair: the TOG271 split rule already covers it; TOG34 check variant applies at T7a's ends too | unchanged |
+| 4 | T5 (plan + DEXPI) | nothing; store part D1 | none. TOG224 CSO blocks sit on the PSV outlets T7 ties in | unchanged |
+| 5 | T8 | D3 | PLT-RECYCLE-CLOSURE must not see the T7a makeup gas (now PROCESS); TOG156 sees its check valve | unchanged |
+| 6 | T7 | D4 | ties the 58 PSV outlets and bleeds to FL; drains by TOG141 | **empty** → `verify_plant` fully raising |
+| 7 | T10 | researcher transcription; D3 | TOG207-PSD uses `utility_side_block` (§17.5) | empty |
+| 8 | T6 | D1, D2 | none. HCVs stay tagged (TOG113); `is_control_valve` reads the HV/HCV tag prefix | empty |
+| 9 | T12 | D7 for the review | the composition report shows the U7 change (FV and FIC become FI) and the boundary groups per sheet kind | empty |
+| 10 | T13 | D1, D5 | G0c checks `OWED_FIXES == {}` and hashes `rules.json` | empty |
+
+**Decision-independent now, in this order:** T9b, T7a, T11, T5 (plan and DEXPI part). T8 is also small, but D3 is
+still open.
+
+**When `verify_plant` fully guards generation:** it is wired in T9b. It raises on every rule except
+PLT-STREAM-CLOSURE until T7 lands, and on everything after that.
+
+### 17.9 Consequence for v2.1 and the thesis
+
+v2.1 data is never changed (§14). The same findings hold for the v2.1 corpora EXP-0008 measured, and the thesis's
+limitations list records them as properties of the v2.1 generator:
+- **TOG271:** a filter package after a farm transfer puts two flow valves in series (1, 0, 1, 2, 0 on seeds 1–5).
+- **PLT-STREAM-CLOSURE:** relief outlets, bleeds and plant-boundary process ends stay open.
+- **TOG295:** no change, since the restated check passes v2.1.
+
+None of these touches a question's gold (gold is topological). An open end only means that a path stops there,
+in the gold and in the store alike.
+
+### 17.10 Open questions
+
+1. **D8** (§15): the exchanger isolation policy. It does not block anything; A is built unless the user says B.
+2. **Column roles.** Should `PRESSURE_DEPENDENT_ROLES` include the column's accumulator? Toghraei's rule-8 examples
+   do not name it. The coder reports which roles exist, and the architect decides in review.
+3. **ADR-0066** (proposed) still says "55 encoded rules (36 local, 19 plant-level) and 14 deferred groups" (line 98).
+   It must read 54 / 35 / 19 / 15 before acceptance.

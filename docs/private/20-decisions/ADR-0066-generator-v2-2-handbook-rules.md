@@ -95,7 +95,8 @@ design: 40-design/generator-v2-2-handbook-rules.md
    - Corpus ids carry `g22`.
    - Fresh test seeds are drawn, and the EXP-0008 seeds are retired.
 2. **R-B.**
-   - The registry holds 55 encoded rules (36 local, 19 plant-level) and 14 deferred groups, each with its reason.
+   - The registry holds 54 encoded rules (35 local, 19 plant-level) and 15 deferred groups, each with its reason
+     (55/36/14 at proposal; TOG73 deferred in T3).
    - Each rule has an id naming the book and page, a paraphrase, its sources marked page-checked, its conflict and
      the choice made, declared parameters, exception codes and a check.
 3. **P-C.**
