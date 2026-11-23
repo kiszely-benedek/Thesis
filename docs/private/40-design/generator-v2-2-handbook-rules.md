@@ -682,7 +682,7 @@ Rules of scope R:
 |---|---|---|
 | **Q4 (primary)** | V2T-A2, scope R, cascade_v4_iso, S1000 − S100, two-stage cluster bootstrap | the interval contains 0 or lies above (ADR-0053, ADR-0065) |
 | Q4-B | V2T-B, scope R ∪ X | the same rule |
-| SB1 no harm | V2T-B − V2T-A2, scope R, paired on the same questions | the lower bound is above −0.03 (declared margin) |
+| SB1 no harm | V2T-B − V2T-A2, scope R, paired on the same questions | descriptive: the difference and its interval, no margin (user, 2026-11-23) |
 | SB2 content value | V2T-B − V2T-A2, scope X isolation families, paired | the interval lies above 0 |
 | K1, K2, K3, Q5 | V2T-A2, scope R | as EXP-0008 |
 | Descriptive | data effect: V2T-A2 on v2.2 − V2T-A2 on v2.1 (EXP-0008) per scale, on the families both share (unpaired, the same bootstrap); X sub-scopes (untagged gold, discriminating share); POSITION_OF_VALVE accuracy; refused shares; network-touching shares; `rules.json` summaries | — |
@@ -1982,4 +1982,5 @@ a comment.
   - The thesis states plainly that no practising engineer reviewed the generated sheets. It lists this as a limitation beside the unmodelled chemistry, sizing, set points and frequencies.
   - The rules are book-cited and machine-checked, but they are not externally reviewed.
   - The 25-item checklist of §18.5 stays in the record as the map from plain questions to rule ids. Items 1–23 are each covered by an automatic check, item 24 by the composition bands, and item 25 is not covered.
-- **Items 4 and 6** are still open. They were explained to the user again.
+- **Item 4:** no margin. SB1 is reported descriptively, as B − A2 on R with its interval.
+- **Item 6:** the user tops up about $25. With the roughly $17 already on the account, P1 fits even at its $37.50 cap.

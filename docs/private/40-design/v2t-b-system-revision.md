@@ -198,13 +198,12 @@ new.
 |---|---|---|
 | Q4 (primary) | A2, scope R, S1000 − S100 | interval contains 0 or lies above (ADR-0053) |
 | Q4-B | B, scope R ∪ X | the same rule |
-| SB1 no harm | B − A2, scope R, paired | the lower bound of the interval is above −0.03 |
+| SB1 no harm | B − A2, scope R, paired | descriptive: the difference and its interval, no pass margin (user, 2026-11-23) |
 | SB2 content value | B − A2, scope X (isolation families), paired | the interval lies above 0 |
 | K1–K3, Q5 | A2, scope R | as EXP-0008 |
 | Descriptive | data effect per scale; X sub-scopes (untagged gold, discriminating share); POSITION_OF_VALVE accuracy; refused shares | — |
 
-**The SB1 margin.** I set it at −0.03, about the half-width of EXP-0008's Q4 interval (−0.005, [−0.035, +0.025]).
-This is a declared choice, not a measured threshold.
+**The SB1 margin.** The proposed margin was −0.03, about the half-width of EXP-0008's Q4 interval (−0.005, [−0.035, +0.025]). The user dropped it on 2026-11-23: SB1 is reported descriptively, as the difference and its interval, with no verdict.
 
 ## 8. How each part reports its own accuracy
 
@@ -217,7 +216,7 @@ This is a declared choice, not a measured threshold.
 
 ## 9. Open questions
 
-1. **The SB1 margin −0.03** is a declared value. The user may prefer to report B − A2 on R descriptively.
+1. **The SB1 margin** is decided: descriptive only, no margin (user, 2026-11-23).
 2. **Valves with no tagged neighbour.** A root valve on a network sheet of an untagged document may have only
    connectors and tees around it, none of them tagged. Such a valve has no descriptor, so a candidate whose answer
    holds it is refused (§5). I propose no special rule. The coder reports the refused share on the dev plants before

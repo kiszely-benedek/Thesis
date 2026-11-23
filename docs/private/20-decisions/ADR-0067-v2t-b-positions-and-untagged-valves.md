@@ -65,7 +65,7 @@ design: 40-design/v2t-b-system-revision.md
 - **Fail action stays out** of B's store: no question uses it.
 - **Claims** (pre-registered in EXP-0009 PREREG A):
   - **Q4-B** on scope R ∪ X;
-  - **SB1 (no harm):** B − A2 on R, paired, lower bound above −0.03;
+  - **SB1 (no harm):** B − A2 on R, paired, reported **descriptively** with its interval. There is no pass margin (user, 2026-11-23); the proposed −0.03 was dropped;
   - **SB2 (content value):** B − A2 on X's isolation families, paired, above 0.
 - **No demo** for B.
 
