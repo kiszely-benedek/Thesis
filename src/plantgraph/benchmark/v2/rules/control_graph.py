@@ -47,7 +47,9 @@ EXCHANGER_CLASSES = frozenset(
 #: equipment through which a stream is heated or cooled: a bypass around one of these bypasses it
 HEAT_TRANSFER_CLASSES = EXCHANGER_CLASSES | {"AirCoolingSystem", "Furnace", "Heater"}
 #: containers whose job needs a held pressure (Toghraei p.270 rule 8: flash drums, separators, ...)
-PRESSURE_DEPENDENT_ROLES = frozenset({"flash_drum", "separator", "suction_ko_drum"})
+PRESSURE_DEPENDENT_ROLES = frozenset(
+    {"flash_drum", "separator", "suction_ko_drum", "discharge_ko_drum"}
+)
 #: roles of containers that run liquid-full: no free surface, so they count as pipe (TOG p.271)
 FLOODED_CONTAINER_ROLES = frozenset({"reactor"})
 #: a controller's measured variable, as the graph stores it

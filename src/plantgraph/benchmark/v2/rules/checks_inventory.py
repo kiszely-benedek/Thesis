@@ -30,6 +30,7 @@ from plantgraph.benchmark.v2.rules.control_graph import (
 )
 from plantgraph.benchmark.v2.rules.registry import CheckResult, Violation
 from plantgraph.benchmark.v2.rules.view import RuleView
+from plantgraph.graph.schema import EQUIPMENT_CLASSES
 
 _ATMOSPHERIC_CLASS = "Tank"  # vents through a breather: no pressure loop to look for
 
@@ -61,7 +62,43 @@ def _is_gas_route_without_valve(view: RuleView, route: tuple[str, ...]) -> bool:
 
 
 def _floats_on(view: RuleView, container: str, routes: list[tuple[str, ...]]) -> str | None:
-    """A neighbour with a pressure loop, joined to `container` by gas pipe and no control valve."""
+    """An item with a pressure loop, joined to `container` by gas pipe and no control valve.
+
+    First another container along a flow route; failing that any equipment item (an aftercooler
+    whose pressure loop holds the discharge drum's gas too, Toghraei p.295 and p.316).
+    """
+    return _floats_on_container(view, container, routes) or _floats_on_item(view, container)
+
+
+def _gas_neighbours(view: RuleView, node: str) -> list[str]:
+    """The parts one gas pipe away from `node`, in either flow direction."""
+    piping = view.piping
+    pipes = [*piping.in_edges(node), *piping.out_edges(node)]
+    gas = [(a, b) for a, b in pipes if service_of(view.graph, a, b) in GAS_SERVICES]
+    return sorted({b if a == node else a for a, b in gas})
+
+
+def _floats_on_item(view: RuleView, container: str) -> str | None:
+    """Walk gas pipe from the container, stopping at control valves and equipment (the ends)."""
+    graph = view.graph
+    seen, queue = {container}, [container]
+    partners: set[str] = set()
+    while queue:
+        for nxt in _gas_neighbours(view, queue.pop()):
+            if nxt in seen:
+                continue
+            seen.add(nxt)
+            if graph.nodes[nxt]["node_class"] in EQUIPMENT_CLASSES:
+                if controllers_on(graph, nxt, PRESSURE):
+                    partners.add(nxt)
+            elif not is_control_valve(graph, nxt):
+                queue.append(nxt)
+    return min(partners, default=None)
+
+
+def _floats_on_container(
+    view: RuleView, container: str, routes: list[tuple[str, ...]]
+) -> str | None:
     for route in routes:
         ends = {route[0], route[-1]}
         if container not in ends or len(ends) != 2:

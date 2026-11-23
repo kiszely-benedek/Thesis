@@ -182,7 +182,8 @@ def _mutate_antisurge(view: RuleView) -> RuleView:
 
 def _mutate_compressor_capacity(view: RuleView) -> RuleView:
     machine, _ = _a_pd_stage_valve(view)
-    return _insert_after(view, machine, "mutant-valve", "GlobeValve", "PV-99999")
+    # an HCV is a hand-throttled control valve: the check counts it, unlike a hand block valve
+    return _insert_after(view, machine, "mutant-valve", "GlobeValve", "HCV-99999")
 
 
 def _has_pd_stage(view: RuleView) -> bool:

@@ -16,6 +16,7 @@ import networkx as nx
 from plantgraph.benchmark.v2.patterns.ports import PatternInstance
 from plantgraph.benchmark.v2.plan_models import StreamKindV2
 from plantgraph.benchmark.v2.rules.checks_v21_plant import reach
+from plantgraph.benchmark.v2.rules.control_graph import is_control_valve
 from plantgraph.benchmark.v2.rules.registry import CheckResult, Violation
 from plantgraph.benchmark.v2.rules.view import RuleView
 from plantgraph.graph.schema import CONTROL_VALVE_BODY_CLASSES, Relation
@@ -104,9 +105,8 @@ def _capacity_problem(stage: PdStage) -> str | None:
     pressure_valves = [v for v in stage.recycle_valves if stage.tag(v).startswith(_PRESSURE_VALVE)]
     if not pressure_valves and not stage.has_speed_drive:
         return "expected a pressure-controlled spillback or a variable-speed drive, found neither"
-    throttles = sorted(
-        n for n in stage.after_machine if stage.node_class(n) in CONTROL_VALVE_BODY_CLASSES
-    )
+    # a valve driven by a controller (or an HCV): a hand block drawn as a butterfly body is not one
+    throttles = sorted(n for n in stage.after_machine if is_control_valve(stage.graph, n))
     if throttles:
         return f"control valve {throttles[0]} throttles the compressor discharge"
     return None
