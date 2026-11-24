@@ -1,0 +1,2844 @@
+{
+ "descriptor": {
+  "key_fields": [
+   "valve_class",
+   "side",
+   "next_to_class",
+   "fluid_field"
+  ],
+  "majority": "NO",
+  "table": [
+   {
+    "key": [
+     "AngleBallValve",
+     "downstream",
+     "Tank",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "AnglePlugValve",
+     "downstream",
+     "Tank",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "AirCoolingSystem",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "AirCoolingSystem",
+     "P"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "AirCoolingSystem",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "BallValve",
+     "LPS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "BallValve",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "ButterflyValve",
+     "LPS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "ButterflyValve",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "CentrifugalPump",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "CentrifugalPump",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "ElectricHeater",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "ElectricHeater",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "ElectromagneticFlowMeter",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "ElectromagneticFlowMeter",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "FlowMeasuringElement",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "FlowMeasuringElement",
+     "LPS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "FlowMeasuringElement",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "FlowNozzle",
+     "LPS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "GasFilter",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "GasFilter",
+     "PG"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "GlobeValve",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "GlobeValve",
+     "LPS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "GlobeValve",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "GravitationalSeparator",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "GravitationalSeparator",
+     "PG"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "LiquidFilter",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "LiquidFilter",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "PlateHeatExchanger",
+     "CD"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "PlateHeatExchanger",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "PlateHeatExchanger",
+     "P"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "PositiveDisplacementFlowMeter",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "PressureVessel",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "PressureVessel",
+     "P"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "PressureVessel",
+     "PG"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "ProcessColumn",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "ProcessColumn",
+     "PG"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "ReciprocatingPump",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "ReciprocatingPump",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "RotaryPump",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "RotaryPump",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "ScrubbingSeparator",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "ScrubbingSeparator",
+     "PG"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "TubularHeatExchanger",
+     "CD"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "TubularHeatExchanger",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "TubularHeatExchanger",
+     "P"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "TubularHeatExchanger",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "TurbineFlowMeter",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "VenturiTube",
+     "LPS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "BallValve",
+     "downstream",
+     "VolumeFlowMeasuringElement",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "downstream",
+     "AngleBallValve",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "downstream",
+     "AngleGlobeValve",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "downstream",
+     "AngleValve",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "downstream",
+     "BallValve",
+     "CD"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "downstream",
+     "BallValve",
+     "FG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "downstream",
+     "BallValve",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "downstream",
+     "ButterflyValve",
+     "FG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "downstream",
+     "ButterflyValve",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "downstream",
+     "CentrifugalPump",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "downstream",
+     "ElectromagneticFlowMeter",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "downstream",
+     "GlobeValve",
+     "FG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "downstream",
+     "GlobeValve",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "downstream",
+     "GravitationalSeparator",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "downstream",
+     "PressureVessel",
+     "CHD"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "downstream",
+     "PressureVessel",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "downstream",
+     "RotaryCompressor",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "downstream",
+     "RuptureDisc",
+     "FL"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "downstream",
+     "SpringLoadedAngleGlobeSafetyValve",
+     "FL"
+    ],
+    "position": "CSO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "downstream",
+     "SpringLoadedGlobeSafetyValve",
+     "FL"
+    ],
+    "position": "CSO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "downstream",
+     "SteamTrap",
+     "CD"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "downstream",
+     "TubularHeatExchanger",
+     "CD"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "downstream",
+     "TubularHeatExchanger",
+     "CWR"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "AirCoolingSystem",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "AirEjector",
+     "MPS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "AirEjector",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "AngleBallValve",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "AngleGlobeValve",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "AngleValve",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "BallValve",
+     "FG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "BallValve",
+     "LPS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "BallValve",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "BallValve",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "ButterflyValve",
+     "FG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "ButterflyValve",
+     "LPS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "ButterflyValve",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "ButterflyValve",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "ConicalStrainer",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "ConicalStrainer",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "ElectricHeater",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "ElectromagneticFlowMeter",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "FlowMeasuringElement",
+     "LPS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "FlowMeasuringElement",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "FlowNozzle",
+     "LPS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "Furnace",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "GlobeValve",
+     "FG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "GlobeValve",
+     "LPS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "GlobeValve",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "GlobeValve",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "IlluminatedSightGlass",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "LiquidFilter",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "MassFlowMeasuringElement",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "PipeFlangeSpade",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "PipeFlangeSpade",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "PlateHeatExchanger",
+     "CWS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "PlateHeatExchanger",
+     "LPS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "PlateHeatExchanger",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "PressureVessel",
+     "CD"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "ProcessColumn",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "ScrubbingSeparator",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "SightGlass",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "Silencer",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "SpringLoadedAngleGlobeSafetyValve",
+     "FL"
+    ],
+    "position": "CSO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "SpringLoadedGlobeSafetyValve",
+     "FL"
+    ],
+    "position": "CSO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "SteamTrap",
+     "CD"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "Strainer",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "Tank",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "TubularHeatExchanger",
+     "CWS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "TubularHeatExchanger",
+     "LPS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "TubularHeatExchanger",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "TubularHeatExchanger",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "ButterflyValve",
+     "upstream",
+     "TurbineFlowMeter",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "AirCoolingSystem",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "AirCoolingSystem",
+     "P"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "AngleBallValve",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "AngleGlobeValve",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "AngleValve",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "BallValve",
+     "CD"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "BallValve",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "BallValve",
+     "FG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "BallValve",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "ButterflyValve",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "ButterflyValve",
+     "LPS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "ButterflyValve",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "CentrifugalPump",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "CentrifugalPump",
+     "P"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "ElectricHeater",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "ElectricHeater",
+     "P"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "ElectromagneticFlowMeter",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "ElectromagneticFlowMeter",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "FlowMeasuringElement",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "FlowMeasuringElement",
+     "LPS"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "FlowMeasuringElement",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "GasFilter",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "GasFilter",
+     "PG"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "GlobeValve",
+     "LPS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "GlobeValve",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "GravitationalSeparator",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "GravitationalSeparator",
+     "PG"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "LiquidFilter",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "LiquidFilter",
+     "P"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "PlateHeatExchanger",
+     "CD"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "PlateHeatExchanger",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "PlateHeatExchanger",
+     "CWR"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "PlateHeatExchanger",
+     "P"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "PressureVessel",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "PressureVessel",
+     "P"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "PressureVessel",
+     "PG"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "ProcessColumn",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "ProcessColumn",
+     "PG"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "ReciprocatingPump",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "ReciprocatingPump",
+     "P"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "RotaryCompressor",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "RotaryPump",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "RotaryPump",
+     "P"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "RuptureDisc",
+     "FL"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "ScrubbingSeparator",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "ScrubbingSeparator",
+     "PG"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "SpringLoadedAngleGlobeSafetyValve",
+     "FL"
+    ],
+    "position": "CSO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "SpringLoadedGlobeSafetyValve",
+     "FL"
+    ],
+    "position": "CSO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "StaticMixer",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "SteamTrap",
+     "CD"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "Tank",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "TubularHeatExchanger",
+     "CD"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "TubularHeatExchanger",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "TubularHeatExchanger",
+     "CWR"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "TubularHeatExchanger",
+     "P"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "TurbineFlowMeter",
+     "CHD"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "downstream",
+     "VenturiTube",
+     "LPS"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "AirCoolingSystem",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "AirEjector",
+     "MPS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "AirEjector",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "AngleBallValve",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "AngleGlobeValve",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "AngleValve",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "BallValve",
+     "FG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "BallValve",
+     "LPS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "BallValve",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "BallValve",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "ButterflyValve",
+     "FG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "ButterflyValve",
+     "LPS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "ButterflyValve",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "ButterflyValve",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "ConicalStrainer",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "ConicalStrainer",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "EjectorPump",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "ElectricHeater",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "ElectromagneticFlowMeter",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "FlowMeasuringElement",
+     "LPS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "FlowMeasuringElement",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "FlowNozzle",
+     "LPS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "Furnace",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "Furnace",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "GlobeValve",
+     "FG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "GlobeValve",
+     "LPS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "GlobeValve",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "GlobeValve",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "GravitationalSeparator",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "IlluminatedSightGlass",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "InLineMixer",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "LiquidFilter",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "MassFlowMeasuringElement",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "PipeFlangeSpacer",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "PipeFlangeSpade",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "PipeFlangeSpade",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "PlateHeatExchanger",
+     "CWS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "PlateHeatExchanger",
+     "LPS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "PlateHeatExchanger",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "PositiveDisplacementFlowMeter",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "PressureVessel",
+     "CD"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "PressureVessel",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "ProcessColumn",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "RotaryMixer",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "ScrubbingSeparator",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "SightGlass",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "Silencer",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "SpringLoadedAngleGlobeSafetyValve",
+     "FL"
+    ],
+    "position": "CSO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "SpringLoadedGlobeSafetyValve",
+     "FL"
+    ],
+    "position": "CSO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "StaticMixer",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "SteamTrap",
+     "CD"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "Strainer",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "Tank",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "TubularHeatExchanger",
+     "CWS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "TubularHeatExchanger",
+     "LPS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "TubularHeatExchanger",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "TubularHeatExchanger",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "TurbineFlowMeter",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "VariableAreaFlowMeter",
+     "P"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "VariableAreaFlowMeter",
+     "PG"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "VenturiTube",
+     "LPS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "VenturiTube",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GateValve",
+     "upstream",
+     "VolumeFlowMeasuringElement",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GlobeValve",
+     "downstream",
+     "FlowMeasuringElement",
+     "P"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GlobeValve",
+     "downstream",
+     "GravitationalSeparator",
+     "PG"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GlobeValve",
+     "downstream",
+     "PressureVessel",
+     "P"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GlobeValve",
+     "downstream",
+     "PressureVessel",
+     "PG"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GlobeValve",
+     "downstream",
+     "ScrubbingSeparator",
+     "P"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GlobeValve",
+     "upstream",
+     "AirEjector",
+     "PG"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GlobeValve",
+     "upstream",
+     "BallValve",
+     "FG"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GlobeValve",
+     "upstream",
+     "BallValve",
+     "P"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GlobeValve",
+     "upstream",
+     "ButterflyValve",
+     "FG"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GlobeValve",
+     "upstream",
+     "ConicalStrainer",
+     "PG"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GlobeValve",
+     "upstream",
+     "ElectricHeater",
+     "P"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GlobeValve",
+     "upstream",
+     "ElectromagneticFlowMeter",
+     "P"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GlobeValve",
+     "upstream",
+     "FlowMeasuringElement",
+     "P"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GlobeValve",
+     "upstream",
+     "Furnace",
+     "P"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GlobeValve",
+     "upstream",
+     "GlobeValve",
+     "FG"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GlobeValve",
+     "upstream",
+     "IlluminatedSightGlass",
+     "P"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GlobeValve",
+     "upstream",
+     "LiquidFilter",
+     "P"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GlobeValve",
+     "upstream",
+     "MassFlowMeasuringElement",
+     "P"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GlobeValve",
+     "upstream",
+     "PipeFlangeSpacer",
+     "P"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GlobeValve",
+     "upstream",
+     "PipeFlangeSpade",
+     "P"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GlobeValve",
+     "upstream",
+     "PlateHeatExchanger",
+     "P"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GlobeValve",
+     "upstream",
+     "PositiveDisplacementFlowMeter",
+     "P"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GlobeValve",
+     "upstream",
+     "ProcessColumn",
+     "P"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GlobeValve",
+     "upstream",
+     "ScrubbingSeparator",
+     "PG"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GlobeValve",
+     "upstream",
+     "SightGlass",
+     "P"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GlobeValve",
+     "upstream",
+     "TubularHeatExchanger",
+     "LPS"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GlobeValve",
+     "upstream",
+     "TubularHeatExchanger",
+     "P"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GlobeValve",
+     "upstream",
+     "TurbineFlowMeter",
+     "P"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GlobeValve",
+     "upstream",
+     "VolumeFlowMeasuringElement",
+     "P"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "NeedleValve",
+     "downstream",
+     "BallValve",
+     "LPS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "NeedleValve",
+     "downstream",
+     "ButterflyValve",
+     "LPS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "NeedleValve",
+     "downstream",
+     "ButterflyValve",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "NeedleValve",
+     "downstream",
+     "CentrifugalPump",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "NeedleValve",
+     "downstream",
+     "ElectricHeater",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "NeedleValve",
+     "downstream",
+     "ElectromagneticFlowMeter",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "NeedleValve",
+     "downstream",
+     "FlowMeasuringElement",
+     "LPS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "NeedleValve",
+     "downstream",
+     "FlowMeasuringElement",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "NeedleValve",
+     "downstream",
+     "FlowNozzle",
+     "LPS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "NeedleValve",
+     "downstream",
+     "Furnace",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "NeedleValve",
+     "downstream",
+     "GlobeValve",
+     "LPS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "NeedleValve",
+     "downstream",
+     "GlobeValve",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "NeedleValve",
+     "downstream",
+     "LiquidFilter",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "NeedleValve",
+     "downstream",
+     "MassFlowMeasuringElement",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "NeedleValve",
+     "downstream",
+     "PipeFlangeSpacer",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "NeedleValve",
+     "downstream",
+     "PipeFlangeSpade",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "NeedleValve",
+     "downstream",
+     "PlateHeatExchanger",
+     "CD"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "NeedleValve",
+     "downstream",
+     "PlateHeatExchanger",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "NeedleValve",
+     "downstream",
+     "PositiveDisplacementFlowMeter",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "NeedleValve",
+     "downstream",
+     "ProcessColumn",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "NeedleValve",
+     "downstream",
+     "ReciprocatingPump",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "NeedleValve",
+     "downstream",
+     "RotaryPump",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "NeedleValve",
+     "downstream",
+     "ScrubbingSeparator",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "NeedleValve",
+     "downstream",
+     "TubularHeatExchanger",
+     "CD"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "NeedleValve",
+     "downstream",
+     "TubularHeatExchanger",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "NeedleValve",
+     "downstream",
+     "TubularHeatExchanger",
+     "PG"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "NeedleValve",
+     "downstream",
+     "TurbineFlowMeter",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "NeedleValve",
+     "downstream",
+     "VenturiTube",
+     "LPS"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "NeedleValve",
+     "downstream",
+     "VolumeFlowMeasuringElement",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "PlugValve",
+     "upstream",
+     "BallValve",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "PlugValve",
+     "upstream",
+     "ConicalStrainer",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "PlugValve",
+     "upstream",
+     "Strainer",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "StraightwayValve",
+     "upstream",
+     "InLineMixer",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "StraightwayValve",
+     "upstream",
+     "RotaryMixer",
+     "P"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "StraightwayValve",
+     "upstream",
+     "StaticMixer",
+     "P"
+    ],
+    "position": "NO"
+   }
+  ]
+ },
+ "tag": {
+  "key_fields": [
+   "tag_letters",
+   "valve_class"
+  ],
+  "majority": "NO",
+  "table": [
+   {
+    "key": [
+     "BFV",
+     "ButterflyValve"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "BV",
+     "AngleBallValve"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "BV",
+     "BallValve"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "GTV",
+     "GateValve"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "GV",
+     "GlobeValve"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "NV",
+     "NeedleValve"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "PGV",
+     "AnglePlugValve"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "PGV",
+     "PlugValve"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "SWV",
+     "StraightwayValve"
+    ],
+    "position": "NO"
+   },
+   {
+    "key": [
+     "XV",
+     "BallValve"
+    ],
+    "position": "NC"
+   },
+   {
+    "key": [
+     "YV",
+     "BallValve"
+    ],
+    "position": "NC"
+   }
+  ]
+ }
+}

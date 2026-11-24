@@ -1,0 +1,244 @@
+{
+  "draw_seed": 20261124,
+  "prior_sha256": "3d48518f16a43262bc23cc74fb7e9d2e56c68d6059d248c71e5195191cbd529a",
+  "majority_code": {
+    "descriptor": "NO",
+    "tag": "NO"
+  },
+  "plants": [
+    {
+      "plant_id": "D100g22",
+      "role": "dev",
+      "scale": 100,
+      "seed": 1,
+      "target_sheets": 100,
+      "n_units": 47,
+      "predicted_sheets": 100,
+      "document_untagged": [
+        true
+      ]
+    },
+    {
+      "plant_id": "D1000g22",
+      "role": "probe",
+      "scale": 1000,
+      "seed": 1,
+      "target_sheets": 1000,
+      "n_units": 500,
+      "predicted_sheets": 1000,
+      "document_untagged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true
+      ]
+    },
+    {
+      "plant_id": "VAL100g22",
+      "role": "validation",
+      "scale": 100,
+      "seed": 5860,
+      "target_sheets": 104,
+      "n_units": 52,
+      "predicted_sheets": 104,
+      "document_untagged": [
+        true
+      ]
+    },
+    {
+      "plant_id": "VAL1000g22",
+      "role": "validation",
+      "scale": 1000,
+      "seed": 5184,
+      "target_sheets": 1049,
+      "n_units": 531,
+      "predicted_sheets": 1050,
+      "document_untagged": [
+        false,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "plant_id": "H100g22p1",
+      "role": "sealed",
+      "scale": 100,
+      "seed": 5669,
+      "target_sheets": 108,
+      "n_units": 55,
+      "predicted_sheets": 110,
+      "document_untagged": [
+        true,
+        true
+      ]
+    },
+    {
+      "plant_id": "H100g22p2",
+      "role": "sealed",
+      "scale": 100,
+      "seed": 5474,
+      "target_sheets": 90,
+      "n_units": 42,
+      "predicted_sheets": 90,
+      "document_untagged": [
+        false
+      ]
+    },
+    {
+      "plant_id": "H100g22p3",
+      "role": "sealed",
+      "scale": 100,
+      "seed": 5308,
+      "target_sheets": 110,
+      "n_units": 53,
+      "predicted_sheets": 109,
+      "document_untagged": [
+        true,
+        true
+      ]
+    },
+    {
+      "plant_id": "H100g22p4",
+      "role": "sealed",
+      "scale": 100,
+      "seed": 5917,
+      "target_sheets": 110,
+      "n_units": 55,
+      "predicted_sheets": 109,
+      "document_untagged": [
+        true
+      ]
+    },
+    {
+      "plant_id": "H100g22p5",
+      "role": "sealed",
+      "scale": 100,
+      "seed": 5030,
+      "target_sheets": 104,
+      "n_units": 53,
+      "predicted_sheets": 100,
+      "document_untagged": [
+        true
+      ]
+    },
+    {
+      "plant_id": "H1000g22p1",
+      "role": "sealed",
+      "scale": 1000,
+      "seed": 5791,
+      "target_sheets": 920,
+      "n_units": 468,
+      "predicted_sheets": 921,
+      "document_untagged": [
+        true,
+        false,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "plant_id": "H1000g22p2",
+      "role": "sealed",
+      "scale": 1000,
+      "seed": 5827,
+      "target_sheets": 1086,
+      "n_units": 558,
+      "predicted_sheets": 1086,
+      "document_untagged": [
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "plant_id": "H1000g22p3",
+      "role": "sealed",
+      "scale": 1000,
+      "seed": 5738,
+      "target_sheets": 1024,
+      "n_units": 533,
+      "predicted_sheets": 1025,
+      "document_untagged": [
+        true,
+        true,
+        false,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "plant_id": "H1000g22p4",
+      "role": "sealed",
+      "scale": 1000,
+      "seed": 5568,
+      "target_sheets": 1072,
+      "n_units": 531,
+      "predicted_sheets": 1072,
+      "document_untagged": [
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        true
+      ]
+    },
+    {
+      "plant_id": "H1000g22p5",
+      "role": "sealed",
+      "scale": 1000,
+      "seed": 5945,
+      "target_sheets": 1012,
+      "n_units": 506,
+      "predicted_sheets": 1011,
+      "document_untagged": [
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false
+      ]
+    }
+  ]
+}
