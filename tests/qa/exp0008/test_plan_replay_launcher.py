@@ -140,3 +140,17 @@ def test_the_plan_composes_the_same_ids_as_the_corpus_id_function_of_f12() -> No
     assert len(plain) == 14
     for spec in plain:
         assert checked_id(spec, fixture) == spec.corpus_id
+
+
+class _VanishingTree:
+    """A process whose child list fails because a member ended while psutil listed it."""
+
+    def children(self, recursive: bool = False) -> list[object]:
+        raise memory_probe.psutil.NoSuchProcess(7056)
+
+    def memory_info(self) -> object:
+        return type("Info", (), {"rss": 1234})()
+
+
+def test_a_child_that_ends_while_the_tree_is_listed_does_not_crash_the_probe() -> None:
+    assert memory_probe._tree_rss(_VanishingTree()) == 1234  # type: ignore[arg-type]

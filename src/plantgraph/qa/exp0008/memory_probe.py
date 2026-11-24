@@ -39,7 +39,13 @@ class ProbeResult(BaseModel):
 
 def _tree_rss(process: psutil.Process) -> int:
     total = 0
-    for member in [process, *process.children(recursive=True)]:
+    try:
+        children = process.children(recursive=True)
+    except psutil.NoSuchProcess:
+        # A process in the tree ended while psutil was listing it (seen at the end of a
+        # 1,000-sheet build, EXP-0009 P0). Skip this sample; the loop samples again 0.2 s later.
+        children = []
+    for member in [process, *children]:
         try:
             total += member.memory_info().rss
         except psutil.NoSuchProcess:
