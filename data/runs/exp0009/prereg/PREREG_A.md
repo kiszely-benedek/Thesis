@@ -10,7 +10,7 @@ Design: `docs/private/40-design/generator-v2-2-handbook-rules.md` section 19.
 - The A2 system is E9 (`5d31cbb94620645ee018771735edae37f49e7ef8`), checked by gate G0f.
 - The code at the draw; the part A commit adds only `prereg/` files:
 
-Part A code commit: c827ae0460906e513622c8666040be48b9185271
+Part A code commit: 25b1d713b8a39829c34c299955966463850dcd26
 
 - Between that commit and E10 only these may change:
   B files under `src/plantgraph/qa/v2tb/` and `tests/v2tb/` (tuning); the T17 analysis module and its tests;
@@ -170,3 +170,5 @@ P0 stopped at the end of the D1000g22 build. Every build gate had passed: G0c, G
 The probe now skips that one sample and samples again. A regression test was added. The code commit above was moved from `871aee51bf3f46b5bdb61483cc51a9ed185a7821` to `c827ae0460906e513622c8666040be48b9185271`.
 
 Nothing else changed: no claim, threshold, seed, plant, question or cap. No paid call had been made.
+
+The code commit was then moved once more, to `25b1d713b8a39829c34c299955966463850dcd26`. That commit adds the independent scope X gold recomputation (`qa/exp0009/gold_crosscheck*.py`), a validation tool that reads built corpora and changes no stage. Before this move it was run on the forced-untagged and forced-tagged 100-sheet dev plants of seeds 1–5: 14,266 scope X questions, all in agreement with the stored gold, and no disagreement anywhere.
