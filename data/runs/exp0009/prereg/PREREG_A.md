@@ -10,7 +10,7 @@ Design: `docs/private/40-design/generator-v2-2-handbook-rules.md` section 19.
 - The A2 system is E9 (`5d31cbb94620645ee018771735edae37f49e7ef8`), checked by gate G0f.
 - The code at the draw; the part A commit adds only `prereg/` files:
 
-Part A code commit: 25b1d713b8a39829c34c299955966463850dcd26
+Part A code commit: 0d346dd0c8824b469f0731d583971d869fe3c21f
 
 - Between that commit and E10 only these may change:
   B files under `src/plantgraph/qa/v2tb/` and `tests/v2tb/` (tuning); the T17 analysis module and its tests;
@@ -172,3 +172,13 @@ The probe now skips that one sample and samples again. A regression test was add
 Nothing else changed: no claim, threshold, seed, plant, question or cap. No paid call had been made.
 
 The code commit was then moved once more, to `25b1d713b8a39829c34c299955966463850dcd26`. That commit adds the independent scope X gold recomputation (`qa/exp0009/gold_crosscheck*.py`), a validation tool that reads built corpora and changes no stage. Before this move it was run on the forced-untagged and forced-tagged 100-sheet dev plants of seeds 1–5: 14,266 scope X questions, all in agreement with the stored gold, and no disagreement anywhere.
+
+## Third amendment of 2026-11-24, in P1a (after the A2 dev baseline, before any B call)
+
+P1a ran the A2 dev baseline on D100g22: Cypher tier U9-A-CYP-D100g22, then agent tier U9-A-AG-D100g22. It then stopped before B's first tuning round, in `prepare-b-load`.
+
+**Cause.** After a real Neo4j load, the kept copy of A's `ingest.json` also holds a `load_report` that names A's corpus. The relabel helper required the corpus id exactly once. The file-only smoke never loads, so it never met this case.
+
+**Fix.** The B folder now relabels only the top-level `corpus_id` (`relabel_top_level_id`); A's load report stays as it is. Tests were added. The code commit above was moved to `0d346dd0c8824b469f0731d583971d869fe3c21f`.
+
+**What this touches.** Only the preparation of the B load. The A2 runs already made, the questions, claims, seeds, plants and caps are unchanged.
