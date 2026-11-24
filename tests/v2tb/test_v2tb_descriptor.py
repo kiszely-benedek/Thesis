@@ -2,8 +2,18 @@
 
 from __future__ import annotations
 
+import networkx as nx
 import pytest
-from plants_b import BRANCH, LINE, real_plant, series_plant, toy_plant
+from plants_b import (
+    BRANCH,
+    LINE,
+    bypass_plant,
+    real_plant,
+    root_valve_plant,
+    series_plant,
+    spec_break_plant,
+    toy_plant,
+)
 
 from plantgraph.qa.v2tb.descriptor import (
     Descriptor,
@@ -34,10 +44,11 @@ def test_a_descriptor_resolves_to_the_valve_it_names() -> None:
     assert resolve_descriptor(index, _descriptor("GateValve", LINE, "T-1", Side.UPSTREAM)) == {"g3"}
 
 
-def test_the_walk_passes_through_a_tee_but_stays_on_its_own_line() -> None:
+def test_the_walk_follows_every_send_to_edge_whatever_its_line_number() -> None:
     index = PlantIndex(toy_plant())
-    # g1 reaches FV-1 through the tee `t`, and never reaches T-2 along the branch line
-    assert index.nearest_tagged("g1", fold_line_number(LINE), forward=True) == {"fv"}
+    # g1 reaches FV-1 through the tee `t`, and also T-2 along the tee's branch line
+    assert index.nearest_tagged("g1", forward=True) == {"fv", "tank2"}
+    assert index.nearest_tagged("g1", forward=False) == {"p"}
     assert resolve_descriptor(index, _descriptor("GateValve", BRANCH, "T-2", Side.UPSTREAM)) == {
         "b"
     }
@@ -117,3 +128,46 @@ def test_every_untagged_valve_of_a_real_plant_that_has_a_descriptor_resolves_to_
             named += 1
             assert resolve_descriptor(index, descriptor) == {node}
     assert untagged and named > 0
+
+
+def test_a_spec_break_block_is_named_by_the_pump_upstream_of_it() -> None:
+    index = PlantIndex(spec_break_plant())
+    assert index.line_numbers("block") == sorted([fold_line_number(LINE), fold_line_number(BRANCH)])
+    # either of the block's two line numbers is accepted (R10c)
+    for line in (LINE, BRANCH):
+        assert resolve_descriptor(
+            index, _descriptor("GateValve", line, "P-1", Side.DOWNSTREAM)
+        ) == {"block"}
+
+
+def test_an_instrument_root_valve_is_named_by_its_gauge() -> None:
+    index = PlantIndex(root_valve_plant())
+    root = _descriptor("NeedleValve", BRANCH, "PI-1", Side.UPSTREAM)
+    assert resolve_descriptor(index, root) == {"root"}
+    assert canonical_descriptor(index, "root") is not None
+
+
+def test_a_control_valve_bypass_globe_valve_gets_a_unique_descriptor() -> None:
+    index = PlantIndex(bypass_plant())
+    descriptor = canonical_descriptor(index, "bypass")
+    assert descriptor is not None
+    assert resolve_descriptor(index, descriptor) == {"bypass"}
+    assert canonical_descriptor(index, "gate_in") is not None
+
+
+def test_two_printed_line_numbers_that_fold_together_are_refused() -> None:
+    plant = toy_plant()
+    plant.add_edge("g3", "tank2", relation="send_to", line_number="6-P-1203-A1A")  # LINE without ")
+    with pytest.raises(ValueError, match="both fold to"):
+        PlantIndex(plant)
+
+
+def test_an_edge_without_a_line_number_still_carries_the_walk() -> None:
+    plant: nx.DiGraph[str] = nx.DiGraph()
+    plant.add_node("a", node_class="Tank", tag="T-1")
+    plant.add_node("v", node_class="GateValve")
+    plant.add_node("b", node_class="Tank", tag="T-2")
+    plant.add_edge("a", "v", relation="send_to", line_number=LINE)
+    plant.add_edge("v", "b", relation="send_to")
+    index = PlantIndex(plant)
+    assert index.nearest_tagged("v", forward=True) == {"b"}

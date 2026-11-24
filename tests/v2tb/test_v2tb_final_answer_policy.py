@@ -70,6 +70,18 @@ def test_an_extra_key_in_a_descriptor_is_ignored() -> None:
     assert decode_item(final.answer[0]) == decode_item(encode_descriptor(_expected()))
 
 
+def test_a_tag_wins_over_whatever_else_an_object_item_holds() -> None:
+    both = {**_DESCRIPTOR, "tag": "GTV-9"}
+    final = parse_final_answer_b(_reply([both]), AnswerType.VALVE_SET)
+    assert final.answer == ["GTV-9"]
+
+
+def test_an_empty_tag_does_not_win() -> None:
+    final = parse_final_answer_b(_reply([{**_DESCRIPTOR, "tag": ""}]), AnswerType.VALVE_SET)
+    assert isinstance(final.answer, list)
+    assert decode_item(final.answer[0]) == _expected()
+
+
 def _expected() -> Descriptor:
     return Descriptor(
         class_name="GateValve", line_number="6-P-1203-A1A", next_to="FV-1203", side=Side.UPSTREAM

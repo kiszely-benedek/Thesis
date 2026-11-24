@@ -3,9 +3,9 @@
 The frozen step knows neither type. Everything else is handed to it unchanged, so a B run asks and
 parses a `TAG_SET` question exactly as V2T-A2 does.
 
-A `VALVE_SET` item is a tag, `{"tag": ...}`, or a descriptor object (`descriptor.py`). The frozen
-`FinalAnswer` holds only strings, so each descriptor is stored as its sorted-key JSON string
-(`encode_descriptor`), and the scorer reads it back.
+A `VALVE_SET` item is a tag, an object holding a `tag`, or a descriptor object (`descriptor.py`).
+The frozen `FinalAnswer` holds only strings, so each descriptor is stored as its sorted-key JSON
+string (`encode_descriptor`), and the scorer reads it back.
 """
 
 from __future__ import annotations
@@ -41,8 +41,9 @@ _FORMAT_INSTRUCTIONS = {
         "Answer with a JSON list, one entry per valve. Name a valve that prints a tag by that tag, "
         'for example "GTV-1203". Name a valve that prints no tag by an object with exactly the '
         'keys "class" (its valve class), "line_number" (the line number of its pipe), "next_to" '
-        '(the tag of the nearest tagged item on that line) and "side" ("upstream" if the valve '
-        'lies upstream of that item along the flow, otherwise "downstream"), for example '
+        "(the tag of the nearest tagged item along the flow; the line number may change on the "
+        'way) and "side" ("upstream" if the valve lies upstream of that item along the flow, '
+        'otherwise "downstream"), for example '
         '{"class": "GateValve", "line_number": "6-P-1203-A1A", "next_to": "FV-1203", '
         '"side": "upstream"}.'
     ),
@@ -132,13 +133,15 @@ def _read_position(answer: object) -> str:
 
 
 def _read_item(item: object) -> str:
-    """A tag stays; `{"tag": ...}` becomes the tag; a descriptor object becomes its string."""
+    """A tag stays; an object with a non-empty string `tag` becomes that tag; else a descriptor."""
     if isinstance(item, str):
         return item
     if not isinstance(item, dict):
         raise FinalAnswerParseError(f"a VALVE_SET item is a tag or an object, got {item!r}")
-    if set(item) == {"tag"} and isinstance(item["tag"], str):
-        return item["tag"]
+    tag = item.get("tag")
+    # a tag identifies the valve whatever else the object holds
+    if isinstance(tag, str) and tag:
+        return tag
     return _descriptor_string(item)
 
 

@@ -16,8 +16,8 @@ _PROPERTIES_PREFIX = "Item properties (present only when the drawing shows them)
 POSITION_PARAGRAPH = """\
 Valves may carry operating_position: NO normally open, NC normally closed, LO/LC locked open/closed,
 CSO/CSC car-sealed open/closed. A valve without the property is normally open. Manual valves in
-some areas carry no tag. Such a valve is named by its class, its line_number and the tagged item it
-sits next to (see the answer rules)."""
+some areas carry no tag. Such a valve is named by its class, its line_number and the nearest tagged
+item along the flow (the line number may change on the way); see the answer rules."""
 
 
 def plan_holds_positions(plan: LoadPlan) -> bool:

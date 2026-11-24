@@ -7,8 +7,9 @@ side of that item (along the flow) it sits.
 
 Resolution reads the gold plant (a `networkx` graph whose `send_to` edges carry the line number).
 A descriptor means: every untagged node of that class on that line whose **nearest tagged
-neighbour** on that side is `next_to`. The walk follows `send_to` edges of the same line only and
-passes through untagged nodes; it stops at the first tagged node on each branch.
+neighbour** on that side is `next_to`. The walk follows every `send_to` edge, whatever its line
+number (the number may change at a spec break), passes through untagged nodes, and stops at the
+first tagged node on each branch.
 
 Answer items travel through the frozen `FinalAnswer`, which holds only strings, so a descriptor is
 written as a JSON string with sorted keys (`encode_descriptor`); a tag stays a plain string.
@@ -109,16 +110,26 @@ class PlantIndex:
         self._line_as_written: dict[str, str] = {}
         self._index_edges()
         self._index_nodes()
-        self._walks: dict[tuple[str, str, bool], frozenset[str]] = {}
+        self._walks: dict[tuple[str, bool], frozenset[str]] = {}
 
     def _index_edges(self) -> None:
         for source, target, data in self._plant.edges(data=True):
             line = data.get("line_number")
             if data.get("relation") == _SEND_TO and line:
-                key = fold_line_number(str(line))
-                self._line_as_written.setdefault(key, str(line))
+                key = self._register_line(str(line))
                 self._lines[source].add(key)
                 self._lines[target].add(key)
+
+    def _register_line(self, written: str) -> str:
+        """Remember how the plant prints a line number; refuse two spellings that fold together."""
+        key = fold_line_number(written)
+        known = self._line_as_written.setdefault(key, written)
+        if known != written:
+            raise ValueError(
+                f"expected distinct line numbers to fold to distinct keys, but {known!r} and "
+                f"{written!r} both fold to {key!r}"
+            )
+        return key
 
     def _index_nodes(self) -> None:
         for node_id, data in self._plant.nodes(data=True):
@@ -153,34 +164,33 @@ class PlantIndex:
         """The node's `node_class`."""
         return str(self._plant.nodes[node_id]["node_class"])
 
-    def nearest_tagged(self, node_id: str, line_key: str, *, forward: bool) -> frozenset[str]:
-        """Tagged nodes first reached from `node_id` along `send_to` edges of one line.
+    def nearest_tagged(self, node_id: str, *, forward: bool) -> frozenset[str]:
+        """Tagged nodes first reached from `node_id` along `send_to` edges, whatever their line.
 
         Args:
             node_id: where the walk starts.
-            line_key: the folded line number whose edges are followed.
             forward: True walks downstream (with the flow), False walks upstream.
         """
-        key = (node_id, line_key, forward)
+        key = (node_id, forward)
         if key not in self._walks:
-            self._walks[key] = self._walk(node_id, line_key, forward)
+            self._walks[key] = self._walk(node_id, forward)
         return self._walks[key]
 
-    def _walk(self, start: str, line_key: str, forward: bool) -> frozenset[str]:
+    def _walk(self, start: str, forward: bool) -> frozenset[str]:
         found: set[str] = set()
         seen = {start}
         frontier = [start]
         while frontier:
-            frontier = self._step(frontier, line_key, forward, seen, found)
+            frontier = self._step(frontier, forward, seen, found)
         return frozenset(found)
 
     def _step(
-        self, frontier: list[str], line_key: str, forward: bool, seen: set[str], found: set[str]
+        self, frontier: list[str], forward: bool, seen: set[str], found: set[str]
     ) -> list[str]:
         """One breadth-first layer: tagged neighbours end a branch, untagged ones are walked on."""
         onward: list[str] = []
         for node_id in frontier:
-            for neighbour in self._same_line_neighbours(node_id, line_key, forward):
+            for neighbour in self._flow_neighbours(node_id, forward):
                 if self.tag_of(neighbour) is not None:
                     found.add(neighbour)
                 elif neighbour not in seen:
@@ -188,19 +198,14 @@ class PlantIndex:
                     onward.append(neighbour)
         return onward
 
-    def _same_line_neighbours(self, node_id: str, line_key: str, forward: bool) -> Iterable[str]:
+    def _flow_neighbours(self, node_id: str, forward: bool) -> Iterable[str]:
         edges = (
             self._plant.out_edges(node_id, data=True)
             if forward
             else self._plant.in_edges(node_id, data=True)
         )
         for source, target, data in edges:
-            line = data.get("line_number")
-            if (
-                data.get("relation") == _SEND_TO
-                and line
-                and fold_line_number(str(line)) == line_key
-            ):
+            if data.get("relation") == _SEND_TO:
                 yield target if forward else source
 
 
@@ -212,30 +217,29 @@ def resolve_descriptor(index: PlantIndex, descriptor: Descriptor) -> frozenset[s
     forward = descriptor.side is Side.UPSTREAM
     candidates = index.untagged_of(fold_class(descriptor.class_name), line_key)
     return frozenset(
-        node_id
-        for node_id in candidates
-        if beside & index.nearest_tagged(node_id, line_key, forward=forward)
+        node_id for node_id in candidates if beside & index.nearest_tagged(node_id, forward=forward)
     )
 
 
 def canonical_descriptor(index: PlantIndex, node_id: str) -> Descriptor | None:
     """The first descriptor that picks out exactly `node_id`, or `None` when none does.
 
-    Order: each of the node's lines, sorted; downstream neighbour first, else upstream; among
-    several tagged neighbours the tag that sorts first. `None` means the node cannot be named.
+    Order: each of the node's own lines, sorted (a valve at a spec break has two); downstream
+    neighbour first, else upstream; among several tagged neighbours the tag that sorts
+    first. `None` means the node cannot be named.
     """
     class_name = index.node_class_of(node_id)
     for line in index.line_numbers(node_id):
         for forward, side in ((True, Side.UPSTREAM), (False, Side.DOWNSTREAM)):
-            for neighbour in _tags_beside(index, node_id, line, forward):
+            for neighbour in _tags_beside(index, node_id, forward):
                 found = _unique_descriptor(index, node_id, class_name, line, neighbour, side)
                 if found is not None:
                     return found
     return None
 
 
-def _tags_beside(index: PlantIndex, node_id: str, line: str, forward: bool) -> list[str]:
-    reached = index.nearest_tagged(node_id, line, forward=forward)
+def _tags_beside(index: PlantIndex, node_id: str, forward: bool) -> list[str]:
+    reached = index.nearest_tagged(node_id, forward=forward)
     return sorted(tag for n in reached if (tag := index.tag_of(n)) is not None)
 
 

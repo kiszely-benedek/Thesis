@@ -13,7 +13,8 @@ POSITION_PRIMER = """\
 Valve positions: a valve's normal position is NO (normally open), NC (normally closed), LO or LC
 (locked open or closed) or CSO or CSC (car-sealed open or closed). A valve with no position drawn is
 normally open. In some drawing sets manual valves carry no tag. Name such a valve by its class, the
-line number of its pipe and the tagged item next to it, with the side it sits on along the flow."""
+line number of its pipe and the nearest tagged item along the flow (the line number may change on
+the way), with the side of that item it sits on."""
 
 
 def primer_block_b() -> str:

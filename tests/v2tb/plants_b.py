@@ -63,6 +63,55 @@ def series_plant() -> nx.DiGraph[str]:
     return plant
 
 
+def spec_break_plant() -> nx.DiGraph[str]:
+    """Pump P-1 -> untagged discharge block -> tank T-1, the line number changing at the block."""
+    plant: nx.DiGraph[str] = nx.DiGraph()
+    for node_id, node_class, tag in [
+        ("pump", "CentrifugalPump", "P-1"),
+        ("block", "GateValve", None),
+        ("tank", "Tank", "T-1"),
+    ]:
+        _node(plant, node_id, node_class, tag)
+    _flow(plant, ["pump", "block"], BRANCH)
+    _flow(plant, ["block", "tank"], LINE)
+    return plant
+
+
+def root_valve_plant() -> nx.DiGraph[str]:
+    """V-1 -> tee -> V-2; the tee also feeds an untagged needle valve into gauge PI-1."""
+    plant: nx.DiGraph[str] = nx.DiGraph()
+    for node_id, node_class, tag in [
+        ("v1", "Tank", "V-1"),
+        ("t", "PipeTee", None),
+        ("v2", "Tank", "V-2"),
+        ("root", "NeedleValve", None),
+        ("gauge", "PressureIndicator", "PI-1"),
+    ]:
+        _node(plant, node_id, node_class, tag)
+    _flow(plant, ["v1", "t", "v2"], LINE)
+    _flow(plant, ["t", "root", "gauge"], BRANCH)
+    return plant
+
+
+def bypass_plant() -> nx.DiGraph[str]:
+    """T-1 -> gate -> control valve CV-1 -> gate -> T-2, an untagged globe valve bypassing CV-1."""
+    plant: nx.DiGraph[str] = nx.DiGraph()
+    for node_id, node_class, tag in [
+        ("t1", "Tank", "T-1"),
+        ("split", "PipeTee", None),
+        ("gate_in", "GateValve", None),
+        ("cv", "GlobeValve", "CV-1"),
+        ("gate_out", "GateValve", None),
+        ("join", "PipeTee", None),
+        ("bypass", "GlobeValve", None),
+        ("t2", "Tank", "T-2"),
+    ]:
+        _node(plant, node_id, node_class, tag)
+    _flow(plant, ["t1", "split", "gate_in", "cv", "gate_out", "join", "t2"], LINE)
+    _flow(plant, ["split", "bypass", "join"], LINE)
+    return plant
+
+
 @cache
 def real_plant() -> nx.DiGraph[str]:
     """A small v2.2 plant (8 units, seed 1) whose first document prints no manual-valve tags."""
