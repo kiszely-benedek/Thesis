@@ -10,7 +10,7 @@ Design: `docs/private/40-design/generator-v2-2-handbook-rules.md` section 19.
 - The A2 system is E9 (`5d31cbb94620645ee018771735edae37f49e7ef8`), checked by gate G0f.
 - The code at the draw; the part A commit adds only `prereg/` files:
 
-Part A code commit: ba7277a76a32262bc4eee884dc47fbb1460909bf
+Part A code commit: 871aee51bf3f46b5bdb61483cc51a9ed185a7821
 
 - Between that commit and E10 only these may change:
   B files under `src/plantgraph/qa/v2tb/` and `tests/v2tb/` (tuning); the T17 analysis module and its tests;
@@ -142,3 +142,23 @@ EXP-0008's rule, plus a B stratum half the main sample's size (VALVE_SET and POS
 ## Bootstrap
 
 The resample count and seed of the EXP-0008 claims code: 5,000 resamples, seed 1 (`N_RESAMPLES`, `BOOTSTRAP_SEED` in `qa/cascade/stats.py`).
+
+## Amendment of 2026-11-24, before P0
+
+This amendment was written before any stage ran, before any plant was built and before any paid call.
+
+**Why the code commit changed.** The code commit above was moved from `ba7277a76a32262bc4eee884dc47fbb1460909bf` to `871aee51bf3f46b5bdb61483cc51a9ed185a7821`. A second read-only review of the launcher found seven blocking faults and nine faults to fix before F10 (`docs/private/40-design/exp0009-launcher-review.md`). They were fixed in one commit (task T13c). None of them changes a claim, threshold, seed, drawn plant, question text or money cap in this part.
+
+**Audit (ADR-0069).** This replaces the audit wording above.
+- The main audit sample is drawn from the scope R rows of the A2 sealed runs only. A2's scope X answers are wrong by construction, because A2 cannot name an untagged valve.
+- When B is sealed, the main sample is sized to 2/3 of the audit cap. The B stratum is judged under the same total audit cap, with one shared ledger.
+- The B stratum is judged through `plantgraph.qa.exp0009.audit_judge`. It uses the unchanged template (sha256 `b56c89d5fba7111f4270d47ef4d8cd53796eee5c499fc3cc5e1ce3d9d2312eaa`) and the unchanged judge pin (sha256 `e4794d07b865bf29c276f58309ccf35f205f3a71fabf9257260863cf2a0ea6aa`), plus two answer-type help lines added in code:
+  - `VALVE_SET (a set of valves to operate, order irrelevant; a valve without a tag is named by its class, line number, side and nearest tag)`
+  - `POSITION (one normal operating position code, e.g. NO, NC, CSO)`
+
+  The sha256 of the two lines, joined by a newline with no trailing newline, is `639479f6b0652b6eb70d99a5c78159ceb940934ddefcceb74def46bfda052aad`.
+
+**Other launcher behaviour fixed in T13c.**
+- **Money check before F10.** At the end of P1b, P1c's spend is projected from P1b's measured cost per question. If the projection does not fit, the launcher stops before F10 and the user decides.
+- **GLM arm.** The GLM arm is scored with `cascade_v4_iso_glm`, which is `cascade_v4_iso` with the GLM tier pins. A money shortfall in the GLM arm skips the rest of that arm and does not stop P1d.
+- **Precision and recall.** Precision, recall and F1 are also computed from the Cypher tier's re-score, scored per question from the tier that answered it.
