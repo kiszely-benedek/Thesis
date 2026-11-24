@@ -26,7 +26,6 @@ from plantgraph.ingest.pipeline import run_synthetic
 from plantgraph.qa.exp0009.build import (
     CORPUS_B_FILE,
     INGEST_FILE,
-    relabel_ingest_text,
     sha256_of_file,
 )
 from plantgraph.qa.exp0009.plan import b_id_of
@@ -93,6 +92,22 @@ def require_loaded_matches(root: Path, plant_id: str) -> None:
         raise ValueError(f"expected the loaded {plant_id} to have {built} sheets, found {loaded}")
 
 
+def relabel_top_level_id(text: str, from_id: str, to_id: str) -> str:
+    """The kept copy's text with only its top-level `corpus_id` changed.
+
+    After a real Neo4j load the kept copy also holds a `load_report` that names A's corpus; that
+    report records the A load and stays as it is. The top-level field is the file's first key.
+
+    Raises:
+        ValueError: the file does not start with the expected top-level field.
+    """
+    field = f'"corpus_id": "{from_id}"'
+    head = text.find(field)
+    if head < 0 or text[:head].strip() != "{":
+        raise ValueError(f"expected the ingest file to start with {field}, found it elsewhere")
+    return text[:head] + f'"corpus_id": "{to_id}"' + text[head + len(field) :]
+
+
 def prepare_b_load(root: Path, plant_id: str) -> Path:
     """Make `cypcorp/plant_lines/<id>B/`: the relabel of A's kept copy plus the positions file.
 
@@ -107,7 +122,7 @@ def prepare_b_load(root: Path, plant_id: str) -> Path:
     b_dir = root / CYPCORP / b_id
     b_dir.mkdir(parents=True, exist_ok=True)
     text = a_copy.read_bytes().decode("utf-8")
-    (b_dir / INGEST_FILE).write_bytes(relabel_ingest_text(text, plant_id, b_id).encode("utf-8"))
+    (b_dir / INGEST_FILE).write_bytes(relabel_top_level_id(text, plant_id, b_id).encode("utf-8"))
     built = root / "corpora" / b_id
     shutil.copyfile(built / POSITIONS_FILE_NAME, b_dir / POSITIONS_FILE_NAME)
     recorded = json.loads((built / CORPUS_B_FILE).read_text(encoding="utf-8"))["positions_sha256"]

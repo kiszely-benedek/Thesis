@@ -35,3 +35,17 @@ def test_prepare_b_refuses_a_changed_positions_file() -> None:
             load.prepare_b_load(root, spec.plant_id)
     finally:
         positions.write_bytes(original)
+
+
+def test_the_b_copy_keeps_a_load_report_and_relabels_only_the_top_level_id() -> None:
+    kept = {"corpus_id": "D100g22", "config": {}, "load_report": {"corpus_id": "D100g22"}}
+    text = json.dumps(kept, indent=2)
+    out = load.relabel_top_level_id(text, "D100g22", "D100g22B")
+    assert json.loads(out)["corpus_id"] == "D100g22B"
+    assert json.loads(out)["load_report"]["corpus_id"] == "D100g22"
+    assert out.count('"corpus_id": "D100g22B"') == 1
+
+
+def test_the_top_level_relabel_refuses_a_file_without_the_leading_field() -> None:
+    with pytest.raises(ValueError, match="start with"):
+        load.relabel_top_level_id('{"x": 1, "corpus_id": "D100g22"}', "D100g22", "D100g22B")
