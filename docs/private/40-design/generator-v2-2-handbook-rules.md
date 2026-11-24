@@ -2034,6 +2034,26 @@ size search has landed, because a document is an area (§17.14 N2):
    - The local Neo4j was not running.
    - T13's first B load is the first live run of `count_positions_in_database`. If it fails, T13 stops.
 
+### 17.19 Main-session rulings on the T13 report, 2026-11-24 (committed `2995480`)
+
+1. **The policy hash is canonical.**
+   - `policy_b().model_dump_json()` is not stable between processes, because the `accept` sets are written in hash-seed order. The coder measured three different digests across three runs.
+   - E10 therefore hashes a canonical form: sorted keys and sorted string lists. This was tested under three hash seeds.
+   - **Accepted.** It replaces "the raw dump" of §10.9.
+2. **G0e for the validation and dev plants** is applied over each role's own plants, because the sealed pools do not exist before B10. **Accepted.**
+3. **Gaps accepted.**
+   - G0h is not built. The harness's own run-start check stays in place.
+   - The smoke run does not cover P1d's judge or the live G0f replays. P1d and the first live Neo4j loads are the first runs of those code paths, and a failure there stops the launcher.
+4. **The coder's assumptions, all accepted.**
+   - The split names are `x-dev` and `x-held-out`.
+   - The T17 path prefixes are as built.
+   - The A build uses store profile `both` (the CLI default). The B load takes `plant_lines` from `ingest.json`.
+   - Readiness reuses EXP-0008's helpers.
+   - A $0 run falls back to the §19.9 cost keys.
+   - The G0l stop asks the user. The main session then brings in the architect.
+5. **Before F10,** everything must be committed, because E10 hashes tracked files only.
+   - The draw is run once. It scans `data/runs` for seeds already used.
+
 ## 18. The user's decisions of 2026-11-23 and what follows from them
 
 ### 18.1 D1 = C: two systems on the same plants
