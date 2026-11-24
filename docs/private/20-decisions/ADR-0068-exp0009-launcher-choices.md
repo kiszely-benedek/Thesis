@@ -1,7 +1,7 @@
 ---
 adr: 0068
 title: Build the EXP-0009 launcher with caps from question counts, an EXP-0009 build command, relabelled B corpus files, a replay of every sealed run, and validation plants in the majority tagging stratum
-status: proposed
+status: accepted (user, 2026-11-24)
 date: 2026-11-24
 supersedes: none. Extends ADR-0065's launcher pattern (EXP-0008) to EXP-0009. Leaves ADR-0066 and ADR-0067 unchanged.
 design: 40-design/generator-v2-2-handbook-rules.md §19
