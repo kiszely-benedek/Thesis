@@ -2019,6 +2019,21 @@ size search has landed, because a document is an area (§17.14 N2):
 
    G0f is `[]`.
 
+### 17.18 Main-session rulings on the T14d report, 2026-11-24
+
+1. **There is no B seed.**
+   - §10.9 assumed that `GraphAgentLinesB` inherits a seed from `build_seed`.
+   - In the code, `GraphAgentLines` has `_seeded = False`. Only the dropped `HierAgent` called `build_seed` (ADR-0047). So neither A2 nor B starts from a seed map.
+   - `seed_b.py` is deleted, together with the seed-coverage and seed-footprint checks. What B shows is its tool item lines. The exactness check covers those: 100% on forced-untagged seed 1, with 8,571 items, 1,493 positioned and 1,713 untagged valves carrying line numbers.
+   - Before the deletion, the dropped footprint check measured 2 of 148 scope-R seeds (1.35%) cut by B but not by A. That number describes a seed no agent shows, so it is recorded here for completeness only.
+2. **Accepted as built.**
+   - `line_numbers` is a `|`-packed string. No generator line number contains `|`.
+   - The literal example in the B prompt sentence may be reworded during the P1a tuning rounds.
+   - `load_b` takes the profile from `ingest.json`. T13 ingests B corpora with `plant_lines`.
+3. **The B Neo4j loader is tested with stubs only.**
+   - The local Neo4j was not running.
+   - T13's first B load is the first live run of `count_positions_in_database`. If it fails, T13 stops.
+
 ## 18. The user's decisions of 2026-11-23 and what follows from them
 
 ### 18.1 D1 = C: two systems on the same plants
