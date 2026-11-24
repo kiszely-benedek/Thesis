@@ -27,6 +27,7 @@ from plantgraph.qa.v2tb.strategies_b import (
     GRAPH_AGENT_LINES_B_NAME,
     CypherRagLinesB,
     GraphAgentLinesB,
+    _with_b_reading,
 )
 from plantgraph.qa.v2tb.views_b import NetworkxGraphViewB
 from plantgraph.qa.v2tb.visible import OPERATING_POSITION
@@ -72,17 +73,6 @@ def test_the_frozen_agent_prints_no_position_for_the_same_valve() -> None:
     assert OPERATING_POSITION not in context.context  # the gap the B result types close
 
 
-def test_a_b_agent_edge_lines_show_the_line_number() -> None:
-    view, tag = _view_with_positions()
-    send = ScriptedModel([call("neighbours", of=tag, direction="both", relations="flow"), DONE])
-
-    context = _agent(view, send, primer=False).retrieve("q")
-
-    assert context.context is not None
-    assert "-send_to->" in context.context
-    assert " [line " in context.context
-
-
 def test_the_agent_system_prompt_has_the_b_primer_only_when_the_primer_is_on() -> None:
     view, _tag = _view_with_positions()
     graph = build_item_graph_b(view, line_view=True)
@@ -92,10 +82,11 @@ def test_the_agent_system_prompt_has_the_b_primer_only_when_the_primer_is_on() -
     b_off = _agent(view, ScriptedModel([]), primer=False)
     b_on = _agent(view, ScriptedModel([]), primer=True)
 
-    assert b_off.system_prompt == frozen_off.system_prompt  # primer off: A's prompt exactly
+    # the view holds positions, so the prompt also carries the one sentence on the two brackets
+    assert b_off.system_prompt == _with_b_reading(frozen_off.system_prompt)
     assert POSITION_PRIMER in b_on.system_prompt
-    assert b_on.system_prompt == frozen_on.system_prompt.replace(
-        primer_block(), primer_block() + "\n" + POSITION_PRIMER
+    assert b_on.system_prompt == _with_b_reading(
+        frozen_on.system_prompt.replace(primer_block(), primer_block() + "\n" + POSITION_PRIMER)
     )
 
 

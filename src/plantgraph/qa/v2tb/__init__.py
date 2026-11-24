@@ -14,11 +14,13 @@ Two ideas carry the package:
 Where the files sit, by job:
 
 - **Ingest** (gold side): `positions.py` reads positions out of DEXPI, `store_b.py` writes the
-  file, patches the load plan and runs gate G0-B.
+  file, patches the load plan and runs gate G0-B; `load_b.py` loads the patched plan into Neo4j and
+  checks the database holds the positions (`python -m plantgraph.qa.v2tb load`).
 - **Views and tools** (what a strategy reads): `views_b.py`, `item_graph_b.py`, `plant_api_b.py`.
 - **Strategies and answer step**: `strategies_b.py`, `registry_b.py`, `answer_b.py`,
   `final_answer_b.py`, `policy_b.py`.
 - **Harness** (the B twin of `qa/harness/`): `corpus_b.py`, `attempt_b.py`, `fill_b.py`,
   `runner_b.py`, and the command line `python -m plantgraph.qa.v2tb run`.
-- **Checks**: `canonical_b.py` and `expressiveness_b.py` (is the gold readable from the view?).
+- **Checks**: `canonical_b.py` and `expressiveness_b.py` (is the gold readable from the view?),
+  `shown_b.py` (are the B item lines exact?).
 """

@@ -4,7 +4,8 @@ The strategy-facing modules are the ones a model's run can reach: strategies, vi
 registry, the agent's tool text and the readers of the view. The gold-side B modules (`store_b`,
 `expressiveness_b`, `corpus_b`, `attempt_b`, `runner_b`, ...) may import gold; they must never be
 imported by a strategy-facing one. A `TYPE_CHECKING` import is a type annotation only (nothing
-runs), so it is not counted.
+runs), so it is not counted; `TYPE_CHECKING_ALLOWED` lists the ones a reviewer has accepted, and a
+new one fails the test until it is reviewed and added.
 """
 
 from __future__ import annotations
@@ -49,6 +50,8 @@ _BANNED_PREFIXES = (
     f"{_B_PREFIX}attempt_b",
     f"{_B_PREFIX}fill_b",
     f"{_B_PREFIX}runner_b",
+    f"{_B_PREFIX}load_b",
+    f"{_B_PREFIX}shown_b",
 )
 _BANNED_NAMES = frozenset({"SplitManifest", "OccurrenceMap"})
 
@@ -126,3 +129,50 @@ def test_the_scan_skips_a_type_checking_import() -> None:
     source = "if TYPE_CHECKING:\n    from plantgraph.benchmark.sheet_graph import SheetGraph\n"
 
     assert _imports_of(source) == (set(), set())
+
+
+# ---- the TYPE_CHECKING allow-list (design §10.9 R17) ---------------------------------------------
+
+#: (module file, imported module, imported name): the `TYPE_CHECKING` imports of a banned module
+#: that were reviewed. `views_b` names `SheetGraph` as the type of the frozen constructor's own
+#: parameter; no gold value reaches a strategy through an annotation.
+TYPE_CHECKING_ALLOWED = {("views_b", "plantgraph.benchmark.sheet_graph", "SheetGraph")}
+
+
+def _type_checking_imports(name: str, source: str) -> set[tuple[str, str, str]]:
+    """Every `from X import Y` inside an `if TYPE_CHECKING:` block of a file, as (file, X, Y)."""
+    found: set[tuple[str, str, str]] = set()
+    for block in (n for n in ast.walk(ast.parse(source)) if _is_type_checking_block(n)):
+        for node in ast.walk(block):
+            if isinstance(node, ast.ImportFrom) and node.module is not None:
+                found.update((name, node.module, alias.name) for alias in node.names)
+    return found
+
+
+def _banned(module: str, imported: str) -> bool:
+    return module.startswith(_BANNED_PREFIXES) or imported in _BANNED_NAMES
+
+
+def test_every_type_checking_import_of_a_banned_module_is_on_the_reviewed_list() -> None:
+    found: set[tuple[str, str, str]] = set()
+    for path in sorted(_B_DIR.glob("*.py")):
+        source = path.read_text(encoding="utf-8")
+        found |= {t for t in _type_checking_imports(path.stem, source) if _banned(t[1], t[2])}
+
+    assert found == TYPE_CHECKING_ALLOWED
+
+
+def test_a_new_type_checking_import_of_gold_is_not_on_the_list() -> None:
+    source = "if TYPE_CHECKING:" + chr(10) + "    from plantgraph.qa.corpus import CorpusArtifacts"
+
+    found = {t for t in _type_checking_imports("views_b", source) if _banned(t[1], t[2])}
+
+    assert found == {("views_b", "plantgraph.qa.corpus", "CorpusArtifacts")}
+    assert not found <= TYPE_CHECKING_ALLOWED
+
+
+def test_a_strategy_facing_module_that_imports_load_b_or_shown_b_is_caught() -> None:
+    for gold_side in ("load_b", "shown_b"):
+        modules, _names = _imports_of(f"from {_B_PREFIX}{gold_side} import anything")
+
+        assert any(module.startswith(_BANNED_PREFIXES) for module in modules), gold_side

@@ -1,20 +1,21 @@
-"""The plant API of the B agent: the frozen tools, with two facts added to what they print.
+"""The plant API of the B agent: the frozen tools, with two facts added to each valve's item line.
 
-The frozen tools print an item as `TAG (Class, kind, unit, sheets)` and an edge as `A -send_to-> B`:
-no item property and no line number ever reaches the model. A B agent needs both to answer:
+The frozen tools print an item as `TAG (Class, kind, unit, sheets)`: no item property and no line
+number ever reaches the model. A B agent needs both to answer:
 
 - a valve's `operating_position` (which valves are closed in normal operation), and
-- the `line_number` of an edge (an untagged valve is named by its line number, design `v2t-b` §5).
+- an untagged valve's line numbers (it is named by its class and line number, design `v2t-b` §5).
 
-So the result types below print one more bracket: `[operating_position NC]` after a valve's line,
-`[line 6"-P-1203-A1A]` after an edge. Nothing else changes: `PlantApiB` computes exactly what the
-frozen `PlantApi` computes and only wraps its results in these subclasses. Each `render` is a copy
-of the frozen method with the two line formatters swapped; its docstring names the original.
+So the item line prints up to two more brackets: `[operating_position NC]` after a positioned
+valve's line, and `[line 6"-P-1203-A1A]` (or `[lines A, B]` where the number changes at the valve)
+after an untagged valve's. Edge lines are the frozen ones. `PlantApiB` computes exactly what the
+frozen `PlantApi` computes and only wraps its results in these subclasses; each `render` is a copy
+of the frozen method with the item-line formatter swapped, and its docstring names the original.
 """
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 
 from plantgraph.qa.plant_api.model import ItemEdge, ItemRecord, RelationGroup
 from plantgraph.qa.plant_api.primitives import PlantApi
@@ -34,25 +35,26 @@ from plantgraph.qa.plant_api.results import (
     no_such_tag_text,
 )
 from plantgraph.qa.plant_api.traversal import Closure
-from plantgraph.qa.v2tb.visible import OPERATING_POSITION
+from plantgraph.qa.v2tb.visible import LINE_NUMBER_SEPARATOR, LINE_NUMBERS, OPERATING_POSITION
 
-LINE_NUMBER = "line_number"
+LINE_NUMBER = "line_number"  # the key of a drawn edge's line number (`canonical_b` reads it)
 
 
 def item_line_b(item: ItemRecord) -> str:
-    """`item_line`, plus `[operating_position NC]` when the item has a position."""
+    """`item_line`, plus `[operating_position NC]` and an untagged valve's `[line ...]`.
+
+    Both brackets come from item properties that only `build_item_graph_b` sets, so an item of a
+    frozen item graph prints exactly the frozen line.
+    """
+    line = item_line(item)
     position = item.properties.get(OPERATING_POSITION)
-    if not isinstance(position, str):
-        return item_line(item)
-    return f"{item_line(item)} [{OPERATING_POSITION} {position}]"
-
-
-def edge_line_b(edge: ItemEdge, names: Mapping[str, ItemRecord]) -> str:
-    """`edge_line`, plus `[line 6"-P-1203-A1A]` when the drawn edge has a line number."""
-    line_number = edge.properties.get(LINE_NUMBER)
-    if not isinstance(line_number, str):
-        return edge_line(edge, names)
-    return f"{edge_line(edge, names)} [line {line_number}]"
+    if isinstance(position, str):
+        line += f" [{OPERATING_POSITION} {position}]"
+    packed = item.properties.get(LINE_NUMBERS)
+    if isinstance(packed, str):
+        numbers = packed.split(LINE_NUMBER_SEPARATOR)
+        line += f" [{'lines' if len(numbers) > 1 else 'line'} {', '.join(numbers)}]"
+    return line
 
 
 def _member_line_b(member: SubgraphMember) -> str:
@@ -80,15 +82,15 @@ class ItemSetB(ItemSet):
 
 
 class SubgraphB(Subgraph):
-    """`Subgraph` whose item and edge lines show the position and the line number."""
+    """`Subgraph` whose item lines show the position and the line numbers."""
 
     def render(self, max_chars: int = DEFAULT_MAX_CHARS, max_items: int = DEFAULT_MAX_ITEMS) -> str:
-        """Copy of `Subgraph.render` over `_member_line_b` and `edge_line_b`."""
+        """Copy of `Subgraph.render` over `_member_line_b`; the edge lines are the frozen ones."""
         members = self.members[:max_items]
         edges = self.edges[:max_items]
         names = {item.item_id: item for item in [*self.start, *(m.item for m in self.members)]}
         lines = [_member_line_b(member) for member in members]
-        lines += [edge_line_b(edge, names) for edge in edges]
+        lines += [edge_line(edge, names) for edge in edges]
         boundary = self.unlisted_boundary[:max_items]
         lines += self._boundary_lines(boundary)
         header = f"{self.handle}: {self.total_items} items, {self.total_edges} edges"
@@ -109,17 +111,17 @@ class SubgraphB(Subgraph):
 
 
 class PathResultB(PathResult):
-    """`PathResult` whose item and edge lines show the position and the line number."""
+    """`PathResult` whose item lines show the position and the line numbers."""
 
     def render(self, max_chars: int = DEFAULT_MAX_CHARS, max_items: int = DEFAULT_MAX_ITEMS) -> str:
-        """`PathResult.render`, with `item_line_b` and `edge_line_b` for a directed path."""
+        """`PathResult.render`, with `item_line_b` for a directed path."""
         if not self.directed or self.hops is None:
             return super().render(max_chars, max_items)  # a summary: no item or edge line in it
         shown = self.items[:max_items]
         names = {item.item_id: item for item in shown}
         edges = [edge for edge in self.edges if edge.source in names and edge.target in names]
         lines = [item_line_b(item) for item in shown]
-        lines += [edge_line_b(edge, names) for edge in edges]
+        lines += [edge_line(edge, names) for edge in edges]
         hidden = (self.hops + 1) - len(shown)
         return frame_text(self._found_header(self.hops), lines, hidden, max_chars)
 

@@ -8,7 +8,8 @@ and its docstring names the original.
 - `CypherRagLinesB` reads the B schema text through its `Neo4jGraphViewB` source; only the query
   prompt needs the B primer.
 - `GraphAgentLinesB` walks an item graph built by `build_item_graph_b`, through `PlantApiB`
-  (`plant_api_b.py`), so a valve's position and an edge's line number are in what it reads.
+  (`plant_api_b.py`), so a valve's position and an untagged valve's line numbers are in what it
+  reads, and its system prompt says how to read those two brackets.
 """
 
 from __future__ import annotations
@@ -29,6 +30,7 @@ from plantgraph.qa.strategies.cypher_rag_lines import (
     _trace_of,
     render_repair_prompt,
 )
+from plantgraph.qa.v2tb.item_graph_b import shows_b_properties
 from plantgraph.qa.v2tb.plant_api_b import PlantApiB
 from plantgraph.qa.v2tb.primer_b import fill_primer_slot_b, primer_block_b
 
@@ -97,6 +99,8 @@ class GraphAgentLinesB(GraphAgentLines):
         )
         if primer:
             self._system_prompt = _with_b_primer(self._system_prompt)
+        if shows_b_properties(item_graph):  # an empty positions map keeps the frozen prompt
+            self._system_prompt = _with_b_reading(self._system_prompt)
 
     def retrieve(self, question_text: str) -> RetrievalResult:
         """Copy of `GraphAgent.retrieve`, walking the plant through `PlantApiB`."""
@@ -127,3 +131,33 @@ def _with_b_primer(system_prompt: str) -> str:
     if block not in system_prompt:
         raise ValueError("expected the agent's system prompt to contain A's primer block")
     return system_prompt.replace(block, primer_block_b(), 1)
+
+
+#: The frozen sentence of the agent prompt that describes an item line (the V2T system prompt).
+_ITEM_LINE_SENTENCE = (
+    "An item line reads TAG (Class, kind K, unit U, sheets S1,S2), then [no inflow] or "
+    "[no outflow] where they apply."
+)
+#: What a B corpus adds to it. It is in the agent prompt and not in the primer because the primer
+#: also goes into the Cypher query prompt, where no tool line ever appears.
+_B_READING_SENTENCE = (
+    "On this plant a valve's line may also end with [operating_position NC], its normal "
+    "position, and an untagged valve's line with [line 6\"-P-1203-A1A], the line number of its "
+    "pipe (two numbers where the line number changes at the valve)."
+)
+
+
+def _with_b_reading(system_prompt: str) -> str:
+    """Add the sentence that explains the two B brackets right after the item-line sentence.
+
+    Raises:
+        ValueError: the frozen item-line sentence is not in the prompt (the frozen template
+            changed), so the addition would silently do nothing.
+    """
+    if _ITEM_LINE_SENTENCE not in system_prompt:
+        raise ValueError(
+            f"expected the agent's system prompt to contain {_ITEM_LINE_SENTENCE!r}, found none"
+        )
+    return system_prompt.replace(
+        _ITEM_LINE_SENTENCE, f"{_ITEM_LINE_SENTENCE} {_B_READING_SENTENCE}", 1
+    )
