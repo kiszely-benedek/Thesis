@@ -1,6 +1,6 @@
 ---
 component: qa/v2tb — V2T-B, a documented revision of the frozen V2T-A2 that reads valve positions and names untagged valves; run beside V2T-A2 on the same v2.2 plants in EXP-0009 (freeze E10)
-status: accepted design (ADR-0067 accepted 2026-11-23); T14 built (`dd60e6c`); rulings on its report in §10 (2026-11-24); T15 built (`cb6db52`), ruling on POSITION_OF_VALVE in §10.8
+status: accepted design (ADR-0067 accepted 2026-11-23); T14 built (`dd60e6c`); rulings on its report in §10 (2026-11-24); T15 built (`cb6db52`), ruling on POSITION_OF_VALVE in §10.8; T14c built (`e367e49`), rulings on its report and task T14d in §10.9
 date: 2026-11-23
 related: [ADR-0066, ADR-0067 (proposed), ADR-0053, ADR-0060, ADR-0061, ADR-0065, ADR-0021, ADR-0027, ADR-0028, ADR-0029,
           40-design/generator-v2-2-handbook-rules.md (§8, §10, §11, §12), 40-design/qa-tuning-v2.md,
@@ -184,6 +184,9 @@ superseded.
   for three rounds (`EXP-0007-V2T-validation.md`).
 - **What tuning may touch:** only the B files of §3, and each round's change is logged in ADR-0067. The held-out X
   families are never generated on a dev plant.
+  - *Amended 2026-11-24 (generator design §19.3):* an accepted ADR is never edited. The log is therefore kept in the
+    EXP-0009 experiment note and summarized in PREREG B. The E10 candidate is the round with the highest B dev
+    accuracy, and a tie goes to the earlier round.
 - **Stopping rule:** stop when a round raises B's dev accuracy by less than 1 point, or after round 3.
 - **Freeze E10** (one user commit):
   - the E9 system-side path list, unchanged (checked as in ADR-0060 1B);
@@ -219,6 +222,8 @@ superseded.
 | Scorer B | self-tests; audit stratum | G0 gate; audit report |
 | Store B | resolution gate G0g on the B corpus; G0-B: the positions file equals the plan's positions node for node, and the patched plan carries exactly that many (§10 R4) | ingest report |
 | Descriptor readability | a canonical program over the B view reproduces every untagged gold valve's descriptor, 100 % (§10.6, T14c criterion 9) | T14c report |
+| What the model is shown | B item lines show every position and every untagged valve's line numbers, 100 %; seed coverage of gold valves; scope R seed footprint (§10.9 R14f) | T14d report |
+| Store B in Neo4j | per-code count of `operating_position` in the database equals the file's (§10.9 R19) | `load_b.json` per load |
 | Arm B | Q4-B, SB1, SB2 | sealed report |
 
 ## 9. Open questions
@@ -792,3 +797,202 @@ only visible properties, it must resolve to exactly the question's valve and rea
 - the per-form and per-code POSITION rows;
 - the Q4-B sensitivity row;
 - the realized form mix per scale.
+
+### 10.9 Rulings on the T14c report, 2026-11-24
+
+**Inputs.**
+- T14c (`e367e49`) and the coder's five issues.
+- My read-only reading: `qa/v2tb/{plant_api_b,strategies_b,item_graph_b,views_b,policy_b,primer_b,schema_text_b,
+  store_b,corpus_b,__main__}.py`, `tests/v2tb/test_v2tb_gold_isolation.py`, the frozen
+  `qa/plant_api/results.py` (`item_line`, `edge_line`, `frame_text`), `qa/agent/seed.py`, `qa/agent/strategies.py`,
+  `qa/need/programs.py`, `qa/prompts/agent_graph_system_v2t.txt`, `qa/cascade/policies_v2t/cascade_v4_iso.json`,
+  `qa/graph_view.py`, `qa/harness/freeze.py`, `ingest/load_step.py`.
+
+**Four facts that decide the rulings.**
+- **T1. The seed map is rendered by frozen code.** `GraphAgentLinesB` inherits `_seed`, which calls the frozen
+  `build_seed`. That function writes every line with the frozen `item_line` and `edge_line` (`agent/seed.py`). So the
+  B seed shows neither a position nor a line number.
+  - This matters most on the dev X isolation families. Their label is UPSTREAM_TO_FIRST_VALVE, so the cascade starts
+    them at tier 1, the agent (`cascade_v4_iso.json`).
+  - The seed program walks `flow` up to the first operated valve (`need/programs.py`). So the seed already lists the
+    valves to close, and the seed rule invites the agent to stop at once.
+  - Today such a seed carries neither of the two facts that B was built to read.
+- **T2. `line_to` edges carry no line number.** `line_graph._as_item_edge` copies no properties. The frozen agent
+  prompt tells the agent to follow relation "line" for upstream and downstream questions. So the coder's suffix on
+  `send_to` edge lines reaches the model only when the agent walks "flow".
+- **T3. A tool result is cut by characters.** `frame_text` drops lines until the text fits `observation_chars`, and
+  the seed is cut at `seed_chars`. Every character added to a line can therefore push a line out of the result, on
+  scope R as well.
+- **T4. B's Neo4j store has no loader.** The frozen `check_store` compares label and relationship counts only, and
+  `with_positions` leaves them unchanged. A B corpus id loaded from the unpatched plan would therefore pass
+  `check_store`, and B's schema text would describe a property the database does not hold. No code loads the patched
+  plan today.
+
+#### R14. What the B agent's tool lines print
+
+**R14a. `[operating_position NC]` after a positioned valve's item line: ratified.** It is §0 change 2 ("the agent's
+item properties mention that property").
+
+**R14b. The line number moves from the edge line to the untagged valve's own item line.** The suffix after a
+`send_to` edge line is withdrawn.
+- **The rule.** An untagged valve's item line ends with the line number or numbers printed on its own `send_to`
+  edges (R10c): `[line 6"-P-1203-A1A]`, or `[lines 6"-P-1203-A1A, 4"-P-1204-A1A]` at a line-number change, in folded
+  order.
+  - `build_item_graph_b` computes them from the item graph's `send_to` edges into and out of the valve, under the
+    B-only item property `line_numbers`.
+  - A tagged valve and every non-valve print no line number. A tagged valve is named by its tag, and R10b says a tag
+    wins.
+  - Edge lines are printed exactly as the frozen code prints them.
+- **Why this rule:**
+  - The descriptor needs the valve's own line number, and that is exactly this field.
+  - It shows whatever relation the agent walked, "line" included (T2).
+  - On scope R it lengthens only untagged valves' lines, and nothing at all on a tagged plant. The edge suffix would
+    have lengthened every `send_to` line on every plant (T3).
+- **§0's four changes stand.** Change 2 now reads: the schema text, the primer and the agent's item lines show what a
+  VALVE_SET or POSITION answer needs, on B corpora only. That is a valve's `operating_position` and an untagged
+  valve's own line number. Both are visible store fields, and the Cypher route can already read both.
+- *Rejected:*
+  - **Keep the edge suffix.** It misses the "line" walk (T2) and costs scope R the most characters (T3).
+  - **Both suffixes.** The edge suffix adds nothing the item suffix lacks.
+  - **Print line numbers on `line_to` edges.** A `line_to` edge can span a spec break, so it has no single line
+    number.
+
+**R14c. The B seed uses the B item line (T1).** `qa/v2tb/seed_b.py` holds copies of `build_seed`, `_entries` and
+`_item_entry` over `item_line_b`, each docstring naming its original. `GraphAgentLinesB._seed` calls it. The frozen
+`_run_label`, `_named_items`, `_head`, `_fit` and `_write` are imported, not copied.
+
+**R14d. One sentence in B's agent system prompt; nothing in the primer.**
+- **Where.** A checked string replacement extends the frozen sentence "An item line reads TAG (Class, kind K, unit U,
+  sheets S1,S2), then [no inflow] or [no outflow] where they apply." It works like `_with_b_primer` and raises if the
+  sentence is missing.
+- **Draft wording, which the tuning may reword:** "On this plant a valve's line may also end with
+  [operating_position NC], its normal position, and an untagged valve's line with [line 6"-P-1203-A1A], the line
+  number of its pipe (two numbers where the line number changes at the valve)."
+- **Why the agent prompt and not the primer.** The primer is also placed in the Cypher query prompt, where no tool
+  line ever appears. The frozen sentence describes the item line completely, so a bracket left out of it would be
+  the only unexplained mark.
+- **Why not leave it out.** It is one sentence, only on B corpora, and it states a format, not a domain fact.
+
+**R14e. Empty map means frozen behaviour.** The brackets, the B seed lines and the sentence appear only when the
+corpus's positions map is non-empty, as for the schema paragraph (§3). With an empty map the B code renders
+exactly what the frozen code renders, so T14c criterion 6, runner equivalence on an A corpus, still holds.
+
+**R14f. Measure what the model is shown (design for measurement).** These checks are free. They run on
+forced-untagged seed 1 with the B view.
+1. **Exactness, bar 100 %.**
+   - Every positioned valve's item line shows its code.
+   - Every untagged valve's item line shows exactly its `PlantIndex` line numbers.
+   - Every other line equals the frozen line.
+2. **Seed coverage (reported, no bar).** Over the dev X isolation questions, report:
+   - the share of gold valves whose B item line, with its brackets, is in the B seed;
+   - the share of untagged gold valves whose canonical `next_to` is also in it.
+
+   The figures tell the tuning what the agent still has to fetch.
+3. **Scope R footprint.** Over a dev-recipe R set on the same plant, report:
+   - the mean seed length under the A and the B rendering;
+   - the number of seeds cut at `seed_chars` under B but not under A.
+
+   If that number exceeds 5 % of the R questions, the case returns to the architect before tuning.
+
+*Who:* T14d.
+
+#### R15. `policy_b()` tiers name the B strategies: confirmed
+
+- The frozen offline evaluation finds a tier's rows by strategy name (`cascade/checks.py`), so renaming the strategy
+  in the tier is the smallest change that works.
+- The pins, the acceptance rules, the start tiers by label, `fallback_to_first_answer` and the tier names stay A's.
+  T14c's test pins equality on every other field.
+- **Added for T13.** The policy is code, not a file. E10 therefore records the sha256 of
+  `policy_b().model_dump_json()` beside the B file hashes.
+
+#### R16. The B CLI: confirmed, with one addition
+
+- **The frozen harness flags, and no `--config`: confirmed.** R6's "`--config …`" was loose wording. The frozen
+  harness takes flags, and mirroring them lets the launcher call either entry point with the same argument list.
+- **`--strategy-params-json` keyed by A names: confirmed.** The E9 parameter file is used as it is.
+- **The refusal of ids other than `*B` and strategies other than `*_b`: confirmed.**
+- **Added (T14d).** `b_strategy_params` refuses a file that names both `x` and `x_b`. Today `x_b` silently wins.
+
+#### R17. The `TYPE_CHECKING` import of `SheetGraph` in `views_b.py`: allowed
+
+- The frozen `qa/graph_view.py`, whose class `views_b` extends, imports `SheetGraph` at runtime. The annotation names
+  that frozen constructor's own parameter type, so it adds no reach into `benchmark/`. Nothing runs.
+- **Criterion 8 guards against gold values reaching a strategy at runtime**, and a type annotation carries no value.
+- **Hardening (T14d).** The gold-isolation test keeps an explicit allow-list of the `TYPE_CHECKING` imports under a
+  banned prefix. Today it has one entry, `(views_b, plantgraph.benchmark.sheet_graph, SheetGraph)`. A new such
+  import then fails the test until it is reviewed.
+
+#### R18. Left for T13: confirmed, with one correction
+
+- **E10 code hashes: confirmed for T13.**
+  - A B run's `run_config.json` holds only the frozen `code_hashes`, which do not cover `qa/v2tb/`.
+  - The launcher writes `b_code.sha256` into each B run folder at the start: the sha256 of every file under
+    `qa/v2tb/`.
+  - After the run it checks that file against E10's B file list, as `check-run-config` does for F7. No RunConfig
+    field is added (R6).
+- **`check_g0b` in the plant gates: confirmed for T13.** T14d adds the database side (R19).
+- **Correction: the positions file's sha256 cannot go into PREREG A.**
+  - PREREG A is committed before any EXP-0009 plant exists (generator design §12.4).
+  - The sealed plants are built only after E10.
+  - So the sha256 goes into the B corpus record (`corpus_b.json`) and into the drawn-sets hash file `D10.sha256`,
+    which is the analogue of EXP-0008's `T9.sha256`, written after the sealed build.
+  - PREREG A pre-registers the method instead:
+    - the DEXPI reader;
+    - the file name;
+    - the sorted-key JSON format;
+    - G0-B's checks.
+  - R7's "and in PREREG A" is superseded.
+  - The text prior of R12 is different. It is fitted on dev seeds before part A, so its sha256 does go into PREREG A.
+
+#### R19. Ruling on T4: a B Neo4j loader with a database-side G0-B check
+
+- **`qa/v2tb/load_b.py`** provides `load_b_corpus(corpus_id, corpora_root, settings, *, fresh_database) -> LoadBRecord`.
+  It runs these steps:
+  1. `load_corpus_artifacts` of the B ingest file;
+  2. the positions file;
+  3. `positions_by_local_key`;
+  4. `with_positions`;
+  5. the frozen `ingest.load_step.load_if_requested` with `StoreMeasurement(fresh_database=…)`;
+  6. a read-only count of the nodes that carry `operating_position`, per code;
+  7. one line per load in `load_b.json`.
+- **G0-B, check 4 (database).** The per-code counts in the database equal the positions file's counts times the
+  profile's layers. Otherwise the load is refused.
+- **CLI.** `python -m plantgraph.qa.v2tb load --corpus-id …B --corpora-root … [--fresh-database]`. It refuses an id that
+  does not end in `B`.
+- *Why in `qa/v2tb/`:* the loader reads the occurrence map, which is gold, as `store_b` does. It is B's store, so E10
+  must hash it with the B files. It is not in a system-side directory (F2).
+- *Rejected:*
+  - **Loading B through the frozen ingest CLI.** It builds the unpatched plan.
+  - **Trusting `check_store`.** It checks counts, not properties (T4).
+
+#### T14d (S, after T14c, before T13): the B tool lines, the B seed, the B loader
+
+Every §13 task rule of the generator design applies: green suite, goldens unchanged, no paid call, one commit
+proposal. The task needs no Neo4j; the database count runs against a fake session in the tests.
+1. **Item lines (R14a, R14b).**
+   - `build_item_graph_b` adds `line_numbers` to each untagged valve of a B corpus.
+   - `item_line_b` prints `[line …]` or `[lines …]`.
+   - `edge_line_b` and its use in `SubgraphB` and `PathResultB` are removed, and the frozen `edge_line` is used.
+   - Tests:
+     - a tagged valve prints no line number;
+     - an untagged valve at a spec break prints both numbers in folded order;
+     - edge lines equal the frozen ones.
+2. **Seed (R14c).** `seed_b.py`, and `GraphAgentLinesB._seed` calls it. Test: on forced-untagged seed 1, the B seed of
+   every dev OPEN_VALVES_TO_ISOLATE question shows the bracket on every positioned valve it lists.
+3. **Prompt (R14d).** `_with_b_reading` in `strategies_b.py`, applied on B corpora only. It raises if the frozen
+   sentence is absent. Test: on an A corpus the system prompt equals the frozen one byte for byte.
+4. **Empty map (R14e).** T14c criterion 6 (runner equivalence) and criterion 4 (views with an empty map) pass
+   unchanged.
+5. **Measurements (R14f).**
+   - Exactness is 100 %, or the task stops and reports the misses.
+   - The report gives the seed coverage table and the scope R footprint, with machine time.
+   - If the footprint passes 5 %, stop and report.
+6. **Loader (R19).** `load_b.py` and the `load` subcommand. Tests with a fake session:
+   - the patched plan is the one sent;
+   - a database whose per-code counts differ from the file's is refused;
+   - an id without `B` is refused.
+7. **Params (R16).** A file with both `x` and `x_b` is refused (test).
+8. **Gold isolation (R17).** The allow-list is in the test, and `seed_b` and `load_b` are classified: `seed_b` as
+   strategy-facing, `load_b` as gold side. Test: a strategy-facing module that imports `load_b` fails.
+9. **Gates.** G0f is `[]`, the import-isolation test is green, and every T14c test passes, apart from the edge-suffix
+   test that criterion 1 replaces.

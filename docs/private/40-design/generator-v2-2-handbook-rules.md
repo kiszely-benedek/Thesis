@@ -724,6 +724,10 @@ Rules of scope R:
 
 ### 12.3 Cost, grounded in EXP-0008's measured spend
 
+**Superseded for P1 by §19.9 and §19.10 (2026-11-24).** Scope R holds 235 questions per plant, not 280, after
+§17.17. The basis is now EXP-0008's measured per-run spend and stage times, and the hard program cap is $35. The
+table below is kept as the record of the first estimate.
+
 **Basis.** I computed the basis with `qa/exp0008/ledger.paid_usd_of_calls` over every EXP-0008 call file (calls not
 served from the cache) on 2026-11-22.
 
@@ -833,9 +837,10 @@ unmeasured.
 | 7 | **T15** Scope X (gold side): OPEN_VALVES_TO_ISOLATE (up, down), UPSTREAM_ISOLATION_X, DOWNSTREAM_ISOLATION_X, POSITION_OF_VALVE, descriptor gold and refusal, the A2 adapter (TAG_SET), discriminating-share report. **Revised 2026-11-24 (`v2t-b-system-revision.md` §10):** the OPEN_VALVES texts are the twins of the registered isolation texts (R9), with a test that `classify_need` gives each the label of its twin; references are sorted `list[str]`, a tag or `encode_descriptor(canonical_descriptor(...))` (R8); an OPEN_VALVES candidate with empty gold is refused and counted (R8); refused count, share and refusing-valve roles per family and plant (R3); stop and return to the architect if any X family refuses more than a quarter of its candidates on a dev plant | M | coder | **done** (`cb6db52`); ruling on its report in `v2t-b-system-revision.md` §10.8 |
 | 7a | **T15b** POSITION_OF_VALVE on untagged plants (`v2t-b-system-revision.md` §10.8 R11, R12): an untagged positioned valve is named in the question by its canonical descriptor, "What is the normal operating position of the {class words} on line {line number}, on the {side} side of {next_to}?", or refused without one; `named_by` flag; routing test (the descriptor text gets the tag text's need label); no-answer-in-text test; `qa/exp0009/position_baselines.py` (majority and text prior, fitted on dev seeds 1–5, sha256); the report reproduces §10.8's counts and P3. Acceptance criteria in §10.8 | S | coder | T15 |
 | 7b | **T14c** The B ingest step and the B harness (`v2t-b-system-revision.md` §10 R4–R7): `positions.py` (DEXPI reader), `store_b.py` (positions map, plan patch, positions file, G0-B check), `views_b.py`, `answer_b.py`, `strategies_b.py`, `registry_b.py`, `runner_b.py`, `__main__.py`, all under `qa/v2tb/`; runner equivalence, cascade, gold-isolation and expressiveness tests. Acceptance criteria in §10.6; criterion 9 amended in §10.8 (descriptor-form POSITION questions) | M | coder | T15b |
+| 7c | **T14d** The B tool lines, the B seed and the B Neo4j loader (`v2t-b-system-revision.md` §10.9 R14–R19): the line number moves from `send_to` edge lines to the untagged valve's own item line; the B seed uses the B item line; one checked sentence in B's agent system prompt; B rendering only on B corpora (empty map = frozen); exactness, seed-coverage and scope R footprint measurements; `load_b.py` with the database-side G0-B count; `x` + `x_b` params refused; `TYPE_CHECKING` allow-list. Acceptance criteria in §10.9 | S | coder | T14c (**done**, `e367e49`) |
 | 8 | **T12b** Composition report per sheet kind; the ch.20 comparison table (the annotation by the main session) | S | coder and main session | T7b |
 | 9 | **T16** Fixes from the review findings, if any (designed by the architect first) | ? | coder | the review |
-| 10 | **T13** EXP-0009 launcher: ledger glob skips `reports/` (with a test on a copied call file); ids `g22` and `…B`; seed draw plus size-target draw in the bands; stratified tagging allocation (§17.15 S9); two-view ingest; the B question files as a corpus-id relabel of A's (§17.15 S3); LINE-01 for v2.2 and `validate_plant_graph_v22` in the plant gates (§17.15 S7, S8); E10 hashes all of `src` again; stages P1a–P1d; caps; PREREG A template. **Added 2026-11-24 (`v2t-b-system-revision.md` §10 R4, R6, R7):** per plant, load A, run A2, wipe, load B with T14c's patched plan, run B; `write_positions_file` in the two-view ingest, with the file's sha256 in the B corpus record and PREREG A; G0-B in the plant gates; B tier runs through `python -m plantgraph.qa.v2tb run`; G0l applies the quarter rule to every X family on the sealed plants; T14c's measured positions-file time added to §12.3. T13 writes no B system code | L | coder | all of the above, T14c included |
+| 10 | **T13** EXP-0009 launcher: ledger glob skips `reports/` (with a test on a copied call file); ids `g22` and `…B`; seed draw plus size-target draw in the bands; stratified tagging allocation (§17.15 S9); two-view ingest; the B question files as a corpus-id relabel of A's (§17.15 S3); LINE-01 for v2.2 and `validate_plant_graph_v22` in the plant gates (§17.15 S7, S8); E10 hashes all of `src` again; stages P1a–P1d; caps; PREREG A template. **Added 2026-11-24 (`v2t-b-system-revision.md` §10 R4, R6, R7):** per plant, load A, run A2, wipe, load B with T14c's patched plan, run B; `write_positions_file` in the two-view ingest, with the file's sha256 in the B corpus record and PREREG A; G0-B in the plant gates; B tier runs through `python -m plantgraph.qa.v2tb run`; G0l applies the quarter rule to every X family on the sealed plants; T14c's measured positions-file time added to §12.3. T13 writes no B system code. **Consolidated 2026-11-24 into one ordered specification, §19, which supersedes the criteria scattered above where they differ** | L | coder | all of the above, T14d included |
 
 **T7b acceptance criteria** (§17.14). Every task rule above applies too.
 1. **Counting (N1).** An open end continued on the same sheet by a sub-header line is not a stub (`sheet_stats.py`).
@@ -914,8 +919,8 @@ unmeasured.
 11. **The report** gives the availability table, the refused shares, criterion 1's three `cmp` results and the
     machine time of the H1000 regeneration. It ends with one commit proposal; nothing is committed.
 
-**Now:** T15b (T14b done, `f5d6ef4`; T15 done, `cb6db52`; ruling in `v2t-b-system-revision.md` §10.8). Next:
-T14c, T12b, T13. T13 also takes §10.8's PREREG A additions. No coder runs in parallel.
+**Now (2026-11-24):** T14d (T15b, T14c and T12b done; rulings on T14c in `v2t-b-system-revision.md` §10.9). Next:
+T13 as specified in §19, then T17 (the sealed analysis, §19.11) before the E10 freeze. No coder runs in parallel.
 
 ## 14. Risks
 
@@ -2287,3 +2292,583 @@ a comment.
 - **Item 4:** no margin. SB1 is reported descriptively, as B − A2 on R with its interval.
 - **Measurement record (user, 2026-11-23; T13 acceptance).** EXP-0009 keeps EXP-0008's record format for both arms. For each model call, `calls.jsonl` holds the tokens, cost, latency and provider id. For each answer, `answers.jsonl` holds the final answer, correctness, tokens, cost, latency and the retrieval trace. Each run also writes `timings.jsonl` and `environment.jsonl`. With these records and the gold answers, precision, recall and F1 can be recomputed after the run without paying for new model calls. A T13 test asserts that every scored answer has a matching call record with cost and token fields filled in.
 - **Item 6:** the user tops up about $25. With the roughly $17 already on the account, P1 fits even at its $37.50 cap.
+  - **Update (2026-11-24, main session):** the user set a **hard total cap of $35** for P1 (runs and audit together) and
+    approved P1 even if the estimate rises above $25. The OpenRouter balance is $37.11. §19.9 applies it.
+
+## 19. T13 specification: the EXP-0009 P1 launcher (2026-11-24)
+
+This section is the one ordered specification of T13. Where it differs from the T13 row of §13 or from §12.2–§12.4,
+§17.15 S3/S7–S9, §17.17, §18.8 or `v2t-b-system-revision.md` §10, this section wins, and the reason is given in place.
+ADR-0068 (proposed) records the five launcher choices that had a real alternative.
+
+### 19.0 What T13 is, and is not
+
+- **What it is.** T13 builds and tests the EXP-0009 launcher for **stage P1 only**, plus the draw tool that feeds
+  PREREG A. P2 (ladder, identity, D4, F1) is a later task.
+- **The task rules.**
+  - Every rule of §13 applies.
+  - T13 makes **no paid call and builds no EXP-0009 plant**. Its tests use fake senders, tiny plants, the small real
+    v2.2 plant of `tests/v2tb/plants_b.py`, and the EXP-0008 plants that already exist.
+  - It ends with one commit proposal.
+- **T13 writes no B system code** (`v2t-b` R7). It calls `qa/v2tb` through its public functions and its two CLI
+  subcommands, `run` and `load` (T14d).
+- **No file of E9's system-side path list changes** (G0f). EXP-0008's own scripts and modules are not edited either:
+  they are hashed in `E9.sha256`. T13 copies what it needs into the EXP-0009 folders, with each copy's docstring
+  naming its original.
+- **Prerequisite.** T14d is committed.
+
+### 19.1 Layout and ids
+
+**Folders.** The root is `data/runs/exp0009/`, with the same layout as `exp0008/`:
+- `state/`, `logs/`, `prereg/`, `inputs/`;
+- `corpora/`, `neo4jplant/`, `cypcorp/plant_lines/`;
+- `qpool/`, `questions/`;
+- `tune/`, `val/`, `sealed/`, `audit/`, `reports/`.
+
+The scripts are `run_all.sh`, `launch.sh`, `lib.sh`, `lib_plants.sh`, `lib_runs.sh`, `stages/*.sh`, `README.md` and
+`PREREG_A.template.md`. `inputs/` holds copies of the E9 pins and parameters: `params_b.json`, `pins_b.json` and the
+EXP-0008 A2 inputs. The environment variables are EXP-0008's, under the prefix `E10_`.
+
+**Ids.**
+
+| Role | A id | B id | Seed | Size |
+|---|---|---|---|---|
+| tuning (dev) | `D100g22` | `D100g22B` | 1 | target 100 |
+| P0 composition and rules only | `D1000g22` | — | 1 | target 1,000 |
+| validation | `VAL100g22`, `VAL1000g22` | `VAL100g22B`, `VAL1000g22B` | drawn | drawn in band |
+| sealed | `H100g22p1`…`p5`, `H1000g22p1`…`p5` | the same ids + `B` | drawn | drawn in band |
+
+An id names the **nominal** scale (100 or 1,000), never the drawn target. A plant with target 97 is `H100g22p3`.
+
+**Python package `src/plantgraph/qa/exp0009/`.** These modules are new; the ones that exist stay as they are.
+
+| Module | Holds |
+|---|---|
+| `plan.py` | `PlantSpec22` and `Exp0009Plan` (Pydantic, frozen): per plant its id, scale, seed, drawn target, `n_units`, predicted total sheets, document count, untagged-document flags; the plant lists by role |
+| `draw.py` | the draw of §19.2 |
+| `build.py` | the A build, the B relabel, the positions step and the corpus record of §19.4 |
+| `load.py` | the A Neo4j load and the `cypcorp` copy (§19.4); B loads go through `python -m plantgraph.qa.v2tb load` |
+| `questions.py` | pools, drop set, samples, A2 and B files, relabel, baselines file (§19.6) |
+| `gates.py` | G0c, G0e, G0k, G0l, the G0-B wiring, G1, G1-B, G1-B2 (§19.5, §19.7) |
+| `caps.py`, `ledger.py` | §19.9 |
+| `freeze.py`, `prereg_b.py` | §19.8 (they reuse `exp0008.freeze`'s pure helpers by import) |
+| `records.py` | the measurement-record check and the offline re-score (§19.11) |
+| `cascade_report.py` | the offline cascade per arm, with `cascade_v4_iso` for A2 and `policy_b()` for B |
+| `audit_b.py` | the B stratum selection (§19.7, P1d) |
+| `smoke_harness.py` | the fake-transport entry points of both arms, for `--smoke` |
+| `launcher.py` | `python -m plantgraph.qa.exp0009.launcher <command>`: every decision the shell needs, each with a test |
+
+### 19.2 Step 0: the draw, before PREREG A (free)
+
+`python -m plantgraph.qa.exp0009.launcher draw --draw-seed N`. It never overwrites a file it writes. A refusal
+writes nothing.
+1. **Seeds.**
+   - `exp0008.draw_seeds.draw_seed_plan(N, hygiene.retired_seeds(data/runs), …)` gives the draw. The retired set
+     includes every EXP-0008 seed, because hygiene reads `data/runs`.
+   - The result goes to `prereg/seeds.json`.
+   - The ladder seeds are drawn too, unused in P1, so that P2 needs no second draw.
+2. **Size targets.**
+   - The stream is `random.Random(f"exp0009:targets:{N}")`.
+   - The order is VAL100g22, VAL1000g22, H100 p1–p5, H1000 p1–p5.
+   - Each target is `randint(90, 110)` or `randint(900, 1100)`.
+3. **Size search.**
+   - Each plant runs `smallest_n_units_v2(target, HeadlinePresetV22(), seed)`, the call the ingest CLI and
+     `exp0009/dev_plants.py` make. It records `n_units` and the predicted total.
+   - **Refusal:** |predicted − target| > 5. This is §17.16's tolerance, which replaces G0k's "within 2".
+4. **Documents.** The count is `len(plan_plant(config).documents)`.
+5. **Tagging allocation (S9).** The stream is `random.Random(f"exp0009:tagging:{N}")`, in the same order.
+   - **100-sheet sealed:** `sample(p1…p5, 4)` are untagged.
+     - Every document of an untagged plant is untagged, and every document of a tagged plant is tagged.
+     - A 100-sheet plant normally has one document, but a 110-sheet plant may have two.
+   - **1,000-sheet sealed:** per plant, `sample(documents, round_half_up(4/5 × n_documents))` are untagged.
+     - Compute it with exact `Fraction` arithmetic.
+     - Half never binds, since 4n/5 never ends in .5, but the rule stays as S9 states it.
+   - **Validation (ruling).** VAL100g22 is untagged, and VAL1000g22 follows the 1,000-sheet rule.
+     - *Why:* G1-B must test B on the population the sealed plants mostly are.
+     - A drawn tagging would leave the 100-sheet validation plant tagged with a chance of 0.25. Its X questions would
+       then barely exercise descriptors.
+   - **Dev plants.** D100g22 keeps its drawn tagging. Measured today with `plan_plant`: one document, untagged.
+     D1000g22 keeps its draw (10 documents, 9 untagged, measured today).
+   - **Flags.** `handbook.document_untagged` gets exactly `n_documents` flags.
+6. **Text prior (R12).** `position_baselines` fits on dev seeds 1–5 and writes `prereg/position_prior.json` (sorted
+   keys). Its sha256 goes into the plan file. The majority code is recorded as well: NO, as measured in §10.8.
+7. **Output.** The tool writes `prereg/plan.json` and prints the PREREG A tables: seeds, targets, `n_units`, predicted
+   totals, documents, allocation, prior sha256.
+
+**Measured today (architect, `plan_plant`, free):**
+- the 1,000-sheet size search for seed 1 took 27.1 s (one 1,000-sheet plan 7.6 s);
+- a 100-sheet plan took 2.3 s.
+
+The whole draw is therefore minutes. The prior fit is extra, and its time is not measured here.
+
+### 19.3 PREREG A (template; filled by the main session, committed on the user's order before P0)
+
+`data/runs/exp0009/PREREG_A.template.md` follows EXP-0008's template and adds the following.
+- **Frozen code.** The A2 system is E9 (`5d31cbb…`), checked by G0f.
+  - "Part A code commit: `<40 hex>`" is the HEAD at the commit of part A.
+  - Between that commit and E10 only these may change:
+    - B files under `src/plantgraph/qa/v2tb/` and `tests/v2tb/` (tuning);
+    - the T17 analysis module and its tests (§19.11);
+    - `data/runs/exp0009/prereg/`;
+    - `docs/`.
+- **Claims.** Q4, Q4-B, SB1 (descriptive), SB2, K1–K3 and Q5, with their pass rules (§12.1). The descriptive list adds:
+  - the Q4-B sensitivity row without POSITION_OF_VALVE;
+  - POSITION accuracy by form and by code, beside the majority and the text prior;
+  - the realized `named_by` mix per scale;
+  - the X sub-scopes;
+  - refused shares;
+  - network-touching shares.
+- **Plants.** The tables of §19.2.
+- **Scope R.**
+  - The available families, which are all v2 families except these five, pre-registered unavailable at both scales:
+    - UPSTREAM_ISOLATION and DOWNSTREAM_ISOLATION (S5);
+    - DOWNSTREAM_IN_UNIT and UPSTREAM_SOURCES (§17.17);
+    - FIRST_MEETING_POINT (v2).
+  - The recipe: EXP-0008's sealed recipe, then the drop set.
+  - G0e's rule.
+- **Scope X.**
+  - The five families, their splits, and 10 per family: B 50, A2 40 via the TAG_SET adapter.
+  - R9's texts and R11's two POSITION forms.
+  - G0l's quarter rule.
+- **POSITION baselines.** The majority code, the prior file and its sha256.
+- **Positions file.** The method only (§10.9 R18), not a hash.
+- **Money.** §19.9: the program cap of $35, the ledgers, the per-tier costs, the caps without dry runs.
+- **B tuning.**
+  - At most three rounds, on D100g22 only, dev families only.
+  - Stop when a round adds less than 1 point, or after round 3.
+  - The E10 candidate is the round with the highest B dev accuracy, and a tie goes to the earlier round.
+  - The log is kept in the EXP-0009 experiment note, not in ADR-0067, because an accepted ADR is not edited.
+- **Gates.** §19.5 and §19.7, including the branch: if G1-B or G1-B2 fails, B is not run sealed.
+- **Audit.** EXP-0008's rule, plus a B stratum half the main sample's size; the judge prompt and pin hashes.
+- **Bootstrap.** The resample count and seed of the EXP-0008 claims code.
+
+### 19.4 Building and loading a plant: two views, one corpus in Neo4j at a time
+
+**Build (free).** `launcher build --plant <A id>`, for each plant of `plan.json`:
+1. **A build.**
+   - The config is `HeadlinePresetV22().generator_config(n_units, seed)`, with `handbook.document_untagged` from the
+     plan.
+   - It goes into `ingest.pipeline.run_synthetic(corpus_id=<A id>, check=True, settings=None)`, with the preset's split
+     config and the store profile EXP-0008's `build_plant` used (the CLI default).
+   - The frozen writer (`ingest/__main__._write_result`, imported, not copied) writes
+     `corpora/<id>/ingest.json` and `rules.json`.
+   - The seed is checked against `prereg/seeds.json` with `require_drawn_test_seed`, **never** against the
+     EXP-0008 default path.
+2. **B corpus files.**
+   - `corpora/<id>B/ingest.json` is A's file with `corpus_id` replaced, which is the S3 pattern for questions. A
+     test checks that the two files are byte-identical once the id is replaced back.
+   - `rules.json` is copied.
+   - *Why a relabel:* the uids are built from the corpus id at rebuild time, and nothing else in the file depends on
+     it. A second build would cost one 1,000-sheet generation (8–12 min) per plant for identical content.
+3. **Positions.** `v2tb.store_b.ingest_positions(config, corpora/<id>B)` writes `operating_positions.json`. G0-B check 1
+   runs inside it.
+4. **Record.** `corpora/<id>B/corpus_b.json` holds the A id, the sha256 of both ingest files, the positions file's
+   sha256 and count per code, and the seconds of steps 1–3.
+
+**Neo4j (only inside paid stages). Every load recreates the database first (`--fresh-database`).**
+- **A load.**
+  - `launcher load-a --plant <id>` runs `run_synthetic` with Neo4j settings, `store_profile="plant_lines"` and
+    `StoreMeasurement(fresh_database=True)`, on the config of `corpora/<id>/ingest.json`.
+  - It writes `neo4jplant/<id>/ingest.json`.
+  - It copies that file to `cypcorp/plant_lines/<id>/` **once**, never replacing it, as in EXP-0008.
+  - `check_loaded_matches` follows.
+- **B load.**
+  - `cypcorp/plant_lines/<id>B/ingest.json` is the relabel of A's `cypcorp` copy. The positions file is copied
+    beside it, and its sha256 is checked against `corpus_b.json`.
+  - Then `python -m plantgraph.qa.v2tb load --corpus-id <id>B --corpora-root cypcorp/plant_lines --fresh-database`
+    runs. Its database-side G0-B (R19) must pass.
+- **One corpus at a time** (user rule): every load wipes first.
+- **End state.** The last action of END runs the EXP-0008 `demo_load.sh` steps: wipe, then H1000g21p1 with
+  `plant_lines`, the plant the demo expects (ADR-0064, `demo-v2.md`). A stop leaves the last plant loaded. The README
+  says how to restore the demo plant by hand.
+
+### 19.5 The free gates, and when each runs
+
+| Gate | Check | Runs on | When |
+|---|---|---|---|
+| G0a | full `pytest`, `ruff`, `mypy --strict`; v1 and v2.1 goldens | — | P0 |
+| G0b | the rule-suite tests; every rule and alternative non-vacuous over dev seeds 1–5 (the T7b/T10 report) | dev seeds | P0 |
+| G0c | `OWED_FIXES == {}`; the plant's `rules.json` holds 0 violations of every wired rule; `validate_plant_graph_v22(plant, record)` gives 0 violations | every built plant | at its build |
+| G0d | ADR-0059 bands pooled per scale on process sheets; network statistics reported | dev plants (gate); sealed plants (report only, after the freeze, as EXP-0008 M4) | P0; B10 |
+| G0e | ≥ 10 kept candidates per family, per scope, per plant | every sealed plant | B10, before any sampling (§19.6) |
+| G0f | `git diff --name-only $(cat data/runs/exp0008/prereg/E9.commit) HEAD` over the system-side list is empty; cache-only replays of `S7-CYP-H100g21p1` (with H100g21p1 loaded) and `S7-AG-H100g21p1` from `exp0008/m6a` are byte-identical | — | P0 (diff and replays); F10 (diff) |
+| G0g | `exp0007 check-ingest` (pair precision = recall = 1.0, network connectors included) on the A view; the B view is the relabel, so the byte test of §19.4 stands in for it | every plant | at its build |
+| line view | `qa/exp0009/line_view_gate.py`: P = R = 1, 0 key collisions | every plant (A view) | at its build |
+| G0h | each arm's first-turn prompts, rendered for the longest question of the plant's file, fit the pin's context wall; the harness's own run-start check stays | every plant, both arms | after its questions |
+| G0j | `tests/v2tb` (the B scorer's self-tests) | — | P0 and F10 |
+| G0k | the documents' `manual_valves_untagged` flags equal the plan's; the built total sheets equal the predicted total in `plan.json` exactly, and lie in the band | every plant | at its build |
+| G0-B | checks 1–3 (`check_g0b` on the corpora plan); check 4 (database) at every B load | every B corpus | at its build; at its load |
+| G0l | per X family and plant, refused for a non-unique descriptor ≤ 25 % | dev, validation and sealed plants | after the pool step |
+| records | §19.11's record check on every finished run | every run | after each run |
+
+- **The stops.**
+  - A failed G0a, G0b, G0c, G0f, G0g, G0j, G0k, G0-B, line-view or records check stops the launcher. The stop is
+    `[infrastructure]` for G0-B check 4; every other gate stops `[needs the user]`.
+  - A failed G0l stops it and returns the case to the architect (ADR-0067).
+  - G0e does not stop. Its drops are pre-registered (§19.6).
+  - A failed G0d band on the dev plants stops (U4). On the sealed plants it is reported only.
+- **Why G0k's "within 2" changes.** §17.16 measured 900 → 904 on seed 7. The draw now refuses beyond 5, and the build
+  must reproduce the recorded total exactly. That is stricter than a tolerance, and it also proves that the
+  allocation override leaves the sheet count alone.
+
+### 19.6 Questions
+
+**One pool step per plant**, in one process, so the corpus is generated once. It runs
+`launcher questions-pool --plant <A id> --recipe sealed|dev`.
+- **R pool.** The frozen `sealed_set.build_pool(artifacts, targets, seed)`.
+  - Sealed plants use EXP-0008's sealed recipe: seed 31, 500 per bin, 100 unanswerable.
+  - Dev and validation plants use EXP-0008's dev recipe: seed 1, 97 and 97.
+  - The pool goes to `qpool/<id>/`, with its availability.
+- **X candidates.**
+  - `scope_x_candidates(plant, manifest, sheets, positions, corpus_id=<A id>, seed=…)`, with the same seed as R.
+  - The families are the five on sealed plants, and the dev three on dev and validation plants. Held-out X is never
+    built on those plants (§6).
+  - The positions come from `positions_of(plan_plant(config).unit_plans)`. A test shows that they equal those of
+    `generate_plant_v2(config).plan`, so the gold side needs no pyDEXPI.
+  - Kept candidates, refusals and T15b's `FamilyReport` go to `qpool/<id>/scope_x/`.
+- **POSITION keys.** For each POSITION candidate, the text-prior key fields (P3) are stored, so that later steps need
+  no plant.
+
+**The drop set**, fixed after **all** pools of a role exist and before any sampling:
+- R's five pre-registered unavailable families;
+- **G0e:** every family of R or X with fewer than 10 kept candidates on any sealed plant. It is dropped at both
+  scales, and an event NOTE lists it. No stop: this rule was written before the seeds were drawn (§11).
+- **G0l** is evaluated at the same moment.
+
+**Samples.**
+- **R, sealed plants.** `sample_sealed_set(pool − dropped families, 10, 5, 20261031, v2=True)`.
+- **R, dev and validation plants.** `per_family` with n = 10 and seed 20261101, after the same drop.
+- **Recipe test.**
+  - With an empty drop set, the two-step path (pool, then sample) reproduces `exp0008/questions/H100g21p1` and
+    `H100g21p2` byte for byte, from their stored `ingest.json`. That is T6b's check, about 40 s each.
+  - A second test shows that dropping families before sampling leaves every other family's draw unchanged, on a
+    forced-tagged dev plant. If the sampler shares one stream across families, the drop moves to after the sample,
+    and the test documents why.
+- **X.** `sample_family(kept, 10, sample_seed)` per family, with the same sample seeds as R.
+  - There is no stratification by `named_by`, position code, "discriminating" or untagged gold (R11, R13.4).
+  - The realized mixes are reported.
+
+**Files.**
+- **A2.** `questions/<A id>/questions.jsonl` holds R plus `for_a2(q)` of every X isolation question (no POSITION).
+- **B.** `questions/<B id>/questions.jsonl` holds R relabelled plus all X, relabelled.
+- **The relabel** changes only `corpus_id` and the question-id prefix.
+- **`splits.json`** follows the same rule. The X families take the split of `scope_x.py`.
+- **S3 test.** The two files are equal on every R question and every X isolation question once the corpus id is
+  stripped and the answer type is set to TAG_SET. SB1 and SB2 pair rows by the stripped id.
+- **`questions/<B id>/position_baselines.jsonl`.** One line per POSITION question: id, `named_by`, gold code,
+  majority prediction, text-prior prediction.
+- **`questions/<id>/scope_report.json`.** Kept, refused and sampled counts per family. For X it adds the untagged-gold
+  flag, the discriminating flag, the empty-gold refusals (R8) and the `named_by` mix.
+
+**Counts (derived, not measured; G0e confirms them at B10).**
+- **Sealed.** EXP-0008's set has 280 questions over 23 families. Taking out the four R families in it (45 questions)
+  leaves R = 235.
+  - A2 answers 235 + 40 = **275** per plant.
+  - B answers 235 + 50 = **285**.
+- **Validation and tuning.** EXP-0008's dev set had 163 questions over 18 families. Three of those families drop.
+  - R-dev is about 133.
+  - A2 answers about 153 (with 2 X families).
+  - B answers about 163 (with 3 X families).
+
+### 19.7 Stages, in order
+
+**P0 — free gates, $0.**
+- Builds D100g22 (with its B files) and D1000g22.
+- Gates: G0a, G0b, G0c, G0d (gate), G0f (diff and replays), G0g, the line view, G0j, G0k, G0-B (checks 1–3).
+- R14f's checks on D100g22B: exactness 100 %, footprint ≤ 5 %.
+- The prior refit: its sha256 must equal `plan.json`'s.
+- The ledger test, and the records test on fake runs of both arms.
+- **Refuses to start** if `PREREG_A.md` holds a `<<FILL` marker or is not committed. The readiness rules are
+  EXP-0008's `readiness.py`, copied for EXP-0009.
+
+**P1a — B tuning on D100g22, PAID.**
+- **Setup.** D100g22's dev questions (§19.6, dev recipe), and G0l on its X dev families.
+- **Round 1** runs first and only once:
+  - the **A2 baseline**: load A, `CYP-A` and `AG` on the A2 dev file;
+  - then B round 1: load B, `CYP-B` and `AG-B` on the B dev file.
+- **Each round writes:**
+  - `tune/round<k>/b_code.sha256` (every `qa/v2tb/` file and the `policy_b` dump);
+  - the B cascade report, with per-family dev accuracy over R-dev ∪ X-dev;
+  - B − A2 on R-dev.
+- **After round 1** the launcher stops `[needs the main session]` with the report.
+  - The main session either changes B files (round 2) and resumes with `--from P1a`, or ends tuning with
+    `launcher finish-tuning`.
+  - From round 2, a round whose B dev accuracy rises by less than 1 point ends tuning automatically.
+  - Round 3 always ends it. A fourth round is refused.
+  - The launcher refuses a round whose `b_code.sha256` equals an earlier round's.
+- **The E10 candidate** is the round with the highest B dev accuracy, ties to the earlier round. The main session
+  restores and commits those B files on the user's order.
+- **Run ids:** `U9-A-CYP-D100g22`, `U9-A-AG-D100g22`, `U9-<k>-CYP-D100g22B`, `U9-<k>-AG-D100g22B`.
+- **No replays in tuning,** as EXP-0008 M1.
+
+**P1b — validation, PAID.**
+- **Precondition.** A clean tree under the frozen paths, and the B files' hashes equal to the chosen round's.
+- **Plants.** VAL100g22, then VAL1000g22. Each gets:
+  - its build and gates;
+  - dev-recipe questions;
+  - A2 `CYP-A` then `AG`;
+  - B `CYP-B` then `AG-B`.
+- **The B runs are replayed cache-only.** These are the E10 replays "per B tier of the B validation runs" (§6), with
+  the Cypher replay prefix allowed as ADR-0062 allows.
+- **The VAL1000g22 pool step** runs under EXP-0008's `memory-probe`, so its peak memory is recorded. It is the first
+  1,000-sheet v2.2 pool.
+- **Gates:**
+  - **G1** (A2): no R dev family below 50 % on both plants. A fail stops the launcher `[needs the user]`, as
+    EXP-0008's U2.
+  - **G1-B** (B): no dev family of R ∪ X below 50 % on both plants.
+  - **G1-B2:** B − A2 on R, the mean of the per-plant paired differences, ≥ −0.05.
+  - If G1-B or G1-B2 fails, B is **not run sealed** (ADR-0067). The launcher records it for part B and continues with
+    A2 alone. It drops B's P1c runs and the B audit stratum.
+  - Accuracies come from `cascade_report.py`. It runs the frozen offline evaluation with `cascade_v4_iso` (A2) and
+    `policy_b()` (B) over the two tier runs, for every family the file holds, R and X. `qa.cascade tune-report` is
+    not used, because it does not know the X families.
+- **Run ids:** `V9-CYP-<id>`, `V9-AG-<id>`, `V9-CYP-<id>B`, `V9-AG-<id>B`.
+
+**F10 — freeze E10 and part B, free (§19.8).**
+
+**B10 — the sealed plants, free.**
+- **Precondition.** `E10.sha256` exists.
+- **Per plant**, 100-sheet plants first: build (§19.4), the plant gates, the pool step.
+- **Then:** the drop set, G0l, the samples and files, G0h, the sealed bands (reported), and `D10.sha256`.
+  - `D10.sha256` covers `E10.commit`, every `corpora/*/ingest.json`, `rules.json`, `operating_positions.json`,
+    `corpus_b.json`, every `questions/*/questions.jsonl`, `splits.json`, `scope_report.json` and
+    `position_baselines.jsonl`.
+  - It is written once and never overwritten.
+
+**P1c — sealed, PAID.**
+- `require_frozen` checks `E10.sha256`, `PREREG.sha256` and `D10.sha256`.
+- **Per plant**, in plan order (100 p1–p5, then 1,000 p1–p5), A2 then B (§12.4):
+  1. load A; `S9-CYP-<id>` and its replay;
+  2. load B; `S9-CYP-<id>B` and its replay;
+  3. `S9-AG-<id>` and its replay; `S9-AG-<id>B` and its replay. The agent runs need no database.
+- **Every sealed run is replayed cache-only, as in EXP-0008 M6a** (ADR-0068, decision 4).
+- **Concurrency** 4, as EXP-0008. Nothing else runs on the machine meanwhile (K1, K3).
+- **The B cap** is recomputed before the first B run from P1b's measured B $/q (§19.9).
+
+**P1d — the scorer audit, PAID.**
+- **The main sample.** EXP-0008's `qa.audit select` and `judge` over the A2 sealed runs, in the pre-registered order.
+- **The B stratum** (`audit_b.py`).
+  - **Size:** ⌈0.5 × the main sample's row count⌉ rows of the B sealed runs.
+  - **Rows:** VALVE_SET and POSITION rows only, every wrong row first, then a random right sample (fixed seed),
+    deduplicated by question and parsed answer.
+  - It is judged with the same judge pin and prompt.
+  - The excerpts are cut with `scripts/audit_export_subgraphs.py` on the B corpus.
+  - The disagreement sheet prints, for each B row, the B scorer's resolution: each answered item and the nodes it
+    resolved to.
+- **The audit ledger** is §19.9's. The launcher stops after the judge. Classifying disagreements is the main session's
+  work under the audit rule, as in EXP-0008.
+
+**END — free.**
+- Cascade reports per plant and arm.
+- §19.11's record check over every run.
+- The ledger summary.
+- The T17 analysis entry point, if present (§19.11). A missing T17 is noted, not a stop.
+- The demo database restore (§19.4). As in EXP-0008 M10b, a failed report is named, the restore still runs, and only
+  then does the stage stop.
+
+### 19.8 Freeze E10 and part B (stage F10)
+
+1. **The tree.**
+   - `git status --porcelain` over the frozen paths is empty.
+   - The frozen paths are `src :!src/plantgraph/demo`, `scripts/audit_export_subgraphs.py`, the EXP-0009 scripts,
+     `stages/` and `inputs/`, `pyproject.toml` and `uv.lock`.
+   - The changes since part A's named commit lie only in §19.3's allowed list. `exp0009/freeze.py` reuses
+     `exp0008.freeze.check_head`'s rule with that list.
+2. **G0f diff** is empty again, and G0j is green.
+3. **The B files** equal the chosen tuning round's hashes, and the P1b B runs' `b_code.sha256`.
+4. **Writes `E10.commit` and `E10.sha256`.** The second file lists every tracked frozen file. This is "all of `src`
+   again", which also freezes the v2.2 gold side (S1).
+5. **Writes `B_FILES.sha256`.** It lists every file under `src/plantgraph/qa/v2tb/` plus one line
+   `<sha256> *policy:cascade_v4_iso_b` for `policy_b().model_dump_json()` (R15).
+6. **Writes `PREREG_B.md`.**
+   - G1, G1-B and G1-B2, with the numbers per plant and family.
+   - The B-sealed decision.
+   - The tuning log summary: rounds, the change made in each, the B dev accuracy, and B − A2 on R-dev.
+   - The replay verdicts.
+   - The measured $/q per arm, tier and scale, with the recomputed sealed caps.
+   - Peak memory of the VAL1000 pool.
+   - The E10 hashes.
+7. **Writes `PREREG.sha256`** over part A, part B, `seeds.json`, `plan.json`, `position_prior.json`, the E10 files
+   and the judge prompt.
+
+The launcher never commits. The user commits part B and the hash files on their order, as after EXP-0008 M3.
+
+### 19.9 Money
+
+**Basis, measured.** I computed it today with `exp0008.ledger.paid_usd_of_calls` over EXP-0008's call files
+(non-cached calls only). Each EXP-0008 run answered every question on both tiers.
+
+| Runs | Paid | Per question (both tiers) |
+|---|---|---|
+| V2T-A2 validation, `V8-CYP-A-*` + `V8-AG-*`, 2 plants × 163 q | $0.694 | $0.00213 |
+| V2T-A2 sealed at 100 sheets, `S7-*-H100g21p1…p5`, 5 × 280 q | $3.281 | $0.00234 |
+| V2T-A2 sealed at 1,000 sheets, `S7-*-H1000g21p1…p5`, 5 × 280 q | $3.410 | $0.00244 |
+| per tier, sealed (cost key) | CYP $1.058 / AG $2.223 at 100; CYP $1.015 / AG $2.395 at 1,000 | `cyp-100` 0.000756, `ag-100` 0.001588, `cyp-1000` 0.000725, `ag-1000` 0.001711 |
+| EXP-0007 V2T tuning, three rounds (`EXP-0007-V2T-validation.md`) | ≈ $1.30 | — |
+| EXP-0008 scorer audit, main sample | $3.61 | — |
+
+**Estimate for P1** (A2 at its measured $/q; B at A2's × 1.10, an **assumed** overhead for its two extra paragraphs
+and brackets, which P1a measures):
+
+| Step | Questions | Estimate | Step ceiling (1.5×) |
+|---|---|---|---|
+| P1a A2 dev baseline, D100g22 | ≈ 153 | $0.33 | |
+| P1a B, at most 3 rounds | ≈ 3 × 163 | $1.15 | |
+| **P1a** | | **$1.48** | **$2.22** |
+| P1b A2, validation pair | ≈ 2 × 153 | $0.65 | |
+| P1b B, validation pair | ≈ 2 × 163 | $0.76 | |
+| **P1b** | | **$1.41** | **$2.12** |
+| P1c A2, 5 + 5 plants | 275 each | $6.57 | |
+| P1c B, 5 + 5 plants | 285 each | $7.49 | |
+| **P1c** | | **$14.06** | **$21.09**, recomputed after P1b |
+| **P1d** audit, main sample + B stratum (EXP-0008 main × 1.5) | | **$5.42** | **$8.13** (audit ledger) |
+| **P1** | | **$22.37** | runs ledger **$26.87** + audit ledger **$8.13** = **$35.00 hard** |
+
+**Rules (`qa/exp0009/caps.py`, `ledger.py`).**
+- **Program cap: $35.00 hard**, runs and audit together.
+  - Runs ledger: $26.87, which is $35 less the audit's $8.13.
+  - Audit cap: min($8.13, $35 − runs spent), so money the runs leave unused stays usable by the audit.
+  - The step ceilings above sum to $25.43, inside the runs ledger.
+- **A run's cap, without a dry run** (ADR-0068, decision 1):
+  - The cap is n questions in the run's file × the tier's cost key × 1.5. It is never below 5 questions' cost
+    (EXP-0008's `RESERVED_QUESTIONS`).
+  - Then the cap is cut to the step ceiling left and the runs ledger left. A resumed run adds what it already spent
+    (`resumed_run_cap_usd`'s rule).
+  - B's cost keys are A2's × 1.10 until P1a has run. P1c's B and A2 keys are replaced by the per-tier $/q measured in
+    P1b at each scale (written in part B).
+- **The balance** must cover each cap before the run starts, as `exp0008.balance` checks. Today it is $37.11.
+- **The ledger glob fix (§12.3 finding).** `exp0009.ledger.runs_spent_usd(root)` counts `*calls.jsonl` under `root`
+  but skips every path with a `reports` or `audit` component.
+  - Test: one paid `calls.jsonl` plus its byte copy under `reports/x/` sums to the single file's spend.
+  - EXP-0008's own ledger is left as it is, so its record stays reproducible.
+- **The estimate is printed before each paid stage.** One event NOTE gives:
+  - the stage's questions per run, cost keys, estimate and ceiling;
+  - the runs ledger spent and left;
+  - the audit ledger;
+  - the balance.
+
+  Before P1c the NOTE also gives the recomputed caps from P1b.
+- **Money stops** (cap, ledger, balance) are resolved by the main session without asking (user rule, 2026-11-15). Gate
+  stops are not.
+
+**Free and paid at a glance.**
+
+| Free ($0) | Paid |
+|---|---|
+| the draw, P0, F10, B10, END; every replay; every gate; every build, pool and Neo4j load | P1a, P1b, P1c (model calls of both arms); P1d (judge calls) |
+
+### 19.10 Machine time
+
+| Stage | Basis (measured unless marked) | Estimate |
+|---|---|---|
+| draw | size search 27.1 s at 1,000 sheets, a 100-sheet plan 2.3 s (today); prior fit not measured | minutes |
+| P0 | v2.2 1,000-sheet generation 8–12 min (T-task measurements); EXP-0008 replays at 100 sheets 12.2 min (Cypher) and 0.8 min (agent) (M6a log); full test suite not measured | ≈ 1–1.5 h plus the suite |
+| P1a | EXP-0008 run time per question at 100 sheets: Cypher 2.9 s, agent 4.35 s (`S7-*-H100g21p2`, M6a log) | ≈ 1.3 h of runs; the tuning work between rounds is not machine time |
+| P1b | EXP-0008 M1 3 h 37 min (two plants, two arms, 163 q); plus the positions step 7.8 min at 1,000 (T14c), the B replays and the slower v2.2 generation (estimated) | ≈ 4.5–6 h |
+| F10 | EXP-0008 M3 18 s | minutes |
+| B10 | v2.1 1,000-sheet pool 6,657–8,585 s (T6b; review-fixes §6); v2.2 generation 8–12 min; positions 7.8 min; X candidates at 1,000 not measured (generation, graph and index 840.5 s, §10.8) | ≈ 12–15 h |
+| P1c | EXP-0008 M6a 17.7 h for **one** arm on ten plants, dry runs, loads and replays included (log, 06:49 → 00:30); × 2 arms; less the dry runs (≈ 12 min each at 1,000, ≈ 4 h, estimated); plus the slower v2.2 generation (+1.3 to +5.3 min on each of about 50 corpus rebuilds at 1,000, ≈ 1–4.5 h, estimated) | ≈ 32–36 h |
+| P1d | EXP-0008 M10a 1 h 05 min; × 1.5 for the B stratum (estimated) | ≈ 1.6 h |
+| END | EXP-0008 M10b 5 h (more reports than here); demo load: one v2.1 generation 404.8–421.6 s + 27.1 s | ≈ 1–2 h |
+| **P1** | | **≈ 54–64 h** |
+
+**Why this is above ADR-0067's "about 46 h".** §12.3 scaled only the runs. It did not count the replays, the dry runs
+or the corpus rebuild at the start of each run. EXP-0008's measured M6a, 17.7 h for one arm, includes all three.
+
+### 19.11 Records, and the analysis handoff
+
+- **The four record files.** Every run of both arms writes `calls.jsonl`, `answers.jsonl`, `timings.jsonl` and
+  `environment.jsonl` in EXP-0008's format (§18.8).
+- **`records.py: check_run_records(run_dir)`**, a gate after each run, checks three things:
+  - every scored answer has at least one matching call record, by question id and strategy;
+  - every call record has `response.prompt_tokens`, `response.completion_tokens`, `response.cost_usd`,
+    `response.latency_s` and `response.provider` set, the field names of EXP-0008's `calls.jsonl`. A cached reply
+    keeps its recorded values;
+  - the timings and environment files exist and are non-empty.
+- **`records.py: rescore(run_dir, questions, corpus)`** rescores offline, with no model call.
+  - It re-scores every row from `answers.jsonl` and the question file: the frozen scorer for A2, `score_answer_b`
+    with a `PlantIndex` for B.
+  - Its `correct` must equal the stored one on 100 % of rows.
+  - For set answers (TAG_SET, VALVE_SET, paths) it also gives precision, recall and F1 over node sets.
+- **Tests on fake-sender runs of both arms:**
+  - a full record passes the check;
+  - a run with one call record deleted, or one `cost_usd` blanked, fails it;
+  - `rescore` reproduces `correct` on every row.
+- **T17, the sealed analysis, is outside T13.** It covers Q4, Q4-B and its sensitivity row, SB1, SB2, K1–K3, Q5, the
+  POSITION rows beside both baselines, the `named_by` mix, the sub-scopes and the data effect against EXP-0008.
+  - It reads only result files.
+  - It must be committed **before F10**, so that E10 hashes it. It can be built during the tuning pause.
+  - END calls it when it is present.
+
+### 19.12 T13 acceptance criteria
+
+1. **Draw.** On a temporary `data/runs` copy, the draw:
+   - reproduces itself for the same N;
+   - refuses an existing file;
+   - refuses a size outside ±5;
+   - allocates exactly 4 of 5 at 100 sheets and `round_half_up(4/5 × n)` at 1,000 sheets (unit tests for n = 8–12);
+   - prints the PREREG A tables.
+2. **Ids.** Every id of §19.1 comes from `plan.py`. The id uses the nominal scale. `require_drawn_test_seed` reads the
+   EXP-0009 seeds file. Tests cover all three.
+3. **Build and relabel.**
+   - On a small dev-seed v2.2 plant with no tagging override, the A build gives the same `ingest.json` content
+     (timings aside) as the frozen CLI. The CLI call is
+     `ingest synthetic --headline-v2 --generator v2.2 --n-units … --seed … --corpus-id … --check --no-neo4j`.
+   - The B file is byte-identical once the id is replaced back.
+   - `load_corpus_artifacts(<id>B)` gives the A counts.
+   - `corpus_b.json` holds the positions sha256.
+4. **Gates.** Each gate of §19.5 passes on a good input and fails on a spoiled one, for example:
+   - a flipped allocation flag;
+   - a sheet total one off;
+   - a deleted position;
+   - a rule violation;
+   - an X family with 26 % descriptor refusals.
+
+   G0f's diff runs on the real repository.
+5. **Questions.**
+   - The EXP-0008 byte reproduction (H100g21p1, H100g21p2) passes.
+   - The drop-before-sample test passes.
+   - The S3 test passes.
+   - The A2 file holds no POSITION question and no VALVE_SET type.
+   - `position_baselines.jsonl` agrees with `position_baselines.py` on seed 1.
+6. **Frozen code meets the X families.** On fake senders, these all run without an exception on a file that holds X
+   questions:
+   - the frozen harness (A2 arm, X questions through `for_a2`);
+   - the B runner;
+   - `exp0007 health`;
+   - `replay-compare`;
+   - `cascade_report.py`.
+
+   If a frozen module raises on an X family, T13 stops and reports. The case returns to the architect, because frozen
+   code cannot change.
+7. **Money.**
+   - Caps without dry runs follow §19.9: unit tests for the minimum, the ceiling and ledger cut, and the resume.
+   - The ledger glob test passes.
+   - The audit cap is the lesser of $8.13 and what is left of $35.
+   - The estimate NOTE is printed before each paid stage in the smoke.
+8. **Freeze.** On stub git facts, F10:
+   - refuses a dirty tree;
+   - refuses a change outside §19.3's list;
+   - refuses B files that differ from the chosen round;
+   - writes `E10.sha256`, `B_FILES.sha256` (with the policy line), `PREREG_B.md` and `PREREG.sha256`, and never
+     overwrites them.
+9. **Records.** §19.11's tests pass.
+10. **Smoke.** `run_all.sh --smoke` runs draw → P0 → P1a (one round, then `finish-tuning`) → P1b → F10 → B10 → P1c →
+    P1d → END.
+    - It uses tiny plants, the fake transport for both arms, and no Neo4j: the Cypher tiers are stood in by the
+      agent, and the loads write files only, as in EXP-0008.
+    - It ends with `SMOKE_PASSED`.
+    - `--force g1|g1b|g1b2|g0l|cap|dirty-tree|wrong-head|b-files` each stops or branches as specified and resumes.
+      `g1b` and `g1b2` take the "B not sealed" branch without a stop.
+11. **Task rules.** `pytest`, `ruff` and `mypy --strict` are green, and the goldens are unchanged. G0f is `[]`. No
+    EXP-0009 plant is built under `data/runs/exp0009/`, and no paid call is made. The report gives the smoke's machine
+    time and one commit proposal.
+
+### 19.13 After T13 (main session)
+
+1. Run the draw.
+2. Fill `PREREG_A.md`.
+3. Write the EXP-0009 experiment note with an empty tuning log.
+4. On the user's order, commit part A with `seeds.json`, `plan.json` and `position_prior.json`.
+5. Run readiness.
+6. Start the launcher on the user's word. P0 is free; P1a is the first paid step.
