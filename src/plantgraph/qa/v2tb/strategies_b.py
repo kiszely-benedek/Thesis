@@ -143,7 +143,10 @@ _ITEM_LINE_SENTENCE = (
 _B_READING_SENTENCE = (
     "On this plant a valve's line may also end with [operating_position NC], its normal "
     "position, and an untagged valve's line with [line 6\"-P-1203-A1A], the line number of its "
-    "pipe (two numbers where the line number changes at the valve)."
+    "pipe (two numbers where the line number changes at the valve). An untagged valve still "
+    "counts as a valve and belongs in a list of valves. When you name one, its next_to is the "
+    "first tagged item you meet walking from the valve itself along the flow on that side, which "
+    "is often not the item the question is about."
 )
 
 
