@@ -10,7 +10,7 @@ Design: `docs/private/40-design/generator-v2-2-handbook-rules.md` section 19.
 - The A2 system is E9 (`5d31cbb94620645ee018771735edae37f49e7ef8`), checked by gate G0f.
 - The code at the draw; the part A commit adds only `prereg/` files:
 
-Part A code commit: 871aee51bf3f46b5bdb61483cc51a9ed185a7821
+Part A code commit: c827ae0460906e513622c8666040be48b9185271
 
 - Between that commit and E10 only these may change:
   B files under `src/plantgraph/qa/v2tb/` and `tests/v2tb/` (tuning); the T17 analysis module and its tests;
@@ -162,3 +162,11 @@ This amendment was written before any stage ran, before any plant was built and 
 - **Money check before F10.** At the end of P1b, P1c's spend is projected from P1b's measured cost per question. If the projection does not fit, the launcher stops before F10 and the user decides.
 - **GLM arm.** The GLM arm is scored with `cascade_v4_iso_glm`, which is `cascade_v4_iso` with the GLM tier pins. A money shortfall in the GLM arm skips the rest of that arm and does not stop P1d.
 - **Precision and recall.** Precision, recall and F1 are also computed from the Cypher tier's re-score, scored per question from the tier that answered it.
+
+## Second amendment of 2026-11-24, during P0 and before any paid stage
+
+P0 stopped at the end of the D1000g22 build. Every build gate had passed: G0c, G0g, G0k, the line view and G0-B. The stop came from the memory probe that wraps the build. One of its processes ended while psutil was listing the process tree, and the probe raised `NoSuchProcess` (`qa/exp0008/memory_probe.py`).
+
+The probe now skips that one sample and samples again. A regression test was added. The code commit above was moved from `871aee51bf3f46b5bdb61483cc51a9ed185a7821` to `c827ae0460906e513622c8666040be48b9185271`.
+
+Nothing else changed: no claim, threshold, seed, plant, question or cap. No paid call had been made.
