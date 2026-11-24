@@ -6,7 +6,7 @@ number is counted on the **plan** (`sheet_stats`), the one counting rule; `compo
 adds the checks that need the split sheet graphs. Each row is `(quantity, value, band, verdict)`.
 
     python -m plantgraph.benchmark.v2.composition --target-sheets 100 --seeds 1 2 3 [--corpus]
-        [--coverage] [--pool] [--json PATH] [--generator v2.2]
+        [--coverage] [--pool] [--json PATH] [--generator v2.2] [--by-kind [--kind-json PATH]]
 
 By default every plant (seed) is judged against the bands on its own, for tuning. With `--pool`
 the plants of the scale are judged together: each band is checked on the mean over the `--seeds`
@@ -38,6 +38,7 @@ from plantgraph.benchmark.v2.composition_bands import (
 from plantgraph.benchmark.v2.composition_corpus import corpus_rows, split_sheets
 from plantgraph.benchmark.v2.composition_kinds import is_process_sheet, kind_values
 from plantgraph.benchmark.v2.coverage import coverage_report, render_coverage
+from plantgraph.benchmark.v2.kind_report import print_kind_report
 from plantgraph.benchmark.v2.planner import PlantPlanV2, plan_plant
 from plantgraph.benchmark.v2.sheet_stats import SheetStats, share_at_most, sheet_stats, spread
 from plantgraph.ingest.headline_v2 import (
@@ -318,6 +319,8 @@ def _parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
     )
     parser.add_argument("--json", type=Path, default=None, help="write the reports as JSON")
     parser.add_argument("--allow-test-seed", action="store_true")
+    parser.add_argument("--by-kind", action="store_true", help="also report each sheet kind")
+    parser.add_argument("--kind-json", type=Path, default=None, help="write the by-kind report")
     parser.add_argument("--generator", choices=["v2.1", "v2.2"], default="v2.1")
     return parser.parse_args(argv)
 
@@ -336,7 +339,12 @@ def main(argv: Sequence[str] | None = None) -> int:
             require_drawn_test_seed(seed, seed_plan)
     except ValueError as error:
         raise SystemExit(f"error: {error}") from error
-    reports = [_report_of_seed(args, preset, seed_plan, seed) for seed in args.seeds]
+    results = [_report_of_seed(args, preset, seed_plan, seed) for seed in args.seeds]
+    reports = [report for report, _ in results]
+    if args.by_kind:
+        noun = "seeds" if len(args.seeds) > 1 else "seed"
+        label = f"{args.target_sheets} sheets, {noun} {' '.join(map(str, args.seeds))}"
+        print_kind_report(label, [plan for _, plan in results], args.kind_json)
     if args.pool:
         return _print_pooled(args, reports)
     if args.json is not None:
@@ -346,17 +354,20 @@ def main(argv: Sequence[str] | None = None) -> int:
 
 def _report_of_seed(
     args: argparse.Namespace, preset: HeadlinePresetV2, seed_plan: SeedPlan | None, seed: int
-) -> CompositionReport:
+) -> tuple[CompositionReport, PlantPlanV2]:
     """Plan the plant of `seed` and build its report; prints the plant's tables unless pooling."""
     n_units = smallest_n_units_v2(args.target_sheets, preset, seed).n_units
     plan = plan_plant(preset.generator_config(n_units, seed))
-    corpus_id = headline_corpus_id_v2(args.target_sheets, seed, preset.duplication_rate, seed_plan)
+    # the preset names its generation (`g21` or `g22`), so a v2.2 run prints a `g22` id
+    corpus_id = headline_corpus_id_v2(
+        args.target_sheets, seed, preset.duplication_rate, seed_plan, preset.generation
+    )
     report = build_report(plan, corpus_id, preset if args.corpus else None)
     if not args.pool:  # a pooled run prints one table with every plant in it
         print(render_report(report))
     if args.coverage:
         print(render_coverage(coverage_report(plan)))
-    return report
+    return report, plan
 
 
 def _print_pooled(args: argparse.Namespace, reports: list[CompositionReport]) -> int:
