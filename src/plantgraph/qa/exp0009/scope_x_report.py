@@ -5,7 +5,8 @@ ones whose gold holds an untagged valve. For OPEN_VALVES it also gives the **dis
 the kept questions whose gold differs from the topological one, which is what separates them from
 their registered twin. Refusals are traced to the **role** of the valves behind them (a role says
 why a valve is on the drawing: "pump discharge block", "tank inlet block"), each valve counted once
-per refused candidate (design `v2t-b-system-revision.md` §10 R3).
+per refused candidate (design `v2t-b-system-revision.md` §10 R3). For POSITION_OF_VALVE it also
+counts the kept questions per form (named by tag or by descriptor) and their position mix (§10 R12).
 
 ADR-0067's stop rule is checked here: a family that refuses more than a quarter of its candidates
 on a dev plant returns to the architect. This is a measurement: it builds the held-out families on
@@ -33,7 +34,8 @@ from plantgraph.benchmark.v2.valve_positions import positions_of
 from plantgraph.ingest.headline_v22 import HeadlinePresetV22
 from plantgraph.qa.exp0009.dev_plants import forced_config
 from plantgraph.qa.models import QuestionFamily
-from plantgraph.qa.questions.scope_x import FamilyOutcome, RefusalReason, scope_x_candidates
+from plantgraph.qa.questions.scope_x import scope_x_candidates
+from plantgraph.qa.questions.scope_x_models import FamilyOutcome, NamedBy, RefusalReason
 
 #: ADR-0067: more refused than this share of a family's candidates stops the work
 QUARTER = 0.25
@@ -55,6 +57,10 @@ class FamilyReport(BaseModel):
     kept_with_untagged_gold: int
     #: OPEN_VALVES only: kept questions whose gold differs from the topological gold
     kept_discriminating: int | None
+    #: POSITION_OF_VALVE only: kept questions that name their valve by a descriptor, not a tag
+    kept_named_by_descriptor: int | None
+    #: POSITION_OF_VALVE only: form ("tag" or "descriptor") -> position code -> kept questions
+    kept_position_mix: dict[str, dict[str, int]]
     #: role -> number of valves of that role behind a refused candidate
     refusing_roles: dict[str, int]
 
@@ -67,6 +73,13 @@ class FamilyReport(BaseModel):
     def refused_share(self) -> float:
         """Refused over candidates; 0.0 when there were none."""
         return self.refused / self.candidates if self.candidates else 0.0
+
+    @property
+    def kept_named_by_tag(self) -> int | None:
+        """POSITION_OF_VALVE only: kept questions that name their valve by its tag."""
+        if self.kept_named_by_descriptor is None:
+            return None
+        return self.kept - self.kept_named_by_descriptor
 
     @property
     def discriminating_share(self) -> float | None:
@@ -115,8 +128,25 @@ def family_report(outcome: FamilyOutcome, roles: Mapping[str, str]) -> FamilyRep
         kept=len(outcome.kept),
         kept_with_untagged_gold=sum(f.holds_untagged for f in flags),
         kept_discriminating=sum(discriminating) if discriminating else None,
+        kept_named_by_descriptor=_count_named_by_descriptor(outcome),
+        kept_position_mix=_position_mix(outcome),
         refusing_roles=dict(sorted(role_counts.items(), key=lambda pair: (-pair[1], pair[0]))),
     )
+
+
+def _count_named_by_descriptor(outcome: FamilyOutcome) -> int | None:
+    named = [f.named_by for f in outcome.flags.values() if f.named_by is not None]
+    return sum(form is NamedBy.DESCRIPTOR for form in named) if named else None
+
+
+def _position_mix(outcome: FamilyOutcome) -> dict[str, dict[str, int]]:
+    """Kept POSITION questions counted by form, then by the position code they ask for."""
+    mix: dict[str, Counter[str]] = {}
+    for question in outcome.kept:
+        form = outcome.flags[question.question_id].named_by
+        if form is not None:
+            mix.setdefault(form.value, Counter())[str(question.reference)] += 1
+    return {form: dict(sorted(counts.items())) for form, counts in sorted(mix.items())}
 
 
 def _roles_of(plans: tuple[TrimPlan, ...]) -> dict[str, str]:
@@ -134,6 +164,7 @@ def report_as_json(report: PlantReport) -> str:
             "refused": row.refused,
             "refused_share": round(row.refused_share, 4),
             "discriminating_share": row.discriminating_share,
+            "kept_named_by_tag": row.kept_named_by_tag,
         }
         for row in report.families
     ]

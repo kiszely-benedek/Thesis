@@ -9,6 +9,10 @@ UPSTREAM_ISOLATION_X and DOWNSTREAM_ISOLATION_X reuse the registered texts uncha
 
 from __future__ import annotations
 
+import re
+
+_CAMEL_BOUNDARY = re.compile(r"(?<!^)(?=[A-Z])")
+
 
 def open_valves_upstream_text(tag: str) -> str:
     """OPEN_VALVES_TO_ISOLATE (dev): twin of `templates.upstream_isolation_text`."""
@@ -26,5 +30,31 @@ def open_valves_downstream_text(tag: str) -> str:
 
 
 def position_of_valve_text(tag: str) -> str:
-    """POSITION_OF_VALVE: the normal operating position of one valve."""
+    """POSITION_OF_VALVE, tag form: the normal operating position of one tagged valve."""
     return f"What is the normal operating position of valve {tag}?"
+
+
+def class_words(class_name: str) -> str:
+    """A CamelCase node class as plain words: "GateValve" becomes "gate valve"."""
+    return _CAMEL_BOUNDARY.sub(" ", class_name).lower()
+
+
+def position_of_described_valve_text(
+    class_name: str, line_number: str, side: str, next_to: str
+) -> str:
+    """POSITION_OF_VALVE, descriptor form: names an untagged valve by line and nearest tagged item.
+
+    "On the {side} side of" is deliberate: "downstream of" alone would route like a reach
+    question (`need/rules.py`), and "just" would be false when untagged fittings sit between.
+    The words hold neither the answer nor a role word (design `v2t-b` §10 R11, P1).
+
+    Args:
+        class_name: the valve's node class, e.g. "GateValve".
+        line_number: the line number as the plant prints it (inch mark and all).
+        side: "upstream" or "downstream", where the valve sits relative to `next_to`.
+        next_to: the tag of the nearest tagged item on that side.
+    """
+    return (
+        f"What is the normal operating position of the {class_words(class_name)} "
+        f"on line {line_number}, on the {side} side of {next_to}?"
+    )

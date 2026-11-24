@@ -19,6 +19,8 @@ from plantgraph.qa.questions.templates_heldout import downstream_isolation_text
 from plantgraph.qa.questions.templates_x import (
     open_valves_downstream_text,
     open_valves_upstream_text,
+    position_of_described_valve_text,
+    position_of_valve_text,
 )
 from qa_routing_toy import ToyCorpus
 
@@ -35,6 +37,7 @@ _PAIRS = [
 def _label(text: str) -> NeedLabel:
     toy = ToyCorpus()
     toy.item("S1", "a", _TAG, unit_id="1")
+    toy.item("S1", "b", "GTV-1203", unit_id="1")  # the valve of the tag-form position text
     return classify_need(text, anchor_finder(toy.view()))
 
 
@@ -58,3 +61,11 @@ def test_the_isolation_x_families_are_routed_like_the_registered_families() -> N
 def test_every_twin_named_for_a_scope_x_family_is_a_registered_isolation_family() -> None:
     assert set(SCOPE_X_ROUTING_TWIN.values()) == {F.UPSTREAM_ISOLATION, F.DOWNSTREAM_ISOLATION}
     assert F.POSITION_OF_VALVE not in SCOPE_X_ROUTING_TWIN
+
+
+@pytest.mark.parametrize("side", ["upstream", "downstream"])
+def test_the_descriptor_position_text_is_routed_like_the_tag_text(side: str) -> None:
+    descriptor_text = position_of_described_valve_text("GateValve", '6"-P-1203-A1A', side, _TAG)
+
+    assert _label(descriptor_text) is _label(position_of_valve_text("GTV-1203"))
+    assert _label(descriptor_text) is NeedLabel.GENERIC

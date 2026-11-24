@@ -11,11 +11,10 @@ from plantgraph.qa.models import AnswerType, Question, QuestionFamily
 from plantgraph.qa.questions.scope_x import (
     SCOPE_X_DEV_FAMILIES,
     SCOPE_X_FAMILIES,
-    FamilyOutcome,
-    RefusalReason,
     for_a2,
     scope_x_candidates,
 )
+from plantgraph.qa.questions.scope_x_models import FamilyOutcome, RefusalReason
 from plantgraph.qa.questions.templates import upstream_isolation_text
 from plantgraph.qa.questions.templates_heldout import downstream_isolation_text
 from plantgraph.qa.v2tb.descriptor import PlantIndex
@@ -122,14 +121,19 @@ def test_every_candidate_is_kept_or_refused() -> None:
         assert outcome.candidates == len(outcome.kept) + len(outcome.refusals), outcome.family
 
 
-def test_position_of_valve_asks_for_each_tagged_positioned_valve() -> None:
+def test_position_of_valve_asks_for_each_positioned_valve_and_refuses_the_unnameable() -> None:
     position = _build()[F.POSITION_OF_VALVE]
     asked = {q.anchors[0]: q.reference for q in position.kept}
 
-    assert asked == {"HV-2": "NC", "HV-5A": "NO", "HV-5B": "NC"}  # ga, gc, gd print no tag
+    # ga is named by its descriptor, anchored on TK-1; gc and gd (two in series) have none
+    assert asked == {"TK-1": "NO", "HV-2": "NC", "HV-5A": "NO", "HV-5B": "NC"}
     assert {q.answer_type for q in position.kept} == {AnswerType.POSITION}
-    assert position.refusals == []
-    assert position.kept[0].text == "What is the normal operating position of valve HV-2?"
+    assert position.candidates == 6
+    assert {r.anchor for r in position.refusals} == {"gc", "gd"}
+    assert {r.reason for r in position.refusals} == {RefusalReason.NO_UNIQUE_DESCRIPTOR}
+    assert next(q for q in position.kept if q.anchors == ["HV-2"]).text == (
+        "What is the normal operating position of valve HV-2?"
+    )
 
 
 def test_the_isolation_x_families_use_the_registered_texts() -> None:

@@ -59,8 +59,13 @@ def test_the_quarter_rule_lists_the_families_that_refuse_more_than_a_quarter() -
         families=reports,
     )
 
-    # the OPEN families lose 2 of 4 (an empty gold and a series pair); 1 of 4 is not above a quarter
-    assert plant.over_quarter == [F.OPEN_VALVES_TO_ISOLATE, F.OPEN_VALVES_TO_ISOLATE_DOWNSTREAM]
+    # the OPEN families lose 2 of 4 (an empty gold and a series pair), POSITION 2 of 6 (the
+    # series pair); 1 of 4 is not above a quarter
+    assert plant.over_quarter == [
+        F.OPEN_VALVES_TO_ISOLATE,
+        F.POSITION_OF_VALVE,
+        F.OPEN_VALVES_TO_ISOLATE_DOWNSTREAM,
+    ]
 
 
 def test_the_json_carries_the_derived_shares() -> None:
@@ -77,3 +82,18 @@ def test_the_json_carries_the_derived_shares() -> None:
 
     assert document["families"][0]["refused_share"] == 0.5
     assert "over_quarter" in document
+
+
+def test_the_position_report_counts_the_two_forms_and_their_position_mix() -> None:
+    report = _reports()[F.POSITION_OF_VALVE]
+
+    assert (report.candidates, report.refused_no_descriptor, report.kept) == (6, 2, 4)
+    assert (report.kept_named_by_descriptor, report.kept_named_by_tag) == (1, 3)
+    assert report.kept_position_mix == {"descriptor": {"NO": 1}, "tag": {"NC": 2, "NO": 1}}
+
+
+def test_a_family_without_forms_has_no_form_counts() -> None:
+    report = _reports()[F.UPSTREAM_ISOLATION_X]
+
+    assert report.kept_named_by_descriptor is None and report.kept_named_by_tag is None
+    assert report.kept_position_mix == {}
