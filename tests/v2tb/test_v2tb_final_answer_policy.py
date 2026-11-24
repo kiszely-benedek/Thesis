@@ -178,11 +178,16 @@ def test_a_b_request_carries_the_b_primer_and_the_valve_set_rule() -> None:
 # ---- policy, pins, parameters -------------------------------------------------------------------
 
 
-def test_the_b_policy_is_the_a_policy_under_another_name() -> None:
+def test_the_b_policy_is_the_a_policy_under_another_name_reading_the_b_strategies() -> None:
     policy_a = load_policy(V2T_POLICIES_DIR / "cascade_v4_iso.json")
     policy = policy_b()
     assert policy.name == B_POLICY_NAME == "cascade_v4_iso_b"
-    assert policy.model_dump(exclude={"name"}) == policy_a.model_dump(exclude={"name"})
+    assert [t.strategy for t in policy.tiers] == ["cypher_rag_lines_b", "graph_agent_lines_b"]
+    # everything but the name and the tiers' strategy names is A's
+    rest = {"name", "tiers"}
+    assert policy.model_dump(exclude=rest) == policy_a.model_dump(exclude=rest)
+    for tier, tier_a in zip(policy.tiers, policy_a.tiers, strict=True):
+        assert tier.model_dump(exclude={"strategy"}) == tier_a.model_dump(exclude={"strategy"})
 
 
 def test_the_b_pins_are_the_pins_of_the_policy_tiers() -> None:
