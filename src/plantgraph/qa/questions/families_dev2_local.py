@@ -30,6 +30,7 @@ from plantgraph.qa.questions.templates import (
     loops_near_item_text,
     same_unit_text,
 )
+from plantgraph.qa.questions.untagged import printed_name
 
 _TEMPLATE_VERSION = "1"
 
@@ -52,7 +53,7 @@ def instruments_of_item_candidates(
         sensor_ids = relation_successors(plant, item_id, Relation.MEASURED_BY)
         if not sensor_ids:
             continue
-        tag = str(plant.nodes[item_id]["tag"])
+        tag = printed_name(plant, item_id)
         questions.append(
             build_question(
                 corpus_id=corpus_id,
@@ -61,7 +62,7 @@ def instruments_of_item_candidates(
                 template_version=_TEMPLATE_VERSION,
                 text=instruments_of_item_text(tag),
                 answer_type=AnswerType.TAG_SET,
-                reference=sorted(str(plant.nodes[s]["tag"]) for s in sensor_ids),
+                reference=sorted(printed_name(plant, s) for s in sensor_ids),
                 evidence=Evidence(
                     nodes=frozenset({item_id, *sensor_ids}),
                     edges=frozenset((item_id, s) for s in sensor_ids),
@@ -160,7 +161,7 @@ def _same_unit_question(
     corpus_id: str,
     seed: int,
 ) -> Question:
-    first_tag, second_tag = str(plant.nodes[item_id]["tag"]), str(plant.nodes[partner_id]["tag"])
+    first_tag, second_tag = printed_name(plant, item_id), printed_name(plant, partner_id)
     return build_question(
         corpus_id=corpus_id,
         family=QuestionFamily.SAME_UNIT,
@@ -199,7 +200,7 @@ def loops_near_item_candidates(
         nodes, edges, loop_tags = _loops_around(plant, item_id)
         if not loop_tags:
             continue
-        tag = str(plant.nodes[item_id]["tag"])
+        tag = printed_name(plant, item_id)
         questions.append(
             build_question(
                 corpus_id=corpus_id,
@@ -230,7 +231,7 @@ def _loops_around(
         for actuator_id, controller_id in _loop_chains(plant, valve_id):
             nodes |= {valve_id, actuator_id, controller_id, *(n for e in line_edges for n in e)}
             edges |= {*line_edges, (actuator_id, valve_id), (controller_id, actuator_id)}
-            loop_tags.add(str(plant.nodes[controller_id]["tag"]))
+            loop_tags.add(printed_name(plant, controller_id))
     return nodes, edges, loop_tags
 
 

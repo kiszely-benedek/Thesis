@@ -35,6 +35,7 @@ from plantgraph.qa.questions.templates import (
     lookup_type_text,
     neighbours_downstream_text,
 )
+from plantgraph.qa.questions.untagged import printed_name
 
 _TEMPLATE_VERSION = "1"
 
@@ -132,7 +133,7 @@ def unanswerable_tag_candidates(
     """
     del manifest, sheets
     rng = random.Random(seed)
-    real_tags = [str(plant.nodes[n]["tag"]) for n in nodes_of_classes(plant, EQUIPMENT_CLASSES)]
+    real_tags = [printed_name(plant, n) for n in nodes_of_classes(plant, EQUIPMENT_CLASSES)]
     if not real_tags:
         raise ValueError("expected at least one equipment item in the plant, found none")
     questions = []
@@ -220,8 +221,8 @@ def _draw(items: list[str], count: int, rng: random.Random) -> list[str]:
 def _no_path_question(
     plant: nx.DiGraph[str], source_id: str, target_id: str, corpus_id: str, seed: int
 ) -> Question:
-    source_tag = str(plant.nodes[source_id]["tag"])
-    target_tag = str(plant.nodes[target_id]["tag"])
+    source_tag = printed_name(plant, source_id)
+    target_tag = printed_name(plant, target_id)
     return build_unanswerable_question(
         corpus_id=corpus_id,
         family=QuestionFamily.NO_PATH,

@@ -28,12 +28,13 @@ from plantgraph.qa.questions.templates_heldout import (
     feeding_units_text,
     units_reached_text,
 )
+from plantgraph.qa.questions.untagged import printed_name
 
 _TEMPLATE_VERSION = "1"
 
 
 def _tags(plant: nx.DiGraph[str], node_ids: set[str] | frozenset[str]) -> list[str]:
-    return sorted(str(plant.nodes[node_id]["tag"]) for node_id in node_ids)
+    return sorted(printed_name(plant, node_id) for node_id in node_ids)
 
 
 # --- DOWNSTREAM_ISOLATION --------------------------------------------------------------------
@@ -94,7 +95,7 @@ def downstream_isolation_candidates(
         if walk is None:
             continue
         valves, edges = walk
-        tag = str(plant.nodes[node_id]["tag"])
+        tag = printed_name(plant, node_id)
         questions.append(
             build_question(
                 corpus_id=corpus_id,
@@ -205,7 +206,7 @@ def units_reached_candidates(
             continue
         own_unit = unit_of(plant, node_id)
         other_units = {unit_of(plant, n) for n in parent_of} - {own_unit, None}
-        tag = str(plant.nodes[node_id]["tag"])
+        tag = printed_name(plant, node_id)
         questions.append(
             build_question(
                 corpus_id=corpus_id,

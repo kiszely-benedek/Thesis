@@ -29,8 +29,9 @@ from plantgraph.qa.questions.families_flow import (
     path_to,
     reach_from,
 )
-from plantgraph.qa.questions.families_heldout_paths import path_evidence, tag_of
+from plantgraph.qa.questions.families_heldout_paths import path_evidence
 from plantgraph.qa.questions.templates_heldout import route_avoiding_text
+from plantgraph.qa.questions.untagged import printed_name
 
 _TEMPLATE_VERSION = "1"
 
@@ -177,7 +178,11 @@ def _route_question(
     else:  # proving "no" means seeing everything A still reaches
         tree_edges = frozenset((parent, child) for child, parent in parent_of.items())
         evidence = Evidence(nodes=frozenset({source_id, *parent_of}), edges=tree_edges)
-    tags = [tag_of(plant, source_id), tag_of(plant, target_id), tag_of(plant, removed_id)]
+    tags = [
+        printed_name(plant, source_id),
+        printed_name(plant, target_id),
+        printed_name(plant, removed_id),
+    ]
     return build_question(
         corpus_id=corpus_id,
         family=QuestionFamily.ROUTE_AVOIDING,

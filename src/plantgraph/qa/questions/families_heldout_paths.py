@@ -47,6 +47,7 @@ from plantgraph.qa.questions.templates_heldout import (
     first_meeting_point_text,
     valves_on_path_text,
 )
+from plantgraph.qa.questions.untagged import printed_name
 
 _TEMPLATE_VERSION = "1"
 
@@ -57,11 +58,6 @@ def path_evidence(*paths: list[str]) -> Evidence:
         nodes=frozenset(n for path in paths for n in path),
         edges=frozenset(edge for path in paths for edge in zip(path, path[1:], strict=False)),
     )
-
-
-def tag_of(plant: nx.DiGraph[str], node_id: str) -> str:
-    """The tag of a node: its printed equipment or valve name."""
-    return str(plant.nodes[node_id]["tag"])
 
 
 class _ReachCache:
@@ -144,15 +140,15 @@ def _equipment_sharing_a_descendant(
         found = {p for n in frontier for p in send_to_predecessors(plant, n) if p not in seen}
         seen |= found
         frontier = sorted(found)
-    own_tag = tag_of(plant, source_id)
+    own_tag = printed_name(plant, source_id)
     partners = [
         n
         for n in seen
         if n not in reached
         and plant.nodes[n]["node_class"] in EQUIPMENT_CLASSES
-        and tag_of(plant, n) > own_tag
+        and printed_name(plant, n) > own_tag
     ]
-    return sorted(partners, key=lambda n: tag_of(plant, n))
+    return sorted(partners, key=lambda n: printed_name(plant, n))
 
 
 def _meeting_point(
@@ -193,11 +189,13 @@ def _meeting_question(
         family=QuestionFamily.FIRST_MEETING_POINT,
         template_id="FIRST_MEETING_POINT",
         template_version=_TEMPLATE_VERSION,
-        text=first_meeting_point_text(tag_of(plant, source_id), tag_of(plant, partner_id)),
+        text=first_meeting_point_text(
+            printed_name(plant, source_id), printed_name(plant, partner_id)
+        ),
         answer_type=AnswerType.TAG,
-        reference=tag_of(plant, meeting_id),
+        reference=printed_name(plant, meeting_id),
         evidence=path_evidence(path_a, path_b),
-        anchors=[tag_of(plant, source_id), tag_of(plant, partner_id)],
+        anchors=[printed_name(plant, source_id), printed_name(plant, partner_id)],
         plant=plant,
         index=index,
         seed=seed,
@@ -289,11 +287,13 @@ def valves_on_path_candidates(
                     family=QuestionFamily.VALVES_ON_PATH,
                     template_id="VALVES_ON_PATH",
                     template_version=_TEMPLATE_VERSION,
-                    text=valves_on_path_text(tag_of(plant, source_id), tag_of(plant, target_id)),
+                    text=valves_on_path_text(
+                        printed_name(plant, source_id), printed_name(plant, target_id)
+                    ),
                     answer_type=AnswerType.COUNT,
                     reference=count,
                     evidence=_route_evidence(item_path, hops),
-                    anchors=[tag_of(plant, source_id), tag_of(plant, target_id)],
+                    anchors=[printed_name(plant, source_id), printed_name(plant, target_id)],
                     plant=plant,
                     index=index,
                     seed=seed,

@@ -28,6 +28,7 @@ from plantgraph.qa.questions.common import (
 )
 from plantgraph.qa.questions.evidence import Evidence, SheetIndex
 from plantgraph.qa.questions.templates import flow_path_text, neighbours_downstream_text
+from plantgraph.qa.questions.untagged import printed_name
 
 _TEMPLATE_VERSION = "1"
 
@@ -59,7 +60,7 @@ def neighbours_downstream_candidates(
                 template_version=_TEMPLATE_VERSION,
                 text=neighbours_downstream_text(tag),
                 answer_type=AnswerType.TAG_SET,
-                reference=sorted(str(plant.nodes[hop.item_id]["tag"]) for hop in hops),
+                reference=sorted(printed_name(plant, hop.item_id) for hop in hops),
                 evidence=evidence,
                 anchors=[tag],
                 plant=plant,
@@ -118,7 +119,7 @@ def flow_path_candidates(
                     corpus_id=corpus_id,
                     seed=seed,
                     source_tag=source_tag,
-                    target_tag=str(plant.nodes[target_id]["tag"]),
+                    target_tag=printed_name(plant, target_id),
                     path=path,
                 )
             )
@@ -159,7 +160,7 @@ def _flow_path_question(
         template_version=_TEMPLATE_VERSION,
         text=flow_path_text(source_tag, target_tag),
         answer_type=AnswerType.TAG_PATH,
-        reference=[str(plant.nodes[n]["tag"]) for n in path if is_path_item(plant, n)],
+        reference=[printed_name(plant, n) for n in path if is_path_item(plant, n)],
         evidence=evidence,
         anchors=[source_tag, target_tag],
         plant=plant,

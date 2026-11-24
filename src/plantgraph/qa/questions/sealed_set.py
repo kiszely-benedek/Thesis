@@ -48,6 +48,7 @@ from plantgraph.qa.questions.per_family import (
     sample_per_family,
 )
 from plantgraph.qa.questions.sample import draw_sample
+from plantgraph.qa.questions.untagged import refuse_untagged
 from plantgraph.qa.questions.wordings_heldout import WORDING_FAMILIES, reword
 from plantgraph.qa.scoring import score_answer
 
@@ -142,6 +143,7 @@ def build_pool_from_plant(
     candidates.update(
         heldout_candidates(plant, manifest, sheets, corpus_id=corpus_id, seed=seed, v2=v2)
     )
+    candidates, _refused = refuse_untagged(candidates)  # v2.2: no question names an untagged valve
     build_seconds = time.perf_counter() - started
     pool, report = draw_sample(candidates, targets, corpus_id=corpus_id, seed=seed)
     return pool, report.model_copy(update={"build_seconds": build_seconds})

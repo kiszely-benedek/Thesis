@@ -80,8 +80,17 @@ def _edges_through_fittings(plant: nx.DiGraph[str]) -> set[tuple[str, str]]:
             continue
         for hop in next_path_items(plant, node_id):
             if hop.via:  # a direct edge is already in `_direct_tag_edges`
-                edges.add((str(plant.nodes[node_id]["tag"]), str(plant.nodes[hop.item_id]["tag"])))
+                _add_tagged_edge(plant, edges, node_id, hop.item_id)
     return edges
+
+
+def _add_tagged_edge(
+    plant: nx.DiGraph[str], edges: set[tuple[str, str]], source: str, target: str
+) -> None:
+    """Add the edge only when both ends print a tag: an untagged valve cannot be named in a path."""
+    source_tag, target_tag = plant.nodes[source].get("tag"), plant.nodes[target].get("tag")
+    if source_tag is not None and target_tag is not None:
+        edges.add((str(source_tag), str(target_tag)))
 
 
 def routing_hit(question: Question, trace: dict[str, Any]) -> bool | None:

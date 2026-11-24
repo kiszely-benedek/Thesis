@@ -28,6 +28,7 @@ from plantgraph.qa.questions.common import (
     single_successor,
 )
 from plantgraph.qa.questions.evidence import Evidence, SheetIndex
+from plantgraph.qa.questions.untagged import printed_name
 
 _TEMPLATE_VERSION = "1"
 
@@ -66,7 +67,7 @@ def loop_actuated_valve_candidates(
                 template_version=_TEMPLATE_VERSION,
                 text=f"Which valve is actuated by control loop {loop_tag}?",
                 answer_type=AnswerType.TAG,
-                reference=str(plant.nodes[valve_id]["tag"]),
+                reference=printed_name(plant, valve_id),
                 evidence=evidence,
                 anchors=[loop_tag],
                 plant=plant,
@@ -118,7 +119,7 @@ def loop_measured_equipment_candidates(
                 template_version=_TEMPLATE_VERSION,
                 text=f"Which equipment item does control loop {loop_tag} measure?",
                 answer_type=AnswerType.TAG,
-                reference=str(plant.nodes[equipment_id]["tag"]),
+                reference=printed_name(plant, equipment_id),
                 evidence=evidence,
                 anchors=[loop_tag],
                 plant=plant,

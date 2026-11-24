@@ -37,6 +37,7 @@ from plantgraph.qa.questions.templates import (
     downstream_in_unit_text,
     upstream_sources_text,
 )
+from plantgraph.qa.questions.untagged import printed_name
 
 _TEMPLATE_VERSION = "1"
 
@@ -120,7 +121,7 @@ def _connected_question(
     reference: str,
     evidence: Evidence,
 ) -> Question:
-    source_tag, target_tag = str(plant.nodes[source_id]["tag"]), str(plant.nodes[target_id]["tag"])
+    source_tag, target_tag = printed_name(plant, source_id), printed_name(plant, target_id)
     return build_question(
         corpus_id=corpus_id,
         family=QuestionFamily.CONNECTED,
@@ -159,7 +160,7 @@ def downstream_in_unit_candidates(
         receiving = [n for n in reached if plant.nodes[n]["node_class"] in COUNTED_CLASSES]
         if not receiving:
             continue
-        tag = str(plant.nodes[item_id]["tag"])
+        tag = printed_name(plant, item_id)
         questions.append(
             build_question(
                 corpus_id=corpus_id,
@@ -168,7 +169,7 @@ def downstream_in_unit_candidates(
                 template_version=_TEMPLATE_VERSION,
                 text=downstream_in_unit_text(unit_id, tag),
                 answer_type=AnswerType.TAG_SET,
-                reference=sorted(str(plant.nodes[n]["tag"]) for n in receiving),
+                reference=sorted(printed_name(plant, n) for n in receiving),
                 evidence=Evidence(nodes=frozenset({item_id, *reached}), edges=edges),
                 anchors=[tag, unit_id],
                 plant=plant,
@@ -222,7 +223,7 @@ def upstream_sources_candidates(
         sources = [n for n in feeds if not send_to_predecessors(plant, n)]
         if not sources:
             continue
-        tag = str(plant.nodes[item_id]["tag"])
+        tag = printed_name(plant, item_id)
         evidence = Evidence(
             nodes=frozenset({item_id, *feeds}),
             edges=frozenset((ancestor, fed) for ancestor, fed in feeds.items()),
@@ -235,7 +236,7 @@ def upstream_sources_candidates(
                 template_version=_TEMPLATE_VERSION,
                 text=upstream_sources_text(tag),
                 answer_type=AnswerType.TAG_SET,
-                reference=sorted(str(plant.nodes[n]["tag"]) for n in sources),
+                reference=sorted(printed_name(plant, n) for n in sources),
                 evidence=evidence,
                 anchors=[tag],
                 plant=plant,

@@ -18,6 +18,7 @@ from plantgraph.qa.models import AnswerType, Question, QuestionFamily
 from plantgraph.qa.questions.common import build_question, nodes_of_classes
 from plantgraph.qa.questions.evidence import Evidence, SheetIndex
 from plantgraph.qa.questions.templates import upstream_isolation_text
+from plantgraph.qa.questions.untagged import printed_name
 
 _TEMPLATE_VERSION = "1"
 
@@ -88,7 +89,7 @@ def upstream_isolation_candidates(
         if walk is None:
             continue
         valves, edges = walk
-        tag = str(plant.nodes[node_id]["tag"])
+        tag = printed_name(plant, node_id)
         questions.append(
             build_question(
                 corpus_id=corpus_id,
@@ -97,7 +98,7 @@ def upstream_isolation_candidates(
                 template_version=_TEMPLATE_VERSION,
                 text=upstream_isolation_text(tag),
                 answer_type=AnswerType.TAG_SET,
-                reference=sorted(str(plant.nodes[v]["tag"]) for v in valves),
+                reference=sorted(printed_name(plant, v) for v in valves),
                 evidence=Evidence(
                     nodes=frozenset({node_id, *(n for edge in edges for n in edge)}),
                     edges=edges,

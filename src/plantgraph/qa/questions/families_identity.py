@@ -25,6 +25,7 @@ from plantgraph.qa.models import AnswerType, Question, QuestionFamily
 from plantgraph.qa.questions.common import build_question, tagged_nodes_by_tag
 from plantgraph.qa.questions.evidence import Evidence, SheetIndex
 from plantgraph.qa.questions.templates import sheets_of_tag_text
+from plantgraph.qa.questions.untagged import printed_name
 
 _TEMPLATE_VERSION = "1"
 
@@ -102,7 +103,7 @@ def _control_question(
 ) -> Question:
     sheet_ids = sorted(index.sheets_of[node_id])
     return _question(
-        node_id, str(plant.nodes[node_id]["tag"]), sheet_ids, plant, index, corpus_id, seed
+        node_id, printed_name(plant, node_id), sheet_ids, plant, index, corpus_id, seed
     )
 
 

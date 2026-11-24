@@ -25,6 +25,7 @@ from plantgraph.qa.questions.availability import (
     k_bin_of,
 )
 from plantgraph.qa.questions.families import all_candidates
+from plantgraph.qa.questions.untagged import refuse_untagged
 
 
 def group_by_bin(
@@ -108,6 +109,7 @@ def generate_question_set(
     candidates = all_candidates(
         plant, manifest, sheets, corpus_id=corpus_id, seed=seed, families=families
     )
+    candidates, _refused = refuse_untagged(candidates)  # v2.2: no question names an untagged valve
     build_seconds = time.perf_counter() - started
     sample, report = draw_sample(candidates, targets, corpus_id=corpus_id, seed=seed)
     return sample, report.model_copy(update={"build_seconds": build_seconds})
