@@ -1,0 +1,13 @@
+{
+ "backend": "openrouter",
+ "model_id": "openai/gpt-6-luna",
+ "route_provider": "openai",
+ "temperature": null,
+ "seed": 0,
+ "max_output_tokens": 16384,
+ "extra": {
+  "reasoning": {
+   "effort": "high"
+  }
+ }
+}

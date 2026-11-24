@@ -1,0 +1,10 @@
+{
+ "cypher_rag_lines": {"timeout_s": 30, "row_cap": 1000},
+ "graph_agent_lines": {
+  "max_steps": 40,
+  "step_effort": "low",
+  "observation_chars": 32000,
+  "max_items_listed": 400,
+  "max_prompt_chars_total": 600000
+ }
+}
