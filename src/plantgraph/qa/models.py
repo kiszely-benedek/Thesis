@@ -106,6 +106,11 @@ class AnswerType(str, Enum):
     #: A yes/no question; the reference is stored as the string `"yes"` or `"no"`.
     BOOLEAN = "BOOLEAN"
     FREE_TEXT = "FREE_TEXT"
+    #: V2T-B only (ADR-0067): valves to operate, some perhaps untagged and named by a descriptor.
+    #: The frozen final-answer and scoring code know nothing of it; `qa/v2tb/` handles it.
+    VALVE_SET = "VALVE_SET"
+    #: V2T-B only: a valve's normal operating position (NO, NC, LO, LC, CSO or CSC).
+    POSITION = "POSITION"
 
 
 class Question(BaseModel):
