@@ -1,6 +1,6 @@
 ---
 component: qa/v2tb — V2T-B, a documented revision of the frozen V2T-A2 that reads valve positions and names untagged valves; run beside V2T-A2 on the same v2.2 plants in EXP-0009 (freeze E10)
-status: accepted design (ADR-0067 accepted 2026-11-23); T14 built (`dd60e6c`); rulings on its report in §10 (2026-11-24)
+status: accepted design (ADR-0067 accepted 2026-11-23); T14 built (`dd60e6c`); rulings on its report in §10 (2026-11-24); T15 built (`cb6db52`), ruling on POSITION_OF_VALVE in §10.8
 date: 2026-11-23
 related: [ADR-0066, ADR-0067 (proposed), ADR-0053, ADR-0060, ADR-0061, ADR-0065, ADR-0021, ADR-0027, ADR-0028, ADR-0029,
           40-design/generator-v2-2-handbook-rules.md (§8, §10, §11, §12), 40-design/qa-tuning-v2.md,
@@ -559,3 +559,236 @@ still the proxy, the isolation walks drawn without the untagged refusal, because
 - **1,000-sheet plants.** I expect shares like the 100-sheet ones, because the walk is local and the trains repeat the
   same valve roles. This is an estimate. T14b measures seed 7 at 1,000 sheets, and T15 measures the real X families on
   the dev plants.
+
+### 10.8 Ruling on the T15 report: POSITION_OF_VALVE on untagged plants, 2026-11-24
+
+**Inputs.**
+- T15 (`cb6db52`) and its report. POSITION_OF_VALVE has 5 / 1 / 5 / 4 / 4 candidates on the forced-untagged
+  100-sheet seeds 1–5, about 1,400–1,540 on the forced-tagged ones, and 4,536 on seed 7 at 1,000 sheets (drawn
+  tagging). The OPEN_VALVES discriminating share is about 13–22 % up and 84–92 % down.
+- My read-only reading: `qa/questions/{scope_x,scope_x_references,templates_x}.py`, `qa/exp0009/scope_x_report.py`,
+  `benchmark/v2/{valve_positions,valve_roles}.py`, `qa/v2tb/descriptor.py`, `qa/need/rules.py`.
+- Four measurements of my own (architect scratch `arch_position.py`, `arch_prior_xplant.py`, `arch_label.py`,
+  `arch_line_tags2.py`). They use the same generator, `positions_of` and `canonical_descriptor` as T15. Machine time
+  is about 10 s per 100-sheet plant and 840.5 s for seed 7 at 1,000 sheets.
+
+**Five facts that decide the ruling.**
+- **P1. A position is a function of the valve's role** (`valve_roles.py`). Vents, drains, flushes and the DBB bleed
+  are NC. The CV bypass is NC. PSV blocks are CSO. Every other blocking valve is NO. The steam-trap bypass has no
+  position. So every manual valve carries a position, and an untagged document hides the tag of every one of them.
+  - The 5 / 1 / 5 / 4 / 4 survivors are DBB bleeds: on-off valves, so they keep their YV or XV tag, and NC by
+    TOG114. This is no bug.
+- **P2. The answer mix, measured** (all positioned valves of the plant):
+
+  | Seed (100 sheets) | Positioned | NO | NC | CSO | Untagged plant: no unique descriptor |
+  |---|---|---|---|---|---|
+  | 1 | 1,493 | 887 | 558 | 48 | 113 (112 NO, 1 NC) |
+  | 2 | 1,540 | 936 | 554 | 50 | 131 (129 NO, 2 NC) |
+  | 3 | 1,389 | 827 | 518 | 44 | 96 (95 NO, 1 NC) |
+  | 4 | 1,457 | 878 | 539 | 40 | 109 (107 NO, 2 NC) |
+  | 5 | 1,402 | 802 | 548 | 52 | 74 (72 NO, 2 NC) |
+
+  "Always NO" is right on 57–61 % of a tagged plant's valves. The valves without a descriptor are the same ones as in
+  §10.7, and almost all are NO: tank inlet blocks, receipt-manifold valves, battery-limit blocks and steam-supply PI
+  roots.
+- **P3. The descriptor carries context that predicts the answer, measured out of sample.**
+  - The method: the most frequent position per text key, fitted on seed 1 and scored on seeds 2–5. An unseen key
+    falls back to the majority.
+  - Descriptor form, key = (valve class, side, class of `next_to`, fluid field of the line number): **94.6–95.1 %**.
+  - Tag form, key = (tag letters, valve class): **66.5–67.4 %**.
+  - Always the majority: 55.1–57.4 % on the descriptor rows, 57.2–60.8 % on the tag rows.
+  - Why: "a ball valve on the downstream side of a pump" is almost always a pump vent or drain, and "a gate valve on
+    the upstream side of a PSV" is a PSV block. Toghraei p.114 states exactly the rules a reader applies. This is a
+    property of P&IDs, not a generator slip. But it means a right answer does not prove that B read
+    `operating_position`.
+- **P4. The frozen need classifier routes by wording** (`need/rules.py`, measured with `classify_need`):
+
+  | Text | Label |
+  |---|---|
+  | "What is the normal operating position of valve GTV-1203?" (registered tag form) | GENERIC |
+  | "... of the gate valve on line 6"-P-1203-A1A just downstream of P-101?" (the proposed wording) | DOWNSTREAM_ALL |
+  | "... just upstream of P-101?" | UPSTREAM_ALL |
+  | "... of the gate valve on line 6"-P-1203-A1A, on the downstream side of P-101?" | GENERIC |
+
+  "just downstream of" matches `\bdownstream of\b`. The seed would then list everything downstream of P-101, and the two
+  forms of one family would start differently. That is F5's slip again.
+- **P5. Line numbers create no false anchor (measured on seed 1).** A line number such as `6"-P-1203-A1A` looks as if
+  it might hold a tag.
+  - The frozen anchor tokenizer (`anchors._TOKEN`) splits it at the inch mark, into `6` and `P-1203-A1A`.
+  - On forced-untagged seed 1, none of the 2,322 printed line numbers holds a plant tag as any run of its dash fields.
+  - So none of the 1,375 descriptor-form questions names a second tag. T15b keeps this as a test.
+
+#### R11. Ruling: option (b). Name an untagged valve in the question by its canonical descriptor, in fixed natural words
+
+- **The rule.** POSITION_OF_VALVE has one candidate per positioned valve.
+  - A tagged valve keeps the registered text: "What is the normal operating position of valve {tag}?"
+  - An untagged valve is named by `canonical_descriptor`: "What is the normal operating position of the {class words}
+    on line {line number}, on the {side} side of {next_to}?" For example: "What is the normal operating position of the
+    gate valve on line 6"-P-1203-A1A, on the downstream side of P-101?"
+  - An untagged valve with no unique descriptor is refused with `NO_UNIQUE_DESCRIPTOR` and counted, as in the isolation
+    families. It is never reworded.
+  - The reference is the position code, as now. The question's anchor is `next_to`, the only tag in the text.
+- **Why "on the {side} side of" and not "just" or "immediately".**
+  - `next_to` is the nearest *tagged* item. Untagged fittings and valves of other classes may sit between, so
+    "immediately" would be false on some questions.
+  - "downstream of" would route to DOWNSTREAM_ALL (P4). "On the downstream side of" routes like the tag form.
+  - The wording is fixed before any X question is generated or answered. That is R9's reasoning, not a rewording to
+    dodge a failure.
+- **Is it how an operator asks? Yes.**
+  - On a drawing set without manual-valve tags, the line number and the nearest tagged item are how a valve is
+    located. ADR-0067 already accepted this naming as "what an engineer says", for answers. Here it is used for the
+    question, in the same words.
+  - It names no role ("drain", "bypass", "discharge block"). A role would hold the answer (P1).
+- **It does not leak the gold.**
+  - The answer is the position. The text holds class, line number, side and a neighbour's tag, all visible to both
+    arms.
+  - It does carry context (P3). Context is not the gold: B must still find the valve. So the context is measured, not
+    removed (R12).
+- **The per-plant minimum and T13's draw.** After the ruling, the forced-untagged 100-sheet seeds keep 1,293–1,409
+  candidates (measured, table below). That is far above the 10 of G0e, so the draw of 10 per family per plant works on
+  every sealed plant at both scales.
+- **The tuning plant.** `D100g22` is one document with a drawn tagging (0.75 untagged), so it is probably untagged.
+  Under the current code, B's tuning would then see at most about five POSITION questions, all NC DBB bleeds. Under
+  R11, the family exists on the tuning plant whatever its draw.
+- **Comparable across the two scales.**
+  - The family is available on every plant at both scales, with the same two forms and the same refusal rule.
+  - The form mix is the tagging mix, which S9 fixes at about 0.8 untagged at both scales: 4 of 5 plants at 100 sheets,
+    round(0.8 × documents) per plant at 1,000.
+  - So about a fifth of the tag-form questions is expected at each scale. At 100 sheets they are clustered in one
+    plant, and the two-stage cluster bootstrap carries that.
+  - The realized mix per scale is reported (R12).
+- **Who:** T15b (criteria below).
+
+**Rejected.**
+- **(a) Unavailable at 100 sheets, or only on tagged plants.**
+  - G0e's rule is "10 on every sealed plant". "Only on tagged plants" is no rule the design has. Under G0e, (a) makes
+    the family unavailable at both scales.
+  - That loses the only direct position family, and it leaves the tuning plant without a position signal, apart from
+    the 13–22 % discriminating OPEN-up rows.
+- **(c1) Role words in the question** ("the drain valve of P-101", "the discharge block of P-101"). The role decides
+  the position (P1), so the text would hold the answer. R2 also rejects role forms.
+- **(c2) A draw stratified by position code.** It changes the family's population, and it does nothing about P3.
+- **(c3) A set question** ("Which valves on line L are normally closed?"). It is a new family. S6 and ADR-0067 fix X.
+- **(c4) The least informative descriptor.** Every unique descriptor holds class, neighbour and side. No form exists
+  without context.
+
+#### R12. Measure what the context is worth
+
+All free, all gold side:
+- **Per question, `named_by`:** `tag` or `descriptor`.
+- **Two baselines on every POSITION question**, pre-registered in PREREG A:
+  - **majority:** the most frequent code on the dev seeds 1–5, which is NO;
+  - **text prior:** the most frequent code per text key (P3's keys), fitted on dev seeds 1–5. Descriptor rows come from
+    the forced-untagged plants and tag rows from the forced-tagged ones. The fitted table is a JSON file whose sha256
+    goes into PREREG A.
+- **POSITION_OF_VALVE accuracy reported by form and by code**, beside both baselines, at each scale. The thesis reads
+  B's position capability on the tag form, and on the descriptor rows the prior gets wrong. A right answer on a row the
+  prior also gets right shows identification, not reading.
+- **Q4-B sensitivity:** Q4-B again without POSITION_OF_VALVE, descriptive and with no verdict of its own.
+  - *Why:* a question that can be answered from its text needs no retrieval, so its accuracy does not depend on scale,
+    and it pulls Q4-B towards 0.
+  - At 10 of about 330 questions per plant (R 280 plus X 50) the pull is small. But P3 measured the shortcut, so it
+    is reported, not assumed away.
+- **What these rows can carry.** At each scale there are about 10 tag-form rows, and about 2 of 40 descriptor rows the
+  prior gets wrong (5 % of 40). Both readings are descriptive, with their counts printed beside them, and no claim
+  rests on them.
+
+*Who:* T15b builds the flags, the baseline module and its fit. T13 writes them into PREREG A. The sealed analysis
+applies them.
+
+#### R13. Confirmations of the four T15 choices
+
+1. **The X families as `QuestionFamily` members, outside `FAMILY_META`: confirmed.** No module iterates the enum (grep:
+   no `for … in QuestionFamily`, `list(…)`, `set(…)`, `len(…)` in `src/`), so EXP-0008's sealed output cannot change.
+   The X families keep their own split tuples in `scope_x.py`.
+2. **Held-out X families built on dev plants only to count them: confirmed.** T6b's availability table set the precedent.
+   §6's rule protects tuning, so its condition holds: no held-out text or reference is written to disk or sent to a
+   model. Only counts leave the process.
+3. **Sampling, the S3 relabel and the files belong to T13: confirmed.** T15b changes only candidate building and the
+   report.
+4. **The discriminating share does not weaken SB2. Nothing changes.**
+   - SB2 is B − A2 on all four X isolation families. On a plant with 0.8 untagged documents, most of B's edge comes
+     from naming untagged valves. On the coder's T6 plant, 213 of 262 isolation candidates held one (§17.15).
+     Positions are the smaller part.
+   - So SB2 measures the content as a whole: positions plus untagged naming. What the low upstream share limits is
+     **attribution**. Only about a fifth of OPEN-up questions can show the position effect, about two per plant in a
+     draw of 10.
+   - Downstream, where 84–92 % discriminate, carries the position effect. That family is held-out and sealed, as
+     designed.
+   - The split is already pre-registered as descriptive sub-scopes (§7: untagged gold, discriminating share), and R12's
+     per-form POSITION rows add the direct reading.
+   - Stratifying the OPEN draw on "discriminating" would make OPEN-up a different population from its twin, and SB2
+     would no longer be paired on like questions. Rejected.
+
+#### Candidate counts after R11
+
+| Plant | POSITION candidates | Refused (no unique descriptor) | Kept | of which tag form | Source |
+|---|---|---|---|---|---|
+| Seed 1, 100, forced untagged | 1,493 | 113 (7.6 %) | 1,380 | 5 | measured |
+| Seed 2, 100, forced untagged | 1,540 | 131 (8.5 %) | 1,409 | 1 | measured |
+| Seed 3, 100, forced untagged | 1,389 | 96 (6.9 %) | 1,293 | 5 | measured |
+| Seed 4, 100, forced untagged | 1,457 | 109 (7.5 %) | 1,348 | 4 | measured |
+| Seed 5, 100, forced untagged | 1,402 | 74 (5.3 %) | 1,328 | 4 | measured |
+| Seeds 1–5, 100, forced tagged | 1,493 / 1,540 / 1,389 / 1,457 / 1,402 | 0 | the same | all | measured |
+| Seed 7, 1,000, drawn tagging | 14,883 | 754 (5.1 %; 7.3 % of its 10,347 untagged) | 14,129 | 4,536 | measured |
+| A sealed 1,000-sheet plant, 0.8 untagged documents | about 14,900 | about 870 (7.3 % of about 11,900 untagged) | about 14,000 | about 3,000 (a fifth) | estimated from seed 7 |
+
+- **Seed 7 cross-checks.**
+  - Its tag-form count, 4,536, equals T15's figure.
+  - Its kept mix is NO 8,116, NC 5,485, CSO 528 (57 % NO), as at 100 sheets.
+  - The undescribable valves are the same roles: tank inlet, receipt-manifold, network-root and battery-limit blocks,
+    and steam-supply PI roots.
+  - The in-sample text prior is 97.0 % on descriptor rows and 66.5 % on tag rows.
+  - Generation, graph and index took 840.5 s.
+- The refused shares (at most 8.5 %) are under ADR-0067's quarter.
+
+#### T15b (S, after T15, before T14c): POSITION_OF_VALVE by descriptor, and its baselines
+
+Every §13 task rule applies: green suite, goldens unchanged, no Neo4j, no paid call, one commit proposal.
+1. **Builder (`scope_x.py`).**
+   - One candidate per positioned valve.
+   - A tagged valve gets the registered text.
+   - An untagged valve gets `canonical_descriptor`. `None` is a `Refusal(NO_UNIQUE_DESCRIPTOR)` with the valve's node id
+     as anchor and in `valve_ids`.
+   - Otherwise the descriptor text, with `anchors=[next_to]`. Its evidence is the valve, `next_to` and the untagged
+     nodes and `send_to` edges of one deterministic shortest walk between them.
+2. **Text (`templates_x.py`).**
+   - `position_of_described_valve_text(class_name, line_number, side, next_to)` gives exactly R11's sentence, with the
+     line number as printed.
+   - `class_words` splits the CamelCase class and lower-cases it ("GateValve" → "gate valve"). A test covers every
+     valve class that holds a position on seeds 1–5.
+3. **Routing and anchor tests.**
+   - On the toy corpus, `classify_need` of the descriptor text, for both sides, equals that of the tag text (GENERIC
+     today).
+   - On forced-untagged seed 1, `extract_anchors` of every descriptor-form text over the dev view gives exactly one tag
+     anchor, `next_to` (P5).
+4. **No-answer-in-text test.** The fixed words of both POSITION templates hold:
+   - no position code and neither "open" nor "closed";
+   - none of the purpose words vent, drain, bleed, flush, bypass, block, root, manifold, suction, discharge, inlet,
+     outlet, fill, makeup.
+5. **Flags and report.**
+   - `QuestionFlags.named_by` (`tag` or `descriptor`, POSITION only).
+   - `FamilyReport` gains the count of kept questions named by descriptor and the kept position mix per form.
+6. **Baselines (`qa/exp0009/position_baselines.py`).**
+   - The majority and the text prior of R12, with a function that fits the prior on dev seeds 1–5 and writes it as
+     sorted-key JSON, returning its sha256.
+   - Fitted on seed 1 and scored on seeds 2–5, it must reproduce P3 exactly. If it does not, report why.
+   - The report also gives the leave-one-seed-out accuracy over seeds 1–5, per form.
+7. **Measurement.**
+   - The report on seeds 1–5 (forced untagged and forced tagged) and on seed 7 at 1,000 sheets (drawn) must equal the
+     table above exactly. If it does not, report why.
+   - Also report the refused share and the quarter rule per plant, and the machine time.
+8. **Gates.** G0f is `[]`, the import-isolation test is green, and the T15 tests pass unchanged except the POSITION
+   ones this task changes.
+
+**T14c criterion 9, amended.** On forced-untagged seed 1, the canonical program also takes every descriptor-form
+POSITION question's descriptor, from its gold fields and not by parsing the text. Over `NetworkxGraphViewB`, reading
+only visible properties, it must resolve to exactly the question's valve and read the gold position from
+`operating_position`. The bar is 100 %.
+
+**T13, added.** PREREG A pre-registers:
+- R11's two forms;
+- R12's baselines and the prior's sha256;
+- the per-form and per-code POSITION rows;
+- the Q4-B sensitivity row;
+- the realized form mix per scale.
