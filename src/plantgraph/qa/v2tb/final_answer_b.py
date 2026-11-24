@@ -38,10 +38,13 @@ B_ANSWER_TYPES = (AnswerType.VALVE_SET, AnswerType.POSITION)
 #: Draft wording (design 5); the three tuning rounds may reword it.
 _FORMAT_INSTRUCTIONS = {
     AnswerType.VALVE_SET: (
-        "Answer with a JSON list, one entry per valve. Name a valve that prints a tag by that tag, "
+        "Answer with a JSON list, one entry per valve; list valves that print no tag as well, "
+        "never leave one out because it has no tag. Name a valve that prints a tag by that tag, "
         'for example "GTV-1203". Name a valve that prints no tag by an object with exactly the '
         'keys "class" (its valve class), "line_number" (the line number of its pipe), "next_to" '
-        "(the tag of the nearest tagged item along the flow; the line number may change on the "
+        "(the tag of the first tagged item you meet when you walk from the valve itself along "
+        "the flow on that side; that is often not the item the question names, because a strainer, "
+        "instrument or other tagged item in between comes first; the line number may change on the "
         'way) and "side" ("upstream" if the valve lies upstream of that item along the flow, '
         'otherwise "downstream"), for example '
         '{"class": "GateValve", "line_number": "6-P-1203-A1A", "next_to": "FV-1203", '

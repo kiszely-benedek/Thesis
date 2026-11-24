@@ -14,7 +14,10 @@ Valve positions: a valve's normal position is NO (normally open), NC (normally c
 (locked open or closed) or CSO or CSC (car-sealed open or closed). A valve with no position drawn is
 normally open. In some drawing sets manual valves carry no tag. Name such a valve by its class, the
 line number of its pipe and the nearest tagged item along the flow (the line number may change on
-the way), with the side of that item it sits on."""
+the way), with the side of that item it sits on. The nearest tagged item is the first one met when
+walking from the valve itself, not the item a question is about. To find a valve described this way,
+start at the named tagged item and walk to the first valve of that class whose pipe has that line
+number on the named side."""
 
 
 def primer_block_b() -> str:
