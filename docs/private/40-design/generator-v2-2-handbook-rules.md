@@ -911,7 +911,7 @@ unmeasured.
 11. **The report** gives the availability table, the refused shares, criterion 1's three `cmp` results and the
     machine time of the H1000 regeneration. It ends with one commit proposal; nothing is committed.
 
-**Now:** T6b. Next: T14, T15, T12b, T13. No coder runs in parallel.
+**Now:** T14 (T6b done, `a2beb7e`, §17.17). Next: T15, T12b, T13. No coder runs in parallel.
 
 ## 14. Risks
 
@@ -1978,6 +1978,37 @@ size search has landed, because a document is an area (§17.14 N2):
    | Seed 7, 1,000 sheets | 25.00 | 36.47 | 1.46 |
 
    Seed 2 alone measures 37.19 instruments per sheet, against a band top of 38. Any later addition must re-check that headroom.
+
+### 17.17 Main-session rulings on the T6b report, 2026-11-24 (committed `a2beb7e`)
+
+1. **The line-view gate key is colour refinement.** Measured key collisions with each key:
+
+   | Key | Seed 1 | Seed 7, 1,000 sheets |
+   |---|---|---|
+   | Nearest tagged items up and down | 200 | 706 |
+   | Same, with the valve class added | 96 | – |
+   | Colour refinement | 0 | 0 |
+
+   - Colour refinement starts from tags and classes and refines over the whole flow graph until stable (`qa/exp0009/structure_names.py`). It is still "keyed by its neighbours", carried out to the fixed point. **Accepted.**
+   - Truly automorphic twins would still collide, and the gate counts them as designed.
+   - On D100g21 the gate gives the frozen LINE-01 result.
+2. **Scope R availability after S6, measured** on the forced-untagged 100-sheet seeds 1–5.
+   - Kept below 10, and so pre-registered **unavailable in scope R at both scales**:
+     - DOWNSTREAM_IN_UNIT (0 on every seed);
+     - UPSTREAM_SOURCES (0 on every seed).
+   - Already unavailable for other reasons: UPSTREAM_ISOLATION and DOWNSTREAM_ISOLATION (S5), and FIRST_MEETING_POINT (excluded on v2).
+   - The families S6 anticipated stay available: FLOW_PATH keeps ≥ 92, NEIGHBOURS_DOWNSTREAM ≥ 203 and ROUTE_AVOIDING ≥ 651.
+3. **UPSTREAM_SOURCES and the line blinds.** Even on tagged plants this family keeps only 6–24 of about 270 candidates, because an untagged spectacle blind can head a battery-limit line. **No exemption** for non-valve parts: S2 stays one rule. The family is unavailable by rule 2 above anyway, so an exemption would change nothing that is measured.
+4. **Consequence for the thesis.** Scope R in EXP-0009 is narrower than EXP-0008's set by these families. The comparison with EXP-0008 is made on the families both runs share, and the dropped families are listed with the reason for each.
+5. **Byte-for-byte check.** EXP-0008's sealed questions regenerated identically for all three plants:
+
+   | Plant | Machine time |
+   |---|---|
+   | H100g21p1 | 39 s |
+   | H100g21p2 | 35 s |
+   | H1000g21p1 | 6,657 s |
+
+   G0f is `[]`.
 
 ## 18. The user's decisions of 2026-11-23 and what follows from them
 
