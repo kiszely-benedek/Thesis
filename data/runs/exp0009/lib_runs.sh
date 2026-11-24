@@ -41,6 +41,21 @@ harness_cmd() {  # the command that runs the arm's harness (A2: the frozen one; 
 measured_args() { if [ -f "$STATE/measured_costs.json" ]; then echo "--measured $STATE/measured_costs.json"; fi; }
 balance_args() { if smoke; then echo "--fake-balance ${E10_FAKE_BALANCE:-100}"; fi; }
 
+money_stop() {  # money_stop <reason>: a money shortfall; stops [top-up or restart], except in the optional GLM stage
+  if [ "${SOFT_MONEY:-no}" != yes ]; then stop_run topup "$1"; fi
+  # P1g (SOFT_MONEY=yes) is optional and only the user's money can fix it: record it, end the stage, let P1d run
+  event NOTE "[needs the user] $1; P1g ends here with the runs it finished, P1d goes on"
+  printf '%s\n' "$1" > "$SD/SHORTFALL"
+  outputs "$SD/SHORTFALL"
+  exit 0
+}
+
+needs_database() {  # needs_database <run-id> <yes|no: is the run replayed?>: a Cypher run (or its replay) is still to do, so load the plant
+  if [ ! -f "$SD/runs/$1.complete" ]; then return 0; fi
+  if [ "$2" = yes ] && [ ! -e "$SD/replays/INF-$1.replayed" ]; then return 0; fi
+  return 1
+}
+
 paid_run() {  # paid_run <arm> <run-id> <corpus> <role>: one capped run, then its record checks
   pr_arm=$1; pr_id=$2; pr_corpus=$3; pr_role=$4
   arm_spec "$pr_arm"
@@ -48,9 +63,9 @@ paid_run() {  # paid_run <arm> <run-id> <corpus> <role>: one capped run, then it
   # shellcheck disable=SC2046
   pr_cap=$($L run-cap --questions "$QROOT/$pr_corpus/questions.jsonl" --tier "$AR_TIER" --scale "$PL_SCALE" \
     --arm "$AR_COST_ARM" --step "$STEP" --root "$ROOT" --step-dir "$SD" --run-dir "$SD/runs/$pr_id" $(measured_args)) \
-    || stop_run topup "no money left for $pr_id under the step ceiling or the \$26.87 runs ledger"
+    || money_stop "no money left for $pr_id under the step ceiling or the \$26.87 runs ledger"
   # shellcheck disable=SC2046
-  $L balance --needed "$pr_cap" $(balance_args) || stop_run topup "the OpenRouter balance cannot be read or does not cover \$$pr_cap for $pr_id"
+  $L balance --needed "$pr_cap" $(balance_args) || money_stop "the OpenRouter balance cannot be read or does not cover \$$pr_cap for $pr_id"
   # shellcheck disable=SC2046
   pr_cost=$($L cost-of --tier "$AR_TIER" --scale "$PL_SCALE" --arm "$AR_COST_ARM" $(measured_args)) || stop_run infra "no cost per question for $pr_id"
   event START "$pr_id arm $pr_arm on $pr_corpus, cap \$$pr_cap"
@@ -63,7 +78,7 @@ paid_run() {  # paid_run <arm> <run-id> <corpus> <role>: one capped run, then it
     --question-deadline-s "$DEADLINE_S" >> "$LOGS/$pr_id.log" 2>&1 || pr_rc=$?
   case $pr_rc in
     0) ;;
-    3) event CAP "$pr_id reached its cap \$$pr_cap"; stop_run topup "$pr_id reached its spend cap of \$$pr_cap" ;;
+    3) event CAP "$pr_id reached its cap \$$pr_cap"; money_stop "$pr_id reached its spend cap of \$$pr_cap" ;;
     *) stop_run infra "$pr_id: harness exit $pr_rc, see $LOGS/$pr_id.log" ;;
   esac
   run_checks "$pr_id"
@@ -117,4 +132,15 @@ require_frozen() {  # nothing the sealed runs depend on changed since F10 froze 
     sha256sum -c --quiet "$ROOT/D10.sha256" >> "$LOGS/frozen_check.txt" 2>&1 \
       || stop_run user "a drawn plant or question set changed since B10 (D10.sha256), see $LOGS/frozen_check.txt"
   fi
+  require_no_new_frozen_files
+}
+
+require_no_new_frozen_files() {  # the hash lists only know the files F10 saw: a file added, edited or committed since is caught by git
+  if smoke; then return 0; fi   # the smoke's E10.commit is a stand-in, not a git commit
+  # shellcheck disable=SC2086
+  rf_dirty=$(git status --porcelain -- $FROZEN_PATHS) || stop_run infra "git status failed"
+  [ -z "$rf_dirty" ] || stop_run user "a frozen path has an uncommitted or untracked change since F10: $(echo "$rf_dirty" | head -n 1)"
+  # shellcheck disable=SC2086
+  rf_changed=$(git diff --name-only "$(cat "$PREREG/E10.commit")" HEAD -- $FROZEN_PATHS) || stop_run infra "git diff since E10.commit failed"
+  [ -z "$rf_changed" ] || stop_run user "a frozen path changed in a commit since F10: $(echo "$rf_changed" | head -n 1)"
 }

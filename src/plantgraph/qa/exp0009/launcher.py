@@ -83,6 +83,9 @@ def _money(sub: Sub) -> None:
         p.add_argument("--root", type=Path, required=True)
         if name == "audit-cap":
             p.add_argument("--left", action="store_true", help="the cap minus what the audit spent")
+            p.add_argument(
+                "--for-main-sample", choices=["yes", "no"], help="size the main sample (B sealed?)"
+            )
     p = _add(sub, "estimate", c.cmd_estimate)
     p.add_argument("--stage", required=True)
     p.add_argument("--root", type=Path, required=True)
@@ -119,15 +122,24 @@ def _runs(sub: Sub) -> None:
     for name in ("--cyp-run", "--ag-run", "--questions-root", "--corpora-root", "--out"):
         p.add_argument(name, type=Path, required=True)
     p.add_argument("--corpus-id", required=True)
-    p.add_argument("--arm", choices=["A2", "B"], required=True)
+    p.add_argument("--arm", choices=["A2", "B", "GLM"], required=True)
     p = _add(sub, "plan-ids", old.cmd_plan_ids)
     for name in ("--plan", "--out"):
         p.add_argument(name, type=Path, required=True)
     p.add_argument("--corpus", required=True)
-    p = _add(sub, "replay-compare", old.cmd_replay_compare)
+    p = _add(sub, "replay-compare", c.cmd_replay_compare)
     p.add_argument("--replay-dir", type=Path, required=True)
     p.add_argument("--run-dir", type=Path, required=True)
     p.add_argument("--allow-prefix", choices=["yes", "no"], default="no")
+    p.add_argument("--require-complete", choices=["yes", "no"], default="no")
+    p = _add(sub, "project-p1c", c.cmd_project_p1c)
+    p.add_argument("--root", type=Path, required=True)
+    p.add_argument("--measured", type=Path, required=True)
+    p.add_argument("--out", type=Path, required=True)
+    p.add_argument(
+        "--ceiling-usd", type=float, help="smoke only: a lower ceiling, to force the stop"
+    )
+    _add(sub, "peak-gib", c.cmd_peak_gib).add_argument("--file", type=Path, required=True)
     p = _add(sub, "check-run-config", old.cmd_check_run_config)
     p.add_argument("--run-dir", type=Path, required=True)
     p.add_argument("--corpora-root", type=Path)

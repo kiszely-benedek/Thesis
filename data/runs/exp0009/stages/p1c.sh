@@ -10,11 +10,11 @@
 
 p1c_plant() {
   if [ "$(cat "$STATE/b_sealed")" = yes ]; then pc_b=yes; else pc_b=no; fi
-  neo4j_load_a
+  if needs_database "S9-CYP-$PL_ID" yes; then neo4j_load_a; fi   # F2: a resume does not regenerate finished plants
   paid_run CYP-A "S9-CYP-$PL_ID" "$PL_ID" test
   replay_run CYP-A "S9-CYP-$PL_ID" "$PL_ID" test
   if [ $pc_b = yes ]; then
-    neo4j_load_b
+    if needs_database "S9-CYP-${PL_ID}B" yes; then neo4j_load_b; fi
     paid_run CYP-B "S9-CYP-${PL_ID}B" "${PL_ID}B" test
     replay_run CYP-B "S9-CYP-${PL_ID}B" "${PL_ID}B" test
   fi

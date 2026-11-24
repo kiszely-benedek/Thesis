@@ -5,11 +5,12 @@
 #   1. refuses a dirty tree under the frozen paths, and a HEAD other than the commit part A names (or a later
 #      commit that changed only B files, the T17 analysis, prereg/ and docs/ - design 19.3);
 #   2. refuses B files that differ from the chosen tuning round's hashes or from the P1b B runs' b_code.sha256;
-#   3. repeats the G0f diff and G0j;
+#   3. repeats the G0f diff and G0j, and runs T17's tests (the sealed analysis must exist before the freeze, §19.11);
 #   4. writes E10.commit and E10.sha256 (every tracked frozen file: all of src again), B_FILES.sha256 (every
 #      qa/v2tb file plus the policy line), PREREG_B.md and PREREG.sha256 (part A, part B, seeds, plan, prior,
 #      the E10 and B hash files, the judge prompt).
-# It never commits: the user commits part B and the hash files on their order.
+# It never commits: the user commits part B and the hash files on their order. It also never runs again once a sealed
+# plant exists or E10.commit is committed (F4): the freeze is then part of the record and is not deleted and rewritten.
 
 JUDGE_PROMPT=src/plantgraph/qa/audit/audit_judge.txt
 
@@ -33,6 +34,28 @@ git_facts() {  # writes head, porcelain and the files changed since part A's com
     git diff --name-only "$f_named" HEAD -- $FROZEN_PATHS pyproject.toml uv.lock tests docs data/runs/exp0009/prereg > "$SD/changed" \
       || stop_run infra "git diff failed"
   else : > "$SD/changed"; fi
+}
+
+refuse_refreeze() {  # F4: after the freeze has been used, deleting and rewriting its files would falsify the record
+  rr_sealed=$(find "$ROOT/corpora" -maxdepth 1 -name 'H*g22p*' 2> /dev/null | head -n 1)
+  if [ -e "$ROOT/D10.sha256" ] || [ -n "$rr_sealed" ]; then
+    stop_run user "F10 refuses to run again: sealed plants exist (${rr_sealed:-D10.sha256}); the E10 files stay as they are"
+  fi
+  if ! smoke && git ls-files --error-unmatch "$PREREG/E10.commit" > /dev/null 2>&1; then
+    stop_run user "F10 refuses to run again: $PREREG/E10.commit is committed; the E10 files stay as they are"
+  fi
+}
+
+t17_gate() {  # F8: T17 (the sealed analysis) exists and passes its own tests BEFORE the freeze, so END runs frozen code
+  if smoke; then event NOTE "SMOKE: T17's tests are pytest, not part of the chain"; return 0; fi
+  if ! $P -c "import importlib.util, sys; sys.exit(0 if importlib.util.find_spec('plantgraph.qa.exp0009.analysis') else 1)"; then
+    stop_run main "T17 (plantgraph.qa.exp0009.analysis) is not present: it must be committed before F10 (design §19.11)"
+  fi
+  t17_tests=$(find tests/qa/exp0009 -name 'test_analysis*.py')
+  [ -n "$t17_tests" ] || stop_run main "T17 has no tests (tests/qa/exp0009/test_analysis*.py): it must have them before F10"
+  # shellcheck disable=SC2086
+  try $P -m pytest -q $t17_tests > "$LOGS/t17_tests.txt" 2>&1
+  gate_pass "T17's tests"
 }
 
 frozen_file_list() {  # every tracked frozen file, one per line
@@ -62,6 +85,7 @@ freeze() {
   done
   g0f_diff
   g0j_gate
+  t17_gate
   rm -f "$PREREG/E10.commit" "$PREREG/E10.sha256" "$PREREG/B_FILES.sha256" "$PREREG/PREREG_B.md" "$PREREG/PREREG.sha256"
   frozen_file_list
   try $L freeze-write --prereg "$PREREG" --files "$SD/frozen_files.txt" --head "$(cat "$SD/head")" > /dev/null
@@ -71,6 +95,7 @@ freeze() {
 
 stage_F10() {
   SD=$ROOT/freeze; mkdir -p "$SD"
+  refuse_refreeze
   rm -f "$SD/head" "$SD/porcelain" "$SD/changed" "$STATE/steps/F10_git_facts.ok"   # the facts are read afresh every run
   freeze
   outputs "$PREREG/E10.commit" "$PREREG/E10.sha256" "$PREREG/B_FILES.sha256" "$PREREG/PREREG_B.md" "$PREREG/PREREG.sha256"

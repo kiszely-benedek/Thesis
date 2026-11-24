@@ -315,7 +315,7 @@ def test_the_arms_use_the_glm_pins_and_the_glm_cost_keys() -> None:
 def test_p1g_checks_money_before_the_first_run_and_replays_every_run() -> None:
     p1g = (EXP / "stages" / "p1g.sh").read_text(encoding="utf-8")
     assert p1g.index("p1g_preflight\n") < p1g.index("for_each_plant glm p1g_plant")
-    assert "stop_run topup" in p1g and "glm-room" in p1g and "glm-estimate" in p1g
+    assert "money_stop" in p1g and "glm-room" in p1g and "glm-estimate" in p1g
     assert p1g.count("replay_run") == 2 and p1g.count("paid_run") == 2
 
 

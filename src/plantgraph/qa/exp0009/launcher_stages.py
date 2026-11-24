@@ -238,6 +238,12 @@ def cmd_prereg_b(args: argparse.Namespace) -> None:
     )
     costs_file = args.root / "state" / "measured_costs.json"
     costs = json.loads(costs_file.read_text("utf-8")) if costs_file.is_file() else {}
+    projection_file = args.root / "state" / "p1c_projection.json"  # P1b's end writes it (F1)
+    sealed_caps = (
+        json.loads(projection_file.read_text("utf-8"))["run_caps_usd"]
+        if projection_file.is_file()
+        else {}
+    )
     part = prereg_b.PartB(
         code_commit=args.head,
         gates=[gates.GateResult.model_validate(g) for g in p1b["gates"]],
@@ -248,7 +254,7 @@ def cmd_prereg_b(args: argparse.Namespace) -> None:
         chosen_round=prereg_b.choose_round(rounds).number,
         replay_verdicts=verdicts,
         cost_per_question_usd=costs,
-        sealed_caps_usd={},
+        sealed_caps_usd=sealed_caps,
         val1000_pool_peak_gib=peak,
         e10_files=len((args.prereg / "E10.sha256").read_text("utf-8").splitlines()),
         e10_sha256_file_sha256=freeze.sha256_of(args.prereg / "E10.sha256"),

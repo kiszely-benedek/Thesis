@@ -16,6 +16,9 @@ from plantgraph.qa.exp0008.ledger import LedgerExhausted, audit_spent_usd, paid_
 PROGRAM_CAP_USD = 35.0
 AUDIT_CAP_USD = 8.13
 RUNS_CAP_USD = round(PROGRAM_CAP_USD - AUDIT_CAP_USD, 2)  # 26.87
+#: With the B stratum the main sample and the stratum split the audit money 2 : 1 (the stratum is
+#: half the main sample's rows), so the main sample is sized with this share of the cap.
+MAIN_SAMPLE_SHARE_WITH_B = 2 / 3
 _SKIPPED_FOLDERS = frozenset({"reports", "audit"})
 
 
@@ -68,6 +71,11 @@ def audit_cap_usd(root: Path) -> float:
     if total - audit_spent_usd(root) <= 0:
         raise LedgerExhausted(f"expected money for the audit under ${total:.2f}, found none")
     return total
+
+
+def main_sample_cap_usd(audit_cap_usd: float, b_sealed: bool) -> float:
+    """The money the main audit sample may be sized for: all of the cap, or 2/3 of it with B."""
+    return round(audit_cap_usd * (MAIN_SAMPLE_SHARE_WITH_B if b_sealed else 1.0), 6)
 
 
 def summary(root: Path) -> str:

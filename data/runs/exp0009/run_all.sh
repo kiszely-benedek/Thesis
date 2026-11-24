@@ -10,8 +10,10 @@
 #                    the default resumes at the first stage that is not done
 #   --smoke          the whole chain on tiny plants in a temporary folder, with a fake transport: zero paid
 #                    calls, no Neo4j, no network (the cheap proof that the launcher itself works)
-#   --force <what>   smoke only, to prove a stop works: g1 | g1b | g1b2 | g0l | cap | dirty-tree | wrong-head | b-files
-#                    (g1b and g1b2 take the "B not sealed" branch without a stop)
+#   --force <what>   smoke only, to prove a stop works: g1 | g1b | g1b2 | g0l | cap | dirty-tree | wrong-head | b-files |
+#                    p1c-projection | glm-short | judge-cap | audit-stop  (g1b and g1b2 take the "B not sealed" branch
+#                    without a stop; glm-short skips P1g and goes on; the F10 rerun refusal needs no switch: run
+#                    `--from F10` again in the same E10_ROOT once the sealed plants exist)
 #
 # Stages: P0 P1a P1b F10 B10 P1c P1g P1d END  (see stages/ and the README). P0, F10, B10, END are free.
 # P1g is the user's small GLM comparison arm (design 20): two sealed plants, scope R only, its own $2.50 cap.
@@ -27,7 +29,7 @@ while [ $# -gt 0 ]; do
   case $1 in
     --smoke) SMOKE=yes ;;
     --from) [ $# -ge 2 ] || { echo "ERROR: --from needs a stage" >&2; exit 2; }; FROM=$2; shift ;;
-    --force) [ $# -ge 2 ] || { echo "ERROR: --force needs g1|g1b|g1b2|g0l|cap|dirty-tree|wrong-head|b-files" >&2; exit 2; }; FORCE=$2; shift ;;
+    --force) [ $# -ge 2 ] || { echo "ERROR: --force needs g1|g1b|g1b2|g0l|cap|dirty-tree|wrong-head|b-files|p1c-projection|glm-short|judge-cap|audit-stop" >&2; exit 2; }; FORCE=$2; shift ;;
     *) echo "ERROR: unknown option $1 (expected --smoke, --from <stage> or --force <what>)" >&2; exit 2 ;;
   esac
   shift
@@ -38,6 +40,7 @@ if [ "$SMOKE" != yes ] && [ ! -d "${E10_NEO4J_HOME:-}" ]; then
   exit 2
 fi
 export SMOKE FORCE
+exec 4>&1; LAUNCHER_FD4=yes   # a STOP raised inside `try ... > step.log` still reaches this script's own log (lib.sh)
 if [ "$SMOKE" = yes ] && [ -z "${E10_ROOT:-}" ]; then   # a fresh temporary folder, as a path Python can open too
   E10_ROOT=$(mktemp -d); if command -v cygpath > /dev/null 2>&1; then E10_ROOT=$(cygpath -m "$E10_ROOT"); fi
 fi

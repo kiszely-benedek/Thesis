@@ -2,7 +2,8 @@
 
 A **cascade** asks the cheap Cypher tier first and falls back to the agent tier when the first
 answer is not accepted; the *policy* says how. A2 runs `cascade_v4_iso`, B runs `policy_b()` (the
-same rules, reading the B strategy names). This is the frozen offline evaluation of
+same rules, reading the B strategy names), and the GLM arm runs `policy_glm()` (the same rules,
+checked against GLM's model pins instead of Luna's). This is the frozen offline evaluation of
 `qa/cascade/tune_report.py` for one policy. `qa.cascade tune-report` is not used, because it
 compares two policies and does not know the scope X families.
 
@@ -26,9 +27,10 @@ from plantgraph.qa.cascade.limits import SETTING_A, LimitSetting, run_problems
 from plantgraph.qa.cascade.models import CascadePolicy
 from plantgraph.qa.cascade.policy import V2T_POLICIES_DIR, load_policies
 from plantgraph.qa.cascade.report_groups import DIM_FAMILY, breakdown, question_groups
+from plantgraph.qa.exp0009.glm_policy import policy_glm
 from plantgraph.qa.v2tb.policy_b import policy_b
 
-Arm = Literal["A2", "B"]
+Arm = Literal["A2", "B", "GLM"]
 A2_POLICY = "cascade_v4_iso"
 
 
@@ -53,7 +55,7 @@ class ArmReport(BaseModel):
 
 
 def policy_of(arm: Arm) -> CascadePolicy:
-    """`cascade_v4_iso` for A2, `policy_b()` for B.
+    """`cascade_v4_iso` for A2, `policy_b()` for B, `policy_glm()` for the GLM arm.
 
     Raises:
         ValueError: an unknown arm.
@@ -62,7 +64,9 @@ def policy_of(arm: Arm) -> CascadePolicy:
         return load_policies(V2T_POLICIES_DIR)[A2_POLICY]
     if arm == "B":
         return policy_b()
-    raise ValueError(f"expected arm 'A2' or 'B', found {arm!r}")
+    if arm == "GLM":
+        return policy_glm()
+    raise ValueError(f"expected arm 'A2', 'B' or 'GLM', found {arm!r}")
 
 
 def build_arm_report(

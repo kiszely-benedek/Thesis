@@ -18,9 +18,9 @@ sealed_bands() {  # ADR-0059 bands on the pooled sealed plants of each scale: re
   if smoke; then event NOTE "SMOKE: tiny plants are not judged by the composition bands"; return 0; fi
   plan_to_file sealed
   for sb_scale in 100 1000; do
-    sb_seeds=$(awk -v s="$sb_scale" '$2 == s { printf "%s ", $3 }' "$PLAN_FILE")
+    sb_ids=$(awk -v s="$sb_scale" '$2 == s { printf "%s ", $1 }' "$PLAN_FILE")
     # shellcheck disable=SC2086
-    pooled_bands report "sealed$sb_scale" "$sb_scale" $sb_seeds
+    pooled_bands report "sealed$sb_scale" "$sb_scale" $sb_ids
   done
 }
 
@@ -30,8 +30,17 @@ write_d10() {
   event NOTE "D10.sha256 written: $(cat "$LOGS/d10.txt") hashes"
 }
 
+require_memory_headroom() {  # R6: the sealed 1,000-sheet pools run ten times at that size; VAL1000's peak is the only measure there is
+  [ -f "$ROOT/val/pool_probe.json" ] && [ ! -e "$STATE/memory_acknowledged" ] || return 0   # the main session creates the file to go on
+  rm_peak=$($L peak-gib --file "$ROOT/val/pool_probe.json") || stop_run infra "cannot read $ROOT/val/pool_probe.json"
+  if awk -v peak="$rm_peak" 'BEGIN { exit !(peak > 8) }'; then
+    stop_run main "the VAL1000g22 question pool peaked at $rm_peak GiB (more than 8 GiB): decide before ten more run on this machine, then create $STATE/memory_acknowledged and resume"
+  fi
+}
+
 stage_B10() {
   [ -f "$PREREG/E10.sha256" ] || stop_run user "no E10 freeze ($PREREG/E10.sha256): run F10 before any sealed plant exists"
+  require_memory_headroom
   once plants for_each_plant sealed b10_plant
   once files question_files sealed
   once bands sealed_bands

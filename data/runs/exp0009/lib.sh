@@ -34,6 +34,10 @@ resume_command() {  # resume_command <stage>: what the user types to continue fr
   echo "${rc_prefix}sh $SCRIPTS/run_all.sh --from $1$rc_flag"
 }
 
+stop_event() {  # print a STOP line on the launcher's own output, even when the caller's stdout is redirected to a step log
+  if [ "${LAUNCHER_FD4:-}" = yes ]; then event STOP "$1" >&4; else event STOP "$1"; fi   # run_all.sh keeps fd 4 on its stdout
+}
+
 stop_run() {  # stop_run <user|main|topup|infra> <reason>: log it, write state/STOPPED, leave the stage
   case $1 in
     user) sr_who="needs the user" ;;
@@ -41,7 +45,7 @@ stop_run() {  # stop_run <user|main|topup|infra> <reason>: log it, write state/S
     topup) sr_who="top-up or restart" ;;
     *) sr_who="infrastructure" ;;
   esac
-  event STOP "[$sr_who] $2"
+  stop_event "[$sr_who] $2"
   $L stopped --dir "$STATE" --stage "$CUR_STAGE" --reason "[$sr_who] $2" \
     --resume "$(resume_command "$CUR_STAGE")"
   exit 10

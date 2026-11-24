@@ -26,6 +26,22 @@ for_each_plant() {  # for_each_plant <kind> <function>: the function sees PL_ID 
 
 smoke_flag() { if smoke; then echo --smoke; fi; }
 
+# ---- memory probe (R6) -------------------------------------------------------------------------------
+# A 1,000-sheet build or pool is the first run of its kind on this machine; VALVES_ON_PATH once peaked at 8.75 GB.
+# Those steps run under `memory-probe` (peak resident memory of the command and its children): the peak goes into
+# the run log, and a step that passes the limit fails. Smaller plants run plain.
+MEM_LIMIT_GIB=10
+
+probed() {  # probed <json> <command...>: run the command, under the memory probe for a 1,000-sheet plant (PL_SCALE)
+  pd_json=$1; shift
+  if smoke || [ "$PL_SCALE" != 1000 ]; then "$@"; return; fi
+  $L memory-probe --out "$pd_json" --limit-gib "$MEM_LIMIT_GIB" -- "$@"
+}
+
+memory_note() {  # memory_note <what> <probe json>: the probe's peak memory into the run log (nothing if it did not run)
+  if [ -f "$2" ]; then event NOTE "memory: $1 peaked at $($L peak-gib --file "$2") GiB (limit $MEM_LIMIT_GIB)"; fi
+}
+
 # ---- building (free) ------------------------------------------------------------------------------
 
 build_plant() {  # the plant PL_ID: A corpus, B relabel, positions, and every build-time gate
@@ -34,8 +50,10 @@ build_plant() {  # the plant PL_ID: A corpus, B relabel, positions, and every bu
   rm -rf "$bp_dir" "$ROOT/corpora/${PL_ID}B"   # a build that died half way left a folder behind
   event NOTE "build $PL_ID (scale $PL_SCALE, seed $PL_SEED)"
   # shellcheck disable=SC2046
-  $L build --root "$ROOT" --prereg "$PREREG" --plant "$PL_ID" $(smoke_flag) > "$LOGS/build_$PL_ID.txt" 2>&1 \
-    || { cat "$LOGS/build_$PL_ID.txt"; stop_run user "the build or a build gate of $PL_ID failed (G0c, G0g, G0k, line view or G0-B), see $LOGS/build_$PL_ID.txt"; }
+  probed "$LOGS/mem_build_$PL_ID.json" $L build --root "$ROOT" --prereg "$PREREG" --plant "$PL_ID" $(smoke_flag) \
+    > "$LOGS/build_$PL_ID.txt" 2>&1 \
+    || { cat "$LOGS/build_$PL_ID.txt"; stop_run user "the build or a build gate of $PL_ID failed (G0c, G0g, G0k, line view, G0-B, or the 10 GiB memory probe), see $LOGS/build_$PL_ID.txt"; }
+  memory_note "build $PL_ID" "$LOGS/mem_build_$PL_ID.json"
   gate_pass "build gates of $PL_ID: $(tr '\n' ' ' < "$LOGS/build_$PL_ID.txt" | cut -c1-200)"
 }
 
@@ -73,7 +91,10 @@ pool_plant() {  # pool_plant <recipe>: one pool step for PL_ID (R pool and the X
   pp_recipe=$1
   if [ -f "$ROOT/qpool/$PL_ID/scope_x/report.json" ]; then return 0; fi
   event NOTE "pool $PL_ID ($pp_recipe recipe)"
-  try $L questions-pool --root "$ROOT" --plant "$PL_ID" --recipe "$pp_recipe" > "$LOGS/pool_$PL_ID.log"
+  probed "$LOGS/mem_pool_$PL_ID.json" $L questions-pool --root "$ROOT" --plant "$PL_ID" --recipe "$pp_recipe" \
+    > "$LOGS/pool_$PL_ID.log" 2>&1 \
+    || stop_run infra "the question pool of $PL_ID failed (or passed the 10 GiB memory probe), see $LOGS/pool_$PL_ID.log"
+  memory_note "pool $PL_ID" "$LOGS/mem_pool_$PL_ID.json"
 }
 
 pool_plant_dev() { pool_plant dev; }
@@ -90,15 +111,19 @@ question_files() {  # question_files <dev|validation|sealed>: the drop set, G0l,
 
 # ---- composition bands (G0d) -------------------------------------------------------------------------
 
-pooled_bands() {  # pooled_bands <gate|report> <name> <sheets> <seed>...: ADR-0059 bands on the mean over the plants
+pooled_bands() {  # pooled_bands <gate|report> <name> <sheets> <seed|plant-id>...: ADR-0059 bands on the mean over the plants
   pb_mode=$1; pb_name=$2; pb_sheets=$3; shift 3
   pb_json=$ROOT/bands/composition_$pb_name.json; pb_txt=$LOGS/composition_$pb_name.txt
   mkdir -p "$ROOT/bands"; rm -f "$pb_json"
-  pb_test=; if [ "$pb_mode" = report ]; then pb_test=--allow-test-seed; fi
   pb_rc=0
-  # shellcheck disable=SC2086
-  $P -m plantgraph.benchmark.v2.composition --generator v2.2 --target-sheets "$pb_sheets" --seeds "$@" --pool --corpus $pb_test \
-    --json "$pb_json" > "$pb_txt" 2>&1 || pb_rc=$?
+  if [ "$pb_mode" = report ]; then
+    # the sealed plants as BUILT: each plant is planned from its own recorded seed, drawn size and tagging (B4);
+    # the frozen CLI re-sizes plants to the nominal scale and refuses every seed outside EXP-0008's seed plan
+    $P -m plantgraph.qa.exp0009.bands_built --root "$ROOT" --plants "$@" --json "$pb_json" > "$pb_txt" 2>&1 || pb_rc=$?
+  else   # the dev plants (seed 1): the frozen command line, plants named by their seeds
+    $P -m plantgraph.benchmark.v2.composition --generator v2.2 --target-sheets "$pb_sheets" --seeds "$@" --pool --corpus \
+      --json "$pb_json" > "$pb_txt" 2>&1 || pb_rc=$?
+  fi
   pb_crash=no
   if [ $pb_rc -ne 0 ] && { [ ! -s "$pb_json" ] || grep -q Traceback "$pb_txt"; }; then pb_crash=yes; fi
   [ "$pb_crash" = no ] || stop_run infra "the composition report of $pb_name crashed (exit $pb_rc), see $pb_txt"

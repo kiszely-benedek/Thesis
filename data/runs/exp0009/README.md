@@ -23,8 +23,8 @@ Everything here follows EXP-0008's launcher (`data/runs/exp0008/`). **Nothing ru
 | B10 | sealed plants, pools, drop set, question files, `D10.sha256` | no |
 | P1c | ten sealed plants, both arms, each run replayed cache-only | yes |
 | P1g | the user's GLM comparison arm: GLM 5.3 Flash (pinned host fireworks) instead of Luna, on the first sealed plant of each scale, scope R only; own cap $2.50, descriptive only | yes |
-| P1d | scorer audit: main sample and the B stratum; stops after the judge | yes |
-| END | reports, record check, re-score, ledger, T17 hook, demo database restore | no |
+| P1d | scorer audit: main sample (scope R rows only) and the B stratum; stops after the judge until `state/audit_classified` exists | yes |
+| END | reports, record check, re-score of both tiers, ledger, T17 analysis, demo database restore | no |
 
 P1a: after round 1 change B files, then `E10_TUNE_CHANGE="what changed" sh run_all.sh --from P1a` for the next
 round, or `python -m plantgraph.qa.exp0009.launcher finish-tuning --root data/runs/exp0009` to end tuning.
@@ -41,13 +41,37 @@ before each paid stage. Money stops (`[top-up or restart]`) are resolved by the 
 
 P1g (the GLM comparison arm) has its own hard cap of $2.50, inside the runs ledger. Its estimate NOTE is A2's sealed
 rate times GLM's dev cost ratio 1.2-1.9. Before its first call it checks the runs ledger and the OpenRouter balance
-against what is left of the cap, and stops `[top-up or restart]` if either is short. It runs after P1c, when P1's
+against what is left of the cap. A shortfall does not stop the launcher: P1g records `p1g/SHORTFALL`, prints a `[needs the user]` NOTE, ends with the runs it finished, and P1d goes on. It runs after P1c, when P1's
 actual spend is known. Its pins (`inputs/pin_*_glm_fireworks_*.json`) are hashed into E10 with the other inputs.
 
 ## Records
 
 Every run keeps `calls.jsonl`, `answers.jsonl`, `timings.jsonl`, `environment.jsonl`. After each run the launcher
 checks them (`records-check`); `launcher rescore` re-scores a run offline and writes precision, recall and F1.
+
+## Audit (P1d)
+
+- The main sample is drawn from **scope R rows only** (`exp0009.audit_select`, ADR-0069): A2's scope X rows are wrong by
+  construction. With B sealed it is sized with 2/3 of the audit cap; both judges get the **total** cap and share one
+  ledger file. A judge stopped by its cap is a STOP `[top-up or restart]`.
+- The B stratum is judged through `exp0009.audit_judge`, which adds the help lines for VALVE_SET and POSITION to the
+  frozen judge in its own process and prints them with their sha256 (record both in PREREG A). The prompt template file
+  and the judge pin are unchanged. The main sample uses the frozen `qa.audit judge` (same prompt for scope R types).
+- After the judge reports the launcher stops `[needs the main session]`. Classify the disagreements, then
+  `touch data/runs/exp0009/state/audit_classified` and resume with `--from P1d`.
+
+## Guards added after the second review (T13c)
+
+- `launch.sh` refuses any `NEO4J_DATABASE` but `neo4j` and exports it: every load replaces that database.
+- End of P1b: P1c's spend is projected from the measured costs; if it exceeds the step ceiling or the runs ledger less
+  the $2.50 GLM reserve the launcher stops `[needs the user]` before F10 (`state/p1c_projection.json`, also in part B).
+- A resume loads a plant only if a Cypher run or replay of it is still to do.
+- `require_frozen` also asks git: no uncommitted, untracked or committed change under the frozen paths since E10.
+- F10 refuses to run again once a sealed plant exists or `E10.commit` is committed.
+- F10 runs T17's tests; END reports a T17 that fails to import as a failed report.
+- 1,000-sheet builds and pools run under the memory probe (limit 10 GiB, peak into the log); B10 stops
+  `[needs the main session]` if the VAL1000 pool passed 8 GiB (`touch state/memory_acknowledged` to go on).
+- A STOP inside a redirected block reaches `run_all.log` (fd 4), not only the step log.
 
 ## Known gaps
 

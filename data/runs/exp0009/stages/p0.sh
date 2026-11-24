@@ -35,7 +35,7 @@ g0f_diff() {  # no system-side path changed since the E9 commit; new untracked f
   gate_pass "G0f diff: $g0f_list"
 }
 
-g0f_replays() {  # S7-CYP-H100g21p1 (with H100g21p1 loaded) and S7-AG-H100g21p1 replay byte-identical
+g0f_replays() {  # S7-CYP-H100g21p1 (with H100g21p1 loaded) and S7-AG-H100g21p1 replay byte-identical, EVERY row (B6)
   if smoke; then event NOTE "SMOKE: the G0f replays need EXP-0008's plants and Neo4j"; return 0; fi
   e8=data/runs/exp0008; g0f=$ROOT/g0f; mkdir -p "$g0f/replays"
   g0f_seed=$($P -c "import json;print(json.load(open('$e8/prereg/seeds.json'))['sealed']['100'][0])") \
@@ -56,7 +56,7 @@ EOF
       --cache-path "$e8/m6a/cache.sqlite" --concurrency 1 --question-deadline-s 120 \
       > "$LOGS/g0f_$g_id.log" 2>&1 || g_rc=$?
     [ $g_rc -eq 0 ] || [ $g_rc -eq 2 ] || stop_run infra "the G0f replay of $g_id failed (exit $g_rc)"
-    g_verdict=$($L replay-compare --replay-dir "$g0f/replays/G0F-$g_id" --run-dir "$e8/m6a/runs/$g_id" --allow-prefix "$g_prefix") \
+    g_verdict=$($L replay-compare --replay-dir "$g0f/replays/G0F-$g_id" --run-dir "$e8/m6a/runs/$g_id" --allow-prefix "$g_prefix" --require-complete yes) \
       || stop_run user "G0f failed: the replay of $g_id is not identical to EXP-0008's run"
     gate_pass "G0f replay $g_id: $g_verdict"
   done

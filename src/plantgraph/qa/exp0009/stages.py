@@ -82,6 +82,57 @@ def render_estimate(
     )
 
 
+# ---- P1c's projection from P1b's measured costs (F1) -----------------------------------------
+
+#: What the GLM comparison arm (P1g) may still need from the runs ledger after P1c.
+GLM_RESERVE_USD = caps.STEP_CEILING_USD["P1g"]
+SEALED_PLANTS_PER_SCALE = 5
+
+
+@dataclass(frozen=True)
+class SealedProjection:
+    """P1c's expected spend from the measured costs, and each run's recomputed cap."""
+
+    #: `arm-tier-scale` -> the cap of one sealed run (questions x measured cost x 1.5)
+    run_caps_usd: dict[str, float]
+    #: the expected spend of all ten plants: questions x measured cost, no safety factor
+    projected_usd: float
+
+
+def project_p1c(measured: dict[str, float] | None, b_sealed: bool) -> SealedProjection:
+    """P1c's expected spend and per-run caps, from `measured` dollars per question (P1b)."""
+    arms = ("A2", "B") if b_sealed else ("A2",)
+    run_caps: dict[str, float] = {}
+    projected = 0.0
+    for arm in arms:
+        for scale in (100, 1000):
+            for tier in ("cyp", "ag"):
+                cost = caps.cost_per_question_usd(tier, scale, arm=arm, measured=measured)
+                run_caps[f"{arm}-{tier}-{scale}"] = caps.run_cap_usd(SEALED_COUNTS[arm], cost)
+                projected += SEALED_PLANTS_PER_SCALE * SEALED_COUNTS[arm] * cost
+    return SealedProjection(run_caps_usd=run_caps, projected_usd=round(projected, 4))
+
+
+def p1c_projection_problems(
+    projection: SealedProjection, runs_left_usd: float, ceiling_usd: float | None = None
+) -> list[str]:
+    """Why P1c's projected spend does not fit the step ceiling or the ledger left."""
+    ceiling = caps.STEP_CEILING_USD["P1c"] if ceiling_usd is None else ceiling_usd
+    problems = []
+    if projection.projected_usd > ceiling:
+        problems.append(
+            f"projected P1c spend ${projection.projected_usd:.2f} exceeds the step ceiling "
+            f"${ceiling:.2f}"
+        )
+    room = runs_left_usd - GLM_RESERVE_USD
+    if projection.projected_usd > room:
+        problems.append(
+            f"projected P1c spend ${projection.projected_usd:.2f} exceeds what the runs ledger "
+            f"leaves (${runs_left_usd:.2f}) less the ${GLM_RESERVE_USD:.2f} GLM reserve"
+        )
+    return problems
+
+
 # ---- the tuning rounds (P1a) ------------------------------------------------------------------
 
 

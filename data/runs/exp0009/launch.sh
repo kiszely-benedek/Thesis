@@ -18,4 +18,13 @@ if [ ! -d "$E10_NEO4J_HOME" ]; then
 fi
 export E10_NEO4J_HOME
 
+# Every load runs CREATE OR REPLACE DATABASE on the database named by NEO4J_DATABASE, and an exported variable beats the
+# git-ignored .env (store/neo4j_settings.py). A login profile exporting another name (a database that is not ours)
+# would have it replaced, so refuse to start on anything but `neo4j` and pin the name for every child process.
+if [ -n "${NEO4J_DATABASE:-}" ] && [ "$NEO4J_DATABASE" != neo4j ]; then
+  echo "ERROR: expected NEO4J_DATABASE unset or 'neo4j', found '$NEO4J_DATABASE' (every load replaces that database)" >&2
+  exit 2
+fi
+export NEO4J_DATABASE=neo4j
+
 exec sh data/runs/exp0009/run_all.sh "$@" >> data/runs/exp0009/run_all.log 2>&1

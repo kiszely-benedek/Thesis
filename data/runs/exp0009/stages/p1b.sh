@@ -29,17 +29,19 @@ p1b_precondition() {
 val_setup() {  # build and pool one validation plant (the 1,000-sheet pool under the memory probe)
   build_plant
   if [ "$PL_ID" = VAL1000g22 ] && [ ! -f "$ROOT/qpool/$PL_ID/scope_x/report.json" ]; then
-    try $L memory-probe --out "$SD/pool_probe.json" -- $L questions-pool --root "$ROOT" --plant "$PL_ID" --recipe dev
+    try $L memory-probe --out "$SD/pool_probe.json" --limit-gib "$MEM_LIMIT_GIB" -- \
+      $L questions-pool --root "$ROOT" --plant "$PL_ID" --recipe dev
+    memory_note "pool $PL_ID (VAL1000 probe)" "$SD/pool_probe.json"
   else
     pool_plant_dev
   fi
 }
 
-val_runs() {  # the two arms on one plant; the database holds one corpus at a time
-  neo4j_load_a
+val_runs() {  # the two arms on one plant; the database holds one corpus at a time, loaded only if a Cypher run of it is still to do (F2)
+  if needs_database "V9-CYP-$PL_ID" no; then neo4j_load_a; fi
   paid_run CYP-A "V9-CYP-$PL_ID" "$PL_ID" dev
   paid_run AG "V9-AG-$PL_ID" "$PL_ID" dev
-  neo4j_load_b
+  if needs_database "V9-CYP-${PL_ID}B" yes; then neo4j_load_b; fi
   paid_run CYP-B "V9-CYP-${PL_ID}B" "${PL_ID}B" dev
   replay_run CYP-B "V9-CYP-${PL_ID}B" "${PL_ID}B" dev
   paid_run AG-B "V9-AG-${PL_ID}B" "${PL_ID}B" dev
@@ -90,5 +92,15 @@ stage_P1b() {
   validation_gates
   try $L measure-costs --val-dir "$SD" --out "$STATE/measured_costs.json"
   event NOTE "measured dollars per question: $(cat "$STATE/measured_costs.json" | tr -d ' ' | tr '\n' ' ')"
-  outputs "$STATE/p1b.json" "$STATE/b_sealed" "$STATE/measured_costs.json"
+  project_p1c_spend
+  outputs "$STATE/p1b.json" "$STATE/b_sealed" "$STATE/measured_costs.json" "$STATE/p1c_projection.json"
+}
+
+project_p1c_spend() {  # F1: P1c's spend from P1b's measured costs; if it cannot fit, stop BEFORE F10 freezes the ceiling
+  pj_extra=; if smoke && forced p1c-projection; then pj_extra="--ceiling-usd 0.0001"; fi
+  # shellcheck disable=SC2086
+  pj_text=$($L project-p1c --root "$ROOT" --measured "$STATE/measured_costs.json" \
+    --out "$STATE/p1c_projection.json" $pj_extra 2>&1) \
+    || stop_run user "P1c would not fit its money (projection from P1b's measured costs, state/p1c_projection.json): $pj_text"
+  event NOTE "$pj_text"
 }

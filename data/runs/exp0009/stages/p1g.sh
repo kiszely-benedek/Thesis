@@ -7,23 +7,26 @@
 # Per plant: load A; G9-GLM-CYP-<id> and its replay; G9-GLM-AG-<id> and its replay. Every run is replayed
 # cache-only, as every sealed run is (ADR-0068 decision 4). It runs after P1c, when P1's actual spend is known.
 # Money: a hard cap of $2.50 for the stage, with its own estimate NOTE. Before the first call the stage checks that
-# the runs ledger and the OpenRouter balance cover what is left of the cap; if not it stops [top-up or restart].
+# the runs ledger and the OpenRouter balance cover what is left of the cap. A shortfall (here or later, in a run) does not
+# stop the launcher (F7): the arm is optional and only the user's money can fix it, so the stage records state/SHORTFALL
+# (in its folder), prints a [needs the user] NOTE, ends with the runs it finished, and P1d goes on.
 # No gate, no claim, no role in Q4: the report (END) only describes GLM - Luna on the same questions.
 
 p1g_questions() {  # the arm's question files, written once from the A2 files of B10
   try $L glm-questions --root "$ROOT" --prereg "$PREREG" > "$LOGS/glm_questions.log"
 }
 
-p1g_preflight() {  # the cap must fit the runs ledger and the balance before anything is paid
+p1g_preflight() {  # the cap must fit the runs ledger and the balance before anything is paid (else P1g is skipped, F7)
+  if smoke && forced glm-short; then money_stop "forced: the OpenRouter balance does not cover the GLM arm's cap"; fi
   pg_needed=$($L glm-room --root "$ROOT") \
-    || stop_run topup "the runs ledger has no room for the GLM arm's \$2.50 cap"
+    || money_stop "the runs ledger has no room for the GLM arm's \$2.50 cap"
   # shellcheck disable=SC2046
   $L balance --needed "$pg_needed" $(balance_args) \
-    || stop_run topup "the OpenRouter balance cannot be read or does not cover \$$pg_needed for the GLM arm"
+    || money_stop "the OpenRouter balance cannot be read or does not cover \$$pg_needed for the GLM arm"
 }
 
 p1g_plant() {  # the plant PL_ID: the Cypher tier needs it loaded, the agent tier reads files
-  neo4j_load_a
+  if needs_database "G9-GLM-CYP-$PL_ID" yes; then neo4j_load_a; fi
   paid_run CYP-GLM "G9-GLM-CYP-$PL_ID" "$PL_ID" test
   replay_run CYP-GLM "G9-GLM-CYP-$PL_ID" "$PL_ID" test
   paid_run AG-GLM "G9-GLM-AG-$PL_ID" "$PL_ID" test
@@ -32,7 +35,9 @@ p1g_plant() {  # the plant PL_ID: the Cypher tier needs it loaded, the agent tie
 
 stage_P1g() {
   SD=$ROOT/p1g; STEP=P1g; CACHE=$SD/cache.sqlite; EXPERIMENT=EXP-0009-GLM; QROOT=$SD/questions
+  SOFT_MONEY=yes   # lib_runs.sh money_stop: a shortfall ends this stage, it does not stop the launcher
   mkdir -p "$SD/runs" "$SD/replays"
+  rm -f "$SD/SHORTFALL"
   require_frozen
   once questions p1g_questions
   event NOTE "$($L glm-estimate --root "$ROOT" --prereg "$PREREG")"

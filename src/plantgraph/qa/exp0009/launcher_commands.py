@@ -9,12 +9,14 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from collections.abc import Sequence
 from pathlib import Path
 
 from plantgraph.ingest.seed_plan import SeedPlan, load_seed_plan
 from plantgraph.qa.corpus import load_corpus_artifacts
 from plantgraph.qa.exp0007.paths import check_paths
+from plantgraph.qa.exp0008 import replay
 from plantgraph.qa.exp0008.draw_seeds import draw_seed_plan
 from plantgraph.qa.exp0008.hygiene import retired_seeds
 from plantgraph.qa.exp0008.ledger import audit_spent_usd
@@ -171,9 +173,72 @@ def cmd_cost_of(args: argparse.Namespace) -> None:
 
 
 def cmd_audit_cap(args: argparse.Namespace) -> None:
-    """Print the audit's cap ($8.13, or what the runs leave of $35); `--left`: minus its spend."""
+    """Print the audit's cap ($8.13, or what the runs leave of $35); `--left`: minus its spend.
+
+    `--for-main-sample yes|no` (B sealed or not) prints the share of the cap the main sample is
+    sized with: 2/3 when the B stratum will be judged from the same money, else all of it.
+    """
     total = ledger.audit_cap_usd(args.root)
-    print(round(total - audit_spent_usd(args.root), 6) if args.left else total)
+    if args.for_main_sample is not None:
+        print(ledger.main_sample_cap_usd(total, args.for_main_sample == "yes"))
+    else:
+        print(round(total - audit_spent_usd(args.root), 6) if args.left else total)
+
+
+_PREFIX_VERDICT = re.compile(r"prefix_equal: (\d+) of (\d+) rows")
+
+
+def require_complete_replay(verdict: str) -> None:
+    """A replay verdict must say every row was replayed: `identical`, or `prefix_equal: n of n`.
+
+    Raises:
+        ValueError: a prefix shorter than the run, or an empty one (a cache miss at row 1).
+    """
+    if verdict == "identical":
+        return
+    match = _PREFIX_VERDICT.fullmatch(verdict)
+    if match is None or match.group(1) != match.group(2) or int(match.group(1)) == 0:
+        raise ValueError(f"expected a complete replay (every row), found {verdict!r}")
+
+
+def cmd_replay_compare(args: argparse.Namespace) -> None:
+    """EXP-0008's replay comparison; with `--require-complete yes` a prefix must cover every row."""
+    verdict = replay.compare(
+        args.replay_dir / "answers.jsonl",
+        args.run_dir / "answers.jsonl",
+        args.allow_prefix == "yes",
+    )
+    if args.require_complete == "yes":
+        require_complete_replay(verdict)
+    print(verdict)
+
+
+def cmd_project_p1c(args: argparse.Namespace) -> None:
+    """End of P1b: project P1c's spend from the measured costs; write it, raise if it cannot fit.
+
+    Raises:
+        ValueError: the projection exceeds the P1c step ceiling or the runs ledger's room.
+    """
+    measured = json.loads(args.measured.read_text("utf-8"))
+    b_sealed = (args.root / "state" / "b_sealed").read_text(encoding="utf-8").strip() == "yes"
+    projection = stages.project_p1c(measured, b_sealed)
+    left = ledger.RUNS_CAP_USD - ledger.runs_spent_usd(args.root)
+    problems = stages.p1c_projection_problems(projection, left, args.ceiling_usd)
+    document = {
+        "b_sealed": b_sealed, "projected_usd": projection.projected_usd,
+        "run_caps_usd": projection.run_caps_usd, "runs_ledger_left_usd": round(left, 4),
+        "problems": problems,
+    }  # fmt: skip
+    args.out.write_text(json.dumps(document, indent=1, sort_keys=True) + "\n", encoding="utf-8")
+    print(f"P1c projected ${projection.projected_usd:.2f}; runs ledger left ${left:.2f}")
+    if problems:
+        raise ValueError("; ".join(problems))
+
+
+def cmd_peak_gib(args: argparse.Namespace) -> None:
+    """Print the peak memory (GiB, two decimals) a `memory-probe` JSON recorded."""
+    peak = json.loads(args.file.read_text(encoding="utf-8"))["peak_rss_bytes"]
+    print(f"{peak / 2**30:.2f}")
 
 
 def cmd_spent(args: argparse.Namespace) -> None:

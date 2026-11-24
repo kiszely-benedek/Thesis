@@ -237,8 +237,9 @@ def _write_inputs(root: Path, spec: PlantSpec22, recipe: Recipe) -> None:
                 )
             ]  # fmt: skip
         )
-        path = root / "reports" / f"rescore_AG_{corpus}.json"
-        path.write_text(rescore.model_dump_json(), encoding="utf-8")
+        for tier in ("AG", "CYP"):  # END re-scores both tiers
+            path = root / "reports" / f"rescore_{tier}_{corpus}.json"
+            path.write_text(rescore.model_dump_json(), encoding="utf-8")
 
 
 def build_root(root: Path, recipe: Recipe | None = None, *, b_sealed: bool = True) -> Path:

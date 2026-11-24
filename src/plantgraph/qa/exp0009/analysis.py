@@ -48,6 +48,7 @@ SCOPE_NOTE = (
     "with equal weight."
 )
 _B, _DIFF = "V2T-B", "V2T-B minus V2T-A2"
+TIERS = ("AG", "CYP")  # the tiers END re-scores: agent and Cypher
 #: (claim, arm, scope, pass rule) of each B claim, for the NOT_RUN rows
 B_CLAIMS = (
     ("Q4-B", _B, claims.SCOPE_R_X, claims.RULE_NO_LOSS),
@@ -108,17 +109,20 @@ def descriptive_tables(
     baselines = {p.spec.plant_id: x.read_baselines(root, p) for p in plants}
     flags = {p.spec.plant_id: x.read_flags(root, p) for p in plants}
     rules = {p.spec.plant_id: misc.read_rules(root, p) for p in plants}
-    rescored = {
-        corpus: misc.read_rescore(root, corpus)
+    rescored = {  # (corpus, tier) -> END's re-score of that tier's run: `AG` agent, `CYP` Cypher
+        (corpus, tier): misc.read_rescore(root, corpus, tier)
         for p in plants
         for corpus in (p.spec.plant_id, p.spec.b_id)
+        for tier in TIERS
     }
+    agent_rescored = {corpus: report for (corpus, tier), report in rescored.items() if tier == "AG"}
     questions = x.x_questions(plants, flags)
     tables = [
         x.refused_table(reports, plants), x.subscope_table(questions), x.family_table(questions),
         x.position_table(plants, baselines), x.named_by_table(plants, baselines),
         misc.network_table(plants), misc.rules_table(rules, plants),
-        misc.prf_table(rescored, plants, b_sealed=b_sealed),
+        misc.prf_table(agent_rescored, plants, b_sealed=b_sealed),
+        misc.prf_final_table(rescored, plants, b_sealed=b_sealed),
     ]  # fmt: skip
     notes = [
         f"no qpool flags for {i}: its X questions are in no sub-scope"
@@ -127,8 +131,8 @@ def descriptive_tables(
     ]
     notes += [f"no rules.json for {i}" for i in ids if rules[i] is None]
     notes += [
-        f"no re-score at {misc.rescore_path(root, c).name}: END's re-score of {c} is missing"
-        for c, report in rescored.items()
+        f"no re-score at {misc.rescore_path(root, c, t).name}: END's {t} re-score of {c} is missing"
+        for (c, t), report in rescored.items()
         if report is None and (b_sealed or not c.endswith("B"))
     ]
     return tables, notes
