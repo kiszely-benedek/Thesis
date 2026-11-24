@@ -8,7 +8,10 @@ Design: `docs/private/40-design/generator-v2-2-handbook-rules.md` section 19.
 ## Frozen code
 
 - The A2 system is E9 (`5d31cbb94620645ee018771735edae37f49e7ef8`), checked by gate G0f.
-- Part A code commit: `ba7277a76a32262bc4eee884dc47fbb1460909bf` (the code at the draw; the part A commit adds only `prereg/` files)
+- The code at the draw; the part A commit adds only `prereg/` files:
+
+Part A code commit: ba7277a76a32262bc4eee884dc47fbb1460909bf
+
 - Between that commit and E10 only these may change:
   B files under `src/plantgraph/qa/v2tb/` and `tests/v2tb/` (tuning); the T17 analysis module and its tests;
   `data/runs/exp0009/prereg/`; `docs/`.
