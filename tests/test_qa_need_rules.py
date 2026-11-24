@@ -12,6 +12,7 @@ from plantgraph.qa.need.labels import NeedLabel
 from plantgraph.qa.need.rules import RuleNeedClassifier
 from plantgraph.qa.questions import templates as t
 from plantgraph.qa.questions.families_heldout import HELDOUT_GENERATORS
+from plantgraph.qa.questions.scope_x import SCOPE_X_FAMILIES
 from qa_routing_toy import ToyCorpus
 
 F = QuestionFamily
@@ -59,7 +60,10 @@ def test_the_rules_cover_every_dev_family_but_the_unanswerable_one() -> None:
     covered = {family for family, _ in _DEV_TEXTS}
 
     # the rules were written from the dev templates; the held-out families are not among them
-    assert covered == set(QuestionFamily) - set(HELDOUT_GENERATORS) - {F.UNANSWERABLE_TAG}
+    # scope X has its own routing test: tests/v2tb/test_scope_x_routing.py
+    assert covered == (
+        set(QuestionFamily) - set(HELDOUT_GENERATORS) - set(SCOPE_X_FAMILIES) - {F.UNANSWERABLE_TAG}
+    )
 
 
 def test_a_tag_the_plant_lacks_does_not_change_the_label() -> None:

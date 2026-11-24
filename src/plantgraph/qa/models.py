@@ -84,6 +84,13 @@ class QuestionFamily(str, Enum):
     FEEDING_UNITS = "FEEDING_UNITS"
     UNITS_REACHED = "UNITS_REACHED"
     ROUTE_AVOIDING = "ROUTE_AVOIDING"
+    # The five scope X families of EXP-0009 (ADR-0067): asked on v2.2 plants only, outside
+    # `FAMILY_META` and the default candidate set. Built by `qa/questions/scope_x.py`.
+    OPEN_VALVES_TO_ISOLATE = "OPEN_VALVES_TO_ISOLATE"
+    OPEN_VALVES_TO_ISOLATE_DOWNSTREAM = "OPEN_VALVES_TO_ISOLATE_DOWNSTREAM"
+    UPSTREAM_ISOLATION_X = "UPSTREAM_ISOLATION_X"
+    DOWNSTREAM_ISOLATION_X = "DOWNSTREAM_ISOLATION_X"
+    POSITION_OF_VALVE = "POSITION_OF_VALVE"
 
 
 class AnswerType(str, Enum):

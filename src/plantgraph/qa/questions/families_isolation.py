@@ -46,7 +46,7 @@ def _visit(
     seen.add(node_id)
 
 
-def _upstream_walk(
+def upstream_walk(
     plant: nx.DiGraph[str], node_id: str
 ) -> tuple[frozenset[str], frozenset[tuple[str, str]]] | None:
     """Walk upstream from `node_id`: `(valves, edges walked)`, or `None` if a route has no valve.
@@ -85,7 +85,7 @@ def upstream_isolation_candidates(
     index = SheetIndex.from_sheets(sheets, manifest)
     questions = []
     for node_id in nodes_of_classes(plant, EQUIPMENT_CLASSES):
-        walk = _upstream_walk(plant, node_id)
+        walk = upstream_walk(plant, node_id)
         if walk is None:
             continue
         valves, edges = walk

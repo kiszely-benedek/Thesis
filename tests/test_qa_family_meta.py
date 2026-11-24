@@ -19,12 +19,14 @@ from plantgraph.qa.questions.families import (
     all_candidates,
 )
 from plantgraph.qa.questions.families_heldout import HELDOUT_GENERATORS
+from plantgraph.qa.questions.scope_x import SCOPE_X_FAMILIES
 
 _QA_DIR = Path(__file__).resolve().parent.parent / "src" / "plantgraph" / "qa"
 
 
 def test_twelve_families_are_dev_old_and_six_are_dev_new() -> None:
-    assert set(FAMILY_META) == set(QuestionFamily)
+    # scope X (EXP-0009) is asked on v2.2 plants only and kept out of FAMILY_META on purpose
+    assert set(FAMILY_META) == set(QuestionFamily) - set(SCOPE_X_FAMILIES)
     assert len(families_of_split(FamilySplit.DEV_OLD)) == 12
     assert {f.value for f in families_of_split(FamilySplit.DEV_NEW)} == {
         "CONNECTED",

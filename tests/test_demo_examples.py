@@ -22,6 +22,7 @@ from plantgraph.demo.app.examples import (
 from plantgraph.demo.app.topics import TOPIC_ORDER, topic_of
 from plantgraph.qa.cascade.live_models import FreeTextQuestion
 from plantgraph.qa.models import AnswerType, Question, QuestionFamily
+from plantgraph.qa.questions.scope_x import SCOPE_X_FAMILIES
 
 
 def _question(question_id: str, family: QuestionFamily, text: str = "") -> Question:
@@ -220,5 +221,5 @@ def test_the_request_no_longer_has_an_answer_type() -> None:
 
 
 def test_every_family_has_one_of_the_four_topics() -> None:
-    for family in QuestionFamily:
+    for family in set(QuestionFamily) - set(SCOPE_X_FAMILIES):  # the demo never shows scope X
         assert topic_of(family) in TOPIC_ORDER

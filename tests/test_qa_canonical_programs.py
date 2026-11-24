@@ -31,6 +31,7 @@ from plantgraph.qa.models import AnswerType, Question, QuestionFamily
 from plantgraph.qa.plant_api.item_graph import ItemGraph, build_item_graph
 from plantgraph.qa.questions.families import FAMILY_CANDIDATE_GENERATORS, all_candidates
 from plantgraph.qa.questions.families_heldout import HELDOUT_GENERATORS
+from plantgraph.qa.questions.scope_x import SCOPE_X_FAMILIES
 from plantgraph.resolution.localize import localize
 from plantgraph.resolution.resolver import resolve
 from qa_plant_api_toy import EdgeSpecs, ItemSpecs, build_graph
@@ -113,7 +114,7 @@ def test_the_dev2_toy_exercises_every_dev_new_family() -> None:
 
 def test_every_family_has_exactly_one_program() -> None:
     # the held-out families have no canonical program: they are only generated for the sealed run
-    dev_families = set(QuestionFamily) - set(HELDOUT_GENERATORS)
+    dev_families = set(QuestionFamily) - set(HELDOUT_GENERATORS) - set(SCOPE_X_FAMILIES)
     assert set(PROGRAMS) == dev_families == set(FAMILY_CANDIDATE_GENERATORS)
 
 
@@ -131,7 +132,7 @@ def test_programs_reproduce_the_reference_on_a_resolved_corpus_with_duplicated_d
     sample = sample_per_family(candidates, 40, seed=0)
     rows = evaluate_programs(sample, graph)
 
-    dev_families = set(QuestionFamily) - set(HELDOUT_GENERATORS)
+    dev_families = set(QuestionFamily) - set(HELDOUT_GENERATORS) - set(SCOPE_X_FAMILIES)
     assert set(rows) == dev_families
     assert {family: row.share for family, row in rows.items()} == {f: 1.0 for f in dev_families}, (
         render_table(rows)

@@ -22,6 +22,7 @@ from plantgraph.qa.cascade.models import CascadePolicy
 from plantgraph.qa.cascade.policy import load_policies
 from plantgraph.qa.models import Outcome, QuestionFamily
 from plantgraph.qa.need.labels import NeedLabel
+from plantgraph.qa.questions.scope_x import SCOPE_X_FAMILIES
 
 LABELS = load_labels()
 # the policies a demo is configured with (`demo_config.example.json` uses v3; v2 is its predecessor)
@@ -59,8 +60,9 @@ def test_the_tiers_and_strategies_of_the_demo_policies_have_text() -> None:
 
 
 def test_every_family_maps_to_a_listed_topic_with_a_heading() -> None:
-    assert set(LABELS.family_topics) == {f.value for f in QuestionFamily}
-    assert all(topic_of(family) in TOPIC_ORDER for family in QuestionFamily)
+    shown = set(QuestionFamily) - set(SCOPE_X_FAMILIES)  # the demo never shows scope X (EXP-0009)
+    assert set(LABELS.family_topics) == {f.value for f in shown}
+    assert all(topic_of(family) in TOPIC_ORDER for family in shown)
     _assert_has_text(LABELS.topics, set(TOPIC_ORDER))
 
 

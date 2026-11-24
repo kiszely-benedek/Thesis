@@ -40,7 +40,7 @@ def _tags(plant: nx.DiGraph[str], node_ids: set[str] | frozenset[str]) -> list[s
 # --- DOWNSTREAM_ISOLATION --------------------------------------------------------------------
 
 
-def _downstream_walk(
+def downstream_walk(
     plant: nx.DiGraph[str], start_id: str
 ) -> tuple[frozenset[str], frozenset[tuple[str, str]]] | None:
     """Walk `send_to` forwards: `(valves to close, edges walked)`, or `None` if a route has none.
@@ -91,7 +91,7 @@ def downstream_isolation_candidates(
     index = SheetIndex.from_sheets(sheets, manifest)
     questions = []
     for node_id in nodes_of_classes(plant, EQUIPMENT_CLASSES):
-        walk = _downstream_walk(plant, node_id)
+        walk = downstream_walk(plant, node_id)
         if walk is None:
             continue
         valves, edges = walk
