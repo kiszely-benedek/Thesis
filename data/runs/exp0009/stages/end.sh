@@ -1,6 +1,6 @@
 # END: the free reports, the ledger summary, the T17 hook and the demo database restore. $0. Sourced by run_all.sh.
 #
-# Cascade reports per plant and arm, the record check over every run, the offline re-score of every run, the
+# Cascade reports per plant and arm (and the GLM arm's report of P1g), the record check over every run, the offline re-score of every run, the
 # ledger summary, the T17 analysis entry point if it is present (a missing T17 is noted, not a stop), and LAST the
 # demo database restore (wipe, then H1000g21p1 with plant_lines: ADR-0064, demo-v2.md). As in EXP-0008 M10b, a
 # failed report is named, the restore still runs, and only then does the stage stop. To restore the demo plant alone:
@@ -33,6 +33,24 @@ end_plant() {  # the reports of one sealed plant, both arms
   fi
 }
 
+end_glm_plant() {  # the reports of one plant of the GLM comparison arm (stage P1g)
+  gd=$ROOT/p1g/runs
+  for eg_run in "$gd/G9-GLM-CYP-$PL_ID" "$gd/G9-GLM-AG-$PL_ID"; do
+    [ -d "$eg_run" ] || continue
+    end_try "records_$(basename "$eg_run")" $L records-check --run-dir "$eg_run"
+  done
+  if smoke; then return 0; fi   # canned answers: the cascade report and the re-score are meaningful on real runs only
+  end_try "cascade_glm_$PL_ID" $L cascade-report --corpus-id "$PL_ID" --arm A2 --cyp-run "$gd/G9-GLM-CYP-$PL_ID"     --ag-run "$gd/G9-GLM-AG-$PL_ID" --questions-root "$ROOT/p1g/questions" --corpora-root "$ROOT/corpora"     --out "$ROOT/reports/glm/${PL_ID}_glm.json"
+  end_try "rescore_AG_glm_$PL_ID" $L rescore --run-dir "$gd/G9-GLM-AG-$PL_ID" --questions-root "$ROOT/p1g/questions"     --corpus-id "$PL_ID" --ingest-json "$ROOT/corpora/$PL_ID/ingest.json" --out "$ROOT/reports/glm/rescore_AG_$PL_ID.json"
+}
+
+end_glm() {  # GLM - Luna on the same questions: descriptive, no claim (design 20)
+  if [ ! -d "$ROOT/p1g/runs" ]; then event NOTE "P1g left no runs: no GLM report"; return 0; fi
+  mkdir -p "$ROOT/reports/glm"
+  for_each_plant glm end_glm_plant
+  if ! smoke; then end_try glm_report $L glm-report --root "$ROOT" --prereg "$PREREG"; fi
+}
+
 end_t17() {  # the sealed analysis (T17), if it has been built and committed before F10
   if $P -c "import plantgraph.qa.exp0009.analysis" 2> /dev/null; then
     end_try t17 $P -m plantgraph.qa.exp0009.analysis --root "$ROOT"
@@ -48,6 +66,7 @@ stage_END() {
   end_try ledger $L spent --root "$ROOT"
   event NOTE "ledger: $($L spent --root "$ROOT")"
   for_each_plant sealed end_plant
+  end_glm
   end_t17
   demo_database   # LAST: the user's database ends on the demo plant, whatever failed above
   [ -z "$END_FAILED" ] || stop_run infra "these reports failed:$END_FAILED (the demo database was restored)"

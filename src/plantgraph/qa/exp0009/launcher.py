@@ -15,6 +15,7 @@ from pathlib import Path
 
 from plantgraph.qa.exp0008 import launcher_commands as old
 from plantgraph.qa.exp0009 import launcher_commands as c
+from plantgraph.qa.exp0009 import launcher_glm as g
 from plantgraph.qa.exp0009 import launcher_stages as s
 
 ROOT = Path("data/runs/exp0009")
@@ -42,7 +43,7 @@ def _plants(sub: Sub) -> None:
     p.add_argument("--runs-root", type=Path, default=Path("data/runs"))
     p.add_argument("--smoke", action="store_true")
     p = _add(sub, "plan-list", c.cmd_plan_list)
-    p.add_argument("kind", choices=["dev", "probe", "validation", "sealed", "all"])
+    p.add_argument("kind", choices=["dev", "probe", "validation", "sealed", "glm", "all"])
     p.add_argument("--prereg", type=Path, default=ROOT / "prereg")
     for name, handler in (
         ("build", c.cmd_build),
@@ -69,11 +70,11 @@ def _money(sub: Sub) -> None:
         p = _add(sub, name, handler)
         p.add_argument("--tier", choices=["cyp", "ag"], required=True)
         p.add_argument("--scale", type=int, choices=[100, 1000], required=True)
-        p.add_argument("--arm", choices=["A2", "B"], required=True)
+        p.add_argument("--arm", choices=["A2", "B", "GLM"], required=True)
         p.add_argument("--measured", type=Path, help="P1b's measured dollars per question (JSON)")
         if name == "run-cap":
             p.add_argument("--questions", type=Path, required=True)
-            p.add_argument("--step", choices=["P1a", "P1b", "P1c"], required=True)
+            p.add_argument("--step", choices=["P1a", "P1b", "P1c", "P1g"], required=True)
             p.add_argument("--root", type=Path, required=True)
             p.add_argument("--step-dir", type=Path, required=True)
             p.add_argument("--run-dir", type=Path)
@@ -89,6 +90,21 @@ def _money(sub: Sub) -> None:
     p = _add(sub, "balance", old.cmd_balance)
     p.add_argument("--needed", type=float, required=True)
     p.add_argument("--fake-balance", type=float)
+
+
+def _glm(sub: Sub) -> None:
+    """The GLM comparison arm, stage P1g (design §20)."""
+    for name, handler in (
+        ("glm-questions", g.cmd_glm_questions),
+        ("glm-estimate", g.cmd_glm_estimate),
+        ("glm-report", g.cmd_glm_report),
+    ):
+        p = _add(sub, name, handler)
+        p.add_argument("--root", type=Path, default=ROOT)
+        p.add_argument("--prereg", type=Path, default=ROOT / "prereg")
+        if name == "glm-estimate":
+            p.add_argument("--balance-usd", type=float)
+    _add(sub, "glm-room", g.cmd_glm_room).add_argument("--root", type=Path, default=ROOT)
 
 
 def _runs(sub: Sub) -> None:
@@ -197,7 +213,7 @@ def build_parser() -> argparse.ArgumentParser:
         prog="python -m plantgraph.qa.exp0009.launcher", description=__doc__
     )
     sub = parser.add_subparsers(dest="command", required=True)
-    for register in (_plants, _money, _runs, _state, _tuning_and_freeze):
+    for register in (_plants, _money, _glm, _runs, _state, _tuning_and_freeze):
         register(sub)
     return parser
 

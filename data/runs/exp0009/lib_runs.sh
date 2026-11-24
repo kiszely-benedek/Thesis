@@ -1,7 +1,7 @@
 # Arms, capped paid runs and replays of the EXP-0009 launcher: sourced after lib.sh.
 #
 # A stage sets, before it calls anything here:
-#   STEP   P1a | P1b | P1c, a key of the step ceilings in qa/exp0009/caps.py
+#   STEP   P1a | P1b | P1c | P1g, a key of the step ceilings in qa/exp0009/caps.py
 #   SD     the stage's folder under $ROOT (its runs, cache, replays live there)
 #   CACHE  the stage's response cache          EXPERIMENT  the name written into run_config.json
 #   QROOT  where the question files are        PL_SCALE    100 or 1000, the plant's nominal scale
@@ -11,18 +11,22 @@
 
 DEADLINE_S=120    # setting A of the cascade: 30 s Cypher timeout, 120 s per question
 
-arm_spec() {  # arm_spec <CYP-A|AG|CYP-B|AG-B>: sets AR_* for the arm (strategy, parameters, pin, cost tier, system)
+arm_spec() {  # arm_spec <CYP-A|AG|CYP-B|AG-B|CYP-GLM|AG-GLM>: sets AR_* for the arm (strategy, parameters, pin, cost tier, system)
   case $1 in
     CYP-A|CYP-B) AR_PARAMS=$INPUTS/params_cypher_v2t_a.json; AR_PIN=$INPUTS/pin_cypher_luna_low.json; AR_TIER=cyp; AR_CORPORA=$ROOT/cypcorp/plant_lines ;;
     AG|AG-B) AR_PARAMS=$INPUTS/params_agent_v2t.json; AR_PIN=$INPUTS/pin_agent_luna_final_high.json; AR_TIER=ag; AR_CORPORA=$ROOT/corpora ;;
+    CYP-GLM) AR_PARAMS=$INPUTS/params_cypher_v2t_a.json; AR_PIN=$INPUTS/pin_cypher_glm_fireworks_low.json; AR_TIER=cyp; AR_CORPORA=$ROOT/cypcorp/plant_lines ;;
+    AG-GLM) AR_PARAMS=$INPUTS/params_agent_v2t.json; AR_PIN=$INPUTS/pin_agent_glm_fireworks_high.json; AR_TIER=ag; AR_CORPORA=$ROOT/corpora ;;
     *) stop_run infra "unknown arm $1" ;;
   esac
-  case $1 in CYP-A) AR_STRATEGY=cypher_rag_lines ;; AG) AR_STRATEGY=graph_agent_lines ;;
+  case $1 in CYP-A|CYP-GLM) AR_STRATEGY=cypher_rag_lines ;; AG|AG-GLM) AR_STRATEGY=graph_agent_lines ;;
     CYP-B) AR_STRATEGY=cypher_rag_lines_b ;; AG-B) AR_STRATEGY=graph_agent_lines_b ;; esac
-  case $1 in *-B) AR_SYSTEM=B ;; *) AR_SYSTEM=A2 ;; esac
+  case $1 in *-B) AR_SYSTEM=B ;; *) AR_SYSTEM=A2 ;; esac   # the GLM arm is the A2 system with other pins
+  AR_COST_ARM=$AR_SYSTEM; case $1 in *-GLM) AR_COST_ARM=GLM ;; esac   # which cost keys the caps use
   if smoke && [ "$AR_TIER" = cyp ]; then   # no Neo4j in the smoke: the agent stands in for the Cypher tier
     AR_STRATEGY=graph_agent_lines; if [ "$AR_SYSTEM" = B ]; then AR_STRATEGY=graph_agent_lines_b; fi
     AR_PARAMS=$INPUTS/params_agent_v2t.json; AR_PIN=$INPUTS/pin_agent_luna_final_high.json; AR_CORPORA=$ROOT/corpora
+    if [ "$AR_COST_ARM" = GLM ]; then AR_PIN=$INPUTS/pin_agent_glm_fireworks_high.json; fi
   fi
   AR_NAME=$1
 }
@@ -43,12 +47,12 @@ paid_run() {  # paid_run <arm> <run-id> <corpus> <role>: one capped run, then it
   if [ -f "$SD/runs/$pr_id.complete" ]; then event NOTE "skip $pr_id (complete)"; return 0; fi
   # shellcheck disable=SC2046
   pr_cap=$($L run-cap --questions "$QROOT/$pr_corpus/questions.jsonl" --tier "$AR_TIER" --scale "$PL_SCALE" \
-    --arm "$AR_SYSTEM" --step "$STEP" --root "$ROOT" --step-dir "$SD" --run-dir "$SD/runs/$pr_id" $(measured_args)) \
+    --arm "$AR_COST_ARM" --step "$STEP" --root "$ROOT" --step-dir "$SD" --run-dir "$SD/runs/$pr_id" $(measured_args)) \
     || stop_run topup "no money left for $pr_id under the step ceiling or the \$26.87 runs ledger"
   # shellcheck disable=SC2046
   $L balance --needed "$pr_cap" $(balance_args) || stop_run topup "the OpenRouter balance cannot be read or does not cover \$$pr_cap for $pr_id"
   # shellcheck disable=SC2046
-  pr_cost=$($L cost-of --tier "$AR_TIER" --scale "$PL_SCALE" --arm "$AR_SYSTEM" $(measured_args)) || stop_run infra "no cost per question for $pr_id"
+  pr_cost=$($L cost-of --tier "$AR_TIER" --scale "$PL_SCALE" --arm "$AR_COST_ARM" $(measured_args)) || stop_run infra "no cost per question for $pr_id"
   event START "$pr_id arm $pr_arm on $pr_corpus, cap \$$pr_cap"
   pr_rc=0
   # shellcheck disable=SC2046

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from collections.abc import Sequence
 from pathlib import Path
 
 from plantgraph.ingest.seed_plan import SeedPlan, load_seed_plan
@@ -22,6 +23,7 @@ from plantgraph.qa.exp0009 import (
     caps,
     draw,
     gates,
+    glm_arm,
     ledger,
     load,
     question_files,
@@ -57,9 +59,13 @@ def cmd_draw(args: argparse.Namespace) -> None:
 
 
 def cmd_plan_list(args: argparse.Namespace) -> None:
-    """Print `plant_id scale seed` for the plants of one role (`all` = every plant)."""
+    """Print `plant_id scale seed` of a role's plants (`all`: every plant; `glm`: the GLM arm's)."""
     plan = read_plan(args.prereg)
-    plants = plan.plants if args.kind == "all" else plan.of_role(Role(args.kind))
+    plants: Sequence[PlantSpec22]
+    if args.kind == "glm":
+        plants = glm_arm.glm_plants(plan)
+    else:
+        plants = plan.plants if args.kind == "all" else plan.of_role(Role(args.kind))
     for spec in plants:
         print(spec.plant_id, spec.scale, spec.seed)
 

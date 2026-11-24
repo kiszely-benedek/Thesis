@@ -13,7 +13,8 @@
 #   --force <what>   smoke only, to prove a stop works: g1 | g1b | g1b2 | g0l | cap | dirty-tree | wrong-head | b-files
 #                    (g1b and g1b2 take the "B not sealed" branch without a stop)
 #
-# Stages: P0 P1a P1b F10 B10 P1c P1d END  (see stages/ and the README). P0, F10, B10, END are free.
+# Stages: P0 P1a P1b F10 B10 P1c P1g P1d END  (see stages/ and the README). P0, F10, B10, END are free.
+# P1g is the user's small GLM comparison arm (design 20): two sealed plants, scope R only, its own $2.50 cap.
 # Each finished stage writes state/<stage>.done with the sha256 of its outputs; a rerun skips it after re-checking.
 # Every event is one line:  === <UTC> <stage> <START|DONE|SKIP|NOTE|GATE PASS|GATE FAIL|CAP|STOP> <detail>
 # Any stop leaves state/STOPPED with the stage, the reason and the exact resume command. This script never commits,
@@ -49,7 +50,7 @@ SCRIPTS=data/runs/exp0009
 . "$SCRIPTS/lib_runs.sh"
 for stage_file in "$SCRIPTS"/stages/*.sh; do . "$stage_file"; done
 
-STAGES="P0 P1a P1b F10 B10 P1c P1d END"
+STAGES="P0 P1a P1b F10 B10 P1c P1g P1d END"
 if [ -n "$FROM" ]; then
   case " $STAGES " in *" $FROM "*) ;; *) echo "ERROR: unknown stage $FROM (stages: $STAGES)" >&2; exit 2 ;; esac
 fi

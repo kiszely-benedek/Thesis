@@ -10,7 +10,7 @@ Everything here follows EXP-0008's launcher (`data/runs/exp0008/`). **Nothing ru
    `plan.json`, `position_prior.json`; never overwrites; prints the PREREG A tables.
 2. Fill `PREREG_A.template.md` into `prereg/PREREG_A.md`; commit part A on the user's order.
 3. `sh data/runs/exp0009/readiness.sh`.
-4. `launch.sh` (or `run_all.sh`), stage by stage. P0, F10, B10, END are free; P1a, P1b, P1c, P1d are paid.
+4. `launch.sh` (or `run_all.sh`), stage by stage. P0, F10, B10, END are free; P1a, P1b, P1c, P1g, P1d are paid.
 
 ## Stages (`run_all.sh --from <stage>` resumes; `--smoke` proves the chain with zero real calls)
 
@@ -22,6 +22,7 @@ Everything here follows EXP-0008's launcher (`data/runs/exp0008/`). **Nothing ru
 | F10 | E10 freeze, `B_FILES.sha256`, `PREREG_B.md`, `PREREG.sha256` | no |
 | B10 | sealed plants, pools, drop set, question files, `D10.sha256` | no |
 | P1c | ten sealed plants, both arms, each run replayed cache-only | yes |
+| P1g | the user's GLM comparison arm: GLM 5.3 Flash (pinned host fireworks) instead of Luna, on the first sealed plant of each scale, scope R only; own cap $2.50, descriptive only | yes |
 | P1d | scorer audit: main sample and the B stratum; stops after the judge | yes |
 | END | reports, record check, re-score, ledger, T17 hook, demo database restore | no |
 
@@ -37,6 +38,11 @@ hand: `sh data/runs/exp0009/demo_load.sh` (wipe, then H1000g21p1 with `plant_lin
 
 Hard cap $35 for runs and audit together; per-run caps from question counts (no dry run); the estimate is printed
 before each paid stage. Money stops (`[top-up or restart]`) are resolved by the main session without asking.
+
+P1g (the GLM comparison arm) has its own hard cap of $2.50, inside the runs ledger. Its estimate NOTE is A2's sealed
+rate times GLM's dev cost ratio 1.2-1.9. Before its first call it checks the runs ledger and the OpenRouter balance
+against what is left of the cap, and stops `[top-up or restart]` if either is short. It runs after P1c, when P1's
+actual spend is known. Its pins (`inputs/pin_*_glm_fireworks_*.json`) are hashed into E10 with the other inputs.
 
 ## Records
 

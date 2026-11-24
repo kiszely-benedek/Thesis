@@ -22,8 +22,11 @@ A2_COST_PER_QUESTION_USD = {
 }
 #: Assumed until P1a measures it: B's two extra prompt paragraphs and brackets cost this much more.
 B_OVERHEAD = 1.10
-#: step -> ceiling in dollars: 1.5 x the estimate of §19.9 (P1a 1.48, P1b 1.41, P1c 14.06)
-STEP_CEILING_USD = {"P1a": 2.22, "P1b": 2.12, "P1c": 21.09}
+#: GLM's dev cost ratio to the Luna pins, as a range (CASCADE-V2/V3, BAKEOFF-2; design §20)
+GLM_COST_RATIO_LOW, GLM_COST_RATIO_HIGH = 1.2, 1.9
+#: step -> ceiling in dollars: 1.5 x the estimate of §19.9 (P1a 1.48, P1b 1.41, P1c 14.06);
+#: P1g is the user's GLM comparison arm, whose $2.50 is a hard cap fixed in design §20
+STEP_CEILING_USD = {"P1a": 2.22, "P1b": 2.12, "P1c": 21.09, "P1g": 2.50}
 
 
 def cost_key(tier: str, scale: int) -> str:
@@ -45,12 +48,17 @@ def cost_per_question_usd(
 ) -> float:
     """Dollars per question of one arm's tier; `measured` (from P1b, per `arm-tier-scale`) wins.
 
+    The GLM arm has no measurement before it runs: its key is A2's at the top of the cost ratio,
+    so that the harness's reservation per question in flight is never too small.
+
     Raises:
         ValueError: an unknown arm, tier or scale.
     """
-    if arm not in ("A2", "B"):
-        raise ValueError(f"expected arm 'A2' or 'B', found {arm!r}")
+    if arm not in ("A2", "B", "GLM"):
+        raise ValueError(f"expected arm 'A2', 'B' or 'GLM', found {arm!r}")
     key = cost_key(tier, scale)
+    if arm == "GLM":
+        return round(A2_COST_PER_QUESTION_USD[key] * GLM_COST_RATIO_HIGH, 6)
     if measured and f"{arm}-{key}" in measured:
         return measured[f"{arm}-{key}"]
     base = A2_COST_PER_QUESTION_USD[key]

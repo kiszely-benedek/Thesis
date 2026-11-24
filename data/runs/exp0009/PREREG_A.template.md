@@ -66,6 +66,20 @@ the EXP-0009 experiment note, not in ADR-0067.
 Design 19.5 and 19.7. If G1-B or G1-B2 fails, B is not run sealed (ADR-0067): A2 alone runs sealed, and the B audit
 stratum and the B P1c runs are dropped.
 
+## GLM comparison arm (the user's, design 20)
+
+A small descriptive arm, with no gate, no claim and no role in Q4: the frozen V2T-A2 system and policy
+`cascade_v4_iso` with GLM 5.3 Flash (`z-ai/glm-5.3-flash`) on one pinned host (fireworks) instead of GPT-6 Luna.
+Effort and token caps per tier are A2's (Cypher low, agent high); the pins are `inputs/pin_cypher_glm_fireworks_low.json`
+and `inputs/pin_agent_glm_fireworks_high.json`, hashed into E10.
+- **Plant choice (fixed here, before any plant exists):** the first sealed plant of each scale in `plan.json` order,
+  that is `H100g22p1` and `H1000g22p1`.
+- **Questions:** scope R only, read from each plant's A2 question file with the X questions filtered out; the rest of
+  the file is byte for byte A2's.
+- **Money:** its own hard cap of $2.50, inside the runs ledger; the estimate is A2's sealed rate per question times 1.2-1.9.
+- **Report:** paired GLM - Luna accuracy per plant on the same questions with a bootstrap interval (the cascade code's
+  5,000 resamples, seed 1), with cost per question, latency and outcome mix beside Luna's.
+
 ## Audit
 
 EXP-0008's rule, plus a B stratum half the main sample's size (VALVE_SET and POSITION rows). Judge prompt sha256

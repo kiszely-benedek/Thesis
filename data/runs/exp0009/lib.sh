@@ -72,6 +72,6 @@ outputs() { mkdir -p "$STATE"; printf '%s\n' "$@" > "$STATE/$CUR_STAGE.outputs";
 
 ensure_dirs() { mkdir -p "$STATE/steps" "$LOGS" "$PREREG"; }
 
-estimate_note() {  # estimate_note <P1a|P1b|P1c>: the cost estimate, printed before every paid stage
+estimate_note() {  # estimate_note <P1a|P1b|P1c> (P1g prints its own, `glm-estimate`): the cost estimate, printed before every paid stage
   event NOTE "$($L estimate --stage "$1" --root "$ROOT")"
 }
