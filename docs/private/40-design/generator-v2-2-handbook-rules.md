@@ -2887,3 +2887,33 @@ or the corpus rebuild at the start of each run. EXP-0008's measured M6a, 17.7 h 
 4. On the user's order, commit part A with `seeds.json`, `plan.json` and `position_prior.json`.
 5. Run readiness.
 6. Start the launcher on the user's word. P0 is free; P1a is the first paid step.
+
+## 20. The user's model-comparison arm (2026-11-24): task T13b
+
+**Decision.** The user asked whether EXP-0009 compares models. As specified, it does not: both arms run GPT-6 Luna, with low effort on the Cypher tier and high effort on the agent tier. The model choice rests on October's dev bake-off (`_results.md` BAKEOFF-1/2, CASCADE-V3).
+
+The user was offered three options:
+- **A:** cite the bake-off only;
+- **B:** a small GLM arm on sealed plants;
+- **C:** a full GLM arm, which would need a top-up.
+
+The user chose **B**.
+
+**The A2-GLM arm.**
+- **Code.** The frozen V2T-A2 code, policy `cascade_v4_iso`, unchanged.
+- **Pins.** A copy of the A2 pins with only the model swapped. The copy is new and lives outside the system-side paths, so G0f stays empty.
+  - The model is `z-ai/glm-5.3-flash`.
+  - The provider is pinned to the BAKEOFF host (fireworks). BAKEOFF-1 showed that unpinned routing spread one config over 15 hosts.
+  - The effort per tier is the same as A2's: Cypher low, agent high.
+  - The token caps are the same as A2's.
+- **Plants.** One sealed 100-sheet plant and one sealed 1,000-sheet plant: the first of each scale in `plan.json` order. This rule is fixed in PREREG A before any plant exists.
+- **Questions.** Scope R only, the same 235 questions per plant that A2 answers. That is 470 questions in all.
+- **Reporting.** Descriptive only: paired GLM − Luna accuracy per plant, with the bootstrap interval, and cost per question, latency and outcome mix beside A2's.
+  - No gate, no claim, and no role in Q4. A single plant per scale cannot carry a scale claim.
+  - The same records are kept (calls, answers, timings, environment), so precision, recall and F1 can be recomputed offline.
+- **Cost.**
+  - **Estimate:** about $1.5–2. This is derived from EXP-0008's measured sealed A2 cost of $0.00234–0.00244 per question, times GLM's dev cost ratio of 1.2–1.9 (CASCADE-V2/V3, BAKEOFF-2).
+  - **Hard cap:** $2.50.
+  - **Timing:** the arm runs after P1c, when P1's actual spend is known. If the OpenRouter balance cannot cover the cap at that point, the main session asks the user for a top-up before starting.
+- **Freeze.** The GLM pins file is hashed into E10 with the other run inputs.
+- **Who does it.** T13b, a small coder task after T13. It adds the pins file, a stage `P1g` in the launcher with its own cap, and a test that the GLM arm reuses the A2 question files byte for byte.
