@@ -33,8 +33,9 @@ A B rendszer (feltáró) jól olvassa a szelepállást (0,96), de a leválasztá
 | Eltérés | B feltáró ágként fut (G1-B bukott) | ✔ | `b3b63a5` | 11-25 |
 | EXP-0009 | Teljes futás, P0–END ($19,58 + $3,51) | ✔ | `cfa839f` | 11-27 |
 | Audit | 25 eltérés besorolva: 0 pontozóhiba | ✔ | `cfa839f` | 11-27 |
-| Eredményjegyzet | `30-experiments/EXP-0009-v22-sealed.md` | ✔ | `9728ae8` |
-| Szúrópróba | 48 kérdés + 500 leválasztási kérdés ellenőrizve | ✔ | ez a commit | 11-27 |
+| Eredményjegyzet | `30-experiments/EXP-0009-v22-sealed.md` | ✔ | `9728ae8` | 11-27 |
+| Szúrópróba | 48 kérdés + 500 leválasztási kérdés ellenőrizve | ✔ | `e3cd89b` | 11-27 |
+| Leválasztási definíció | Négy olvasat: legfeljebb +15 pont a B-nek; a fő ok a hiányos lista | ✔ | ez a commit | 11-27 |
 
 ## Ellenőrzőpontok
 
@@ -47,8 +48,6 @@ A B rendszer (feltáró) jól olvassa a szelepállást (0,96), de a leválasztá
 ## Mi vár rád
 
 1. **Dolgozatterv-minta** elküldése, amikor kész vagy vele.
-2. **Döntés (nem sürgős):** megnézessük-e, mennyit számít a leválasztási definíció (üzemanyaggáz-ág) a gyenge
-   leválasztási eredményekben.
 
 ## Mit olvass el legközelebb
 

@@ -125,6 +125,55 @@ The arm ran GLM 5.3 Flash on one pinned host against Luna. Both used the frozen 
     - a control signal can reach its valve through an off-page signal connector, which carries the loop tag.
 - **One format case.** On OPEN_VALVES_TO_ISOLATE for EA-33701 (H1000g22p5B), B named all three gold valves but gave `next_to` H-33701 for the untagged one, where the gold says SB-337002. It is scored wrong. This is the same pattern as the borderline audit row (P-1701).
 
+### Isolation definition analysis (after the run, descriptive, not registered)
+
+**Question.** How much of the weak isolation score comes from the registered definition? The registered walk takes the first operated valve on every route, follows utility and network lines, and passes through other equipment.
+
+**Method.**
+- The four isolation families were re-scored on all ten sealed plants: 400 questions per arm.
+- Each gold was recomputed on the flow graph under four readings:
+
+  | Reading | What it changes |
+  |---|---|
+  | D0 | the registered definition, which reproduces the gold on 800 of 800 questions |
+  | D1 | only process lines (`P`, `PG`) are walked |
+  | D2 | other equipment is a boundary and is not walked through |
+  | D3 | D1 and D2 together |
+
+- An edge counts as a process edge if a line it runs on is `P` or `PG`, using the shared line of both ends where there is one. This is an approximation.
+- The saved agent-tier answers were re-scored under each reading, using the exact-set rule with the descriptor resolution of the cross-check.
+
+**Agent-tier accuracy, both scales.**
+
+| Family | B: D0 / D1 / D2 / D3 | A2: D0 / D1 / D2 / D3 |
+|---|---|---|
+| UPSTREAM_ISOLATION_X | 0.28 / 0.11 / 0.28 / 0.13 | 0.16 / 0.10 / 0.15 / 0.12 |
+| OPEN_VALVES_TO_ISOLATE | 0.26 / 0.11 / 0.32 / 0.15 | 0.14 / 0.12 / 0.15 / 0.14 |
+| DOWNSTREAM_ISOLATION_X | 0.05 / 0.17 / 0.05 / 0.17 | 0.02 / 0.03 / 0.02 / 0.03 |
+| OPEN_VALVES_TO_ISOLATE_DOWNSTREAM | 0.24 / 0.37 / 0.24 / 0.37 | 0.09 / 0.11 / 0.09 / 0.11 |
+| All four | 0.207 / 0.190 / 0.223 / 0.205 | 0.102 / 0.090 / 0.102 / 0.100 |
+
+**Findings.**
+- **Lenient upper bound.** If an answer counts as right when it matches any of the four readings, B rises from 0.207 to 0.362 and A2 from 0.102 to 0.138. So the definition explains at most about 15 points for B and 4 for A2. B stays wrong under every reading on 64 % of the isolation questions.
+- **How much the readings change the gold.** 27 % of the gold valves sit on non-process lines (both scales).
+  - Upstream, these are steam (`LPS`), cooling water (`CWS`) and fuel gas (`FG`) valves.
+  - Downstream, they are normally closed closed-drain valves (`CHD`, NC) and flare valves (`FL`).
+- **The agent itself follows D0 upstream and D1 downstream.**
+  - It lists the utility valves upstream: D1 lowers B's upstream score from 0.28 to 0.11.
+  - It leaves out the closed drain valves downstream: D1 raises DOWNSTREAM_ISOLATION_X from 0.05 to 0.17.
+  - DOWNSTREAM_ISOLATION_X asks for "valves that must be closed", yet its gold includes drains that are already closed. This is a real definitional point.
+- **The main failure is incompleteness.** Under D0, B's answered isolation lists have a mean recall of 0.52 (S100) and 0.49 (S1000), against a mean precision of 0.79 and 0.77. The agent finds about half of the valves, and most of what it names is right.
+- **Routing loss on the held-out wording.**
+  - The downstream templates say "cut … off from all downstream equipment" and never use the word "isolate". The need rule `isolat…downstream` therefore misses them, and the "all downstream" rule sends them to the Cypher tier first.
+  - On B this cost 10 OPEN_VALVES_TO_ISOLATE_DOWNSTREAM answers that the agent had right: the cascade scores 0.14 there, the agent alone 0.24, counted without the cutoff. It cost one more answer on DOWNSTREAM_ISOLATION_X.
+  - A2 lost none.
+  - The downstream families are the held-out ones, so this is a generalisation failure of the frozen router.
+
+**Limits.**
+- The analysis is post hoc and changes no registered claim.
+- The edge-service rule is approximate.
+- It reads agent-tier answers. For the downstream families the cascade's final answer sometimes came from the Cypher tier.
+
 ### Spend
 
 - The runs cost $19.58 of the $26.87 runs ledger.
@@ -150,7 +199,10 @@ The arm ran GLM 5.3 Flash on one pinned host against Luna. Both used the frozen 
 - The plants are generated, not real drawings, and there are only five plants per scale. The bootstrap understates between-plant variance by about 4/5 (`analysis.md` notes).
 - Every B result is exploratory. B ran sealed after its gate failed (`DEVIATION_B_EXPLORATORY.md`).
 - Some scope X answers are wrong only in format. One audited B row named the right valve with the wrong `next_to` label (`audit/classification.md`, borderline row). The descriptor format is strict by registration.
-- The isolation definition walks through heat exchangers and heaters and counts a fuel-gas branch as upstream (R-3701). This is recorded as a limitation, and its effect has not been quantified.
+- The isolation definition walks through heat exchangers and heaters and counts a fuel-gas branch as upstream (R-3701).
+  - The post-hoc analysis above bounds its effect at about 15 points for B and 4 for A2.
+  - It also shows that DOWNSTREAM_ISOLATION_X counts drains that are already closed.
+- The frozen need rules route the held-out downstream wording ("cut … off") to the Cypher tier first. This cost B 11 answers that its agent had right.
 - The GLM arm covers one plant per scale (235 questions each). It is descriptive.
 - The latency results depend on the machine. The run was on mains power except during the pause.
 - Every family scores without held-out split tables. The plants have no `splits.json` (`analysis.md` notes), so there is no held-out scope in this experiment.
