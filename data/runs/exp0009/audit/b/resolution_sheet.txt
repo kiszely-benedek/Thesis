@@ -1,0 +1,321 @@
+H100g22p1B:DOWNSTREAM_ISOLATION_X:P-4101 (correct=False)
+FV-41004 -> ['u41-t26']
+{"class": "ButterflyValve", "line_number": "6-P-410004-B1A-N", "next_to": "LV-41001", "side": "upstream"} -> ['u41-t21']
+
+H100g22p1B:DOWNSTREAM_ISOLATION_X:P-3601 (correct=False)
+{"class": "GateValve", "line_number": "4-P-360003-B1A-N", "next_to": "P-3601", "side": "downstream"} -> ['u36-t18']
+
+H100g22p1B:DOWNSTREAM_ISOLATION_X:P-3401 (correct=False)
+{"class": "GateValve", "line_number": "6-P-340042-B1A-N", "next_to": "FE-34056", "side": "upstream"} -> ['u34-t162']
+FV-34047 -> ['u34-t167']
+
+H100g22p1B:DOWNSTREAM_ISOLATION_X:P-2001 (correct=False)
+{"class": "GateValve", "line_number": "4-P-200004-B1A-N", "next_to": "P-2001", "side": "downstream"} -> ['u20-t20']
+
+H100g22p1B:OPEN_VALVES_TO_ISOLATE:P-1701 (correct=False)
+{"class": "GateValve", "line_number": "6-P-170004-A1A-N", "next_to": "P-1701", "side": "upstream"} -> []
+
+H100g22p1B:OPEN_VALVES_TO_ISOLATE:M-3701 (correct=False)
+{"class": "GateValve", "line_number": "4-P-370004-B1A-N", "next_to": "MX-37003", "side": "upstream"} -> ['u37-t7']
+LV-36016 -> ['u36-t69']
+
+H100g22p1B:OPEN_VALVES_TO_ISOLATE:R-1101 (correct=False)
+{"class": "ButterflyValve", "line_number": "6-P-110006-A1A-N", "next_to": "H-1101", "side": "upstream"} -> []
+YV-11032 -> ['u11-t163']
+{"class": "GateValve", "line_number": "6-P-100008-B1A-N", "next_to": "E-1101", "side": "upstream"} -> []
+{"class": "ButterflyValve", "line_number": "6-P-100016-B1A-N", "next_to": "E-1101", "side": "upstream"} -> []
+
+H100g22p1B:OPEN_VALVES_TO_ISOLATE:V-1601 (correct=False)
+{"class": "StraightwayValve", "line_number": "4-P-160004-B1A-N", "next_to": "V-1601", "side": "upstream"} -> []
+
+H100g22p1B:OPEN_VALVES_TO_ISOLATE:F-4701 (correct=False)
+{"class": "GateValve", "line_number": "6-P-470001-A1A-N", "next_to": "F-4701", "side": "upstream"} -> ['u47-t9']
+
+H100g22p1B:OPEN_VALVES_TO_ISOLATE:T-901 (correct=False)
+{"class": "GateValve", "line_number": "6-P-90054-A1A-N", "next_to": "T-901", "side": "upstream"} -> []
+
+H100g22p1B:OPEN_VALVES_TO_ISOLATE:E-902 (correct=False)
+{"class": "ButterflyValve", "line_number": "4-CWS-90120003-A1A-N", "next_to": "E-902", "side": "upstream"} -> ['u9-t40']
+{"class": "GateValve", "line_number": "6-P-90054-A1A-N", "next_to": "T-901", "side": "upstream"} -> []
+{"class": "GateValve", "line_number": "6-P-80004-B1A-N", "next_to": "E-903", "side": "upstream"} -> ['u8-t5']
+{"class": "GateValve", "line_number": "6-LPS-90002-A1A-H", "next_to": "E-901", "side": "upstream"} -> ['u9-t13', 'u9-t7']
+{"class": "GateValve", "line_number": "6-LPS-90016-A1A-H", "next_to": "E-903", "side": "upstream"} -> ['u9-t62', 'u9-t70']
+
+H100g22p1B:OPEN_VALVES_TO_ISOLATE:E-3402 (correct=False)
+{"class": "GateValve", "line_number": "6-CWS-340008-A1A-N", "next_to": "E-3402", "side": "upstream"} -> ['u34-t50']
+
+H100g22p1B:OPEN_VALVES_TO_ISOLATE_DOWNSTREAM:P-302 (correct=False)
+{"class": "GateValve", "line_number": "4-P-30013-B1A-N", "next_to": "V-301", "side": "upstream"} -> ['u3-t61']
+{"class": "ButterflyValve", "line_number": "6-P-30012-B1A-N", "next_to": "LV-3001", "side": "upstream"} -> ['u3-t53']
+
+H100g22p1B:OPEN_VALVES_TO_ISOLATE_DOWNSTREAM:P-3601 (correct=False)
+{"class": "GateValve", "line_number": "4-P-360003-B1A-N", "next_to": "FE-36002", "side": "upstream"} -> ['u36-t18']
+{"class": "StraightwayValve", "line_number": "4-P-360003-B1A-N", "next_to": "MX-36003", "side": "upstream"} -> ['u36-t7']
+
+H100g22p1B:OPEN_VALVES_TO_ISOLATE_DOWNSTREAM:P-3401 (correct=False)
+{"class": "GateValve", "line_number": "6-P-340042-A1A-N", "next_to": "FE-34056", "side": "upstream"} -> []
+FV-34047 -> ['u34-t167']
+
+H100g22p1B:OPEN_VALVES_TO_ISOLATE_DOWNSTREAM:P-801 (correct=False)
+{"class": "ButterflyValve", "line_number": "6-P-80004-B1A-N", "next_to": "P-801", "side": "downstream"} -> ['u8-t23']
+YV-8003 -> ['u8-t26']
+
+H100g22p1B:OPEN_VALVES_TO_ISOLATE_DOWNSTREAM:P-2001 (correct=False)
+{"class": "GateValve", "line_number": "4-P-200004-B1A-N", "next_to": "P-2001", "side": "downstream"} -> ['u20-t20']
+
+H100g22p1B:OPEN_VALVES_TO_ISOLATE_DOWNSTREAM:P-1902 (correct=False)
+{"class": "GateValve", "line_number": "6-P-190015-B1A-N", "next_to": "M-2001", "side": "upstream"} -> []
+
+H100g22p1B:POSITION_OF_VALVE:FE-1006|upstream|GateValve|6-P-10007-B1A-N (correct=False)
+answer 'NO'
+
+H100g22p1B:POSITION_OF_VALVE:E-3403|upstream|GateValve|6-P-330005-B1A-N (correct=False)
+answer 'NO'
+
+H100g22p1B:POSITION_OF_VALVE:YV-29001|upstream|ButterflyValve|6-P-280060-B1A-N (correct=False)
+answer 'NO'
+
+H100g22p1B:POSITION_OF_VALVE:P-5301B|downstream|GateValve|4-P-530029-A1A-N (correct=False)
+answer 'NC'
+
+H100g22p1B:POSITION_OF_VALVE:YV-17014|upstream|GlobeValve|4-P-160022-A1A-N (correct=False)
+answer 'NC'
+
+H100g22p1B:POSITION_OF_VALVE:YV-29003|upstream|GlobeValve|4-P-280048-A1A-N (correct=False)
+answer 'NC'
+
+H100g22p1B:POSITION_OF_VALVE:EJ-2804|upstream|GateValve|6-PG-280032-A1A-N (correct=False)
+answer 'NO'
+
+H100g22p1B:POSITION_OF_VALVE:XV-54017|upstream|GateValve|6-P-530020-A1A-N (correct=False)
+answer 'NO'
+
+H100g22p1B:POSITION_OF_VALVE:YV-24001|upstream|ButterflyValve|6-P-230005-B1A-N (correct=False)
+answer 'NO'
+
+H100g22p1B:POSITION_OF_VALVE:FE-44002|upstream|ButterflyValve|6-P-440003-B1A-N (correct=False)
+answer 'NO'
+
+H100g22p1B:UPSTREAM_ISOLATION_X:P-1701 (correct=False)
+{"class": "GateValve", "line_number": "6-P-170004-A1A-N", "next_to": "P-1701", "side": "upstream"} -> []
+
+H100g22p1B:UPSTREAM_ISOLATION_X:M-3701 (correct=False)
+{"class": "GateValve", "line_number": "4-P-370004-B1A-N", "next_to": "M-3701", "side": "upstream"} -> []
+LV-36016 -> ['u36-t69']
+
+H100g22p1B:UPSTREAM_ISOLATION_X:E-1302 (correct=False)
+{"class": "ButterflyValve", "line_number": "6-CWS-130009-A1A-N", "next_to": "E-1302", "side": "upstream"} -> ['u13-t53']
+{"class": "GateValve", "line_number": "6-P-130049-A1A-N", "next_to": "T-1301", "side": "upstream"} -> ['u13-t181']
+{"class": "GlobeValve", "line_number": "4-P-130047-A1A-N", "next_to": "T-1301", "side": "upstream"} -> ['u13-t185']
+FV-12002 -> ['u12-t3']
+YV-13049 -> ['u13-t223']
+YV-13053 -> ['u13-t252']
+{"class": "GateValve", "line_number": "6-LPS-130002-A1A-H", "next_to": "E-1301", "side": "upstream"} -> ['u13-t8']
+{"class": "GlobeValve", "line_number": "4-LPS-130001-A1A-H", "next_to": "E-1301", "side": "upstream"} -> ['u13-t12']
+
+H100g22p1B:UPSTREAM_ISOLATION_X:R-1101 (correct=False)
+{"class": "ButterflyValve", "line_number": "6-P-110006-A1A-N", "next_to": "H-1101", "side": "upstream"} -> []
+{"class": "GlobeValve", "line_number": "4-P-110005-A1A-N", "next_to": "H-1101", "side": "upstream"} -> []
+YV-11032 -> ['u11-t163']
+{"class": "GateValve", "line_number": "6-P-100008-B1A-N", "next_to": "E-1101", "side": "upstream"} -> []
+{"class": "ButterflyValve", "line_number": "6-P-100016-B1A-N", "next_to": "E-1101", "side": "upstream"} -> []
+{"class": "GateValve", "line_number": "6-PG-110041-A1A-N", "next_to": "E-1101", "side": "upstream"} -> ['u11-t150']
+
+H100g22p1B:UPSTREAM_ISOLATION_X:F-4701 (correct=False)
+{"class": "GateValve", "line_number": "6-P-470001-A1A-N", "next_to": "F-4701", "side": "upstream"} -> ['u47-t9']
+
+H100g22p1B:UPSTREAM_ISOLATION_X:T-901 (correct=False)
+{"class": "GateValve", "line_number": "6-P-90054-A1A-N", "next_to": "T-901", "side": "upstream"} -> []
+{"class": "GlobeValve", "line_number": "4-P-90053-A1A-N", "next_to": "T-901", "side": "upstream"} -> []
+
+H100g22p1B:UPSTREAM_ISOLATION_X:E-902 (correct=False)
+
+H100g22p1B:DOWNSTREAM_ISOLATION_X:P-4101 (correct=False)
+FV-41004 -> ['u41-t26']
+{"class": "ButterflyValve", "line_number": "6-P-410004-B1A-N", "next_to": "LV-41001", "side": "upstream"} -> ['u41-t21']
+
+H100g22p1B:DOWNSTREAM_ISOLATION_X:P-302 (correct=False)
+{"class": "GateValve", "line_number": "4-P-30013-B1A-N", "next_to": "V-301", "side": "upstream"} -> ['u3-t61']
+{"class": "ButterflyValve", "line_number": "6-P-30012-B1A-N", "next_to": "LV-3001", "side": "upstream"} -> ['u3-t53']
+
+H100g22p1B:DOWNSTREAM_ISOLATION_X:P-3601 (correct=False)
+{"class": "GateValve", "line_number": "4-P-360003-B1A-N", "next_to": "P-3601", "side": "downstream"} -> ['u36-t18']
+
+H100g22p1B:DOWNSTREAM_ISOLATION_X:P-3401 (correct=False)
+{"class": "GateValve", "line_number": "6-P-340042-B1A-N", "next_to": "FE-34056", "side": "upstream"} -> ['u34-t162']
+FV-34047 -> ['u34-t167']
+
+H100g22p1B:DOWNSTREAM_ISOLATION_X:P-801 (correct=False)
+{"class": "ButterflyValve", "line_number": "6-P-80004-B1A-N", "next_to": "V-801", "side": "upstream"} -> []
+YV-8003 -> ['u8-t26']
+
+H100g22p1B:DOWNSTREAM_ISOLATION_X:P-2001 (correct=False)
+{"class": "GateValve", "line_number": "4-P-200004-B1A-N", "next_to": "P-2001", "side": "downstream"} -> ['u20-t20']
+
+H100g22p1B:DOWNSTREAM_ISOLATION_X:P-1902 (correct=False)
+{"class": "GateValve", "line_number": "6-P-190015-B1A-N", "next_to": "M-2001", "side": "upstream"} -> []
+
+H100g22p1B:DOWNSTREAM_ISOLATION_X:P-5502B (correct=False)
+FV-55066 -> ['u55-t285']
+
+H100g22p1B:DOWNSTREAM_ISOLATION_X:F-2501 (correct=False)
+{"class": "ButterflyValve", "line_number": "6-P-250002-A1A-N", "next_to": "F-2501", "side": "downstream"} -> ['u25-t15']
+
+H100g22p1B:DOWNSTREAM_ISOLATION_X:P-1102 (correct=False)
+YV-11017 -> ['u11-t107']
+{"class": "GateValve", "line_number": "6-P-110025-B1A-N", "next_to": "P-1102", "side": "downstream"} -> ['u11-t102']
+
+H100g22p1B:OPEN_VALVES_TO_ISOLATE:P-1701 (correct=False)
+{"class": "GateValve", "line_number": "6-P-170004-A1A-N", "next_to": "P-1701", "side": "upstream"} -> []
+
+H100g22p1B:OPEN_VALVES_TO_ISOLATE:E-1302 (correct=False)
+{"class": "ButterflyValve", "line_number": "6-CWS-130009-A1A-N", "next_to": "E-1302", "side": "upstream"} -> ['u13-t53']
+
+H100g22p1B:OPEN_VALVES_TO_ISOLATE:P-4301 (correct=False)
+{"class": "GateValve", "line_number": "4-P-430002-A1A-N", "next_to": "P-4301", "side": "upstream"} -> []
+
+H100g22p1B:OPEN_VALVES_TO_ISOLATE:R-1101 (correct=False)
+{"class": "ButterflyValve", "line_number": "6-P-110006-A1A-N", "next_to": "H-1101", "side": "upstream"} -> []
+YV-11032 -> ['u11-t163']
+{"class": "GateValve", "line_number": "6-P-100008-B1A-N", "next_to": "E-1101", "side": "upstream"} -> []
+{"class": "ButterflyValve", "line_number": "6-P-100016-B1A-N", "next_to": "E-1101", "side": "upstream"} -> []
+
+H100g22p1B:OPEN_VALVES_TO_ISOLATE:V-1601 (correct=False)
+{"class": "StraightwayValve", "line_number": "4-P-160004-B1A-N", "next_to": "V-1601", "side": "upstream"} -> []
+
+H100g22p1B:OPEN_VALVES_TO_ISOLATE:T-901 (correct=False)
+{"class": "GateValve", "line_number": "6-P-90054-A1A-N", "next_to": "T-901", "side": "upstream"} -> []
+
+H100g22p1B:OPEN_VALVES_TO_ISOLATE:E-902 (correct=False)
+{"class": "ButterflyValve", "line_number": "4-CWS-90120003-A1A-N", "next_to": "E-902", "side": "upstream"} -> ['u9-t40']
+{"class": "GateValve", "line_number": "6-P-90054-A1A-N", "next_to": "T-901", "side": "upstream"} -> []
+{"class": "GateValve", "line_number": "6-P-80004-B1A-N", "next_to": "E-903", "side": "upstream"} -> ['u8-t5']
+{"class": "GateValve", "line_number": "6-LPS-90002-A1A-H", "next_to": "E-901", "side": "upstream"} -> ['u9-t13', 'u9-t7']
+{"class": "GateValve", "line_number": "6-LPS-90016-A1A-H", "next_to": "E-903", "side": "upstream"} -> ['u9-t62', 'u9-t70']
+
+H100g22p1B:OPEN_VALVES_TO_ISOLATE:E-3402 (correct=False)
+{"class": "GateValve", "line_number": "6-CWS-340008-A1A-N", "next_to": "E-3402", "side": "upstream"} -> ['u34-t50']
+
+H100g22p1B:OPEN_VALVES_TO_ISOLATE_DOWNSTREAM:P-4101 (correct=False)
+FV-41004 -> ['u41-t26']
+{"class": "ButterflyValve", "line_number": "6-P-410004-B1A-N", "next_to": "LV-41001", "side": "upstream"} -> ['u41-t21']
+
+H100g22p1B:OPEN_VALVES_TO_ISOLATE_DOWNSTREAM:P-302 (correct=False)
+{"class": "GateValve", "line_number": "4-P-30013-B1A-N", "next_to": "V-301", "side": "upstream"} -> ['u3-t61']
+{"class": "ButterflyValve", "line_number": "6-P-30012-B1A-N", "next_to": "LV-3001", "side": "upstream"} -> ['u3-t53']
+
+H100g22p1B:OPEN_VALVES_TO_ISOLATE_DOWNSTREAM:P-3601 (correct=False)
+{"class": "GateValve", "line_number": "4-P-360003-B1A-N", "next_to": "FE-36002", "side": "upstream"} -> ['u36-t18']
+{"class": "StraightwayValve", "line_number": "4-P-360003-B1A-N", "next_to": "MX-36003", "side": "upstream"} -> ['u36-t7']
+
+H100g22p1B:OPEN_VALVES_TO_ISOLATE_DOWNSTREAM:P-3401 (correct=False)
+{"class": "GateValve", "line_number": "6-P-340042-A1A-N", "next_to": "FE-34056", "side": "upstream"} -> []
+FV-34047 -> ['u34-t167']
+
+H100g22p1B:OPEN_VALVES_TO_ISOLATE_DOWNSTREAM:P-2001 (correct=False)
+{"class": "GateValve", "line_number": "4-P-200004-B1A-N", "next_to": "P-2001", "side": "downstream"} -> ['u20-t20']
+
+H100g22p1B:OPEN_VALVES_TO_ISOLATE_DOWNSTREAM:P-1902 (correct=False)
+{"class": "GateValve", "line_number": "6-P-190015-B1A-N", "next_to": "M-2001", "side": "upstream"} -> []
+
+H100g22p1B:OPEN_VALVES_TO_ISOLATE_DOWNSTREAM:P-5502B (correct=False)
+FV-55066 -> ['u55-t285']
+
+H100g22p1B:OPEN_VALVES_TO_ISOLATE_DOWNSTREAM:P-1102 (correct=False)
+{"class": "GateValve", "line_number": "6-P-110025-B1A-N", "next_to": "P-1102", "side": "downstream"} -> ['u11-t102']
+YV-11017 -> ['u11-t107']
+
+H100g22p1B:UPSTREAM_ISOLATION_X:P-1701 (correct=False)
+{"class": "GateValve", "line_number": "6-P-170004-A1A-N", "next_to": "P-1701", "side": "upstream"} -> []
+
+H100g22p1B:UPSTREAM_ISOLATION_X:M-3701 (correct=False)
+{"class": "GateValve", "line_number": "4-P-370004-B1A-N", "next_to": "M-3701", "side": "upstream"} -> []
+LV-36016 -> ['u36-t69']
+
+H100g22p1B:UPSTREAM_ISOLATION_X:R-1101 (correct=False)
+{"class": "ButterflyValve", "line_number": "6-P-110006-A1A-N", "next_to": "H-1101", "side": "upstream"} -> []
+{"class": "GlobeValve", "line_number": "4-P-110005-A1A-N", "next_to": "H-1101", "side": "upstream"} -> []
+YV-11032 -> ['u11-t163']
+{"class": "GateValve", "line_number": "6-P-100008-B1A-N", "next_to": "E-1101", "side": "upstream"} -> []
+{"class": "ButterflyValve", "line_number": "6-P-100016-B1A-N", "next_to": "E-1101", "side": "upstream"} -> []
+{"class": "GateValve", "line_number": "6-PG-110041-A1A-N", "next_to": "E-1101", "side": "upstream"} -> ['u11-t150']
+
+H100g22p1B:UPSTREAM_ISOLATION_X:V-1601 (correct=False)
+{"class": "StraightwayValve", "line_number": "4-P-160004-B1A-N", "next_to": "M-1601", "side": "upstream"} -> ['u16-t7']
+{"class": "ButterflyValve", "line_number": "6-P-140007-B1A-N", "next_to": "EJ-1501", "side": "upstream"} -> []
+{"class": "GateValve", "line_number": "4-P-150003-B1A-N", "next_to": "EJ-1501", "side": "upstream"} -> []
+
+H100g22p1B:UPSTREAM_ISOLATION_X:T-901 (correct=False)
+{"class": "GateValve", "line_number": "6-P-90054-A1A-N", "next_to": "T-901", "side": "upstream"} -> []
+{"class": "GlobeValve", "line_number": "4-P-90053-A1A-N", "next_to": "T-901", "side": "upstream"} -> []
+
+H100g22p1B:UPSTREAM_ISOLATION_X:E-902 (correct=False)
+
+H100g22p1B:UPSTREAM_ISOLATION_X:E-3402 (correct=False)
+
+H100g22p2B:DOWNSTREAM_ISOLATION_X:P-4002B (correct=False)
+BV-40010 -> ['u40-t285']
+GTV-40030 -> ['u40-t274']
+XV-40064 -> ['u40-t279']
+
+H100g22p2B:OPEN_VALVES_TO_ISOLATE:T-901 (correct=False)
+BFV-9006 -> ['u9-t217']
+GTV-9002 -> ['u9-t9']
+GTV-8015 -> ['u8-t167']
+TV-9017 -> ['u9-t53']
+
+H100g22p2B:OPEN_VALVES_TO_ISOLATE:P-101B (correct=False)
+BFV-1002 -> ['u1-t89']
+
+H100g22p2B:OPEN_VALVES_TO_ISOLATE:E-303 (correct=False)
+GTV-2006 -> ['u2-t53']
+TV-3020 -> ['u3-t60']
+
+H100g22p2B:OPEN_VALVES_TO_ISOLATE_DOWNSTREAM:P-1902C (correct=False)
+GTV-19021 -> ['u19-t165']
+GTV-19030 -> ['u19-t249']
+
+H100g22p2B:OPEN_VALVES_TO_ISOLATE_DOWNSTREAM:P-3902 (correct=False)
+GTV-39024 -> ['u39-t206']
+BFV-39005 -> ['u39-t198']
+
+H100g22p2B:OPEN_VALVES_TO_ISOLATE_DOWNSTREAM:P-4002B (correct=False)
+GTV-40030 -> ['u40-t274']
+XV-40064 -> ['u40-t279']
+
+H100g22p2B:OPEN_VALVES_TO_ISOLATE_DOWNSTREAM:P-3601B (correct=False)
+GTV-36007 -> ['u36-t67']
+BFV-36003 -> ['u36-t59']
+
+H100g22p2B:OPEN_VALVES_TO_ISOLATE_DOWNSTREAM:P-3701B (correct=False)
+GTV-37010 -> ['u37-t71']
+XV-37011 -> ['u37-t74']
+
+H100g22p2B:UPSTREAM_ISOLATION_X:P-101B (correct=False)
+BFV-1002 -> ['u1-t89']
+
+H100g22p2B:UPSTREAM_ISOLATION_X:E-303 (correct=False)
+GTV-2006 -> ['u2-t53']
+TV-3020 -> ['u3-t60']
+
+H100g22p2B:UPSTREAM_ISOLATION_X:P-3301A (correct=False)
+GTV-33001 -> ['u33-t49']
+
+H100g22p2B:UPSTREAM_ISOLATION_X:T-3901 (correct=False)
+GTV-38007 -> ['u38-t58']
+GTV-39024 -> ['u39-t206']
+LV-39041 -> ['u39-t175']
+GTV-39002 -> ['u39-t8']
+GV-39001 -> ['u39-t10']
+
+H100g22p2B:DOWNSTREAM_ISOLATION_X:P-2301A (correct=False)
+FV-23013 -> ['u23-t79']
+GTV-23007 -> ['u23-t76']
+
+H100g22p2B:DOWNSTREAM_ISOLATION_X:P-2201B (correct=False)
+BFV-22003 -> ['u22-t44']
+XV-22006 -> ['u22-t49']
+
+H100g22p2B:DOWNSTREAM_ISOLATION_X:P-1902C (correct=False)
+GTV-19030 -> ['u19-t249']
+GTV-19021 -> ['u19-t165']

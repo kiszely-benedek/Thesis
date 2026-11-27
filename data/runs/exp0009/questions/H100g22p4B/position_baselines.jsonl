@@ -1,0 +1,10 @@
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "H100g22p4B:POSITION_OF_VALVE:TV-44001|downstream|NeedleValve|4-LPS-440002-A1A-H", "text_prior": "NO"}
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "H100g22p4B:POSITION_OF_VALVE:FE-39009|downstream|NeedleValve|4-P-400007-A1A-N", "text_prior": "NO"}
+{"gold": "NC", "majority": "NO", "named_by": "descriptor", "question_id": "H100g22p4B:POSITION_OF_VALVE:XV-39003|upstream|GlobeValve|4-P-380037-A1A-N", "text_prior": "NC"}
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "H100g22p4B:POSITION_OF_VALVE:PSE-10023|downstream|GateValve|8-FL-90100004-A1A-N", "text_prior": "NO"}
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "H100g22p4B:POSITION_OF_VALVE:D-1801|downstream|GateValve|8-CHD-90110006-A1A-N", "text_prior": "NC"}
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "H100g22p4B:POSITION_OF_VALVE:P-101A|downstream|BallValve|4-P-10003-B1A-N", "text_prior": "NO"}
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "H100g22p4B:POSITION_OF_VALVE:XV-39001|upstream|PlugValve|6-P-390001-A1A-N", "text_prior": "NO"}
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "H100g22p4B:POSITION_OF_VALVE:XV-8001|upstream|ButterflyValve|6-P-70004-B1A-N", "text_prior": "NO"}
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "H100g22p4B:POSITION_OF_VALVE:STR-21003|upstream|ButterflyValve|4-P-210002-A1A-N", "text_prior": "NO"}
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "H100g22p4B:POSITION_OF_VALVE:XV-39003|upstream|PlugValve|6-P-390003-A1A-N", "text_prior": "NO"}

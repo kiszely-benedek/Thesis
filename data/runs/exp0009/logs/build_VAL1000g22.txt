@@ -1,0 +1,7 @@
+PASS G0c-rules: c4402d8e7c9dd15e9ba15d9913e2e0a814b6fd1a20d101f6f0a2808d9e1a3aa8
+PASS G0c-validation: ok
+PASS G0g: ok
+PASS G0k: ok
+PASS line-view: ok
+PASS G0-B: ok
+peak 1.76 GiB of 10.00; 2197.53s; rc 0

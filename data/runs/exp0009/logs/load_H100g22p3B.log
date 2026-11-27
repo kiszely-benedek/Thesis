@@ -1,0 +1,18 @@
+Received notification from DBMS server: <GqlStatusObject gql_status='01N51', status_description='warn: relationship type does not exist. The relationship type `related_to` does not exist in database `neo4j`. Verify that the spelling is correct.', position=<SummaryInputPosition line=1, column=81, offset=80>, raw_classification='UNRECOGNIZED', classification=<NotificationClassification.UNRECOGNIZED: 'UNRECOGNIZED'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'UNRECOGNIZED', '_severity': 'WARNING', '_position': {'offset': 80, 'line': 1, 'column': 81}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: 'MATCH (a:CorpusNode {corpus_id: $corpus_id})-[:control|has_agitator|measured_by|related_to|send_signal_to|send_to]->(b:CorpusNode)\nWHERE (a:PlantItem AND NOT b:PlantItem) OR (b:PlantItem AND NOT a:PlantItem)\nRETURN count(*) AS violations'
+{
+  "corpus_id": "H100g22p3B",
+  "store_profile": "plant_lines",
+  "positions_sha256": "20762dd4485ff30cbc2671b004400f926e6a7f4a95b1497c50fb285cf263179b",
+  "expected_per_code": {
+    "NC": 534,
+    "NO": 886,
+    "CSO": 48
+  },
+  "database_per_code": {
+    "NC": 534,
+    "NO": 886,
+    "CSO": 48
+  },
+  "nodes_written": 8798,
+  "total_seconds": 7.8630514999968
+}

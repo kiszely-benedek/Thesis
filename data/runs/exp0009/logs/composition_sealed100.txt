@@ -1,0 +1,362 @@
+H100g22p1: seed 5669, 55 units, 110 sheets
+
+plan (the counting rule)
+  quantity                                                            value  band                                      verdict
+  symbols per sheet, mean                                            80.295  56-109                                    pass
+  sheets with 40-134 symbols (share)                                  0.852  reported (target >= 0.95 not enforced)    reported
+  valves per sheet, mean                                             22.489  15-28                                     pass
+  instruments per sheet, mean                                        31.398  20-38                                     pass
+  instruments : valves                                                1.396  1-1.8                                     pass
+  off-page stubs per sheet, mean                                      7.545  5-11                                      pass
+  off-page stubs per sheet, max                                      15.000  <= 21                                     pass
+  equipment per sheet, min                                            1.000  >= 1                                      pass
+  equipment per sheet, max                                           10.000  <= 16                                     pass
+  sheets with at most 10 equipment (share)                            1.000  >= 0.9                                    pass
+  equipment in A/B(/C) sets (share)                                   0.412  0.25-0.45                                 pass
+  units drawn on 2 or more sheets (share)                             0.491  0.25-0.65                                 pass
+  signal cuts per sheet, mean                                         0.977  reported, no band                         reported
+
+sheets by kind (reported, not judged)
+  quantity                                                            value  band                                      verdict
+  sheets: process                                                    88.000  reported                                  reported
+  sheets: network (headers)                                          21.000  reported                                  reported
+  sheets: interarea                                                   1.000  reported                                  reported
+  sheets: network and interarea (share of all)                        0.200  reported                                  reported
+  tie-ins per network sheet, mean                                     8.045  reported                                  reported
+  tie-ins per network sheet, max                                     16.000  reported                                  reported
+  connectors per network sheet, mean                                 10.318  reported                                  reported
+  connectors per network sheet, max                                  19.000  reported                                  reported
+
+corpus (sheet graphs)
+  quantity                                                            value  band                                      verdict
+  instruments with sheet-graph degree 1 (share)                       0.611  >= 0.55                                   pass
+  sheets that show one unit (share)                                   1.000  = 1                                       pass
+  dup 0: sheets with corpus symbols = plan symbols (share)            1.000  = 1                                       pass
+  dup 0: sheets with pipe connectors = plan crossings (share)         1.000  = 1                                       pass
+  dup 0: sheets with signal connectors = plan signal cuts (share)     1.000  = 1                                       pass
+  preset duplication: reference copies added per sheet                0.064  reported, no band                         reported
+  preset duplication: crossings absorbed per sheet                    0.127  reported, no band                         reported
+
+per pattern (misses = sheets > 134 or < 40 symbols, > 21 stubs)
+  pattern, layout, sheet                n    symbols mean (min-max)    stubs mean (max)  misses
+  U1 combined sheet 1/1                 1           262.0 (262-262)           15.0 (15)  >134: 1, <40: 0, >21 stubs: 0
+  U1 two_sheets sheet 1/2               1           164.0 (164-164)           10.0 (10)  >134: 1, <40: 0, >21 stubs: 0
+  U1 two_sheets sheet 1/3               2           119.5 (105-134)           10.5 (11)  
+  U1 two_sheets sheet 1/4               1              92.0 (92-92)             8.0 (8)  
+  U1 two_sheets sheet 2/2               1           115.0 (115-115)           11.0 (11)  
+  U1 two_sheets sheet 2/3               2           113.0 (111-115)           11.5 (12)  
+  U1 two_sheets sheet 2/4               1              86.0 (86-86)             8.0 (8)  
+  U1 two_sheets sheet 3/3               2              58.0 (57-59)             7.0 (7)  
+  U1 two_sheets sheet 3/4               1              58.0 (58-58)           11.0 (11)  
+  U1 two_sheets sheet 4/4               1              59.0 (59-59)             5.0 (5)  
+  U2 sheet 1/1                          1           123.0 (123-123)             9.0 (9)  
+  U3 sheet 1/2                          3             99.3 (89-106)             6.0 (6)  
+  U3 sheet 1/3                          2              69.5 (43-96)             5.0 (6)  
+  U3 sheet 2/2                          3           122.3 (112-135)             7.7 (8)  >134: 1, <40: 0, >21 stubs: 0
+  U3 sheet 2/3                          2              68.5 (66-71)             7.0 (7)  
+  U3 sheet 3/3                          2             85.5 (56-115)             7.5 (8)  
+  U4 sheet 1/1                          3             94.3 (89-101)             6.3 (7)  
+  U4 sheet 1/2                          8              47.1 (39-72)             6.1 (8)  >134: 0, <40: 3, >21 stubs: 0
+  U4 sheet 2/2                          8             94.5 (66-141)           10.1 (13)  >134: 1, <40: 0, >21 stubs: 0
+  U5 sheet 1/1                          5             99.4 (69-129)            8.8 (10)  
+  U6 sheet 1/1                          9             97.8 (77-134)             7.0 (8)  
+  U6 sheet 1/2                          8              52.4 (48-58)             7.1 (8)  
+  U6 sheet 2/2                          8              56.8 (47-71)             7.2 (9)  
+  U7 sheet 1/1                          4              36.8 (34-39)             3.0 (3)  >134: 0, <40: 4, >21 stubs: 0
+  U8 sheet 1/1                          5             82.2 (66-108)             6.8 (8)  
+  U8 sheet 1/2                          2              64.5 (47-82)            9.0 (10)  
+  U8 sheet 2/2                          2              30.5 (27-34)             7.0 (7)  >134: 0, <40: 2, >21 stubs: 0
+H100g22p2: seed 5474, 42 units, 90 sheets
+
+plan (the counting rule)
+  quantity                                                            value  band                                      verdict
+  symbols per sheet, mean                                            86.461  56-109                                    pass
+  sheets with 40-134 symbols (share)                                  0.908  reported (target >= 0.95 not enforced)    reported
+  valves per sheet, mean                                             24.487  15-28                                     pass
+  instruments per sheet, mean                                        33.961  20-38                                     pass
+  instruments : valves                                                1.387  1-1.8                                     pass
+  off-page stubs per sheet, mean                                      7.947  5-11                                      pass
+  off-page stubs per sheet, max                                      16.000  <= 21                                     pass
+  equipment per sheet, min                                            1.000  >= 1                                      pass
+  equipment per sheet, max                                           10.000  <= 16                                     pass
+  sheets with at most 10 equipment (share)                            1.000  >= 0.9                                    pass
+  equipment in A/B(/C) sets (share)                                   0.396  0.25-0.45                                 pass
+  units drawn on 2 or more sheets (share)                             0.571  0.25-0.65                                 pass
+  signal cuts per sheet, mean                                         0.789  reported, no band                         reported
+
+sheets by kind (reported, not judged)
+  quantity                                                            value  band                                      verdict
+  sheets: process                                                    76.000  reported                                  reported
+  sheets: network (headers)                                          14.000  reported                                  reported
+  sheets: interarea                                                   0.000  reported                                  reported
+  sheets: network and interarea (share of all)                        0.156  reported                                  reported
+  tie-ins per network sheet, mean                                    12.143  reported                                  reported
+  tie-ins per network sheet, max                                     16.000  reported                                  reported
+  connectors per network sheet, mean                                 14.571  reported                                  reported
+  connectors per network sheet, max                                  19.000  reported                                  reported
+
+corpus (sheet graphs)
+  quantity                                                            value  band                                      verdict
+  instruments with sheet-graph degree 1 (share)                       0.609  >= 0.55                                   pass
+  sheets that show one unit (share)                                   1.000  = 1                                       pass
+  dup 0: sheets with corpus symbols = plan symbols (share)            1.000  = 1                                       pass
+  dup 0: sheets with pipe connectors = plan crossings (share)         1.000  = 1                                       pass
+  dup 0: sheets with signal connectors = plan signal cuts (share)     1.000  = 1                                       pass
+  preset duplication: reference copies added per sheet                0.089  reported, no band                         reported
+  preset duplication: crossings absorbed per sheet                    0.178  reported, no band                         reported
+
+per pattern (misses = sheets > 134 or < 40 symbols, > 21 stubs)
+  pattern, layout, sheet                n    symbols mean (min-max)    stubs mean (max)  misses
+  U1 combined sheet 1/1                 2           270.5 (258-283)           15.5 (16)  >134: 2, <40: 0, >21 stubs: 0
+  U1 combined sheet 1/3                 1           185.0 (185-185)           14.0 (14)  >134: 1, <40: 0, >21 stubs: 0
+  U1 combined sheet 2/3                 1              60.0 (60-60)           11.0 (11)  
+  U1 combined sheet 3/3                 1              51.0 (51-51)             6.0 (6)  
+  U1 two_sheets sheet 1/2               4           149.2 (117-176)           10.0 (11)  >134: 3, <40: 0, >21 stubs: 0
+  U1 two_sheets sheet 1/3               2            111.0 (90-132)           10.0 (11)  
+  U1 two_sheets sheet 1/4               1           113.0 (113-113)           10.0 (10)  
+  U1 two_sheets sheet 2/2               4            106.5 (92-117)           10.0 (11)  
+  U1 two_sheets sheet 2/3               2           114.0 (105-123)             8.5 (9)  
+  U1 two_sheets sheet 2/4               1           115.0 (115-115)           12.0 (12)  
+  U1 two_sheets sheet 3/3               2              48.0 (46-50)             6.0 (7)  
+  U1 two_sheets sheet 3/4               1              65.0 (65-65)           12.0 (12)  
+  U1 two_sheets sheet 4/4               1              56.0 (56-56)             7.0 (7)  
+  U3 sheet 1/3                          3              66.3 (49-98)             5.0 (6)  
+  U3 sheet 1/4                          1              51.0 (51-51)             5.0 (5)  
+  U3 sheet 2/3                          3              60.3 (48-67)             6.3 (7)  
+  U3 sheet 2/4                          1              66.0 (66-66)             7.0 (7)  
+  U3 sheet 3/3                          3             92.0 (72-108)             6.7 (7)  
+  U3 sheet 3/4                          1              57.0 (57-57)             5.0 (5)  
+  U3 sheet 4/4                          1              66.0 (66-66)             6.0 (6)  
+  U4 sheet 1/1                          2             97.5 (88-107)             6.5 (8)  
+  U4 sheet 1/2                          8              65.1 (41-96)            7.8 (10)  
+  U4 sheet 2/2                          8             73.2 (48-106)            8.8 (11)  
+  U5 sheet 1/1                          2           109.5 (106-113)            9.5 (10)  
+  U6 sheet 1/1                         10             90.7 (77-121)             6.7 (8)  
+  U6 sheet 1/2                          4              51.2 (49-56)             7.0 (7)  
+  U6 sheet 2/2                          4              49.8 (45-59)             7.0 (7)  
+  U7 sheet 1/1                          1              36.0 (36-36)             3.0 (3)  >134: 0, <40: 1, >21 stubs: 0
+  U8 sheet 1/1                          1              52.0 (52-52)             5.0 (5)  
+H100g22p3: seed 5308, 53 units, 109 sheets
+
+plan (the counting rule)
+  quantity                                                            value  band                                      verdict
+  symbols per sheet, mean                                            84.966  56-109                                    pass
+  sheets with 40-134 symbols (share)                                  0.875  reported (target >= 0.95 not enforced)    reported
+  valves per sheet, mean                                             23.932  15-28                                     pass
+  instruments per sheet, mean                                        33.580  20-38                                     pass
+  instruments : valves                                                1.403  1-1.8                                     pass
+  off-page stubs per sheet, mean                                      7.966  5-11                                      pass
+  off-page stubs per sheet, max                                      17.000  <= 21                                     pass
+  equipment per sheet, min                                            1.000  >= 1                                      pass
+  equipment per sheet, max                                            8.000  <= 16                                     pass
+  sheets with at most 10 equipment (share)                            1.000  >= 0.9                                    pass
+  equipment in A/B(/C) sets (share)                                   0.401  0.25-0.45                                 pass
+  units drawn on 2 or more sheets (share)                             0.509  0.25-0.65                                 pass
+  signal cuts per sheet, mean                                         0.864  reported, no band                         reported
+
+sheets by kind (reported, not judged)
+  quantity                                                            value  band                                      verdict
+  sheets: process                                                    88.000  reported                                  reported
+  sheets: network (headers)                                          20.000  reported                                  reported
+  sheets: interarea                                                   1.000  reported                                  reported
+  sheets: network and interarea (share of all)                        0.193  reported                                  reported
+  tie-ins per network sheet, mean                                     9.095  reported                                  reported
+  tie-ins per network sheet, max                                     16.000  reported                                  reported
+  connectors per network sheet, mean                                 11.381  reported                                  reported
+  connectors per network sheet, max                                  19.000  reported                                  reported
+
+corpus (sheet graphs)
+  quantity                                                            value  band                                      verdict
+  instruments with sheet-graph degree 1 (share)                       0.610  >= 0.55                                   pass
+  sheets that show one unit (share)                                   1.000  = 1                                       pass
+  dup 0: sheets with corpus symbols = plan symbols (share)            1.000  = 1                                       pass
+  dup 0: sheets with pipe connectors = plan crossings (share)         1.000  = 1                                       pass
+  dup 0: sheets with signal connectors = plan signal cuts (share)     1.000  = 1                                       pass
+  preset duplication: reference copies added per sheet                0.073  reported, no band                         reported
+  preset duplication: crossings absorbed per sheet                    0.147  reported, no band                         reported
+
+per pattern (misses = sheets > 134 or < 40 symbols, > 21 stubs)
+  pattern, layout, sheet                n    symbols mean (min-max)    stubs mean (max)  misses
+  U1 combined sheet 1/2                 1           181.0 (181-181)           12.0 (12)  >134: 1, <40: 0, >21 stubs: 0
+  U1 combined sheet 1/3                 2           225.5 (212-239)           16.5 (17)  >134: 2, <40: 0, >21 stubs: 0
+  U1 combined sheet 2/2                 1              53.0 (53-53)             7.0 (7)  
+  U1 combined sheet 2/3                 2              63.0 (62-64)           11.5 (12)  
+  U1 combined sheet 3/3                 2              51.0 (43-59)             7.5 (8)  
+  U1 two_sheets sheet 1/2               2           146.0 (135-157)            9.5 (10)  >134: 2, <40: 0, >21 stubs: 0
+  U1 two_sheets sheet 1/3               4           130.2 (118-148)            9.5 (10)  >134: 1, <40: 0, >21 stubs: 0
+  U1 two_sheets sheet 2/2               2           124.0 (118-130)           10.0 (11)  
+  U1 two_sheets sheet 2/3               4             86.0 (58-111)           10.2 (12)  
+  U1 two_sheets sheet 3/3               4              59.2 (42-82)            9.0 (11)  
+  U2 sheet 1/1                          2           131.5 (105-158)            8.0 (10)  >134: 1, <40: 0, >21 stubs: 0
+  U3 sheet 1/2                          1              87.0 (87-87)             6.0 (6)  
+  U3 sheet 1/3                          2              48.5 (43-54)             4.0 (4)  
+  U3 sheet 2/2                          1              90.0 (90-90)             6.0 (6)  
+  U3 sheet 2/3                          2              73.0 (70-76)             7.0 (7)  
+  U3 sheet 3/3                          2              83.0 (79-87)             6.5 (7)  
+  U4 sheet 1/1                          3             94.3 (87-103)             5.3 (7)  
+  U4 sheet 1/2                          9              55.4 (44-95)            7.1 (11)  
+  U4 sheet 2/2                          9             84.4 (47-146)            9.6 (13)  >134: 1, <40: 0, >21 stubs: 0
+  U5 sheet 1/1                          4             97.5 (71-119)            9.2 (10)  
+  U6 sheet 1/1                         12            100.1 (78-124)             7.1 (8)  
+  U6 sheet 1/2                          5              56.2 (48-63)             7.2 (8)  
+  U6 sheet 2/2                          5              57.6 (49-78)             7.4 (9)  
+  U7 sheet 1/1                          3              35.3 (30-39)             3.0 (3)  >134: 0, <40: 3, >21 stubs: 0
+  U8 sheet 1/1                          2              76.0 (69-83)             6.5 (7)  
+  U8 sheet 1/2                          1              73.0 (73-73)             6.0 (6)  
+  U8 sheet 2/2                          1              40.0 (40-40)             5.0 (5)  
+H100g22p4: seed 5917, 55 units, 109 sheets
+
+plan (the counting rule)
+  quantity                                                            value  band                                      verdict
+  symbols per sheet, mean                                            80.441  56-109                                    pass
+  sheets with 40-134 symbols (share)                                  0.860  reported (target >= 0.95 not enforced)    reported
+  valves per sheet, mean                                             22.129  15-28                                     pass
+  instruments per sheet, mean                                        31.613  20-38                                     pass
+  instruments : valves                                                1.429  1-1.8                                     pass
+  off-page stubs per sheet, mean                                      7.817  5-11                                      pass
+  off-page stubs per sheet, max                                      14.000  <= 21                                     pass
+  equipment per sheet, min                                            1.000  >= 1                                      pass
+  equipment per sheet, max                                            9.000  <= 16                                     pass
+  sheets with at most 10 equipment (share)                            1.000  >= 0.9                                    pass
+  equipment in A/B(/C) sets (share)                                   0.436  0.25-0.45                                 pass
+  units drawn on 2 or more sheets (share)                             0.564  0.25-0.65                                 pass
+  signal cuts per sheet, mean                                         0.946  reported, no band                         reported
+
+sheets by kind (reported, not judged)
+  quantity                                                            value  band                                      verdict
+  sheets: process                                                    93.000  reported                                  reported
+  sheets: network (headers)                                          16.000  reported                                  reported
+  sheets: interarea                                                   0.000  reported                                  reported
+  sheets: network and interarea (share of all)                        0.147  reported                                  reported
+  tie-ins per network sheet, mean                                    12.438  reported                                  reported
+  tie-ins per network sheet, max                                     16.000  reported                                  reported
+  connectors per network sheet, mean                                 14.938  reported                                  reported
+  connectors per network sheet, max                                  19.000  reported                                  reported
+
+corpus (sheet graphs)
+  quantity                                                            value  band                                      verdict
+  instruments with sheet-graph degree 1 (share)                       0.607  >= 0.55                                   pass
+  sheets that show one unit (share)                                   1.000  = 1                                       pass
+  dup 0: sheets with corpus symbols = plan symbols (share)            1.000  = 1                                       pass
+  dup 0: sheets with pipe connectors = plan crossings (share)         1.000  = 1                                       pass
+  dup 0: sheets with signal connectors = plan signal cuts (share)     1.000  = 1                                       pass
+  preset duplication: reference copies added per sheet                0.073  reported, no band                         reported
+  preset duplication: crossings absorbed per sheet                    0.147  reported, no band                         reported
+
+per pattern (misses = sheets > 134 or < 40 symbols, > 21 stubs)
+  pattern, layout, sheet                n    symbols mean (min-max)    stubs mean (max)  misses
+  U1 combined sheet 1/1                 1           273.0 (273-273)           14.0 (14)  >134: 1, <40: 0, >21 stubs: 0
+  U1 two_sheets sheet 1/2               3           147.7 (125-164)           10.3 (11)  >134: 2, <40: 0, >21 stubs: 0
+  U1 two_sheets sheet 1/3               2           121.5 (116-127)           10.0 (10)  
+  U1 two_sheets sheet 1/4               1           117.0 (117-117)           10.0 (10)  
+  U1 two_sheets sheet 2/2               3           120.3 (115-124)           10.3 (12)  
+  U1 two_sheets sheet 2/3               2           127.5 (120-135)           10.5 (11)  >134: 1, <40: 0, >21 stubs: 0
+  U1 two_sheets sheet 2/4               1           116.0 (116-116)           12.0 (12)  
+  U1 two_sheets sheet 3/3               2              59.0 (51-67)            9.5 (12)  
+  U1 two_sheets sheet 3/4               1              62.0 (62-62)           12.0 (12)  
+  U1 two_sheets sheet 4/4               1              47.0 (47-47)             7.0 (7)  
+  U2 sheet 1/1                          2           143.0 (133-153)            9.5 (10)  >134: 1, <40: 0, >21 stubs: 0
+  U3 sheet 1/2                          2             97.0 (94-100)             6.0 (6)  
+  U3 sheet 1/3                          1              48.0 (48-48)             5.0 (5)  
+  U3 sheet 1/4                          1              48.0 (48-48)             4.0 (4)  
+  U3 sheet 2/2                          2           112.0 (108-116)             7.5 (8)  
+  U3 sheet 2/3                          1              67.0 (67-67)             7.0 (7)  
+  U3 sheet 2/4                          1              68.0 (68-68)             7.0 (7)  
+  U3 sheet 3/3                          1              99.0 (99-99)             7.0 (7)  
+  U3 sheet 3/4                          1              58.0 (58-58)             7.0 (7)  
+  U3 sheet 4/4                          1              53.0 (53-53)             7.0 (7)  
+  U4 sheet 1/2                          9              49.9 (39-61)             6.3 (7)  >134: 0, <40: 1, >21 stubs: 0
+  U4 sheet 2/2                          9             80.7 (54-104)            9.2 (12)  
+  U5 sheet 1/1                          5             97.2 (63-130)            9.0 (10)  
+  U6 sheet 1/1                         10             95.6 (72-119)             7.0 (8)  
+  U6 sheet 1/2                          8              52.0 (47-57)             7.1 (8)  
+  U6 sheet 2/2                          8              62.9 (48-82)             7.5 (9)  
+  U7 sheet 1/1                          4              35.5 (32-39)             3.0 (3)  >134: 0, <40: 4, >21 stubs: 0
+  U8 sheet 1/1                          2              72.5 (71-74)             6.0 (6)  
+  U8 sheet 1/2                          4              79.2 (46-95)            9.0 (11)  
+  U8 sheet 2/2                          4              40.2 (34-51)             7.0 (9)  >134: 0, <40: 3, >21 stubs: 0
+H100g22p5: seed 5030, 53 units, 100 sheets
+
+plan (the counting rule)
+  quantity                                                            value  band                                      verdict
+  symbols per sheet, mean                                            87.247  56-109                                    pass
+  sheets with 40-134 symbols (share)                                  0.835  reported (target >= 0.95 not enforced)    reported
+  valves per sheet, mean                                             24.647  15-28                                     pass
+  instruments per sheet, mean                                        34.176  20-38                                     pass
+  instruments : valves                                                1.387  1-1.8                                     pass
+  off-page stubs per sheet, mean                                      7.741  5-11                                      pass
+  off-page stubs per sheet, max                                      17.000  <= 21                                     pass
+  equipment per sheet, min                                            1.000  >= 1                                      pass
+  equipment per sheet, max                                           11.000  <= 16                                     pass
+  sheets with at most 10 equipment (share)                            0.988  >= 0.9                                    pass
+  equipment in A/B(/C) sets (share)                                   0.423  0.25-0.45                                 pass
+  units drawn on 2 or more sheets (share)                             0.491  0.25-0.65                                 pass
+  signal cuts per sheet, mean                                         0.706  reported, no band                         reported
+
+sheets by kind (reported, not judged)
+  quantity                                                            value  band                                      verdict
+  sheets: process                                                    85.000  reported                                  reported
+  sheets: network (headers)                                          15.000  reported                                  reported
+  sheets: interarea                                                   0.000  reported                                  reported
+  sheets: network and interarea (share of all)                        0.150  reported                                  reported
+  tie-ins per network sheet, mean                                    12.400  reported                                  reported
+  tie-ins per network sheet, max                                     16.000  reported                                  reported
+  connectors per network sheet, mean                                 14.867  reported                                  reported
+  connectors per network sheet, max                                  19.000  reported                                  reported
+
+corpus (sheet graphs)
+  quantity                                                            value  band                                      verdict
+  instruments with sheet-graph degree 1 (share)                       0.619  >= 0.55                                   pass
+  sheets that show one unit (share)                                   1.000  = 1                                       pass
+  dup 0: sheets with corpus symbols = plan symbols (share)            1.000  = 1                                       pass
+  dup 0: sheets with pipe connectors = plan crossings (share)         1.000  = 1                                       pass
+  dup 0: sheets with signal connectors = plan signal cuts (share)     1.000  = 1                                       pass
+  preset duplication: reference copies added per sheet                0.080  reported, no band                         reported
+  preset duplication: crossings absorbed per sheet                    0.160  reported, no band                         reported
+
+per pattern (misses = sheets > 134 or < 40 symbols, > 21 stubs)
+  pattern, layout, sheet                n    symbols mean (min-max)    stubs mean (max)  misses
+  U1 combined sheet 1/1                 1           299.0 (299-299)           16.0 (16)  >134: 1, <40: 0, >21 stubs: 0
+  U1 combined sheet 1/2                 2           226.5 (212-241)           16.0 (17)  >134: 2, <40: 0, >21 stubs: 0
+  U1 combined sheet 2/2                 2              55.5 (48-63)           10.0 (12)  
+  U1 two_sheets sheet 1/2               2           148.0 (138-158)           10.5 (11)  >134: 2, <40: 0, >21 stubs: 0
+  U1 two_sheets sheet 1/3               3            122.7 (92-138)           10.7 (11)  >134: 2, <40: 0, >21 stubs: 0
+  U1 two_sheets sheet 2/2               2           117.0 (111-123)           10.0 (12)  
+  U1 two_sheets sheet 2/3               3           111.3 (102-121)            9.3 (12)  
+  U1 two_sheets sheet 3/3               3              63.0 (52-73)            9.3 (12)  
+  U2 sheet 1/1                          3            124.7 (92-164)            8.3 (10)  >134: 1, <40: 0, >21 stubs: 0
+  U3 sheet 1/2                          3             99.7 (97-102)             6.0 (6)  
+  U3 sheet 1/3                          3             81.0 (48-104)             5.7 (6)  
+  U3 sheet 2/2                          3           109.7 (102-115)             7.0 (7)  
+  U3 sheet 2/3                          3              66.7 (59-72)             7.0 (7)  
+  U3 sheet 3/3                          3             71.3 (52-107)             7.0 (7)  
+  U4 sheet 1/1                          5             99.4 (96-101)             7.2 (9)  
+  U4 sheet 1/2                          6              59.8 (41-85)             6.7 (8)  
+  U4 sheet 2/2                          6              71.2 (48-93)            8.3 (11)  
+  U5 sheet 1/1                          3             95.3 (74-117)            9.3 (11)  
+  U6 sheet 1/1                          9             98.1 (74-134)             6.9 (8)  
+  U6 sheet 1/2                          7              58.4 (55-68)             7.3 (8)  
+  U6 sheet 2/2                          7              57.6 (44-78)             7.6 (9)  
+  U7 sheet 1/1                          6              34.8 (32-39)             3.0 (3)  >134: 0, <40: 6, >21 stubs: 0
+pooled over 5 plants (H100g22p1, H100g22p2, H100g22p3, H100g22p4, H100g22p5): bands judged on the mean
+  quantity                                                             mean  band                                      verdict       H100g22p1     H100g22p2     H100g22p3     H100g22p4     H100g22p5
+  symbols per sheet, mean                                            83.882  56-109                                    pass             80.295        86.461        84.966        80.441        87.247
+  sheets with 40-134 symbols (share)                                  0.866  reported (target >= 0.95 not enforced)    reported          0.852         0.908         0.875         0.860         0.835
+  valves per sheet, mean                                             23.537  15-28                                     pass             22.489        24.487        23.932        22.129        24.647
+  instruments per sheet, mean                                        32.945  20-38                                     pass             31.398        33.961        33.580        31.613        34.176
+  instruments : valves                                                1.400  1-1.8                                     pass              1.396         1.387         1.403         1.429         1.387
+  off-page stubs per sheet, mean                                      7.803  5-11                                      pass              7.545         7.947         7.966         7.817         7.741
+  off-page stubs per sheet, max                                      15.800  <= 21                                     pass             15.000        16.000        17.000        14.000        17.000
+  equipment per sheet, min                                            1.000  >= 1                                      pass              1.000         1.000         1.000         1.000         1.000
+  equipment per sheet, max                                            9.600  <= 16                                     pass             10.000        10.000         8.000         9.000        11.000
+  sheets with at most 10 equipment (share)                            0.998  >= 0.9                                    pass              1.000         1.000         1.000         1.000         0.988
+  equipment in A/B(/C) sets (share)                                   0.414  0.25-0.45                                 pass              0.412         0.396         0.401         0.436         0.423
+  units drawn on 2 or more sheets (share)                             0.525  0.25-0.65                                 pass              0.491         0.571         0.509         0.564         0.491
+  signal cuts per sheet, mean                                         0.857  reported, no band                         reported          0.977         0.789         0.864         0.946         0.706
+  instruments with sheet-graph degree 1 (share)                       0.611  >= 0.55                                   pass              0.611         0.609         0.610         0.607         0.619
+  sheets that show one unit (share)                                   1.000  = 1                                       pass              1.000         1.000         1.000         1.000         1.000
+  dup 0: sheets with corpus symbols = plan symbols (share)            1.000  = 1                                       pass              1.000         1.000         1.000         1.000         1.000
+  dup 0: sheets with pipe connectors = plan crossings (share)         1.000  = 1                                       pass              1.000         1.000         1.000         1.000         1.000
+  dup 0: sheets with signal connectors = plan signal cuts (share)     1.000  = 1                                       pass              1.000         1.000         1.000         1.000         1.000
+  preset duplication: reference copies added per sheet                0.076  reported, no band                         reported          0.064         0.089         0.073         0.073         0.080
+  preset duplication: crossings absorbed per sheet                    0.152  reported, no band                         reported          0.127         0.178         0.147         0.147         0.160

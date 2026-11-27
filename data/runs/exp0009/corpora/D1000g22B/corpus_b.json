@@ -1,0 +1,17 @@
+{
+  "a_id": "D1000g22",
+  "b_id": "D1000g22B",
+  "a_ingest_sha256": "b732c189295117fd31b6fec9766a65c56d5f6bcee1f71d0850b681ce9464c113",
+  "b_ingest_sha256": "752b7508f29171ea97a1a3f9f3cbeeabec0c3207a81eb909824ea9adec298f16",
+  "positions_sha256": "43455e48212b01dd4f4069d98e5de05ef71d24002984bd7624275ee78f2a5505",
+  "positions_per_code": {
+    "CSO": 496,
+    "NC": 5420,
+    "NO": 8838
+  },
+  "seconds": {
+    "a_build": 439.1,
+    "relabel": 0.0,
+    "positions": 376.8
+  }
+}

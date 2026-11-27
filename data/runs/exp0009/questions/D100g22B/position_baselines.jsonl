@@ -1,0 +1,10 @@
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "D100g22B:POSITION_OF_VALVE:E-1603|downstream|NeedleValve|4-CD-160016-A1A-H", "text_prior": "NO"}
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "D100g22B:POSITION_OF_VALVE:E-1603|upstream|GateValve|6-P-150018-A1A-N", "text_prior": "NO"}
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "D100g22B:POSITION_OF_VALVE:H-3001|upstream|ButterflyValve|6-P-290015-A1A-N", "text_prior": "NO"}
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "D100g22B:POSITION_OF_VALVE:PSE-15023|downstream|GateValve|8-FL-90100003-A1A-N", "text_prior": "NO"}
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "D100g22B:POSITION_OF_VALVE:D-1601|downstream|ButterflyValve|8-CHD-90110006-A1A-N", "text_prior": "NO"}
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "D100g22B:POSITION_OF_VALVE:STR-21046|upstream|ButterflyValve|6-P-210050-A1A-N", "text_prior": "NO"}
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "D100g22B:POSITION_OF_VALVE:YV-10001|upstream|GateValve|6-P-100001-A1A-N", "text_prior": "NO"}
+{"gold": "NC", "majority": "NO", "named_by": "descriptor", "question_id": "D100g22B:POSITION_OF_VALVE:YV-23001|upstream|GlobeValve|4-P-220001-A1A-N", "text_prior": "NC"}
+{"gold": "NC", "majority": "NO", "named_by": "descriptor", "question_id": "D100g22B:POSITION_OF_VALVE:T-3301|upstream|GlobeValve|4-P-330044-A1A-N", "text_prior": "NC"}
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "D100g22B:POSITION_OF_VALVE:STR-19011|upstream|GateValve|6-P-190021-A1A-N", "text_prior": "NO"}

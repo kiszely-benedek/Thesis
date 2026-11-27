@@ -1,0 +1,535 @@
+{
+  "generator_version": "v2.2",
+  "rows": [
+    {
+      "rule_id": "TOG28-SPARE-NAMING",
+      "checked": 623,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG113-MANUAL-VALVE-TAGS",
+      "checked": 21610,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "LIP1-1.1-SHARED-LOOP-NUMBER",
+      "checked": 12972,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG113-AUTOMATIC-VALVE-LETTERS",
+      "checked": 4037,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG114-BLOCK-DEFAULT-NO",
+      "checked": 9042,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG114-VENT-DRAIN-NC",
+      "checked": 4946,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG120-CV-BYPASS-NC",
+      "checked": 630,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG224-PSV-BLOCKS-CSO",
+      "checked": 550,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG114-FAIL-ACTION",
+      "checked": 2780,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG34-BL-ISOLATION",
+      "checked": 1062,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG192-RECIP-NO-CHECK",
+      "checked": 1049,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG192-PD-NO-MINFLOW",
+      "checked": 139,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG177-MINFLOW-TAKEOFF",
+      "checked": 683,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG177-MINFLOW-NEED",
+      "checked": 910,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG313-MINFLOW-METHOD",
+      "checked": 910,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG219-PD-RELIEF",
+      "checked": 139,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG314-PD-NO-THROTTLE",
+      "checked": 139,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG270-PUMP-FLOW-CONTROLLED",
+      "checked": 533,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG175-PUMP-TRIM",
+      "checked": 1959,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG173-PUMP-REDUCERS",
+      "checked": 910,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG319-ANTISURGE-DYNAMIC",
+      "checked": 9,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG316-PD-COMP-CAPACITY",
+      "checked": 9,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "API14C-A8-FSV",
+      "checked": 44,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "API14C-A8-PSV",
+      "checked": 44,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG207-HX-NO-ISOLATION",
+      "checked": 407,
+      "violations": 0,
+      "exceptions": {
+        "utility_side_block": 85
+      },
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG320-HX-NONTARGET",
+      "checked": 235,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG322-HX-BYPASS-VARIANT",
+      "checked": 54,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG326-STEAM-CONDENSATE",
+      "checked": 209,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG214-FUEL-SWITCHING-VALVES",
+      "checked": 35,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG271-ONE-CV-LIQUID",
+      "checked": 5914,
+      "violations": 0,
+      "exceptions": {
+        "split_valve": 1472
+      },
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG267-FE-UPSTREAM-FV",
+      "checked": 562,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG295-INVENTORY-ONCE",
+      "checked": 881,
+      "violations": 0,
+      "exceptions": {
+        "storage_tank_batch": 351,
+        "pressure_floating_on:u106-t1": 1,
+        "pressure_optional": 68,
+        "pressure_floating_on:u113-t5": 1,
+        "pressure_floating_on:u119-t1": 1,
+        "pressure_floating_on:u130-t1": 1,
+        "pressure_floating_on:u131-t1": 1,
+        "pressure_floating_on:u137-t1": 1,
+        "pressure_floating_on:u147-t1": 1,
+        "pressure_floating_on:u148-t1": 1,
+        "pressure_floating_on:u152-t1": 1,
+        "pressure_floating_on:u154-t1": 1,
+        "pressure_floating_on:u158-t1": 1,
+        "pressure_floating_on:u16-t1": 1,
+        "pressure_floating_on:u162-t1": 1,
+        "pressure_floating_on:u164-t1": 1,
+        "pressure_floating_on:u174-t1": 1,
+        "pressure_floating_on:u176-t1": 1,
+        "pressure_floating_on:u182-t1": 1,
+        "pressure_floating_on:u187-t1": 1,
+        "pressure_floating_on:u190-t1": 1,
+        "pressure_floating_on:u191-t1": 1,
+        "pressure_floating_on:u197-t1": 1,
+        "pressure_floating_on:u198-t1": 1,
+        "pressure_floating_on:u20-t1": 1,
+        "pressure_floating_on:u203-t1": 1,
+        "pressure_floating_on:u204-t1": 1,
+        "pressure_floating_on:u205-t1": 1,
+        "pressure_floating_on:u206-t1": 1,
+        "pressure_floating_on:u209-t1": 1,
+        "pressure_floating_on:u214-t1": 1,
+        "pressure_floating_on:u231-t1": 1,
+        "pressure_floating_on:u236-t1": 1,
+        "pressure_floating_on:u237-t1": 1,
+        "pressure_floating_on:u247-t1": 1,
+        "pressure_floating_on:u248-t1": 1,
+        "pressure_floating_on:u249-t1": 1,
+        "pressure_floating_on:u255-t1": 1,
+        "pressure_floating_on:u26-t1": 1,
+        "pressure_floating_on:u269-t5": 1,
+        "pressure_floating_on:u271-t1": 1,
+        "pressure_floating_on:u281-t1": 1,
+        "pressure_floating_on:u284-t1": 1,
+        "pressure_floating_on:u285-t1": 1,
+        "pressure_floating_on:u29-t1": 1,
+        "pressure_floating_on:u290-t1": 1,
+        "pressure_floating_on:u295-t1": 1,
+        "pressure_floating_on:u296-t1": 1,
+        "pressure_floating_on:u30-t1": 1,
+        "pressure_floating_on:u301-t1": 1,
+        "pressure_floating_on:u306-t1": 1,
+        "pressure_floating_on:u307-t1": 1,
+        "pressure_floating_on:u308-t1": 1,
+        "pressure_floating_on:u317-t1": 1,
+        "pressure_floating_on:u318-t1": 1,
+        "pressure_floating_on:u322-t1": 1,
+        "pressure_floating_on:u323-t1": 1,
+        "pressure_floating_on:u337-t1": 1,
+        "pressure_floating_on:u342-t1": 1,
+        "pressure_floating_on:u343-t1": 1,
+        "pressure_floating_on:u349-t1": 1,
+        "pressure_floating_on:u353-t1": 1,
+        "pressure_floating_on:u363-t1": 1,
+        "pressure_floating_on:u364-t1": 1,
+        "pressure_floating_on:u367-t1": 1,
+        "pressure_floating_on:u377-t1": 1,
+        "pressure_floating_on:u388-t1": 1,
+        "pressure_floating_on:u389-t1": 1,
+        "pressure_floating_on:u397-t5": 1,
+        "pressure_floating_on:u399-t1": 1,
+        "pressure_floating_on:u41-t1": 1,
+        "pressure_floating_on:u418-t1": 1,
+        "pressure_floating_on:u419-t1": 1,
+        "pressure_floating_on:u430-t1": 1,
+        "pressure_floating_on:u432-t1": 1,
+        "pressure_floating_on:u436-t1": 1,
+        "pressure_floating_on:u437-t1": 1,
+        "pressure_floating_on:u443-t1": 1,
+        "pressure_floating_on:u449-t1": 1,
+        "pressure_floating_on:u454-t1": 1,
+        "pressure_floating_on:u455-t1": 1,
+        "pressure_floating_on:u461-t1": 1,
+        "pressure_floating_on:u462-t1": 1,
+        "pressure_floating_on:u471-t1": 1,
+        "pressure_floating_on:u472-t1": 1,
+        "pressure_floating_on:u474-t1": 1,
+        "pressure_floating_on:u479-t1": 1,
+        "pressure_floating_on:u486-t1": 1,
+        "pressure_floating_on:u49-t1": 1,
+        "pressure_floating_on:u494-t1": 1,
+        "pressure_floating_on:u498-t1": 1,
+        "pressure_floating_on:u5-t1": 1,
+        "pressure_floating_on:u503-t1": 1,
+        "pressure_floating_on:u504-t1": 1,
+        "pressure_floating_on:u505-t1": 1,
+        "pressure_floating_on:u517-t1": 1,
+        "pressure_floating_on:u52-t1": 1,
+        "pressure_floating_on:u525-t1": 1,
+        "pressure_floating_on:u526-t1": 1,
+        "pressure_floating_on:u527-t1": 1,
+        "pressure_floating_on:u532-t1": 1,
+        "pressure_floating_on:u533-t1": 1,
+        "pressure_floating_on:u57-t1": 1,
+        "pressure_floating_on:u58-t1": 1,
+        "pressure_floating_on:u64-t1": 1,
+        "pressure_floating_on:u70-t1": 1,
+        "pressure_floating_on:u77-t1": 1,
+        "pressure_floating_on:u82-t1": 1,
+        "pressure_floating_on:u85-t1": 1,
+        "pressure_floating_on:u9-t1": 1,
+        "pressure_floating_on:u97-t1": 1
+      },
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG309-SPLIT-PAIRING",
+      "checked": 100,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG122-PV-NO-BYPASS",
+      "checked": 214,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG224-PSV-PIPE-CLEAN",
+      "checked": 1210,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG219-VESSEL-PSV",
+      "checked": 481,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG207-HX-PSD-BOTH-SIDES",
+      "checked": 779,
+      "violations": 0,
+      "exceptions": {
+        "side_not_blockable": 779
+      },
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG236-TANK-EMERGENCY-VENT",
+      "checked": 351,
+      "violations": 0,
+      "exceptions": {
+        "scope:non_hydrocarbon": 164
+      },
+      "owed_by": null
+    },
+    {
+      "rule_id": "API14C-3.4-TWO-LEVELS",
+      "checked": 624,
+      "violations": 0,
+      "exceptions": {
+        "deferred:valve_band": 84,
+        "scope:non_hydrocarbon": 49
+      },
+      "owed_by": null
+    },
+    {
+      "rule_id": "API14C-SAC",
+      "checked": 6695,
+      "violations": 0,
+      "exceptions": {
+        "conflict:TOG192-RECIP-NO-CHECK": 73,
+        "declared:A-4.2 g.3 steam_limited": 100,
+        "declared:discharge_rated_for_shutoff": 910,
+        "declared:natural_draft": 105,
+        "declared:no_separated_phases": 139,
+        "declared:utility_designed_for_header": 372,
+        "deferred:process_section_psh": 335,
+        "deferred:valve_band": 84,
+        "derived:A-10.2 a.4": 72,
+        "derived:A-4.2 a.4": 100,
+        "derived:A-4.2 e.2": 129,
+        "derived:A-5.2 b.2": 37,
+        "derived:A-5.2 d.3": 42,
+        "derived:A-6.2 h.2": 35,
+        "derived:A-6.2 l.3": 21,
+        "scope:non_hydrocarbon": 213,
+        "scope:vacuum_service": 25
+      },
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG32-NETWORK-SHEETS",
+      "checked": 691,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG141-DRAIN-DESTINATION",
+      "checked": 2590,
+      "violations": 0,
+      "exceptions": {
+        "vacuum_drain": 7
+      },
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG360-UTILITY-NETWORKS",
+      "checked": 1090,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG33-INTERAREA",
+      "checked": 9,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG24-NO-VISITING-STREAM",
+      "checked": 23650,
+      "violations": 0,
+      "exceptions": {
+        "interarea_straight_pipe": 9
+      },
+      "owed_by": null
+    },
+    {
+      "rule_id": "PLT-NETWORK-CLOSURE",
+      "checked": 2037,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "PLT-STREAM-CLOSURE",
+      "checked": 7052,
+      "violations": 0,
+      "exceptions": {
+        "end_fitting": 6616,
+        "battery_limit": 436
+      },
+      "owed_by": null
+    },
+    {
+      "rule_id": "PLT-PHASE",
+      "checked": 2107,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "PLT-RECYCLE-CLOSURE",
+      "checked": 702,
+      "violations": 0,
+      "exceptions": {
+        "switching_valve": 239
+      },
+      "owed_by": null
+    },
+    {
+      "rule_id": "PRS-MONOTONE",
+      "checked": 43770,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG82-SPEC-BREAK",
+      "checked": 32093,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "PRS-SPEC-CLASS",
+      "checked": 1128,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "TOG156-MERGE-CHECK",
+      "checked": 1571,
+      "violations": 0,
+      "exceptions": {},
+      "owed_by": null
+    },
+    {
+      "rule_id": "API14C-A4-OVERPRESSURE",
+      "checked": 881,
+      "violations": 0,
+      "exceptions": {
+        "scope:non_hydrocarbon": 49
+      },
+      "owed_by": null
+    }
+  ]
+}

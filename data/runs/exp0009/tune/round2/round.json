@@ -1,0 +1,6 @@
+{
+ "number": 2,
+ "change": "round 2: descriptor guidance (next_to is the first tagged item met walking from the valve; untagged valves belong in a valve list) in the B agent prompt only; Cypher-facing format and primer as round 1 (a first round-2 attempt with it in the format text tripped the Cypher health gate, 18/170 parse failures, run kept as U9-2-CYP-D100g22B.health-stop-1)",
+ "b_dev_accuracy": 0.870588,
+ "b_minus_a2_on_r": 0.007143
+}

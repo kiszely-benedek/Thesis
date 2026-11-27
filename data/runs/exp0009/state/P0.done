@@ -1,0 +1,9 @@
+{
+ "stage": "P0",
+ "finished_utc": "2026-11-24T19:28:13+00:00",
+ "outputs": {
+  "data/runs/exp0009/corpora/D1000g22/ingest.json": "b732c189295117fd31b6fec9766a65c56d5f6bcee1f71d0850b681ce9464c113",
+  "data/runs/exp0009/corpora/D100g22/ingest.json": "43a48a1a365e54d5cd49eaf4b24b2f2f264f20f864eb216429c59fd5f30d8bb9",
+  "data/runs/exp0009/corpora/D100g22B/corpus_b.json": "e638ecedae45a9340e0407250df59243cea4ecbbd9c8cbc803718734ec4403c5"
+ }
+}

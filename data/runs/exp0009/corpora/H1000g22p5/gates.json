@@ -1,0 +1,32 @@
+[
+ {
+  "gate": "G0c-rules",
+  "passed": true,
+  "detail": "41091abf5178c77b76aea4b0111bfb5139cb388bdd0d85b553076bcdbc5faa31"
+ },
+ {
+  "gate": "G0c-validation",
+  "passed": true,
+  "detail": "ok"
+ },
+ {
+  "gate": "G0g",
+  "passed": true,
+  "detail": "ok"
+ },
+ {
+  "gate": "G0k",
+  "passed": true,
+  "detail": "ok"
+ },
+ {
+  "gate": "line-view",
+  "passed": true,
+  "detail": "ok"
+ },
+ {
+  "gate": "G0-B",
+  "passed": true,
+  "detail": "ok"
+ }
+]

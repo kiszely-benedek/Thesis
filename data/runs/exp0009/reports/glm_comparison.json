@@ -1,0 +1,127 @@
+[
+ {
+  "plant_id": "H100g22p1",
+  "scale": 100,
+  "n_questions": 235,
+  "luna": {
+   "name": "Luna",
+   "n_correct": 209,
+   "accuracy": 0.8893617021276595,
+   "tiers": [
+    {
+     "tier": "cyp",
+     "cost_per_question_usd": 0.0006060078723404256,
+     "median_latency_s": 4.329000000027008,
+     "p90_latency_s": 8.59299999999348,
+     "outcomes": {
+      "ANSWERED": 231,
+      "PARSE_FAILURE": 2,
+      "RETRIEVAL_ERROR": 2
+     }
+    },
+    {
+     "tier": "ag",
+     "cost_per_question_usd": 0.0011647274680851062,
+     "median_latency_s": 6.405999999959022,
+     "p90_latency_s": 16.718999999924563,
+     "outcomes": {
+      "ANSWERED": 235
+     }
+    }
+   ]
+  },
+  "glm": {
+   "name": "GLM",
+   "n_correct": 206,
+   "accuracy": 0.8765957446808511,
+   "tiers": [
+    {
+     "tier": "cyp",
+     "cost_per_question_usd": 0.000250994,
+     "median_latency_s": 1.5929999999934807,
+     "p90_latency_s": 2.265999999945052,
+     "outcomes": {
+      "ANSWERED": 233,
+      "RETRIEVAL_ERROR": 2
+     }
+    },
+    {
+     "tier": "ag",
+     "cost_per_question_usd": 0.002079117319148936,
+     "median_latency_s": 3.657999999995809,
+     "p90_latency_s": 14.640999999945052,
+     "outcomes": {
+      "ANSWERED": 234,
+      "PARSE_FAILURE": 1
+     }
+    }
+   ]
+  },
+  "glm_minus_luna": {
+   "mean": -0.01276595744680851,
+   "ci_low": -0.05106382978723404,
+   "ci_high": 0.02553191489361702
+  }
+ },
+ {
+  "plant_id": "H1000g22p1",
+  "scale": 1000,
+  "n_questions": 235,
+  "luna": {
+   "name": "Luna",
+   "n_correct": 217,
+   "accuracy": 0.9234042553191489,
+   "tiers": [
+    {
+     "tier": "cyp",
+     "cost_per_question_usd": 0.0006272405957446808,
+     "median_latency_s": 4.312999999965541,
+     "p90_latency_s": 8.390999999945052,
+     "outcomes": {
+      "ANSWERED": 228,
+      "RETRIEVAL_ERROR": 7
+     }
+    },
+    {
+     "tier": "ag",
+     "cost_per_question_usd": 0.0016787321914893617,
+     "median_latency_s": 7.812000000034459,
+     "p90_latency_s": 22.45299999997951,
+     "outcomes": {
+      "ANSWERED": 235
+     }
+    }
+   ]
+  },
+  "glm": {
+   "name": "GLM",
+   "n_correct": 205,
+   "accuracy": 0.8723404255319149,
+   "tiers": [
+    {
+     "tier": "cyp",
+     "cost_per_question_usd": 0.00037390540425531917,
+     "median_latency_s": 1.5929999999934807,
+     "p90_latency_s": 3.1719999999622814,
+     "outcomes": {
+      "ANSWERED": 235
+     }
+    },
+    {
+     "tier": "ag",
+     "cost_per_question_usd": 0.0020262741276595745,
+     "median_latency_s": 3.780999999959022,
+     "p90_latency_s": 14.077000000048429,
+     "outcomes": {
+      "ANSWERED": 235
+     }
+    }
+   ]
+  },
+  "glm_minus_luna": {
+   "mean": -0.05106382978723404,
+   "ci_low": -0.09361702127659574,
+   "ci_high": -0.01276595744680851
+  }
+ }
+]

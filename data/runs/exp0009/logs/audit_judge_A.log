@@ -1,0 +1,11 @@
+judge prompt sha256: b56c89d5fba7111f4270d47ef4d8cd53796eee5c499fc3cc5e1ce3d9d2312eaa
+judged 162, already done 0, not run 0
+failed 6; stopped by cap: False
+  FAILED S9-AG-H1000g22p4|graph_agent_lines|H1000g22p4:CROSS_UNIT:376: expected a judge reply with verdict/reference_ok/reason, got '{}'
+  FAILED S9-AG-H1000g22p2|graph_agent_lines|H1000g22p2:ROUTE_AVOIDING:T-27701|EJ-27701|GTV-277015: expected the routes and evidence parts of 'H1000g22p2:ROUTE_AVOIDING:T-27701|EJ-27701|GTV-277015' to fit in 24000 characters, found 0 routes and 5782 parts that do not
+  FAILED S9-AG-H1000g22p1|graph_agent_lines|H1000g22p1:NEIGHBOURS_DOWNSTREAM:NEIGHBOURS_DOWNSTREAM_P1:BFV-179004: expected a judge reply with verdict/reference_ok/reason, got '{"FE-179032":"GTV-179025"}'
+  FAILED S9-CYP-H100g22p3|cypher_rag_lines|H100g22p3:CONNECTED:P-2701A|TK-2704: expected the routes and evidence parts of 'H100g22p3:CONNECTED:P-2701A|TK-2704' to fit in 24000 characters, found 0 routes and 428 parts that do not
+  FAILED S9-AG-H1000g22p5|graph_agent_lines|H1000g22p5:FLOW_PATH:XV-1005|BFV-40003: expected the routes and evidence parts of 'H1000g22p5:FLOW_PATH:XV-1005|BFV-40003' to fit in 24000 characters, found 0 routes and 426 parts that do not
+  FAILED S9-AG-H100g22p2|graph_agent_lines|H100g22p2:UNITS_REACHED:EA-3901: expected the routes and evidence parts of 'H100g22p2:UNITS_REACHED:EA-3901' to fit in 24000 characters, found 0 routes and 266 parts that do not
+prompt chars: median 4641, max 29330
+spent so far: 2.2619 of 8.13 USD

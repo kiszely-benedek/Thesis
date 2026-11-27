@@ -1,0 +1,2 @@
+round 2: B dev 0.8706, B-A2 on R +0.0071
+next_round=no (the last round added less than 1 point)

@@ -1,0 +1,18 @@
+{
+ "command": [
+  ".venv/Scripts\\python.EXE",
+  "-m",
+  "plantgraph.qa.exp0009.launcher",
+  "questions-pool",
+  "--root",
+  "data/runs/exp0009",
+  "--plant",
+  "H1000g22p1",
+  "--recipe",
+  "sealed"
+ ],
+ "return_code": 0,
+ "seconds": 9077.75,
+ "peak_rss_bytes": 1977458688,
+ "limit_bytes": 10737418240
+}

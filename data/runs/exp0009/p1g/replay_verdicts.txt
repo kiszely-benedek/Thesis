@@ -1,0 +1,4 @@
+G9-GLM-CYP-H100g22p1 identical
+G9-GLM-AG-H100g22p1 identical
+G9-GLM-CYP-H1000g22p1 identical
+G9-GLM-AG-H1000g22p1 identical

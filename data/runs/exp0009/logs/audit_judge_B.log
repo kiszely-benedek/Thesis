@@ -1,0 +1,8 @@
+added judge help line: VALVE_SET (a set of valves to operate, order irrelevant; a valve without a tag is named by its class, line number, side and nearest tag)
+added judge help line: POSITION (one normal operating position code, e.g. NO, NC, CSO)
+added judge help lines sha256: 639479f6b0652b6eb70d99a5c78159ceb940934ddefcceb74def46bfda052aad
+judge prompt sha256: b56c89d5fba7111f4270d47ef4d8cd53796eee5c499fc3cc5e1ce3d9d2312eaa
+judged 84, already done 0, not run 0
+failed 0; stopped by cap: False
+prompt chars: median 8482, max 25770
+spent so far: 3.5122 of 8.13 USD

@@ -1,0 +1,157 @@
+{
+  "dropped": {
+    "DOWNSTREAM_IN_UNIT": "pre-registered",
+    "DOWNSTREAM_ISOLATION": "pre-registered",
+    "FIRST_MEETING_POINT": "pre-registered",
+    "UPSTREAM_ISOLATION": "pre-registered",
+    "UPSTREAM_SOURCES": "pre-registered"
+  },
+  "r_pool_per_family": {
+    "CONNECTED": 1302,
+    "COUNT_IN_UNIT": 70,
+    "CROSS_UNIT": 59,
+    "DOWNSTREAM_ISOLATION": 3,
+    "FEEDING_UNITS": 58,
+    "FLOW_PATH": 53,
+    "INSTRUMENTS_OF_ITEM": 37,
+    "LOOKUP_TYPE": 36,
+    "LOOKUP_UNIT": 36,
+    "LOOPS_NEAR_ITEM": 55,
+    "LOOP_ACTUATED_VALVE": 68,
+    "LOOP_MEASURED_EQUIPMENT": 36,
+    "NEIGHBOURS_DOWNSTREAM": 48,
+    "NO_PATH": 50,
+    "ROUTE_AVOIDING": 695,
+    "SAME_UNIT": 36,
+    "SHEETS_OF_TAG": 16,
+    "UNANSWERABLE_TAG": 50,
+    "UNITS_REACHED": 194,
+    "UPSTREAM_ISOLATION": 37,
+    "VALVES_ON_PATH": 1156
+  },
+  "sampled": {
+    "CONNECTED": 10,
+    "COUNT_IN_UNIT": 15,
+    "CROSS_UNIT": 15,
+    "DOWNSTREAM_ISOLATION_X": 10,
+    "FEEDING_UNITS": 10,
+    "FLOW_PATH": 15,
+    "INSTRUMENTS_OF_ITEM": 10,
+    "LOOKUP_TYPE": 15,
+    "LOOKUP_UNIT": 15,
+    "LOOPS_NEAR_ITEM": 10,
+    "LOOP_ACTUATED_VALVE": 15,
+    "LOOP_MEASURED_EQUIPMENT": 15,
+    "NEIGHBOURS_DOWNSTREAM": 15,
+    "NO_PATH": 10,
+    "OPEN_VALVES_TO_ISOLATE": 10,
+    "OPEN_VALVES_TO_ISOLATE_DOWNSTREAM": 10,
+    "POSITION_OF_VALVE": 10,
+    "ROUTE_AVOIDING": 10,
+    "SAME_UNIT": 10,
+    "SHEETS_OF_TAG": 15,
+    "UNANSWERABLE_TAG": 10,
+    "UNITS_REACHED": 10,
+    "UPSTREAM_ISOLATION_X": 10,
+    "VALVES_ON_PATH": 10
+  },
+  "scope_x": [
+    {
+      "candidates": 270,
+      "family": "OPEN_VALVES_TO_ISOLATE",
+      "kept": 256,
+      "kept_discriminating": 36,
+      "kept_named_by_descriptor": null,
+      "kept_position_mix": {},
+      "kept_with_untagged_gold": 206,
+      "refused_empty_gold": 0,
+      "refused_no_descriptor": 14,
+      "refusing_roles": {
+        "ejector_inlet_block": 1,
+        "filter_inlet_block": 2,
+        "makeup_gas_block": 8,
+        "tank_fill_block": 3
+      }
+    },
+    {
+      "candidates": 270,
+      "family": "UPSTREAM_ISOLATION_X",
+      "kept": 256,
+      "kept_discriminating": null,
+      "kept_named_by_descriptor": null,
+      "kept_position_mix": {},
+      "kept_with_untagged_gold": 206,
+      "refused_empty_gold": 0,
+      "refused_no_descriptor": 14,
+      "refusing_roles": {
+        "ejector_inlet_block": 1,
+        "filter_inlet_block": 2,
+        "makeup_gas_block": 8,
+        "tank_fill_block": 3
+      }
+    },
+    {
+      "candidates": 1462,
+      "family": "POSITION_OF_VALVE",
+      "kept": 1358,
+      "kept_discriminating": null,
+      "kept_named_by_descriptor": 1354,
+      "kept_position_mix": {
+        "descriptor": {
+          "CSO": 46,
+          "NC": 542,
+          "NO": 766
+        },
+        "tag": {
+          "NC": 4
+        }
+      },
+      "kept_with_untagged_gold": 1354,
+      "refused_empty_gold": 0,
+      "refused_no_descriptor": 104,
+      "refusing_roles": {
+        "battery_limit_block": 19,
+        "cv_block_in": 4,
+        "cv_block_out": 14,
+        "cv_drain_valve": 1,
+        "discharge_block": 3,
+        "ejector_inlet_block": 1,
+        "filter_inlet_block": 2,
+        "makeup_gas_block": 2,
+        "network_root_block": 10,
+        "receipt_manifold_valve": 12,
+        "steam_supply_pi_root": 13,
+        "tank_fill_block": 3,
+        "tank_inlet_block": 20
+      }
+    },
+    {
+      "candidates": 131,
+      "family": "OPEN_VALVES_TO_ISOLATE_DOWNSTREAM",
+      "kept": 128,
+      "kept_discriminating": 114,
+      "kept_named_by_descriptor": null,
+      "kept_position_mix": {},
+      "kept_with_untagged_gold": 124,
+      "refused_empty_gold": 0,
+      "refused_no_descriptor": 3,
+      "refusing_roles": {
+        "discharge_block": 3
+      }
+    },
+    {
+      "candidates": 131,
+      "family": "DOWNSTREAM_ISOLATION_X",
+      "kept": 128,
+      "kept_discriminating": null,
+      "kept_named_by_descriptor": null,
+      "kept_position_mix": {},
+      "kept_with_untagged_gold": 125,
+      "refused_empty_gold": 0,
+      "refused_no_descriptor": 3,
+      "refusing_roles": {
+        "discharge_block": 3
+      }
+    }
+  ]
+}

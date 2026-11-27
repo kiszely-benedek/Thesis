@@ -1,0 +1,68 @@
+[
+ {
+  "candidates": 234,
+  "family": "OPEN_VALVES_TO_ISOLATE",
+  "kept": 234,
+  "kept_discriminating": 45,
+  "kept_named_by_descriptor": null,
+  "kept_position_mix": {},
+  "kept_with_untagged_gold": 0,
+  "refused_empty_gold": 0,
+  "refused_no_descriptor": 0,
+  "refusing_roles": {}
+ },
+ {
+  "candidates": 234,
+  "family": "UPSTREAM_ISOLATION_X",
+  "kept": 234,
+  "kept_discriminating": null,
+  "kept_named_by_descriptor": null,
+  "kept_position_mix": {},
+  "kept_with_untagged_gold": 0,
+  "refused_empty_gold": 0,
+  "refused_no_descriptor": 0,
+  "refusing_roles": {}
+ },
+ {
+  "candidates": 1317,
+  "family": "POSITION_OF_VALVE",
+  "kept": 1317,
+  "kept_discriminating": null,
+  "kept_named_by_descriptor": 0,
+  "kept_position_mix": {
+   "tag": {
+    "CSO": 34,
+    "NC": 502,
+    "NO": 781
+   }
+  },
+  "kept_with_untagged_gold": 0,
+  "refused_empty_gold": 0,
+  "refused_no_descriptor": 0,
+  "refusing_roles": {}
+ },
+ {
+  "candidates": 108,
+  "family": "OPEN_VALVES_TO_ISOLATE_DOWNSTREAM",
+  "kept": 108,
+  "kept_discriminating": 96,
+  "kept_named_by_descriptor": null,
+  "kept_position_mix": {},
+  "kept_with_untagged_gold": 0,
+  "refused_empty_gold": 0,
+  "refused_no_descriptor": 0,
+  "refusing_roles": {}
+ },
+ {
+  "candidates": 108,
+  "family": "DOWNSTREAM_ISOLATION_X",
+  "kept": 108,
+  "kept_discriminating": null,
+  "kept_named_by_descriptor": null,
+  "kept_position_mix": {},
+  "kept_with_untagged_gold": 0,
+  "refused_empty_gold": 0,
+  "refused_no_descriptor": 0,
+  "refusing_roles": {}
+ }
+]

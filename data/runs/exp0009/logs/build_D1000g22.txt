@@ -1,0 +1,31 @@
+PASS G0c-rules: 4e51a0e6eddb92390aeb4e20721063511b51ec00d2e8353458f7a0384ff7228b
+PASS G0c-validation: ok
+PASS G0g: ok
+PASS G0k: ok
+PASS line-view: ok
+PASS G0-B: ok
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\qa\exp0009\launcher.py", line 245, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\qa\exp0009\launcher.py", line 237, in main
+    args.handler(args)
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\qa\exp0008\launcher_commands.py", line 143, in cmd_memory_probe
+    result = memory_probe.probe(command, limit)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\qa\exp0008\memory_probe.py", line 63, in probe
+    peak = max(peak, _tree_rss(handle))
+                     ^^^^^^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\qa\exp0008\memory_probe.py", line 42, in _tree_rss
+    for member in [process, *process.children(recursive=True)]:
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\.venv\Lib\site-packages\psutil\__init__.py", line 982, in children
+    proc_ctime = Process(self.pid).create_time()
+                 ^^^^^^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\.venv\Lib\site-packages\psutil\__init__.py", line 314, in __init__
+    self._init(pid)
+  File "C:\Users\Otthon\Desktop\Dissertation\.venv\Lib\site-packages\psutil\__init__.py", line 360, in _init
+    raise NoSuchProcess(pid, msg=msg) from None
+psutil.NoSuchProcess: process PID not found (pid=7056)

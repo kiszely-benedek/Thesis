@@ -1,0 +1,10 @@
+{"gold": "NC", "majority": "NO", "named_by": "descriptor", "question_id": "VAL100g22B:POSITION_OF_VALVE:V-301|downstream|GateValve|4-CHD-30007-A1A-N", "text_prior": "NC"}
+{"gold": "NC", "majority": "NO", "named_by": "descriptor", "question_id": "VAL100g22B:POSITION_OF_VALVE:XV-52001|upstream|GlobeValve|4-P-510001-A1A-N", "text_prior": "NC"}
+{"gold": "NC", "majority": "NO", "named_by": "descriptor", "question_id": "VAL100g22B:POSITION_OF_VALVE:XV-13003|upstream|GlobeValve|4-P-120064-A1A-N", "text_prior": "NC"}
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "VAL100g22B:POSITION_OF_VALVE:PSE-11027|downstream|GateValve|8-FL-90100004-A1A-N", "text_prior": "NO"}
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "VAL100g22B:POSITION_OF_VALVE:D-1201|downstream|ButterflyValve|8-CHD-90110006-A1A-N", "text_prior": "NO"}
+{"gold": "NC", "majority": "NO", "named_by": "descriptor", "question_id": "VAL100g22B:POSITION_OF_VALVE:D-2401|downstream|GateValve|2-CHD-240076-A1A-N", "text_prior": "NC"}
+{"gold": "NC", "majority": "NO", "named_by": "descriptor", "question_id": "VAL100g22B:POSITION_OF_VALVE:XV-26011|upstream|GlobeValve|4-P-250065-A1A-N", "text_prior": "NC"}
+{"gold": "NC", "majority": "NO", "named_by": "descriptor", "question_id": "VAL100g22B:POSITION_OF_VALVE:XV-7001|upstream|GlobeValve|4-P-60001-A1A-N", "text_prior": "NC"}
+{"gold": "NC", "majority": "NO", "named_by": "descriptor", "question_id": "VAL100g22B:POSITION_OF_VALVE:V-4901|downstream|GlobeValve|4-PG-490021-A1A-N", "text_prior": "NC"}
+{"gold": "NC", "majority": "NO", "named_by": "descriptor", "question_id": "VAL100g22B:POSITION_OF_VALVE:E-4202|upstream|GlobeValve|4-P-410001-A1A-N", "text_prior": "NC"}

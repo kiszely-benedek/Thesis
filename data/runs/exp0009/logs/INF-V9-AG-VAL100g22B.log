@@ -1,0 +1,92 @@
+run INF-V9-AG-VAL100g22B: 170 rows to answer, 0 already on disk
+replay mode: cache only, no network; stops at the first cache miss
+{
+  "run_id": "INF-V9-AG-VAL100g22B",
+  "n_rows": 170,
+  "n_new_rows": 170,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "graph_agent_lines_b": {
+      "0": {
+        "ANSWERED": 45
+      },
+      "1": {
+        "ANSWERED": 43
+      },
+      "2": {
+        "ANSWERED": 21
+      },
+      "3-4": {
+        "ANSWERED": 16
+      },
+      "5-8": {
+        "ANSWERED": 8
+      },
+      "9-16": {
+        "ANSWERED": 8
+      },
+      "17-32": {
+        "ANSWERED": 4
+      },
+      "33+": {
+        "ANSWERED": 5
+      },
+      "unanswerable": {
+        "ANSWERED": 20
+      }
+    }
+  },
+  "routing_recall": {
+    "graph_agent_lines_b": 0.84
+  },
+  "relaxed_routing_recall": {
+    "graph_agent_lines_b": 0.84
+  },
+  "evidence_node_recall": {
+    "graph_agent_lines_b": 0.8077543661197011
+  },
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {
+      "graph_agent_lines_b": {
+        "0": 0.9111111111111111,
+        "1": 0.8604651162790697,
+        "2": 0.9047619047619048,
+        "3-4": 0.75,
+        "5-8": 0.75,
+        "9-16": 1.0,
+        "17-32": 0.5,
+        "33+": 0.2
+      }
+    },
+    "relaxed_routing_recall": {
+      "graph_agent_lines_b": {
+        "0": 0.9111111111111111,
+        "1": 0.8604651162790697,
+        "2": 0.9047619047619048,
+        "3-4": 0.75,
+        "5-8": 0.75,
+        "9-16": 1.0,
+        "17-32": 0.5,
+        "33+": 0.2
+      }
+    },
+    "evidence_node_recall": {
+      "graph_agent_lines_b": {
+        "0": 0.8047138047138047,
+        "1": 0.80469943335797,
+        "2": 0.8843358395989975,
+        "3-4": 0.7970174501424502,
+        "5-8": 0.8763621436035228,
+        "9-16": 0.9071464321464322,
+        "17-32": 0.8254347826086956,
+        "33+": 0.32173834290741604
+      }
+    }
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "graph_agent_lines_b": 0.002214489
+  },
+  "stopped_by_spend_cap": false,
+  "late_after_timeout_usd": 0.0
+}

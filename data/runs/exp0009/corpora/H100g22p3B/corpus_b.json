@@ -1,0 +1,17 @@
+{
+  "a_id": "H100g22p3",
+  "b_id": "H100g22p3B",
+  "a_ingest_sha256": "5b6cf4db9e789da542bd8b0ed5cd92ed498a94f5c00353bf719077badbeef4cb",
+  "b_ingest_sha256": "a7b9a35124b6c60eeb0837673533434deb3668ebb7bf27f9f4d7473fab393d9b",
+  "positions_sha256": "20762dd4485ff30cbc2671b004400f926e6a7f4a95b1497c50fb285cf263179b",
+  "positions_per_code": {
+    "CSO": 48,
+    "NC": 534,
+    "NO": 886
+  },
+  "seconds": {
+    "a_build": 7.8,
+    "relabel": 0.0,
+    "positions": 3.9
+  }
+}

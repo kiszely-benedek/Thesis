@@ -1,0 +1,11 @@
+{
+ "stage": "P1b",
+ "finished_utc": "2026-11-25T04:00:45+00:00",
+ "outputs": {
+  "data/runs/exp0009/state/b_sealed": "8f770e3481e54a3f7b206acde71dc9bce617a7559ec197ac2a4baf5a24fef053",
+  "data/runs/exp0009/state/measured_costs.json": "4c2ddec9ab2773cd649348c8eadca4986f2e0b94e2b1fa414f99eb53ced12ab7",
+  "data/runs/exp0009/state/p1b.json": "1b2ef6737294e591806dfee919b2887a6039466eba68b56335e94fc53c1f9ca2",
+  "data/runs/exp0009/state/p1c_projection.json": "39d60ac530bfa34b00bee77a3ffa3e1869d00665f95efdc3217cb91e8aa125e0"
+ },
+ "manual_change": "2026-11-25: state/b_sealed set from no to yes on the user's decision (B exploratory sealed arm); see prereg/DEVIATION_B_EXPLORATORY.md"
+}

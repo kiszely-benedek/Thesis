@@ -1,0 +1,10 @@
+{"gold": "NC", "majority": "NO", "named_by": "tag", "question_id": "H1000g22p1B:POSITION_OF_VALVE:BV-197001", "text_prior": "NC"}
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "H1000g22p1B:POSITION_OF_VALVE:XV-419003|upstream|PlugValve|6-P-4190003-A1A-N", "text_prior": "NO"}
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "H1000g22p1B:POSITION_OF_VALVE:XV-322001|upstream|GateValve|6-P-3210066-B1A-N", "text_prior": "NO"}
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "H1000g22p1B:POSITION_OF_VALVE:PSE-225025|downstream|GateValve|8-FL-90500003-A1A-N", "text_prior": "NO"}
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "H1000g22p1B:POSITION_OF_VALVE:D-37301|downstream|GateValve|8-CHD-90810005-A1A-N", "text_prior": "NC"}
+{"gold": "NC", "majority": "NO", "named_by": "tag", "question_id": "H1000g22p1B:POSITION_OF_VALVE:BV-66003", "text_prior": "NC"}
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "H1000g22p1B:POSITION_OF_VALVE:FE-245001|upstream|GateValve|6-P-2440010-B1A-N", "text_prior": "NO"}
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "H1000g22p1B:POSITION_OF_VALVE:XV-358003|upstream|GateValve|6-P-3570054-B1A-N", "text_prior": "NO"}
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "H1000g22p1B:POSITION_OF_VALVE:PSE-106018|downstream|GateValve|8-FL-90300004-A1A-N", "text_prior": "NO"}
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "H1000g22p1B:POSITION_OF_VALVE:D-32101|downstream|GateValve|8-CHD-90710006-A1A-N", "text_prior": "NC"}

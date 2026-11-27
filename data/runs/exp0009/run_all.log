@@ -1,0 +1,754 @@
+=== 2026-11-24T17:49:59Z launcher NOTE real run into data/runs/exp0009 (resume with: sh data/runs/exp0009/run_all.sh --from P0)
+=== 2026-11-24T17:50:04Z P0 START P0
+[ OK ] PREREG_A.md filled, consistent and committed: ok
+=== 2026-11-24T18:12:00Z P0 GATE PASS G0a: pytest, ruff, mypy --strict, v1 and v2.1 goldens
+=== 2026-11-24T18:24:04Z P0 GATE PASS G0b: the rule suite
+=== 2026-11-24T18:24:09Z P0 GATE PASS G0f diff: []
+=== 2026-11-24T18:37:52Z P0 GATE PASS G0f replay S7-CYP-H100g21p1: prefix_equal: 280 of 280 rows
+=== 2026-11-24T18:38:17Z P0 GATE PASS G0f replay S7-AG-H100g21p1: identical
+=== 2026-11-24T18:38:21Z P0 NOTE build D100g22 (scale 100, seed 1)
+=== 2026-11-24T18:39:11Z P0 GATE PASS build gates of D100g22: PASS G0c-rules: d3641e0ec42cd09e18bb163d276b44b00f1a31f97e4ffee14f3f9c65a05d8173 PASS G0c-validation: ok PASS G0g: ok PASS G0k: ok PASS line-view: ok PASS G0-B: ok 
+=== 2026-11-24T18:39:16Z P0 NOTE build D1000g22 (scale 1000, seed 1)
+PASS G0c-rules: 4e51a0e6eddb92390aeb4e20721063511b51ec00d2e8353458f7a0384ff7228b
+PASS G0c-validation: ok
+PASS G0g: ok
+PASS G0k: ok
+PASS line-view: ok
+PASS G0-B: ok
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\qa\exp0009\launcher.py", line 245, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\qa\exp0009\launcher.py", line 237, in main
+    args.handler(args)
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\qa\exp0008\launcher_commands.py", line 143, in cmd_memory_probe
+    result = memory_probe.probe(command, limit)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\qa\exp0008\memory_probe.py", line 63, in probe
+    peak = max(peak, _tree_rss(handle))
+                     ^^^^^^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\src\plantgraph\qa\exp0008\memory_probe.py", line 42, in _tree_rss
+    for member in [process, *process.children(recursive=True)]:
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\.venv\Lib\site-packages\psutil\__init__.py", line 982, in children
+    proc_ctime = Process(self.pid).create_time()
+                 ^^^^^^^^^^^^^^^^^
+  File "C:\Users\Otthon\Desktop\Dissertation\.venv\Lib\site-packages\psutil\__init__.py", line 314, in __init__
+    self._init(pid)
+  File "C:\Users\Otthon\Desktop\Dissertation\.venv\Lib\site-packages\psutil\__init__.py", line 360, in _init
+    raise NoSuchProcess(pid, msg=msg) from None
+psutil.NoSuchProcess: process PID not found (pid=7056)
+=== 2026-11-24T19:13:46Z P0 STOP [needs the user] the build or a build gate of D1000g22 failed (G0c, G0g, G0k, line view, G0-B, or the 10 GiB memory probe), see data/runs/exp0009/logs/build_D1000g22.txt
+=== 2026-11-24T19:16:54Z launcher NOTE real run into data/runs/exp0009 (resume with: sh data/runs/exp0009/run_all.sh --from P0)
+=== 2026-11-24T19:16:54Z P0 START P0
+[ OK ] PREREG_A.md filled, consistent and committed: ok
+=== 2026-11-24T19:16:56Z P0 NOTE skip step g0a (done)
+=== 2026-11-24T19:16:57Z P0 NOTE skip step g0b (done)
+=== 2026-11-24T19:16:57Z P0 NOTE skip step g0f_diff (done)
+=== 2026-11-24T19:16:57Z P0 NOTE skip step g0f_replays (done)
+=== 2026-11-24T19:16:57Z P0 NOTE skip step plants_dev (done)
+PASS R14f: ok
+=== 2026-11-24T19:17:24Z P0 GATE PASS composition bands hold on the dev100 plants
+=== 2026-11-24T19:25:21Z P0 GATE PASS composition bands hold on the dev1000 plants
+=== 2026-11-24T19:26:30Z P0 GATE PASS G0j: tests/v2tb
+=== 2026-11-24T19:27:58Z P0 GATE PASS prior refit equals the pre-registered position_prior.json
+=== 2026-11-24T19:28:07Z P0 GATE PASS ledger glob test and records tests
+=== 2026-11-24T19:28:13Z P0 DONE P0
+=== 2026-11-24T19:28:13Z P1a START P1a
+[ OK ] PREREG_A.md filled, consistent and committed: ok
+=== 2026-11-24T19:28:16Z P1a NOTE pool D100g22 (dev recipe)
+=== 2026-11-24T19:29:43Z P1a NOTE question files (dev): G0l: ok drop set of the dev plants: ['DOWNSTREAM_IN_UNIT', 'DOWNSTREAM_ISOLATION', 'FIRST_MEETING_POINT', 'INSTRUMENTS_OF_ITEM', 'LOOKUP_TYPE', 'LOOKUP_UNIT', 'LOOP_MEASURED_EQUIPMENT', 'SAME_UNIT', 'UPSTREAM_ISOLATION', 'UPSTREAM_SOURCES'] D100g22: {'a2': 160, 'b': 170, 'r': 140, 'x': 30} 
+=== 2026-11-24T19:29:51Z P1a NOTE estimate P1a: A2 baseline, D100g22: 1 run(s) x 153 q, key dev, $0.33; B rounds, D100g22B (at most 3): 3 run(s) x 163 q, key dev, $1.15; total $1.47, step ceiling $2.22; ledger runs $0.0000 of $26.87 (left $26.8700); audit $0.0000 of $8.13; balance not read
+=== 2026-11-24T19:29:51Z P1a NOTE load D100g22 into Neo4j (plant_lines), wiping the database first
+balance $37.11 (needed $0.18)
+=== 2026-11-24T19:30:22Z P1a START U9-A-CYP-D100g22 arm CYP-A on D100g22, cap $0.1815
+    160 rows: {'RETRIEVAL_ERROR': 3, 'ANSWERED': 149, 'PARSE_FAILURE': 8}
+=== 2026-11-24T19:38:43Z P1a DONE U9-A-CYP-D100g22
+balance $37.00 (needed $0.38)
+=== 2026-11-24T19:38:55Z P1a START U9-A-AG-D100g22 arm AG on D100g22, cap $0.3812
+    160 rows: {'ANSWERED': 159, 'PARSE_FAILURE': 1}
+=== 2026-11-24T19:50:46Z P1a DONE U9-A-AG-D100g22
+ERROR: expected exactly one "corpus_id": "D100g22" in the ingest file, found 2
+=== 2026-11-24T19:50:50Z P1a STOP [infrastructure] command failed (exit 1): .venv/Scripts/python -m plantgraph.qa.exp0009.launcher prepare-b-load --root data/runs/exp0009 --prereg data/runs/exp0009/prereg --plant D100g22
+=== 2026-11-24T19:52:53Z launcher NOTE real run into data/runs/exp0009 (resume with: sh data/runs/exp0009/run_all.sh --from P0)
+=== 2026-11-24T19:53:01Z P0 SKIP P0 (done)
+=== 2026-11-24T19:53:01Z P1a START P1a
+[ OK ] PREREG_A.md filled, consistent and committed: ok
+=== 2026-11-24T19:53:04Z P1a NOTE skip step setup (done)
+=== 2026-11-24T19:53:12Z P1a NOTE estimate P1a: A2 baseline, D100g22: 1 run(s) x 153 q, key dev, $0.33; B rounds, D100g22B (at most 3): 3 run(s) x 163 q, key dev, $1.15; total $1.47, step ceiling $2.22; ledger runs $0.4511 of $26.87 (left $26.4189); audit $0.0000 of $8.13; balance not read
+=== 2026-11-24T19:53:12Z P1a NOTE load D100g22 into Neo4j (plant_lines), wiping the database first
+=== 2026-11-24T19:53:29Z P1a NOTE skip U9-A-CYP-D100g22 (complete)
+=== 2026-11-24T19:53:29Z P1a NOTE skip U9-A-AG-D100g22 (complete)
+=== 2026-11-24T19:53:33Z P1a NOTE load D100g22B into Neo4j (plant_lines), wiping the database first
+balance $36.66 (needed $0.21)
+=== 2026-11-24T19:54:00Z P1a START U9-1-CYP-D100g22B arm CYP-B on D100g22B, cap $0.2122
+    170 rows: {'ANSWERED': 162, 'RETRIEVAL_ERROR': 2, 'PARSE_FAILURE': 6}
+=== 2026-11-24T20:02:36Z P1a DONE U9-1-CYP-D100g22B
+balance $36.54 (needed $0.45)
+=== 2026-11-24T20:02:52Z P1a START U9-1-AG-D100g22B arm AG-B on D100g22B, cap $0.4455
+    170 rows: {'ANSWERED': 169, 'PARSE_FAILURE': 1}
+=== 2026-11-24T20:17:11Z P1a DONE U9-1-AG-D100g22B
+D100g22 A2: 132/160
+D100g22B B: 147/170
+round 1: B dev 0.8647, B-A2 on R +0.0143
+next_round=yes (tuning may continue)
+=== 2026-11-24T20:17:39Z P1a STOP [needs the main session] round 1 is done, report in data/runs/exp0009/tune/round1: change the B files and resume with --from P1a, or run: .venv/Scripts/python -m plantgraph.qa.exp0009.launcher finish-tuning --root data/runs/exp0009
+=== 2026-11-24T20:21:44Z launcher NOTE real run into data/runs/exp0009 (resume with: sh data/runs/exp0009/run_all.sh --from P0)
+=== 2026-11-24T20:21:49Z P0 SKIP P0 (done)
+=== 2026-11-24T20:21:49Z P1a START P1a
+[ OK ] PREREG_A.md filled, consistent and committed: ok
+=== 2026-11-24T20:21:52Z P1a NOTE skip step setup (done)
+=== 2026-11-24T20:22:01Z P1a NOTE estimate P1a: A2 baseline, D100g22: 1 run(s) x 153 q, key dev, $0.33; B rounds, D100g22B (at most 3): 3 run(s) x 163 q, key dev, $1.15; total $1.47, step ceiling $2.22; ledger runs $0.9788 of $26.87 (left $25.8912); audit $0.0000 of $8.13; balance not read
+=== 2026-11-24T20:22:05Z P1a NOTE load D100g22B into Neo4j (plant_lines), wiping the database first
+balance $36.13 (needed $0.21)
+=== 2026-11-24T20:22:40Z P1a START U9-2-CYP-D100g22B arm CYP-B on D100g22B, cap $0.2122
+ERROR: technical fault in data\runs\exp0009\tune\runs\U9-2-CYP-D100g22B: PROVIDER_ERROR + PARSE_FAILURE is 18 of 170 rows (limit 10 %)
+    170 rows: {'ANSWERED': 150, 'RETRIEVAL_ERROR': 2, 'PARSE_FAILURE': 18}
+=== 2026-11-24T20:30:52Z P1a STOP [infrastructure] U9-2-CYP-D100g22B: technical fault, read data/runs/exp0009/logs/U9-2-CYP-D100g22B.log
+=== 2026-11-24T20:33:40Z launcher NOTE real run into data/runs/exp0009 (resume with: sh data/runs/exp0009/run_all.sh --from P0)
+=== 2026-11-24T20:33:45Z P0 SKIP P0 (done)
+=== 2026-11-24T20:33:45Z P1a START P1a
+[ OK ] PREREG_A.md filled, consistent and committed: ok
+=== 2026-11-24T20:33:48Z P1a NOTE skip step setup (done)
+=== 2026-11-24T20:33:56Z P1a NOTE estimate P1a: A2 baseline, D100g22: 1 run(s) x 153 q, key dev, $0.33; B rounds, D100g22B (at most 3): 3 run(s) x 163 q, key dev, $1.15; total $1.47, step ceiling $2.22; ledger runs $1.1075 of $26.87 (left $25.7625); audit $0.0000 of $8.13; balance not read
+=== 2026-11-24T20:34:00Z P1a NOTE load D100g22B into Neo4j (plant_lines), wiping the database first
+balance $36.00 (needed $0.21)
+=== 2026-11-24T20:34:29Z P1a START U9-2-CYP-D100g22B arm CYP-B on D100g22B, cap $0.2122
+    170 rows: {'ANSWERED': 162, 'RETRIEVAL_ERROR': 2, 'PARSE_FAILURE': 6}
+=== 2026-11-24T20:37:09Z P1a DONE U9-2-CYP-D100g22B
+balance $36.00 (needed $0.45)
+=== 2026-11-24T20:37:21Z P1a START U9-2-AG-D100g22B arm AG-B on D100g22B, cap $0.4455
+    170 rows: {'ANSWERED': 169, 'PARSE_FAILURE': 1}
+=== 2026-11-24T20:49:43Z P1a DONE U9-2-AG-D100g22B
+D100g22B B: 148/170
+round 2: B dev 0.8706, B-A2 on R +0.0071
+next_round=no (the last round added less than 1 point)
+tuning finished; the E10 candidate is round 2
+=== 2026-11-24T20:50:08Z P1a DONE P1a
+=== 2026-11-24T20:50:08Z P1b START P1b
+=== 2026-11-24T20:50:16Z P1b NOTE estimate P1b: A2 validation pair: 2 run(s) x 153 q, key dev, $0.65; B validation pair: 2 run(s) x 163 q, key dev, $0.76; total $1.42, step ceiling $2.12; ledger runs $1.4638 of $26.87 (left $25.4062); audit $0.0000 of $8.13; balance not read
+=== 2026-11-24T20:50:21Z P1b NOTE build VAL100g22 (scale 100, seed 5860)
+=== 2026-11-24T20:51:00Z P1b GATE PASS build gates of VAL100g22: PASS G0c-rules: b3806573e936c6b2517b97d35dcb685cd813645dad41e88fd35c05f7f5162b90 PASS G0c-validation: ok PASS G0g: ok PASS G0k: ok PASS line-view: ok PASS G0-B: ok 
+=== 2026-11-24T20:51:00Z P1b NOTE pool VAL100g22 (dev recipe)
+=== 2026-11-24T20:52:20Z P1b NOTE build VAL1000g22 (scale 1000, seed 5184)
+=== 2026-11-24T21:29:06Z P1b NOTE memory: build VAL1000g22 peaked at 1.76 GiB (limit 10)
+=== 2026-11-24T21:29:06Z P1b GATE PASS build gates of VAL1000g22: PASS G0c-rules: c4402d8e7c9dd15e9ba15d9913e2e0a814b6fd1a20d101f6f0a2808d9e1a3aa8 PASS G0c-validation: ok PASS G0g: ok PASS G0k: ok PASS line-view: ok PASS G0-B: ok peak 1.76 GiB of 10.00; 2197.5
+VAL1000g22: R pool 873, X kept 19762
+peak 2.13 GiB of 10.00; 12161.2s; rc 0
+=== 2026-11-25T00:51:58Z P1b NOTE memory: pool VAL1000g22 (VAL1000 probe) peaked at 2.13 GiB (limit 10)
+=== 2026-11-25T00:52:03Z P1b NOTE question files (validation): drop set of the validation plants: ['DOWNSTREAM_IN_UNIT', 'DOWNSTREAM_ISOLATION', 'FIRST_MEETING_POINT', 'INSTRUMENTS_OF_ITEM', 'LOOKUP_TYPE', 'LOOKUP_UNIT', 'LOOP_MEASURED_EQUIPMENT', 'SAME_UNIT', 'UPSTREAM_ISOLATION', 'UPSTREAM_SOURCES'] VAL100g22: {'a2': 160, 'b': 170, 'r': 140, 'x': 30} VAL1000g22: {'a2': 160, 'b': 170, 'r': 140, 'x': 30} 
+=== 2026-11-25T00:52:07Z P1b NOTE load VAL100g22 into Neo4j (plant_lines), wiping the database first
+balance $35.64 (needed $0.18)
+=== 2026-11-25T00:52:47Z P1b START V9-CYP-VAL100g22 arm CYP-A on VAL100g22, cap $0.1815
+    160 rows: {'ANSWERED': 148, 'RETRIEVAL_ERROR': 3, 'PARSE_FAILURE': 9}
+=== 2026-11-25T00:58:43Z P1b DONE V9-CYP-VAL100g22
+balance $35.54 (needed $0.38)
+=== 2026-11-25T00:58:56Z P1b START V9-AG-VAL100g22 arm AG on VAL100g22, cap $0.3812
+    160 rows: {'ANSWERED': 159, 'PARSE_FAILURE': 1}
+=== 2026-11-25T01:09:29Z P1b DONE V9-AG-VAL100g22
+=== 2026-11-25T01:09:33Z P1b NOTE load VAL100g22B into Neo4j (plant_lines), wiping the database first
+balance $35.23 (needed $0.21)
+=== 2026-11-25T01:10:05Z P1b START V9-CYP-VAL100g22B arm CYP-B on VAL100g22B, cap $0.2122
+    170 rows: {'ANSWERED': 161, 'PARSE_FAILURE': 6, 'RETRIEVAL_ERROR': 3}
+=== 2026-11-25T01:16:52Z P1b DONE V9-CYP-VAL100g22B
+=== 2026-11-25T01:23:21Z P1b NOTE replay INF-V9-CYP-VAL100g22B: identical
+balance $35.09 (needed $0.45)
+=== 2026-11-25T01:23:34Z P1b START V9-AG-VAL100g22B arm AG-B on VAL100g22B, cap $0.4455
+    170 rows: {'ANSWERED': 170}
+=== 2026-11-25T01:34:39Z P1b DONE V9-AG-VAL100g22B
+=== 2026-11-25T01:35:02Z P1b NOTE replay INF-V9-AG-VAL100g22B: identical
+=== 2026-11-25T01:35:02Z P1b NOTE load VAL1000g22 into Neo4j (plant_lines), wiping the database first
+balance $34.72 (needed $0.17)
+=== 2026-11-25T01:44:12Z P1b START V9-CYP-VAL1000g22 arm CYP-A on VAL1000g22, cap $0.174
+    160 rows: {'ANSWERED': 140, 'RETRIEVAL_ERROR': 17, 'PARSE_FAILURE': 3}
+=== 2026-11-25T02:03:12Z P1b DONE V9-CYP-VAL1000g22
+balance $34.60 (needed $0.41)
+=== 2026-11-25T02:03:25Z P1b START V9-AG-VAL1000g22 arm AG on VAL1000g22, cap $0.4107
+    160 rows: {'ANSWERED': 158, 'PARSE_FAILURE': 2}
+=== 2026-11-25T02:21:09Z P1b DONE V9-AG-VAL1000g22
+=== 2026-11-25T02:21:13Z P1b NOTE load VAL1000g22B into Neo4j (plant_lines), wiping the database first
+balance $34.25 (needed $0.20)
+=== 2026-11-25T02:29:48Z P1b START V9-CYP-VAL1000g22B arm CYP-B on VAL1000g22B, cap $0.2035
+    170 rows: {'ANSWERED': 141, 'RETRIEVAL_ERROR': 25, 'PARSE_FAILURE': 4}
+=== 2026-11-25T02:49:08Z P1b DONE V9-CYP-VAL1000g22B
+=== 2026-11-25T03:06:25Z P1b NOTE replay INF-V9-CYP-VAL1000g22B: prefix_equal: 143 of 170 rows
+balance $34.12 (needed $0.48)
+=== 2026-11-25T03:06:38Z P1b START V9-AG-VAL1000g22B arm AG-B on VAL1000g22B, cap $0.48
+=== 2026-11-25T03:25:20Z P1b CAP V9-AG-VAL1000g22B reached its cap $0.48
+=== 2026-11-25T03:25:20Z P1b STOP [top-up or restart] V9-AG-VAL1000g22B reached its spend cap of $0.48
+=== 2026-11-25T03:26:02Z launcher NOTE real run into data/runs/exp0009 (resume with: sh data/runs/exp0009/run_all.sh --from P0)
+=== 2026-11-25T03:26:07Z P0 SKIP P0 (done)
+=== 2026-11-25T03:26:12Z P1a SKIP P1a (done)
+=== 2026-11-25T03:26:12Z P1b START P1b
+=== 2026-11-25T03:26:21Z P1b NOTE estimate P1b: A2 validation pair: 2 run(s) x 153 q, key dev, $0.65; B validation pair: 2 run(s) x 163 q, key dev, $0.76; total $1.42, step ceiling $2.12; ledger runs $3.4197 of $26.87 (left $23.4503); audit $0.0000 of $8.13; balance not read
+=== 2026-11-25T03:26:21Z P1b NOTE skip step setup (done)
+=== 2026-11-25T03:26:21Z P1b NOTE skip step files (done)
+=== 2026-11-25T03:26:26Z P1b NOTE skip V9-CYP-VAL100g22 (complete)
+=== 2026-11-25T03:26:26Z P1b NOTE skip V9-AG-VAL100g22 (complete)
+=== 2026-11-25T03:26:26Z P1b NOTE skip V9-CYP-VAL100g22B (complete)
+=== 2026-11-25T03:26:26Z P1b NOTE skip replay INF-V9-CYP-VAL100g22B (done)
+=== 2026-11-25T03:26:26Z P1b NOTE skip V9-AG-VAL100g22B (complete)
+=== 2026-11-25T03:26:26Z P1b NOTE skip replay INF-V9-AG-VAL100g22B (done)
+=== 2026-11-25T03:26:26Z P1b NOTE skip V9-CYP-VAL1000g22 (complete)
+=== 2026-11-25T03:26:26Z P1b NOTE skip V9-AG-VAL1000g22 (complete)
+=== 2026-11-25T03:26:26Z P1b NOTE skip V9-CYP-VAL1000g22B (complete)
+=== 2026-11-25T03:26:26Z P1b NOTE skip replay INF-V9-CYP-VAL1000g22B (done)
+balance $33.72 (needed $0.59)
+=== 2026-11-25T03:26:39Z P1b START V9-AG-VAL1000g22B arm AG-B on VAL1000g22B, cap $0.591735
+    170 rows: {'ANSWERED': 170}
+=== 2026-11-25T03:35:56Z P1b DONE V9-AG-VAL1000g22B
+=== 2026-11-25T03:44:37Z P1b NOTE replay INF-V9-AG-VAL1000g22B: identical
+VAL100g22 A2: 123/160
+VAL100g22B B: 138/170
+VAL1000g22 A2: 124/160
+VAL1000g22B B: 138/170
+PASS G1: ok
+FAIL G1-B: OPEN_VALVES_TO_ISOLATE below 50% on every plant; UPSTREAM_ISOLATION_X below 50% on every plant
+PASS G1-B2: mean +0.0036
+b_sealed=no
+=== 2026-11-25T04:00:32Z P1b GATE PASS G1 (A2)
+=== 2026-11-25T04:00:32Z P1b NOTE BRANCH: G1-B or G1-B2 failed, so B is NOT run sealed (ADR-0067); A2 alone runs sealed
+{'A2-ag-1000': 0.002195, 'B-ag-1000': 0.002618, 'A2-ag-100': 0.001995, 'B-ag-100': 0.002214, 'A2-cyp-1000': 0.000731, 'B-cyp-1000': 0.000781, 'A2-cyp-100': 0.000663, 'B-cyp-100': 0.000738}
+=== 2026-11-25T04:00:36Z P1b NOTE measured dollars per question: { "A2-ag-100":0.001995, "A2-ag-1000":0.002195, "A2-cyp-100":0.000663, "A2-cyp-1000":0.000731, "B-ag-100":0.002214, "B-ag-1000":0.002618, "B-cyp-100":0.000738, "B-cyp-1000":0.000781 } 
+=== 2026-11-25T04:00:40Z P1b NOTE P1c projected $7.68; runs ledger left $23.43
+=== 2026-11-25T04:00:45Z P1b DONE P1b
+=== 2026-11-25T04:00:45Z F10 START F10
+freeze preconditions hold at 91c1139d71 (part A names 0d346dd0c8)
+=== 2026-11-25T04:00:50Z F10 GATE PASS freeze preconditions
+=== 2026-11-25T04:01:12Z F10 GATE PASS G0f diff: []
+=== 2026-11-25T04:02:24Z F10 GATE PASS G0j: tests/v2tb
+=== 2026-11-25T04:03:27Z F10 GATE PASS T17's tests
+wrote PREREG_B.md; PREREG.sha256 lists 9 files
+=== 2026-11-25T04:03:40Z F10 NOTE E10 frozen at 2026-11-25T04:03:40Z: E10.sha256 bb651798ae5887f24accc4ea3381031651cc31764c25e8edba49e1ec09bb3bcd, PREREG.sha256 191e94c9f3715310a48dfcf8beecb35775b8364ca2aabb60de9f4b60506d5f81
+=== 2026-11-25T04:03:46Z F10 DONE F10
+=== 2026-11-25T04:03:46Z B10 START B10
+=== 2026-11-25T04:03:55Z B10 NOTE build H100g22p1 (scale 100, seed 5669)
+=== 2026-11-25T04:04:33Z B10 GATE PASS build gates of H100g22p1: PASS G0c-rules: a43d78c533bbfcfce3800875fd6bff9a3205e46408e42bfd48410b7d9b1f5dea PASS G0c-validation: ok PASS G0g: ok PASS G0k: ok PASS line-view: ok PASS G0-B: ok 
+=== 2026-11-25T04:04:33Z B10 NOTE pool H100g22p1 (sealed recipe)
+=== 2026-11-25T04:05:55Z B10 NOTE build H100g22p2 (scale 100, seed 5474)
+=== 2026-11-25T04:06:31Z B10 GATE PASS build gates of H100g22p2: PASS G0c-rules: 6ed1abb938f9ff4d0c98e133c228d0907c603ad98e0d5de15d769b493fef8a13 PASS G0c-validation: ok PASS G0g: ok PASS G0k: ok PASS line-view: ok PASS G0-B: ok 
+=== 2026-11-25T04:06:31Z B10 NOTE pool H100g22p2 (sealed recipe)
+=== 2026-11-25T04:07:47Z B10 NOTE build H100g22p3 (scale 100, seed 5308)
+=== 2026-11-25T04:08:27Z B10 GATE PASS build gates of H100g22p3: PASS G0c-rules: a76051f0f2fa1fee6881c65438a960fa4f3f8833b4899d63b2174865f0bfaa9d PASS G0c-validation: ok PASS G0g: ok PASS G0k: ok PASS line-view: ok PASS G0-B: ok 
+=== 2026-11-25T04:08:27Z B10 NOTE pool H100g22p3 (sealed recipe)
+=== 2026-11-25T04:10:04Z B10 NOTE build H100g22p4 (scale 100, seed 5917)
+=== 2026-11-25T04:10:44Z B10 GATE PASS build gates of H100g22p4: PASS G0c-rules: 45a20e4392fd97d9cb9bd37aab4af9b252849bb39f3b6659608ccc83df0508d7 PASS G0c-validation: ok PASS G0g: ok PASS G0k: ok PASS line-view: ok PASS G0-B: ok 
+=== 2026-11-25T04:10:44Z B10 NOTE pool H100g22p4 (sealed recipe)
+=== 2026-11-25T04:12:18Z B10 NOTE build H100g22p5 (scale 100, seed 5030)
+=== 2026-11-25T04:12:59Z B10 GATE PASS build gates of H100g22p5: PASS G0c-rules: 4828f4af3ed855a424160166a78b8b0313a138cf3723161b7a0d199c3f1c3a01 PASS G0c-validation: ok PASS G0g: ok PASS G0k: ok PASS line-view: ok PASS G0-B: ok 
+=== 2026-11-25T04:12:59Z B10 NOTE pool H100g22p5 (sealed recipe)
+=== 2026-11-25T04:14:30Z B10 NOTE build H1000g22p1 (scale 1000, seed 5791)
+=== 2026-11-25T04:44:23Z B10 NOTE memory: build H1000g22p1 peaked at 1.58 GiB (limit 10)
+=== 2026-11-25T04:44:23Z B10 GATE PASS build gates of H1000g22p1: PASS G0c-rules: 376d7d6130888fdbd610c994f96a056f851a6e98198361806540ae86fdc53f11 PASS G0c-validation: ok PASS G0g: ok PASS G0k: ok PASS line-view: ok PASS G0-B: ok peak 1.58 GiB of 10.00; 1784.7
+=== 2026-11-25T04:44:23Z B10 NOTE pool H1000g22p1 (sealed recipe)
+=== 2026-11-25T07:15:50Z B10 NOTE memory: pool H1000g22p1 peaked at 1.84 GiB (limit 10)
+=== 2026-11-25T07:15:50Z B10 NOTE build H1000g22p2 (scale 1000, seed 5827)
+=== 2026-11-25T08:00:02Z B10 NOTE memory: build H1000g22p2 peaked at 1.82 GiB (limit 10)
+=== 2026-11-25T08:00:02Z B10 GATE PASS build gates of H1000g22p2: PASS G0c-rules: b0dd50b994c010992636b74725f6f90f6ba292d48dce3bc7fefb7361c9fcd9fb PASS G0c-validation: ok PASS G0g: ok PASS G0k: ok PASS line-view: ok PASS G0-B: ok peak 1.82 GiB of 10.00; 2642.8
+=== 2026-11-25T08:00:02Z B10 NOTE pool H1000g22p2 (sealed recipe)
+=== 2026-11-25T11:36:04Z B10 NOTE memory: pool H1000g22p2 peaked at 2.27 GiB (limit 10)
+=== 2026-11-25T11:36:04Z B10 NOTE build H1000g22p3 (scale 1000, seed 5738)
+=== 2026-11-25T12:15:11Z B10 NOTE memory: build H1000g22p3 peaked at 1.74 GiB (limit 10)
+=== 2026-11-25T12:15:11Z B10 GATE PASS build gates of H1000g22p3: PASS G0c-rules: 7ef9b77ac28acf97906041a7fcf0180c05f00a6e0b869eaaa99afbe928ecdc30 PASS G0c-validation: ok PASS G0g: ok PASS G0k: ok PASS line-view: ok PASS G0-B: ok peak 1.74 GiB of 10.00; 2339.1
+=== 2026-11-25T12:15:11Z B10 NOTE pool H1000g22p3 (sealed recipe)
+=== 2026-11-25T15:34:07Z B10 NOTE memory: pool H1000g22p3 peaked at 2.12 GiB (limit 10)
+=== 2026-11-25T15:34:07Z B10 NOTE build H1000g22p4 (scale 1000, seed 5568)
+=== 2026-11-25T16:16:42Z B10 NOTE memory: build H1000g22p4 peaked at 1.81 GiB (limit 10)
+=== 2026-11-25T16:16:43Z B10 GATE PASS build gates of H1000g22p4: PASS G0c-rules: 08b5a8f3bce375a149aec7f7ac3cf3fc12ab5d3b25891b4cdbf85567b7b2cf94 PASS G0c-validation: ok PASS G0g: ok PASS G0k: ok PASS line-view: ok PASS G0-B: ok peak 1.81 GiB of 10.00; 2547.5
+=== 2026-11-25T16:16:43Z B10 NOTE pool H1000g22p4 (sealed recipe)
+=== 2026-11-25T19:40:35Z B10 NOTE memory: pool H1000g22p4 peaked at 2.23 GiB (limit 10)
+=== 2026-11-25T19:40:35Z B10 NOTE build H1000g22p5 (scale 1000, seed 5945)
+=== 2026-11-25T20:18:53Z B10 NOTE memory: build H1000g22p5 peaked at 1.72 GiB (limit 10)
+=== 2026-11-25T20:18:53Z B10 GATE PASS build gates of H1000g22p5: PASS G0c-rules: 41091abf5178c77b76aea4b0111bfb5139cb388bdd0d85b553076bcdbc5faa31 PASS G0c-validation: ok PASS G0g: ok PASS G0k: ok PASS line-view: ok PASS G0-B: ok peak 1.72 GiB of 10.00; 2289.8
+=== 2026-11-25T20:18:53Z B10 NOTE pool H1000g22p5 (sealed recipe)
+=== 2026-11-25T23:24:16Z B10 NOTE memory: pool H1000g22p5 peaked at 1.94 GiB (limit 10)
+=== 2026-11-25T23:24:26Z B10 NOTE question files (sealed): H1000g22p3: {'a2': 275, 'b': 285, 'r': 235, 'x': 50} H1000g22p4: {'a2': 275, 'b': 285, 'r': 235, 'x': 50} H1000g22p5: {'a2': 275, 'b': 285, 'r': 235, 'x': 50} 
+=== 2026-11-25T23:25:10Z B10 GATE PASS composition bands hold on the sealed100 plants
+=== 2026-11-26T00:04:03Z B10 GATE PASS composition bands hold on the sealed1000 plants
+=== 2026-11-26T00:04:08Z B10 NOTE D10.sha256 written: 176 hashes
+=== 2026-11-26T00:04:13Z B10 DONE B10
+=== 2026-11-26T00:04:13Z P1c START P1c
+=== 2026-11-26T00:04:17Z P1c NOTE B sealed: yes; measured costs: {"A2-ag-100":0.001995,"A2-ag-1000":0.002195,"A2-cyp-100":0.000663,"A2-cyp-1000":0.000731,"B-ag-100":0.002214,"B-ag-1000":0.002618,"B-cyp-100":0.000738,"B-cyp-1000":0.000781}
+=== 2026-11-26T00:04:22Z P1c NOTE estimate P1c: A2 sealed, 100-sheet plants: 5 run(s) x 275 q, key 100, $3.22; A2 sealed, 1000-sheet plants: 5 run(s) x 275 q, key 1000, $3.35; B sealed, 100-sheet plants: 5 run(s) x 285 q, key 100, $3.67; B sealed, 1000-sheet plants: 5 run(s) x 285 q, key 1000, $3.82; total $14.07, step ceiling $21.09; ledger runs $3.4371 of $26.87 (left $23.4329); audit $0.0000 of $8.13; balance not read
+=== 2026-11-26T00:04:26Z P1c NOTE load H100g22p1 into Neo4j (plant_lines), wiping the database first
+balance $33.67 (needed $0.27)
+=== 2026-11-26T00:05:01Z P1c START S9-CYP-H100g22p1 arm CYP-A on H100g22p1, cap $0.2735
+    275 rows: {'ANSWERED': 251, 'PARSE_FAILURE': 19, 'RETRIEVAL_ERROR': 5}
+=== 2026-11-26T00:15:43Z P1c DONE S9-CYP-H100g22p1
+=== 2026-11-26T00:24:29Z P1c NOTE replay INF-S9-CYP-H100g22p1: prefix_equal: 242 of 275 rows
+=== 2026-11-26T00:24:33Z P1c NOTE load H100g22p1B into Neo4j (plant_lines), wiping the database first
+balance $33.49 (needed $0.32)
+=== 2026-11-26T00:25:08Z P1c START S9-CYP-H100g22p1B arm CYP-B on H100g22p1B, cap $0.3155
+    285 rows: {'ANSWERED': 262, 'PARSE_FAILURE': 17, 'RETRIEVAL_ERROR': 6}
+=== 2026-11-26T00:36:23Z P1c DONE S9-CYP-H100g22p1B
+=== 2026-11-26T00:47:50Z P1c NOTE replay INF-S9-CYP-H100g22p1B: identical
+balance $33.27 (needed $0.82)
+=== 2026-11-26T00:48:03Z P1c START S9-AG-H100g22p1 arm AG on H100g22p1, cap $0.823
+    275 rows: {'ANSWERED': 273, 'PARSE_FAILURE': 2}
+=== 2026-11-26T01:02:43Z P1c DONE S9-AG-H100g22p1
+=== 2026-11-26T01:03:06Z P1c NOTE replay INF-S9-AG-H100g22p1: identical
+balance $32.81 (needed $0.95)
+=== 2026-11-26T01:03:19Z P1c START S9-AG-H100g22p1B arm AG-B on H100g22p1B, cap $0.9465
+    285 rows: {'ANSWERED': 284, 'PARSE_FAILURE': 1}
+=== 2026-11-26T01:21:07Z P1c DONE S9-AG-H100g22p1B
+=== 2026-11-26T01:21:32Z P1c NOTE replay INF-S9-AG-H100g22p1B: identical
+=== 2026-11-26T01:21:32Z P1c NOTE load H100g22p2 into Neo4j (plant_lines), wiping the database first
+balance $32.26 (needed $0.27)
+=== 2026-11-26T01:21:59Z P1c START S9-CYP-H100g22p2 arm CYP-A on H100g22p2, cap $0.2735
+    275 rows: {'ANSWERED': 247, 'RETRIEVAL_ERROR': 8, 'PARSE_FAILURE': 20}
+=== 2026-11-26T01:32:26Z P1c DONE S9-CYP-H100g22p2
+=== 2026-11-26T01:44:38Z P1c NOTE replay INF-S9-CYP-H100g22p2: identical
+=== 2026-11-26T01:44:43Z P1c NOTE load H100g22p2B into Neo4j (plant_lines), wiping the database first
+balance $32.06 (needed $0.32)
+=== 2026-11-26T01:45:16Z P1c START S9-CYP-H100g22p2B arm CYP-B on H100g22p2B, cap $0.3155
+    285 rows: {'ANSWERED': 252, 'RETRIEVAL_ERROR': 6, 'PARSE_FAILURE': 27}
+=== 2026-11-26T01:57:05Z P1c DONE S9-CYP-H100g22p2B
+=== 2026-11-26T02:11:19Z P1c NOTE replay INF-S9-CYP-H100g22p2B: identical
+balance $31.82 (needed $0.82)
+=== 2026-11-26T02:11:32Z P1c START S9-AG-H100g22p2 arm AG on H100g22p2, cap $0.823
+    275 rows: {'ANSWERED': 275}
+=== 2026-11-26T02:28:10Z P1c DONE S9-AG-H100g22p2
+=== 2026-11-26T02:28:33Z P1c NOTE replay INF-S9-AG-H100g22p2: identical
+balance $31.30 (needed $0.95)
+=== 2026-11-26T02:28:46Z P1c START S9-AG-H100g22p2B arm AG-B on H100g22p2B, cap $0.9465
+    285 rows: {'ANSWERED': 285}
+=== 2026-11-26T02:44:19Z P1c DONE S9-AG-H100g22p2B
+=== 2026-11-26T02:44:45Z P1c NOTE replay INF-S9-AG-H100g22p2B: identical
+=== 2026-11-26T02:44:45Z P1c NOTE load H100g22p3 into Neo4j (plant_lines), wiping the database first
+balance $30.76 (needed $0.27)
+=== 2026-11-26T02:45:18Z P1c START S9-CYP-H100g22p3 arm CYP-A on H100g22p3, cap $0.2735
+    275 rows: {'ANSWERED': 261, 'RETRIEVAL_ERROR': 6, 'PARSE_FAILURE': 8}
+=== 2026-11-26T02:55:55Z P1c DONE S9-CYP-H100g22p3
+=== 2026-11-26T03:05:02Z P1c NOTE replay INF-S9-CYP-H100g22p3: prefix_equal: 241 of 275 rows
+=== 2026-11-26T03:05:06Z P1c NOTE load H100g22p3B into Neo4j (plant_lines), wiping the database first
+balance $30.57 (needed $0.32)
+=== 2026-11-26T03:05:39Z P1c START S9-CYP-H100g22p3B arm CYP-B on H100g22p3B, cap $0.3155
+    285 rows: {'ANSWERED': 260, 'RETRIEVAL_ERROR': 6, 'PARSE_FAILURE': 19}
+=== 2026-11-26T03:16:50Z P1c DONE S9-CYP-H100g22p3B
+=== 2026-11-26T03:28:20Z P1c NOTE replay INF-S9-CYP-H100g22p3B: identical
+balance $30.35 (needed $0.82)
+=== 2026-11-26T03:28:34Z P1c START S9-AG-H100g22p3 arm AG on H100g22p3, cap $0.823
+    275 rows: {'ANSWERED': 271, 'PARSE_FAILURE': 4}
+=== 2026-11-26T03:45:21Z P1c DONE S9-AG-H100g22p3
+=== 2026-11-26T03:45:46Z P1c NOTE replay INF-S9-AG-H100g22p3: identical
+balance $29.81 (needed $0.95)
+=== 2026-11-26T03:45:59Z P1c START S9-AG-H100g22p3B arm AG-B on H100g22p3B, cap $0.9465
+    285 rows: {'ANSWERED': 285}
+=== 2026-11-26T04:03:07Z P1c DONE S9-AG-H100g22p3B
+=== 2026-11-26T04:03:34Z P1c NOTE replay INF-S9-AG-H100g22p3B: identical
+=== 2026-11-26T04:03:34Z P1c NOTE load H100g22p4 into Neo4j (plant_lines), wiping the database first
+balance $29.23 (needed $0.27)
+=== 2026-11-26T04:04:09Z P1c START S9-CYP-H100g22p4 arm CYP-A on H100g22p4, cap $0.2735
+    275 rows: {'ANSWERED': 258, 'RETRIEVAL_ERROR': 4, 'PARSE_FAILURE': 13}
+=== 2026-11-26T04:13:55Z P1c DONE S9-CYP-H100g22p4
+=== 2026-11-26T04:23:57Z P1c NOTE replay INF-S9-CYP-H100g22p4: prefix_equal: 275 of 275 rows
+=== 2026-11-26T04:24:01Z P1c NOTE load H100g22p4B into Neo4j (plant_lines), wiping the database first
+balance $29.05 (needed $0.32)
+=== 2026-11-26T04:24:38Z P1c START S9-CYP-H100g22p4B arm CYP-B on H100g22p4B, cap $0.3155
+    285 rows: {'ANSWERED': 264, 'RETRIEVAL_ERROR': 4, 'PARSE_FAILURE': 17}
+=== 2026-11-26T04:35:56Z P1c DONE S9-CYP-H100g22p4B
+=== 2026-11-26T04:45:01Z P1c NOTE replay INF-S9-CYP-H100g22p4B: prefix_equal: 257 of 285 rows
+balance $28.83 (needed $0.82)
+=== 2026-11-26T04:45:15Z P1c START S9-AG-H100g22p4 arm AG on H100g22p4, cap $0.823
+    275 rows: {'ANSWERED': 275}
+=== 2026-11-26T05:00:37Z P1c DONE S9-AG-H100g22p4
+=== 2026-11-26T05:01:01Z P1c NOTE replay INF-S9-AG-H100g22p4: identical
+balance $28.33 (needed $0.95)
+=== 2026-11-26T05:01:14Z P1c START S9-AG-H100g22p4B arm AG-B on H100g22p4B, cap $0.9465
+    285 rows: {'ANSWERED': 285}
+=== 2026-11-26T05:18:38Z P1c DONE S9-AG-H100g22p4B
+=== 2026-11-26T05:19:03Z P1c NOTE replay INF-S9-AG-H100g22p4B: identical
+=== 2026-11-26T05:19:03Z P1c NOTE load H100g22p5 into Neo4j (plant_lines), wiping the database first
+balance $27.77 (needed $0.27)
+=== 2026-11-26T05:19:38Z P1c START S9-CYP-H100g22p5 arm CYP-A on H100g22p5, cap $0.2735
+    275 rows: {'ANSWERED': 256, 'RETRIEVAL_ERROR': 6, 'PARSE_FAILURE': 13}
+=== 2026-11-26T05:30:09Z P1c DONE S9-CYP-H100g22p5
+=== 2026-11-26T05:42:12Z P1c NOTE replay INF-S9-CYP-H100g22p5: identical
+=== 2026-11-26T05:42:16Z P1c NOTE load H100g22p5B into Neo4j (plant_lines), wiping the database first
+balance $27.59 (needed $0.32)
+=== 2026-11-26T05:42:53Z P1c START S9-CYP-H100g22p5B arm CYP-B on H100g22p5B, cap $0.3155
+    285 rows: {'ANSWERED': 265, 'PARSE_FAILURE': 13, 'RETRIEVAL_ERROR': 7}
+=== 2026-11-26T05:55:05Z P1c DONE S9-CYP-H100g22p5B
+=== 2026-11-26T06:02:44Z P1c NOTE replay INF-S9-CYP-H100g22p5B: prefix_equal: 239 of 285 rows
+balance $27.37 (needed $0.82)
+=== 2026-11-26T06:02:57Z P1c START S9-AG-H100g22p5 arm AG on H100g22p5, cap $0.823
+    275 rows: {'ANSWERED': 271, 'PARSE_FAILURE': 4}
+=== 2026-11-26T06:19:00Z P1c DONE S9-AG-H100g22p5
+=== 2026-11-26T06:19:25Z P1c NOTE replay INF-S9-AG-H100g22p5: identical
+balance $26.86 (needed $0.95)
+=== 2026-11-26T06:19:39Z P1c START S9-AG-H100g22p5B arm AG-B on H100g22p5B, cap $0.9465
+    285 rows: {'ANSWERED': 284, 'PARSE_FAILURE': 1}
+=== 2026-11-26T06:36:19Z P1c DONE S9-AG-H100g22p5B
+=== 2026-11-26T06:36:44Z P1c NOTE replay INF-S9-AG-H100g22p5B: identical
+=== 2026-11-26T06:36:45Z P1c NOTE load H1000g22p1 into Neo4j (plant_lines), wiping the database first
+balance $26.29 (needed $0.30)
+=== 2026-11-26T06:42:41Z P1c START S9-CYP-H1000g22p1 arm CYP-A on H1000g22p1, cap $0.3016
+    275 rows: {'ANSWERED': 239, 'RETRIEVAL_ERROR': 34, 'PARSE_FAILURE': 2}
+=== 2026-11-26T07:06:19Z P1c DONE S9-CYP-H1000g22p1
+=== 2026-11-26T07:23:09Z P1c NOTE replay INF-S9-CYP-H1000g22p1: prefix_equal: 237 of 275 rows
+=== 2026-11-26T07:23:13Z P1c NOTE load H1000g22p1B into Neo4j (plant_lines), wiping the database first
+balance $26.10 (needed $0.33)
+=== 2026-11-26T07:29:37Z P1c START S9-CYP-H1000g22p1B arm CYP-B on H1000g22p1B, cap $0.3339
+    285 rows: {'ANSWERED': 241, 'RETRIEVAL_ERROR': 35, 'PARSE_FAILURE': 9}
+=== 2026-11-26T07:53:22Z P1c DONE S9-CYP-H1000g22p1B
+=== 2026-11-26T08:08:21Z P1c NOTE replay INF-S9-CYP-H1000g22p1B: prefix_equal: 237 of 285 rows
+balance $25.88 (needed $0.91)
+=== 2026-11-26T08:08:34Z P1c START S9-AG-H1000g22p1 arm AG on H1000g22p1, cap $0.9055
+    275 rows: {'ANSWERED': 274, 'PARSE_FAILURE': 1}
+=== 2026-11-26T08:31:25Z P1c DONE S9-AG-H1000g22p1
+=== 2026-11-26T08:38:13Z P1c NOTE replay INF-S9-AG-H1000g22p1: identical
+balance $25.31 (needed $1.12)
+=== 2026-11-26T08:38:27Z P1c START S9-AG-H1000g22p1B arm AG-B on H1000g22p1B, cap $1.1192
+    285 rows: {'ANSWERED': 284, 'PARSE_FAILURE': 1}
+=== 2026-11-26T09:02:55Z P1c DONE S9-AG-H1000g22p1B
+=== 2026-11-26T09:09:34Z P1c NOTE replay INF-S9-AG-H1000g22p1B: identical
+=== 2026-11-26T09:09:34Z P1c NOTE load H1000g22p2 into Neo4j (plant_lines), wiping the database first
+balance $24.67 (needed $0.30)
+=== 2026-11-26T09:18:56Z P1c START S9-CYP-H1000g22p2 arm CYP-A on H1000g22p2, cap $0.3016
+    275 rows: {'ANSWERED': 237, 'RETRIEVAL_ERROR': 33, 'PARSE_FAILURE': 5}
+=== 2026-11-26T09:45:09Z P1c DONE S9-CYP-H1000g22p2
+=== 2026-11-26T10:12:02Z P1c NOTE replay INF-S9-CYP-H1000g22p2: prefix_equal: 244 of 275 rows
+=== 2026-11-26T10:12:07Z P1c NOTE load H1000g22p2B into Neo4j (plant_lines), wiping the database first
+balance $24.48 (needed $0.33)
+=== 2026-11-26T10:21:30Z P1c START S9-CYP-H1000g22p2B arm CYP-B on H1000g22p2B, cap $0.3339
+    285 rows: {'ANSWERED': 239, 'RETRIEVAL_ERROR': 43, 'PARSE_FAILURE': 3}
+=== 2026-11-26T10:51:51Z P1c DONE S9-CYP-H1000g22p2B
+=== 2026-11-26T11:49:56Z P1c NOTE replay INF-S9-CYP-H1000g22p2B: identical
+balance $24.27 (needed $0.91)
+=== 2026-11-26T11:50:09Z P1c START S9-AG-H1000g22p2 arm AG on H1000g22p2, cap $0.9055
+    275 rows: {'ANSWERED': 273, 'PARSE_FAILURE': 2}
+=== 2026-11-26T12:16:21Z P1c DONE S9-AG-H1000g22p2
+=== 2026-11-26T12:26:07Z P1c NOTE replay INF-S9-AG-H1000g22p2: identical
+balance $23.77 (needed $1.12)
+=== 2026-11-26T12:26:22Z P1c START S9-AG-H1000g22p2B arm AG-B on H1000g22p2B, cap $1.1192
+    285 rows: {'ANSWERED': 283, 'PARSE_FAILURE': 2}
+=== 2026-11-26T12:52:53Z P1c DONE S9-AG-H1000g22p2B
+=== 2026-11-26T13:01:28Z P1c NOTE replay INF-S9-AG-H1000g22p2B: identical
+=== 2026-11-26T13:01:28Z P1c NOTE load H1000g22p3 into Neo4j (plant_lines), wiping the database first
+balance $23.18 (needed $0.30)
+=== 2026-11-26T13:09:08Z P1c START S9-CYP-H1000g22p3 arm CYP-A on H1000g22p3, cap $0.3016
+    275 rows: {'ANSWERED': 244, 'RETRIEVAL_ERROR': 27, 'PARSE_FAILURE': 4}
+=== 2026-11-26T13:33:11Z P1c DONE S9-CYP-H1000g22p3
+=== 2026-11-26T14:17:24Z P1c NOTE replay INF-S9-CYP-H1000g22p3: identical
+=== 2026-11-26T14:17:28Z P1c NOTE load H1000g22p3B into Neo4j (plant_lines), wiping the database first
+balance $22.99 (needed $0.33)
+=== 2026-11-26T14:25:56Z P1c START S9-CYP-H1000g22p3B arm CYP-B on H1000g22p3B, cap $0.3339
+    285 rows: {'ANSWERED': 241, 'RETRIEVAL_ERROR': 36, 'PARSE_FAILURE': 7, 'DID_NOT_FIT': 1}
+=== 2026-11-26T14:53:12Z P1c DONE S9-CYP-H1000g22p3B
+=== 2026-11-26T15:01:21Z P1c NOTE replay INF-S9-CYP-H1000g22p3B: prefix_equal: 9 of 285 rows
+balance $22.76 (needed $0.91)
+=== 2026-11-26T15:01:35Z P1c START S9-AG-H1000g22p3 arm AG on H1000g22p3, cap $0.9055
+    275 rows: {'ANSWERED': 274, 'PARSE_FAILURE': 1}
+=== 2026-11-26T15:26:20Z P1c DONE S9-AG-H1000g22p3
+=== 2026-11-26T15:34:40Z P1c NOTE replay INF-S9-AG-H1000g22p3: identical
+balance $22.25 (needed $1.12)
+=== 2026-11-26T15:34:53Z P1c START S9-AG-H1000g22p3B arm AG-B on H1000g22p3B, cap $1.1192
+    285 rows: {'ANSWERED': 285}
+=== 2026-11-26T15:59:03Z P1c DONE S9-AG-H1000g22p3B
+=== 2026-11-26T16:06:42Z P1c NOTE replay INF-S9-AG-H1000g22p3B: identical
+=== 2026-11-26T16:06:42Z P1c NOTE load H1000g22p4 into Neo4j (plant_lines), wiping the database first
+balance $21.71 (needed $0.30)
+=== 2026-11-26T16:15:34Z P1c START S9-CYP-H1000g22p4 arm CYP-A on H1000g22p4, cap $0.3016
+    275 rows: {'ANSWERED': 234, 'PARSE_FAILURE': 6, 'RETRIEVAL_ERROR': 35}
+=== 2026-11-26T16:41:23Z P1c DONE S9-CYP-H1000g22p4
+=== 2026-11-26T17:24:15Z P1c STOP [user] paused by the user (machine unplugged); resume: bash.exe -l data/runs/exp0009/launch.sh --from P1c
+=== 2026-11-26T20:38:19Z launcher NOTE real run into data/runs/exp0009 (resume with: sh data/runs/exp0009/run_all.sh --from P0)
+=== 2026-11-26T20:38:28Z P0 SKIP P0 (done)
+=== 2026-11-26T20:38:35Z P1a SKIP P1a (done)
+=== 2026-11-26T20:38:39Z P1b SKIP P1b (done)
+=== 2026-11-26T20:38:46Z F10 SKIP F10 (done)
+=== 2026-11-26T20:38:52Z B10 SKIP B10 (done)
+=== 2026-11-26T20:38:52Z P1c START P1c
+=== 2026-11-26T20:38:54Z P1c NOTE B sealed: yes; measured costs: {"A2-ag-100":0.001995,"A2-ag-1000":0.002195,"A2-cyp-100":0.000663,"A2-cyp-1000":0.000731,"B-ag-100":0.002214,"B-ag-1000":0.002618,"B-cyp-100":0.000738,"B-cyp-1000":0.000781}
+=== 2026-11-26T20:38:59Z P1c NOTE estimate P1c: A2 sealed, 100-sheet plants: 5 run(s) x 275 q, key 100, $3.22; A2 sealed, 1000-sheet plants: 5 run(s) x 275 q, key 1000, $3.35; B sealed, 100-sheet plants: 5 run(s) x 285 q, key 100, $3.67; B sealed, 1000-sheet plants: 5 run(s) x 285 q, key 1000, $3.82; total $14.07, step ceiling $21.09; ledger runs $15.5970 of $26.87 (left $11.2730); audit $0.0000 of $8.13; balance not read
+=== 2026-11-26T20:39:03Z P1c NOTE skip S9-CYP-H100g22p1 (complete)
+=== 2026-11-26T20:39:03Z P1c NOTE skip replay INF-S9-CYP-H100g22p1 (done)
+=== 2026-11-26T20:39:03Z P1c NOTE skip S9-CYP-H100g22p1B (complete)
+=== 2026-11-26T20:39:03Z P1c NOTE skip replay INF-S9-CYP-H100g22p1B (done)
+=== 2026-11-26T20:39:03Z P1c NOTE skip S9-AG-H100g22p1 (complete)
+=== 2026-11-26T20:39:03Z P1c NOTE skip replay INF-S9-AG-H100g22p1 (done)
+=== 2026-11-26T20:39:03Z P1c NOTE skip S9-AG-H100g22p1B (complete)
+=== 2026-11-26T20:39:03Z P1c NOTE skip replay INF-S9-AG-H100g22p1B (done)
+=== 2026-11-26T20:39:03Z P1c NOTE skip S9-CYP-H100g22p2 (complete)
+=== 2026-11-26T20:39:03Z P1c NOTE skip replay INF-S9-CYP-H100g22p2 (done)
+=== 2026-11-26T20:39:03Z P1c NOTE skip S9-CYP-H100g22p2B (complete)
+=== 2026-11-26T20:39:03Z P1c NOTE skip replay INF-S9-CYP-H100g22p2B (done)
+=== 2026-11-26T20:39:03Z P1c NOTE skip S9-AG-H100g22p2 (complete)
+=== 2026-11-26T20:39:03Z P1c NOTE skip replay INF-S9-AG-H100g22p2 (done)
+=== 2026-11-26T20:39:03Z P1c NOTE skip S9-AG-H100g22p2B (complete)
+=== 2026-11-26T20:39:03Z P1c NOTE skip replay INF-S9-AG-H100g22p2B (done)
+=== 2026-11-26T20:39:03Z P1c NOTE skip S9-CYP-H100g22p3 (complete)
+=== 2026-11-26T20:39:03Z P1c NOTE skip replay INF-S9-CYP-H100g22p3 (done)
+=== 2026-11-26T20:39:03Z P1c NOTE skip S9-CYP-H100g22p3B (complete)
+=== 2026-11-26T20:39:03Z P1c NOTE skip replay INF-S9-CYP-H100g22p3B (done)
+=== 2026-11-26T20:39:03Z P1c NOTE skip S9-AG-H100g22p3 (complete)
+=== 2026-11-26T20:39:04Z P1c NOTE skip replay INF-S9-AG-H100g22p3 (done)
+=== 2026-11-26T20:39:04Z P1c NOTE skip S9-AG-H100g22p3B (complete)
+=== 2026-11-26T20:39:04Z P1c NOTE skip replay INF-S9-AG-H100g22p3B (done)
+=== 2026-11-26T20:39:04Z P1c NOTE skip S9-CYP-H100g22p4 (complete)
+=== 2026-11-26T20:39:04Z P1c NOTE skip replay INF-S9-CYP-H100g22p4 (done)
+=== 2026-11-26T20:39:04Z P1c NOTE skip S9-CYP-H100g22p4B (complete)
+=== 2026-11-26T20:39:04Z P1c NOTE skip replay INF-S9-CYP-H100g22p4B (done)
+=== 2026-11-26T20:39:04Z P1c NOTE skip S9-AG-H100g22p4 (complete)
+=== 2026-11-26T20:39:04Z P1c NOTE skip replay INF-S9-AG-H100g22p4 (done)
+=== 2026-11-26T20:39:04Z P1c NOTE skip S9-AG-H100g22p4B (complete)
+=== 2026-11-26T20:39:04Z P1c NOTE skip replay INF-S9-AG-H100g22p4B (done)
+=== 2026-11-26T20:39:04Z P1c NOTE skip S9-CYP-H100g22p5 (complete)
+=== 2026-11-26T20:39:04Z P1c NOTE skip replay INF-S9-CYP-H100g22p5 (done)
+=== 2026-11-26T20:39:04Z P1c NOTE skip S9-CYP-H100g22p5B (complete)
+=== 2026-11-26T20:39:04Z P1c NOTE skip replay INF-S9-CYP-H100g22p5B (done)
+=== 2026-11-26T20:39:04Z P1c NOTE skip S9-AG-H100g22p5 (complete)
+=== 2026-11-26T20:39:04Z P1c NOTE skip replay INF-S9-AG-H100g22p5 (done)
+=== 2026-11-26T20:39:04Z P1c NOTE skip S9-AG-H100g22p5B (complete)
+=== 2026-11-26T20:39:04Z P1c NOTE skip replay INF-S9-AG-H100g22p5B (done)
+=== 2026-11-26T20:39:04Z P1c NOTE skip S9-CYP-H1000g22p1 (complete)
+=== 2026-11-26T20:39:04Z P1c NOTE skip replay INF-S9-CYP-H1000g22p1 (done)
+=== 2026-11-26T20:39:04Z P1c NOTE skip S9-CYP-H1000g22p1B (complete)
+=== 2026-11-26T20:39:04Z P1c NOTE skip replay INF-S9-CYP-H1000g22p1B (done)
+=== 2026-11-26T20:39:04Z P1c NOTE skip S9-AG-H1000g22p1 (complete)
+=== 2026-11-26T20:39:04Z P1c NOTE skip replay INF-S9-AG-H1000g22p1 (done)
+=== 2026-11-26T20:39:04Z P1c NOTE skip S9-AG-H1000g22p1B (complete)
+=== 2026-11-26T20:39:04Z P1c NOTE skip replay INF-S9-AG-H1000g22p1B (done)
+=== 2026-11-26T20:39:04Z P1c NOTE skip S9-CYP-H1000g22p2 (complete)
+=== 2026-11-26T20:39:04Z P1c NOTE skip replay INF-S9-CYP-H1000g22p2 (done)
+=== 2026-11-26T20:39:04Z P1c NOTE skip S9-CYP-H1000g22p2B (complete)
+=== 2026-11-26T20:39:04Z P1c NOTE skip replay INF-S9-CYP-H1000g22p2B (done)
+=== 2026-11-26T20:39:04Z P1c NOTE skip S9-AG-H1000g22p2 (complete)
+=== 2026-11-26T20:39:04Z P1c NOTE skip replay INF-S9-AG-H1000g22p2 (done)
+=== 2026-11-26T20:39:04Z P1c NOTE skip S9-AG-H1000g22p2B (complete)
+=== 2026-11-26T20:39:05Z P1c NOTE skip replay INF-S9-AG-H1000g22p2B (done)
+=== 2026-11-26T20:39:05Z P1c NOTE skip S9-CYP-H1000g22p3 (complete)
+=== 2026-11-26T20:39:05Z P1c NOTE skip replay INF-S9-CYP-H1000g22p3 (done)
+=== 2026-11-26T20:39:05Z P1c NOTE skip S9-CYP-H1000g22p3B (complete)
+=== 2026-11-26T20:39:05Z P1c NOTE skip replay INF-S9-CYP-H1000g22p3B (done)
+=== 2026-11-26T20:39:05Z P1c NOTE skip S9-AG-H1000g22p3 (complete)
+=== 2026-11-26T20:39:05Z P1c NOTE skip replay INF-S9-AG-H1000g22p3 (done)
+=== 2026-11-26T20:39:05Z P1c NOTE skip S9-AG-H1000g22p3B (complete)
+=== 2026-11-26T20:39:05Z P1c NOTE skip replay INF-S9-AG-H1000g22p3B (done)
+=== 2026-11-26T20:39:05Z P1c NOTE load H1000g22p4 into Neo4j (plant_lines), wiping the database first
+=== 2026-11-26T20:47:51Z P1c NOTE skip S9-CYP-H1000g22p4 (complete)
+=== 2026-11-26T21:33:54Z P1c NOTE replay INF-S9-CYP-H1000g22p4: identical
+=== 2026-11-26T21:33:59Z P1c NOTE load H1000g22p4B into Neo4j (plant_lines), wiping the database first
+balance $21.51 (needed $0.33)
+=== 2026-11-26T21:43:18Z P1c START S9-CYP-H1000g22p4B arm CYP-B on H1000g22p4B, cap $0.3339
+    285 rows: {'ANSWERED': 245, 'RETRIEVAL_ERROR': 36, 'PARSE_FAILURE': 4}
+=== 2026-11-26T22:10:31Z P1c DONE S9-CYP-H1000g22p4B
+=== 2026-11-26T23:01:29Z P1c NOTE replay INF-S9-CYP-H1000g22p4B: identical
+balance $21.29 (needed $0.91)
+=== 2026-11-26T23:01:44Z P1c START S9-AG-H1000g22p4 arm AG on H1000g22p4, cap $0.9055
+    275 rows: {'ANSWERED': 275}
+=== 2026-11-26T23:27:17Z P1c DONE S9-AG-H1000g22p4
+=== 2026-11-26T23:36:49Z P1c NOTE replay INF-S9-AG-H1000g22p4: identical
+balance $20.77 (needed $1.12)
+=== 2026-11-26T23:37:03Z P1c START S9-AG-H1000g22p4B arm AG-B on H1000g22p4B, cap $1.1192
+    285 rows: {'ANSWERED': 284, 'PARSE_FAILURE': 1}
+=== 2026-11-27T00:03:07Z P1c DONE S9-AG-H1000g22p4B
+=== 2026-11-27T00:12:51Z P1c NOTE replay INF-S9-AG-H1000g22p4B: identical
+=== 2026-11-27T00:12:51Z P1c NOTE load H1000g22p5 into Neo4j (plant_lines), wiping the database first
+balance $20.19 (needed $0.30)
+=== 2026-11-27T00:20:53Z P1c START S9-CYP-H1000g22p5 arm CYP-A on H1000g22p5, cap $0.3016
+    275 rows: {'ANSWERED': 241, 'RETRIEVAL_ERROR': 31, 'PARSE_FAILURE': 3}
+=== 2026-11-27T00:45:03Z P1c DONE S9-CYP-H1000g22p5
+=== 2026-11-27T01:30:09Z P1c NOTE replay INF-S9-CYP-H1000g22p5: identical
+=== 2026-11-27T01:30:14Z P1c NOTE load H1000g22p5B into Neo4j (plant_lines), wiping the database first
+balance $19.99 (needed $0.33)
+=== 2026-11-27T01:38:23Z P1c START S9-CYP-H1000g22p5B arm CYP-B on H1000g22p5B, cap $0.3339
+    285 rows: {'ANSWERED': 240, 'RETRIEVAL_ERROR': 41, 'PARSE_FAILURE': 4}
+=== 2026-11-27T02:04:24Z P1c DONE S9-CYP-H1000g22p5B
+=== 2026-11-27T02:48:24Z P1c NOTE replay INF-S9-CYP-H1000g22p5B: prefix_equal: 275 of 285 rows
+balance $19.77 (needed $0.91)
+=== 2026-11-27T02:48:39Z P1c START S9-AG-H1000g22p5 arm AG on H1000g22p5, cap $0.9055
+    275 rows: {'ANSWERED': 274, 'PARSE_FAILURE': 1}
+=== 2026-11-27T03:12:42Z P1c DONE S9-AG-H1000g22p5
+=== 2026-11-27T03:20:57Z P1c NOTE replay INF-S9-AG-H1000g22p5: identical
+balance $19.26 (needed $1.12)
+=== 2026-11-27T03:21:11Z P1c START S9-AG-H1000g22p5B arm AG-B on H1000g22p5B, cap $1.1192
+    285 rows: {'ANSWERED': 282, 'PARSE_FAILURE': 3}
+=== 2026-11-27T03:45:42Z P1c DONE S9-AG-H1000g22p5B
+=== 2026-11-27T03:54:15Z P1c NOTE replay INF-S9-AG-H1000g22p5B: identical
+=== 2026-11-27T03:54:20Z P1c DONE P1c
+=== 2026-11-27T03:54:20Z P1g START P1g
+=== 2026-11-27T03:54:36Z P1g NOTE estimate P1g (GLM comparison arm, scope R only): H100g22p1 235 q at $0.00234 (A2 sealed rate); H1000g22p1 235 q at $0.00244 (A2 sealed rate); x1.2-1.9 (GLM dev cost ratio) = $1.35-$2.13; hard cap $2.50; ledger runs $18.4690 of $26.87 (left $8.4010); audit $0.0000 of $8.13; balance not read
+balance $18.64 (needed $2.50)
+=== 2026-11-27T03:54:51Z P1g NOTE load H100g22p1 into Neo4j (plant_lines), wiping the database first
+balance $18.64 (needed $0.51)
+=== 2026-11-27T03:55:27Z P1g START G9-GLM-CYP-H100g22p1 arm CYP-GLM on H100g22p1, cap $0.5062
+    235 rows: {'ANSWERED': 233, 'RETRIEVAL_ERROR': 2}
+=== 2026-11-27T03:58:48Z P1g DONE G9-GLM-CYP-H100g22p1
+=== 2026-11-27T04:02:16Z P1g NOTE replay INF-G9-GLM-CYP-H100g22p1: identical
+balance $18.58 (needed $1.06)
+=== 2026-11-27T04:02:31Z P1g START G9-GLM-AG-H100g22p1 arm AG-GLM on H100g22p1, cap $1.0635
+    235 rows: {'ANSWERED': 234, 'PARSE_FAILURE': 1}
+=== 2026-11-27T04:09:07Z P1g DONE G9-GLM-AG-H100g22p1
+=== 2026-11-27T04:09:33Z P1g NOTE replay INF-G9-GLM-AG-H100g22p1: identical
+=== 2026-11-27T04:09:33Z P1g NOTE load H1000g22p1 into Neo4j (plant_lines), wiping the database first
+balance $18.09 (needed $0.49)
+=== 2026-11-27T04:15:44Z P1g START G9-GLM-CYP-H1000g22p1 arm CYP-GLM on H1000g22p1, cap $0.4854
+    235 rows: {'ANSWERED': 235}
+=== 2026-11-27T04:24:37Z P1g DONE G9-GLM-CYP-H1000g22p1
+=== 2026-11-27T04:33:48Z P1g NOTE replay INF-G9-GLM-CYP-H1000g22p1: identical
+balance $18.00 (needed $1.15)
+=== 2026-11-27T04:34:02Z P1g START G9-GLM-AG-H1000g22p1 arm AG-GLM on H1000g22p1, cap $1.146
+    235 rows: {'ANSWERED': 235}
+=== 2026-11-27T04:46:33Z P1g DONE G9-GLM-AG-H1000g22p1
+=== 2026-11-27T04:53:13Z P1g NOTE replay INF-G9-GLM-AG-H1000g22p1: identical
+=== 2026-11-27T04:53:23Z P1g DONE P1g
+=== 2026-11-27T04:53:23Z P1d START P1d
+=== 2026-11-27T04:53:33Z P1d NOTE estimate P1d: main sample + B stratum about $5.42, audit ledger cap $8.13 (min of that and $35 less the runs); runs $19.5807 of $26.87 (left $7.2893); audit $0.0000 of $8.13
+audit plan: 168 scope R rows (661 scope X rows left out), about 5.41 USD -> data\runs\exp0009\audit\main\plan.json
+wrote 20 subgraphs to data\runs\exp0009\audit\main\subgraphs\H100g22p1.json
+wrote 16 subgraphs to data\runs\exp0009\audit\main\subgraphs\H100g22p2.json
+wrote 14 subgraphs to data\runs\exp0009\audit\main\subgraphs\H100g22p3.json
+wrote 18 subgraphs to data\runs\exp0009\audit\main\subgraphs\H100g22p4.json
+wrote 17 subgraphs to data\runs\exp0009\audit\main\subgraphs\H100g22p5.json
+wrote 17 subgraphs to data\runs\exp0009\audit\main\subgraphs\H1000g22p1.json
+wrote 17 subgraphs to data\runs\exp0009\audit\main\subgraphs\H1000g22p2.json
+wrote 9 subgraphs to data\runs\exp0009\audit\main\subgraphs\H1000g22p3.json
+wrote 16 subgraphs to data\runs\exp0009\audit\main\subgraphs\H1000g22p4.json
+wrote 22 subgraphs to data\runs\exp0009\audit\main\subgraphs\H1000g22p5.json
+B stratum: 84 rows (main sample 168)
+wrote 48 subgraphs to data\runs\exp0009\audit\b\subgraphs\H100g22p1B.json
+wrote 16 subgraphs to data\runs\exp0009\audit\b\subgraphs\H100g22p2B.json
+balance $17.53 (needed $8.13)
+=== 2026-11-27T06:18:31Z P1d START audit judge (A), total cap $8.13, still to spend $8.13
+balance $15.35 (needed $5.87)
+=== 2026-11-27T06:28:05Z P1d START audit judge (B), total cap $8.13, still to spend $5.868058
+report -> data\runs\exp0009\audit\main\report.md; disagreement sheet -> data\runs\exp0009\audit\main\disagreements.csv
+report -> data\runs\exp0009\audit\b\report.md; disagreement sheet -> data\runs\exp0009\audit\b\disagreements.csv
+=== 2026-11-27T06:34:26Z P1d STOP [needs the main session] the judge is done: classify the disagreements under the audit rule (data/runs/exp0009/audit/main/disagreements.csv, data/runs/exp0009/audit/b/disagreements.csv), then create data/runs/exp0009/state/audit_classified and resume
+=== 2026-11-27T07:53:26Z launcher NOTE real run into data/runs/exp0009 (resume with: sh data/runs/exp0009/run_all.sh --from P0)
+=== 2026-11-27T07:53:35Z P0 SKIP P0 (done)
+=== 2026-11-27T07:53:41Z P1a SKIP P1a (done)
+=== 2026-11-27T07:53:46Z P1b SKIP P1b (done)
+=== 2026-11-27T07:53:51Z F10 SKIP F10 (done)
+=== 2026-11-27T07:53:55Z B10 SKIP B10 (done)
+=== 2026-11-27T07:54:00Z P1c SKIP P1c (done)
+=== 2026-11-27T07:54:04Z P1g SKIP P1g (done)
+=== 2026-11-27T07:54:04Z P1d START P1d
+=== 2026-11-27T07:54:14Z P1d NOTE estimate P1d: main sample + B stratum about $5.42, audit ledger cap $8.13 (min of that and $35 less the runs); runs $19.5807 of $26.87 (left $7.2893); audit $3.5122 of $8.13
+=== 2026-11-27T07:54:14Z P1d NOTE skip step select (done)
+=== 2026-11-27T07:54:14Z P1d NOTE skip step subgraphs (done)
+=== 2026-11-27T07:54:15Z P1d NOTE skip step b_select (done)
+=== 2026-11-27T07:54:15Z P1d NOTE skip step judge (done)
+=== 2026-11-27T07:54:15Z P1d NOTE skip step judge_b (done)
+report -> data\runs\exp0009\audit\main\report.md; disagreement sheet -> data\runs\exp0009\audit\main\disagreements.csv
+report -> data\runs\exp0009\audit\b\report.md; disagreement sheet -> data\runs\exp0009\audit\b\disagreements.csv
+=== 2026-11-27T07:54:27Z P1d DONE P1d
+=== 2026-11-27T07:54:27Z END START END
+=== 2026-11-27T07:54:37Z END NOTE report ledger ok
+=== 2026-11-27T07:54:41Z END NOTE ledger: runs $19.5807 of $26.87 (left $7.2893); audit $3.5122 of $8.13
+=== 2026-11-27T07:54:49Z END NOTE report records_S9-CYP-H100g22p1 ok
+=== 2026-11-27T07:54:53Z END NOTE report records_S9-AG-H100g22p1 ok
+=== 2026-11-27T07:54:58Z END NOTE report records_S9-CYP-H100g22p1B ok
+=== 2026-11-27T07:55:02Z END NOTE report records_S9-AG-H100g22p1B ok
+=== 2026-11-27T07:55:13Z END NOTE report cascade_H100g22p1 ok
+=== 2026-11-27T07:55:24Z END NOTE report rescore_CYP_H100g22p1 ok
+=== 2026-11-27T07:55:35Z END NOTE report rescore_AG_H100g22p1 ok
+=== 2026-11-27T07:55:46Z END NOTE report cascade_H100g22p1B ok
+=== 2026-11-27T07:55:58Z END NOTE report rescore_CYP_H100g22p1B ok
+=== 2026-11-27T07:56:09Z END NOTE report rescore_AG_H100g22p1B ok
+=== 2026-11-27T07:56:13Z END NOTE report records_S9-CYP-H100g22p2 ok
+=== 2026-11-27T07:56:17Z END NOTE report records_S9-AG-H100g22p2 ok
+=== 2026-11-27T07:56:21Z END NOTE report records_S9-CYP-H100g22p2B ok
+=== 2026-11-27T07:56:25Z END NOTE report records_S9-AG-H100g22p2B ok
+=== 2026-11-27T07:56:36Z END NOTE report cascade_H100g22p2 ok
+=== 2026-11-27T07:56:47Z END NOTE report rescore_CYP_H100g22p2 ok
+=== 2026-11-27T07:56:57Z END NOTE report rescore_AG_H100g22p2 ok
+=== 2026-11-27T07:57:08Z END NOTE report cascade_H100g22p2B ok
+=== 2026-11-27T07:57:19Z END NOTE report rescore_CYP_H100g22p2B ok
+=== 2026-11-27T07:57:30Z END NOTE report rescore_AG_H100g22p2B ok
+=== 2026-11-27T07:57:34Z END NOTE report records_S9-CYP-H100g22p3 ok
+=== 2026-11-27T07:57:38Z END NOTE report records_S9-AG-H100g22p3 ok
+=== 2026-11-27T07:57:42Z END NOTE report records_S9-CYP-H100g22p3B ok
+=== 2026-11-27T07:57:46Z END NOTE report records_S9-AG-H100g22p3B ok
+=== 2026-11-27T07:57:58Z END NOTE report cascade_H100g22p3 ok
+=== 2026-11-27T07:58:09Z END NOTE report rescore_CYP_H100g22p3 ok
+=== 2026-11-27T07:58:21Z END NOTE report rescore_AG_H100g22p3 ok
+=== 2026-11-27T07:58:33Z END NOTE report cascade_H100g22p3B ok
+=== 2026-11-27T07:58:45Z END NOTE report rescore_CYP_H100g22p3B ok
+=== 2026-11-27T07:58:56Z END NOTE report rescore_AG_H100g22p3B ok
+=== 2026-11-27T07:59:00Z END NOTE report records_S9-CYP-H100g22p4 ok
+=== 2026-11-27T07:59:05Z END NOTE report records_S9-AG-H100g22p4 ok
+=== 2026-11-27T07:59:09Z END NOTE report records_S9-CYP-H100g22p4B ok
+=== 2026-11-27T07:59:13Z END NOTE report records_S9-AG-H100g22p4B ok
+=== 2026-11-27T07:59:24Z END NOTE report cascade_H100g22p4 ok
+=== 2026-11-27T07:59:36Z END NOTE report rescore_CYP_H100g22p4 ok
+=== 2026-11-27T07:59:48Z END NOTE report rescore_AG_H100g22p4 ok
+=== 2026-11-27T07:59:59Z END NOTE report cascade_H100g22p4B ok
+=== 2026-11-27T08:00:11Z END NOTE report rescore_CYP_H100g22p4B ok
+=== 2026-11-27T08:00:23Z END NOTE report rescore_AG_H100g22p4B ok
+=== 2026-11-27T08:00:27Z END NOTE report records_S9-CYP-H100g22p5 ok
+=== 2026-11-27T08:00:31Z END NOTE report records_S9-AG-H100g22p5 ok
+=== 2026-11-27T08:00:35Z END NOTE report records_S9-CYP-H100g22p5B ok
+=== 2026-11-27T08:00:39Z END NOTE report records_S9-AG-H100g22p5B ok
+=== 2026-11-27T08:00:51Z END NOTE report cascade_H100g22p5 ok
+=== 2026-11-27T08:01:03Z END NOTE report rescore_CYP_H100g22p5 ok
+=== 2026-11-27T08:01:14Z END NOTE report rescore_AG_H100g22p5 ok
+=== 2026-11-27T08:01:26Z END NOTE report cascade_H100g22p5B ok
+=== 2026-11-27T08:01:38Z END NOTE report rescore_CYP_H100g22p5B ok
+=== 2026-11-27T08:01:50Z END NOTE report rescore_AG_H100g22p5B ok
+=== 2026-11-27T08:01:54Z END NOTE report records_S9-CYP-H1000g22p1 ok
+=== 2026-11-27T08:01:58Z END NOTE report records_S9-AG-H1000g22p1 ok
+=== 2026-11-27T08:02:02Z END NOTE report records_S9-CYP-H1000g22p1B ok
+=== 2026-11-27T08:02:06Z END NOTE report records_S9-AG-H1000g22p1B ok
+=== 2026-11-27T08:07:44Z END NOTE report cascade_H1000g22p1 ok
+=== 2026-11-27T08:13:26Z END NOTE report rescore_CYP_H1000g22p1 ok
+=== 2026-11-27T08:19:11Z END NOTE report rescore_AG_H1000g22p1 ok
+=== 2026-11-27T08:24:39Z END NOTE report cascade_H1000g22p1B ok
+=== 2026-11-27T08:29:51Z END NOTE report rescore_CYP_H1000g22p1B ok
+=== 2026-11-27T08:35:14Z END NOTE report rescore_AG_H1000g22p1B ok
+=== 2026-11-27T08:35:18Z END NOTE report records_S9-CYP-H1000g22p2 ok
+=== 2026-11-27T08:35:22Z END NOTE report records_S9-AG-H1000g22p2 ok
+=== 2026-11-27T08:35:26Z END NOTE report records_S9-CYP-H1000g22p2B ok
+=== 2026-11-27T08:35:30Z END NOTE report records_S9-AG-H1000g22p2B ok
+=== 2026-11-27T08:43:26Z END NOTE report cascade_H1000g22p2 ok
+=== 2026-11-27T08:51:06Z END NOTE report rescore_CYP_H1000g22p2 ok
+=== 2026-11-27T08:59:19Z END NOTE report rescore_AG_H1000g22p2 ok
+=== 2026-11-27T09:08:21Z END NOTE report cascade_H1000g22p2B ok
+=== 2026-11-27T09:17:03Z END NOTE report rescore_CYP_H1000g22p2B ok
+=== 2026-11-27T09:25:02Z END NOTE report rescore_AG_H1000g22p2B ok
+=== 2026-11-27T09:25:06Z END NOTE report records_S9-CYP-H1000g22p3 ok
+=== 2026-11-27T09:25:10Z END NOTE report records_S9-AG-H1000g22p3 ok
+=== 2026-11-27T09:25:14Z END NOTE report records_S9-CYP-H1000g22p3B ok
+=== 2026-11-27T09:25:18Z END NOTE report records_S9-AG-H1000g22p3B ok
+=== 2026-11-27T09:32:01Z END NOTE report cascade_H1000g22p3 ok
+=== 2026-11-27T09:38:55Z END NOTE report rescore_CYP_H1000g22p3 ok
+=== 2026-11-27T09:45:47Z END NOTE report rescore_AG_H1000g22p3 ok
+=== 2026-11-27T09:53:25Z END NOTE report cascade_H1000g22p3B ok
+=== 2026-11-27T10:01:25Z END NOTE report rescore_CYP_H1000g22p3B ok
+=== 2026-11-27T10:09:03Z END NOTE report rescore_AG_H1000g22p3B ok
+=== 2026-11-27T10:09:07Z END NOTE report records_S9-CYP-H1000g22p4 ok
+=== 2026-11-27T10:09:11Z END NOTE report records_S9-AG-H1000g22p4 ok
+=== 2026-11-27T10:09:16Z END NOTE report records_S9-CYP-H1000g22p4B ok
+=== 2026-11-27T10:09:20Z END NOTE report records_S9-AG-H1000g22p4B ok
+=== 2026-11-27T10:17:51Z END NOTE report cascade_H1000g22p4 ok
+=== 2026-11-27T10:26:21Z END NOTE report rescore_CYP_H1000g22p4 ok
+=== 2026-11-27T10:35:23Z END NOTE report rescore_AG_H1000g22p4 ok
+=== 2026-11-27T10:44:06Z END NOTE report cascade_H1000g22p4B ok
+=== 2026-11-27T10:52:35Z END NOTE report rescore_CYP_H1000g22p4B ok
+=== 2026-11-27T11:01:03Z END NOTE report rescore_AG_H1000g22p4B ok
+=== 2026-11-27T11:01:08Z END NOTE report records_S9-CYP-H1000g22p5 ok
+=== 2026-11-27T11:01:12Z END NOTE report records_S9-AG-H1000g22p5 ok
+=== 2026-11-27T11:01:16Z END NOTE report records_S9-CYP-H1000g22p5B ok
+=== 2026-11-27T11:01:20Z END NOTE report records_S9-AG-H1000g22p5B ok
+=== 2026-11-27T11:08:52Z END NOTE report cascade_H1000g22p5 ok
+=== 2026-11-27T11:16:12Z END NOTE report rescore_CYP_H1000g22p5 ok
+=== 2026-11-27T11:23:46Z END NOTE report rescore_AG_H1000g22p5 ok
+=== 2026-11-27T11:31:30Z END NOTE report cascade_H1000g22p5B ok
+=== 2026-11-27T11:38:55Z END NOTE report rescore_CYP_H1000g22p5B ok
+=== 2026-11-27T11:47:05Z END NOTE report rescore_AG_H1000g22p5B ok
+=== 2026-11-27T11:47:14Z END NOTE report records_G9-GLM-CYP-H100g22p1 ok
+=== 2026-11-27T11:47:18Z END NOTE report records_G9-GLM-AG-H100g22p1 ok
+=== 2026-11-27T11:47:30Z END NOTE report cascade_glm_H100g22p1 ok
+=== 2026-11-27T11:47:42Z END NOTE report rescore_AG_H100g22p1 ok
+=== 2026-11-27T11:47:46Z END NOTE report records_G9-GLM-CYP-H1000g22p1 ok
+=== 2026-11-27T11:47:50Z END NOTE report records_G9-GLM-AG-H1000g22p1 ok
+=== 2026-11-27T11:53:42Z END NOTE report cascade_glm_H1000g22p1 ok
+=== 2026-11-27T11:59:32Z END NOTE report rescore_AG_H1000g22p1 ok
+=== 2026-11-27T11:59:37Z END NOTE report glm_report ok
+=== 2026-11-27T13:23:54Z END NOTE report t17 ok
+=== 2026-11-27T13:23:54Z END NOTE restore the demo database: H1000g21p1 with plant_lines
+=== 2026-11-27T13:31:34Z END DONE END
+=== 2026-11-27T13:31:39Z launcher DONE all stages: runs $19.5807 of $26.87 (left $7.2893); audit $3.5122 of $8.13

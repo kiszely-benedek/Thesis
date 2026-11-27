@@ -1,0 +1,12 @@
+G0l: ok
+drop set of the sealed plants: ['DOWNSTREAM_IN_UNIT', 'DOWNSTREAM_ISOLATION', 'FIRST_MEETING_POINT', 'UPSTREAM_ISOLATION', 'UPSTREAM_SOURCES']
+H100g22p1: {'a2': 275, 'b': 285, 'r': 235, 'x': 50}
+H100g22p2: {'a2': 275, 'b': 285, 'r': 235, 'x': 50}
+H100g22p3: {'a2': 275, 'b': 285, 'r': 235, 'x': 50}
+H100g22p4: {'a2': 275, 'b': 285, 'r': 235, 'x': 50}
+H100g22p5: {'a2': 275, 'b': 285, 'r': 235, 'x': 50}
+H1000g22p1: {'a2': 275, 'b': 285, 'r': 235, 'x': 50}
+H1000g22p2: {'a2': 275, 'b': 285, 'r': 235, 'x': 50}
+H1000g22p3: {'a2': 275, 'b': 285, 'r': 235, 'x': 50}
+H1000g22p4: {'a2': 275, 'b': 285, 'r': 235, 'x': 50}
+H1000g22p5: {'a2': 275, 'b': 285, 'r': 235, 'x': 50}

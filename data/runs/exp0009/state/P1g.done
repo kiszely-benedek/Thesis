@@ -1,0 +1,10 @@
+{
+ "stage": "P1g",
+ "finished_utc": "2026-11-27T04:53:22+00:00",
+ "outputs": {
+  "data/runs/exp0009/p1g/runs/G9-GLM-AG-H1000g22p1/answers.jsonl": "125f24a4c01215ddce3b907343d452f8f460b62db7eb79c41842b7e92ed53445",
+  "data/runs/exp0009/p1g/runs/G9-GLM-AG-H100g22p1/answers.jsonl": "30d7fa91a21b640e8073d3ab3c788e2ba39bf91388515452954657a28ecf1349",
+  "data/runs/exp0009/p1g/runs/G9-GLM-CYP-H1000g22p1/answers.jsonl": "e6d6ee2cba32e58b62427d0a10dda677de3b0f177d5eccbff7be5363a0c664fe",
+  "data/runs/exp0009/p1g/runs/G9-GLM-CYP-H100g22p1/answers.jsonl": "d32385f7ba92058bf56edc7b5f15156de8297506bba744e32c2895778882782c"
+ }
+}

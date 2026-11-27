@@ -1,0 +1,128 @@
+{
+  "dropped": {
+    "DOWNSTREAM_IN_UNIT": "pre-registered",
+    "DOWNSTREAM_ISOLATION": "pre-registered",
+    "FIRST_MEETING_POINT": "pre-registered",
+    "UPSTREAM_ISOLATION": "pre-registered",
+    "UPSTREAM_SOURCES": "pre-registered"
+  },
+  "r_pool_per_family": {
+    "CONNECTED": 719,
+    "COUNT_IN_UNIT": 62,
+    "CROSS_UNIT": 46,
+    "DOWNSTREAM_IN_UNIT": 146,
+    "DOWNSTREAM_ISOLATION": 46,
+    "FEEDING_UNITS": 45,
+    "FLOW_PATH": 717,
+    "INSTRUMENTS_OF_ITEM": 31,
+    "LOOKUP_TYPE": 31,
+    "LOOKUP_UNIT": 31,
+    "LOOPS_NEAR_ITEM": 48,
+    "LOOP_ACTUATED_VALVE": 58,
+    "LOOP_MEASURED_EQUIPMENT": 31,
+    "NEIGHBOURS_DOWNSTREAM": 290,
+    "NO_PATH": 50,
+    "ROUTE_AVOIDING": 700,
+    "SAME_UNIT": 31,
+    "SHEETS_OF_TAG": 16,
+    "UNANSWERABLE_TAG": 50,
+    "UNITS_REACHED": 173,
+    "UPSTREAM_ISOLATION": 82,
+    "UPSTREAM_SOURCES": 4,
+    "VALVES_ON_PATH": 693
+  },
+  "sampled": {
+    "CONNECTED": 10,
+    "COUNT_IN_UNIT": 15,
+    "CROSS_UNIT": 15,
+    "DOWNSTREAM_ISOLATION_X": 10,
+    "FEEDING_UNITS": 10,
+    "FLOW_PATH": 15,
+    "INSTRUMENTS_OF_ITEM": 10,
+    "LOOKUP_TYPE": 15,
+    "LOOKUP_UNIT": 15,
+    "LOOPS_NEAR_ITEM": 10,
+    "LOOP_ACTUATED_VALVE": 15,
+    "LOOP_MEASURED_EQUIPMENT": 15,
+    "NEIGHBOURS_DOWNSTREAM": 15,
+    "NO_PATH": 10,
+    "OPEN_VALVES_TO_ISOLATE": 10,
+    "OPEN_VALVES_TO_ISOLATE_DOWNSTREAM": 10,
+    "POSITION_OF_VALVE": 10,
+    "ROUTE_AVOIDING": 10,
+    "SAME_UNIT": 10,
+    "SHEETS_OF_TAG": 15,
+    "UNANSWERABLE_TAG": 10,
+    "UNITS_REACHED": 10,
+    "UPSTREAM_ISOLATION_X": 10,
+    "VALVES_ON_PATH": 10
+  },
+  "scope_x": [
+    {
+      "candidates": 234,
+      "family": "OPEN_VALVES_TO_ISOLATE",
+      "kept": 234,
+      "kept_discriminating": 45,
+      "kept_named_by_descriptor": null,
+      "kept_position_mix": {},
+      "kept_with_untagged_gold": 0,
+      "refused_empty_gold": 0,
+      "refused_no_descriptor": 0,
+      "refusing_roles": {}
+    },
+    {
+      "candidates": 234,
+      "family": "UPSTREAM_ISOLATION_X",
+      "kept": 234,
+      "kept_discriminating": null,
+      "kept_named_by_descriptor": null,
+      "kept_position_mix": {},
+      "kept_with_untagged_gold": 0,
+      "refused_empty_gold": 0,
+      "refused_no_descriptor": 0,
+      "refusing_roles": {}
+    },
+    {
+      "candidates": 1317,
+      "family": "POSITION_OF_VALVE",
+      "kept": 1317,
+      "kept_discriminating": null,
+      "kept_named_by_descriptor": 0,
+      "kept_position_mix": {
+        "tag": {
+          "CSO": 34,
+          "NC": 502,
+          "NO": 781
+        }
+      },
+      "kept_with_untagged_gold": 0,
+      "refused_empty_gold": 0,
+      "refused_no_descriptor": 0,
+      "refusing_roles": {}
+    },
+    {
+      "candidates": 108,
+      "family": "OPEN_VALVES_TO_ISOLATE_DOWNSTREAM",
+      "kept": 108,
+      "kept_discriminating": 96,
+      "kept_named_by_descriptor": null,
+      "kept_position_mix": {},
+      "kept_with_untagged_gold": 0,
+      "refused_empty_gold": 0,
+      "refused_no_descriptor": 0,
+      "refusing_roles": {}
+    },
+    {
+      "candidates": 108,
+      "family": "DOWNSTREAM_ISOLATION_X",
+      "kept": 108,
+      "kept_discriminating": null,
+      "kept_named_by_descriptor": null,
+      "kept_position_mix": {},
+      "kept_with_untagged_gold": 0,
+      "refused_empty_gold": 0,
+      "refused_no_descriptor": 0,
+      "refusing_roles": {}
+    }
+  ]
+}

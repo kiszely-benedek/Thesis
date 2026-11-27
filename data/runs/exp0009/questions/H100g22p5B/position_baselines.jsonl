@@ -1,0 +1,10 @@
+{"gold": "NC", "majority": "NO", "named_by": "descriptor", "question_id": "H100g22p5B:POSITION_OF_VALVE:E-4103|downstream|GateValve|4-CHD-410030-A1A-N", "text_prior": "NC"}
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "H100g22p5B:POSITION_OF_VALVE:STR-39011|upstream|GateValve|6-P-390027-A1A-N", "text_prior": "NO"}
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "H100g22p5B:POSITION_OF_VALVE:XV-10001|upstream|GateValve|6-P-90053-B1A-N", "text_prior": "NO"}
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "H100g22p5B:POSITION_OF_VALVE:PSE-13028|downstream|GateValve|8-FL-90100003-A1A-N", "text_prior": "NO"}
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "H100g22p5B:POSITION_OF_VALVE:D-1601|downstream|GateValve|8-CHD-90110006-A1A-N", "text_prior": "NC"}
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "H100g22p5B:POSITION_OF_VALVE:STR-22043|upstream|GateValve|6-PG-220040-A1A-N", "text_prior": "NO"}
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "H100g22p5B:POSITION_OF_VALVE:FV-44008|downstream|BallValve|4-P-450005-A1A-N", "text_prior": "NO"}
+{"gold": "NC", "majority": "NO", "named_by": "descriptor", "question_id": "H100g22p5B:POSITION_OF_VALVE:XV-10001|upstream|GlobeValve|4-P-90048-A1A-N", "text_prior": "NC"}
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "H100g22p5B:POSITION_OF_VALVE:FE-18006|upstream|GateValve|6-P-180017-B1A-N", "text_prior": "NO"}
+{"gold": "NO", "majority": "NO", "named_by": "descriptor", "question_id": "H100g22p5B:POSITION_OF_VALVE:XV-36013|upstream|ButterflyValve|6-P-350004-B1A-N", "text_prior": "NO"}

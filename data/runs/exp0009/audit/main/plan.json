@@ -1,0 +1,2365 @@
+{
+ "seed": 20261108,
+ "call_usd": 0.03220956349206349,
+ "remaining_usd": 5.42,
+ "items": [
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p3",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p3:CONNECTED:EA-4001|V-4901",
+    "corpus_id": "H100g22p3",
+    "family": "CONNECTED",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"yes\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p2:CONNECTED:P-601A|E-902",
+    "corpus_id": "H100g22p2",
+    "family": "CONNECTED",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"yes\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p1",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p1:CONNECTED:E-3002|P-3101",
+    "corpus_id": "H1000g22p1",
+    "family": "CONNECTED",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"yes\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p1",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p1:CONNECTED:P-30503|P-32502",
+    "corpus_id": "H1000g22p1",
+    "family": "CONNECTED",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"yes\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p2:COUNT_IN_UNIT:41|BallValve",
+    "corpus_id": "H100g22p2",
+    "family": "COUNT_IN_UNIT",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": 4, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p4",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p4:COUNT_IN_UNIT:COUNT_IN_UNIT_P1:18|SwingCheckValve",
+    "corpus_id": "H100g22p4",
+    "family": "COUNT_IN_UNIT",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": 5, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p3",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p3:COUNT_IN_UNIT:176|AngleValve",
+    "corpus_id": "H1000g22p3",
+    "family": "COUNT_IN_UNIT",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": 1, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p1",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p1:COUNT_IN_UNIT:275|PressureVessel",
+    "corpus_id": "H1000g22p1",
+    "family": "COUNT_IN_UNIT",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": 1, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p5",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p5:CROSS_UNIT:29",
+    "corpus_id": "H100g22p5",
+    "family": "CROSS_UNIT",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"30\", \"9010\", \"9011\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p5",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p5:CROSS_UNIT:3",
+    "corpus_id": "H100g22p5",
+    "family": "CROSS_UNIT",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"4\", \"9010\", \"9011\", \"9013\", \"9016\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p4",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p4:CROSS_UNIT:376",
+    "corpus_id": "H1000g22p4",
+    "family": "CROSS_UNIT",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"377\", \"9070\", \"9071\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p5",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p5:CROSS_UNIT:9075",
+    "corpus_id": "H1000g22p5",
+    "family": "CROSS_UNIT",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"333\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-CYP-H100g22p3",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H100g22p3:FEEDING_UNITS:11",
+    "corpus_id": "H100g22p3",
+    "family": "FEEDING_UNITS",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"10\", \"12\", \"9017\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p4",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p4:FEEDING_UNITS:49",
+    "corpus_id": "H100g22p4",
+    "family": "FEEDING_UNITS",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"48\", \"9012\", \"9014\", \"9015\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p2:FEEDING_UNITS:183",
+    "corpus_id": "H1000g22p2",
+    "family": "FEEDING_UNITS",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"182\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p5",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p5:FEEDING_UNITS:470",
+    "corpus_id": "H1000g22p5",
+    "family": "FEEDING_UNITS",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"468\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p4",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p4:FLOW_PATH:FLOW_PATH_P1:LV-24019|XV-24020",
+    "corpus_id": "H100g22p4",
+    "family": "FLOW_PATH",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"LV-24019\", \"XV-24020\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p3",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p3:FLOW_PATH:YV-30028|E-3001",
+    "corpus_id": "H100g22p3",
+    "family": "FLOW_PATH",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"YV-30028\", \"YV-30025\", \"YV-30026\", \"H-3001\", \"R-3001\", \"E-3001\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-CYP-H1000g22p3",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H1000g22p3:FLOW_PATH:GTV-174019|PGV-193002",
+    "corpus_id": "H1000g22p3",
+    "family": "FLOW_PATH",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"GTV-174019\", \"P-17401\", \"CHV-174001\", \"BFV-174006\", \"GV-174004\", \"GTV-177009\", \"CHV-177001\", \"GTV-177008\", \"GTV-177004\", \"XV-177007\", \"XV-177008\", \"TK-17704\", \"BFV-177002\", \"P-17701\", \"CHV-177002\", \"GTV-177010\", \"GTV-178011\", \"CHV-178001\", \"EJ-17801\", \"E-17901\", \"EA-17901\", \"XV-179021\", \"V-17901\", \"BFV-179002\", \"P-17901\", \"CHV-179001\", \"GTV-179006\", \"LV-179008\", \"GTV-179005\", \"XV-180013\", \"V-18001\", \"BFV-180002\", \"P-18002\", \"CHV-180004\", \"BFV-180003\", \"GV-180001\", \"GTV-180002\", \"CHV-180001\", \"GTV-181009\", \"CHV-181005\", \"XV-181013\", \"V-18101\", \"GTV-181003\", \"P-18101\", \"CHV-181001\", \"GTV-181004\", \"GV-181001\", \"T-18201\", \"EA-18201\", \"D-18201\", \"GTV-182012\", \"P-18201\", \"CHV-182003\", \"GTV-182013\", \"GV-182002\", \"BFV-182005\", \"CHV-182002\", \"PGV-183004\", \"PGV-183002\", \"XV-183003\", \"XV-183004\", \"TK-18302\", \"GTV-183005\", \"P-18301\", \"CHV-183002\", \"GTV-183006\", \"GV-183001\", \"BFV-184001\", \"CHV-184001\", \"GTV-184002\", \"F-18402\", \"GTV-184003\", \"XV-185010\", \"V-18501\", \"GTV-185002\", \"P-18501\", \"CHV-185001\", \"BFV-185002\", \"GV-185001\", \"BFV-186003\", \"XV-186011\", \"V-18601\", \"GTV-186002\", \"P-18601\", \"CHV-186001\", \"GTV-186003\", \"GV-186001\", \"BFV-187002\", \"T-18701\", \"BFV-187010\", \"P-18703\", \"CHV-187004\", \"GTV-187033\", \"LV-187057\", \"GTV-188005\", \"GTV-188001\", \"XV-188001\", \"XV-188002\", \"TK-18801\", \"GTV-188016\", \"GTV-188010\", \"P-18802\", \"CHV-188002\", \"BFV-188003\", \"GV-188001\", \"XV-189011\", \"V-18901\", \"BFV-189001\", \"P-18902\", \"CHV-189003\", \"BFV-189002\", \"LV-189001\", \"E-19003\", \"T-19001\", \"BFV-190009\", \"P-19004\", \"CHV-190006\", \"GTV-190028\", \"GV-190004\", \"T-19101\", \"EA-19101\", \"D-19101\", \"BFV-191004\", \"P-19101\", \"CHV-191001\", \"GTV-191012\", \"GV-191003\", \"GTV-191011\", \"GTV-193006\", \"GTV-193005\", \"GTV-193002\", \"XV-193003\", \"XV-193004\", \"TK-19302\", \"PGV-193002\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p1",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p1:FLOW_PATH:FLOW_PATH_P1:CHV-89001|P-9001B",
+    "corpus_id": "H1000g22p1",
+    "family": "FLOW_PATH",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"CHV-89001\", \"GTV-89008\", \"EA-8901\", \"GTV-88013\", \"CHV-88003\", \"E-8801\", \"EA-8801\", \"YV-88024\", \"V-8801\", \"BFV-88002\", \"P-8801A\", \"CHV-88001\", \"GTV-88006\", \"LV-88009\", \"GTV-88005\", \"YV-90010\", \"V-9001\", \"BFV-90002\", \"P-9001B\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p2:INSTRUMENTS_OF_ITEM:TK-2701",
+    "corpus_id": "H100g22p2",
+    "family": "INSTRUMENTS_OF_ITEM",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"LSH-27023\", \"LSL-27024\", \"LSLL-27022\", \"LT-27002\", \"LT-27020\", \"TI-27021\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p5",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p5:INSTRUMENTS_OF_ITEM:R-2801",
+    "corpus_id": "H100g22p5",
+    "family": "INSTRUMENTS_OF_ITEM",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"PI-28024\", \"PI-28053\", \"PI-28054\", \"PSHH-28073\", \"TI-28055\", \"TI-28056\", \"TI-28057\", \"TT-28003\", \"TT-28050\", \"TT-28051\", \"TT-28052\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p2:INSTRUMENTS_OF_ITEM:TK-32102",
+    "corpus_id": "H1000g22p2",
+    "family": "INSTRUMENTS_OF_ITEM",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"LSL-321027\", \"LSLL-321026\", \"LT-321004\", \"LT-321024\", \"TI-321025\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p2:INSTRUMENTS_OF_ITEM:TK-20003",
+    "corpus_id": "H1000g22p2",
+    "family": "INSTRUMENTS_OF_ITEM",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"LSL-200027\", \"LT-200006\", \"LT-200025\", \"TI-200026\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p5",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p5:LOOKUP_TYPE:TI-14050",
+    "corpus_id": "H100g22p5",
+    "family": "LOOKUP_TYPE",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"ProcessSignalGeneratingFunction\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p4",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p4:LOOKUP_TYPE:TI-32012",
+    "corpus_id": "H100g22p4",
+    "family": "LOOKUP_TYPE",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"ProcessSignalGeneratingFunction\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p5",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p5:LOOKUP_TYPE:LALL-311019",
+    "corpus_id": "H1000g22p5",
+    "family": "LOOKUP_TYPE",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"ProcessInstrumentationFunction\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p2:LOOKUP_TYPE:TI-327011",
+    "corpus_id": "H1000g22p2",
+    "family": "LOOKUP_TYPE",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"ProcessSignalGeneratingFunction\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p5",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p5:LOOKUP_UNIT:LOOKUP_UNIT_P1:LSH-9079",
+    "corpus_id": "H100g22p5",
+    "family": "LOOKUP_UNIT",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"9\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p1",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p1:LOOKUP_UNIT:P-5401C",
+    "corpus_id": "H100g22p1",
+    "family": "LOOKUP_UNIT",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"54\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p1",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p1:LOOKUP_UNIT:PI-400063",
+    "corpus_id": "H1000g22p1",
+    "family": "LOOKUP_UNIT",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"400\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p3",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p3:LOOKUP_UNIT:LOOKUP_UNIT_P1:LT-59002",
+    "corpus_id": "H1000g22p3",
+    "family": "LOOKUP_UNIT",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"59\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p2:LOOPS_NEAR_ITEM:V-1301",
+    "corpus_id": "H100g22p2",
+    "family": "LOOPS_NEAR_ITEM",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"FIC-13003\", \"FIC-13007\", \"LSHH-13010\", \"PIC-13015\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p5",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p5:LOOPS_NEAR_ITEM:E-303",
+    "corpus_id": "H100g22p5",
+    "family": "LOOPS_NEAR_ITEM",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"LSHH-4013\", \"TIC-3025\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p5",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p5:LOOPS_NEAR_ITEM:V-5301",
+    "corpus_id": "H1000g22p5",
+    "family": "LOOPS_NEAR_ITEM",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"FSLL-53006\", \"FSLL-53011\", \"FSLL-53015\", \"LSHH-53017\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p2:LOOPS_NEAR_ITEM:H-33401",
+    "corpus_id": "H1000g22p2",
+    "family": "LOOPS_NEAR_ITEM",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"HS-334031\", \"TIC-334004\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p2:LOOP_ACTUATED_VALVE:LIC-17055",
+    "corpus_id": "H100g22p2",
+    "family": "LOOP_ACTUATED_VALVE",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"LV-17055\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p4",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p4:LOOP_ACTUATED_VALVE:LOOP_ACTUATED_VALVE_P1:FSLL-42004",
+    "corpus_id": "H100g22p4",
+    "family": "LOOP_ACTUATED_VALVE",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"XV-42004\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p4",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p4:LOOP_ACTUATED_VALVE:LOOP_ACTUATED_VALVE_P1:FIC-302003",
+    "corpus_id": "H1000g22p4",
+    "family": "LOOP_ACTUATED_VALVE",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"FV-302003\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p4",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p4:LOOP_ACTUATED_VALVE:HS-172032",
+    "corpus_id": "H1000g22p4",
+    "family": "LOOP_ACTUATED_VALVE",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"XV-172032\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p5",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p5:LOOP_MEASURED_EQUIPMENT:LOOP_MEASURED_EQUIPMENT_P1:TI-51025",
+    "corpus_id": "H100g22p5",
+    "family": "LOOP_MEASURED_EQUIPMENT",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"V-5101\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p1",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p1:LOOP_MEASURED_EQUIPMENT:TIAH-12006",
+    "corpus_id": "H100g22p1",
+    "family": "LOOP_MEASURED_EQUIPMENT",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"P-1201\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p2:LOOP_MEASURED_EQUIPMENT:PI-10072",
+    "corpus_id": "H1000g22p2",
+    "family": "LOOP_MEASURED_EQUIPMENT",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"V-1001\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p3",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p3:LOOP_MEASURED_EQUIPMENT:TI-24053",
+    "corpus_id": "H1000g22p3",
+    "family": "LOOP_MEASURED_EQUIPMENT",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"R-2401\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p2:NEIGHBOURS_DOWNSTREAM:BV-31006",
+    "corpus_id": "H100g22p2",
+    "family": "NEIGHBOURS_DOWNSTREAM",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"GTV-9011001\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p4",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p4:NEIGHBOURS_DOWNSTREAM:TV-53003",
+    "corpus_id": "H100g22p4",
+    "family": "NEIGHBOURS_DOWNSTREAM",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"H-5301\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p1",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p1:NEIGHBOURS_DOWNSTREAM:GTV-200018",
+    "corpus_id": "H1000g22p1",
+    "family": "NEIGHBOURS_DOWNSTREAM",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"GTV-201005\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p3",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p3:NEIGHBOURS_DOWNSTREAM:YV-380002",
+    "corpus_id": "H1000g22p3",
+    "family": "NEIGHBOURS_DOWNSTREAM",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"TK-38001\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p4",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p4:NO_PATH:FLOW_PATH:P-801A|TK-4601",
+    "corpus_id": "H100g22p4",
+    "family": "NO_PATH",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p3",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p3:NO_PATH:FLOW_PATH:E-3702|F-201A",
+    "corpus_id": "H100g22p3",
+    "family": "NO_PATH",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p5",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p5:NO_PATH:FLOW_PATH:V-23301|P-12401C",
+    "corpus_id": "H1000g22p5",
+    "family": "NO_PATH",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p1",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p1:NO_PATH:FLOW_PATH:P-6602B|P-2201",
+    "corpus_id": "H1000g22p1",
+    "family": "NO_PATH",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p5",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p5:ROUTE_AVOIDING:H-2001|E-2001|R-2001",
+    "corpus_id": "H100g22p5",
+    "family": "ROUTE_AVOIDING",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"no\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p2:ROUTE_AVOIDING:E-1101|E-1401|CHV-13001",
+    "corpus_id": "H100g22p2",
+    "family": "ROUTE_AVOIDING",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"yes\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p3",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p3:ROUTE_AVOIDING:P-17901|TK-18302|BFV-180003",
+    "corpus_id": "H1000g22p3",
+    "family": "ROUTE_AVOIDING",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"yes\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p2:ROUTE_AVOIDING:T-27701|EJ-27701|GTV-277015",
+    "corpus_id": "H1000g22p2",
+    "family": "ROUTE_AVOIDING",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"no\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p2:SAME_UNIT:P-201B|V-201",
+    "corpus_id": "H100g22p2",
+    "family": "SAME_UNIT",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"yes\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p4",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p4:SAME_UNIT:TK-802|V-901",
+    "corpus_id": "H100g22p4",
+    "family": "SAME_UNIT",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"no\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p2:SAME_UNIT:F-36201A|E-36301",
+    "corpus_id": "H1000g22p2",
+    "family": "SAME_UNIT",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"no\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p2:SAME_UNIT:E-27703|T-27701",
+    "corpus_id": "H1000g22p2",
+    "family": "SAME_UNIT",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": \"yes\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p1",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p1:SHEETS_OF_TAG:SHEETS_OF_TAG_P1:V-401",
+    "corpus_id": "H100g22p1",
+    "family": "SHEETS_OF_TAG",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"4\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p4",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p4:SHEETS_OF_TAG:V-3601",
+    "corpus_id": "H100g22p4",
+    "family": "SHEETS_OF_TAG",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"57\", \"58\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p1",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p1:SHEETS_OF_TAG:H-33401",
+    "corpus_id": "H1000g22p1",
+    "family": "SHEETS_OF_TAG",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"558\", \"559\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p3",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p3:SHEETS_OF_TAG:P-16802",
+    "corpus_id": "H1000g22p3",
+    "family": "SHEETS_OF_TAG",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": [\"275\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p4",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p4:UNANSWERABLE_TAG:LOOKUP_TYPE:FA-50035",
+    "corpus_id": "H100g22p4",
+    "family": "UNANSWERABLE_TAG",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p1",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p1:UNANSWERABLE_TAG:LOOKUP_TYPE:TV-6034",
+    "corpus_id": "H100g22p1",
+    "family": "UNANSWERABLE_TAG",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p4",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p4:UNANSWERABLE_TAG:LOOKUP_TYPE:K-30702",
+    "corpus_id": "H1000g22p4",
+    "family": "UNANSWERABLE_TAG",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p5",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p5:UNANSWERABLE_TAG:NEIGHBOURS_DOWNSTREAM:NV-13002",
+    "corpus_id": "H1000g22p5",
+    "family": "UNANSWERABLE_TAG",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p4",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p4:UNITS_REACHED:K-3001",
+    "corpus_id": "H100g22p4",
+    "family": "UNITS_REACHED",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": 1, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p5",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p5:UNITS_REACHED:EJ-4102",
+    "corpus_id": "H100g22p5",
+    "family": "UNITS_REACHED",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": 2, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p4",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p4:UNITS_REACHED:K-12401",
+    "corpus_id": "H1000g22p4",
+    "family": "UNITS_REACHED",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": 1, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p2:UNITS_REACHED:EJ-37601B",
+    "corpus_id": "H1000g22p2",
+    "family": "UNITS_REACHED",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": 2, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p5",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p5:VALVES_ON_PATH:E-4001|EA-4001",
+    "corpus_id": "H100g22p5",
+    "family": "VALVES_ON_PATH",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": 0, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H100g22p4",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p4:VALVES_ON_PATH:P-1901B|V-2201",
+    "corpus_id": "H100g22p4",
+    "family": "VALVES_ON_PATH",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": 11, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p2:VALVES_ON_PATH:P-22001|P-22201A",
+    "corpus_id": "H1000g22p2",
+    "family": "VALVES_ON_PATH",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": 8, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "right_min",
+   "row": {
+    "run_id": "S9-AG-H1000g22p2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p2:VALVES_ON_PATH:P-37101B|V-37501",
+    "corpus_id": "H1000g22p2",
+    "family": "VALVES_ON_PATH",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": true,
+    "answer_key": "{\"answer\": 27, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-AG-H1000g22p4",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p4:CONNECTED:EJ-25702B|TK-14602",
+    "corpus_id": "H1000g22p4",
+    "family": "CONNECTED",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H1000g22p2",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H1000g22p2:COUNT_IN_UNIT:COUNT_IN_UNIT_P1:150|NeedleValve",
+    "corpus_id": "H1000g22p2",
+    "family": "COUNT_IN_UNIT",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 0, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-AG-H100g22p1",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p1:CROSS_UNIT:35",
+    "corpus_id": "H100g22p1",
+    "family": "CROSS_UNIT",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": [\"36\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-AG-H1000g22p4",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p4:FEEDING_UNITS:9030",
+    "corpus_id": "H1000g22p4",
+    "family": "FEEDING_UNITS",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": [\"138\", \"139\", \"140\", \"142\", \"143\", \"144\", \"145\", \"148\", \"149\", \"150\", \"154\", \"155\", \"156\", \"157\", \"159\", \"160\", \"161\", \"162\", \"166\", \"167\", \"168\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H100g22p1",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H100g22p1:FLOW_PATH:EH-2101|PSE-22028",
+    "corpus_id": "H100g22p1",
+    "family": "FLOW_PATH",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": [\"EH-2101\", \"H-2201\", \"R-2201\", \"PSE-22028\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H100g22p1",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H100g22p1:INSTRUMENTS_OF_ITEM:V-4901",
+    "corpus_id": "H100g22p1",
+    "family": "INSTRUMENTS_OF_ITEM",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": [], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H1000g22p4",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H1000g22p4:LOOKUP_TYPE:PIC-202019",
+    "corpus_id": "H1000g22p4",
+    "family": "LOOKUP_TYPE",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H100g22p3",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H100g22p3:LOOPS_NEAR_ITEM:V-701",
+    "corpus_id": "H100g22p3",
+    "family": "LOOPS_NEAR_ITEM",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": [], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H100g22p4",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H100g22p4:LOOP_ACTUATED_VALVE:BSL-53034",
+    "corpus_id": "H100g22p4",
+    "family": "LOOP_ACTUATED_VALVE",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H1000g22p5",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H1000g22p5:LOOP_MEASURED_EQUIPMENT:LOOP_MEASURED_EQUIPMENT_P1:PIC-497032",
+    "corpus_id": "H1000g22p5",
+    "family": "LOOP_MEASURED_EQUIPMENT",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-AG-H100g22p3",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p3:NEIGHBOURS_DOWNSTREAM:FV-20008",
+    "corpus_id": "H100g22p3",
+    "family": "NEIGHBOURS_DOWNSTREAM",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": [], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-AG-H1000g22p5",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p5:ROUTE_AVOIDING:P-3401B|EA-3501|CHV-34003",
+    "corpus_id": "H1000g22p5",
+    "family": "ROUTE_AVOIDING",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": \"no\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-AG-H1000g22p2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p2:SAME_UNIT:TK-21502|P-21501B",
+    "corpus_id": "H1000g22p2",
+    "family": "SAME_UNIT",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-AG-H100g22p5",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p5:UNANSWERABLE_TAG:FLOW_PATH:P-1802|P-4603",
+    "corpus_id": "H100g22p5",
+    "family": "UNANSWERABLE_TAG",
+    "scale": "100",
+    "outcome": "PARSE_FAILURE",
+    "scorer_correct": false,
+    "answer_key": "raw:{\"answer\":null,\"not_present\":false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H100g22p5",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H100g22p5:UNITS_REACHED:P-4601",
+    "corpus_id": "H100g22p5",
+    "family": "UNITS_REACHED",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 9, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-AG-H100g22p3",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p3:VALVES_ON_PATH:P-3601B|E-4903",
+    "corpus_id": "H100g22p3",
+    "family": "VALVES_ON_PATH",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 88, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-AG-H1000g22p5",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p5:CONNECTED:M-28101|TK-15901",
+    "corpus_id": "H1000g22p5",
+    "family": "CONNECTED",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-AG-H100g22p5",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p5:COUNT_IN_UNIT:13|CheckValve",
+    "corpus_id": "H100g22p5",
+    "family": "COUNT_IN_UNIT",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 5, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H1000g22p3",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H1000g22p3:CROSS_UNIT:399",
+    "corpus_id": "H1000g22p3",
+    "family": "CROSS_UNIT",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": [\"400\", \"402\", \"9081\", \"9086\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H1000g22p5",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H1000g22p5:FEEDING_UNITS:9103",
+    "corpus_id": "H1000g22p5",
+    "family": "FEEDING_UNITS",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H100g22p1",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H100g22p1:FLOW_PATH:FLOW_PATH_P1:EH-2101|PSE-22028",
+    "corpus_id": "H100g22p1",
+    "family": "FLOW_PATH",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": [\"EH-2101\", \"H-2201\", \"R-2201\", \"PSE-22028\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H100g22p1",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H100g22p1:INSTRUMENTS_OF_ITEM:V-4501",
+    "corpus_id": "H100g22p1",
+    "family": "INSTRUMENTS_OF_ITEM",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": [], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H1000g22p5",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H1000g22p5:LOOKUP_TYPE:TI-427053",
+    "corpus_id": "H1000g22p5",
+    "family": "LOOKUP_TYPE",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H1000g22p5",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H1000g22p5:LOOPS_NEAR_ITEM:TK-37603",
+    "corpus_id": "H1000g22p5",
+    "family": "LOOPS_NEAR_ITEM",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": [], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H100g22p4",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H100g22p4:LOOP_ACTUATED_VALVE:HS-8003",
+    "corpus_id": "H100g22p4",
+    "family": "LOOP_ACTUATED_VALVE",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H1000g22p5",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H1000g22p5:LOOP_MEASURED_EQUIPMENT:PAHH-482004",
+    "corpus_id": "H1000g22p5",
+    "family": "LOOP_MEASURED_EQUIPMENT",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-AG-H1000g22p1",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p1:NEIGHBOURS_DOWNSTREAM:NEIGHBOURS_DOWNSTREAM_P1:BFV-179004",
+    "corpus_id": "H1000g22p1",
+    "family": "NEIGHBOURS_DOWNSTREAM",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": [\"GTV-179025\", \"GV-179003\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H100g22p5",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H100g22p5:ROUTE_AVOIDING:P-2502|P-5102|XV-39002",
+    "corpus_id": "H100g22p5",
+    "family": "ROUTE_AVOIDING",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": \"no\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-AG-H100g22p5",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p5:UNANSWERABLE_TAG:FLOW_PATH:P-2302|TK-104",
+    "corpus_id": "H100g22p5",
+    "family": "UNANSWERABLE_TAG",
+    "scale": "100",
+    "outcome": "PARSE_FAILURE",
+    "scorer_correct": false,
+    "answer_key": "raw:{\"answer\":null,\"not_present\":false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-AG-H100g22p3",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p3:UNITS_REACHED:V-5201",
+    "corpus_id": "H100g22p3",
+    "family": "UNITS_REACHED",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 1, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H1000g22p4",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H1000g22p4:VALVES_ON_PATH:P-3801|P-3802",
+    "corpus_id": "H1000g22p4",
+    "family": "VALVES_ON_PATH",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 2, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H100g22p3",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H100g22p3:CONNECTED:P-2701A|TK-2704",
+    "corpus_id": "H100g22p3",
+    "family": "CONNECTED",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H1000g22p5",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H1000g22p5:COUNT_IN_UNIT:285|SwingCheckValve",
+    "corpus_id": "H1000g22p5",
+    "family": "COUNT_IN_UNIT",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 0, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H1000g22p4",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H1000g22p4:CROSS_UNIT:165",
+    "corpus_id": "H1000g22p4",
+    "family": "CROSS_UNIT",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H1000g22p4",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H1000g22p4:FEEDING_UNITS:9036",
+    "corpus_id": "H1000g22p4",
+    "family": "FEEDING_UNITS",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H100g22p1",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H100g22p1:FLOW_PATH:FA-29033|PVSV-29034",
+    "corpus_id": "H100g22p1",
+    "family": "FLOW_PATH",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": [\"PVSV-29034\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H100g22p4",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H100g22p4:INSTRUMENTS_OF_ITEM:V-4201",
+    "corpus_id": "H100g22p4",
+    "family": "INSTRUMENTS_OF_ITEM",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H1000g22p4",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H1000g22p4:LOOKUP_TYPE:YV-522001",
+    "corpus_id": "H1000g22p4",
+    "family": "LOOKUP_TYPE",
+    "scale": "1000",
+    "outcome": "PARSE_FAILURE",
+    "scorer_correct": false,
+    "answer_key": "raw:{\"answer\": null, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H100g22p1",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H100g22p1:LOOPS_NEAR_ITEM:V-5001",
+    "corpus_id": "H100g22p1",
+    "family": "LOOPS_NEAR_ITEM",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": [], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H1000g22p1",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H1000g22p1:LOOP_ACTUATED_VALVE:FSLL-96005",
+    "corpus_id": "H1000g22p1",
+    "family": "LOOP_ACTUATED_VALVE",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H1000g22p4",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H1000g22p4:LOOP_MEASURED_EQUIPMENT:LOOP_MEASURED_EQUIPMENT_P1:PIC-87002",
+    "corpus_id": "H1000g22p4",
+    "family": "LOOP_MEASURED_EQUIPMENT",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H100g22p5",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H100g22p5:ROUTE_AVOIDING:F-4502|H-4601|E-4601",
+    "corpus_id": "H100g22p5",
+    "family": "ROUTE_AVOIDING",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": \"no\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-AG-H100g22p3",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p3:UNANSWERABLE_TAG:FLOW_PATH:P-2602B|P-802",
+    "corpus_id": "H100g22p3",
+    "family": "UNANSWERABLE_TAG",
+    "scale": "100",
+    "outcome": "PARSE_FAILURE",
+    "scorer_correct": false,
+    "answer_key": "raw:{\"answer\":null,\"not_present\":false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-AG-H1000g22p1",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p1:UNITS_REACHED:P-46001A",
+    "corpus_id": "H1000g22p1",
+    "family": "UNITS_REACHED",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 10, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H100g22p1",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H100g22p1:VALVES_ON_PATH:P-2401|F-2501",
+    "corpus_id": "H100g22p1",
+    "family": "VALVES_ON_PATH",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 0, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-AG-H100g22p5",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p5:CONNECTED:EJ-4103|TK-1003",
+    "corpus_id": "H100g22p5",
+    "family": "CONNECTED",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H1000g22p1",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H1000g22p1:COUNT_IN_UNIT:142|ButterflyValve",
+    "corpus_id": "H1000g22p1",
+    "family": "COUNT_IN_UNIT",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 2, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-AG-H100g22p4",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p4:CROSS_UNIT:CROSS_UNIT_P1:18",
+    "corpus_id": "H100g22p4",
+    "family": "CROSS_UNIT",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": [\"19\", \"20\", \"21\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H100g22p1",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H100g22p1:FEEDING_UNITS:40",
+    "corpus_id": "H100g22p1",
+    "family": "FEEDING_UNITS",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-AG-H100g22p1",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p1:FLOW_PATH:FLOW_PATH_P1:EH-2101|PSE-22028",
+    "corpus_id": "H100g22p1",
+    "family": "FLOW_PATH",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": [\"EH-2101\", \"35:3c8ae0c9db91\", \"H-2201\", \"R-2201\", \"PSE-22028\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H1000g22p4",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H1000g22p4:LOOPS_NEAR_ITEM:V-12901",
+    "corpus_id": "H1000g22p4",
+    "family": "LOOPS_NEAR_ITEM",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": [\"FIC-129003\", \"FIC-129006\", \"FIC-129009\", \"PIC-129019\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H1000g22p5",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H1000g22p5:LOOP_ACTUATED_VALVE:BSL-52032",
+    "corpus_id": "H1000g22p5",
+    "family": "LOOP_ACTUATED_VALVE",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H100g22p2",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H100g22p2:LOOP_MEASURED_EQUIPMENT:TI-16044",
+    "corpus_id": "H100g22p2",
+    "family": "LOOP_MEASURED_EQUIPMENT",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-AG-H100g22p2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p2:ROUTE_AVOIDING:P-3001B|P-3701A|BFV-36002",
+    "corpus_id": "H100g22p2",
+    "family": "ROUTE_AVOIDING",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": \"no\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H100g22p1",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H100g22p1:UNITS_REACHED:P-5102",
+    "corpus_id": "H100g22p1",
+    "family": "UNITS_REACHED",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 9, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H100g22p4",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H100g22p4:VALVES_ON_PATH:P-2101A|P-2201B",
+    "corpus_id": "H100g22p4",
+    "family": "VALVES_ON_PATH",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 2, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-AG-H100g22p2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p2:CONNECTED:V-3101|P-3102C",
+    "corpus_id": "H100g22p2",
+    "family": "CONNECTED",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H100g22p1",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H100g22p1:COUNT_IN_UNIT:28|SwingCheckValve",
+    "corpus_id": "H100g22p1",
+    "family": "COUNT_IN_UNIT",
+    "scale": "100",
+    "outcome": "PARSE_FAILURE",
+    "scorer_correct": false,
+    "answer_key": "raw:{\"answer\":null,\"not_present\":false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-AG-H1000g22p2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p2:CROSS_UNIT:CROSS_UNIT_P1:9035",
+    "corpus_id": "H1000g22p2",
+    "family": "CROSS_UNIT",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": [\"150\", \"9031\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-AG-H1000g22p5",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p5:FEEDING_UNITS:202",
+    "corpus_id": "H1000g22p5",
+    "family": "FEEDING_UNITS",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": [\"200\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H100g22p2",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H100g22p2:FLOW_PATH:GTV-9012001|CHV-27002",
+    "corpus_id": "H100g22p2",
+    "family": "FLOW_PATH",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": [\"GTV-9012001\", \"CHV-2001\", \"GTV-9012006\", \"BFV-19002\", \"E-1902\", \"D-1901\", \"GTV-19015\", \"P-1901\", \"CHV-19002\", \"GTV-19016\", \"GV-19003\", \"BFV-19004\", \"CHV-19001\", \"GTV-20007\", \"GTV-20002\", \"XV-20003\", \"XV-20004\", \"TK-2002\", \"GTV-20021\", \"GTV-20012\", \"P-2001A\", \"CHV-20002\", \"BFV-20001\", \"FV-20012\", \"GTV-21005\", \"XV-21006\", \"V-2101\", \"BFV-21001\", \"P-2101\", \"CHV-21002\", \"GTV-21002\", \"LV-21001\", \"GTV-21001\", \"CHV-21001\", \"GTV-22007\", \"XV-22010\", \"V-2201\", \"GTV-22004\", \"P-2201B\", \"CHV-22003\", \"BFV-22003\", \"GV-22001\", \"GTV-23005\", \"GTV-23004\", \"XV-23007\", \"XV-23008\", \"TK-2304\", \"GTV-23009\", \"P-2301B\", \"CHV-23003\", \"BFV-23001\", \"FV-23010\", \"TV-24001\", \"E-2401\", \"EA-2401\", \"XV-24031\", \"V-2401\", \"GTV-24006\", \"P-2401A\", \"CHV-24001\", \"BFV-24003\", \"GV-24002\", \"GTV-24005\", \"XV-25014\", \"V-2501\", \"GTV-25006\", \"P-2501B\", \"CHV-25003\", \"GTV-25007\", \"FV-25002\", \"GTV-25001\", \"XV-26013\", \"V-2601\", \"BFV-26003\", \"P-2601B\", \"CHV-26003\", \"GTV-26005\", \"GV-26001\", \"GTV-27005\", \"GTV-27003\", \"XV-27005\", \"XV-27006\", \"TK-2703\", \"GTV-27018\", \"BFV-27001\", \"P-2701A\", \"CHV-27002\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H1000g22p1",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H1000g22p1:LOOPS_NEAR_ITEM:V-17601",
+    "corpus_id": "H1000g22p1",
+    "family": "LOOPS_NEAR_ITEM",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": [], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H1000g22p2",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H1000g22p2:LOOP_ACTUATED_VALVE:LOOP_ACTUATED_VALVE_P1:LIC-17048",
+    "corpus_id": "H1000g22p2",
+    "family": "LOOP_ACTUATED_VALVE",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H100g22p3",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H100g22p3:LOOP_MEASURED_EQUIPMENT:LOOP_MEASURED_EQUIPMENT_P1:PI-15018",
+    "corpus_id": "H100g22p3",
+    "family": "LOOP_MEASURED_EQUIPMENT",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-AG-H1000g22p5",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p5:ROUTE_AVOIDING:P-2001C|TK-2403|GV-22001",
+    "corpus_id": "H1000g22p5",
+    "family": "ROUTE_AVOIDING",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": \"no\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H1000g22p5",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H1000g22p5:UNITS_REACHED:K-7901",
+    "corpus_id": "H1000g22p5",
+    "family": "UNITS_REACHED",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 85, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H100g22p3",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H100g22p3:VALVES_ON_PATH:P-701C|P-701B",
+    "corpus_id": "H100g22p3",
+    "family": "VALVES_ON_PATH",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 4, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-AG-H1000g22p5",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p5:CONNECTED:K-23801|P-7601C",
+    "corpus_id": "H1000g22p5",
+    "family": "CONNECTED",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H1000g22p4",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H1000g22p4:COUNT_IN_UNIT:COUNT_IN_UNIT_P1:340|GlobeCheckValve",
+    "corpus_id": "H1000g22p4",
+    "family": "COUNT_IN_UNIT",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 0, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H100g22p1",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H100g22p1:CROSS_UNIT:CROSS_UNIT_P1:35",
+    "corpus_id": "H100g22p1",
+    "family": "CROSS_UNIT",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": [\"36\", \"37\", \"38\", \"39\", \"40\", \"41\", \"42\", \"43\", \"44\", \"45\", \"46\", \"47\", \"48\", \"49\", \"50\", \"51\", \"52\", \"53\", \"54\", \"55\", \"9008\", \"9013\", \"9020\", \"9021\", \"9023\", \"9026\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H1000g22p1",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H1000g22p1:FEEDING_UNITS:133",
+    "corpus_id": "H1000g22p1",
+    "family": "FEEDING_UNITS",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-AG-H1000g22p5",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p5:FLOW_PATH:XV-1005|BFV-40003",
+    "corpus_id": "H1000g22p5",
+    "family": "FLOW_PATH",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": [\"XV-1005\", \"XV-1006\", \"TK-103\", \"GTV-1017\", \"BFV-1001\", \"P-101B\", \"CHV-1003\", \"GTV-1010\", \"FV-1010\", \"GTV-2011\", \"CHV-2001\", \"E-201\", \"E-202\", \"E-203\", \"GV-2001\", \"EH-201\", \"TV-3001\", \"E-301\", \"EA-301\", \"XV-3022\", \"V-301\", \"BFV-3003\", \"P-301\", \"CHV-3001\", \"GTV-3008\", \"GV-3002\", \"BFV-3002\", \"GTV-5011\", \"CHV-5007\", \"XV-5015\", \"V-501\", \"GTV-5003\", \"P-501A\", \"CHV-5001\", \"BFV-5002\", \"GV-5001\", \"GTV-5002\", \"GTV-6004\", \"GTV-6003\", \"XV-6005\", \"XV-6006\", \"TK-603\", \"BFV-6001\", \"P-601A\", \"CHV-6001\", \"GTV-6006\", \"EJ-701\", \"BFV-7002\", \"CHV-7001\", \"M-801\", \"V-801\", \"GV-8001\", \"GTV-9009\", \"CHV-9006\", \"XV-9013\", \"V-901\", \"BFV-9001\", \"P-901A\", \"CHV-9002\", \"BFV-9002\", \"FV-9002\", \"GTV-9001\", \"CHV-9001\", \"E-1003\", \"T-1001\", \"E-1002\", \"D-1001\", \"BFV-10011\", \"P-1001B\", \"CHV-10003\", \"GTV-10032\", \"FV-10059\", \"GTV-12001\", \"PGV-12006\", \"PGV-12003\", \"XV-12005\", \"XV-12006\", \"TK-1203\", \"GTV-12004\", \"P-1201A\", \"CHV-12001\", \"BFV-12002\", \"GV-12001\", \"GTV-12003\", \"GTV-13006\", \"CHV-13002\", \"V-1301\", \"LV-13011\", \"GTV-13005\", \"CHV-13001\", \"BFV-14002\", \"F-1401B\", \"GTV-14002\", \"XV-15018\", \"V-1501\", \"BFV-15001\", \"P-1501A\", \"CHV-15001\", \"GTV-15002\", \"FV-15002\", \"GTV-15001\", \"E-1603\", \"T-1601\", \"BFV-16008\", \"GTV-18005\", \"GTV-18002\", \"XV-18003\", \"XV-18004\", \"TK-1802\", \"GTV-18019\", \"BFV-18002\", \"P-1801B\", \"CHV-18004\", \"GTV-18012\", \"FV-18008\", \"BFV-18001\", \"CHV-18001\", \"GTV-19001\", \"F-1901A\", \"GTV-19002\", \"BFV-19001\", \"CHV-19001\", \"XV-20020\", \"V-2001\", \"BFV-20002\", \"P-2001B\", \"CHV-20003\", \"GTV-20007\", \"GV-20001\", \"BFV-20001\", \"XV-21012\", \"V-2101\", \"BFV-21002\", \"P-2101A\", \"CHV-21001\", \"GTV-21003\", \"GV-21001\", \"GTV-21002\", \"XV-22012\", \"V-2201\", \"GTV-22002\", \"P-2201A\", \"CHV-22001\", \"BFV-22002\", \"GV-22001\", \"T-2301\", \"EA-2301\", \"D-2301\", \"BFV-23005\", \"P-2301C\", \"CHV-23005\", \"GTV-23021\", \"GV-23002\", \"PGV-24006\", \"PGV-24004\", \"XV-24007\", \"XV-24008\", \"TK-2404\", \"BFV-24003\", \"P-2401A\", \"CHV-24002\", \"GTV-24002\", \"GV-24001\", \"XV-25013\", \"V-2501\", \"BFV-25002\", \"P-2501B\", \"CHV-25003\", \"GTV-25008\", \"GV-25001\", \"BFV-25001\", \"GTV-26012\", \"CHV-26005\", \"XV-26014\", \"V-2601\", \"BFV-26001\", \"P-2601A\", \"CHV-26001\", \"GTV-26003\", \"GV-26001\", \"E-2703\", \"T-2701\", \"GTV-27035\", \"GTV-28005\", \"GTV-28002\", \"XV-28003\", \"XV-28004\", \"TK-2802\", \"GTV-28014\", \"BFV-28001\", \"P-2801A\", \"CHV-28002\", \"BFV-28002\", \"GTV-28007\", \"CHV-28001\", \"BFV-29002\", \"XV-29012\", \"V-2901\", \"GTV-29001\", \"P-2901A\", \"CHV-29001\", \"BFV-29001\", \"LV-29001\", \"T-3001\", \"GTV-30034\", \"GTV-31005\", \"GTV-31002\", \"XV-31003\", \"XV-31004\", \"TK-3102\", \"GTV-31013\", \"GTV-31008\", \"P-3101\", \"CHV-31002\", \"GTV-31009\", \"GTV-32006\", \"E-3201\", \"GV-32001\", \"E-3301\", \"E-3302\", \"E-3303\", \"E-3401\", \"EA-3401\", \"XV-34028\", \"V-3401\", \"BFV-34004\", \"P-3401B\", \"CHV-34003\", \"GTV-34012\", \"FV-34010\", \"BFV-34003\", \"T-3501\", \"GTV-35021\", \"P-3502A\", \"CHV-35005\", \"BFV-35008\", \"LV-35051\", \"GTV-36005\", \"GTV-36001\", \"XV-36001\", \"XV-36002\", \"TK-3601\", \"GTV-36012\", \"BFV-36001\", \"P-3601\", \"CHV-36001\", \"GTV-36007\", \"FV-36010\", \"XV-38014\", \"V-3801\", \"BFV-38002\", \"P-3801A\", \"CHV-38001\", \"GTV-38002\", \"GV-38001\", \"E-3903\", \"T-3901\", \"BFV-39011\", \"P-3902B\", \"CHV-39005\", \"GTV-39036\", \"LV-39069\", \"GTV-39030\", \"XV-40017\", \"V-4001\", \"BFV-40003\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H100g22p3",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H100g22p3:LOOPS_NEAR_ITEM:T-1501",
+    "corpus_id": "H100g22p3",
+    "family": "LOOPS_NEAR_ITEM",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": [\"FIC-15051\", \"LIC-14001\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H1000g22p1",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H1000g22p1:LOOP_ACTUATED_VALVE:FSLL-130068",
+    "corpus_id": "H1000g22p1",
+    "family": "LOOP_ACTUATED_VALVE",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H100g22p1",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H100g22p1:LOOP_MEASURED_EQUIPMENT:PI-33021",
+    "corpus_id": "H100g22p1",
+    "family": "LOOP_MEASURED_EQUIPMENT",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-AG-H1000g22p4",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p4:ROUTE_AVOIDING:T-22801|TK-23003|XV-230004",
+    "corpus_id": "H1000g22p4",
+    "family": "ROUTE_AVOIDING",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": \"no\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H1000g22p2",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H1000g22p2:UNITS_REACHED:E-51803",
+    "corpus_id": "H1000g22p2",
+    "family": "UNITS_REACHED",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 0, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H100g22p3",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H100g22p3:VALVES_ON_PATH:D-1901|TK-2704",
+    "corpus_id": "H100g22p3",
+    "family": "VALVES_ON_PATH",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 12, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-AG-H100g22p4",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p4:CONNECTED:M-2102|TK-3401",
+    "corpus_id": "H100g22p4",
+    "family": "CONNECTED",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H1000g22p5",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H1000g22p5:COUNT_IN_UNIT:COUNT_IN_UNIT_P1:285|SwingCheckValve",
+    "corpus_id": "H1000g22p5",
+    "family": "COUNT_IN_UNIT",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 0, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H100g22p2",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H100g22p2:CROSS_UNIT:CROSS_UNIT_P1:12",
+    "corpus_id": "H100g22p2",
+    "family": "CROSS_UNIT",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": [\"13\", \"14\", \"15\", \"16\", \"17\", \"18\", \"19\", \"20\", \"21\", \"22\", \"23\", \"24\", \"25\", \"26\", \"27\", \"28\", \"29\", \"30\", \"31\", \"32\", \"33\", \"34\", \"35\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H100g22p2",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H100g22p2:FEEDING_UNITS:9010",
+    "corpus_id": "H100g22p2",
+    "family": "FEEDING_UNITS",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H1000g22p3",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H1000g22p3:FLOW_PATH:GV-199001|GTV-207019",
+    "corpus_id": "H1000g22p3",
+    "family": "FLOW_PATH",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": [\"GV-199001\", \"PGV-200005\", \"PGV-200003\", \"XV-200005\", \"XV-200006\", \"TK-20003\", \"PGV-200009\", \"GTV-200001\", \"P-20001\", \"CHV-200001\", \"BFV-200001\", \"FV-200010\", \"E-20101\", \"E-20102\", \"TV-201042\", \"EH-20101\", \"GTV-202001\", \"E-20201\", \"EA-20201\", \"XV-202024\", \"V-20201\", \"GTV-202011\", \"P-20202\", \"CHV-202002\", \"BFV-202003\", \"GV-202002\", \"GTV-202007\", \"BFV-204006\", \"P-20404\", \"CHV-204005\", \"GTV-204021\", \"GV-204004\", \"E-20503\", \"BFV-205008\", \"P-20503\", \"CHV-205005\", \"GTV-205022\", \"LV-205054\", \"E-20603\", \"GTV-206032\", \"P-20602\", \"CHV-206002\", \"BFV-206012\", \"GV-206005\", \"GTV-206031\", \"GTV-207005\", \"GTV-207001\", \"XV-207001\", \"XV-207002\", \"TK-20701\", \"GTV-207019\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H100g22p5",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H100g22p5:LOOPS_NEAR_ITEM:E-303",
+    "corpus_id": "H100g22p5",
+    "family": "LOOPS_NEAR_ITEM",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": [\"TIC-3025\"], \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H100g22p1",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H100g22p1:LOOP_ACTUATED_VALVE:BSL-31033",
+    "corpus_id": "H100g22p1",
+    "family": "LOOP_ACTUATED_VALVE",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H1000g22p5",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H1000g22p5:LOOP_MEASURED_EQUIPMENT:LOOP_MEASURED_EQUIPMENT_P1:LALL-269016",
+    "corpus_id": "H1000g22p5",
+    "family": "LOOP_MEASURED_EQUIPMENT",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-AG-H100g22p2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p2:ROUTE_AVOIDING:D-1401|D-1901|PGV-15005",
+    "corpus_id": "H100g22p2",
+    "family": "ROUTE_AVOIDING",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": \"no\", \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-AG-H100g22p2",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p2:UNITS_REACHED:EA-3901",
+    "corpus_id": "H100g22p2",
+    "family": "UNITS_REACHED",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 6, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-AG-H100g22p1",
+    "strategy": "graph_agent_lines",
+    "question_id": "H100g22p1:VALVES_ON_PATH:V-1701|E-4901",
+    "corpus_id": "H100g22p1",
+    "family": "VALVES_ON_PATH",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": 156, \"not_present\": false}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-AG-H1000g22p1",
+    "strategy": "graph_agent_lines",
+    "question_id": "H1000g22p1:CONNECTED:EJ-19101|E-11503",
+    "corpus_id": "H1000g22p1",
+    "family": "CONNECTED",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H1000g22p1",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H1000g22p1:COUNT_IN_UNIT:306|NeedleValve",
+    "corpus_id": "H1000g22p1",
+    "family": "COUNT_IN_UNIT",
+    "scale": "1000",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": null, \"not_present\": true}"
+   }
+  },
+  {
+   "stratum": "wrong",
+   "row": {
+    "run_id": "S9-CYP-H100g22p1",
+    "strategy": "cypher_rag_lines",
+    "question_id": "H100g22p1:CROSS_UNIT:CROSS_UNIT_P1:9014",
+    "corpus_id": "H100g22p1",
+    "family": "CROSS_UNIT",
+    "scale": "100",
+    "outcome": "ANSWERED",
+    "scorer_correct": false,
+    "answer_key": "{\"answer\": [\"10\", \"11\", \"12\", \"13\", \"14\", \"15\", \"16\", \"17\", \"18\", \"19\", \"20\", \"21\", \"22\", \"23\", \"24\", \"25\", \"26\", \"27\", \"28\", \"29\", \"30\", \"31\", \"32\", \"33\", \"34\", \"35\", \"36\", \"37\", \"38\", \"39\", \"40\", \"41\", \"42\", \"43\", \"44\", \"45\", \"46\", \"47\", \"48\", \"49\", \"50\", \"51\", \"52\", \"53\", \"54\", \"55\", \"6\", \"7\", \"8\", \"9\", \"9008\", \"9013\", \"9020\", \"9021\", \"9023\", \"9026\"], \"not_present\": false}"
+   }
+  }
+ ],
+ "wrong_available": 447,
+ "wrong_selected": 92,
+ "contextrag_available": 0,
+ "contextrag_selected": 0,
+ "right_extra_available": 114,
+ "right_extra_selected": 0
+}

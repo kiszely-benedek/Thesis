@@ -1,0 +1,3292 @@
+{
+  "plants": [
+    {
+      "corpus_id": "H1000g22p1",
+      "seed": 5791,
+      "n_units": 468,
+      "n_sheets": 921,
+      "plan_rows": [
+        {
+          "quantity": "symbols per sheet, mean",
+          "value": 85.63636363636364,
+          "band": "56-109",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "sheets with 40-134 symbols (share)",
+          "value": 0.8386683738796414,
+          "band": "reported (target >= 0.95 not enforced)",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "valves per sheet, mean",
+          "value": 23.962868117797694,
+          "band": "15-28",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "instruments per sheet, mean",
+          "value": 33.85659411011524,
+          "band": "20-38",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "instruments : valves",
+          "value": 1.4128773710927065,
+          "band": "1-1.8",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "off-page stubs per sheet, mean",
+          "value": 7.8399487836107555,
+          "band": "5-11",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "off-page stubs per sheet, max",
+          "value": 18.0,
+          "band": "<= 21",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "equipment per sheet, min",
+          "value": 1.0,
+          "band": ">= 1",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "equipment per sheet, max",
+          "value": 11.0,
+          "band": "<= 16",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "sheets with at most 10 equipment (share)",
+          "value": 0.9974391805377721,
+          "band": ">= 0.9",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "equipment in A/B(/C) sets (share)",
+          "value": 0.4037674037674038,
+          "band": "0.25-0.45",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "units drawn on 2 or more sheets (share)",
+          "value": 0.5,
+          "band": "0.25-0.65",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "signal cuts per sheet, mean",
+          "value": 0.8245838668373879,
+          "band": "reported, no band",
+          "verdict": "reported"
+        }
+      ],
+      "corpus_rows": [
+        {
+          "quantity": "instruments with sheet-graph degree 1 (share)",
+          "value": 0.6145904243249376,
+          "band": ">= 0.55",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "sheets that show one unit (share)",
+          "value": 1.0,
+          "band": "= 1",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "dup 0: sheets with corpus symbols = plan symbols (share)",
+          "value": 1.0,
+          "band": "= 1",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "dup 0: sheets with pipe connectors = plan crossings (share)",
+          "value": 1.0,
+          "band": "= 1",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "dup 0: sheets with signal connectors = plan signal cuts (share)",
+          "value": 1.0,
+          "band": "= 1",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "preset duplication: reference copies added per sheet",
+          "value": 0.07600434310532031,
+          "band": "reported, no band",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "preset duplication: crossings absorbed per sheet",
+          "value": 0.15200868621064062,
+          "band": "reported, no band",
+          "verdict": "reported"
+        }
+      ],
+      "per_pattern": [
+        {
+          "label": "U1 combined sheet 1/1",
+          "sheets": 7,
+          "symbols_mean": 264.2857142857143,
+          "symbols_low": 223,
+          "symbols_high": 303,
+          "stubs_mean": 14.0,
+          "stubs_high": 16,
+          "over_134_symbols": 7,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 combined sheet 1/2",
+          "sheets": 14,
+          "symbols_mean": 234.42857142857142,
+          "symbols_low": 185,
+          "symbols_high": 316,
+          "stubs_mean": 15.214285714285714,
+          "stubs_high": 18,
+          "over_134_symbols": 14,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 combined sheet 1/3",
+          "sheets": 4,
+          "symbols_mean": 199.0,
+          "symbols_low": 154,
+          "symbols_high": 222,
+          "stubs_mean": 14.5,
+          "stubs_high": 17,
+          "over_134_symbols": 4,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 combined sheet 2/2",
+          "sheets": 14,
+          "symbols_mean": 57.57142857142857,
+          "symbols_low": 45,
+          "symbols_high": 83,
+          "stubs_mean": 7.642857142857143,
+          "stubs_high": 12,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 combined sheet 2/3",
+          "sheets": 4,
+          "symbols_mean": 59.0,
+          "symbols_low": 56,
+          "symbols_high": 63,
+          "stubs_mean": 10.25,
+          "stubs_high": 11,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 combined sheet 3/3",
+          "sheets": 4,
+          "symbols_mean": 54.5,
+          "symbols_low": 45,
+          "symbols_high": 59,
+          "stubs_mean": 7.0,
+          "stubs_high": 8,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 1/2",
+          "sheets": 20,
+          "symbols_mean": 151.9,
+          "symbols_low": 114,
+          "symbols_high": 181,
+          "stubs_mean": 10.1,
+          "stubs_high": 11,
+          "over_134_symbols": 15,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 1/3",
+          "sheets": 30,
+          "symbols_mean": 127.1,
+          "symbols_low": 81,
+          "symbols_high": 180,
+          "stubs_mean": 9.9,
+          "stubs_high": 12,
+          "over_134_symbols": 13,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 1/4",
+          "sheets": 9,
+          "symbols_mean": 130.22222222222223,
+          "symbols_low": 91,
+          "symbols_high": 169,
+          "stubs_mean": 10.11111111111111,
+          "stubs_high": 11,
+          "over_134_symbols": 5,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 2/2",
+          "sheets": 20,
+          "symbols_mean": 111.65,
+          "symbols_low": 82,
+          "symbols_high": 163,
+          "stubs_mean": 9.8,
+          "stubs_high": 13,
+          "over_134_symbols": 4,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 2/3",
+          "sheets": 30,
+          "symbols_mean": 103.16666666666667,
+          "symbols_low": 54,
+          "symbols_high": 162,
+          "stubs_mean": 10.4,
+          "stubs_high": 14,
+          "over_134_symbols": 3,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 2/4",
+          "sheets": 9,
+          "symbols_mean": 92.22222222222223,
+          "symbols_low": 63,
+          "symbols_high": 147,
+          "stubs_mean": 10.333333333333334,
+          "stubs_high": 13,
+          "over_134_symbols": 1,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 3/3",
+          "sheets": 30,
+          "symbols_mean": 55.2,
+          "symbols_low": 38,
+          "symbols_high": 80,
+          "stubs_mean": 8.066666666666666,
+          "stubs_high": 12,
+          "over_134_symbols": 0,
+          "under_40_symbols": 1,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 3/4",
+          "sheets": 9,
+          "symbols_mean": 62.888888888888886,
+          "symbols_low": 56,
+          "symbols_high": 79,
+          "stubs_mean": 11.222222222222221,
+          "stubs_high": 12,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 4/4",
+          "sheets": 9,
+          "symbols_mean": 53.77777777777778,
+          "symbols_low": 45,
+          "symbols_high": 61,
+          "stubs_mean": 7.222222222222222,
+          "stubs_high": 8,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U2 sheet 1/1",
+          "sheets": 15,
+          "symbols_mean": 131.93333333333334,
+          "symbols_low": 95,
+          "symbols_high": 159,
+          "stubs_mean": 8.533333333333333,
+          "stubs_high": 10,
+          "over_134_symbols": 8,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 1/2",
+          "sheets": 16,
+          "symbols_mean": 99.4375,
+          "symbols_low": 89,
+          "symbols_high": 106,
+          "stubs_mean": 6.0,
+          "stubs_high": 6,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 1/3",
+          "sheets": 19,
+          "symbols_mean": 66.36842105263158,
+          "symbols_low": 38,
+          "symbols_high": 103,
+          "stubs_mean": 5.0,
+          "stubs_high": 6,
+          "over_134_symbols": 0,
+          "under_40_symbols": 2,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 1/4",
+          "sheets": 4,
+          "symbols_mean": 46.5,
+          "symbols_low": 44,
+          "symbols_high": 48,
+          "stubs_mean": 4.75,
+          "stubs_high": 5,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 2/2",
+          "sheets": 16,
+          "symbols_mean": 100.6875,
+          "symbols_low": 76,
+          "symbols_high": 133,
+          "stubs_mean": 6.875,
+          "stubs_high": 8,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 2/3",
+          "sheets": 19,
+          "symbols_mean": 66.42105263157895,
+          "symbols_low": 51,
+          "symbols_high": 77,
+          "stubs_mean": 6.947368421052632,
+          "stubs_high": 8,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 2/4",
+          "sheets": 4,
+          "symbols_mean": 76.75,
+          "symbols_low": 70,
+          "symbols_high": 83,
+          "stubs_mean": 7.0,
+          "stubs_high": 7,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 3/3",
+          "sheets": 19,
+          "symbols_mean": 84.42105263157895,
+          "symbols_low": 52,
+          "symbols_high": 135,
+          "stubs_mean": 6.894736842105263,
+          "stubs_high": 9,
+          "over_134_symbols": 1,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 3/4",
+          "sheets": 4,
+          "symbols_mean": 57.5,
+          "symbols_low": 52,
+          "symbols_high": 63,
+          "stubs_mean": 6.5,
+          "stubs_high": 7,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 4/4",
+          "sheets": 4,
+          "symbols_mean": 49.0,
+          "symbols_low": 47,
+          "symbols_high": 51,
+          "stubs_mean": 6.5,
+          "stubs_high": 7,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U4 sheet 1/1",
+          "sheets": 22,
+          "symbols_mean": 99.95454545454545,
+          "symbols_low": 74,
+          "symbols_high": 140,
+          "stubs_mean": 6.909090909090909,
+          "stubs_high": 9,
+          "over_134_symbols": 1,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U4 sheet 1/2",
+          "sheets": 68,
+          "symbols_mean": 55.63235294117647,
+          "symbols_low": 37,
+          "symbols_high": 110,
+          "stubs_mean": 6.8088235294117645,
+          "stubs_high": 13,
+          "over_134_symbols": 0,
+          "under_40_symbols": 5,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U4 sheet 2/2",
+          "sheets": 68,
+          "symbols_mean": 82.19117647058823,
+          "symbols_low": 44,
+          "symbols_high": 133,
+          "stubs_mean": 9.176470588235293,
+          "stubs_high": 12,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U5 sheet 1/1",
+          "sheets": 38,
+          "symbols_mean": 100.13157894736842,
+          "symbols_low": 65,
+          "symbols_high": 145,
+          "stubs_mean": 9.18421052631579,
+          "stubs_high": 11,
+          "over_134_symbols": 1,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U6 sheet 1/1",
+          "sheets": 103,
+          "symbols_mean": 91.46601941747574,
+          "symbols_low": 66,
+          "symbols_high": 125,
+          "stubs_mean": 6.766990291262136,
+          "stubs_high": 8,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U6 sheet 1/2",
+          "sheets": 39,
+          "symbols_mean": 51.76923076923077,
+          "symbols_low": 41,
+          "symbols_high": 65,
+          "stubs_mean": 6.641025641025641,
+          "stubs_high": 8,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U6 sheet 2/2",
+          "sheets": 39,
+          "symbols_mean": 57.94871794871795,
+          "symbols_low": 43,
+          "symbols_high": 82,
+          "stubs_mean": 6.846153846153846,
+          "stubs_high": 9,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U7 sheet 1/1",
+          "sheets": 34,
+          "symbols_mean": 34.6764705882353,
+          "symbols_low": 29,
+          "symbols_high": 42,
+          "stubs_mean": 3.0,
+          "stubs_high": 3,
+          "over_134_symbols": 0,
+          "under_40_symbols": 31,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U8 sheet 1/1",
+          "sheets": 15,
+          "symbols_mean": 84.06666666666666,
+          "symbols_low": 47,
+          "symbols_high": 106,
+          "stubs_mean": 7.0,
+          "stubs_high": 8,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U8 sheet 1/2",
+          "sheets": 11,
+          "symbols_mean": 61.54545454545455,
+          "symbols_low": 40,
+          "symbols_high": 97,
+          "stubs_mean": 8.636363636363637,
+          "stubs_high": 10,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U8 sheet 2/2",
+          "sheets": 11,
+          "symbols_mean": 35.18181818181818,
+          "symbols_low": 29,
+          "symbols_high": 40,
+          "stubs_mean": 6.818181818181818,
+          "stubs_high": 7,
+          "over_134_symbols": 0,
+          "under_40_symbols": 10,
+          "over_21_stubs": 0
+        }
+      ],
+      "kind_rows": [
+        {
+          "quantity": "sheets: process",
+          "value": 781.0,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "sheets: network (headers)",
+          "value": 139.0,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "sheets: interarea",
+          "value": 1.0,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "sheets: network and interarea (share of all)",
+          "value": 0.15200868621064062,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "tie-ins per network sheet, mean",
+          "value": 12.45,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "tie-ins per network sheet, max",
+          "value": 16.0,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "connectors per network sheet, mean",
+          "value": 15.028571428571428,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "connectors per network sheet, max",
+          "value": 19.0,
+          "band": "reported",
+          "verdict": "reported"
+        }
+      ]
+    },
+    {
+      "corpus_id": "H1000g22p2",
+      "seed": 5827,
+      "n_units": 558,
+      "n_sheets": 1086,
+      "plan_rows": [
+        {
+          "quantity": "symbols per sheet, mean",
+          "value": 87.18032786885246,
+          "band": "56-109",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "sheets with 40-134 symbols (share)",
+          "value": 0.8491803278688524,
+          "band": "reported (target >= 0.95 not enforced)",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "valves per sheet, mean",
+          "value": 24.26775956284153,
+          "band": "15-28",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "instruments per sheet, mean",
+          "value": 34.71366120218579,
+          "band": "20-38",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "instruments : valves",
+          "value": 1.4304435937851834,
+          "band": "1-1.8",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "off-page stubs per sheet, mean",
+          "value": 7.896174863387978,
+          "band": "5-11",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "off-page stubs per sheet, max",
+          "value": 18.0,
+          "band": "<= 21",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "equipment per sheet, min",
+          "value": 1.0,
+          "band": ">= 1",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "equipment per sheet, max",
+          "value": 11.0,
+          "band": "<= 16",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "sheets with at most 10 equipment (share)",
+          "value": 0.9989071038251366,
+          "band": ">= 0.9",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "equipment in A/B(/C) sets (share)",
+          "value": 0.3952446588559614,
+          "band": "0.25-0.45",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "units drawn on 2 or more sheets (share)",
+          "value": 0.48566308243727596,
+          "band": "0.25-0.65",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "signal cuts per sheet, mean",
+          "value": 0.7846994535519126,
+          "band": "reported, no band",
+          "verdict": "reported"
+        }
+      ],
+      "corpus_rows": [
+        {
+          "quantity": "instruments with sheet-graph degree 1 (share)",
+          "value": 0.61165507036489,
+          "band": ">= 0.55",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "sheets that show one unit (share)",
+          "value": 1.0,
+          "band": "= 1",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "dup 0: sheets with corpus symbols = plan symbols (share)",
+          "value": 1.0,
+          "band": "= 1",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "dup 0: sheets with pipe connectors = plan crossings (share)",
+          "value": 1.0,
+          "band": "= 1",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "dup 0: sheets with signal connectors = plan signal cuts (share)",
+          "value": 1.0,
+          "band": "= 1",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "preset duplication: reference copies added per sheet",
+          "value": 0.07642725598526703,
+          "band": "reported, no band",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "preset duplication: crossings absorbed per sheet",
+          "value": 0.15285451197053407,
+          "band": "reported, no band",
+          "verdict": "reported"
+        }
+      ],
+      "per_pattern": [
+        {
+          "label": "U1 combined sheet 1/1",
+          "sheets": 12,
+          "symbols_mean": 245.41666666666666,
+          "symbols_low": 204,
+          "symbols_high": 297,
+          "stubs_mean": 14.833333333333334,
+          "stubs_high": 18,
+          "over_134_symbols": 12,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 combined sheet 1/2",
+          "sheets": 11,
+          "symbols_mean": 210.0909090909091,
+          "symbols_low": 167,
+          "symbols_high": 270,
+          "stubs_mean": 13.636363636363637,
+          "stubs_high": 17,
+          "over_134_symbols": 11,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 combined sheet 1/3",
+          "sheets": 7,
+          "symbols_mean": 213.42857142857142,
+          "symbols_low": 174,
+          "symbols_high": 248,
+          "stubs_mean": 14.714285714285714,
+          "stubs_high": 18,
+          "over_134_symbols": 7,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 combined sheet 2/2",
+          "sheets": 11,
+          "symbols_mean": 59.0,
+          "symbols_low": 50,
+          "symbols_high": 89,
+          "stubs_mean": 7.545454545454546,
+          "stubs_high": 10,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 combined sheet 2/3",
+          "sheets": 7,
+          "symbols_mean": 60.285714285714285,
+          "symbols_low": 52,
+          "symbols_high": 64,
+          "stubs_mean": 11.142857142857142,
+          "stubs_high": 12,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 combined sheet 3/3",
+          "sheets": 7,
+          "symbols_mean": 57.42857142857143,
+          "symbols_low": 48,
+          "symbols_high": 74,
+          "stubs_mean": 7.0,
+          "stubs_high": 10,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 1/2",
+          "sheets": 26,
+          "symbols_mean": 144.73076923076923,
+          "symbols_low": 99,
+          "symbols_high": 188,
+          "stubs_mean": 10.26923076923077,
+          "stubs_high": 12,
+          "over_134_symbols": 19,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 1/3",
+          "sheets": 31,
+          "symbols_mean": 137.0,
+          "symbols_low": 75,
+          "symbols_high": 174,
+          "stubs_mean": 10.064516129032258,
+          "stubs_high": 11,
+          "over_134_symbols": 18,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 1/4",
+          "sheets": 8,
+          "symbols_mean": 126.625,
+          "symbols_low": 104,
+          "symbols_high": 148,
+          "stubs_mean": 10.875,
+          "stubs_high": 11,
+          "over_134_symbols": 3,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 2/2",
+          "sheets": 26,
+          "symbols_mean": 109.88461538461539,
+          "symbols_low": 77,
+          "symbols_high": 149,
+          "stubs_mean": 9.576923076923077,
+          "stubs_high": 12,
+          "over_134_symbols": 4,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 2/3",
+          "sheets": 31,
+          "symbols_mean": 104.45161290322581,
+          "symbols_low": 59,
+          "symbols_high": 159,
+          "stubs_mean": 11.32258064516129,
+          "stubs_high": 17,
+          "over_134_symbols": 5,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 2/4",
+          "sheets": 8,
+          "symbols_mean": 96.125,
+          "symbols_low": 68,
+          "symbols_high": 123,
+          "stubs_mean": 11.25,
+          "stubs_high": 12,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 3/3",
+          "sheets": 31,
+          "symbols_mean": 59.29032258064516,
+          "symbols_low": 44,
+          "symbols_high": 84,
+          "stubs_mean": 8.612903225806452,
+          "stubs_high": 12,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 3/4",
+          "sheets": 8,
+          "symbols_mean": 60.375,
+          "symbols_low": 56,
+          "symbols_high": 66,
+          "stubs_mean": 10.875,
+          "stubs_high": 12,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 4/4",
+          "sheets": 8,
+          "symbols_mean": 67.625,
+          "symbols_low": 48,
+          "symbols_high": 94,
+          "stubs_mean": 8.25,
+          "stubs_high": 10,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U2 sheet 1/1",
+          "sheets": 23,
+          "symbols_mean": 132.2608695652174,
+          "symbols_low": 96,
+          "symbols_high": 168,
+          "stubs_mean": 8.565217391304348,
+          "stubs_high": 10,
+          "over_134_symbols": 10,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 1/2",
+          "sheets": 22,
+          "symbols_mean": 99.0,
+          "symbols_low": 89,
+          "symbols_high": 105,
+          "stubs_mean": 6.0,
+          "stubs_high": 6,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 1/3",
+          "sheets": 26,
+          "symbols_mean": 60.73076923076923,
+          "symbols_low": 40,
+          "symbols_high": 106,
+          "stubs_mean": 4.8076923076923075,
+          "stubs_high": 6,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 1/4",
+          "sheets": 3,
+          "symbols_mean": 47.0,
+          "symbols_low": 44,
+          "symbols_high": 52,
+          "stubs_mean": 4.666666666666667,
+          "stubs_high": 5,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 2/2",
+          "sheets": 22,
+          "symbols_mean": 99.54545454545455,
+          "symbols_low": 73,
+          "symbols_high": 134,
+          "stubs_mean": 6.818181818181818,
+          "stubs_high": 8,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 2/3",
+          "sheets": 26,
+          "symbols_mean": 68.03846153846153,
+          "symbols_low": 50,
+          "symbols_high": 79,
+          "stubs_mean": 7.0,
+          "stubs_high": 8,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 2/4",
+          "sheets": 3,
+          "symbols_mean": 74.66666666666667,
+          "symbols_low": 69,
+          "symbols_high": 80,
+          "stubs_mean": 7.0,
+          "stubs_high": 7,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 3/3",
+          "sheets": 26,
+          "symbols_mean": 95.23076923076923,
+          "symbols_low": 49,
+          "symbols_high": 142,
+          "stubs_mean": 7.076923076923077,
+          "stubs_high": 9,
+          "over_134_symbols": 1,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 3/4",
+          "sheets": 3,
+          "symbols_mean": 64.0,
+          "symbols_low": 57,
+          "symbols_high": 68,
+          "stubs_mean": 6.666666666666667,
+          "stubs_high": 8,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 4/4",
+          "sheets": 3,
+          "symbols_mean": 64.33333333333333,
+          "symbols_low": 58,
+          "symbols_high": 68,
+          "stubs_mean": 7.333333333333333,
+          "stubs_high": 9,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U4 sheet 1/1",
+          "sheets": 28,
+          "symbols_mean": 94.78571428571429,
+          "symbols_low": 66,
+          "symbols_high": 137,
+          "stubs_mean": 6.535714285714286,
+          "stubs_high": 9,
+          "over_134_symbols": 1,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U4 sheet 1/2",
+          "sheets": 81,
+          "symbols_mean": 61.60493827160494,
+          "symbols_low": 36,
+          "symbols_high": 110,
+          "stubs_mean": 7.444444444444445,
+          "stubs_high": 15,
+          "over_134_symbols": 0,
+          "under_40_symbols": 4,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U4 sheet 2/2",
+          "sheets": 81,
+          "symbols_mean": 75.44444444444444,
+          "symbols_low": 45,
+          "symbols_high": 117,
+          "stubs_mean": 8.864197530864198,
+          "stubs_high": 12,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U5 sheet 1/1",
+          "sheets": 37,
+          "symbols_mean": 97.21621621621621,
+          "symbols_low": 55,
+          "symbols_high": 144,
+          "stubs_mean": 9.135135135135135,
+          "stubs_high": 10,
+          "over_134_symbols": 2,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U6 sheet 1/1",
+          "sheets": 130,
+          "symbols_mean": 95.46153846153847,
+          "symbols_low": 62,
+          "symbols_high": 129,
+          "stubs_mean": 6.876923076923077,
+          "stubs_high": 8,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U6 sheet 1/2",
+          "sheets": 43,
+          "symbols_mean": 50.97674418604651,
+          "symbols_low": 40,
+          "symbols_high": 66,
+          "stubs_mean": 6.534883720930233,
+          "stubs_high": 8,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U6 sheet 2/2",
+          "sheets": 43,
+          "symbols_mean": 55.69767441860465,
+          "symbols_low": 42,
+          "symbols_high": 76,
+          "stubs_mean": 6.674418604651163,
+          "stubs_high": 9,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U7 sheet 1/1",
+          "sheets": 33,
+          "symbols_mean": 35.06060606060606,
+          "symbols_low": 29,
+          "symbols_high": 41,
+          "stubs_mean": 3.0,
+          "stubs_high": 3,
+          "over_134_symbols": 0,
+          "under_40_symbols": 31,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U8 sheet 1/1",
+          "sheets": 24,
+          "symbols_mean": 82.70833333333333,
+          "symbols_low": 46,
+          "symbols_high": 108,
+          "stubs_mean": 6.791666666666667,
+          "stubs_high": 8,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U8 sheet 1/2",
+          "sheets": 13,
+          "symbols_mean": 64.23076923076923,
+          "symbols_low": 42,
+          "symbols_high": 96,
+          "stubs_mean": 8.307692307692308,
+          "stubs_high": 11,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U8 sheet 2/2",
+          "sheets": 13,
+          "symbols_mean": 37.53846153846154,
+          "symbols_low": 31,
+          "symbols_high": 58,
+          "stubs_mean": 6.6923076923076925,
+          "stubs_high": 9,
+          "over_134_symbols": 0,
+          "under_40_symbols": 10,
+          "over_21_stubs": 0
+        }
+      ],
+      "kind_rows": [
+        {
+          "quantity": "sheets: process",
+          "value": 915.0,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "sheets: network (headers)",
+          "value": 170.0,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "sheets: interarea",
+          "value": 1.0,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "sheets: network and interarea (share of all)",
+          "value": 0.1574585635359116,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "tie-ins per network sheet, mean",
+          "value": 11.865497076023392,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "tie-ins per network sheet, max",
+          "value": 16.0,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "connectors per network sheet, mean",
+          "value": 14.450292397660819,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "connectors per network sheet, max",
+          "value": 20.0,
+          "band": "reported",
+          "verdict": "reported"
+        }
+      ]
+    },
+    {
+      "corpus_id": "H1000g22p3",
+      "seed": 5738,
+      "n_units": 533,
+      "n_sheets": 1025,
+      "plan_rows": [
+        {
+          "quantity": "symbols per sheet, mean",
+          "value": 87.09792626728111,
+          "band": "56-109",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "sheets with 40-134 symbols (share)",
+          "value": 0.8421658986175116,
+          "band": "reported (target >= 0.95 not enforced)",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "valves per sheet, mean",
+          "value": 24.402073732718893,
+          "band": "15-28",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "instruments per sheet, mean",
+          "value": 34.30184331797235,
+          "band": "20-38",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "instruments : valves",
+          "value": 1.4056937821632596,
+          "band": "1-1.8",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "off-page stubs per sheet, mean",
+          "value": 7.877880184331797,
+          "band": "5-11",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "off-page stubs per sheet, max",
+          "value": 18.0,
+          "band": "<= 21",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "equipment per sheet, min",
+          "value": 1.0,
+          "band": ">= 1",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "equipment per sheet, max",
+          "value": 10.0,
+          "band": "<= 16",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "sheets with at most 10 equipment (share)",
+          "value": 1.0,
+          "band": ">= 0.9",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "equipment in A/B(/C) sets (share)",
+          "value": 0.4092385420425839,
+          "band": "0.25-0.45",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "units drawn on 2 or more sheets (share)",
+          "value": 0.46153846153846156,
+          "band": "0.25-0.65",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "signal cuts per sheet, mean",
+          "value": 0.836405529953917,
+          "band": "reported, no band",
+          "verdict": "reported"
+        }
+      ],
+      "corpus_rows": [
+        {
+          "quantity": "instruments with sheet-graph degree 1 (share)",
+          "value": 0.6137569691677303,
+          "band": ">= 0.55",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "sheets that show one unit (share)",
+          "value": 1.0,
+          "band": "= 1",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "dup 0: sheets with corpus symbols = plan symbols (share)",
+          "value": 1.0,
+          "band": "= 1",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "dup 0: sheets with pipe connectors = plan crossings (share)",
+          "value": 1.0,
+          "band": "= 1",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "dup 0: sheets with signal connectors = plan signal cuts (share)",
+          "value": 1.0,
+          "band": "= 1",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "preset duplication: reference copies added per sheet",
+          "value": 0.07414634146341463,
+          "band": "reported, no band",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "preset duplication: crossings absorbed per sheet",
+          "value": 0.14829268292682926,
+          "band": "reported, no band",
+          "verdict": "reported"
+        }
+      ],
+      "per_pattern": [
+        {
+          "label": "U1 combined sheet 1/1",
+          "sheets": 11,
+          "symbols_mean": 256.45454545454544,
+          "symbols_low": 212,
+          "symbols_high": 292,
+          "stubs_mean": 13.727272727272727,
+          "stubs_high": 17,
+          "over_134_symbols": 11,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 combined sheet 1/2",
+          "sheets": 13,
+          "symbols_mean": 224.0,
+          "symbols_low": 189,
+          "symbols_high": 258,
+          "stubs_mean": 14.923076923076923,
+          "stubs_high": 18,
+          "over_134_symbols": 13,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 combined sheet 1/3",
+          "sheets": 3,
+          "symbols_mean": 198.66666666666666,
+          "symbols_low": 150,
+          "symbols_high": 244,
+          "stubs_mean": 15.666666666666666,
+          "stubs_high": 17,
+          "over_134_symbols": 3,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 combined sheet 2/2",
+          "sheets": 13,
+          "symbols_mean": 56.0,
+          "symbols_low": 47,
+          "symbols_high": 69,
+          "stubs_mean": 8.846153846153847,
+          "stubs_high": 12,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 combined sheet 2/3",
+          "sheets": 3,
+          "symbols_mean": 58.666666666666664,
+          "symbols_low": 58,
+          "symbols_high": 59,
+          "stubs_mean": 10.0,
+          "stubs_high": 11,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 combined sheet 3/3",
+          "sheets": 3,
+          "symbols_mean": 50.333333333333336,
+          "symbols_low": 42,
+          "symbols_high": 57,
+          "stubs_mean": 7.0,
+          "stubs_high": 8,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 1/2",
+          "sheets": 23,
+          "symbols_mean": 149.1304347826087,
+          "symbols_low": 105,
+          "symbols_high": 184,
+          "stubs_mean": 9.956521739130435,
+          "stubs_high": 11,
+          "over_134_symbols": 19,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 1/3",
+          "sheets": 40,
+          "symbols_mean": 136.925,
+          "symbols_low": 79,
+          "symbols_high": 215,
+          "stubs_mean": 9.775,
+          "stubs_high": 12,
+          "over_134_symbols": 20,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 1/4",
+          "sheets": 10,
+          "symbols_mean": 119.2,
+          "symbols_low": 96,
+          "symbols_high": 157,
+          "stubs_mean": 10.1,
+          "stubs_high": 11,
+          "over_134_symbols": 3,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 2/2",
+          "sheets": 23,
+          "symbols_mean": 113.21739130434783,
+          "symbols_low": 76,
+          "symbols_high": 143,
+          "stubs_mean": 10.08695652173913,
+          "stubs_high": 12,
+          "over_134_symbols": 3,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 2/3",
+          "sheets": 40,
+          "symbols_mean": 95.175,
+          "symbols_low": 54,
+          "symbols_high": 140,
+          "stubs_mean": 10.55,
+          "stubs_high": 16,
+          "over_134_symbols": 1,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 2/4",
+          "sheets": 10,
+          "symbols_mean": 83.1,
+          "symbols_low": 62,
+          "symbols_high": 114,
+          "stubs_mean": 10.5,
+          "stubs_high": 12,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 3/3",
+          "sheets": 40,
+          "symbols_mean": 57.85,
+          "symbols_low": 45,
+          "symbols_high": 86,
+          "stubs_mean": 7.575,
+          "stubs_high": 12,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 3/4",
+          "sheets": 10,
+          "symbols_mean": 60.3,
+          "symbols_low": 50,
+          "symbols_high": 65,
+          "stubs_mean": 10.8,
+          "stubs_high": 12,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 4/4",
+          "sheets": 10,
+          "symbols_mean": 55.5,
+          "symbols_low": 41,
+          "symbols_high": 77,
+          "stubs_mean": 7.1,
+          "stubs_high": 10,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U2 sheet 1/1",
+          "sheets": 19,
+          "symbols_mean": 131.8421052631579,
+          "symbols_low": 106,
+          "symbols_high": 157,
+          "stubs_mean": 8.526315789473685,
+          "stubs_high": 10,
+          "over_134_symbols": 8,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 1/2",
+          "sheets": 15,
+          "symbols_mean": 102.2,
+          "symbols_low": 98,
+          "symbols_high": 106,
+          "stubs_mean": 6.0,
+          "stubs_high": 6,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 1/3",
+          "sheets": 14,
+          "symbols_mean": 71.92857142857143,
+          "symbols_low": 42,
+          "symbols_high": 104,
+          "stubs_mean": 5.285714285714286,
+          "stubs_high": 6,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 1/4",
+          "sheets": 6,
+          "symbols_mean": 43.666666666666664,
+          "symbols_low": 40,
+          "symbols_high": 49,
+          "stubs_mean": 4.666666666666667,
+          "stubs_high": 5,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 2/2",
+          "sheets": 15,
+          "symbols_mean": 102.2,
+          "symbols_low": 73,
+          "symbols_high": 133,
+          "stubs_mean": 6.866666666666666,
+          "stubs_high": 8,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 2/3",
+          "sheets": 14,
+          "symbols_mean": 63.142857142857146,
+          "symbols_low": 51,
+          "symbols_high": 75,
+          "stubs_mean": 6.5,
+          "stubs_high": 8,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 2/4",
+          "sheets": 6,
+          "symbols_mean": 73.16666666666667,
+          "symbols_low": 67,
+          "symbols_high": 79,
+          "stubs_mean": 7.0,
+          "stubs_high": 7,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 3/3",
+          "sheets": 14,
+          "symbols_mean": 83.28571428571429,
+          "symbols_low": 45,
+          "symbols_high": 135,
+          "stubs_mean": 6.714285714285714,
+          "stubs_high": 9,
+          "over_134_symbols": 1,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 3/4",
+          "sheets": 6,
+          "symbols_mean": 63.5,
+          "symbols_low": 55,
+          "symbols_high": 71,
+          "stubs_mean": 6.833333333333333,
+          "stubs_high": 8,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 4/4",
+          "sheets": 6,
+          "symbols_mean": 57.333333333333336,
+          "symbols_low": 46,
+          "symbols_high": 74,
+          "stubs_mean": 7.0,
+          "stubs_high": 9,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U4 sheet 1/1",
+          "sheets": 27,
+          "symbols_mean": 96.48148148148148,
+          "symbols_low": 70,
+          "symbols_high": 136,
+          "stubs_mean": 6.518518518518518,
+          "stubs_high": 9,
+          "over_134_symbols": 1,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U4 sheet 1/2",
+          "sheets": 70,
+          "symbols_mean": 60.142857142857146,
+          "symbols_low": 38,
+          "symbols_high": 102,
+          "stubs_mean": 7.285714285714286,
+          "stubs_high": 13,
+          "over_134_symbols": 0,
+          "under_40_symbols": 3,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U4 sheet 2/2",
+          "sheets": 70,
+          "symbols_mean": 81.35714285714286,
+          "symbols_low": 43,
+          "symbols_high": 149,
+          "stubs_mean": 9.057142857142857,
+          "stubs_high": 12,
+          "over_134_symbols": 1,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U5 sheet 1/1",
+          "sheets": 39,
+          "symbols_mean": 95.56410256410257,
+          "symbols_low": 57,
+          "symbols_high": 137,
+          "stubs_mean": 9.153846153846153,
+          "stubs_high": 10,
+          "over_134_symbols": 1,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U6 sheet 1/1",
+          "sheets": 122,
+          "symbols_mean": 96.38524590163935,
+          "symbols_low": 66,
+          "symbols_high": 137,
+          "stubs_mean": 6.909836065573771,
+          "stubs_high": 8,
+          "over_134_symbols": 2,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U6 sheet 1/2",
+          "sheets": 42,
+          "symbols_mean": 53.07142857142857,
+          "symbols_low": 41,
+          "symbols_high": 74,
+          "stubs_mean": 6.809523809523809,
+          "stubs_high": 8,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U6 sheet 2/2",
+          "sheets": 42,
+          "symbols_mean": 56.833333333333336,
+          "symbols_low": 42,
+          "symbols_high": 86,
+          "stubs_mean": 7.0,
+          "stubs_high": 9,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U7 sheet 1/1",
+          "sheets": 42,
+          "symbols_mean": 34.785714285714285,
+          "symbols_low": 29,
+          "symbols_high": 41,
+          "stubs_mean": 3.0,
+          "stubs_high": 3,
+          "over_134_symbols": 0,
+          "under_40_symbols": 40,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U8 sheet 1/1",
+          "sheets": 27,
+          "symbols_mean": 80.81481481481481,
+          "symbols_low": 52,
+          "symbols_high": 107,
+          "stubs_mean": 6.703703703703703,
+          "stubs_high": 8,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U8 sheet 1/2",
+          "sheets": 10,
+          "symbols_mean": 74.8,
+          "symbols_low": 51,
+          "symbols_high": 84,
+          "stubs_mean": 8.2,
+          "stubs_high": 10,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U8 sheet 2/2",
+          "sheets": 10,
+          "symbols_mean": 34.7,
+          "symbols_low": 27,
+          "symbols_high": 51,
+          "stubs_mean": 6.2,
+          "stubs_high": 7,
+          "over_134_symbols": 0,
+          "under_40_symbols": 7,
+          "over_21_stubs": 0
+        }
+      ],
+      "kind_rows": [
+        {
+          "quantity": "sheets: process",
+          "value": 868.0,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "sheets: network (headers)",
+          "value": 156.0,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "sheets: interarea",
+          "value": 1.0,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "sheets: network and interarea (share of all)",
+          "value": 0.15317073170731707,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "tie-ins per network sheet, mean",
+          "value": 12.464968152866241,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "tie-ins per network sheet, max",
+          "value": 16.0,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "connectors per network sheet, mean",
+          "value": 15.05732484076433,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "connectors per network sheet, max",
+          "value": 19.0,
+          "band": "reported",
+          "verdict": "reported"
+        }
+      ]
+    },
+    {
+      "corpus_id": "H1000g22p4",
+      "seed": 5568,
+      "n_units": 531,
+      "n_sheets": 1072,
+      "plan_rows": [
+        {
+          "quantity": "symbols per sheet, mean",
+          "value": 87.66075388026607,
+          "band": "56-109",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "sheets with 40-134 symbols (share)",
+          "value": 0.8325942350332595,
+          "band": "reported (target >= 0.95 not enforced)",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "valves per sheet, mean",
+          "value": 24.16851441241685,
+          "band": "15-28",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "instruments per sheet, mean",
+          "value": 35.669623059866964,
+          "band": "20-38",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "instruments : valves",
+          "value": 1.4758715596330276,
+          "band": "1-1.8",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "off-page stubs per sheet, mean",
+          "value": 7.852549889135255,
+          "band": "5-11",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "off-page stubs per sheet, max",
+          "value": 18.0,
+          "band": "<= 21",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "equipment per sheet, min",
+          "value": 1.0,
+          "band": ">= 1",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "equipment per sheet, max",
+          "value": 10.0,
+          "band": "<= 16",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "sheets with at most 10 equipment (share)",
+          "value": 1.0,
+          "band": ">= 0.9",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "equipment in A/B(/C) sets (share)",
+          "value": 0.37504369101712687,
+          "band": "0.25-0.45",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "units drawn on 2 or more sheets (share)",
+          "value": 0.5178907721280602,
+          "band": "0.25-0.65",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "signal cuts per sheet, mean",
+          "value": 0.7804878048780488,
+          "band": "reported, no band",
+          "verdict": "reported"
+        }
+      ],
+      "corpus_rows": [
+        {
+          "quantity": "instruments with sheet-graph degree 1 (share)",
+          "value": 0.6103064586311929,
+          "band": ">= 0.55",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "sheets that show one unit (share)",
+          "value": 1.0,
+          "band": "= 1",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "dup 0: sheets with corpus symbols = plan symbols (share)",
+          "value": 1.0,
+          "band": "= 1",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "dup 0: sheets with pipe connectors = plan crossings (share)",
+          "value": 1.0,
+          "band": "= 1",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "dup 0: sheets with signal connectors = plan signal cuts (share)",
+          "value": 1.0,
+          "band": "= 1",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "preset duplication: reference copies added per sheet",
+          "value": 0.08208955223880597,
+          "band": "reported, no band",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "preset duplication: crossings absorbed per sheet",
+          "value": 0.16417910447761194,
+          "band": "reported, no band",
+          "verdict": "reported"
+        }
+      ],
+      "per_pattern": [
+        {
+          "label": "U1 combined sheet 1/1",
+          "sheets": 4,
+          "symbols_mean": 247.75,
+          "symbols_low": 232,
+          "symbols_high": 267,
+          "stubs_mean": 14.5,
+          "stubs_high": 16,
+          "over_134_symbols": 4,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 combined sheet 1/2",
+          "sheets": 16,
+          "symbols_mean": 222.75,
+          "symbols_low": 176,
+          "symbols_high": 276,
+          "stubs_mean": 14.9375,
+          "stubs_high": 18,
+          "over_134_symbols": 16,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 combined sheet 1/3",
+          "sheets": 6,
+          "symbols_mean": 208.5,
+          "symbols_low": 179,
+          "symbols_high": 234,
+          "stubs_mean": 16.666666666666668,
+          "stubs_high": 18,
+          "over_134_symbols": 6,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 combined sheet 1/4",
+          "sheets": 1,
+          "symbols_mean": 157.0,
+          "symbols_low": 157,
+          "symbols_high": 157,
+          "stubs_mean": 15.0,
+          "stubs_high": 15,
+          "over_134_symbols": 1,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 combined sheet 2/2",
+          "sheets": 16,
+          "symbols_mean": 55.75,
+          "symbols_low": 49,
+          "symbols_high": 62,
+          "stubs_mean": 8.125,
+          "stubs_high": 11,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 combined sheet 2/3",
+          "sheets": 6,
+          "symbols_mean": 59.5,
+          "symbols_low": 57,
+          "symbols_high": 63,
+          "stubs_mean": 10.166666666666666,
+          "stubs_high": 12,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 combined sheet 2/4",
+          "sheets": 1,
+          "symbols_mean": 59.0,
+          "symbols_low": 59,
+          "symbols_high": 59,
+          "stubs_mean": 11.0,
+          "stubs_high": 11,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 combined sheet 3/3",
+          "sheets": 6,
+          "symbols_mean": 58.333333333333336,
+          "symbols_low": 51,
+          "symbols_high": 75,
+          "stubs_mean": 7.5,
+          "stubs_high": 9,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 combined sheet 3/4",
+          "sheets": 1,
+          "symbols_mean": 56.0,
+          "symbols_low": 56,
+          "symbols_high": 56,
+          "stubs_mean": 8.0,
+          "stubs_high": 8,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 combined sheet 4/4",
+          "sheets": 1,
+          "symbols_mean": 42.0,
+          "symbols_low": 42,
+          "symbols_high": 42,
+          "stubs_mean": 7.0,
+          "stubs_high": 7,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 1/2",
+          "sheets": 31,
+          "symbols_mean": 147.38709677419354,
+          "symbols_low": 109,
+          "symbols_high": 200,
+          "stubs_mean": 9.838709677419354,
+          "stubs_high": 12,
+          "over_134_symbols": 22,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 1/3",
+          "sheets": 36,
+          "symbols_mean": 134.88888888888889,
+          "symbols_low": 81,
+          "symbols_high": 198,
+          "stubs_mean": 9.777777777777779,
+          "stubs_high": 11,
+          "over_134_symbols": 18,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 1/4",
+          "sheets": 7,
+          "symbols_mean": 111.28571428571429,
+          "symbols_low": 82,
+          "symbols_high": 147,
+          "stubs_mean": 9.714285714285714,
+          "stubs_high": 11,
+          "over_134_symbols": 2,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 2/2",
+          "sheets": 31,
+          "symbols_mean": 115.09677419354838,
+          "symbols_low": 87,
+          "symbols_high": 149,
+          "stubs_mean": 10.32258064516129,
+          "stubs_high": 12,
+          "over_134_symbols": 3,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 2/3",
+          "sheets": 36,
+          "symbols_mean": 100.47222222222223,
+          "symbols_low": 56,
+          "symbols_high": 142,
+          "stubs_mean": 10.694444444444445,
+          "stubs_high": 17,
+          "over_134_symbols": 3,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 2/4",
+          "sheets": 7,
+          "symbols_mean": 81.71428571428571,
+          "symbols_low": 57,
+          "symbols_high": 119,
+          "stubs_mean": 9.285714285714286,
+          "stubs_high": 11,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 3/3",
+          "sheets": 36,
+          "symbols_mean": 54.916666666666664,
+          "symbols_low": 43,
+          "symbols_high": 87,
+          "stubs_mean": 8.083333333333334,
+          "stubs_high": 11,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 3/4",
+          "sheets": 7,
+          "symbols_mean": 60.0,
+          "symbols_low": 51,
+          "symbols_high": 68,
+          "stubs_mean": 10.428571428571429,
+          "stubs_high": 12,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 4/4",
+          "sheets": 7,
+          "symbols_mean": 58.0,
+          "symbols_low": 50,
+          "symbols_high": 71,
+          "stubs_mean": 7.428571428571429,
+          "stubs_high": 9,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U2 sheet 1/1",
+          "sheets": 41,
+          "symbols_mean": 133.5121951219512,
+          "symbols_low": 99,
+          "symbols_high": 173,
+          "stubs_mean": 8.487804878048781,
+          "stubs_high": 10,
+          "over_134_symbols": 22,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 1/2",
+          "sheets": 28,
+          "symbols_mean": 101.17857142857143,
+          "symbols_low": 85,
+          "symbols_high": 106,
+          "stubs_mean": 6.0,
+          "stubs_high": 6,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 1/3",
+          "sheets": 28,
+          "symbols_mean": 55.0,
+          "symbols_low": 34,
+          "symbols_high": 106,
+          "stubs_mean": 4.642857142857143,
+          "stubs_high": 6,
+          "over_134_symbols": 0,
+          "under_40_symbols": 1,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 1/4",
+          "sheets": 5,
+          "symbols_mean": 45.0,
+          "symbols_low": 40,
+          "symbols_high": 49,
+          "stubs_mean": 4.4,
+          "stubs_high": 5,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 2/2",
+          "sheets": 28,
+          "symbols_mean": 98.46428571428571,
+          "symbols_low": 75,
+          "symbols_high": 136,
+          "stubs_mean": 6.714285714285714,
+          "stubs_high": 8,
+          "over_134_symbols": 1,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 2/3",
+          "sheets": 28,
+          "symbols_mean": 68.78571428571429,
+          "symbols_low": 49,
+          "symbols_high": 79,
+          "stubs_mean": 6.857142857142857,
+          "stubs_high": 7,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 2/4",
+          "sheets": 5,
+          "symbols_mean": 71.8,
+          "symbols_low": 68,
+          "symbols_high": 75,
+          "stubs_mean": 7.0,
+          "stubs_high": 7,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 3/3",
+          "sheets": 28,
+          "symbols_mean": 88.96428571428571,
+          "symbols_low": 45,
+          "symbols_high": 114,
+          "stubs_mean": 6.607142857142857,
+          "stubs_high": 7,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 3/4",
+          "sheets": 5,
+          "symbols_mean": 59.8,
+          "symbols_low": 51,
+          "symbols_high": 66,
+          "stubs_mean": 6.8,
+          "stubs_high": 8,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 4/4",
+          "sheets": 5,
+          "symbols_mean": 62.4,
+          "symbols_low": 52,
+          "symbols_high": 78,
+          "stubs_mean": 7.2,
+          "stubs_high": 9,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U4 sheet 1/1",
+          "sheets": 25,
+          "symbols_mean": 95.56,
+          "symbols_low": 65,
+          "symbols_high": 125,
+          "stubs_mean": 6.28,
+          "stubs_high": 9,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U4 sheet 1/2",
+          "sheets": 72,
+          "symbols_mean": 58.625,
+          "symbols_low": 36,
+          "symbols_high": 112,
+          "stubs_mean": 7.277777777777778,
+          "stubs_high": 14,
+          "over_134_symbols": 0,
+          "under_40_symbols": 6,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U4 sheet 2/2",
+          "sheets": 72,
+          "symbols_mean": 80.29166666666667,
+          "symbols_low": 40,
+          "symbols_high": 141,
+          "stubs_mean": 9.166666666666666,
+          "stubs_high": 13,
+          "over_134_symbols": 1,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U5 sheet 1/1",
+          "sheets": 24,
+          "symbols_mean": 97.04166666666667,
+          "symbols_low": 58,
+          "symbols_high": 147,
+          "stubs_mean": 9.291666666666666,
+          "stubs_high": 11,
+          "over_134_symbols": 2,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U6 sheet 1/1",
+          "sheets": 104,
+          "symbols_mean": 93.625,
+          "symbols_low": 62,
+          "symbols_high": 140,
+          "stubs_mean": 6.846153846153846,
+          "stubs_high": 8,
+          "over_134_symbols": 1,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U6 sheet 1/2",
+          "sheets": 32,
+          "symbols_mean": 52.78125,
+          "symbols_low": 37,
+          "symbols_high": 65,
+          "stubs_mean": 6.6875,
+          "stubs_high": 8,
+          "over_134_symbols": 0,
+          "under_40_symbols": 1,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U6 sheet 2/2",
+          "sheets": 32,
+          "symbols_mean": 55.78125,
+          "symbols_low": 39,
+          "symbols_high": 85,
+          "stubs_mean": 6.84375,
+          "stubs_high": 9,
+          "over_134_symbols": 0,
+          "under_40_symbols": 1,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U7 sheet 1/1",
+          "sheets": 36,
+          "symbols_mean": 35.916666666666664,
+          "symbols_low": 30,
+          "symbols_high": 42,
+          "stubs_mean": 3.0,
+          "stubs_high": 3,
+          "over_134_symbols": 0,
+          "under_40_symbols": 30,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U8 sheet 1/1",
+          "sheets": 22,
+          "symbols_mean": 80.86363636363636,
+          "symbols_low": 48,
+          "symbols_high": 105,
+          "stubs_mean": 6.636363636363637,
+          "stubs_high": 8,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U8 sheet 1/2",
+          "sheets": 13,
+          "symbols_mean": 69.23076923076923,
+          "symbols_low": 48,
+          "symbols_high": 83,
+          "stubs_mean": 8.615384615384615,
+          "stubs_high": 10,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U8 sheet 2/2",
+          "sheets": 13,
+          "symbols_mean": 36.0,
+          "symbols_low": 30,
+          "symbols_high": 47,
+          "stubs_mean": 6.538461538461538,
+          "stubs_high": 7,
+          "over_134_symbols": 0,
+          "under_40_symbols": 10,
+          "over_21_stubs": 0
+        }
+      ],
+      "kind_rows": [
+        {
+          "quantity": "sheets: process",
+          "value": 902.0,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "sheets: network (headers)",
+          "value": 169.0,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "sheets: interarea",
+          "value": 1.0,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "sheets: network and interarea (share of all)",
+          "value": 0.15858208955223882,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "tie-ins per network sheet, mean",
+          "value": 11.91764705882353,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "tie-ins per network sheet, max",
+          "value": 16.0,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "connectors per network sheet, mean",
+          "value": 14.535294117647059,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "connectors per network sheet, max",
+          "value": 19.0,
+          "band": "reported",
+          "verdict": "reported"
+        }
+      ]
+    },
+    {
+      "corpus_id": "H1000g22p5",
+      "seed": 5945,
+      "n_units": 506,
+      "n_sheets": 1011,
+      "plan_rows": [
+        {
+          "quantity": "symbols per sheet, mean",
+          "value": 88.2030516431925,
+          "band": "56-109",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "sheets with 40-134 symbols (share)",
+          "value": 0.8591549295774648,
+          "band": "reported (target >= 0.95 not enforced)",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "valves per sheet, mean",
+          "value": 24.58450704225352,
+          "band": "15-28",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "instruments per sheet, mean",
+          "value": 35.044600938967136,
+          "band": "20-38",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "instruments : valves",
+          "value": 1.425475031032178,
+          "band": "1-1.8",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "off-page stubs per sheet, mean",
+          "value": 7.981220657276995,
+          "band": "5-11",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "off-page stubs per sheet, max",
+          "value": 18.0,
+          "band": "<= 21",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "equipment per sheet, min",
+          "value": 1.0,
+          "band": ">= 1",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "equipment per sheet, max",
+          "value": 10.0,
+          "band": "<= 16",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "sheets with at most 10 equipment (share)",
+          "value": 1.0,
+          "band": ">= 0.9",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "equipment in A/B(/C) sets (share)",
+          "value": 0.3861713865391688,
+          "band": "0.25-0.45",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "units drawn on 2 or more sheets (share)",
+          "value": 0.5118577075098815,
+          "band": "0.25-0.65",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "signal cuts per sheet, mean",
+          "value": 0.8051643192488263,
+          "band": "reported, no band",
+          "verdict": "reported"
+        }
+      ],
+      "corpus_rows": [
+        {
+          "quantity": "instruments with sheet-graph degree 1 (share)",
+          "value": 0.6126331301493737,
+          "band": ">= 0.55",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "sheets that show one unit (share)",
+          "value": 1.0,
+          "band": "= 1",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "dup 0: sheets with corpus symbols = plan symbols (share)",
+          "value": 1.0,
+          "band": "= 1",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "dup 0: sheets with pipe connectors = plan crossings (share)",
+          "value": 1.0,
+          "band": "= 1",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "dup 0: sheets with signal connectors = plan signal cuts (share)",
+          "value": 1.0,
+          "band": "= 1",
+          "verdict": "pass"
+        },
+        {
+          "quantity": "preset duplication: reference copies added per sheet",
+          "value": 0.0771513353115727,
+          "band": "reported, no band",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "preset duplication: crossings absorbed per sheet",
+          "value": 0.1543026706231454,
+          "band": "reported, no band",
+          "verdict": "reported"
+        }
+      ],
+      "per_pattern": [
+        {
+          "label": "U1 combined sheet 1/1",
+          "sheets": 9,
+          "symbols_mean": 250.44444444444446,
+          "symbols_low": 209,
+          "symbols_high": 283,
+          "stubs_mean": 13.555555555555555,
+          "stubs_high": 16,
+          "over_134_symbols": 9,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 combined sheet 1/2",
+          "sheets": 15,
+          "symbols_mean": 225.93333333333334,
+          "symbols_low": 177,
+          "symbols_high": 265,
+          "stubs_mean": 14.933333333333334,
+          "stubs_high": 18,
+          "over_134_symbols": 15,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 combined sheet 1/3",
+          "sheets": 6,
+          "symbols_mean": 205.5,
+          "symbols_low": 194,
+          "symbols_high": 225,
+          "stubs_mean": 15.166666666666666,
+          "stubs_high": 18,
+          "over_134_symbols": 6,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 combined sheet 1/4",
+          "sheets": 1,
+          "symbols_mean": 158.0,
+          "symbols_low": 158,
+          "symbols_high": 158,
+          "stubs_mean": 15.0,
+          "stubs_high": 15,
+          "over_134_symbols": 1,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 combined sheet 2/2",
+          "sheets": 15,
+          "symbols_mean": 56.13333333333333,
+          "symbols_low": 46,
+          "symbols_high": 69,
+          "stubs_mean": 8.533333333333333,
+          "stubs_high": 12,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 combined sheet 2/3",
+          "sheets": 6,
+          "symbols_mean": 60.5,
+          "symbols_low": 55,
+          "symbols_high": 71,
+          "stubs_mean": 10.666666666666666,
+          "stubs_high": 12,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 combined sheet 2/4",
+          "sheets": 1,
+          "symbols_mean": 64.0,
+          "symbols_low": 64,
+          "symbols_high": 64,
+          "stubs_mean": 12.0,
+          "stubs_high": 12,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 combined sheet 3/3",
+          "sheets": 6,
+          "symbols_mean": 58.666666666666664,
+          "symbols_low": 46,
+          "symbols_high": 72,
+          "stubs_mean": 7.333333333333333,
+          "stubs_high": 9,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 combined sheet 3/4",
+          "sheets": 1,
+          "symbols_mean": 52.0,
+          "symbols_low": 52,
+          "symbols_high": 52,
+          "stubs_mean": 6.0,
+          "stubs_high": 6,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 combined sheet 4/4",
+          "sheets": 1,
+          "symbols_mean": 58.0,
+          "symbols_low": 58,
+          "symbols_high": 58,
+          "stubs_mean": 7.0,
+          "stubs_high": 7,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 1/2",
+          "sheets": 28,
+          "symbols_mean": 147.0,
+          "symbols_low": 113,
+          "symbols_high": 194,
+          "stubs_mean": 9.821428571428571,
+          "stubs_high": 11,
+          "over_134_symbols": 18,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 1/3",
+          "sheets": 28,
+          "symbols_mean": 137.96428571428572,
+          "symbols_low": 82,
+          "symbols_high": 206,
+          "stubs_mean": 10.071428571428571,
+          "stubs_high": 11,
+          "over_134_symbols": 17,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 1/4",
+          "sheets": 10,
+          "symbols_mean": 117.5,
+          "symbols_low": 79,
+          "symbols_high": 166,
+          "stubs_mean": 10.2,
+          "stubs_high": 11,
+          "over_134_symbols": 2,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 2/2",
+          "sheets": 28,
+          "symbols_mean": 113.21428571428571,
+          "symbols_low": 76,
+          "symbols_high": 145,
+          "stubs_mean": 10.107142857142858,
+          "stubs_high": 12,
+          "over_134_symbols": 2,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 2/3",
+          "sheets": 28,
+          "symbols_mean": 98.17857142857143,
+          "symbols_low": 55,
+          "symbols_high": 145,
+          "stubs_mean": 10.142857142857142,
+          "stubs_high": 13,
+          "over_134_symbols": 5,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 2/4",
+          "sheets": 10,
+          "symbols_mean": 87.7,
+          "symbols_low": 56,
+          "symbols_high": 117,
+          "stubs_mean": 10.9,
+          "stubs_high": 15,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 3/3",
+          "sheets": 28,
+          "symbols_mean": 57.42857142857143,
+          "symbols_low": 39,
+          "symbols_high": 76,
+          "stubs_mean": 8.571428571428571,
+          "stubs_high": 12,
+          "over_134_symbols": 0,
+          "under_40_symbols": 1,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 3/4",
+          "sheets": 10,
+          "symbols_mean": 61.9,
+          "symbols_low": 53,
+          "symbols_high": 78,
+          "stubs_mean": 10.4,
+          "stubs_high": 12,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U1 two_sheets sheet 4/4",
+          "sheets": 10,
+          "symbols_mean": 57.6,
+          "symbols_low": 46,
+          "symbols_high": 83,
+          "stubs_mean": 7.5,
+          "stubs_high": 10,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U2 sheet 1/1",
+          "sheets": 24,
+          "symbols_mean": 131.875,
+          "symbols_low": 104,
+          "symbols_high": 170,
+          "stubs_mean": 8.5,
+          "stubs_high": 10,
+          "over_134_symbols": 9,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 1/2",
+          "sheets": 17,
+          "symbols_mean": 101.82352941176471,
+          "symbols_low": 96,
+          "symbols_high": 106,
+          "stubs_mean": 6.0,
+          "stubs_high": 6,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 1/3",
+          "sheets": 25,
+          "symbols_mean": 68.28,
+          "symbols_low": 35,
+          "symbols_high": 106,
+          "stubs_mean": 5.08,
+          "stubs_high": 6,
+          "over_134_symbols": 0,
+          "under_40_symbols": 1,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 1/4",
+          "sheets": 3,
+          "symbols_mean": 41.0,
+          "symbols_low": 37,
+          "symbols_high": 43,
+          "stubs_mean": 4.0,
+          "stubs_high": 4,
+          "over_134_symbols": 0,
+          "under_40_symbols": 1,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 2/2",
+          "sheets": 17,
+          "symbols_mean": 100.76470588235294,
+          "symbols_low": 79,
+          "symbols_high": 135,
+          "stubs_mean": 6.823529411764706,
+          "stubs_high": 8,
+          "over_134_symbols": 1,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 2/3",
+          "sheets": 25,
+          "symbols_mean": 66.8,
+          "symbols_low": 48,
+          "symbols_high": 77,
+          "stubs_mean": 6.84,
+          "stubs_high": 8,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 2/4",
+          "sheets": 3,
+          "symbols_mean": 72.66666666666667,
+          "symbols_low": 69,
+          "symbols_high": 79,
+          "stubs_mean": 7.0,
+          "stubs_high": 7,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 3/3",
+          "sheets": 25,
+          "symbols_mean": 81.96,
+          "symbols_low": 46,
+          "symbols_high": 140,
+          "stubs_mean": 6.76,
+          "stubs_high": 9,
+          "over_134_symbols": 1,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 3/4",
+          "sheets": 3,
+          "symbols_mean": 59.0,
+          "symbols_low": 59,
+          "symbols_high": 59,
+          "stubs_mean": 6.333333333333333,
+          "stubs_high": 7,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U3 sheet 4/4",
+          "sheets": 3,
+          "symbols_mean": 51.333333333333336,
+          "symbols_low": 48,
+          "symbols_high": 57,
+          "stubs_mean": 6.333333333333333,
+          "stubs_high": 7,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U4 sheet 1/1",
+          "sheets": 32,
+          "symbols_mean": 95.90625,
+          "symbols_low": 59,
+          "symbols_high": 131,
+          "stubs_mean": 6.53125,
+          "stubs_high": 9,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U4 sheet 1/2",
+          "sheets": 69,
+          "symbols_mean": 57.95652173913044,
+          "symbols_low": 37,
+          "symbols_high": 112,
+          "stubs_mean": 7.173913043478261,
+          "stubs_high": 14,
+          "over_134_symbols": 0,
+          "under_40_symbols": 1,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U4 sheet 2/2",
+          "sheets": 69,
+          "symbols_mean": 80.8695652173913,
+          "symbols_low": 45,
+          "symbols_high": 138,
+          "stubs_mean": 9.028985507246377,
+          "stubs_high": 13,
+          "over_134_symbols": 1,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U5 sheet 1/1",
+          "sheets": 29,
+          "symbols_mean": 97.44827586206897,
+          "symbols_low": 68,
+          "symbols_high": 136,
+          "stubs_mean": 9.241379310344827,
+          "stubs_high": 10,
+          "over_134_symbols": 2,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U6 sheet 1/1",
+          "sheets": 107,
+          "symbols_mean": 96.59813084112149,
+          "symbols_low": 65,
+          "symbols_high": 138,
+          "stubs_mean": 6.925233644859813,
+          "stubs_high": 8,
+          "over_134_symbols": 2,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U6 sheet 1/2",
+          "sheets": 49,
+          "symbols_mean": 51.93877551020408,
+          "symbols_low": 39,
+          "symbols_high": 70,
+          "stubs_mean": 6.775510204081633,
+          "stubs_high": 8,
+          "over_134_symbols": 0,
+          "under_40_symbols": 1,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U6 sheet 2/2",
+          "sheets": 49,
+          "symbols_mean": 58.63265306122449,
+          "symbols_low": 44,
+          "symbols_high": 84,
+          "stubs_mean": 7.020408163265306,
+          "stubs_high": 9,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U7 sheet 1/1",
+          "sheets": 19,
+          "symbols_mean": 33.31578947368421,
+          "symbols_low": 29,
+          "symbols_high": 40,
+          "stubs_mean": 3.0,
+          "stubs_high": 3,
+          "over_134_symbols": 0,
+          "under_40_symbols": 18,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U8 sheet 1/1",
+          "sheets": 27,
+          "symbols_mean": 80.11111111111111,
+          "symbols_low": 48,
+          "symbols_high": 102,
+          "stubs_mean": 6.7407407407407405,
+          "stubs_high": 8,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U8 sheet 1/2",
+          "sheets": 8,
+          "symbols_mean": 77.625,
+          "symbols_low": 47,
+          "symbols_high": 97,
+          "stubs_mean": 8.75,
+          "stubs_high": 10,
+          "over_134_symbols": 0,
+          "under_40_symbols": 0,
+          "over_21_stubs": 0
+        },
+        {
+          "label": "U8 sheet 2/2",
+          "sheets": 8,
+          "symbols_mean": 34.875,
+          "symbols_low": 27,
+          "symbols_high": 44,
+          "stubs_mean": 6.5,
+          "stubs_high": 7,
+          "over_134_symbols": 0,
+          "under_40_symbols": 6,
+          "over_21_stubs": 0
+        }
+      ],
+      "kind_rows": [
+        {
+          "quantity": "sheets: process",
+          "value": 852.0,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "sheets: network (headers)",
+          "value": 158.0,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "sheets: interarea",
+          "value": 1.0,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "sheets: network and interarea (share of all)",
+          "value": 0.1572700296735905,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "tie-ins per network sheet, mean",
+          "value": 12.0,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "tie-ins per network sheet, max",
+          "value": 16.0,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "connectors per network sheet, mean",
+          "value": 14.59119496855346,
+          "band": "reported",
+          "verdict": "reported"
+        },
+        {
+          "quantity": "connectors per network sheet, max",
+          "value": 20.0,
+          "band": "reported",
+          "verdict": "reported"
+        }
+      ]
+    }
+  ],
+  "rows": [
+    {
+      "quantity": "symbols per sheet, mean",
+      "value": 87.15568465919117,
+      "band": "56-109",
+      "verdict": "pass"
+    },
+    {
+      "quantity": "sheets with 40-134 symbols (share)",
+      "value": 0.8443527529953461,
+      "band": "reported (target >= 0.95 not enforced)",
+      "verdict": "reported"
+    },
+    {
+      "quantity": "valves per sheet, mean",
+      "value": 24.2771445736057,
+      "band": "15-28",
+      "verdict": "pass"
+    },
+    {
+      "quantity": "instruments per sheet, mean",
+      "value": 34.7172645258215,
+      "band": "20-38",
+      "verdict": "pass"
+    },
+    {
+      "quantity": "instruments : valves",
+      "value": 1.4300722675412711,
+      "band": "1-1.8",
+      "verdict": "pass"
+    },
+    {
+      "quantity": "off-page stubs per sheet, mean",
+      "value": 7.889554875548557,
+      "band": "5-11",
+      "verdict": "pass"
+    },
+    {
+      "quantity": "off-page stubs per sheet, max",
+      "value": 18.0,
+      "band": "<= 21",
+      "verdict": "pass"
+    },
+    {
+      "quantity": "equipment per sheet, min",
+      "value": 1.0,
+      "band": ">= 1",
+      "verdict": "pass"
+    },
+    {
+      "quantity": "equipment per sheet, max",
+      "value": 10.4,
+      "band": "<= 16",
+      "verdict": "pass"
+    },
+    {
+      "quantity": "sheets with at most 10 equipment (share)",
+      "value": 0.9992692568725818,
+      "band": ">= 0.9",
+      "verdict": "pass"
+    },
+    {
+      "quantity": "equipment in A/B(/C) sets (share)",
+      "value": 0.39389313644444895,
+      "band": "0.25-0.45",
+      "verdict": "pass"
+    },
+    {
+      "quantity": "units drawn on 2 or more sheets (share)",
+      "value": 0.49539000472273587,
+      "band": "0.25-0.65",
+      "verdict": "pass"
+    },
+    {
+      "quantity": "signal cuts per sheet, mean",
+      "value": 0.8062681948940185,
+      "band": "reported, no band",
+      "verdict": "reported"
+    },
+    {
+      "quantity": "instruments with sheet-graph degree 1 (share)",
+      "value": 0.6125884105276249,
+      "band": ">= 0.55",
+      "verdict": "pass"
+    },
+    {
+      "quantity": "sheets that show one unit (share)",
+      "value": 1.0,
+      "band": "= 1",
+      "verdict": "pass"
+    },
+    {
+      "quantity": "dup 0: sheets with corpus symbols = plan symbols (share)",
+      "value": 1.0,
+      "band": "= 1",
+      "verdict": "pass"
+    },
+    {
+      "quantity": "dup 0: sheets with pipe connectors = plan crossings (share)",
+      "value": 1.0,
+      "band": "= 1",
+      "verdict": "pass"
+    },
+    {
+      "quantity": "dup 0: sheets with signal connectors = plan signal cuts (share)",
+      "value": 1.0,
+      "band": "= 1",
+      "verdict": "pass"
+    },
+    {
+      "quantity": "preset duplication: reference copies added per sheet",
+      "value": 0.07716376562087612,
+      "band": "reported, no band",
+      "verdict": "reported"
+    },
+    {
+      "quantity": "preset duplication: crossings absorbed per sheet",
+      "value": 0.15432753124175225,
+      "band": "reported, no band",
+      "verdict": "reported"
+    }
+  ]
+}

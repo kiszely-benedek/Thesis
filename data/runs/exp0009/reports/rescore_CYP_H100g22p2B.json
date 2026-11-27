@@ -1,0 +1,2284 @@
+{
+ "rows": [
+  {
+   "question_id": "H100g22p2B:SAME_UNIT:P-201B|V-201",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:SHEETS_OF_TAG:E-304",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:UNITS_REACHED:EJ-1802A",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOKUP_UNIT:PT-18018",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOP_MEASURED_EQUIPMENT:PIC-21011",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:SHEETS_OF_TAG:P-2401A",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:UNITS_REACHED:EJ-1802B",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOKUP_UNIT:LSLL-3098",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:NEIGHBOURS_DOWNSTREAM:CHV-39002",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:SAME_UNIT:P-4001A|E-4001",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:SHEETS_OF_TAG:T-4001",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:COUNT_IN_UNIT:27|ButterflyValve",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOKUP_TYPE:FT-10024",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOKUP_UNIT:P-2401A",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOPS_NEAR_ITEM:TK-2704",
+   "stored_correct": false,
+   "correct": false,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0
+  },
+  {
+   "question_id": "H100g22p2B:SAME_UNIT:R-1601|P-1701A",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:INSTRUMENTS_OF_ITEM:P-3601B",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:LOOKUP_UNIT:TT-2028",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:ROUTE_AVOIDING:H-2401|P-2401A|R-2401",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOPS_NEAR_ITEM:E-303",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:SAME_UNIT:P-1301A|D-1401",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:VALVES_ON_PATH:D-1801|P-1801B",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:INSTRUMENTS_OF_ITEM:TK-2004",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:LOOKUP_TYPE:LSHH-10004",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:SHEETS_OF_TAG:V-2101",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:SAME_UNIT:TK-2304|V-2401",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:SHEETS_OF_TAG:P-3301B",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:CONNECTED:EJ-302A|E-1801",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:FLOW_PATH:FV-3067|PSV-3034",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:LOOP_ACTUATED_VALVE:FIC-31002",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOP_MEASURED_EQUIPMENT:LAL-10029",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:SAME_UNIT:TK-4202|TK-4203",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOKUP_UNIT:FT-23013",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOP_MEASURED_EQUIPMENT:LI-42023",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:SAME_UNIT:P-3102C|TK-3301",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOPS_NEAR_ITEM:TK-1501",
+   "stored_correct": false,
+   "correct": false,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0
+  },
+  {
+   "question_id": "H100g22p2B:LOOP_MEASURED_EQUIPMENT:PI-40011",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:ROUTE_AVOIDING:H-2401|E-2401|R-2401",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:SAME_UNIT:T-1901|D-1801",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:COUNT_IN_UNIT:32|ButterflyValve",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOKUP_TYPE:PI-18058",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:INSTRUMENTS_OF_ITEM:P-1801A",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:LOOKUP_TYPE:STR-38014",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOKUP_UNIT:BFV-22001",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:COUNT_IN_UNIT:2|CheckValve",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:INSTRUMENTS_OF_ITEM:P-101B",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:LOOP_MEASURED_EQUIPMENT:LSHH-34012",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOKUP_TYPE:PI-31020",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:SAME_UNIT:E-303|P-201A",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:CONNECTED:E-302|D-301",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOKUP_TYPE:HS-20016",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:NEIGHBOURS_DOWNSTREAM:GTV-34009",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:LOOKUP_TYPE:CHV-32002",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:INSTRUMENTS_OF_ITEM:TK-2701",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:LOOKUP_UNIT:LT-19032",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:INSTRUMENTS_OF_ITEM:T-3901",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:LOOKUP_UNIT:TT-24050",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOP_ACTUATED_VALVE:PIC-34017",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:SAME_UNIT:EA-901|P-1001B",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOP_MEASURED_EQUIPMENT:TI-16044",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:FLOW_PATH:CHV-5001|FV-5006",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:INSTRUMENTS_OF_ITEM:R-1601",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:LOOKUP_TYPE:PI-11023",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOP_MEASURED_EQUIPMENT:LIAH-1019",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:INSTRUMENTS_OF_ITEM:P-1601B",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:LOOKUP_TYPE:GV-21001",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOKUP_UNIT:STR-27016",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOP_ACTUATED_VALVE:FIC-3059",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOP_MEASURED_EQUIPMENT:PI-9009",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:INSTRUMENTS_OF_ITEM:D-1901",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:LOOP_MEASURED_EQUIPMENT:PSHH-2025",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:COUNT_IN_UNIT:41|BallValve",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:INSTRUMENTS_OF_ITEM:E-3801",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:LOOKUP_TYPE:PSE-16024",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOKUP_UNIT:TI-18021",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOP_ACTUATED_VALVE:LIC-41001",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOP_MEASURED_EQUIPMENT:CSHH-11003",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:VALVES_ON_PATH:P-3901B|D-3901",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:COUNT_IN_UNIT:19|ProcessColumn",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOP_ACTUATED_VALVE:HS-10005",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:FEEDING_UNITS:35",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:SHEETS_OF_TAG:H-201",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:SHEETS_OF_TAG:V-601",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:LOOP_ACTUATED_VALVE:PIC-39030",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:UNITS_REACHED:EJ-301A",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:COUNT_IN_UNIT:18|SwingCheckValve",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:FLOW_PATH:CHV-18006|BV-19001",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:LOOPS_NEAR_ITEM:D-1401",
+   "stored_correct": false,
+   "correct": false,
+   "precision": 1.0,
+   "recall": 0.5,
+   "f1": 0.6666666666666666
+  },
+  {
+   "question_id": "H100g22p2B:LOOP_ACTUATED_VALVE:LIC-13001",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:SHEETS_OF_TAG:H-1601",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:LOOP_ACTUATED_VALVE:LIC-17055",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:SHEETS_OF_TAG:V-3801",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:LOOPS_NEAR_ITEM:D-1701",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:FEEDING_UNITS:30",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:ROUTE_AVOIDING:P-3401B|P-3501B|GV-34001",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:UNITS_REACHED:P-4201A",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:SHEETS_OF_TAG:TK-4203",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:COUNT_IN_UNIT:18|CentrifugalPump",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOPS_NEAR_ITEM:T-801",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:VALVES_ON_PATH:T-1701|P-1702B",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOP_ACTUATED_VALVE:FSLL-18082",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:CONNECTED:V-3101|P-3102C",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:NEIGHBOURS_DOWNSTREAM:GTV-1004",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:COUNT_IN_UNIT:3|AngleValve",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOP_ACTUATED_VALVE:LIC-22001",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:COUNT_IN_UNIT:18|GlobeCheckValve",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:COUNT_IN_UNIT:3|BallValve",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:CONNECTED:EH-1101|EJ-1201",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:ROUTE_AVOIDING:V-3501|V-3601|GV-35001",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:FLOW_PATH:BV-39004|GTV-9011001",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:NEIGHBOURS_DOWNSTREAM:GTV-38025",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:VALVES_ON_PATH:D-901|TK-1003",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:CROSS_UNIT:12",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:CROSS_UNIT:29",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:FEEDING_UNITS:15",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:LOOPS_NEAR_ITEM:T-1701",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:UNITS_REACHED:K-1701",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOPS_NEAR_ITEM:T-1801",
+   "stored_correct": false,
+   "correct": false,
+   "precision": 1.0,
+   "recall": 0.3333333333333333,
+   "f1": 0.5
+  },
+  {
+   "question_id": "H100g22p2B:CROSS_UNIT:5",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:FEEDING_UNITS:39",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:LOOPS_NEAR_ITEM:V-1301",
+   "stored_correct": false,
+   "correct": false,
+   "precision": 1.0,
+   "recall": 0.75,
+   "f1": 0.8571428571428571
+  },
+  {
+   "question_id": "H100g22p2B:UNITS_REACHED:TK-4201",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:NEIGHBOURS_DOWNSTREAM:GTV-27014",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:ROUTE_AVOIDING:P-1402A|TK-1502|GV-14002",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:NEIGHBOURS_DOWNSTREAM:BV-31006",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:FLOW_PATH:CHV-7001|BFV-8004",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:VALVES_ON_PATH:P-2001A|V-2201",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:CONNECTED:EA-1601|K-1701",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOPS_NEAR_ITEM:T-1401",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:UNITS_REACHED:E-1804",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:FEEDING_UNITS:10",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:VALVES_ON_PATH:D-1401|EA-1601",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:FEEDING_UNITS:19",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:CROSS_UNIT:34",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:CROSS_UNIT:35",
+   "stored_correct": false,
+   "correct": false,
+   "precision": 1.0,
+   "recall": 0.6666666666666666,
+   "f1": 0.8
+  },
+  {
+   "question_id": "H100g22p2B:NEIGHBOURS_DOWNSTREAM:BV-25002",
+   "stored_correct": false,
+   "correct": false,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0
+  },
+  {
+   "question_id": "H100g22p2B:CROSS_UNIT:30",
+   "stored_correct": false,
+   "correct": false,
+   "precision": 1.0,
+   "recall": 0.6666666666666666,
+   "f1": 0.8
+  },
+  {
+   "question_id": "H100g22p2B:FLOW_PATH:BFV-15002|GTV-17013",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": 0.75
+  },
+  {
+   "question_id": "H100g22p2B:NEIGHBOURS_DOWNSTREAM:GTV-22008",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:ROUTE_AVOIDING:E-1101|E-1401|CHV-13001",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:CONNECTED:P-601A|E-902",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:FEEDING_UNITS:20",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:CROSS_UNIT:40",
+   "stored_correct": false,
+   "correct": false,
+   "precision": 1.0,
+   "recall": 0.8333333333333334,
+   "f1": 0.9090909090909091
+  },
+  {
+   "question_id": "H100g22p2B:VALVES_ON_PATH:P-3501C|EA-3901",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:FEEDING_UNITS:18",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:NEIGHBOURS_DOWNSTREAM:GTV-2009",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:CROSS_UNIT:3",
+   "stored_correct": false,
+   "correct": false,
+   "precision": 1.0,
+   "recall": 0.8333333333333334,
+   "f1": 0.9090909090909091
+  },
+  {
+   "question_id": "H100g22p2B:NEIGHBOURS_DOWNSTREAM:GTV-5012",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:CONNECTED:H-1601|TK-2002",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:ROUTE_AVOIDING:P-3001B|P-3701A|BFV-36002",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:FLOW_PATH:GTV-9006|PVSV-15031",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": 0.9148936170212766
+  },
+  {
+   "question_id": "H100g22p2B:CROSS_UNIT:9012",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:FEEDING_UNITS:9016",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:CROSS_UNIT:18",
+   "stored_correct": false,
+   "correct": false,
+   "precision": 1.0,
+   "recall": 0.8333333333333334,
+   "f1": 0.9090909090909091
+  },
+  {
+   "question_id": "H100g22p2B:FLOW_PATH:XV-1006|BV-13003",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": 0.7398843930635838
+  },
+  {
+   "question_id": "H100g22p2B:UNITS_REACHED:EA-3901",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:CONNECTED:P-4002B|TK-1002",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:ROUTE_AVOIDING:D-1401|D-1901|PGV-15005",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:VALVES_ON_PATH:TK-1502|P-2601A",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:CONNECTED:V-2201|P-3501C",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:UNITS_REACHED:P-3601B",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:ROUTE_AVOIDING:P-101B|E-3103|XV-6011",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:FLOW_PATH:GTV-9012001|CHV-27002",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": 0.5257142857142857
+  },
+  {
+   "question_id": "H100g22p2B:VALVES_ON_PATH:P-601A|V-3001",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:FEEDING_UNITS:9010",
+   "stored_correct": false,
+   "correct": false,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0
+  },
+  {
+   "question_id": "H100g22p2B:UNITS_REACHED:E-2803",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:VALVES_ON_PATH:EA-901|P-3901B",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:CONNECTED:P-1702B|P-4201B",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:FLOW_PATH:TV-16029|P-3901B",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": 0.7262247838616714
+  },
+  {
+   "question_id": "H100g22p2B:ROUTE_AVOIDING:P-601A|V-3401|CHV-15001",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:UNANSWERABLE_TAG:FLOW_PATH:E-1102|FV-34003",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:UNANSWERABLE_TAG:LOOKUP_TYPE:XV-15007",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:NO_PATH:FLOW_PATH:P-3601A|EA-1701",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:UNANSWERABLE_TAG:FLOW_PATH:P-4201B|BFV-35004",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:NO_PATH:FLOW_PATH:P-3401A|P-302",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:NO_PATH:FLOW_PATH:P-4201A|TK-103",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:NO_PATH:FLOW_PATH:D-3901|H-2401",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:NO_PATH:FLOW_PATH:E-3103|P-3001B",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:NO_PATH:FLOW_PATH:E-3103|TK-2002",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:NO_PATH:FLOW_PATH:TK-4202|E-2401",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:UNANSWERABLE_TAG:LOOKUP_TYPE:V-4102",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:NO_PATH:FLOW_PATH:P-3301A|E-301",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:UNANSWERABLE_TAG:NEIGHBOURS_DOWNSTREAM:BV-10004",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:UNANSWERABLE_TAG:FLOW_PATH:T-1901|CHV-24006",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:NO_PATH:FLOW_PATH:P-1902B|TK-1004",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:UNANSWERABLE_TAG:LOOKUP_TYPE:TV-3021",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:UNANSWERABLE_TAG:NEIGHBOURS_DOWNSTREAM:CHV-32005",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:UNANSWERABLE_TAG:LOOKUP_TYPE:PSE-2024",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:NO_PATH:FLOW_PATH:P-3102C|P-201A",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:UNANSWERABLE_TAG:NEIGHBOURS_DOWNSTREAM:PV-16029",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOKUP_TYPE:LOOKUP_TYPE_P1:HS-20016",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOKUP_TYPE:LOOKUP_TYPE_P1:GV-21001",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOKUP_TYPE:LOOKUP_TYPE_P1:STR-38014",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOKUP_TYPE:LOOKUP_TYPE_P1:CHV-32002",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOKUP_TYPE:LOOKUP_TYPE_P1:LSHH-10004",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOKUP_UNIT:LOOKUP_UNIT_P1:LT-19032",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOKUP_UNIT:LOOKUP_UNIT_P1:LSLL-3098",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOKUP_UNIT:LOOKUP_UNIT_P1:TT-24050",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOKUP_UNIT:LOOKUP_UNIT_P1:BFV-22001",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOKUP_UNIT:LOOKUP_UNIT_P1:P-2401A",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:NEIGHBOURS_DOWNSTREAM:NEIGHBOURS_DOWNSTREAM_P1:GTV-34009",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:NEIGHBOURS_DOWNSTREAM:NEIGHBOURS_DOWNSTREAM_P1:GTV-38025",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:NEIGHBOURS_DOWNSTREAM:NEIGHBOURS_DOWNSTREAM_P1:GTV-27014",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:NEIGHBOURS_DOWNSTREAM:NEIGHBOURS_DOWNSTREAM_P1:GTV-22008",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:NEIGHBOURS_DOWNSTREAM:NEIGHBOURS_DOWNSTREAM_P1:GTV-5012",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:LOOP_ACTUATED_VALVE:LOOP_ACTUATED_VALVE_P1:FIC-31002",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOP_ACTUATED_VALVE:LOOP_ACTUATED_VALVE_P1:LIC-17055",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOP_ACTUATED_VALVE:LOOP_ACTUATED_VALVE_P1:HS-10005",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOP_ACTUATED_VALVE:LOOP_ACTUATED_VALVE_P1:FSLL-18082",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOP_ACTUATED_VALVE:LOOP_ACTUATED_VALVE_P1:FIC-3059",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOP_MEASURED_EQUIPMENT:LOOP_MEASURED_EQUIPMENT_P1:LIAH-1019",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOP_MEASURED_EQUIPMENT:LOOP_MEASURED_EQUIPMENT_P1:LI-42023",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOP_MEASURED_EQUIPMENT:LOOP_MEASURED_EQUIPMENT_P1:TI-16044",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOP_MEASURED_EQUIPMENT:LOOP_MEASURED_EQUIPMENT_P1:CSHH-11003",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:LOOP_MEASURED_EQUIPMENT:LOOP_MEASURED_EQUIPMENT_P1:LSHH-34012",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:FLOW_PATH:FLOW_PATH_P1:CHV-5001|FV-5006",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:FLOW_PATH:FLOW_PATH_P1:BV-39004|GTV-9011001",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:FLOW_PATH:FLOW_PATH_P1:CHV-7001|BFV-8004",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:FLOW_PATH:FLOW_PATH_P1:BFV-15002|GTV-17013",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": 0.75
+  },
+  {
+   "question_id": "H100g22p2B:FLOW_PATH:FLOW_PATH_P1:GTV-9006|PVSV-15031",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": 0.9148936170212766
+  },
+  {
+   "question_id": "H100g22p2B:CROSS_UNIT:CROSS_UNIT_P1:5",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:CROSS_UNIT:CROSS_UNIT_P1:35",
+   "stored_correct": false,
+   "correct": false,
+   "precision": 1.0,
+   "recall": 0.6666666666666666,
+   "f1": 0.8
+  },
+  {
+   "question_id": "H100g22p2B:CROSS_UNIT:CROSS_UNIT_P1:3",
+   "stored_correct": false,
+   "correct": false,
+   "precision": 1.0,
+   "recall": 0.8333333333333334,
+   "f1": 0.9090909090909091
+  },
+  {
+   "question_id": "H100g22p2B:CROSS_UNIT:CROSS_UNIT_P1:9012",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:CROSS_UNIT:CROSS_UNIT_P1:12",
+   "stored_correct": false,
+   "correct": false,
+   "precision": 0.043478260869565216,
+   "recall": 0.5,
+   "f1": 0.08
+  },
+  {
+   "question_id": "H100g22p2B:COUNT_IN_UNIT:COUNT_IN_UNIT_P1:41|BallValve",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:COUNT_IN_UNIT:COUNT_IN_UNIT_P1:18|CentrifugalPump",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:COUNT_IN_UNIT:COUNT_IN_UNIT_P1:32|ButterflyValve",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:COUNT_IN_UNIT:COUNT_IN_UNIT_P1:3|BallValve",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:COUNT_IN_UNIT:COUNT_IN_UNIT_P1:27|ButterflyValve",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:SHEETS_OF_TAG:SHEETS_OF_TAG_P1:P-3301B",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:SHEETS_OF_TAG:SHEETS_OF_TAG_P1:H-201",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:SHEETS_OF_TAG:SHEETS_OF_TAG_P1:P-2401A",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:SHEETS_OF_TAG:SHEETS_OF_TAG_P1:V-601",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:SHEETS_OF_TAG:SHEETS_OF_TAG_P1:V-2101",
+   "stored_correct": true,
+   "correct": true,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "question_id": "H100g22p2B:DOWNSTREAM_ISOLATION_X:P-2301A",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:DOWNSTREAM_ISOLATION_X:P-2201B",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:DOWNSTREAM_ISOLATION_X:P-1902C",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:DOWNSTREAM_ISOLATION_X:P-1301A",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:DOWNSTREAM_ISOLATION_X:P-3902",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:DOWNSTREAM_ISOLATION_X:P-1301B",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:DOWNSTREAM_ISOLATION_X:P-4002B",
+   "stored_correct": false,
+   "correct": false,
+   "precision": 0.03508771929824561,
+   "recall": 0.3333333333333333,
+   "f1": 0.06349206349206349
+  },
+  {
+   "question_id": "H100g22p2B:DOWNSTREAM_ISOLATION_X:P-3601B",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:DOWNSTREAM_ISOLATION_X:P-3701B",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:DOWNSTREAM_ISOLATION_X:P-1702A",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:OPEN_VALVES_TO_ISOLATE:H-2401",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:OPEN_VALVES_TO_ISOLATE:T-901",
+   "stored_correct": false,
+   "correct": false,
+   "precision": 0.021739130434782608,
+   "recall": 1.0,
+   "f1": 0.042553191489361694
+  },
+  {
+   "question_id": "H100g22p2B:OPEN_VALVES_TO_ISOLATE:E-4002",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:OPEN_VALVES_TO_ISOLATE:EA-1601",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:OPEN_VALVES_TO_ISOLATE:P-101B",
+   "stored_correct": false,
+   "correct": false,
+   "precision": 0.05555555555555555,
+   "recall": 1.0,
+   "f1": 0.10526315789473684
+  },
+  {
+   "question_id": "H100g22p2B:OPEN_VALVES_TO_ISOLATE:E-303",
+   "stored_correct": false,
+   "correct": false,
+   "precision": 0.022222222222222223,
+   "recall": 0.5,
+   "f1": 0.0425531914893617
+  },
+  {
+   "question_id": "H100g22p2B:OPEN_VALVES_TO_ISOLATE:D-4001",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:OPEN_VALVES_TO_ISOLATE:R-3801",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:OPEN_VALVES_TO_ISOLATE:P-3301A",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:OPEN_VALVES_TO_ISOLATE:T-3901",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:OPEN_VALVES_TO_ISOLATE_DOWNSTREAM:P-2301A",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:OPEN_VALVES_TO_ISOLATE_DOWNSTREAM:P-2201B",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:OPEN_VALVES_TO_ISOLATE_DOWNSTREAM:P-1902C",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:OPEN_VALVES_TO_ISOLATE_DOWNSTREAM:P-1301A",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:OPEN_VALVES_TO_ISOLATE_DOWNSTREAM:P-3902",
+   "stored_correct": false,
+   "correct": false,
+   "precision": 0.025974025974025976,
+   "recall": 0.6666666666666666,
+   "f1": 0.05
+  },
+  {
+   "question_id": "H100g22p2B:OPEN_VALVES_TO_ISOLATE_DOWNSTREAM:P-1301B",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:OPEN_VALVES_TO_ISOLATE_DOWNSTREAM:P-4002B",
+   "stored_correct": false,
+   "correct": false,
+   "precision": 0.03773584905660377,
+   "recall": 0.6666666666666666,
+   "f1": 0.07142857142857142
+  },
+  {
+   "question_id": "H100g22p2B:OPEN_VALVES_TO_ISOLATE_DOWNSTREAM:P-3601B",
+   "stored_correct": false,
+   "correct": false,
+   "precision": 0.015625,
+   "recall": 0.6666666666666666,
+   "f1": 0.030534351145038167
+  },
+  {
+   "question_id": "H100g22p2B:OPEN_VALVES_TO_ISOLATE_DOWNSTREAM:P-3701B",
+   "stored_correct": false,
+   "correct": false,
+   "precision": 0.011235955056179775,
+   "recall": 1.0,
+   "f1": 0.02222222222222222
+  },
+  {
+   "question_id": "H100g22p2B:OPEN_VALVES_TO_ISOLATE_DOWNSTREAM:P-1702A",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:POSITION_OF_VALVE:BV-18002",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:POSITION_OF_VALVE:GTV-24016",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:POSITION_OF_VALVE:BFV-3011",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:POSITION_OF_VALVE:BV-10002",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:POSITION_OF_VALVE:GTV-7007",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:POSITION_OF_VALVE:GTV-37005",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:POSITION_OF_VALVE:BV-24004",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:POSITION_OF_VALVE:BV-18004",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:POSITION_OF_VALVE:GTV-31010",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:POSITION_OF_VALVE:GTV-21002",
+   "stored_correct": true,
+   "correct": true,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:UPSTREAM_ISOLATION_X:H-2401",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:UPSTREAM_ISOLATION_X:T-901",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:UPSTREAM_ISOLATION_X:E-4002",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:UPSTREAM_ISOLATION_X:EA-1601",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:UPSTREAM_ISOLATION_X:P-101B",
+   "stored_correct": false,
+   "correct": false,
+   "precision": 0.05555555555555555,
+   "recall": 1.0,
+   "f1": 0.10526315789473684
+  },
+  {
+   "question_id": "H100g22p2B:UPSTREAM_ISOLATION_X:E-303",
+   "stored_correct": false,
+   "correct": false,
+   "precision": 0.03076923076923077,
+   "recall": 1.0,
+   "f1": 0.059701492537313446
+  },
+  {
+   "question_id": "H100g22p2B:UPSTREAM_ISOLATION_X:D-4001",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:UPSTREAM_ISOLATION_X:R-3801",
+   "stored_correct": false,
+   "correct": false,
+   "precision": null,
+   "recall": null,
+   "f1": null
+  },
+  {
+   "question_id": "H100g22p2B:UPSTREAM_ISOLATION_X:P-3301A",
+   "stored_correct": false,
+   "correct": false,
+   "precision": 0.002336448598130841,
+   "recall": 1.0,
+   "f1": 0.004662004662004662
+  },
+  {
+   "question_id": "H100g22p2B:UPSTREAM_ISOLATION_X:T-3901",
+   "stored_correct": false,
+   "correct": false,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0
+  }
+ ]
+}

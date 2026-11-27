@@ -1,0 +1,18 @@
+{
+ "command": [
+  ".venv/Scripts\\python.EXE",
+  "-m",
+  "plantgraph.qa.exp0009.launcher",
+  "build",
+  "--root",
+  "data/runs/exp0009",
+  "--prereg",
+  "data/runs/exp0009/prereg",
+  "--plant",
+  "H1000g22p1"
+ ],
+ "return_code": 0,
+ "seconds": 1784.72,
+ "peak_rss_bytes": 1696038912,
+ "limit_bytes": 10737418240
+}

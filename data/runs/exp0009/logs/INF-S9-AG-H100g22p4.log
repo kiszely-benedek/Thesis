@@ -1,0 +1,92 @@
+run INF-S9-AG-H100g22p4: 275 rows to answer, 0 already on disk
+replay mode: cache only, no network; stops at the first cache miss
+{
+  "run_id": "INF-S9-AG-H100g22p4",
+  "n_rows": 275,
+  "n_new_rows": 275,
+  "n_provider_errors": 0,
+  "outcomes_by_k_bin": {
+    "graph_agent_lines": {
+      "0": {
+        "ANSWERED": 125
+      },
+      "1": {
+        "ANSWERED": 58
+      },
+      "2": {
+        "ANSWERED": 26
+      },
+      "3-4": {
+        "ANSWERED": 20
+      },
+      "5-8": {
+        "ANSWERED": 8
+      },
+      "9-16": {
+        "ANSWERED": 9
+      },
+      "17-32": {
+        "ANSWERED": 4
+      },
+      "33+": {
+        "ANSWERED": 5
+      },
+      "unanswerable": {
+        "ANSWERED": 20
+      }
+    }
+  },
+  "routing_recall": {
+    "graph_agent_lines": 0.9058823529411765
+  },
+  "relaxed_routing_recall": {
+    "graph_agent_lines": 0.9058823529411765
+  },
+  "evidence_node_recall": {
+    "graph_agent_lines": 0.8789197486390468
+  },
+  "routing_metrics_by_k_bin": {
+    "routing_recall": {
+      "graph_agent_lines": {
+        "0": 0.968,
+        "1": 0.8793103448275862,
+        "2": 0.9230769230769231,
+        "3-4": 0.75,
+        "5-8": 0.875,
+        "9-16": 0.7777777777777778,
+        "17-32": 1.0,
+        "33+": 0.4
+      }
+    },
+    "relaxed_routing_recall": {
+      "graph_agent_lines": {
+        "0": 0.968,
+        "1": 0.8793103448275862,
+        "2": 0.9230769230769231,
+        "3-4": 0.75,
+        "5-8": 0.875,
+        "9-16": 0.7777777777777778,
+        "17-32": 1.0,
+        "33+": 0.4
+      }
+    },
+    "evidence_node_recall": {
+      "graph_agent_lines": {
+        "0": 0.9176556776556777,
+        "1": 0.8122445550800965,
+        "2": 0.9484126984126985,
+        "3-4": 0.9333333333333333,
+        "5-8": 0.9428571428571428,
+        "9-16": 0.762962962962963,
+        "17-32": 0.7541307022157838,
+        "33+": 0.21981953283510924
+      }
+    }
+  },
+  "trace_rates": {},
+  "mean_total_cost_usd": {
+    "graph_agent_lines": 0.0018412362363636363
+  },
+  "stopped_by_spend_cap": false,
+  "late_after_timeout_usd": 0.0
+}

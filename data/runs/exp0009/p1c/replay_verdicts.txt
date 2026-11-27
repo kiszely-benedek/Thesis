@@ -1,0 +1,40 @@
+S9-CYP-H100g22p1 prefix_equal: 242 of 275 rows
+S9-CYP-H100g22p1B identical
+S9-AG-H100g22p1 identical
+S9-AG-H100g22p1B identical
+S9-CYP-H100g22p2 identical
+S9-CYP-H100g22p2B identical
+S9-AG-H100g22p2 identical
+S9-AG-H100g22p2B identical
+S9-CYP-H100g22p3 prefix_equal: 241 of 275 rows
+S9-CYP-H100g22p3B identical
+S9-AG-H100g22p3 identical
+S9-AG-H100g22p3B identical
+S9-CYP-H100g22p4 prefix_equal: 275 of 275 rows
+S9-CYP-H100g22p4B prefix_equal: 257 of 285 rows
+S9-AG-H100g22p4 identical
+S9-AG-H100g22p4B identical
+S9-CYP-H100g22p5 identical
+S9-CYP-H100g22p5B prefix_equal: 239 of 285 rows
+S9-AG-H100g22p5 identical
+S9-AG-H100g22p5B identical
+S9-CYP-H1000g22p1 prefix_equal: 237 of 275 rows
+S9-CYP-H1000g22p1B prefix_equal: 237 of 285 rows
+S9-AG-H1000g22p1 identical
+S9-AG-H1000g22p1B identical
+S9-CYP-H1000g22p2 prefix_equal: 244 of 275 rows
+S9-CYP-H1000g22p2B identical
+S9-AG-H1000g22p2 identical
+S9-AG-H1000g22p2B identical
+S9-CYP-H1000g22p3 identical
+S9-CYP-H1000g22p3B prefix_equal: 9 of 285 rows
+S9-AG-H1000g22p3 identical
+S9-AG-H1000g22p3B identical
+S9-CYP-H1000g22p4 identical
+S9-CYP-H1000g22p4B identical
+S9-AG-H1000g22p4 identical
+S9-AG-H1000g22p4B identical
+S9-CYP-H1000g22p5 identical
+S9-CYP-H1000g22p5B prefix_equal: 275 of 285 rows
+S9-AG-H1000g22p5 identical
+S9-AG-H1000g22p5B identical

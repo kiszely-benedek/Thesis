@@ -1,0 +1,6 @@
+PASS G0c-rules: d3641e0ec42cd09e18bb163d276b44b00f1a31f97e4ffee14f3f9c65a05d8173
+PASS G0c-validation: ok
+PASS G0g: ok
+PASS G0k: ok
+PASS line-view: ok
+PASS G0-B: ok

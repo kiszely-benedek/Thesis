@@ -1,0 +1,296 @@
+{
+ "gates": [
+  {
+   "gate": "G1",
+   "passed": true,
+   "detail": "ok"
+  },
+  {
+   "gate": "G1-B",
+   "passed": false,
+   "detail": "OPEN_VALVES_TO_ISOLATE below 50% on every plant; UPSTREAM_ISOLATION_X below 50% on every plant"
+  },
+  {
+   "gate": "G1-B2",
+   "passed": true,
+   "detail": "mean +0.0036"
+  }
+ ],
+ "b_sealed": false,
+ "a2": {
+  "VAL100g22": {
+   "CONNECTED": [
+    10,
+    10
+   ],
+   "COUNT_IN_UNIT": [
+    9,
+    10
+   ],
+   "CROSS_UNIT": [
+    9,
+    10
+   ],
+   "FEEDING_UNITS": [
+    8,
+    10
+   ],
+   "FLOW_PATH": [
+    8,
+    10
+   ],
+   "LOOPS_NEAR_ITEM": [
+    7,
+    10
+   ],
+   "LOOP_ACTUATED_VALVE": [
+    10,
+    10
+   ],
+   "NEIGHBOURS_DOWNSTREAM": [
+    10,
+    10
+   ],
+   "NO_PATH": [
+    10,
+    10
+   ],
+   "OPEN_VALVES_TO_ISOLATE": [
+    0,
+    10
+   ],
+   "ROUTE_AVOIDING": [
+    7,
+    10
+   ],
+   "SHEETS_OF_TAG": [
+    10,
+    10
+   ],
+   "UNANSWERABLE_TAG": [
+    10,
+    10
+   ],
+   "UNITS_REACHED": [
+    8,
+    10
+   ],
+   "UPSTREAM_ISOLATION_X": [
+    0,
+    10
+   ],
+   "VALVES_ON_PATH": [
+    7,
+    10
+   ]
+  },
+  "VAL1000g22": {
+   "CONNECTED": [
+    10,
+    10
+   ],
+   "COUNT_IN_UNIT": [
+    8,
+    10
+   ],
+   "CROSS_UNIT": [
+    5,
+    10
+   ],
+   "FEEDING_UNITS": [
+    9,
+    10
+   ],
+   "FLOW_PATH": [
+    9,
+    10
+   ],
+   "LOOPS_NEAR_ITEM": [
+    7,
+    10
+   ],
+   "LOOP_ACTUATED_VALVE": [
+    10,
+    10
+   ],
+   "NEIGHBOURS_DOWNSTREAM": [
+    10,
+    10
+   ],
+   "NO_PATH": [
+    10,
+    10
+   ],
+   "OPEN_VALVES_TO_ISOLATE": [
+    2,
+    10
+   ],
+   "ROUTE_AVOIDING": [
+    9,
+    10
+   ],
+   "SHEETS_OF_TAG": [
+    10,
+    10
+   ],
+   "UNANSWERABLE_TAG": [
+    10,
+    10
+   ],
+   "UNITS_REACHED": [
+    4,
+    10
+   ],
+   "UPSTREAM_ISOLATION_X": [
+    3,
+    10
+   ],
+   "VALVES_ON_PATH": [
+    8,
+    10
+   ]
+  }
+ },
+ "b": {
+  "VAL100g22": {
+   "CONNECTED": [
+    9,
+    10
+   ],
+   "COUNT_IN_UNIT": [
+    8,
+    10
+   ],
+   "CROSS_UNIT": [
+    9,
+    10
+   ],
+   "FEEDING_UNITS": [
+    9,
+    10
+   ],
+   "FLOW_PATH": [
+    9,
+    10
+   ],
+   "LOOPS_NEAR_ITEM": [
+    8,
+    10
+   ],
+   "LOOP_ACTUATED_VALVE": [
+    10,
+    10
+   ],
+   "NEIGHBOURS_DOWNSTREAM": [
+    10,
+    10
+   ],
+   "NO_PATH": [
+    10,
+    10
+   ],
+   "OPEN_VALVES_TO_ISOLATE": [
+    2,
+    10
+   ],
+   "POSITION_OF_VALVE": [
+    10,
+    10
+   ],
+   "ROUTE_AVOIDING": [
+    8,
+    10
+   ],
+   "SHEETS_OF_TAG": [
+    10,
+    10
+   ],
+   "UNANSWERABLE_TAG": [
+    10,
+    10
+   ],
+   "UNITS_REACHED": [
+    7,
+    10
+   ],
+   "UPSTREAM_ISOLATION_X": [
+    3,
+    10
+   ],
+   "VALVES_ON_PATH": [
+    6,
+    10
+   ]
+  },
+  "VAL1000g22": {
+   "CONNECTED": [
+    8,
+    10
+   ],
+   "COUNT_IN_UNIT": [
+    9,
+    10
+   ],
+   "CROSS_UNIT": [
+    5,
+    10
+   ],
+   "FEEDING_UNITS": [
+    9,
+    10
+   ],
+   "FLOW_PATH": [
+    8,
+    10
+   ],
+   "LOOPS_NEAR_ITEM": [
+    7,
+    10
+   ],
+   "LOOP_ACTUATED_VALVE": [
+    10,
+    10
+   ],
+   "NEIGHBOURS_DOWNSTREAM": [
+    10,
+    10
+   ],
+   "NO_PATH": [
+    10,
+    10
+   ],
+   "OPEN_VALVES_TO_ISOLATE": [
+    4,
+    10
+   ],
+   "POSITION_OF_VALVE": [
+    10,
+    10
+   ],
+   "ROUTE_AVOIDING": [
+    10,
+    10
+   ],
+   "SHEETS_OF_TAG": [
+    10,
+    10
+   ],
+   "UNANSWERABLE_TAG": [
+    10,
+    10
+   ],
+   "UNITS_REACHED": [
+    4,
+    10
+   ],
+   "UPSTREAM_ISOLATION_X": [
+    4,
+    10
+   ],
+   "VALVES_ON_PATH": [
+    10,
+    10
+   ]
+  }
+ }
+}

@@ -1,0 +1,16 @@
+Q4: PASS
+K1: FAIL
+K2: PASS
+K3: PASS
+Q5: PASS
+Q4-B: PASS
+Q4-B sensitivity (no POSITION_OF_VALVE): PASS
+SB1: DESCRIPTIVE
+SB2: PASS
+SB1 S100: DESCRIPTIVE
+SB2 S100: DESCRIPTIVE
+SB1 S1000: DESCRIPTIVE
+SB2 S1000: DESCRIPTIVE
+Data effect S100: DESCRIPTIVE
+Data effect S1000: DESCRIPTIVE
+wrote data\runs\exp0009\reports\analysis.json and data\runs\exp0009\reports\analysis.md

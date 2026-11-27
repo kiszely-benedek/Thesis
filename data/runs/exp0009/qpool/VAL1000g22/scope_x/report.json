@@ -1,0 +1,82 @@
+[
+ {
+  "candidates": 2772,
+  "family": "OPEN_VALVES_TO_ISOLATE",
+  "kept": 2710,
+  "kept_discriminating": 513,
+  "kept_named_by_descriptor": null,
+  "kept_position_mix": {},
+  "kept_with_untagged_gold": 1739,
+  "refused_empty_gold": 0,
+  "refused_no_descriptor": 62,
+  "refusing_roles": {
+   "battery_limit_block": 15,
+   "compressor_suction_block": 1,
+   "ejector_inlet_block": 5,
+   "filter_inlet_block": 8,
+   "makeup_gas_block": 24,
+   "tank_fill_block": 9
+  }
+ },
+ {
+  "candidates": 2772,
+  "family": "UPSTREAM_ISOLATION_X",
+  "kept": 2710,
+  "kept_discriminating": null,
+  "kept_named_by_descriptor": null,
+  "kept_position_mix": {},
+  "kept_with_untagged_gold": 1739,
+  "refused_empty_gold": 0,
+  "refused_no_descriptor": 62,
+  "refusing_roles": {
+   "battery_limit_block": 15,
+   "compressor_suction_block": 1,
+   "ejector_inlet_block": 5,
+   "filter_inlet_block": 8,
+   "makeup_gas_block": 24,
+   "tank_fill_block": 9
+  }
+ },
+ {
+  "candidates": 15158,
+  "family": "POSITION_OF_VALVE",
+  "kept": 14342,
+  "kept_discriminating": null,
+  "kept_named_by_descriptor": 11211,
+  "kept_position_mix": {
+   "descriptor": {
+    "CSO": 424,
+    "NC": 4504,
+    "NO": 6283
+   },
+   "tag": {
+    "CSO": 128,
+    "NC": 1188,
+    "NO": 1815
+   }
+  },
+  "kept_with_untagged_gold": 11211,
+  "refused_empty_gold": 0,
+  "refused_no_descriptor": 816,
+  "refusing_roles": {
+   "battery_limit_block": 100,
+   "compressor_discharge_block": 7,
+   "compressor_suction_block": 1,
+   "cv_block_in": 56,
+   "cv_block_out": 75,
+   "cv_drain_valve": 16,
+   "discharge_block": 29,
+   "ejector_inlet_block": 5,
+   "filter_inlet_block": 8,
+   "filter_outlet_block": 2,
+   "fuel_gas_block": 4,
+   "makeup_gas_block": 11,
+   "network_root_block": 95,
+   "receipt_manifold_valve": 125,
+   "steam_supply_pi_root": 95,
+   "tank_fill_block": 9,
+   "tank_inlet_block": 177,
+   "utility_supply_block": 1
+  }
+ }
+]

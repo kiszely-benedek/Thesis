@@ -1,0 +1,12 @@
+{
+ "b_sealed": false,
+ "problems": [],
+ "projected_usd": 7.678,
+ "run_caps_usd": {
+  "A2-ag-100": 0.823,
+  "A2-ag-1000": 0.9055,
+  "A2-cyp-100": 0.2735,
+  "A2-cyp-1000": 0.3016
+ },
+ "runs_ledger_left_usd": 23.4329
+}

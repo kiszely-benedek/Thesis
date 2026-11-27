@@ -1,0 +1,7882 @@
+{
+ "H100g22p1:POSITION_OF_VALVE:D-1301|downstream|GateValve|4-CHD-130024-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:D-1301|downstream|GateValve|4-PG-130025-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:D-2801|downstream|BallValve|4-CHD-280018-A1A-N": [
+  "BallValve",
+  "downstream",
+  "PressureVessel",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:D-2801|downstream|GateValve|4-PG-280019-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:D-2801|downstream|GateValve|4-PG-280022-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:D-3401|downstream|GateValve|2-CHD-340074-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:D-3401|downstream|GateValve|4-PG-340035-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:D-5501|downstream|BallValve|4-CHD-550033-A1A-N": [
+  "BallValve",
+  "downstream",
+  "PressureVessel",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:D-5501|downstream|GateValve|4-PG-550034-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:D-5501|downstream|GateValve|4-PG-550037-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:D-5501|downstream|GateValve|4-PG-550038-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:D-5501|downstream|GateValve|8-CHD-90210001-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:D-901|downstream|BallValve|4-CHD-90036-A1A-N": [
+  "BallValve",
+  "downstream",
+  "PressureVessel",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:D-901|downstream|GateValve|4-PG-90037-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:D-901|upstream|GateValve|4-P-90049-B1A-N": [
+  "GateValve",
+  "upstream",
+  "PressureVessel",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-1101|downstream|BallValve|4-P-110045-A1A-N": [
+  "BallValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-1101|downstream|GateValve|2-CHD-110052-A1A-N": [
+  "GateValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-1101|upstream|GateValve|6-PG-110041-A1A-N": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-1301|downstream|BallValve|2-CHD-130074-A1A-N": [
+  "BallValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-1301|downstream|BallValve|4-CD-130006-A1A-H": [
+  "BallValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-1301|downstream|GateValve|4-P-130008-A1A-N": [
+  "GateValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-1301|upstream|GateValve|6-LPS-130002-A1A-H": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-1301|upstream|GlobeValve|4-LPS-130001-A1A-H": [
+  "GlobeValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-1302|downstream|BallValve|2-CHD-130079-A1A-N": [
+  "BallValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-1302|downstream|ButterflyValve|8-CWR-90130001-A1A-N": [
+  "ButterflyValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CWR"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-1302|downstream|GateValve|4-CWR-90130004-A1A-N": [
+  "GateValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CWR"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-1302|downstream|GateValve|4-P-130013-A1A-N": [
+  "GateValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-1302|upstream|ButterflyValve|4-CWS-90120004-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "CWS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-1302|upstream|GateValve|4-CWS-90120004-A1A-N": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "CWS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-1302|upstream|GateValve|8-CWS-90120001-A1A-N": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "CWS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2101|downstream|BallValve|4-CD-210005-A1A-H": [
+  "BallValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2101|upstream|ButterflyValve|2-LPS-210028-A1A-H": [
+  "ButterflyValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2101|upstream|GateValve|4-LPS-90140005-A1A-H": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2101|upstream|GateValve|8-LPS-90140001-A1A-H": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2102|downstream|BallValve|4-P-210013-A1A-N": [
+  "BallValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2102|downstream|GateValve|4-CHD-210012-A1A-N": [
+  "GateValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2102|downstream|NeedleValve|4-CD-210011-A1A-H": [
+  "NeedleValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2102|upstream|GateValve|4-LPS-210027-A1A-H": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2102|upstream|GlobeValve|4-LPS-210007-A1A-H": [
+  "GlobeValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2601|downstream|BallValve|4-CHD-260005-A1A-N": [
+  "BallValve",
+  "downstream",
+  "PlateHeatExchanger",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2601|downstream|ButterflyValve|4-CWR-260052-A1A-N": [
+  "ButterflyValve",
+  "downstream",
+  "PlateHeatExchanger",
+  "CWR"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2601|downstream|GateValve|4-P-260006-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PlateHeatExchanger",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2601|upstream|ButterflyValve|2-CWS-260051-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "PlateHeatExchanger",
+  "CWS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2601|upstream|ButterflyValve|4-CWS-90120005-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "PlateHeatExchanger",
+  "CWS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2602|downstream|BallValve|4-CD-260012-A1A-H": [
+  "BallValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2602|downstream|BallValve|4-P-260014-A1A-N": [
+  "BallValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2602|downstream|GateValve|2-CHD-260047-A1A-N": [
+  "GateValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2602|downstream|GateValve|2-CHD-260048-A1A-N": [
+  "GateValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2602|upstream|GateValve|2-LPS-260055-A1A-H": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2602|upstream|GateValve|4-LPS-90140006-A1A-H": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2603|downstream|BallValve|2-CHD-260049-A1A-N": [
+  "BallValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2603|downstream|GateValve|2-CWR-260053-A1A-N": [
+  "GateValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CWR"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2603|downstream|GateValve|4-P-260022-A1A-N": [
+  "GateValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2603|upstream|ButterflyValve|4-CWS-260050-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "CWS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2604|downstream|BallValve|4-CD-260029-A1A-H": [
+  "BallValve",
+  "downstream",
+  "PlateHeatExchanger",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2604|downstream|BallValve|4-P-260041-A1A-N": [
+  "BallValve",
+  "downstream",
+  "PlateHeatExchanger",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2604|upstream|ButterflyValve|6-LPS-260025-A1A-H": [
+  "ButterflyValve",
+  "upstream",
+  "PlateHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2604|upstream|GateValve|4-LPS-260054-A1A-H": [
+  "GateValve",
+  "upstream",
+  "PlateHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2604|upstream|GlobeValve|4-LPS-260024-A1A-H": [
+  "GlobeValve",
+  "upstream",
+  "PlateHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2801|downstream|BallValve|4-CD-280006-A1A-H": [
+  "BallValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2801|upstream|GlobeValve|4-LPS-280001-A1A-H": [
+  "GlobeValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2802|downstream|GateValve|4-CWR-90130006-A1A-N": [
+  "GateValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CWR"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2802|upstream|ButterflyValve|4-CWS-90120006-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "CWS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2802|upstream|GateValve|4-CWS-90120006-A1A-N": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "CWS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2802|upstream|GateValve|6-PG-280029-A1A-N": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-2802|upstream|GateValve|6-PG-280030-A1A-N": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3001|downstream|GateValve|4-CWR-300047-A1A-N": [
+  "GateValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CWR"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3001|upstream|GateValve|2-CWS-300046-A1A-N": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "CWS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3001|upstream|GateValve|4-CWS-90120007-A1A-N": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "CWS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3002|downstream|BallValve|4-CD-300007-A1A-H": [
+  "BallValve",
+  "downstream",
+  "PlateHeatExchanger",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3002|downstream|BallValve|4-CHD-300008-A1A-N": [
+  "BallValve",
+  "downstream",
+  "PlateHeatExchanger",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3002|downstream|GateValve|4-P-300009-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PlateHeatExchanger",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3002|upstream|ButterflyValve|4-LPS-90140008-A1A-H": [
+  "ButterflyValve",
+  "upstream",
+  "PlateHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3002|upstream|GateValve|2-LPS-300050-A1A-H": [
+  "GateValve",
+  "upstream",
+  "PlateHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3003|downstream|BallValve|2-CHD-300042-A1A-N": [
+  "BallValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3003|downstream|GateValve|2-CWR-300048-A1A-N": [
+  "GateValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CWR"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3003|upstream|GateValve|4-CWS-300045-A1A-N": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "CWS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3004|downstream|BallValve|4-CD-300020-A1A-H": [
+  "BallValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3004|downstream|GateValve|2-CHD-300043-A1A-N": [
+  "GateValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3004|downstream|GateValve|4-P-300022-A1A-N": [
+  "GateValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3004|upstream|GateValve|4-LPS-300049-A1A-H": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3004|upstream|GlobeValve|4-LPS-300015-A1A-H": [
+  "GlobeValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3101|downstream|BallValve|4-P-310048-A1A-N": [
+  "BallValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3101|downstream|GateValve|2-CHD-310053-A1A-N": [
+  "GateValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3201|downstream|BallValve|4-PG-320018-A1A-N": [
+  "BallValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3201|downstream|ButterflyValve|4-CWR-90130008-A1A-N": [
+  "ButterflyValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CWR"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3201|upstream|ButterflyValve|4-CWS-90120008-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "CWS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3201|upstream|ButterflyValve|6-PG-320016-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3201|upstream|GateValve|4-CWS-90120008-A1A-N": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "CWS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3401|downstream|BallValve|4-CD-340007-A1A-H": [
+  "BallValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3401|upstream|ButterflyValve|2-LPS-340082-A1A-H": [
+  "ButterflyValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3401|upstream|GateValve|4-LPS-90140009-A1A-H": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3401|upstream|GateValve|6-LPS-340003-A1A-H": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3401|upstream|GlobeValve|4-LPS-340001-A1A-H": [
+  "GlobeValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3402|downstream|BallValve|2-CHD-340079-A1A-N": [
+  "BallValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3402|downstream|GateValve|4-CWR-90130009-A1A-N": [
+  "GateValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CWR"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3402|downstream|GateValve|4-P-340014-A1A-N": [
+  "GateValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3402|upstream|GateValve|6-CWS-340008-A1A-N": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "CWS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3403|downstream|GateValve|2-CHD-340080-A1A-N": [
+  "GateValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3403|downstream|GateValve|4-P-340021-A1A-N": [
+  "GateValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3403|downstream|NeedleValve|4-CD-340019-A1A-H": [
+  "NeedleValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3403|upstream|GateValve|6-P-330005-B1A-N": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3403|upstream|GateValve|6-P-340022-A1A-N": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-3403|upstream|GlobeValve|4-P-330001-A1A-N": [
+  "GlobeValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-4801|downstream|GateValve|4-CWR-90130010-A1A-N": [
+  "GateValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CWR"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-4801|upstream|GateValve|6-CWS-480001-A1A-N": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "CWS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-4802|downstream|BallValve|4-CD-480008-A1A-H": [
+  "BallValve",
+  "downstream",
+  "PlateHeatExchanger",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-4802|upstream|ButterflyValve|4-LPS-90140010-A1A-H": [
+  "ButterflyValve",
+  "upstream",
+  "PlateHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-4802|upstream|GateValve|4-LPS-90140010-A1A-H": [
+  "GateValve",
+  "upstream",
+  "PlateHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-4802|upstream|GateValve|6-LPS-480005-A1A-H": [
+  "GateValve",
+  "upstream",
+  "PlateHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-4802|upstream|GlobeValve|4-LPS-480004-A1A-H": [
+  "GlobeValve",
+  "upstream",
+  "PlateHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-5301|downstream|BallValve|4-P-530056-A1A-N": [
+  "BallValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-5301|downstream|GateValve|2-CHD-530065-A1A-N": [
+  "GateValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-5501|downstream|GateValve|8-CD-90260001-A1A-H": [
+  "GateValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-5501|downstream|NeedleValve|4-CD-550006-A1A-H": [
+  "NeedleValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-5501|upstream|ButterflyValve|4-LPS-90240002-A1A-H": [
+  "ButterflyValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-5501|upstream|ButterflyValve|6-LPS-550002-A1A-H": [
+  "ButterflyValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-5501|upstream|GateValve|2-LPS-550076-A1A-H": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-5501|upstream|GlobeValve|4-LPS-550001-A1A-H": [
+  "GlobeValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-5502|downstream|GateValve|2-CHD-550083-A1A-N": [
+  "GateValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-5502|downstream|GateValve|4-CWR-90230002-A1A-N": [
+  "GateValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CWR"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-5502|downstream|GateValve|4-P-550012-A1A-N": [
+  "GateValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-5502|downstream|GateValve|8-CWR-90230001-A1A-N": [
+  "GateValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CWR"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-5502|upstream|ButterflyValve|4-CWS-90220002-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "CWS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-5502|upstream|GateValve|4-CWS-90220002-A1A-N": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "CWS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-5503|downstream|NeedleValve|4-CD-550018-A1A-H": [
+  "NeedleValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-5503|upstream|ButterflyValve|6-LPS-550014-A1A-H": [
+  "ButterflyValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-5503|upstream|GateValve|4-LPS-550075-A1A-H": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-5503|upstream|GateValve|6-P-550019-A1A-N": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-5503|upstream|GlobeValve|4-LPS-550013-A1A-H": [
+  "GlobeValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-601|downstream|BallValve|4-P-60007-A1A-N": [
+  "BallValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-601|downstream|ButterflyValve|4-CWR-60038-A1A-N": [
+  "ButterflyValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CWR"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-601|downstream|GateValve|4-CHD-60006-A1A-N": [
+  "GateValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-601|upstream|ButterflyValve|2-CWS-60037-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "CWS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-601|upstream|GateValve|4-CWS-90120002-A1A-N": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "CWS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-602|downstream|GateValve|2-CHD-60033-A1A-N": [
+  "GateValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-602|downstream|GateValve|4-P-60013-A1A-N": [
+  "GateValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-602|downstream|NeedleValve|4-CD-60011-A1A-H": [
+  "NeedleValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-602|upstream|ButterflyValve|4-LPS-90140002-A1A-H": [
+  "ButterflyValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-602|upstream|GateValve|4-LPS-90140002-A1A-H": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-603|downstream|BallValve|4-P-60019-A1A-N": [
+  "BallValve",
+  "downstream",
+  "PlateHeatExchanger",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-603|downstream|BallValve|4-P-60030-A1A-N": [
+  "BallValve",
+  "downstream",
+  "PlateHeatExchanger",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-603|downstream|GateValve|2-CHD-60034-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PlateHeatExchanger",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-603|downstream|GateValve|2-CHD-60035-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PlateHeatExchanger",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-603|downstream|GateValve|2-CWR-60039-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PlateHeatExchanger",
+  "CWR"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-603|downstream|NeedleValve|4-P-70005-A1A-N": [
+  "NeedleValve",
+  "downstream",
+  "PlateHeatExchanger",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-603|downstream|NeedleValve|4-P-70007-A1A-N": [
+  "NeedleValve",
+  "downstream",
+  "PlateHeatExchanger",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-603|downstream|NeedleValve|4-P-70008-A1A-N": [
+  "NeedleValve",
+  "downstream",
+  "PlateHeatExchanger",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-603|upstream|GateValve|4-CWS-60036-A1A-N": [
+  "GateValve",
+  "upstream",
+  "PlateHeatExchanger",
+  "CWS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-901|downstream|BallValve|4-CD-90006-A1A-H": [
+  "BallValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-901|downstream|GateValve|2-CHD-90078-A1A-N": [
+  "GateValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-901|downstream|GateValve|4-P-90008-A1A-N": [
+  "GateValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-901|upstream|GateValve|2-LPS-90081-A1A-H": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-901|upstream|GateValve|4-LPS-90140003-A1A-H": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-901|upstream|GlobeValve|4-LPS-90001-A1A-H": [
+  "GlobeValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-902|downstream|BallValve|2-CHD-90088-A1A-N": [
+  "BallValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-902|downstream|GateValve|4-CWR-90130003-A1A-N": [
+  "GateValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CWR"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-902|downstream|GateValve|4-P-90013-A1A-N": [
+  "GateValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-902|upstream|ButterflyValve|4-CWS-90120003-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "CWS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-902|upstream|GateValve|4-CWS-90120003-A1A-N": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "CWS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-903|downstream|BallValve|2-CHD-90079-A1A-N": [
+  "BallValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-903|downstream|GateValve|4-P-90021-A1A-N": [
+  "GateValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-903|downstream|NeedleValve|4-CD-90019-A1A-H": [
+  "NeedleValve",
+  "downstream",
+  "TubularHeatExchanger",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-903|upstream|ButterflyValve|6-P-80004-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-903|upstream|GateValve|4-LPS-90080-A1A-H": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-903|upstream|GateValve|6-P-80004-B1A-N": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-903|upstream|GateValve|6-P-80010-B1A-N": [
+  "GateValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-903|upstream|GlobeValve|4-LPS-90014-A1A-H": [
+  "GlobeValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:E-903|upstream|GlobeValve|4-P-80001-A1A-N": [
+  "GlobeValve",
+  "upstream",
+  "TubularHeatExchanger",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:EA-1101|downstream|GateValve|2-CHD-110055-A1A-N": [
+  "GateValve",
+  "downstream",
+  "AirCoolingSystem",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:EA-1101|downstream|GateValve|4-P-110047-A1A-N": [
+  "GateValve",
+  "downstream",
+  "AirCoolingSystem",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:EA-4901|downstream|GateValve|2-CHD-490059-A1A-N": [
+  "GateValve",
+  "downstream",
+  "AirCoolingSystem",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:EA-4901|downstream|GateValve|4-P-490050-A1A-N": [
+  "GateValve",
+  "downstream",
+  "AirCoolingSystem",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:EH-2101|downstream|GateValve|2-CHD-210026-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ElectricHeater",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:EH-2101|downstream|GateValve|4-P-210015-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ElectricHeater",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:EH-2101|downstream|NeedleValve|4-P-210024-A1A-N": [
+  "NeedleValve",
+  "downstream",
+  "ElectricHeater",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:EH-3001|downstream|BallValve|2-CHD-300044-A1A-N": [
+  "BallValve",
+  "downstream",
+  "ElectricHeater",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:EH-3001|downstream|BallValve|4-P-300038-A1A-N": [
+  "BallValve",
+  "downstream",
+  "ElectricHeater",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:EH-3001|downstream|GateValve|4-P-300025-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ElectricHeater",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:EH-4801|downstream|GateValve|4-CHD-480009-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ElectricHeater",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:EH-4801|downstream|GateValve|4-P-480010-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ElectricHeater",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:EH-4801|downstream|NeedleValve|4-P-480019-A1A-N": [
+  "NeedleValve",
+  "downstream",
+  "ElectricHeater",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:EJ-2801|upstream|ButterflyValve|2-MPS-280077-A1A-H": [
+  "ButterflyValve",
+  "upstream",
+  "AirEjector",
+  "MPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:EJ-2801|upstream|ButterflyValve|4-MPS-90150002-A1A-H": [
+  "ButterflyValve",
+  "upstream",
+  "AirEjector",
+  "MPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:EJ-2801|upstream|GateValve|8-MPS-90150001-A1A-H": [
+  "GateValve",
+  "upstream",
+  "AirEjector",
+  "MPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:EJ-2802|upstream|ButterflyValve|6-PG-280028-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "AirEjector",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:EJ-2802|upstream|GateValve|2-MPS-280078-A1A-H": [
+  "GateValve",
+  "upstream",
+  "AirEjector",
+  "MPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:EJ-2802|upstream|GateValve|6-PG-280027-A1A-N": [
+  "GateValve",
+  "upstream",
+  "AirEjector",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:EJ-2803|upstream|ButterflyValve|6-PG-280031-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "AirEjector",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:EJ-2803|upstream|GateValve|2-MPS-280079-A1A-H": [
+  "GateValve",
+  "upstream",
+  "AirEjector",
+  "MPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:EJ-2804|upstream|ButterflyValve|4-MPS-280076-A1A-H": [
+  "ButterflyValve",
+  "upstream",
+  "AirEjector",
+  "MPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:EJ-2804|upstream|GateValve|6-PG-280032-A1A-N": [
+  "GateValve",
+  "upstream",
+  "AirEjector",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:EJ-4301|upstream|GateValve|4-P-430004-B1A-N": [
+  "GateValve",
+  "upstream",
+  "EjectorPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:F-201|downstream|BallValve|4-P-20006-A1A-N": [
+  "BallValve",
+  "downstream",
+  "LiquidFilter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:F-201|downstream|GateValve|4-CHD-20009-A1A-N": [
+  "GateValve",
+  "downstream",
+  "LiquidFilter",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:F-201|downstream|GateValve|4-P-20010-A1A-N": [
+  "GateValve",
+  "downstream",
+  "LiquidFilter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:F-201|upstream|GateValve|6-P-10007-B1A-N": [
+  "GateValve",
+  "upstream",
+  "LiquidFilter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:F-201|upstream|GateValve|6-P-20001-A1A-N": [
+  "GateValve",
+  "upstream",
+  "LiquidFilter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:F-201|upstream|GlobeValve|4-P-10003-A1A-N": [
+  "GlobeValve",
+  "upstream",
+  "LiquidFilter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:F-202|downstream|GateValve|2-CHD-20014-A1A-N": [
+  "GateValve",
+  "downstream",
+  "LiquidFilter",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:F-202|downstream|GateValve|4-P-20012-A1A-N": [
+  "GateValve",
+  "downstream",
+  "LiquidFilter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:F-202|upstream|GateValve|6-P-20003-A1A-N": [
+  "GateValve",
+  "upstream",
+  "LiquidFilter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:F-2501|downstream|BallValve|4-P-250006-A1A-N": [
+  "BallValve",
+  "downstream",
+  "LiquidFilter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:F-2501|downstream|BallValve|4-P-250010-A1A-N": [
+  "BallValve",
+  "downstream",
+  "LiquidFilter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:F-2501|downstream|GateValve|4-CHD-250009-A1A-N": [
+  "GateValve",
+  "downstream",
+  "LiquidFilter",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:F-2501|upstream|ButterflyValve|6-P-250001-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "LiquidFilter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:F-2501|upstream|GateValve|6-P-250001-A1A-N": [
+  "GateValve",
+  "upstream",
+  "LiquidFilter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:F-2502|downstream|GateValve|2-CHD-250014-A1A-N": [
+  "GateValve",
+  "downstream",
+  "LiquidFilter",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:F-2502|downstream|GateValve|4-P-250012-A1A-N": [
+  "GateValve",
+  "downstream",
+  "LiquidFilter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:F-2502|upstream|GateValve|6-P-250003-A1A-N": [
+  "GateValve",
+  "upstream",
+  "LiquidFilter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:F-3201|downstream|BallValve|2-CHD-320032-A1A-N": [
+  "BallValve",
+  "downstream",
+  "GasFilter",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:F-3201|downstream|GateValve|4-PG-320012-A1A-N": [
+  "GateValve",
+  "downstream",
+  "GasFilter",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:F-4701|downstream|BallValve|4-P-470006-A1A-N": [
+  "BallValve",
+  "downstream",
+  "LiquidFilter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:F-4701|downstream|GateValve|4-CHD-470009-A1A-N": [
+  "GateValve",
+  "downstream",
+  "LiquidFilter",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:F-4701|downstream|GateValve|4-P-470010-A1A-N": [
+  "GateValve",
+  "downstream",
+  "LiquidFilter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:F-4701|upstream|GateValve|6-P-470001-A1A-N": [
+  "GateValve",
+  "upstream",
+  "LiquidFilter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:F-4702|downstream|BallValve|2-CHD-470014-A1A-N": [
+  "BallValve",
+  "downstream",
+  "LiquidFilter",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:F-4702|downstream|BallValve|4-P-470012-A1A-N": [
+  "BallValve",
+  "downstream",
+  "LiquidFilter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:F-4702|upstream|GateValve|6-P-470003-A1A-N": [
+  "GateValve",
+  "upstream",
+  "LiquidFilter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:F-701|downstream|BallValve|4-P-70006-A1A-N": [
+  "BallValve",
+  "downstream",
+  "LiquidFilter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:F-701|downstream|BallValve|4-P-70010-A1A-N": [
+  "BallValve",
+  "downstream",
+  "LiquidFilter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:F-701|downstream|GateValve|4-CHD-70009-A1A-N": [
+  "GateValve",
+  "downstream",
+  "LiquidFilter",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:F-701|upstream|ButterflyValve|6-P-70001-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "LiquidFilter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:F-701|upstream|GateValve|6-P-60025-A1A-N": [
+  "GateValve",
+  "upstream",
+  "LiquidFilter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:F-702|downstream|GateValve|2-CHD-70014-A1A-N": [
+  "GateValve",
+  "downstream",
+  "LiquidFilter",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:F-702|downstream|GateValve|4-P-70012-A1A-N": [
+  "GateValve",
+  "downstream",
+  "LiquidFilter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:F-702|upstream|GateValve|6-P-70003-A1A-N": [
+  "GateValve",
+  "upstream",
+  "LiquidFilter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-10009|upstream|ButterflyValve|6-P-100016-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-10009|upstream|GateValve|6-P-100008-B1A-N": [
+  "GateValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-1006|downstream|NeedleValve|4-P-20005-A1A-N": [
+  "NeedleValve",
+  "downstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-1006|downstream|NeedleValve|4-P-20007-A1A-N": [
+  "NeedleValve",
+  "downstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-1006|downstream|NeedleValve|4-P-20008-A1A-N": [
+  "NeedleValve",
+  "downstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-1006|upstream|ButterflyValve|6-P-10015-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-1006|upstream|GateValve|6-P-10007-B1A-N": [
+  "GateValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-12002|upstream|GateValve|6-P-120003-B1A-N": [
+  "GateValve",
+  "upstream",
+  "ElectromagneticFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-12002|upstream|GateValve|6-P-120008-B1A-N": [
+  "GateValve",
+  "upstream",
+  "ElectromagneticFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-13002|downstream|BallValve|4-LPS-130003-A1A-H": [
+  "BallValve",
+  "downstream",
+  "VenturiTube",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-13002|upstream|ButterflyValve|4-LPS-90140004-A1A-H": [
+  "ButterflyValve",
+  "upstream",
+  "VenturiTube",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-13002|upstream|GateValve|4-LPS-90140004-A1A-H": [
+  "GateValve",
+  "upstream",
+  "VenturiTube",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-13033|upstream|ButterflyValve|6-P-130032-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-13033|upstream|ButterflyValve|6-P-130038-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-13033|upstream|GateValve|6-P-130044-B1A-N": [
+  "GateValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-13057|upstream|GateValve|6-P-130068-A1A-N": [
+  "GateValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-14008|upstream|ButterflyValve|6-P-140013-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ElectromagneticFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-14008|upstream|ButterflyValve|6-P-140019-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ElectromagneticFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-14008|upstream|GateValve|6-P-140007-B1A-N": [
+  "GateValve",
+  "upstream",
+  "ElectromagneticFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-15001|upstream|ButterflyValve|6-P-140007-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ElectromagneticFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-15002|upstream|GateValve|4-P-150003-B1A-N": [
+  "GateValve",
+  "upstream",
+  "MassFlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-15002|upstream|GateValve|4-P-150010-B1A-N": [
+  "GateValve",
+  "upstream",
+  "MassFlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-16002|upstream|GateValve|4-P-160004-B1A-N": [
+  "GateValve",
+  "upstream",
+  "MassFlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-16002|upstream|GateValve|4-P-160011-B1A-N": [
+  "GateValve",
+  "upstream",
+  "MassFlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-17002|downstream|BallValve|2-CHD-170026-A1A-N": [
+  "BallValve",
+  "downstream",
+  "FlowMeasuringElement",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-17002|downstream|GateValve|6-P-170006-B1A-N": [
+  "GateValve",
+  "downstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-17002|upstream|GateValve|6-P-170006-B1A-N": [
+  "GateValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-17002|upstream|GateValve|6-P-170013-B1A-N": [
+  "GateValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-19009|upstream|ButterflyValve|6-P-190008-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-19009|upstream|GateValve|6-P-190015-B1A-N": [
+  "GateValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-20002|upstream|GateValve|4-P-200004-B1A-N": [
+  "GateValve",
+  "upstream",
+  "MassFlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-20002|upstream|GateValve|4-P-200011-B1A-N": [
+  "GateValve",
+  "upstream",
+  "MassFlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-21001|upstream|GateValve|6-P-200015-A1A-N": [
+  "GateValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-22010|upstream|ButterflyValve|6-P-220016-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ElectromagneticFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-22010|upstream|ButterflyValve|6-P-220029-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ElectromagneticFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-22010|upstream|GateValve|6-P-220023-B1A-N": [
+  "GateValve",
+  "upstream",
+  "ElectromagneticFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-23002|upstream|ButterflyValve|6-P-230005-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-23002|upstream|ButterflyValve|6-P-230019-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-23002|upstream|GateValve|6-P-230012-B1A-N": [
+  "GateValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-24008|upstream|GateValve|6-P-240007-B1A-N": [
+  "GateValve",
+  "upstream",
+  "ElectromagneticFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-24008|upstream|GateValve|6-P-240013-B1A-N": [
+  "GateValve",
+  "upstream",
+  "ElectromagneticFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-24008|upstream|GateValve|6-P-240019-B1A-N": [
+  "GateValve",
+  "upstream",
+  "ElectromagneticFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-24009|downstream|BallValve|4-P-250005-A1A-N": [
+  "BallValve",
+  "downstream",
+  "VolumeFlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-24009|downstream|NeedleValve|4-P-250007-A1A-N": [
+  "NeedleValve",
+  "downstream",
+  "VolumeFlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-24009|downstream|NeedleValve|4-P-250008-A1A-N": [
+  "NeedleValve",
+  "downstream",
+  "VolumeFlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-24009|upstream|GateValve|6-P-240007-B1A-N": [
+  "GateValve",
+  "upstream",
+  "VolumeFlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-24009|upstream|GlobeValve|4-P-240004-A1A-N": [
+  "GlobeValve",
+  "upstream",
+  "VolumeFlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-25001|downstream|NeedleValve|4-P-260040-A1A-N": [
+  "NeedleValve",
+  "downstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-25001|upstream|ButterflyValve|6-P-250002-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-25001|upstream|GateValve|6-P-250004-A1A-N": [
+  "GateValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-28051|upstream|GateValve|6-P-280052-B1A-N": [
+  "GateValve",
+  "upstream",
+  "ElectromagneticFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-29010|downstream|GateValve|2-CHD-290050-A1A-N": [
+  "GateValve",
+  "downstream",
+  "FlowMeasuringElement",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-29010|upstream|ButterflyValve|6-P-290025-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-29010|upstream|GateValve|6-P-290010-B1A-N": [
+  "GateValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-29010|upstream|GateValve|6-P-290017-B1A-N": [
+  "GateValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-29011|downstream|NeedleValve|4-P-300037-A1A-N": [
+  "NeedleValve",
+  "downstream",
+  "PositiveDisplacementFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-29011|upstream|ButterflyValve|6-P-290010-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "PositiveDisplacementFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-29011|upstream|GlobeValve|4-P-290005-A1A-N": [
+  "GlobeValve",
+  "upstream",
+  "PositiveDisplacementFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-31012|downstream|GateValve|2-CHD-310057-A1A-N": [
+  "GateValve",
+  "downstream",
+  "FlowMeasuringElement",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-31012|upstream|GateValve|6-P-310017-B1A-N": [
+  "GateValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-31012|upstream|GateValve|6-P-310026-B1A-N": [
+  "GateValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-33002|upstream|ButterflyValve|6-P-330005-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ElectromagneticFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-34056|upstream|GateValve|6-P-340042-B1A-N": [
+  "GateValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-34056|upstream|GateValve|6-P-340049-B1A-N": [
+  "GateValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-35008|upstream|ButterflyValve|6-P-350007-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-36001|upstream|GateValve|6-P-350007-B1A-N": [
+  "GateValve",
+  "upstream",
+  "ElectromagneticFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-36001|upstream|GateValve|6-P-360024-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ElectromagneticFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-36002|upstream|ButterflyValve|4-P-360009-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "MassFlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-36002|upstream|GateValve|4-P-360003-B1A-N": [
+  "GateValve",
+  "upstream",
+  "MassFlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-37002|upstream|ButterflyValve|4-P-370004-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "MassFlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-37002|upstream|GateValve|4-P-370012-B1A-N": [
+  "GateValve",
+  "upstream",
+  "MassFlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-4002|downstream|BallValve|2-CHD-40020-A1A-N": [
+  "BallValve",
+  "downstream",
+  "FlowMeasuringElement",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-4002|upstream|GateValve|6-P-40006-B1A-N": [
+  "GateValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-42005|upstream|ButterflyValve|6-P-420013-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-42005|upstream|GateValve|6-P-420006-B1A-N": [
+  "GateValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-43001|upstream|GateValve|6-P-420006-B1A-N": [
+  "GateValve",
+  "upstream",
+  "ElectromagneticFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-43002|upstream|GateValve|4-P-430004-B1A-N": [
+  "GateValve",
+  "upstream",
+  "MassFlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-43002|upstream|GateValve|4-P-430012-B1A-N": [
+  "GateValve",
+  "upstream",
+  "MassFlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-44002|upstream|ButterflyValve|6-P-440003-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ElectromagneticFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-44002|upstream|GateValve|6-P-440010-B1A-N": [
+  "GateValve",
+  "upstream",
+  "ElectromagneticFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-45002|upstream|ButterflyValve|6-P-450012-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-45002|upstream|GateValve|6-P-450004-B1A-N": [
+  "GateValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-46010|upstream|GateValve|6-P-460008-B1A-N": [
+  "GateValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-46010|upstream|GateValve|6-P-460014-B1A-N": [
+  "GateValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-47001|downstream|BallValve|4-P-480018-A1A-N": [
+  "BallValve",
+  "downstream",
+  "ElectromagneticFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-47001|upstream|ButterflyValve|6-P-470002-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ElectromagneticFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-47001|upstream|ButterflyValve|6-P-470004-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ElectromagneticFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-50002|downstream|GateValve|6-P-500005-B1A-N": [
+  "GateValve",
+  "downstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-50002|upstream|ButterflyValve|6-P-500005-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-50002|upstream|GateValve|6-P-500012-B1A-N": [
+  "GateValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-5008|upstream|ButterflyValve|6-P-50007-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ElectromagneticFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-5008|upstream|GateValve|6-P-50013-B1A-N": [
+  "GateValve",
+  "upstream",
+  "ElectromagneticFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-5009|downstream|BallValve|4-P-60029-A1A-N": [
+  "BallValve",
+  "downstream",
+  "MassFlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-5009|upstream|ButterflyValve|6-P-50007-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "MassFlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-5009|upstream|GlobeValve|4-P-50004-A1A-N": [
+  "GlobeValve",
+  "upstream",
+  "MassFlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-51008|upstream|ButterflyValve|6-P-510007-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-51008|upstream|GateValve|6-P-510014-B1A-N": [
+  "GateValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-51009|upstream|GateValve|6-P-510007-B1A-N": [
+  "GateValve",
+  "upstream",
+  "MassFlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-51009|upstream|GlobeValve|4-P-510004-A1A-N": [
+  "GlobeValve",
+  "upstream",
+  "MassFlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-52001|upstream|ButterflyValve|8-P-90080001-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ElectromagneticFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-52001|upstream|GateValve|6-P-520017-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ElectromagneticFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-52002|upstream|ButterflyValve|4-P-520011-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "MassFlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-52002|upstream|GateValve|4-P-520004-B1A-N": [
+  "GateValve",
+  "upstream",
+  "MassFlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-54002|upstream|GateValve|6-P-540004-B1A-N": [
+  "GateValve",
+  "upstream",
+  "ElectromagneticFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-54002|upstream|GateValve|6-P-540011-B1A-N": [
+  "GateValve",
+  "upstream",
+  "ElectromagneticFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-54002|upstream|GateValve|6-P-540018-B1A-N": [
+  "GateValve",
+  "upstream",
+  "ElectromagneticFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-55056|upstream|GateValve|6-P-550046-B1A-N": [
+  "GateValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-6001|upstream|ButterflyValve|6-P-60022-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "FlowMeasuringElement",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-9050|downstream|GateValve|6-P-90048-B1A-N": [
+  "GateValve",
+  "downstream",
+  "ElectromagneticFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FE-9050|upstream|ButterflyValve|6-P-90048-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ElectromagneticFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FI-10013|upstream|GateValve|4-P-100012-A1A-N": [
+  "GateValve",
+  "upstream",
+  "VariableAreaFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FI-1010|upstream|GateValve|4-P-10011-A1A-N": [
+  "GateValve",
+  "upstream",
+  "VariableAreaFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FI-13054|upstream|GateValve|4-P-130067-A1A-N": [
+  "GateValve",
+  "upstream",
+  "VariableAreaFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FI-23016|upstream|GateValve|4-P-230023-A1A-N": [
+  "GateValve",
+  "upstream",
+  "VariableAreaFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FI-28054|upstream|GateValve|4-P-280055-A1A-N": [
+  "GateValve",
+  "upstream",
+  "VariableAreaFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FI-29020|upstream|GateValve|4-P-290021-A1A-N": [
+  "GateValve",
+  "upstream",
+  "VariableAreaFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FI-31009|upstream|GateValve|4-PG-310010-A1A-N": [
+  "GateValve",
+  "upstream",
+  "VariableAreaFlowMeter",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FI-35011|upstream|GateValve|4-P-350010-A1A-N": [
+  "GateValve",
+  "upstream",
+  "VariableAreaFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FI-39004|upstream|GateValve|4-P-390008-A1A-N": [
+  "GateValve",
+  "upstream",
+  "VariableAreaFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FI-41010|upstream|GateValve|4-P-410015-A1A-N": [
+  "GateValve",
+  "upstream",
+  "VariableAreaFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FI-41018|upstream|GateValve|4-PG-410022-A1A-N": [
+  "GateValve",
+  "upstream",
+  "VariableAreaFlowMeter",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FI-45012|upstream|GateValve|4-P-450016-A1A-N": [
+  "GateValve",
+  "upstream",
+  "VariableAreaFlowMeter",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FI-53008|upstream|GateValve|4-PG-530012-A1A-N": [
+  "GateValve",
+  "upstream",
+  "VariableAreaFlowMeter",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FI-55034|upstream|GateValve|4-PG-550028-A1A-N": [
+  "GateValve",
+  "upstream",
+  "VariableAreaFlowMeter",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FI-8015|upstream|GateValve|4-PG-80022-A1A-N": [
+  "GateValve",
+  "upstream",
+  "VariableAreaFlowMeter",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FV-1006|upstream|GateValve|6-P-10007-B1A-N": [
+  "GateValve",
+  "upstream",
+  "GlobeValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FV-13002|upstream|ButterflyValve|6-LPS-130002-A1A-H": [
+  "ButterflyValve",
+  "upstream",
+  "GlobeValve",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FV-17002|upstream|ButterflyValve|6-P-170006-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "AngleValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FV-22010|upstream|GateValve|6-P-220016-B1A-N": [
+  "GateValve",
+  "upstream",
+  "AngleGlobeValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FV-23002|upstream|GateValve|6-P-230005-B1A-N": [
+  "GateValve",
+  "upstream",
+  "AngleGlobeValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FV-24008|upstream|ButterflyValve|6-P-240007-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "GlobeValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FV-28051|upstream|GateValve|6-P-280052-B1A-N": [
+  "GateValve",
+  "upstream",
+  "AngleValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FV-29010|upstream|GateValve|6-P-290010-B1A-N": [
+  "GateValve",
+  "upstream",
+  "ButterflyValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FV-31012|upstream|GateValve|6-P-310017-B1A-N": [
+  "GateValve",
+  "upstream",
+  "AngleValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FV-32003|upstream|GateValve|6-PG-320020-A1A-N": [
+  "GateValve",
+  "upstream",
+  "GlobeValve",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FV-33002|upstream|GateValve|6-P-330005-B1A-N": [
+  "GateValve",
+  "upstream",
+  "AngleBallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FV-34056|upstream|GateValve|6-P-340054-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FV-4002|upstream|GateValve|6-P-40006-B1A-N": [
+  "GateValve",
+  "upstream",
+  "AngleBallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FV-46010|downstream|NeedleValve|4-P-470005-A1A-N": [
+  "NeedleValve",
+  "downstream",
+  "GlobeValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FV-46010|downstream|NeedleValve|4-P-470007-A1A-N": [
+  "NeedleValve",
+  "downstream",
+  "GlobeValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FV-46010|downstream|NeedleValve|4-P-470008-A1A-N": [
+  "NeedleValve",
+  "downstream",
+  "GlobeValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FV-50002|upstream|ButterflyValve|6-P-500005-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "AngleGlobeValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FV-5008|upstream|GateValve|6-P-50007-B1A-N": [
+  "GateValve",
+  "upstream",
+  "ButterflyValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FV-51008|upstream|GateValve|6-P-510007-B1A-N": [
+  "GateValve",
+  "upstream",
+  "ButterflyValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FV-55056|upstream|GateValve|6-P-550052-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:FV-9050|upstream|ButterflyValve|6-P-90048-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "AngleGlobeValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:H-1101|downstream|NeedleValve|4-P-110030-A1A-N": [
+  "NeedleValve",
+  "downstream",
+  "Furnace",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:H-3101|downstream|NeedleValve|4-P-310031-A1A-N": [
+  "NeedleValve",
+  "downstream",
+  "Furnace",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:H-4901|downstream|NeedleValve|4-P-490035-A1A-N": [
+  "NeedleValve",
+  "downstream",
+  "Furnace",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:K-5501|downstream|GateValve|6-PG-550042-B1A-N": [
+  "GateValve",
+  "downstream",
+  "RotaryCompressor",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-11009|upstream|GateValve|6-P-110025-B1A-N": [
+  "GateValve",
+  "upstream",
+  "AngleValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-13044|upstream|ButterflyValve|6-P-130049-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-13046|upstream|GateValve|6-P-130063-B1A-N": [
+  "GateValve",
+  "upstream",
+  "AngleBallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-16016|upstream|GateValve|6-P-160023-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-18001|downstream|GateValve|6-P-180004-B1A-N": [
+  "GateValve",
+  "downstream",
+  "AngleValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-18001|upstream|GateValve|6-P-180010-B1A-N": [
+  "GateValve",
+  "upstream",
+  "AngleValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-27001|upstream|GateValve|6-P-270012-B1A-N": [
+  "GateValve",
+  "upstream",
+  "AngleValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-28058|upstream|GateValve|6-P-280066-B1A-N": [
+  "GateValve",
+  "upstream",
+  "AngleBallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-3001|upstream|ButterflyValve|6-P-30012-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "AngleValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-3001|upstream|GateValve|6-P-30004-B1A-N": [
+  "GateValve",
+  "upstream",
+  "AngleValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-34058|upstream|GateValve|6-P-340059-B1A-N": [
+  "GateValve",
+  "upstream",
+  "AngleValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-34058|upstream|GateValve|6-P-340065-B1A-N": [
+  "GateValve",
+  "upstream",
+  "AngleValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-37018|upstream|GateValve|6-P-370026-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-38001|upstream|ButterflyValve|6-P-380005-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "AngleBallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-38001|upstream|ButterflyValve|6-P-380012-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "AngleBallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-38001|upstream|GateValve|6-P-380005-B1A-N": [
+  "GateValve",
+  "upstream",
+  "AngleBallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-39001|downstream|GateValve|6-P-390004-B1A-N": [
+  "GateValve",
+  "downstream",
+  "AngleGlobeValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-39001|upstream|ButterflyValve|6-P-390004-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "AngleGlobeValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-39001|upstream|GateValve|6-P-390004-B1A-N": [
+  "GateValve",
+  "upstream",
+  "AngleGlobeValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-39001|upstream|GateValve|6-P-390011-B1A-N": [
+  "GateValve",
+  "upstream",
+  "AngleGlobeValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-40001|upstream|ButterflyValve|6-P-400013-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "AngleValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-40001|upstream|ButterflyValve|6-P-400020-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "AngleValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-41001|upstream|ButterflyValve|6-P-410004-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "AngleValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-41001|upstream|ButterflyValve|6-P-410011-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "AngleValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-49009|upstream|ButterflyValve|6-P-490015-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "AngleBallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-49009|upstream|ButterflyValve|6-P-490022-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "AngleBallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-49009|upstream|GateValve|6-P-490015-B1A-N": [
+  "GateValve",
+  "upstream",
+  "AngleBallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-49009|upstream|GateValve|6-P-490028-B1A-N": [
+  "GateValve",
+  "upstream",
+  "AngleBallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-53010|downstream|GateValve|6-P-530019-B1A-N": [
+  "GateValve",
+  "downstream",
+  "AngleValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-53010|upstream|GateValve|6-P-530027-B1A-N": [
+  "GateValve",
+  "upstream",
+  "AngleValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-53010|upstream|GateValve|6-P-530034-B1A-N": [
+  "GateValve",
+  "upstream",
+  "AngleValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-55050|downstream|GateValve|6-P-550046-B1A-N": [
+  "GateValve",
+  "downstream",
+  "AngleValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-55058|downstream|GateValve|6-P-550058-B1A-N": [
+  "GateValve",
+  "downstream",
+  "AngleGlobeValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-55058|upstream|ButterflyValve|6-P-550066-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "AngleGlobeValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-8001|upstream|GateValve|6-P-80004-B1A-N": [
+  "GateValve",
+  "upstream",
+  "AngleValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-9055|upstream|GateValve|6-P-90054-A1A-N": [
+  "GateValve",
+  "upstream",
+  "GlobeValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-9058|upstream|ButterflyValve|6-P-90060-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "AngleBallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-9058|upstream|GateValve|6-P-90060-B1A-N": [
+  "GateValve",
+  "upstream",
+  "AngleBallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:LV-9058|upstream|GateValve|6-P-90067-B1A-N": [
+  "GateValve",
+  "upstream",
+  "AngleBallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:M-1601|upstream|StraightwayValve|4-P-160004-B1A-N": [
+  "StraightwayValve",
+  "upstream",
+  "StaticMixer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:M-2001|downstream|BallValve|4-P-210023-A1A-N": [
+  "BallValve",
+  "downstream",
+  "StaticMixer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:M-2001|upstream|GateValve|4-P-200004-B1A-N": [
+  "GateValve",
+  "upstream",
+  "StaticMixer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:M-5201|downstream|GateValve|4-CHD-530006-A1A-N": [
+  "GateValve",
+  "downstream",
+  "StaticMixer",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:MX-15003|upstream|GateValve|4-P-150003-B1A-N": [
+  "GateValve",
+  "upstream",
+  "InLineMixer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:MX-36003|upstream|StraightwayValve|4-P-360003-B1A-N": [
+  "StraightwayValve",
+  "upstream",
+  "InLineMixer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:MX-37003|upstream|GateValve|4-P-370004-B1A-N": [
+  "GateValve",
+  "upstream",
+  "InLineMixer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:MX-52003|upstream|GateValve|4-P-520004-B1A-N": [
+  "GateValve",
+  "upstream",
+  "InLineMixer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1001|downstream|BallValve|4-P-100005-B1A-N": [
+  "BallValve",
+  "downstream",
+  "RotaryPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1001|downstream|GateValve|4-CHD-100011-A1A-N": [
+  "GateValve",
+  "downstream",
+  "RotaryPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1001|downstream|GateValve|4-P-100010-A1A-N": [
+  "GateValve",
+  "downstream",
+  "RotaryPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1002|downstream|BallValve|2-CHD-100038-A1A-N": [
+  "BallValve",
+  "downstream",
+  "RotaryPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1002|downstream|GateValve|4-P-100018-A1A-N": [
+  "GateValve",
+  "downstream",
+  "RotaryPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1002|downstream|NeedleValve|4-P-100013-B1A-N": [
+  "NeedleValve",
+  "downstream",
+  "RotaryPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-101|downstream|BallValve|4-CHD-10010-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-101|downstream|BallValve|4-P-10004-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-101|downstream|GateValve|4-P-10009-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-102|downstream|BallValve|2-CHD-10027-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-102|downstream|BallValve|4-P-10012-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-102|downstream|GateValve|4-P-10017-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1101|downstream|BallValve|4-P-110014-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1101|downstream|GateValve|4-CHD-110021-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1101|downstream|GateValve|4-P-110020-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1102|downstream|BallValve|2-CHD-110057-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1102|downstream|BallValve|4-P-110022-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1102|downstream|BallValve|4-P-110027-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1102|downstream|ButterflyValve|6-P-110017-B1A-N": [
+  "ButterflyValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1201|downstream|BallValve|4-P-120004-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1201|downstream|GateValve|2-CHD-120020-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1201|downstream|NeedleValve|4-P-120011-A1A-N": [
+  "NeedleValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1202|downstream|BallValve|4-P-120009-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1202|downstream|GateValve|2-CHD-120021-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1301|downstream|BallValve|4-P-130033-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1301|downstream|GateValve|2-CHD-130073-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1301|downstream|GateValve|2-CHD-130076-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1301|downstream|NeedleValve|4-P-130029-B1A-N": [
+  "NeedleValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1302|downstream|BallValve|2-CHD-130077-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1302|downstream|GateValve|4-P-130039-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1302|downstream|NeedleValve|4-P-130035-B1A-N": [
+  "NeedleValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1303|downstream|BallValve|4-P-130041-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1303|downstream|GateValve|2-CHD-130078-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1303|downstream|GateValve|4-P-130045-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1304|downstream|BallValve|4-P-130052-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1304|downstream|BallValve|4-P-130057-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1304|downstream|GateValve|4-CHD-130058-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1304|downstream|GateValve|4-P-130059-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1305|downstream|BallValve|4-P-130060-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1305|downstream|BallValve|4-P-130065-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1305|downstream|GateValve|2-CHD-130081-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1305|downstream|GateValve|6-P-130055-B1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1401|downstream|GateValve|4-CHD-140009-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1401|downstream|GateValve|4-P-140008-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1401|downstream|NeedleValve|4-P-140004-B1A-N": [
+  "NeedleValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1402|downstream|BallValve|2-CHD-140033-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1402|downstream|BallValve|4-P-140010-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1402|downstream|GateValve|4-P-140014-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1403|downstream|BallValve|2-CHD-140034-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1403|downstream|BallValve|4-P-140016-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1403|downstream|GateValve|4-P-140020-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1501|downstream|GateValve|3-CHD-150006-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ReciprocatingPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1501|downstream|GateValve|3-P-150005-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ReciprocatingPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1501|downstream|GateValve|3-P-150007-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ReciprocatingPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1501|downstream|NeedleValve|3-P-150014-A1A-N": [
+  "NeedleValve",
+  "downstream",
+  "ReciprocatingPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1502|downstream|BallValve|2-CHD-150023-A1A-N": [
+  "BallValve",
+  "downstream",
+  "ReciprocatingPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1502|downstream|GateValve|3-P-150012-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ReciprocatingPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1601|downstream|BallValve|3-P-160001-B1A-N": [
+  "BallValve",
+  "downstream",
+  "ReciprocatingPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1601|downstream|GateValve|3-CHD-160007-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ReciprocatingPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1601|downstream|GateValve|3-P-160006-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ReciprocatingPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1602|downstream|BallValve|3-P-160008-B1A-N": [
+  "BallValve",
+  "downstream",
+  "ReciprocatingPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1602|downstream|BallValve|3-P-160013-A1A-N": [
+  "BallValve",
+  "downstream",
+  "ReciprocatingPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1602|downstream|GateValve|2-CHD-160030-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ReciprocatingPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1701|downstream|BallValve|4-P-170003-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1701|downstream|GateValve|4-CHD-170009-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1701|downstream|GateValve|4-P-170008-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1702|downstream|BallValve|4-P-170015-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1702|downstream|GateValve|2-CHD-170025-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1702|downstream|NeedleValve|4-P-170010-B1A-N": [
+  "NeedleValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1801|downstream|BallValve|4-P-180006-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1801|downstream|GateValve|2-CHD-180023-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1801|downstream|NeedleValve|4-P-180014-A1A-N": [
+  "NeedleValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1802|downstream|BallValve|4-P-180012-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1802|downstream|GateValve|2-CHD-180024-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1802|downstream|GateValve|6-P-180004-B1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1901|downstream|BallValve|4-P-190005-B1A-N": [
+  "BallValve",
+  "downstream",
+  "RotaryPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1901|downstream|GateValve|4-CHD-190011-A1A-N": [
+  "GateValve",
+  "downstream",
+  "RotaryPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1901|downstream|GateValve|4-P-190010-A1A-N": [
+  "GateValve",
+  "downstream",
+  "RotaryPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1902|downstream|BallValve|2-CHD-190037-A1A-N": [
+  "BallValve",
+  "downstream",
+  "RotaryPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1902|downstream|BallValve|4-P-190012-B1A-N": [
+  "BallValve",
+  "downstream",
+  "RotaryPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-1902|downstream|GateValve|4-P-190017-A1A-N": [
+  "GateValve",
+  "downstream",
+  "RotaryPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2001|downstream|GateValve|3-CHD-200007-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ReciprocatingPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2001|downstream|GateValve|3-P-200006-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ReciprocatingPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2001|downstream|NeedleValve|3-P-200001-B1A-N": [
+  "NeedleValve",
+  "downstream",
+  "ReciprocatingPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2002|downstream|BallValve|2-CHD-200024-A1A-N": [
+  "BallValve",
+  "downstream",
+  "ReciprocatingPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2002|downstream|BallValve|3-P-200008-B1A-N": [
+  "BallValve",
+  "downstream",
+  "ReciprocatingPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2002|downstream|GateValve|3-P-200013-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ReciprocatingPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2201|downstream|BallValve|4-P-220013-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2201|downstream|BallValve|4-P-220018-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2201|downstream|GateValve|2-CHD-220058-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2202|downstream|BallValve|4-P-220020-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2202|downstream|GateValve|2-CHD-220059-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2202|downstream|GateValve|4-P-220024-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2203|downstream|BallValve|4-P-220026-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2203|downstream|BallValve|4-P-220030-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2203|downstream|GateValve|2-CHD-220060-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2301|downstream|GateValve|2-CHD-230034-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2301|downstream|GateValve|4-P-230007-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2301|downstream|NeedleValve|4-P-230002-B1A-N": [
+  "NeedleValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2302|downstream|BallValve|4-P-230009-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2302|downstream|BallValve|4-P-230014-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2302|downstream|GateValve|2-CHD-230035-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2303|downstream|BallValve|4-P-230021-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2303|downstream|GateValve|2-CHD-230036-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2303|downstream|NeedleValve|4-P-230016-B1A-N": [
+  "NeedleValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2401|downstream|BallValve|4-CHD-240010-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2401|downstream|BallValve|4-P-240024-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2401|downstream|GateValve|4-P-240009-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2402|downstream|GateValve|2-CHD-240036-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2402|downstream|GateValve|4-P-240015-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2403|downstream|BallValve|4-P-240021-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2403|downstream|GateValve|2-CHD-240037-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2403|downstream|GateValve|4-P-240023-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2701|downstream|BallValve|4-P-270002-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2701|downstream|GateValve|4-CHD-270008-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2701|downstream|GateValve|4-P-270007-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2701|downstream|GateValve|6-P-270005-B1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2702|downstream|BallValve|4-P-270009-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2702|downstream|BallValve|4-P-270014-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2702|downstream|ButterflyValve|6-P-270005-B1A-N": [
+  "ButterflyValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2702|downstream|GateValve|2-CHD-270025-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2702|downstream|GateValve|4-P-270016-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2801|downstream|BallValve|2-CHD-280075-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2801|downstream|BallValve|4-P-280049-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2801|downstream|GateValve|4-P-280053-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2802|downstream|BallValve|4-CHD-280062-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2802|downstream|BallValve|4-P-280070-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2802|downstream|GateValve|4-P-280061-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2802|downstream|GateValve|4-P-280063-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2802|downstream|GateValve|6-P-280060-B1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2803|downstream|ButterflyValve|6-P-280060-B1A-N": [
+  "ButterflyValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2803|downstream|GateValve|2-CHD-280081-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2803|downstream|GateValve|4-P-280067-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2803|downstream|GateValve|4-P-280069-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2901|downstream|BallValve|4-CHD-290013-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2901|downstream|BallValve|4-P-290012-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2901|downstream|NeedleValve|4-P-290007-B1A-N": [
+  "NeedleValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2902|downstream|BallValve|4-P-290014-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2902|downstream|GateValve|2-CHD-290048-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2902|downstream|GateValve|4-P-290019-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2903|downstream|BallValve|4-P-290022-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2903|downstream|GateValve|2-CHD-290049-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2903|downstream|GateValve|4-P-290027-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-2903|downstream|GateValve|4-P-290029-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-301|downstream|BallValve|4-P-30006-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-301|downstream|GateValve|4-CHD-30007-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-301|downstream|GateValve|4-P-30008-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-301|downstream|NeedleValve|4-P-30001-B1A-N": [
+  "NeedleValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-302|downstream|BallValve|4-P-30009-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-302|downstream|BallValve|4-P-30014-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-302|downstream|GateValve|2-CHD-30024-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3101|downstream|BallValve|4-P-310014-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3101|downstream|BallValve|4-P-310020-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3101|downstream|GateValve|2-CHD-310055-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3101|downstream|GateValve|4-P-310022-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3102|downstream|GateValve|2-CHD-310056-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3102|downstream|GateValve|4-P-310028-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3102|downstream|NeedleValve|4-P-310023-B1A-N": [
+  "NeedleValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3301|downstream|BallValve|2-CHD-330019-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3301|downstream|BallValve|4-P-330002-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3301|downstream|GateValve|4-P-330007-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3401|downstream|BallValve|2-CHD-340075-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3401|downstream|BallValve|4-P-340039-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3401|downstream|BallValve|4-P-340044-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3402|downstream|GateValve|2-CHD-340076-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3402|downstream|GateValve|4-P-340051-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3402|downstream|NeedleValve|4-P-340046-B1A-N": [
+  "NeedleValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3403|downstream|BallValve|4-P-340056-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3403|downstream|GateValve|2-CHD-340077-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3403|downstream|GateValve|4-P-340060-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3404|downstream|BallValve|4-P-340062-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3404|downstream|BallValve|4-P-340066-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3404|downstream|GateValve|2-CHD-340078-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3501|downstream|BallValve|4-P-350004-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3501|downstream|BallValve|4-P-350008-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3501|downstream|GateValve|4-CHD-350009-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3601|downstream|BallValve|3-P-360005-A1A-N": [
+  "BallValve",
+  "downstream",
+  "ReciprocatingPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3601|downstream|GateValve|3-CHD-360006-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ReciprocatingPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3601|downstream|NeedleValve|3-P-360013-A1A-N": [
+  "NeedleValve",
+  "downstream",
+  "ReciprocatingPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3602|downstream|GateValve|2-CHD-360033-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ReciprocatingPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3602|downstream|GateValve|3-P-360011-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ReciprocatingPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3701|downstream|BallValve|3-P-370001-B1A-N": [
+  "BallValve",
+  "downstream",
+  "ReciprocatingPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3701|downstream|BallValve|3-P-370006-A1A-N": [
+  "BallValve",
+  "downstream",
+  "ReciprocatingPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3701|downstream|GateValve|3-CHD-370007-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ReciprocatingPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3701|downstream|GateValve|3-P-370008-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ReciprocatingPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3702|downstream|BallValve|3-P-370009-B1A-N": [
+  "BallValve",
+  "downstream",
+  "ReciprocatingPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3702|downstream|GateValve|2-CHD-370033-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ReciprocatingPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3702|downstream|GateValve|3-P-370014-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ReciprocatingPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3801|downstream|GateValve|4-CHD-380008-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3801|downstream|GateValve|4-P-380007-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3801|downstream|NeedleValve|4-P-380002-B1A-N": [
+  "NeedleValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3802|downstream|BallValve|4-P-380009-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3802|downstream|BallValve|4-P-380014-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3802|downstream|GateValve|2-CHD-380028-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3802|downstream|GateValve|6-P-380005-B1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3901|downstream|BallValve|4-P-390006-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3901|downstream|BallValve|4-P-390015-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3901|downstream|GateValve|2-CHD-390024-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3902|downstream|BallValve|2-CHD-390025-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-3902|downstream|GateValve|4-P-390013-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4001|downstream|BallValve|4-P-400002-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4001|downstream|BallValve|4-P-400007-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4001|downstream|GateValve|4-CHD-400008-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4001|downstream|GateValve|4-P-400009-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4002|downstream|BallValve|2-CHD-400033-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4002|downstream|GateValve|4-P-400015-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4002|downstream|NeedleValve|4-P-400010-B1A-N": [
+  "NeedleValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4003|downstream|GateValve|2-CHD-400034-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4003|downstream|GateValve|4-P-400022-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4003|downstream|GateValve|4-P-400024-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4003|downstream|NeedleValve|4-P-400017-B1A-N": [
+  "NeedleValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-401|downstream|BallValve|4-P-40008-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-401|downstream|GateValve|2-CHD-40019-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-401|downstream|GateValve|4-P-40010-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-401|downstream|NeedleValve|4-P-40003-B1A-N": [
+  "NeedleValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4101|downstream|BallValve|2-CHD-410025-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4101|downstream|BallValve|4-P-410001-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4101|downstream|GateValve|4-P-410006-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4102|downstream|BallValve|4-P-410008-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4102|downstream|GateValve|2-CHD-410026-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4102|downstream|GateValve|4-P-410013-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4201|downstream|BallValve|4-P-420003-B1A-N": [
+  "BallValve",
+  "downstream",
+  "RotaryPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4201|downstream|BallValve|4-P-420008-A1A-N": [
+  "BallValve",
+  "downstream",
+  "RotaryPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4201|downstream|GateValve|4-CHD-420009-A1A-N": [
+  "GateValve",
+  "downstream",
+  "RotaryPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4202|downstream|BallValve|4-P-420010-B1A-N": [
+  "BallValve",
+  "downstream",
+  "RotaryPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4202|downstream|BallValve|4-P-420015-A1A-N": [
+  "BallValve",
+  "downstream",
+  "RotaryPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4202|downstream|GateValve|2-CHD-420026-A1A-N": [
+  "GateValve",
+  "downstream",
+  "RotaryPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4202|downstream|GateValve|4-P-420017-A1A-N": [
+  "GateValve",
+  "downstream",
+  "RotaryPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4301|downstream|GateValve|3-CHD-430007-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ReciprocatingPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4301|downstream|GateValve|3-P-430006-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ReciprocatingPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4301|downstream|GateValve|3-P-430008-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ReciprocatingPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4301|downstream|NeedleValve|3-P-430001-B1A-N": [
+  "NeedleValve",
+  "downstream",
+  "ReciprocatingPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4302|downstream|BallValve|2-CHD-430024-A1A-N": [
+  "BallValve",
+  "downstream",
+  "ReciprocatingPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4302|downstream|BallValve|3-P-430009-B1A-N": [
+  "BallValve",
+  "downstream",
+  "ReciprocatingPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4302|downstream|BallValve|3-P-430014-A1A-N": [
+  "BallValve",
+  "downstream",
+  "ReciprocatingPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4401|downstream|BallValve|4-P-440014-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4401|downstream|GateValve|4-CHD-440006-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4401|downstream|GateValve|4-P-440005-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4401|downstream|GateValve|4-P-440007-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4402|downstream|BallValve|2-CHD-440026-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4402|downstream|GateValve|4-P-440012-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4501|downstream|GateValve|2-CHD-450025-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4501|downstream|GateValve|4-P-450006-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4501|downstream|GateValve|4-P-450008-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4501|downstream|NeedleValve|4-P-450001-B1A-N": [
+  "NeedleValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4502|downstream|BallValve|2-CHD-450026-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4502|downstream|GateValve|4-P-450014-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4502|downstream|NeedleValve|4-P-450009-B1A-N": [
+  "NeedleValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4601|downstream|BallValve|4-P-460005-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4601|downstream|BallValve|4-P-460009-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4601|downstream|GateValve|4-CHD-460010-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4602|downstream|BallValve|4-P-460011-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4602|downstream|BallValve|4-P-460015-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4602|downstream|GateValve|2-CHD-460031-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4901|downstream|BallValve|2-CHD-490056-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4901|downstream|GateValve|4-P-490018-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4901|downstream|NeedleValve|4-P-490033-B1A-N": [
+  "NeedleValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4902|downstream|GateValve|2-CHD-490057-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4902|downstream|GateValve|4-P-490024-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4903|downstream|BallValve|2-CHD-490058-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4903|downstream|GateValve|4-P-490030-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-4903|downstream|GateValve|4-P-490032-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5001|downstream|BallValve|4-CHD-500008-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5001|downstream|BallValve|4-P-500002-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5001|downstream|GateValve|4-P-500007-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5002|downstream|BallValve|4-P-500009-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5002|downstream|GateValve|2-CHD-500024-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5002|downstream|GateValve|4-P-500014-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-501|downstream|BallValve|4-P-50017-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-501|downstream|GateValve|4-CHD-50010-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-501|downstream|GateValve|4-P-50009-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-502|downstream|BallValve|4-P-50015-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-502|downstream|GateValve|2-CHD-50029-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5101|downstream|BallValve|4-P-510018-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5101|downstream|GateValve|4-CHD-510010-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5101|downstream|GateValve|4-P-510009-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5101|downstream|GateValve|4-P-510011-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5102|downstream|BallValve|2-CHD-510031-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5102|downstream|GateValve|4-P-510016-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5201A|downstream|BallValve|3-CHD-520007-A1A-N": [
+  "BallValve",
+  "downstream",
+  "ReciprocatingPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5201A|downstream|GateValve|3-P-520006-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ReciprocatingPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5201A|downstream|NeedleValve|3-P-520001-B1A-N": [
+  "NeedleValve",
+  "downstream",
+  "ReciprocatingPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5201B|downstream|BallValve|3-P-520008-B1A-N": [
+  "BallValve",
+  "downstream",
+  "ReciprocatingPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5201B|downstream|GateValve|2-CHD-520023-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ReciprocatingPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5201B|downstream|GateValve|3-P-520013-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ReciprocatingPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5301A|downstream|BallValve|4-P-530022-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5301A|downstream|GateValve|2-CHD-530067-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5301A|downstream|GateValve|2-CHD-530070-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5301A|downstream|NeedleValve|4-P-530016-B1A-N": [
+  "NeedleValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5301B|downstream|BallValve|4-P-530024-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5301B|downstream|GateValve|2-CHD-530068-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5301B|downstream|GateValve|4-P-530029-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5301B|downstream|GateValve|6-P-530019-B1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5301C|downstream|BallValve|4-P-530031-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5301C|downstream|BallValve|4-P-530036-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5301C|downstream|GateValve|2-CHD-530069-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5401A|downstream|BallValve|2-CHD-540030-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5401A|downstream|GateValve|4-P-540006-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5401A|downstream|NeedleValve|4-P-540001-B1A-N": [
+  "NeedleValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5401B|downstream|BallValve|4-P-540008-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5401B|downstream|GateValve|2-CHD-540031-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5401B|downstream|GateValve|4-P-540013-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5401C|downstream|BallValve|4-P-540015-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5401C|downstream|BallValve|4-P-540020-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5401C|downstream|GateValve|2-CHD-540032-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5501|downstream|BallValve|4-P-550048-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5501|downstream|BallValve|4-P-550050-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5501|downstream|GateValve|2-CHD-550082-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5501|downstream|GlobeValve|4-P-550043-A1A-N": [
+  "GlobeValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5502A|downstream|BallValve|4-CHD-550061-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5502A|downstream|BallValve|4-P-550055-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5502A|downstream|GateValve|2-CHD-550086-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5502A|downstream|GateValve|4-P-550060-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5502A|downstream|GateValve|4-P-550062-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5502A|downstream|GlobeValve|4-P-550053-A1A-N": [
+  "GlobeValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5502B|downstream|BallValve|4-P-550063-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5502B|downstream|GateValve|2-CHD-550085-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5502B|downstream|GateValve|4-P-550068-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-5502B|downstream|GateValve|6-P-550058-B1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-801|downstream|BallValve|4-CHD-80007-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-801|downstream|BallValve|4-P-80014-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-801|downstream|GateValve|4-P-80006-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-802|downstream|GateValve|2-CHD-80027-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-802|downstream|GateValve|4-P-80012-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-901|downstream|BallValve|4-P-90045-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-901|downstream|GateValve|2-CHD-90087-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-901|downstream|GateValve|4-P-90050-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-901|downstream|GateValve|4-P-90052-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-902|downstream|BallValve|2-CHD-90076-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-902|downstream|BallValve|4-P-90057-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-902|downstream|GateValve|4-P-90061-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-902|downstream|GateValve|4-P-90063-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-903|downstream|BallValve|4-P-90064-B1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-903|downstream|BallValve|4-P-90068-A1A-N": [
+  "BallValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-903|downstream|GateValve|2-CHD-90077-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:P-903|downstream|GateValve|4-P-90070-A1A-N": [
+  "GateValve",
+  "downstream",
+  "CentrifugalPump",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSE-53031|downstream|ButterflyValve|8-FL-90200001-A1A-N": [
+  "ButterflyValve",
+  "downstream",
+  "RuptureDisc",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-11007|downstream|GateValve|4-FL-110010-A1A-N": [
+  "GateValve",
+  "downstream",
+  "SpringLoadedGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-11007|upstream|GateValve|4-FL-110010-A1A-N": [
+  "GateValve",
+  "upstream",
+  "SpringLoadedGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-12014|downstream|GateValve|4-FL-120017-A1A-N": [
+  "GateValve",
+  "downstream",
+  "SpringLoadedAngleGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-12014|upstream|ButterflyValve|4-FL-120017-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "SpringLoadedAngleGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-13030|downstream|GateValve|4-FL-130027-A1A-N": [
+  "GateValve",
+  "downstream",
+  "SpringLoadedGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-13030|upstream|ButterflyValve|4-FL-130027-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "SpringLoadedGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-17018|downstream|GateValve|4-FL-170022-A1A-N": [
+  "GateValve",
+  "downstream",
+  "SpringLoadedGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-17018|upstream|ButterflyValve|4-FL-170022-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "SpringLoadedGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-22007|downstream|ButterflyValve|4-FL-220010-A1A-N": [
+  "ButterflyValve",
+  "downstream",
+  "SpringLoadedAngleGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-22007|upstream|GateValve|4-FL-220010-A1A-N": [
+  "GateValve",
+  "upstream",
+  "SpringLoadedAngleGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-26016|downstream|GateValve|2-FL-260043-A1A-N": [
+  "GateValve",
+  "downstream",
+  "SpringLoadedGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-26016|upstream|GateValve|4-FL-260015-A1A-N": [
+  "GateValve",
+  "upstream",
+  "SpringLoadedGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-26037|downstream|ButterflyValve|2-FL-260045-A1A-N": [
+  "ButterflyValve",
+  "downstream",
+  "SpringLoadedGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-26037|upstream|GateValve|4-FL-260030-A1A-N": [
+  "GateValve",
+  "upstream",
+  "SpringLoadedGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-27016|downstream|ButterflyValve|4-FL-270022-A1A-N": [
+  "ButterflyValve",
+  "downstream",
+  "SpringLoadedAngleGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-27016|upstream|GateValve|4-FL-270022-A1A-N": [
+  "GateValve",
+  "upstream",
+  "SpringLoadedAngleGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-28030|downstream|ButterflyValve|4-FL-280021-A1A-N": [
+  "ButterflyValve",
+  "downstream",
+  "SpringLoadedGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-28030|upstream|GateValve|4-FL-280021-A1A-N": [
+  "GateValve",
+  "upstream",
+  "SpringLoadedGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-30019|downstream|ButterflyValve|4-FL-300013-A1A-N": [
+  "ButterflyValve",
+  "downstream",
+  "SpringLoadedGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-30019|upstream|GateValve|4-FL-300013-A1A-N": [
+  "GateValve",
+  "upstream",
+  "SpringLoadedGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-31026|downstream|GateValve|4-FL-310035-A1A-N": [
+  "GateValve",
+  "downstream",
+  "SpringLoadedGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-31026|upstream|ButterflyValve|4-FL-310035-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "SpringLoadedGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-34042|downstream|GateValve|2-FL-340072-A1A-N": [
+  "GateValve",
+  "downstream",
+  "SpringLoadedAngleGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-34042|upstream|GateValve|4-FL-340037-A1A-N": [
+  "GateValve",
+  "upstream",
+  "SpringLoadedAngleGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-36015|downstream|ButterflyValve|4-FL-360020-A1A-N": [
+  "ButterflyValve",
+  "downstream",
+  "SpringLoadedGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-36015|upstream|GateValve|4-FL-360020-A1A-N": [
+  "GateValve",
+  "upstream",
+  "SpringLoadedGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-38015|downstream|GateValve|4-FL-380021-A1A-N": [
+  "GateValve",
+  "downstream",
+  "SpringLoadedGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-38015|upstream|GateValve|4-FL-380021-A1A-N": [
+  "GateValve",
+  "upstream",
+  "SpringLoadedGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-39015|downstream|ButterflyValve|4-FL-390021-A1A-N": [
+  "ButterflyValve",
+  "downstream",
+  "SpringLoadedGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-39015|upstream|GateValve|4-FL-390021-A1A-N": [
+  "GateValve",
+  "upstream",
+  "SpringLoadedGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-4012|downstream|ButterflyValve|4-FL-40016-A1A-N": [
+  "ButterflyValve",
+  "downstream",
+  "SpringLoadedAngleGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-4012|upstream|GateValve|4-FL-40016-A1A-N": [
+  "GateValve",
+  "upstream",
+  "SpringLoadedAngleGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-41017|downstream|GateValve|4-FL-410021-A1A-N": [
+  "GateValve",
+  "downstream",
+  "SpringLoadedGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-41017|upstream|GateValve|4-FL-410021-A1A-N": [
+  "GateValve",
+  "upstream",
+  "SpringLoadedGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-44017|downstream|ButterflyValve|4-FL-440020-A1A-N": [
+  "ButterflyValve",
+  "downstream",
+  "SpringLoadedAngleGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-44017|upstream|GateValve|4-FL-440020-A1A-N": [
+  "GateValve",
+  "upstream",
+  "SpringLoadedAngleGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-45019|downstream|GateValve|4-FL-450022-A1A-N": [
+  "GateValve",
+  "downstream",
+  "SpringLoadedGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-45019|upstream|GateValve|4-FL-450022-A1A-N": [
+  "GateValve",
+  "upstream",
+  "SpringLoadedGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-49007|downstream|GateValve|4-FL-490009-A1A-N": [
+  "GateValve",
+  "downstream",
+  "SpringLoadedAngleGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-49007|upstream|GateValve|4-FL-490009-A1A-N": [
+  "GateValve",
+  "upstream",
+  "SpringLoadedAngleGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-49024|downstream|GateValve|4-FL-490039-A1A-N": [
+  "GateValve",
+  "downstream",
+  "SpringLoadedGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-49024|upstream|ButterflyValve|4-FL-490039-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "SpringLoadedGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-55033|downstream|ButterflyValve|4-FL-550026-A1A-N": [
+  "ButterflyValve",
+  "downstream",
+  "SpringLoadedGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PSV-55033|upstream|GateValve|4-FL-550026-A1A-N": [
+  "GateValve",
+  "upstream",
+  "SpringLoadedGlobeSafetyValve",
+  "FL"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-11008|upstream|GateValve|6-PG-110012-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-11029|upstream|ButterflyValve|4-FG-110043-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ButterflyValve",
+  "FG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-11029|upstream|GateValve|4-FG-90170002-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ButterflyValve",
+  "FG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-12015|upstream|GateValve|6-PG-120018-A1A-N": [
+  "GateValve",
+  "upstream",
+  "GlobeValve",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-18015|downstream|GateValve|6-PG-180021-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ButterflyValve",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-18015|upstream|ButterflyValve|6-PG-180021-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ButterflyValve",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-22008|downstream|GateValve|6-PG-220011-A1A-N": [
+  "GateValve",
+  "downstream",
+  "GlobeValve",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-22008|upstream|ButterflyValve|6-PG-220011-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "GlobeValve",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-22032|upstream|ButterflyValve|4-FG-90170003-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "GlobeValve",
+  "FG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-22032|upstream|GateValve|4-FG-220049-A1A-N": [
+  "GateValve",
+  "upstream",
+  "GlobeValve",
+  "FG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-23023|downstream|GateValve|6-PG-230031-A1A-N": [
+  "GateValve",
+  "downstream",
+  "BallValve",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-23023|upstream|GateValve|6-PG-230031-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-27017|downstream|ButterflyValve|6-PG-270023-A1A-N": [
+  "ButterflyValve",
+  "downstream",
+  "BallValve",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-28031|upstream|GateValve|6-PG-280027-A1A-N": [
+  "GateValve",
+  "upstream",
+  "GlobeValve",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-3016|downstream|GateValve|6-PG-30022-A1A-N": [
+  "GateValve",
+  "downstream",
+  "BallValve",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-31031|upstream|ButterflyValve|4-FG-310046-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "GlobeValve",
+  "FG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-31031|upstream|GateValve|4-FG-310046-A1A-N": [
+  "GateValve",
+  "upstream",
+  "GlobeValve",
+  "FG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-33013|downstream|GateValve|6-PG-330016-A1A-N": [
+  "GateValve",
+  "downstream",
+  "BallValve",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-33013|upstream|GateValve|6-PG-330016-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-38016|downstream|GateValve|6-PG-380024-A1A-N": [
+  "GateValve",
+  "downstream",
+  "GlobeValve",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-40019|downstream|GateValve|6-PG-400031-A1A-N": [
+  "GateValve",
+  "downstream",
+  "GlobeValve",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-40019|upstream|GateValve|6-PG-400031-A1A-N": [
+  "GateValve",
+  "upstream",
+  "GlobeValve",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-4013|downstream|GateValve|6-PG-40017-A1A-N": [
+  "GateValve",
+  "downstream",
+  "BallValve",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-41019|downstream|ButterflyValve|6-PG-410023-A1A-N": [
+  "ButterflyValve",
+  "downstream",
+  "GlobeValve",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-44018|upstream|GateValve|6-PG-440022-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-49008|downstream|ButterflyValve|6-PG-490011-A1A-N": [
+  "ButterflyValve",
+  "downstream",
+  "BallValve",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-49008|downstream|GateValve|6-PG-490011-A1A-N": [
+  "GateValve",
+  "downstream",
+  "BallValve",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-49008|upstream|ButterflyValve|6-PG-490011-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "BallValve",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-49029|upstream|GateValve|4-FG-490048-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "FG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-50017|downstream|ButterflyValve|6-PG-500022-A1A-N": [
+  "ButterflyValve",
+  "downstream",
+  "GlobeValve",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-50017|downstream|GateValve|6-PG-500022-A1A-N": [
+  "GateValve",
+  "downstream",
+  "GlobeValve",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-50017|upstream|ButterflyValve|6-PG-500022-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "GlobeValve",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-53009|downstream|ButterflyValve|6-PG-530013-A1A-N": [
+  "ButterflyValve",
+  "downstream",
+  "GlobeValve",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-53009|upstream|GateValve|6-PG-530013-A1A-N": [
+  "GateValve",
+  "upstream",
+  "GlobeValve",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-53035|upstream|ButterflyValve|4-FG-530054-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "BallValve",
+  "FG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-53035|upstream|GateValve|4-FG-90270002-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "FG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-55040|upstream|GateValve|6-PG-550039-A1A-N": [
+  "GateValve",
+  "upstream",
+  "GlobeValve",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-8016|downstream|GateValve|6-PG-80023-A1A-N": [
+  "GateValve",
+  "downstream",
+  "GlobeValve",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-8016|upstream|GateValve|6-PG-80023-A1A-N": [
+  "GateValve",
+  "upstream",
+  "GlobeValve",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:PV-9039|upstream|GateValve|6-PG-90040-A1A-N": [
+  "GateValve",
+  "upstream",
+  "GlobeValve",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:R-1101|downstream|GateValve|4-CHD-110031-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:R-1101|downstream|GateValve|4-P-110032-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:R-2201|downstream|BallValve|4-P-220035-A1A-N": [
+  "BallValve",
+  "downstream",
+  "PressureVessel",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:R-2201|downstream|GateValve|2-CHD-220056-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:R-2201|downstream|GateValve|4-CHD-220038-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:R-2201|downstream|GateValve|4-P-220039-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:R-3101|downstream|BallValve|4-P-310033-A1A-N": [
+  "BallValve",
+  "downstream",
+  "PressureVessel",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:R-3101|downstream|GateValve|4-CHD-310032-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:R-3101|downstream|GateValve|4-P-310036-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:R-4901|downstream|BallValve|4-P-490037-A1A-N": [
+  "BallValve",
+  "downstream",
+  "PressureVessel",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:R-4901|downstream|GateValve|4-CHD-490036-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:R-5301|downstream|BallValve|2-CHD-530064-A1A-N": [
+  "BallValve",
+  "downstream",
+  "PressureVessel",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:R-5301|downstream|GateValve|2-CHD-530063-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:R-5301|downstream|GateValve|4-P-530041-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:SB-11001|upstream|ButterflyValve|6-P-110006-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "PipeFlangeSpade",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:SB-11001|upstream|GlobeValve|4-P-110005-A1A-N": [
+  "GlobeValve",
+  "upstream",
+  "PipeFlangeSpade",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:SB-22001|upstream|GateValve|6-P-220006-A1A-N": [
+  "GateValve",
+  "upstream",
+  "PipeFlangeSpacer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:SB-22001|upstream|GlobeValve|4-P-220005-A1A-N": [
+  "GlobeValve",
+  "upstream",
+  "PipeFlangeSpacer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:SB-22022|downstream|NeedleValve|4-P-220033-A1A-N": [
+  "NeedleValve",
+  "downstream",
+  "PipeFlangeSpacer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:SB-53001|upstream|GateValve|6-P-530007-A1A-N": [
+  "GateValve",
+  "upstream",
+  "PipeFlangeSpade",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:SB-53001|upstream|GlobeValve|4-P-530005-A1A-N": [
+  "GlobeValve",
+  "upstream",
+  "PipeFlangeSpade",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:SB-53025|downstream|NeedleValve|4-P-530039-A1A-N": [
+  "NeedleValve",
+  "downstream",
+  "PipeFlangeSpacer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:SG-55057|upstream|ButterflyValve|6-P-550052-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "IlluminatedSightGlass",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:SG-55057|upstream|GlobeValve|4-P-550051-A1A-N": [
+  "GlobeValve",
+  "upstream",
+  "IlluminatedSightGlass",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:SG-9056|upstream|GateValve|6-P-90054-A1A-N": [
+  "GateValve",
+  "upstream",
+  "SightGlass",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:SG-9056|upstream|GlobeValve|4-P-90053-A1A-N": [
+  "GlobeValve",
+  "upstream",
+  "SightGlass",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:SL-28040|upstream|GateValve|6-PG-280033-A1A-N": [
+  "GateValve",
+  "upstream",
+  "Silencer",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:SL-28040|upstream|GateValve|6-PG-280034-A1A-N": [
+  "GateValve",
+  "upstream",
+  "Silencer",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:ST-21003|downstream|GateValve|6-CD-210003-A1A-H": [
+  "GateValve",
+  "downstream",
+  "SteamTrap",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:ST-21003|upstream|GateValve|6-CD-210003-A1A-H": [
+  "GateValve",
+  "upstream",
+  "SteamTrap",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:ST-21015|downstream|GateValve|2-CD-210030-A1A-H": [
+  "GateValve",
+  "downstream",
+  "SteamTrap",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:ST-26035|downstream|GateValve|6-CD-260027-A1A-H": [
+  "GateValve",
+  "downstream",
+  "SteamTrap",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:ST-26035|upstream|GateValve|6-CD-260027-A1A-H": [
+  "GateValve",
+  "upstream",
+  "SteamTrap",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:ST-30010|downstream|ButterflyValve|4-CD-300051-A1A-H": [
+  "ButterflyValve",
+  "downstream",
+  "SteamTrap",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:ST-30029|downstream|GateValve|6-CD-300018-A1A-H": [
+  "GateValve",
+  "downstream",
+  "SteamTrap",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:ST-30029|upstream|GateValve|6-CD-300018-A1A-H": [
+  "GateValve",
+  "upstream",
+  "SteamTrap",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:ST-34026|downstream|ButterflyValve|6-CD-340017-A1A-H": [
+  "ButterflyValve",
+  "downstream",
+  "SteamTrap",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:ST-34026|upstream|GateValve|6-CD-340017-A1A-H": [
+  "GateValve",
+  "upstream",
+  "SteamTrap",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:ST-48011|downstream|GateValve|4-CD-90160010-A1A-H": [
+  "GateValve",
+  "downstream",
+  "SteamTrap",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:ST-55003|downstream|ButterflyValve|6-CD-550004-A1A-H": [
+  "ButterflyValve",
+  "downstream",
+  "SteamTrap",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:ST-55003|upstream|GateValve|6-CD-550004-A1A-H": [
+  "GateValve",
+  "upstream",
+  "SteamTrap",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:ST-55020|downstream|ButterflyValve|6-CD-550016-A1A-H": [
+  "ButterflyValve",
+  "downstream",
+  "SteamTrap",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:ST-55020|upstream|GateValve|6-CD-550016-A1A-H": [
+  "GateValve",
+  "upstream",
+  "SteamTrap",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:ST-6011|downstream|GateValve|4-CD-90160002-A1A-H": [
+  "GateValve",
+  "downstream",
+  "SteamTrap",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:ST-9003|downstream|GateValve|6-CD-90004-A1A-H": [
+  "GateValve",
+  "downstream",
+  "SteamTrap",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:ST-9003|upstream|ButterflyValve|6-CD-90004-A1A-H": [
+  "ButterflyValve",
+  "upstream",
+  "SteamTrap",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:ST-9020|downstream|ButterflyValve|2-CD-90083-A1A-H": [
+  "ButterflyValve",
+  "downstream",
+  "SteamTrap",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-10010|upstream|ButterflyValve|6-P-100006-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "Strainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-10010|upstream|GateValve|6-P-100028-A1A-N": [
+  "GateValve",
+  "upstream",
+  "Strainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-10010|upstream|GateValve|6-P-100029-A1A-N": [
+  "GateValve",
+  "upstream",
+  "Strainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-10010|upstream|GateValve|6-P-100030-A1A-N": [
+  "GateValve",
+  "upstream",
+  "Strainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-10016|upstream|GateValve|6-P-100014-A1A-N": [
+  "GateValve",
+  "upstream",
+  "Strainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-1007|upstream|ButterflyValve|6-P-10005-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-1007|upstream|PlugValve|6-P-10023-A1A-N": [
+  "PlugValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-1012|upstream|GateValve|6-P-10013-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-11010|upstream|GateValve|6-P-110015-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-11015|upstream|GateValve|6-P-110023-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-12004|upstream|ButterflyValve|6-P-120001-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-12007|upstream|GateValve|6-P-120006-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-13034|upstream|GateValve|6-P-130030-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-13037|upstream|GateValve|6-P-130036-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-13041|upstream|GateValve|6-P-130042-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-13047|upstream|GateValve|6-P-130053-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-13051|upstream|ButterflyValve|6-P-130061-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-14009|upstream|GateValve|6-P-140005-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-14009|upstream|GateValve|6-P-140028-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-14009|upstream|GateValve|6-P-140029-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-14013|upstream|GateValve|6-P-140011-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-14017|upstream|GateValve|6-P-140017-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-15004|upstream|GateValve|4-P-150001-A1A-N": [
+  "GateValve",
+  "upstream",
+  "Strainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-15008|upstream|ButterflyValve|4-P-150008-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "Strainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-16003|upstream|GateValve|4-P-160002-A1A-N": [
+  "GateValve",
+  "upstream",
+  "Strainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-16007|upstream|ButterflyValve|4-P-160009-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "Strainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-17004|upstream|GateValve|6-P-170004-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-17009|upstream|ButterflyValve|6-P-170011-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-18002|upstream|ButterflyValve|6-P-180002-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-18005|upstream|ButterflyValve|6-P-180008-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-19011|upstream|GateValve|6-P-190006-A1A-N": [
+  "GateValve",
+  "upstream",
+  "Strainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-19011|upstream|GateValve|6-P-190027-A1A-N": [
+  "GateValve",
+  "upstream",
+  "Strainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-19011|upstream|GateValve|6-P-190028-A1A-N": [
+  "GateValve",
+  "upstream",
+  "Strainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-19011|upstream|GateValve|6-P-190029-A1A-N": [
+  "GateValve",
+  "upstream",
+  "Strainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-19016|upstream|ButterflyValve|6-P-190013-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "Strainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-20003|upstream|GateValve|4-P-200002-A1A-N": [
+  "GateValve",
+  "upstream",
+  "Strainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-20008|upstream|ButterflyValve|4-P-200009-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "Strainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-22012|upstream|ButterflyValve|6-P-220014-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-22016|upstream|GateValve|6-P-220021-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-22019|upstream|GateValve|6-P-220027-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-23004|upstream|GateValve|6-P-230003-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-23009|upstream|GateValve|6-P-230010-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-23013|upstream|GateValve|6-P-230017-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-24010|upstream|GateValve|6-P-240005-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-24010|upstream|PlugValve|6-P-240031-A1A-N": [
+  "PlugValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-24010|upstream|PlugValve|6-P-240032-A1A-N": [
+  "PlugValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-24013|upstream|ButterflyValve|6-P-240011-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-24017|upstream|GateValve|6-P-240017-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-27002|upstream|GateValve|6-P-270003-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-27007|upstream|GateValve|6-P-270010-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-28052|upstream|ButterflyValve|6-P-280050-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-28059|upstream|GateValve|6-P-280058-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-28062|upstream|ButterflyValve|6-P-280064-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-29012|upstream|GateValve|6-P-290008-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-29012|upstream|GateValve|6-P-290038-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-29012|upstream|GateValve|6-P-290039-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-29012|upstream|GateValve|6-P-290040-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-29017|upstream|ButterflyValve|6-P-290015-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-29022|upstream|GateValve|6-P-290023-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-3002|upstream|ButterflyValve|6-P-30002-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-3007|upstream|GateValve|6-P-30010-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-31014|upstream|ButterflyValve|6-P-310015-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-31018|upstream|GateValve|6-P-310024-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-32009|upstream|ButterflyValve|6-PG-320013-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-33004|upstream|GateValve|6-P-330003-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-34045|upstream|ButterflyValve|6-P-340040-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-34050|upstream|ButterflyValve|6-P-340047-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-34059|upstream|GateValve|6-P-340057-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-34062|upstream|ButterflyValve|6-P-340063-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-35009|upstream|GateValve|6-P-350005-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-35009|upstream|PlugValve|6-P-350017-A1A-N": [
+  "PlugValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-35009|upstream|PlugValve|6-P-350018-A1A-N": [
+  "PlugValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-36004|upstream|GateValve|4-P-360001-A1A-N": [
+  "GateValve",
+  "upstream",
+  "Strainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-36007|upstream|GateValve|4-P-360007-A1A-N": [
+  "GateValve",
+  "upstream",
+  "Strainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-37004|upstream|GateValve|4-P-370002-A1A-N": [
+  "GateValve",
+  "upstream",
+  "Strainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-37008|upstream|ButterflyValve|4-P-370010-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "Strainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-38002|upstream|ButterflyValve|6-P-380003-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-38006|upstream|GateValve|6-P-380010-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-39002|upstream|ButterflyValve|6-P-390002-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-39006|upstream|ButterflyValve|6-P-390009-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-40002|upstream|ButterflyValve|6-P-400003-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-40006|upstream|GateValve|6-P-400011-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-40010|upstream|GateValve|6-P-400018-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-4004|upstream|GateValve|6-P-40004-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-41002|upstream|GateValve|6-P-410002-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-41007|upstream|GateValve|6-P-410009-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-42007|upstream|GateValve|6-P-420004-A1A-N": [
+  "GateValve",
+  "upstream",
+  "Strainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-42007|upstream|GateValve|6-P-420022-A1A-N": [
+  "GateValve",
+  "upstream",
+  "Strainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-42011|upstream|ButterflyValve|6-P-420011-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "Strainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-43003|upstream|GateValve|4-P-430002-A1A-N": [
+  "GateValve",
+  "upstream",
+  "Strainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-43008|upstream|ButterflyValve|4-P-430010-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "Strainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-44004|upstream|GateValve|6-P-440001-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-44008|upstream|GateValve|6-P-440008-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-45004|upstream|ButterflyValve|6-P-450002-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-45009|upstream|GateValve|6-P-450010-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-46011|upstream|ButterflyValve|6-P-460006-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-46011|upstream|PlugValve|6-P-460025-A1A-N": [
+  "PlugValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-46011|upstream|PlugValve|6-P-460026-A1A-N": [
+  "PlugValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-46011|upstream|PlugValve|6-P-460027-A1A-N": [
+  "PlugValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-46015|upstream|ButterflyValve|6-P-460012-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-49010|upstream|GateValve|6-P-490013-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-49013|upstream|GateValve|6-P-490020-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-49016|upstream|GateValve|6-P-490026-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-50004|upstream|ButterflyValve|6-P-500003-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-50008|upstream|GateValve|6-P-500010-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-5010|upstream|GateValve|6-P-50005-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-5010|upstream|GateValve|6-P-50024-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-5010|upstream|GateValve|6-P-50025-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-5014|upstream|GateValve|6-P-50011-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-51010|upstream|ButterflyValve|6-P-510005-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-51010|upstream|GateValve|6-P-510025-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-51010|upstream|GateValve|6-P-510026-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-51014|upstream|GateValve|6-P-510012-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-52004|upstream|GateValve|4-P-520002-A1A-N": [
+  "GateValve",
+  "upstream",
+  "Strainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-52008|upstream|ButterflyValve|4-P-520009-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "Strainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-53011|upstream|ButterflyValve|6-P-530017-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-53015|upstream|GateValve|6-P-530025-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-53020|upstream|ButterflyValve|6-P-530032-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-54004|upstream|ButterflyValve|6-P-540002-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-54008|upstream|ButterflyValve|6-P-540009-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-54013|upstream|GateValve|6-P-540016-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-55051|upstream|ButterflyValve|6-P-550044-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-55059|upstream|ButterflyValve|6-P-550056-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-55064|upstream|GateValve|6-P-550064-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-8002|upstream|ButterflyValve|6-P-80002-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-8006|upstream|GateValve|6-P-80008-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-9040|upstream|ButterflyValve|6-PG-90040-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-9040|upstream|GateValve|6-PG-90040-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-9051|upstream|ButterflyValve|6-P-90046-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-9059|upstream|ButterflyValve|6-P-90058-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:STR-9063|upstream|GateValve|6-P-90065-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ConicalStrainer",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:T-1301|downstream|BallValve|4-PG-130017-A1A-N": [
+  "BallValve",
+  "downstream",
+  "ProcessColumn",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:T-1301|downstream|GateValve|4-CHD-130016-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ProcessColumn",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:T-1301|downstream|NeedleValve|4-PG-130021-A1A-N": [
+  "NeedleValve",
+  "downstream",
+  "ProcessColumn",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:T-1301|upstream|GateValve|6-P-130049-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ProcessColumn",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:T-1301|upstream|GlobeValve|4-P-130047-A1A-N": [
+  "GlobeValve",
+  "upstream",
+  "ProcessColumn",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:T-2801|downstream|GateValve|4-CHD-280009-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ProcessColumn",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:T-2801|downstream|GateValve|4-PG-280010-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ProcessColumn",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:T-2801|downstream|GateValve|4-PG-280013-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ProcessColumn",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:T-2801|downstream|NeedleValve|4-PG-280015-A1A-N": [
+  "NeedleValve",
+  "downstream",
+  "ProcessColumn",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:T-2801|upstream|ButterflyValve|6-P-270005-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ProcessColumn",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:T-2801|upstream|GlobeValve|4-P-270001-A1A-N": [
+  "GlobeValve",
+  "upstream",
+  "ProcessColumn",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:T-3401|downstream|BallValve|4-PG-340027-A1A-N": [
+  "BallValve",
+  "downstream",
+  "ProcessColumn",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:T-3401|downstream|GateValve|4-CHD-340026-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ProcessColumn",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:T-3401|downstream|NeedleValve|4-PG-340031-A1A-N": [
+  "NeedleValve",
+  "downstream",
+  "ProcessColumn",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:T-3401|upstream|GateValve|6-P-340054-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ProcessColumn",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:T-3401|upstream|GlobeValve|4-P-340053-A1A-N": [
+  "GlobeValve",
+  "upstream",
+  "ProcessColumn",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:T-5501|downstream|BallValve|4-PG-550024-A1A-N": [
+  "BallValve",
+  "downstream",
+  "ProcessColumn",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:T-5501|downstream|GateValve|2-CHD-550074-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ProcessColumn",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:T-5501|downstream|GateValve|4-CHD-550027-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ProcessColumn",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:T-5501|downstream|NeedleValve|4-PG-550030-A1A-N": [
+  "NeedleValve",
+  "downstream",
+  "ProcessColumn",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:T-901|downstream|BallValve|4-CHD-90030-A1A-N": [
+  "BallValve",
+  "downstream",
+  "ProcessColumn",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:T-901|downstream|GateValve|2-CHD-90075-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ProcessColumn",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:T-901|downstream|GateValve|4-PG-90027-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ProcessColumn",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:T-901|downstream|GateValve|4-PG-90031-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ProcessColumn",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:T-901|downstream|NeedleValve|4-PG-90033-A1A-N": [
+  "NeedleValve",
+  "downstream",
+  "ProcessColumn",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-1001|downstream|AnglePlugValve|4-CHD-100021-A1A-N": [
+  "AnglePlugValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-1002|downstream|AnglePlugValve|2-CHD-100036-A1A-N": [
+  "AnglePlugValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-1003|downstream|AnglePlugValve|2-CHD-100039-A1A-N": [
+  "AnglePlugValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-1004|downstream|AnglePlugValve|2-CHD-100040-A1A-N": [
+  "AnglePlugValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-101|downstream|GateValve|2-CHD-10028-A1A-N": [
+  "GateValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-102|downstream|GateValve|2-CHD-10029-A1A-N": [
+  "GateValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-1401|downstream|AngleBallValve|4-CHD-140023-A1A-N": [
+  "AngleBallValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-1402|downstream|GateValve|2-CHD-140031-A1A-N": [
+  "GateValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-1403|downstream|AngleBallValve|2-CHD-140035-A1A-N": [
+  "AngleBallValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-1501|downstream|GateValve|2-CHD-150024-A1A-N": [
+  "GateValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-1501|upstream|ButterflyValve|4-P-150018-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "Tank",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-1501|upstream|GateValve|4-P-150018-A1A-N": [
+  "GateValve",
+  "upstream",
+  "Tank",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-1601|downstream|AngleBallValve|2-CHD-160031-A1A-N": [
+  "AngleBallValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-1601|upstream|ButterflyValve|4-P-160025-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "Tank",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-1601|upstream|GateValve|4-P-160025-A1A-N": [
+  "GateValve",
+  "upstream",
+  "Tank",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-1901|downstream|AnglePlugValve|4-CHD-190020-A1A-N": [
+  "AnglePlugValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-1902|downstream|AnglePlugValve|2-CHD-190035-A1A-N": [
+  "AnglePlugValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-1903|downstream|AnglePlugValve|2-CHD-190038-A1A-N": [
+  "AnglePlugValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-1904|downstream|AnglePlugValve|2-CHD-190039-A1A-N": [
+  "AnglePlugValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-2001|downstream|GateValve|3-CHD-200021-A1A-N": [
+  "GateValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-2001|upstream|ButterflyValve|4-P-200019-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "Tank",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-2001|upstream|GateValve|4-P-200019-A1A-N": [
+  "GateValve",
+  "upstream",
+  "Tank",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-2401|downstream|GateValve|4-CHD-240026-A1A-N": [
+  "GateValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-2402|downstream|GateValve|2-CHD-240034-A1A-N": [
+  "GateValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-2403|downstream|GateValve|2-CHD-240038-A1A-N": [
+  "GateValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-2901|downstream|AngleBallValve|4-CHD-290031-A1A-N": [
+  "AngleBallValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-2902|downstream|GateValve|2-CHD-290046-A1A-N": [
+  "GateValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-2903|downstream|AngleBallValve|2-CHD-290051-A1A-N": [
+  "AngleBallValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-2904|downstream|GateValve|2-CHD-290052-A1A-N": [
+  "GateValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-3501|downstream|GateValve|2-CHD-350020-A1A-N": [
+  "GateValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-3502|downstream|AngleBallValve|2-CHD-350021-A1A-N": [
+  "AngleBallValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-3503|downstream|GateValve|2-CHD-350022-A1A-N": [
+  "GateValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-3601|downstream|GateValve|3-CHD-360027-A1A-N": [
+  "GateValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-3601|upstream|GateValve|4-P-360025-A1A-N": [
+  "GateValve",
+  "upstream",
+  "Tank",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-3701|downstream|AngleBallValve|2-CHD-370034-A1A-N": [
+  "AngleBallValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-3701|upstream|GateValve|4-P-370028-A1A-N": [
+  "GateValve",
+  "upstream",
+  "Tank",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-4201|downstream|AnglePlugValve|2-CHD-420027-A1A-N": [
+  "AnglePlugValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-4202|downstream|AnglePlugValve|2-CHD-420028-A1A-N": [
+  "AnglePlugValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-4301|downstream|GateValve|2-CHD-430025-A1A-N": [
+  "GateValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-4301|upstream|ButterflyValve|4-P-430019-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "Tank",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-4301|upstream|GateValve|4-P-430019-A1A-N": [
+  "GateValve",
+  "upstream",
+  "Tank",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-4601|downstream|GateValve|4-CHD-460018-A1A-N": [
+  "GateValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-4602|downstream|AngleBallValve|2-CHD-460029-A1A-N": [
+  "AngleBallValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-4603|downstream|GateValve|2-CHD-460032-A1A-N": [
+  "GateValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-4604|downstream|AngleBallValve|2-CHD-460033-A1A-N": [
+  "AngleBallValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-501|downstream|AngleBallValve|4-CHD-50019-A1A-N": [
+  "AngleBallValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-502|downstream|GateValve|2-CHD-50027-A1A-N": [
+  "GateValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-503|downstream|GateValve|2-CHD-50030-A1A-N": [
+  "GateValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-5101|downstream|GateValve|4-CHD-510020-A1A-N": [
+  "GateValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-5102|downstream|GateValve|2-CHD-510028-A1A-N": [
+  "GateValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-5103|downstream|GateValve|2-CHD-510029-A1A-N": [
+  "GateValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-5201|downstream|AngleBallValve|2-CHD-520024-A1A-N": [
+  "AngleBallValve",
+  "downstream",
+  "Tank",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-5201|upstream|ButterflyValve|4-P-520018-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "Tank",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TK-5201|upstream|GateValve|4-P-520018-A1A-N": [
+  "GateValve",
+  "upstream",
+  "Tank",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TV-11004|upstream|GateValve|6-P-110006-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ButterflyValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TV-21013|downstream|BallValve|4-LPS-210009-A1A-H": [
+  "BallValve",
+  "downstream",
+  "BallValve",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TV-21013|downstream|GateValve|6-LPS-210008-A1A-H": [
+  "GateValve",
+  "downstream",
+  "BallValve",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TV-21013|upstream|ButterflyValve|6-LPS-210008-A1A-H": [
+  "ButterflyValve",
+  "upstream",
+  "BallValve",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TV-22004|upstream|ButterflyValve|6-P-220006-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "GlobeValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TV-22033|upstream|GateValve|4-FG-220049-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ButterflyValve",
+  "FG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TV-26033|downstream|NeedleValve|4-LPS-260026-A1A-H": [
+  "NeedleValve",
+  "downstream",
+  "GlobeValve",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TV-28001|downstream|GateValve|6-LPS-280002-A1A-H": [
+  "GateValve",
+  "downstream",
+  "GlobeValve",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TV-28001|downstream|NeedleValve|4-LPS-280003-A1A-H": [
+  "NeedleValve",
+  "downstream",
+  "GlobeValve",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TV-28001|upstream|ButterflyValve|6-LPS-280002-A1A-H": [
+  "ButterflyValve",
+  "upstream",
+  "GlobeValve",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TV-28001|upstream|GateValve|6-LPS-280002-A1A-H": [
+  "GateValve",
+  "upstream",
+  "GlobeValve",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TV-30027|downstream|BallValve|4-LPS-300017-A1A-H": [
+  "BallValve",
+  "downstream",
+  "GlobeValve",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TV-30027|downstream|GateValve|6-LPS-300016-A1A-H": [
+  "GateValve",
+  "downstream",
+  "GlobeValve",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TV-30027|upstream|ButterflyValve|6-LPS-300016-A1A-H": [
+  "ButterflyValve",
+  "upstream",
+  "GlobeValve",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TV-31001|upstream|GateValve|6-PG-310043-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TV-31032|downstream|GateValve|4-FG-310046-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ButterflyValve",
+  "FG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TV-31032|upstream|ButterflyValve|4-FG-310046-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "ButterflyValve",
+  "FG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TV-31032|upstream|GateValve|4-FG-310046-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ButterflyValve",
+  "FG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TV-34001|downstream|NeedleValve|4-LPS-340004-A1A-H": [
+  "NeedleValve",
+  "downstream",
+  "GlobeValve",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TV-34001|upstream|GateValve|6-LPS-340003-A1A-H": [
+  "GateValve",
+  "upstream",
+  "GlobeValve",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TV-34024|downstream|BallValve|4-LPS-340016-A1A-H": [
+  "BallValve",
+  "downstream",
+  "BallValve",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TV-34024|upstream|ButterflyValve|4-LPS-340081-A1A-H": [
+  "ButterflyValve",
+  "upstream",
+  "BallValve",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TV-48009|downstream|BallValve|4-LPS-480006-A1A-H": [
+  "BallValve",
+  "downstream",
+  "GlobeValve",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TV-53004|upstream|ButterflyValve|6-P-530007-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TV-53036|upstream|GateValve|4-FG-530054-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ButterflyValve",
+  "FG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TV-55001|downstream|BallValve|4-LPS-550003-A1A-H": [
+  "BallValve",
+  "downstream",
+  "BallValve",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TV-55001|upstream|ButterflyValve|6-LPS-550002-A1A-H": [
+  "ButterflyValve",
+  "upstream",
+  "BallValve",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TV-55018|downstream|BallValve|4-LPS-550015-A1A-H": [
+  "BallValve",
+  "downstream",
+  "GlobeValve",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TV-9001|downstream|GateValve|6-LPS-90002-A1A-H": [
+  "GateValve",
+  "downstream",
+  "BallValve",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TV-9001|downstream|NeedleValve|4-LPS-90003-A1A-H": [
+  "NeedleValve",
+  "downstream",
+  "BallValve",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TV-9001|upstream|ButterflyValve|6-LPS-90002-A1A-H": [
+  "ButterflyValve",
+  "upstream",
+  "BallValve",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TV-9018|downstream|BallValve|4-LPS-90017-A1A-H": [
+  "BallValve",
+  "downstream",
+  "ButterflyValve",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TV-9018|downstream|GateValve|6-LPS-90016-A1A-H": [
+  "GateValve",
+  "downstream",
+  "ButterflyValve",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:TV-9018|upstream|ButterflyValve|6-LPS-90016-A1A-H": [
+  "ButterflyValve",
+  "upstream",
+  "ButterflyValve",
+  "LPS"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-1101|downstream|BallValve|2-CHD-110054-A1A-N": [
+  "BallValve",
+  "downstream",
+  "GravitationalSeparator",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-1101|downstream|GateValve|4-CHD-110007-A1A-N": [
+  "GateValve",
+  "downstream",
+  "GravitationalSeparator",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-1101|downstream|GateValve|4-PG-110008-A1A-N": [
+  "GateValve",
+  "downstream",
+  "GravitationalSeparator",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-1201|downstream|GateValve|4-CHD-120014-A1A-N": [
+  "GateValve",
+  "downstream",
+  "GravitationalSeparator",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-1201|downstream|GateValve|4-PG-120015-A1A-N": [
+  "GateValve",
+  "downstream",
+  "GravitationalSeparator",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-1301|upstream|ButterflyValve|6-CD-130004-A1A-H": [
+  "ButterflyValve",
+  "upstream",
+  "PressureVessel",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-1601|downstream|BallValve|4-PG-160018-A1A-N": [
+  "BallValve",
+  "downstream",
+  "PressureVessel",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-1601|downstream|GateValve|2-CHD-160032-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-1701|downstream|GateValve|4-CHD-170019-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-1701|downstream|GateValve|4-PG-170020-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-1801|downstream|BallValve|4-PG-180018-A1A-N": [
+  "BallValve",
+  "downstream",
+  "PressureVessel",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-1801|downstream|GateValve|4-CHD-180017-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-1801|upstream|GateValve|4-P-180005-B1A-N": [
+  "GateValve",
+  "upstream",
+  "PressureVessel",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-1801|upstream|GateValve|4-P-180011-B1A-N": [
+  "GateValve",
+  "upstream",
+  "PressureVessel",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-2201|downstream|BallValve|4-CHD-220007-A1A-N": [
+  "BallValve",
+  "downstream",
+  "GravitationalSeparator",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-2201|downstream|GateValve|4-PG-220008-A1A-N": [
+  "GateValve",
+  "downstream",
+  "GravitationalSeparator",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-2301|downstream|BallValve|2-CHD-230033-A1A-N": [
+  "BallValve",
+  "downstream",
+  "GravitationalSeparator",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-2301|downstream|GateValve|4-CHD-230026-A1A-N": [
+  "GateValve",
+  "downstream",
+  "GravitationalSeparator",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-2301|downstream|GateValve|4-PG-230027-A1A-N": [
+  "GateValve",
+  "downstream",
+  "GravitationalSeparator",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-2301|upstream|GateValve|4-P-230006-B1A-N": [
+  "GateValve",
+  "upstream",
+  "GravitationalSeparator",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-2301|upstream|GateValve|4-P-230013-B1A-N": [
+  "GateValve",
+  "upstream",
+  "GravitationalSeparator",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-2301|upstream|GateValve|4-P-230020-B1A-N": [
+  "GateValve",
+  "upstream",
+  "GravitationalSeparator",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-2601|upstream|GateValve|6-CD-260010-A1A-H": [
+  "GateValve",
+  "upstream",
+  "PressureVessel",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-2701|downstream|BallValve|4-PG-270020-A1A-N": [
+  "BallValve",
+  "downstream",
+  "PressureVessel",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-2701|downstream|GateValve|4-CHD-270019-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-2801|upstream|ButterflyValve|6-CD-280004-A1A-H": [
+  "ButterflyValve",
+  "upstream",
+  "PressureVessel",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-301|downstream|GateValve|4-CHD-30018-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-301|downstream|GateValve|4-PG-30019-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-301|upstream|GateValve|4-P-30005-B1A-N": [
+  "GateValve",
+  "upstream",
+  "PressureVessel",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-301|upstream|GateValve|4-P-30013-B1A-N": [
+  "GateValve",
+  "upstream",
+  "PressureVessel",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-3101|downstream|BallValve|4-CHD-310006-A1A-N": [
+  "BallValve",
+  "downstream",
+  "GravitationalSeparator",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-3101|downstream|GateValve|4-PG-310007-A1A-N": [
+  "GateValve",
+  "downstream",
+  "GravitationalSeparator",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-3201|downstream|GateValve|4-CHD-320004-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ScrubbingSeparator",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-3201|downstream|GateValve|4-PG-320005-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ScrubbingSeparator",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-3201|downstream|GateValve|4-PG-320008-A1A-N": [
+  "GateValve",
+  "downstream",
+  "ScrubbingSeparator",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-3201|downstream|NeedleValve|4-PG-320010-A1A-N": [
+  "NeedleValve",
+  "downstream",
+  "ScrubbingSeparator",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-3201|upstream|GateValve|6-PG-320020-A1A-N": [
+  "GateValve",
+  "upstream",
+  "ScrubbingSeparator",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-3201|upstream|GlobeValve|4-PG-320003-A1A-N": [
+  "GlobeValve",
+  "upstream",
+  "ScrubbingSeparator",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-3301|downstream|BallValve|4-PG-330012-A1A-N": [
+  "BallValve",
+  "downstream",
+  "PressureVessel",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-3301|downstream|GateValve|2-CHD-330018-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-3301|downstream|GateValve|4-CHD-330015-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-3401|upstream|GateValve|6-CD-340005-A1A-H": [
+  "GateValve",
+  "upstream",
+  "PressureVessel",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-3601|downstream|BallValve|4-PG-360018-A1A-N": [
+  "BallValve",
+  "downstream",
+  "PressureVessel",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-3601|downstream|GateValve|2-CHD-360030-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-3601|downstream|GateValve|2-CHD-360031-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-3701|downstream|BallValve|2-CHD-370035-A1A-N": [
+  "BallValve",
+  "downstream",
+  "PressureVessel",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-3701|downstream|BallValve|2-CHD-370036-A1A-N": [
+  "BallValve",
+  "downstream",
+  "PressureVessel",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-3701|downstream|GateValve|4-PG-370020-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-3801|downstream|BallValve|4-CHD-380022-A1A-N": [
+  "BallValve",
+  "downstream",
+  "PressureVessel",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-3801|downstream|GateValve|2-CHD-380026-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-3801|downstream|GateValve|4-PG-380019-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-3801|downstream|GateValve|4-PG-380023-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-3901|downstream|GateValve|4-CHD-390018-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-3901|downstream|GateValve|4-PG-390019-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-4001|downstream|BallValve|4-PG-400028-A1A-N": [
+  "BallValve",
+  "downstream",
+  "GravitationalSeparator",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-4001|downstream|GateValve|4-CHD-400027-A1A-N": [
+  "GateValve",
+  "downstream",
+  "GravitationalSeparator",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-4001|upstream|GateValve|4-P-400006-B1A-N": [
+  "GateValve",
+  "upstream",
+  "GravitationalSeparator",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-4001|upstream|GateValve|4-P-400014-B1A-N": [
+  "GateValve",
+  "upstream",
+  "GravitationalSeparator",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-4001|upstream|GateValve|4-P-400021-B1A-N": [
+  "GateValve",
+  "upstream",
+  "GravitationalSeparator",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-401|downstream|BallValve|4-PG-40014-A1A-N": [
+  "BallValve",
+  "downstream",
+  "PressureVessel",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-401|downstream|GateValve|4-CHD-40013-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-4101|downstream|GateValve|4-CHD-410018-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-4101|downstream|GateValve|4-PG-410019-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-4401|downstream|BallValve|4-PG-440018-A1A-N": [
+  "BallValve",
+  "downstream",
+  "GravitationalSeparator",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-4401|downstream|GateValve|2-CHD-440024-A1A-N": [
+  "GateValve",
+  "downstream",
+  "GravitationalSeparator",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-4401|downstream|GateValve|4-CHD-440017-A1A-N": [
+  "GateValve",
+  "downstream",
+  "GravitationalSeparator",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-4501|downstream|GateValve|4-CHD-450019-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-4501|downstream|GateValve|4-PG-450020-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-4501|upstream|GateValve|4-P-450005-B1A-N": [
+  "GateValve",
+  "upstream",
+  "PressureVessel",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-4501|upstream|GateValve|4-P-450013-B1A-N": [
+  "GateValve",
+  "upstream",
+  "PressureVessel",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-4901|downstream|BallValve|4-PG-490007-A1A-N": [
+  "BallValve",
+  "downstream",
+  "GravitationalSeparator",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-4901|downstream|GateValve|2-CHD-490055-A1A-N": [
+  "GateValve",
+  "downstream",
+  "GravitationalSeparator",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-4901|downstream|GateValve|4-CHD-490010-A1A-N": [
+  "GateValve",
+  "downstream",
+  "GravitationalSeparator",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-5001|downstream|BallValve|4-CHD-500018-A1A-N": [
+  "BallValve",
+  "downstream",
+  "PressureVessel",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-5001|downstream|BallValve|4-PG-500019-A1A-N": [
+  "BallValve",
+  "downstream",
+  "PressureVessel",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-5301|downstream|BallValve|4-PG-530009-A1A-N": [
+  "BallValve",
+  "downstream",
+  "GravitationalSeparator",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-5301|downstream|GateValve|4-CHD-530008-A1A-N": [
+  "GateValve",
+  "downstream",
+  "GravitationalSeparator",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-5401|downstream|BallValve|4-CHD-540024-A1A-N": [
+  "BallValve",
+  "downstream",
+  "PressureVessel",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-5401|downstream|GateValve|4-PG-540025-A1A-N": [
+  "GateValve",
+  "downstream",
+  "PressureVessel",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-5401|upstream|GateValve|4-P-540005-B1A-N": [
+  "GateValve",
+  "upstream",
+  "PressureVessel",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-5401|upstream|GateValve|4-P-540012-B1A-N": [
+  "GateValve",
+  "upstream",
+  "PressureVessel",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-5401|upstream|GateValve|4-P-540019-B1A-N": [
+  "GateValve",
+  "upstream",
+  "PressureVessel",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-801|downstream|BallValve|2-CHD-80025-A1A-N": [
+  "BallValve",
+  "downstream",
+  "GravitationalSeparator",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-801|downstream|BallValve|4-PG-80018-A1A-N": [
+  "BallValve",
+  "downstream",
+  "GravitationalSeparator",
+  "PG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:V-801|downstream|GateValve|4-CHD-80021-A1A-N": [
+  "GateValve",
+  "downstream",
+  "GravitationalSeparator",
+  "CHD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:XV-53039": [
+  "XV",
+  "BallValve"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:XV-53040|upstream|GateValve|4-FG-530054-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "FG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:XV-53040|upstream|GlobeValve|3-FG-530052-A1A-N": [
+  "GlobeValve",
+  "upstream",
+  "BallValve",
+  "FG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:XV-54017|upstream|GateValve|6-P-530020-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:XV-54017|upstream|GlobeValve|4-P-530014-B1A-N": [
+  "GlobeValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-10001|upstream|GateValve|6-P-100001-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-10001|upstream|GateValve|6-P-100002-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-10001|upstream|GateValve|6-P-90060-B1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-10001|upstream|GlobeValve|4-P-90056-A1A-N": [
+  "GlobeValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-10003|upstream|GateValve|6-P-100004-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-10003|upstream|GlobeValve|4-P-90044-A1A-N": [
+  "GlobeValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-1001|upstream|ButterflyValve|6-P-10001-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-1001|upstream|PlugValve|6-P-10001-A1A-N": [
+  "PlugValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-1001|upstream|PlugValve|6-P-10002-A1A-N": [
+  "PlugValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-11033": [
+  "YV",
+  "BallValve"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-12010|upstream|ButterflyValve|6-P-110017-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-12010|upstream|GateValve|6-P-110017-B1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-12010|upstream|GateValve|6-P-110018-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-12010|upstream|GlobeValve|4-P-110013-B1A-N": [
+  "GlobeValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-13006|downstream|GateValve|4-CD-90160004-A1A-H": [
+  "GateValve",
+  "downstream",
+  "BallValve",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-14001|upstream|ButterflyValve|6-P-130055-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-14001|upstream|GateValve|6-P-130055-B1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-14001|upstream|GlobeValve|4-P-130051-A1A-N": [
+  "GlobeValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-14005|upstream|GateValve|6-P-130032-B1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-17014|upstream|ButterflyValve|6-P-160023-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-17014|upstream|GateValve|6-P-160023-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-17014|upstream|GlobeValve|4-P-160022-A1A-N": [
+  "GlobeValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-18010|upstream|GateValve|6-P-180015-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-18010|upstream|GlobeValve|4-P-170001-A1A-N": [
+  "GlobeValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-19001|upstream|GateValve|6-P-190002-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-19001|upstream|GlobeValve|4-P-180001-A1A-N": [
+  "GlobeValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-19003|upstream|GateValve|6-P-190003-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-19005|upstream|GateValve|6-P-190004-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-22034|upstream|ButterflyValve|4-FG-220049-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "BallValve",
+  "FG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-22034|upstream|GlobeValve|3-FG-220047-A1A-N": [
+  "GlobeValve",
+  "upstream",
+  "BallValve",
+  "FG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-22036": [
+  "YV",
+  "BallValve"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-23018|upstream|GateValve|6-P-220016-B1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-23018|upstream|GateValve|6-P-220017-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-23018|upstream|GlobeValve|4-P-220012-B1A-N": [
+  "GlobeValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-24001|upstream|ButterflyValve|6-P-230005-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-24001|upstream|GateValve|6-P-230005-B1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-24001|upstream|GlobeValve|4-P-230001-A1A-N": [
+  "GlobeValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-24001|upstream|PlugValve|6-P-240001-A1A-N": [
+  "PlugValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-24001|upstream|PlugValve|6-P-240002-A1A-N": [
+  "PlugValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-24003|upstream|PlugValve|6-P-240003-A1A-N": [
+  "PlugValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-26012|downstream|ButterflyValve|4-CD-260056-A1A-H": [
+  "ButterflyValve",
+  "downstream",
+  "BallValve",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-28004|downstream|GateValve|4-CD-90160007-A1A-H": [
+  "GateValve",
+  "downstream",
+  "BallValve",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-29001|upstream|ButterflyValve|6-P-280060-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-29001|upstream|GateValve|6-P-290001-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-29001|upstream|GateValve|6-P-290002-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-29001|upstream|GlobeValve|4-P-280057-A1A-N": [
+  "GlobeValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-29003|upstream|GateValve|6-P-280052-B1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-29003|upstream|GateValve|6-P-290003-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-29003|upstream|GateValve|6-P-290004-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-29003|upstream|GlobeValve|4-P-280048-A1A-N": [
+  "GlobeValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-3011|upstream|ButterflyValve|6-P-20002-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-3011|upstream|GateValve|6-P-20002-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-3011|upstream|GateValve|6-P-20004-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-31035": [
+  "YV",
+  "BallValve"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-31036|upstream|GlobeValve|3-FG-310044-A1A-N": [
+  "GlobeValve",
+  "upstream",
+  "BallValve",
+  "FG"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-33008|upstream|ButterflyValve|6-P-310018-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-33008|upstream|GateValve|6-P-310017-B1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-33008|upstream|GlobeValve|4-P-310012-B1A-N": [
+  "GlobeValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-34004|downstream|ButterflyValve|4-CD-340083-A1A-H": [
+  "ButterflyValve",
+  "downstream",
+  "BallValve",
+  "CD"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-35001|upstream|ButterflyValve|6-P-340059-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-35001|upstream|PlugValve|6-P-350001-A1A-N": [
+  "PlugValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-35001|upstream|PlugValve|6-P-350002-A1A-N": [
+  "PlugValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-35003|upstream|ButterflyValve|6-P-350003-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-38011|upstream|GateValve|6-P-370026-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-38011|upstream|GlobeValve|4-P-370025-A1A-N": [
+  "GlobeValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-39011|upstream|GlobeValve|4-P-380001-A1A-N": [
+  "GlobeValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-40014|upstream|GlobeValve|4-P-390001-A1A-N": [
+  "GlobeValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-41013|upstream|GlobeValve|4-P-400001-A1A-N": [
+  "GlobeValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-42001|upstream|ButterflyValve|6-P-420001-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-42001|upstream|GateValve|6-P-420001-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-42001|upstream|GateValve|6-P-420002-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-46001|upstream|GateValve|6-P-460001-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-46001|upstream|PlugValve|6-P-460001-A1A-N": [
+  "PlugValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-46001|upstream|PlugValve|6-P-460002-A1A-N": [
+  "PlugValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-46003|upstream|PlugValve|6-P-460003-A1A-N": [
+  "PlugValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-46005|upstream|PlugValve|6-P-460004-A1A-N": [
+  "PlugValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-49033": [
+  "YV",
+  "BallValve"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-50012|upstream|GateValve|6-P-490015-B1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-50012|upstream|GateValve|6-P-490016-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-50012|upstream|GlobeValve|4-P-490012-B1A-N": [
+  "GlobeValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-5001|upstream|ButterflyValve|6-P-40006-B1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-5001|upstream|GateValve|6-P-50002-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-5001|upstream|GlobeValve|4-P-40001-A1A-N": [
+  "GlobeValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-5003|upstream|GateValve|6-P-50003-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-51001|upstream|GateValve|6-P-510002-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-51001|upstream|GlobeValve|4-P-500001-A1A-N": [
+  "GlobeValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-51003|upstream|ButterflyValve|6-P-510003-A1A-N": [
+  "ButterflyValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-8010|upstream|GateValve|6-P-70002-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ],
+ "H100g22p1:POSITION_OF_VALVE:YV-8010|upstream|GateValve|6-P-70004-A1A-N": [
+  "GateValve",
+  "upstream",
+  "BallValve",
+  "P"
+ ]
+}

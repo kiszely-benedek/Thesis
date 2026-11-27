@@ -1,0 +1,17 @@
+{
+  "a_id": "VAL1000g22",
+  "b_id": "VAL1000g22B",
+  "a_ingest_sha256": "9f57b523c7b86ec040141eb8bee767c27303abdab227940d087d5fe87c357c7c",
+  "b_ingest_sha256": "7e492a0f31c6126f58d3fd8699c077206b4ef7add0dd2d1a733423f1aa799e3f",
+  "positions_sha256": "a3f7d5df25859085e13d1c0ed53970185f73fe3047e6c28bef89d8afa4aeb101",
+  "positions_per_code": {
+    "CSO": 552,
+    "NC": 5708,
+    "NO": 8898
+  },
+  "seconds": {
+    "a_build": 463.2,
+    "relabel": 0.0,
+    "positions": 409.1
+  }
+}

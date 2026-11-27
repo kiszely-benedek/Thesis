@@ -1,0 +1,124 @@
+{
+ "prior_sha256": "3d48518f16a43262bc23cc74fb7e9d2e56c68d6059d248c71e5195191cbd529a",
+ "seconds": 84.2,
+ "fit_seed_1_score_seeds_2_to_5": {
+  "tag": {
+   "2": {
+    "rows": 1540,
+    "prior": 0.6714,
+    "majority": 0.6078,
+    "unseen_keys": 1
+   },
+   "3": {
+    "rows": 1389,
+    "prior": 0.6717,
+    "majority": 0.5954,
+    "unseen_keys": 0
+   },
+   "4": {
+    "rows": 1457,
+    "prior": 0.674,
+    "majority": 0.6026,
+    "unseen_keys": 0
+   },
+   "5": {
+    "rows": 1402,
+    "prior": 0.6648,
+    "majority": 0.572,
+    "unseen_keys": 0
+   }
+  },
+  "descriptor": {
+   "2": {
+    "rows": 1408,
+    "prior": 0.951,
+    "majority": 0.5732,
+    "unseen_keys": 59
+   },
+   "3": {
+    "rows": 1288,
+    "prior": 0.9495,
+    "majority": 0.5683,
+    "unseen_keys": 63
+   },
+   "4": {
+    "rows": 1344,
+    "prior": 0.9494,
+    "majority": 0.5737,
+    "unseen_keys": 77
+   },
+   "5": {
+    "rows": 1324,
+    "prior": 0.9464,
+    "majority": 0.5514,
+    "unseen_keys": 66
+   }
+  }
+ },
+ "leave_one_seed_out": {
+  "tag": {
+   "1": {
+    "rows": 1493,
+    "prior": 0.6798,
+    "majority": 0.5941,
+    "unseen_keys": 0
+   },
+   "2": {
+    "rows": 1540,
+    "prior": 0.6714,
+    "majority": 0.6078,
+    "unseen_keys": 1
+   },
+   "3": {
+    "rows": 1389,
+    "prior": 0.6717,
+    "majority": 0.5954,
+    "unseen_keys": 0
+   },
+   "4": {
+    "rows": 1457,
+    "prior": 0.674,
+    "majority": 0.6026,
+    "unseen_keys": 0
+   },
+   "5": {
+    "rows": 1402,
+    "prior": 0.6648,
+    "majority": 0.572,
+    "unseen_keys": 0
+   }
+  },
+  "descriptor": {
+   "1": {
+    "rows": 1375,
+    "prior": 0.9564,
+    "majority": 0.5636,
+    "unseen_keys": 16
+   },
+   "2": {
+    "rows": 1408,
+    "prior": 0.9574,
+    "majority": 0.5732,
+    "unseen_keys": 17
+   },
+   "3": {
+    "rows": 1288,
+    "prior": 0.9589,
+    "majority": 0.5683,
+    "unseen_keys": 9
+   },
+   "4": {
+    "rows": 1344,
+    "prior": 0.9643,
+    "majority": 0.5737,
+    "unseen_keys": 10
+   },
+   "5": {
+    "rows": 1324,
+    "prior": 0.9554,
+    "majority": 0.5514,
+    "unseen_keys": 14
+   }
+  }
+ }
+}
