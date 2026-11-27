@@ -114,6 +114,17 @@ The arm ran GLM 5.3 Flash on one pinned host against Luna. Both used the frozen 
   - The post-audit score therefore equals the pre-audit score.
   - The judge's main error source was an excerpt too small to show untagged valves a few parts away: 12 of the 25 rows.
 
+### Gold spot-check (after the run, free, no model calls)
+
+- **Sample.** Two questions per family, one at each scale: 24 families, 48 questions from the sealed B question files, seed 20261127.
+- **Scope X gold.** The independent cross-check (`gold_crosscheck`) ran on all ten sealed plants. It checked 500 questions and found 0 disagreements.
+- **Scope R gold.** A separate throw-away script recomputed the 38 scope R questions of the sample from the plant graph with its own walks. All 38 agree.
+  - It agreed only after three corrections to the script itself, none of them to the gold:
+    - path answers list only equipment and valves, so strainers and other parts are passed through;
+    - VALVES_ON_PATH counts along item-level shortest routes;
+    - a control signal can reach its valve through an off-page signal connector, which carries the loop tag.
+- **One format case.** On OPEN_VALVES_TO_ISOLATE for EA-33701 (H1000g22p5B), B named all three gold valves but gave `next_to` H-33701 for the untagged one, where the gold says SB-337002. It is scored wrong. This is the same pattern as the borderline audit row (P-1701).
+
 ### Spend
 
 - The runs cost $19.58 of the $26.87 runs ledger.

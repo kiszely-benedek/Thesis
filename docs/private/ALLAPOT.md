@@ -20,7 +20,7 @@ A B rendszer (feltáró) jól olvassa a szelepállást (0,96), de a leválasztá
 | EXP-0008 | Tiszta v2 újramérés, öt-öt üzem skálánként | ✔ `6955036`, `e54546e`, `e54a495` (11-19) |
 | 6b | Demó | ✔ v1 kész; v2 (ADR-0064) kész: `a39bdb1`, `5546d29`, `321fe3b` (11-21) |
 | v2.2 | Kézikönyvi szabályokra épülő generátor és a V2T-B rendszer | ✔ `d8914f8` … `871aee5`, hangolás `91c1139` (11-23 – 11-25) |
-| EXP-0009 | Lezárt mérés v2.2-es üzemeken, A2 és B, GLM-ág, audit | ✔ lefutott 11-27; befagyasztás `36d619f`, eltérés `b3b63a5`; az eredmények commitja most készül |
+| EXP-0009 | Lezárt mérés v2.2-es üzemeken, A2 és B, GLM-ág, audit | ✔ lefutott 11-27; befagyasztás `36d619f`, eltérés `b3b63a5`; eredmények `cfa839f`, `9728ae8` |
 
 ## Feladatok (a legutóbbiak)
 
@@ -31,23 +31,23 @@ A B rendszer (feltáró) jól olvassa a szelepállást (0,96), de a leválasztá
 | B hangolás | Két kör, a második javítva | ✔ | `d499256`, `91c1139` | 11-25 |
 | E10 + PREREG B | Befagyasztás a lezárt üzemek előtt | ✔ | `36d619f` | 11-25 |
 | Eltérés | B feltáró ágként fut (G1-B bukott) | ✔ | `b3b63a5` | 11-25 |
-| EXP-0009 | Teljes futás, P0–END ($19,58 + $3,51) | ✔ lefutott, commit most | | 11-27 |
-| Audit | 25 eltérés besorolva: 0 pontozóhiba | ✔ | | 11-27 |
-| Eredményjegyzet | `30-experiments/EXP-0009-v22-sealed.md` | ✔ commit most | | 11-27 |
+| EXP-0009 | Teljes futás, P0–END ($19,58 + $3,51) | ✔ | `cfa839f` | 11-27 |
+| Audit | 25 eltérés besorolva: 0 pontozóhiba | ✔ | `cfa839f` | 11-27 |
+| Eredményjegyzet | `30-experiments/EXP-0009-v22-sealed.md` | ✔ | `9728ae8` |
+| Szúrópróba | 48 kérdés + 500 leválasztási kérdés ellenőrizve | ✔ | ez a commit | 11-27 |
 
 ## Ellenőrzőpontok
 
 | Pont | Mi kell hozzá | Hol tartunk |
 |---|---|---|
 | EXP-0009 | Lefut, besorolva, commitolva | 🟢 kész |
-| Szúrópróba | Nagyobb minta minden kérdéscsaládból a felhasználónak | 🟡 következik |
+| Szúrópróba | Nagyobb minta minden kérdéscsaládból a felhasználónak | 🟢 kész: 48 kérdés, 0 hibás helyes válasz; 500 leválasztási kérdés, 0 eltérés |
 | Dolgozatterv | A felhasználó mintatervet küld, Claude segít | 🟡 a mintára vár |
 
 ## Mi vár rád
 
 1. **Dolgozatterv-minta** elküldése, amikor kész vagy vele.
-2. **Szúrópróba** átnézése, amikor elküldöm.
-3. **Döntés (nem sürgős):** megnézessük-e, mennyit számít a leválasztási definíció (üzemanyaggáz-ág) a gyenge
+2. **Döntés (nem sürgős):** megnézessük-e, mennyit számít a leválasztási definíció (üzemanyaggáz-ág) a gyenge
    leválasztási eredményekben.
 
 ## Mit olvass el legközelebb
