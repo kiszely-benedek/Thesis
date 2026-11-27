@@ -50,7 +50,7 @@ Note also that the title does **not** mention the retrieval-inversion claim. Tha
 
 **2026-11-06: EXP-0004 P4 done ($1.94) and reported (X-T8, uncommitted; `30-experiments/EXP-0004-E2E.md`): acc@120 on H1000g2V D0 0.766, D2 0.859, D4 0.798 vs R5 0.891; E1, E2 pass, E3, E4 fail; D4's false merges cost questions the variants do not touch. Next: commit, code freeze for the user's review, demo v2.**
 
-**2026-11-20: EXP-0008 clean v2 re-run done and pushed (`6955036`, `e54546e`, `e54a495`; `30-experiments/EXP-0008-v2-rerun.md`). Five plants per scale: cascade_v4_iso 0.914 / 0.908 at S100 / S1000 (Q4 PASS). The ladder's X1 and X2 FAIL: ContextRAG trails from one sheet (0.779 vs 0.985). E2E: D0 0.823, D2 0.856, D4 0.830 vs R5 0.908. Audit kappa 0.889. These numbers supersede EXP-0007 and EXP-0004 P4. Study map updated. Next: the user's review through the study map, then demo v2.**
+**2026-11-20: EXP-0008 clean v2 re-run done and pushed (`6955036`, `e54546e`, `e54a495`; `30-experiments/EXP-0008-v2-rerun.md`). Five plants per scale: cascade_v4_iso 0.914 / 0.908 at S100 / S1000 (Q4 PASS). The ladder's X1 and X2 FAIL: ContextRAG trails from one sheet (0.779 vs 0.985). E2E: D0 0.823, D2 0.856, D4 0.830 vs R5 0.908. Audit kappa 0.889. These numbers supersede EXP-0007 and EXP-0004 P4. Study map updated. Demo v2 built and smoke-tested 2026-11-21 (`a39bdb1`, `5546d29`, `321fe3b`). Next: the user's review through the study map, then thesis structure planning.**
 
 **2026-10-16: demo polish ADR-0055: DP-T1…T4 committed, DP-T5 uncommitted, DP-T6…T10 next.**
 
@@ -128,7 +128,13 @@ Note also that the title does **not** mention the retrieval-inversion claim. Tha
 
 ## Next action
 
-**Updated 2026-11-20.** User-facing status: `ALLAPOT.md`. Latest log: `50-progress/2026-W47.md`.
+**Updated 2026-11-27.** User-facing status: `ALLAPOT.md`. Latest log: `50-progress/2026-W48.md`.
+
+**2026-11-27: EXP-0009 done on the handbook-ruled v2.2 plants (`30-experiments/EXP-0009-v22-sealed.md`).**
+- A2 Q4 PASS: 0.899 at S100 and 0.913 at S1000. K1 FAIL again, K2, K3 and Q5 PASS.
+- B (exploratory, G1-B failed): POSITION_OF_VALVE 0.96, SB2 +7.5 points on isolation. Isolation stays weak for both systems.
+- GLM against Luna: −1.3 / −5.1 points. Audit kappa 0.860, 0 scorer defects.
+- Next: a spot-check sample for the user, then thesis structure planning.
 
 0. **Now:** the user reviews the project through the study map (https://claude.ai/artifact/4B5CtZjxe677rbkqDNTV9b), then demo v2 (ADR-0064). Earlier items below are kept for the record.
 **The chat is the user's single source of truth** (CLAUDE.md). **The thesis is written in English** (2026-11-05); the chat stays Hungarian.
