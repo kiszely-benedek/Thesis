@@ -1,7 +1,8 @@
 # A nagy kép — merre tartunk, és jó-e az irány
 
-*Írva: 2026-09-27. Szabad szöveges összefoglaló a commitok mögötti szerkezetről. A számok forrása a
-`30-experiments/_results.md`, a döntéseké a `20-decisions/`.*
+*Első változat: 2026-09-27. Átírva: 2026-11-22, frissítve 2026-11-28 az EXP-0009 eredményeivel. Szabad szöveges
+összefoglaló a commitok mögötti szerkezetről. A számok forrása a `30-experiments/_results.md`, az
+`EXP-0008-v2-rerun.md` és az `EXP-0009-v22-sealed.md`, a döntéseké a `20-decisions/`.*
 
 ## A végcél
 
@@ -12,84 +13,109 @@ látnia. A meglévő kutatások (ChatP&ID, PIDQA) mind **egyetlen lapon** műkö
 
 A dolgozat végcélja ezért egy rendszer, amely **(1)** sok lapból egyetlen tudásgráfot épít — ez a cím első fele,
 „tudásgráf-építés P&ID-rajzokból” —, és **(2)** erre a gráfra kérdés-válasz rendszert tesz, amely akkor is működik,
-amikor az üzem már nem fér bele egy nyelvi modell „fejébe” — ez a cím második fele, „skálázható Q&A rendszer”. A fő
-kísérlet azt mutatja meg, hogy a módszerek rangsora **megváltozik** a méret növekedésével: ami egy lapon a legjobb
-(az egész gráfot a promptba tenni), az ezer lapon egyszerűen nem fér bele. Erre építünk egy saját,
-**hierarchikus** módszert, amely előbb a megfelelő üzemrészt és lapot keresi meg, és csak ott keres tovább.
+amikor az üzem már nem fér bele egy nyelvi modell „fejébe” — ez a cím második fele, „skálázható Q&A rendszer”.
 
-## Miért ebben a sorrendben építünk
+A kiinduló állítás az volt, hogy a módszerek rangsora **megfordul** a méret növekedésével: ami egy lapon a legjobb
+(az egész gráfot a promptba tenni), az üzemi méretben nem működik. A mérések ezt **részben igazolták, részben
+cáfolták** (lásd lent): a gráflekérdező kaszkád minden mért méreten pontosabb volt, már egy lapon is. A méret azt
+változtatja meg, mennyibe kerül és mennyi ideig tart a prompt-tömés, és hogy 67 lap fölött már be sem fér.
 
-A sorrend a feladat logikáját követi: **amit nem lehet mérni, azt nem lehet állítani.** Ezért először kellett egy
+## Miért ebben a sorrendben építettünk
+
+A sorrend a feladat logikáját követte: **amit nem lehet mérni, azt nem lehet állítani.** Először kellett egy
 **benchmark**: generált üzemek, amelyeket úgy vágunk lapokra, hogy pontosan tudjuk, melyik cső melyik lapon
-folytatódik — ez a „megoldókulcs”. Valódi, több száz lapos P&ID-csomag nyilvánosan nincs; a professzor elfogadta,
-hogy a módszert generált üzemeken mutassuk be (ADR-0007). Utána jöhetett a **tudásgráf-építés**, mert a kérdés-válasz
-rendszernek kell egy gráf, amin dolgozik. Csak ezután van értelme a **kérdés-válasz rendszernek**, és a legvégén a
-**fő kísérletnek**, amely az egészet végigméri. Az írás ezzel párhuzamosan halad.
+folytatódik — ez a „megoldókulcs” (ADR-0004, inverzió). Valódi, több száz lapos P&ID-csomag nyilvánosan nincs; a
+professzor elfogadta, hogy a módszert generált üzemeken mutassuk be (ADR-0007). Utána jött a **tudásgráf-építés**
+(a lapösszekötővel), majd a **kérdés-válasz rendszer**, és a végén a **fő kísérlet**, amely az egészet végigméri.
 
-## Amit eddig megcsináltunk
+## Amit megcsináltunk
 
-**A benchmark megjavítása.** A lapokra vágás hibás volt. Amikor megmértük, milyen sűrűk a lapjaink egy valódi
-DEXPI-laphoz képest, kiderült, hogy a lapoló a berendezéseket szinte véletlenszerűen szórja szét — nem jobb, mint a
-vakszerencse (DENS-01). Megtaláltuk az okát (szélességi bejárás, `1731fae`), kijavítottuk, és újramértük: most egy
-generált lap kb. 43 csomópontos (a valódi EX01: 36) és kb. 9 lapközi csatlakozója van (a valódi OPEN100-lapok: 8)
-— SMOKE-06. Ez azért fontos, mert a fő kísérlet éppen azt méri, hány laphatáron kell átmenni egy válaszhoz; ha a
-lapok irreálisak, a mérés is az.
+**A benchmark két generációja.** A v1 generátor véletlen fákból épít üzemet; ezen futott az első lezárt teszt. A
+felülvizsgálat után készült a **v2**: folyamatminták (kolonna, kompresszor, tartálypark, hőcserélő-sor, szűrő stb.),
+ISA-műszerezés, szokásos szelepcsoportok (trim), A/B tartalék-berendezések. A v2 az **OPEN100-hoz mért összetétel-
+sávokon** belül van (pl. szimbólum/lap 85,7; sáv 56–109), de a sávokat mi tűztük ki egyetlen valódi üzemre, és a 40–134
+szimbólumos lapok aránya csak 0,77 (cél 0,95, nem érvényesített). Ezután jött a **v2.2**: a generátor szabályait
+kézikönyvekből vettük (Toghraei 2019, API RP 14C, Liptak), és minden üzemen 56 szabályt ellenőrzünk; a lezárt
+üzemeken egyik sem sérült. A v2.2 tag nélküli szelepeket és szelepállásokat (nyitott, zárt, plombált) is rajzol.
+Mérnöki szemmel ez sincs átnézve, de a szabályok forrása most már könyv, nem a saját ítéletünk.
 
-**A tudásgráf-építés — kész.** Négy darabból áll, és mindegyiknek oka van:
-- **Beolvasás** (`a5cf586`, `271cdf1`): egy valódi DEXPI-fájl (EX01) ugyanabba a formába kerül, mint a generált
-  lapok, és egyetlen alkatrész sem vész el csendben. Így a valódi rajz és a generált üzemek ugyanazon az úton
-  haladnak, és a ChatP&ID-vel való összevetés tisztességes.
-- **A megoldókulcs elrejtése** (`5481943`): kiderült, hogy a lapok véletlenül elárulták, mi hová tartozik (közös
-  belső azonosítók, a csatlakozó párja). Ha ezt nem zárjuk el, a lapösszekötő „puskázik”, és hamisan tökéletes. Ez a
-  munka egyik legfontosabb tisztességi pontja.
-- **Összekötés** (`3c97587`, `271cdf1`): a lapokat csak a rajzon látható feliratok alapján kötjük össze — ahogy egy
-  mérnök tenné. Mérve 1 004 lapnál is hibátlan (SMOKE-04). Egy fontos eredmény már most van: ha a tagek a lapokon
-  kicsit eltérő alakban szerepelnek, az összevonás teljesen elbukik (recall 0). Ez a valódi rajzokon előfordul, és
-  itt lehet a munka egyik saját hozzájárulása.
-- **Adatbázis** (`a94b6e6`, `1adc2dc`, `a634491`): az egész egy paranccsal betölthető a Neo4j-be; az 1 004 lapos üzem
-  25 másodperc alatt (SMOKE-05). A határt (600 mp) a mérés *előtt* rögzítettük, hogy ne utólag igazítsunk hozzá.
+**A tudásgráf-építés — kész.** A beolvasás (valódi DEXPI-fájl és generált üzem ugyanazon az úton), a megoldókulcs
+elrejtése a lapösszekötő elől, a címke-alapú lapösszekötés és a Neo4j-betöltés. A lapokat nem tároljuk fájlként: a
+memóriában `SheetGraph`-ok, a Neo4j-ben `Sheet` csomópontok, a korpusz a seedből újraépíthető.
 
-**A kérdés-válasz rendszer — kb. félig.** Megvannak az alapkövek: a nyelvi modell hívása úgy, hogy minden válasz
-elmentődik és pénz nélkül visszajátszható (`d48208b`, `64c56d5`), és fizetős hívás csak kifejezett engedéllyel
-mehet ki; a közös válaszlépés, amelyen minden módszer ugyanúgy megy át, hogy csak a keresés különbözzön
-(`083c7a6`); a válaszok pontozása számított helyes válaszok alapján, nem egy másik modell véleménye szerint
-(`2b12dc5`); és a kérdésgenerátor első fele (`7b8845d`), amely minden kérdéshez kiszámolja a **k**-t — hány
-laphatáron kell átmenni a válaszhoz. A k a fő kísérlet legfontosabb változója.
+**A kérdés-válasz rendszer — kész, befagyasztva.** A fő rendszer a **kaszkád** (V2T-A2): először egy olcsó Cypher-
+lekérdezés próbálkozik, bizonytalanságnál egy gráfeszközöket használó ágens veszi át. A válaszok számított helyes
+válaszok alapján pontozódnak, nem egy másik modell véleménye szerint (független LLM-audit: kappa 0,889).
+
+**A fő mérés: EXP-0008 (lefutott 2026-11-17-én).** Tiszta újramérés, öt üzem skálánként, előre rögzített
+állításokkal és $40-os plafonnal (a futás $26,56-ot használt a $30-ból).
+
+| Mérés | Eredmény |
+|---|---|
+| Kaszkád pontossága ~100 lapon | 0,914 [0,895; 0,932] |
+| Kaszkád pontossága ~1000 lapon | 0,908 [0,885; 0,932] |
+| Különbség (Q4) | −0,005 [−0,035; +0,025], **PASS** |
+| Költség kérdésenként | 0,00140 → 0,00155 $ |
+| ContextRAG vs kaszkád, 1 / 3 / 11 lap | 0,779 / 0,566 / 0,592 vs 0,985 / 0,921 / 0,855 |
+| ContextRAG költségaránya, 1 / 3 / 11 lap | 3,2× / 8,9× / 23,2× |
+| ContextRAG kontextusfala | 67 lapnál |
+
+**Ami elbukott, és ezt nyíltan kimondjuk:** az X1 és X2 előre rögzített állítás FAIL, mert a ContextRAG egy lapon
+sem nyer. A késleltetési kritérium (K1) is FAIL, és az infrastruktúra-mérés (M1) is FAIL: az ágens-visszajátszások
+a forrásfutás időit vették át.
+
+**A második lezárt mérés: EXP-0009 (lefutott 2026-11-27-én).** Ugyanaz a befagyasztott kaszkád a nehezebb, v2.2-es
+üzemeken, öt üzem skálánként, plusz egy feltáró B rendszer, amely a szelepállást és a tag nélküli szelepeket is
+látja. Költség: $23,09 a $35-os plafonból.
+
+| Mérés | Eredmény |
+|---|---|
+| Kaszkád (A2) ~100 / ~1000 lapon | 0,899 / 0,913; különbség +1,4 pont [−1,9; +4,7], **Q4 PASS** |
+| A v2.2-es üzemek nehezebbek | −7,6 / −5,6 pont a v2.1-hez képest |
+| K1 (kaszkád vs „mindig ágens”) | −3,1 pont, nem gyorsabb: **FAIL**, másodszor is |
+| B: szelepállás | 0,96 (a „mindig a leggyakoribb” alapvonal 0,81) |
+| Leválasztási kérdések | B 4–28 %, A2 3–16 % családonként: **nyitott probléma** |
+| GLM 5.3 Flash a Luna helyett | 100 lapon −1,3, 1000 lapon −5,1 pont (egy-egy üzem) |
+| Pontozó-audit | kappa 0,860; 25 eltérésből 0 pontozó- vagy gold-hiba |
+
+A leválasztás utólagos elemzése szerint a gyenge eredményt csak kisebb részben okozza a definíció (legfeljebb kb.
+15 pont a B-nél). A fő ok, hogy az ágens a szükséges szelepeknek csak kb. a felét sorolja fel (recall kb. 0,5,
+precision kb. 0,78). Közben kiderült, hogy a befagyasztott útválasztó szabály a „cut … off” megfogalmazást nem
+ismeri fel, ezért a lefelé irányuló kérdések először a Cypher-szintre mennek; ez a B-nél 11 jó ágensválaszt vitt el.
+
+**A demo v2.** Angol nyelvű alkalmazás két üzemen (H100g21p1, H1000g21p1), a kérdés a kaszkádon át megy a
+megfelelő szintre, külön eredmény-fülön mutatja az EXP-0008 számait. Az ingyenes visszajátszás-egyezés 10/10 mindkét
+üzemen. Egy fizetős próbán (6 kérdés, $0,0103) egy kérdésnél a Cypher elfogadott, de rossz választ adott; ezt nem
+javítottuk, mert a befagyasztott kaszkádhoz nem nyúlunk.
 
 ## Ami hátravan, és hová vezet
 
-1. **A kérdés-válasz rendszer befejezése** (kb. egy hét): a kérdésgenerátor második fele és a k szerinti mintavétel;
-   maguk a válaszadási módszerek — az „egész gráf a promptban” (ContextRAG), az adatbázis-lekérdezés (CypherRAG) és
-   a **saját hierarchikus módszerünk**; a futtató és a jelentéskészítő.
-2. **A pilot — az első fizetős mérés** (a te engedélyeddel): hol van a modell „kontextusfala”, mennyibe kerül egy
-   kérdés, mennyire szórnak a válaszok. Ettől függ, hány kérdést engedhetünk meg magunknak. → *A kísérlet
-   tervezésének alapja.*
-3. **A ChatP&ID-összevetés** (EXP-0001): az ő 19 kérdésükből azokon, amelyekhez nem kell adatlap, reprodukáljuk-e az
-   eredményüket egy lapon. → *Ez a horgony: megmutatja, hogy a mi megvalósításunk korrekt.*
-4. **A fő kísérlet** (~10, ~100 és ~1 000 lap): a módszerek pontossága, költsége és ideje a méret és a k
-   függvényében. A siker feltételeit előre rögzítettük (`qa-system.md` §13.3), hogy az eredményt ne utólag
-   értelmezzük a javunkra.
-5. **A lapösszekötő értékelése** a 23 valódi OPEN100-páron. → *Kis, de valódi ellenőrzés.*
+1. **A tanulási térkép átnézése** (te, folyamatban): a térkép állomásain végigmenni, és a nem érthető tételeket
+   jelezni.
+2. **A „megfordul” állítás átfogalmazása** (te döntöd el): a mérések szerint a pontossági optimum nem mozdul, a
+   költség- és késleltetési oldal fordul. Ez az X1/X2 FAIL következménye; az EXP-0009 ezt megerősítette.
+3. **A lapösszekötő tesztelése az OPEN100-on** (új terv): 12 valódi lap, 23 megbízhatóan összekötött pár. A
+   címkék visszaállítása OCR-rel és kézi ellenőrzéssel történne.
+4. **A mérnöki átnézés** (nyitott): egy kinyomtatott lap és a kérdéscsaládok megmutatása P&ID-t olvasó embernek.
+5. **A P2 szakasz** (nincs jóváhagyva): az EXP-0009 kiegészítő része, saját jóváhagyás kell hozzá.
+
+Kész, és ezért lekerült a listáról: precision, recall és F1 a mentett válaszokból (EXP-0009-ben számolva), a
+gold-szúrópróba (48 kérdés és 500 leválasztási kérdés, 0 hiba).
 
 ## Jó-e az irány?
 
 **Igen, és ezt az alábbiak igazolják:**
-- A cím mindkét felét lefedi: a tudásgráf-építés kész és mért; a kérdés-válasz rendszer félúton van, és egyenesen
-  a fő kísérlet felé tart.
-- A terep valóban nyitott: a legutóbbi újdonság-ellenőrzés (2026-09-26) szerint senki nem publikált kérdés-válasz
-  kiértékelést sok, egymással összekötött P&ID-lapon.
-- A naptárhoz képest előrébb vagyunk: az október 4-i ellenőrzőpont tartalma már kész.
-- Minden szám mérésből jön, minden döntés indokolva van — a védésen ez sokat ér.
+- A cím mindkét fele kész és mért: a tudásgráf-építés és a skálázható kérdés-válasz két lezárt mérésen is
+  lefutott, és a skálaeredmény a nehezebb, kézikönyvi szabályú üzemeken is megismétlődött.
+- A terep nyitott: a legutóbbi újdonság-ellenőrzés szerint senki nem publikált kérdés-válasz kiértékelést sok,
+  egymással összekötött P&ID-lapon.
+- Minden szám mérésből jön, a hibákat is megmutatjuk, és a siker feltételeit az első futás előtt rögzítettük.
 
 **Amire figyelni kell — őszintén:**
-- **Az írás a leglemaradóbb rész.** Javaslom, hogy a héten induljon el, a kód mellett. Ehhez kell a BME-sablon.
-- **A pilot a legnagyobb ismeretlen.** Amíg nem mérjük meg a kontextusfalat és a költséget, nem tudjuk, mekkora
-  kísérlet fér bele. Érdemes minél előbb lefuttatni — az engedélyeddel.
-- **A hierarchikus módszer — a saját hozzájárulás — még nincs megtervezve.** Szándékosan: a görbék alapján
-  tervezzük, de időben kell elkezdeni.
-- **Generált adatokon dolgozunk.** Ez a módszertani dolgozatnál elfogadott (a professzor is elfogadta), de a
-  dolgozatban nyíltan korlátként kell kimondani.
-- **Neked kell értened az egészet** — ezért jó, hogy most együtt végigmegyünk rajta.
-
-**A javasolt sorrend a következő napokra:** a kérdés-válasz rendszer befejezése → a pilot (engedéllyel) → a
-ChatP&ID-összevetés → a fő kísérlet.
+- **A valósághűség a legnagyobb nyitott pont.** Generált üzemeken mérünk. A szabályok ma már kézikönyvből jönnek,
+  de mérnöki átnézés nincs, és a kérdéscsaládokat mi találtuk ki. Ezt korlátként kell kimondani.
+- **A leválasztás nincs megoldva.** Ez a mérnöki szempontból legfontosabb kérdéstípus, és itt a legrosszabb a
+  rendszer. Ezt nyíltan kimondjuk; az okát (hiányos listák) már tudjuk.
+- **A történet változott.** A „megfordul” állítás a saját méréseink szerint nem áll meg szó szerint; az
+  átfogalmazás a dolgozat gerince.
+- **Neked kell értened az egészet** — ezért jó, hogy a tanulási térképen végigmegyünk rajta.
