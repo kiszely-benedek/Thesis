@@ -191,7 +191,7 @@ bins, §0), and drawn round-robin over the bins inside each family.
 | Source | Status | Paraphrase |
 |---|---|---|
 | Rajpurkar, Jia, Liang, **"Know What You Don't Know: Unanswerable Questions for SQuAD"**, ACL 2018, arXiv 1806.03822 | [new], read §1–§5 | 53,775 unanswerable questions written adversarially. Two desiderata (§2): **relevance** (otherwise word-overlap heuristics separate them) and **existence of a plausible answer** of the asked type (otherwise type matching separates them). Abstaining on a negative scores 1 (§5, fn. 3). |
-| Patidar, Faldu, Singh, Vig, Bhattacharya, Mausam, **"Do I have the Knowledge to Answer? Investigating Answerability of Knowledge Base Questions" (GrailQAbility)**, ACL 2023, pp. 10341–10357, doi 10.18653/v1/2023.acl-long.576, arXiv 2212.10189 | [new], read §3–§5 via ar5iv | **The KGQA precedent.** Unanswerable questions are made by deleting KB elements: schema-level (class, relation) or data-level (entity, fact) (§3). About 24% of the test set is unanswerable (2,162 of 8,970, Table 2). Models often say "no answer" **for the wrong reason**: RnG-KBQA+T on missing facts has answer F1 86.0 but logical-form EM 32.5 (Table 4, §5). |
+| Patidar, Faldu, Singh, Vig, Bhattacharya, Mausam, **"Do I have the Knowledge to Answer? Investigating Answerability of Knowledge Base Questions" (GrailQAbility)**, ACL 2023, pp. 10341–10357, doi 10.18653/v1/2023.acl-long.576, arXiv 2212.10189 | [new], read §3–§5 via ar5iv | **The KGQA precedent.** Unanswerable questions are made by deleting KB elements: schema-level (class, relation) or data-level (entity, fact) (§3). About 33% of the test set is unanswerable: 3,358 of 10,166, the NK column (2,162) plus the NA column (1,196) of Table 2 (corrected 2026-11-28, see `2212.10189.md`). Models often say "no answer" **for the wrong reason**: RnG-KBQA+T on missing facts has answer F1 86.0 but logical-form EM 32.5 (Table 4, §5). |
 | Kamath, Jia, Liang, **"Selective Question Answering under Domain Shift"**, ACL 2020, arXiv 2006.09462 | [new], abstract | Abstention as risk–coverage: 56% of questions answered at 80% accuracy with a calibrator, against 48% from raw probabilities. |
 | Wen et al., **"Know Your Limits: A Survey of Abstention in Large Language Models"**, TACL (the arXiv comment says 2024), arXiv 2407.18418 | [new], abstract | A taxonomy of abstention from the query, model and human-values perspectives. Use it to place our decoys as "query-side, unanswerable from the knowledge source". |
 | Kirichenko, Ibrahim, Chaudhuri, Bell, **"AbstentionBench: Reasoning LLMs Fail on Unanswerable Questions"**, arXiv 2506.09038 (2025, no venue listed) | [new], abstract | 20 datasets and 20 frontier LLMs. Abstention is "unsolved"; reasoning fine-tuning degrades it by about 24% on average. This motivates measuring abstention at all. |
@@ -215,7 +215,7 @@ to a mentioned entity. `NO_PATH` corresponds to **missing facts** on the path. O
 - **The right answer can come from the wrong reason** (GrailQAbility §5). Our `not_present` flag is scored without
   checking that the system looked. If traces allow, report how many correct abstentions followed an actual lookup of
   the tag or a reachability check.
-- The decoy share is our choice. GrailQAbility (about 24% of its test set) and MultiHop-RAG (11.78%) show there is no
+- The decoy share is our choice. GrailQAbility (about 33% of its test set) and MultiHop-RAG (11.78%) show there is no
   standard. State ours and report the decoys apart from the answerable questions.
 
 ---

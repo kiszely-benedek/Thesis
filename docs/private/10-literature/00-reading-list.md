@@ -16,6 +16,13 @@ One row per source. Notes live beside this file. Add rows with `/paper-intake`.
 | 2505.11976 | Discrete Line Segment Integration | 2025 | method | single drawing | [note](2505.11976.md) |
 | 2609.05880 | Grounded and Faithful P&ID Reasoning (TopoPID-VQA, 7-primitive graph-tool VLM agent) | 2026 | method (closest to ADR-0034) | **100 synthetic single sheets, 3,000 template questions, 1 run, no cross-sheet** | [note](2609.05880.md) |
 | make7020039 | PIDQA - QA on P&IDs (text-to-Cypher) | 2025 | core prior art | **500 single sheets, 64,000 template QA pairs, no cross-sheet** | [note](make7020039-pidqa.md) |
+| 2411.00640 | Adding Error Bars to Evals (clustered SE, paired Δ, power) | 2024 | method (statistics) | no own benchmark; one real table (3 evals, unnamed models, no n), rest fictional | [note](2411.00640.md) |
+| 2011.07743 | GrailQA - three levels of KBQA generalization | 2021 | method (held-out levels, template gold) | 64,331 Qs / 4,969 logical forms; 100-item quality audit (5.6% error) | [note](2011.07743.md) |
+| 1806.03822 | SQuAD 2.0 - unanswerable questions | 2018 | method (decoys, abstention scoring) | 53,775 crowd negatives; test 8,862 (4,332 neg.); 100-negative audit (93% valid) | [note](1806.03822.md) |
+| 2212.10189 | GrailQAbility - answerability in KBQA | 2023 | method (decoy taxonomy) | 50,507 Qs; test 3,358 / 10,166 unanswerable; single runs | [note](2212.10189.md) |
+| 2406.12624 | Judging the Judges (LLM-as-judge alignment, leniency) | 2024/25 | method (scorer audit) | 400 TriviaQA Qs × 9 exam-takers, 13 judges; human π 96.2 on 1,200 | [note](2406.12624.md) |
+| 2007.07797 | Hierarchical bootstrap for multi-level data | 2020 | method (statistics) | simulations (1,000-10,000 reps) + 2 real datasets; N = 1-16 subjects | [note](2007.07797.md) |
+| 1612.06890 | CLEVR - question families, diagnostic VQA | 2017 | method (families, bias control) | 999,968 Qs / 90 families / 100,000 synthetic images; 1 test run | [note](1612.06890.md) |
 
 ## Not yet read — queued
 
