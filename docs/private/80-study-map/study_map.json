@@ -1,5 +1,5 @@
 {
- "commit": "e54a495",
+ "commit": "1d32dd9",
  "repo": "https://github.com/kiszely-benedek/Thesis",
  "artifact_url": "https://claude.ai/artifact/4B5CtZjxe677rbkqDNTV9b",
  "adr_files": {
@@ -66,7 +66,11 @@
   "ADR-0062": "docs/private/20-decisions/ADR-0062-r5-question-draw-deviations.md",
   "ADR-0063": "docs/private/20-decisions/ADR-0063-exp0004-on-v2-and-end-to-end-arm.md",
   "ADR-0064": "docs/private/20-decisions/ADR-0064-demo-v2-need-routing-and-plants.md",
-  "ADR-0065": "docs/private/20-decisions/ADR-0065-fix-all-findings-and-rerun-v2.md"
+  "ADR-0065": "docs/private/20-decisions/ADR-0065-fix-all-findings-and-rerun-v2.md",
+  "ADR-0066": "docs/private/20-decisions/ADR-0066-generator-v2-2-handbook-rules.md",
+  "ADR-0067": "docs/private/20-decisions/ADR-0067-v2t-b-positions-and-untagged-valves.md",
+  "ADR-0068": "docs/private/20-decisions/ADR-0068-exp0009-launcher-choices.md",
+  "ADR-0069": "docs/private/20-decisions/ADR-0069-exp0009-audit-judge-and-scope.md"
  },
  "start": {
   "lead": "Ez a térkép egyetlen út végig a projekten, az alapoktól a demóig. Minden állomáson megtalálod, mit döntöttünk és miért, hol van a kód és mi mit hív, mit mértünk, és mit kérdezhet a bíráló.",
@@ -122,7 +126,7 @@
    }
   ],
   "claim": "A GraphRAG legjobb lekérési stratégiája mérnöki rajzokon a korpusz méretétől függ. A publikált optimum, vagyis egy tömörített egylapos gráf beírása a promptba (ChatP&ID, 0,91 pontosság), az egylapos kiértékelés mellékterméke, és üzemi léptékben megfordul.",
-  "headline": "Az érvényes eredmény az EXP-0008 tiszta újramérése (2026-11-17), öt-öt üzemen skálánként: a kaszkád acc@120 értéke 0.914 [0.895, 0.932] kb. 100 lapon és 0.908 [0.885, 0.932] kb. 1000 lapon, a különbség −0.005 [−0.035, +0.025] (Q4 PASS); a költség kérdésenként 0.00140 → 0.00155 $. A létrán a ContextRAG már egy lapon is gyengébb (0.779 vs 0.985), 3 és 11 lapon 0.566 és 0.592 a kaszkád 0.921 és 0.855 értékével szemben, és 67 lap fölött nem fér a modell ablakába (forrás: docs/private/30-experiments/EXP-0008-v2-rerun.md).",
+  "headline": "Két lezárt mérés áll. Az EXP-0008 (2026-11-17, v2.1 üzemek): a kaszkád 0.914 kb. 100 lapon és 0.908 kb. 1000 lapon (Q4 PASS); a ContextRAG már egy lapon is gyengébb (0.779 vs 0.985), és 67 lap fölött nem fér a modell ablakába. Az EXP-0009 (2026-11-27, nehezebb, kézikönyvi szabályú v2.2 üzemek): 0.899 és 0.913 (Q4 PASS); a szelepállást a B rendszer 0.96-tal olvassa, a leválasztás viszont mindkét rendszernek nyitott probléma (források: EXP-0008-v2-rerun.md, EXP-0009-v22-sealed.md).",
   "howto": [
    "Az állomások sorrendje a tanulás sorrendje. Az alapokkal kezdődik (mi a P&ID, hogyan generálunk üzemet), a gráfon és a kérdéseken át eljut a válaszolásig, végül a kísérletekig és a demóig. Minden állomás csak a korábbiakra épít; az „Előtte” sor mondja meg, melyikekre.",
    "Minden állomás hét részből áll (lent). A lényeg a „Miért” és a „Hogyan”. A „Bizonyíték” minden száma egy fájlból jön, és a tétel megnevezi ezt a fájlt.",
@@ -656,13 +660,13 @@
   },
   {
    "id": "2",
-   "title": "Üzemgenerátor (v1 → v2 → v2.1)",
+   "title": "Üzemgenerátor (v1 → v2 → v2.1 → v2.2)",
    "minutes": 180,
    "prerequisites": [
     "0",
     "1"
    ],
-   "summary": "A generátor egy magból (seed) teljes, irányított, típusos üzemet épít valódi pyDEXPI DexpiModelként, és mellé egy megoldókulcsot (GenerationRecord), amely soha nem kerül a vizsgált adatbázisba; ugyanaz a mag mindig bájtra ugyanazt a modellt adja. A v1 egyszerű volt (egységenként véletlen fa, recycle és keresztkötés, 6 berendezés- és 3 szelepfajta, minden műszer szabályozókörben), és a fő v1 mérések ezen futottak. A v2 (ADR-0057/0058) a valódi rajzokhoz közelít: technológiai mintákból (kolonna, kompresszor, reaktor, tartálypark, hőcserélősor, flash-dob, szűrő, keverés) egy magolt folyamatábra-nyelvtan rak össze üzemet tipizált portokon át, szabványos szerelvényekkel, ISA-5.1 műszerekkel, A/B tartalékgépekkel, vezetékszámokkal, és a minta maga mondja meg, mi kerül egy lapra. A v1 befagyasztva, bájtazonosan él tovább a v2 mellett. A v2.1 (ADR-0065) a kódátnézés realizmushibáit javítja (bekötetlen desztillátum és oldalelvétel, rossz lapra került szerelvények, a kemencén ülő fűtőgáz-érzékelők, duplán számolt csonkok), és a régi v2 konfigurációt már el sem fogadja.",
+   "summary": "A generátor egy magból (seed) teljes, irányított, típusos üzemet épít valódi pyDEXPI DexpiModelként, és mellé egy megoldókulcsot (GenerationRecord), amely soha nem kerül a vizsgált adatbázisba; ugyanaz a mag mindig bájtra ugyanazt a modellt adja. A v1 egyszerű volt (egységenként véletlen fa, recycle és keresztkötés, 6 berendezés- és 3 szelepfajta, minden műszer szabályozókörben), és a fő v1 mérések ezen futottak. A v2 (ADR-0057/0058) a valódi rajzokhoz közelít: technológiai mintákból (kolonna, kompresszor, reaktor, tartálypark, hőcserélősor, flash-dob, szűrő, keverés) egy magolt folyamatábra-nyelvtan rak össze üzemet tipizált portokon át, szabványos szerelvényekkel, ISA-5.1 műszerekkel, A/B tartalékgépekkel, vezetékszámokkal, és a minta maga mondja meg, mi kerül egy lapra. A v1 befagyasztva, bájtazonosan él tovább a v2 mellett. A v2.1 (ADR-0065) a kódátnézés realizmushibáit javítja (bekötetlen desztillátum és oldalelvétel, rossz lapra került szerelvények, a kemencén ülő fűtőgáz-érzékelők, duplán számolt csonkok), és a régi v2 konfigurációt már el sem fogadja. A v2.2 (ADR-0066) a szabályokat már kézikönyvekből veszi (Toghraei 2019, API RP 14C, Liptak): minden szabálynak azonosítója van a könyvvel és az oldalszámmal, és minden megépített üzemen lefut az ellenőrzése. Új a tag nélküli kézi szelep és a szelepállás (nyitott, zárt, plombált), amelyet a B rendszer olvas.",
    "why": [
     {
      "adr": "ADR-0018",
@@ -755,6 +759,17 @@
       "C: csak az R5 újrafuttatása a régi üzemeken"
      ],
      "status": "proposed (a pre-regisztráció A része commitolva: ca3a854)"
+    },
+    {
+     "adr": "ADR-0066",
+     "title": "Generator v2.2: handbook rules, checked on every plant",
+     "decision": "A v2.2 a v2.1 mellé épül, helyben kapuzva (V-B): új konfigtípus, minden új viselkedés `handbook` kapcsolók mögött, a v2.1 goldenek változatlanok. A szabályjegyzékben 54 kódolt szabály van (35 helyi, 19 üzemszintű) és 15 halasztott tétel, mindegyik az okával; az ellenőrzés minden megépített üzemen fut, nem csak a tesztmagokon.",
+     "alternatives": [
+      "V-A: a v2 lemásolása egy befagyasztott v2_1 csomagba (kb. 9100 sor kód duplán)",
+      "V-C: csak git checkout-tal reprodukálható v2.1",
+      "R-A: a szabályokat csak pytestben, az 1–5. magokon ellenőrizni"
+     ],
+     "status": "accepted (user, 2026-11-23)"
     }
    ],
    "what": [
@@ -777,6 +792,10 @@
     {
      "design": "docs/private/40-design/review-fixes.md",
      "gist": "A §3.1 10. és 10b. tétele, a §9 F8a–F8c feladatai és a §11 jegyzetei (R2 is): mit javított a v2.1 a folyamatábrán, a lapokon és statisztikán, a műszereken és tagokon, és mennyit mozdított ez egy fejlesztői magon mérve."
+    },
+    {
+     "design": "docs/private/40-design/generator-v2-2-handbook-rules.md",
+     "gist": "A v2.2 teljes terve: a könyvek szabályai (§4), a mintavételezett alternatívák, a rejtett állapot (sávok, értékek nélkül), a szelepállások, a hálózati lapok, a szabályjegyzék és az EXP-0009 indítójának specifikációja (§19)."
     }
    ],
    "how": [
@@ -963,6 +982,30 @@
       "sheet_stats → wired_out_ends → open_end_stubs → _crossing_stubs → _signal_cuts → _kind_counts → _stats_of",
       "composition.main → require_no_test_seeds → _report_of_seed (plan_plant, build_report) → _print_pooled → composition_pool.pool_reports"
      ]
+    },
+    {
+     "file": "src/plantgraph/benchmark/v2/rules/catalogue.py",
+     "entry": "all_rules",
+     "role": "A szabályjegyzék: minden kódolt szabály azonosítóval (pl. TOG192-RECIP-NO-CHECK = Toghraei 2019, 192. o.), parafrázissal, paraméterekkel és ellenőrzővel; a catalogue_a/b/c fájlok tartják a tételeket, a catalogue_deferred a halasztottakat.",
+     "calls": [
+      "catalogue.all_rules → catalogue_a/b/c → registry.HandbookRule"
+     ]
+    },
+    {
+     "file": "src/plantgraph/benchmark/v2/rules/verify.py",
+     "entry": "verify_generated",
+     "role": "Egy megépített üzem minden bekötött szabályát lefuttatja egy közös nézeten (view.RuleView), és szabálysértésnél megállítja az építést.",
+     "calls": [
+      "verify.verify_generated → verify.verify_plant → view.build_rule_view → verify.run_rule → checks_*.check_…"
+     ]
+    },
+    {
+     "file": "src/plantgraph/benchmark/v2/rules/checks_positions.py",
+     "entry": "check_block_default_no",
+     "role": "Példa egy szabály-ellenőrzőre: a szelepállás szabályai (Toghraei 2019, 114., 120., 224. o.), például hogy a leeresztők és légtelenítők normálisan zártak.",
+     "calls": [
+      "verify.run_rule → checks_positions.check_block_default_no"
+     ]
     }
    ],
    "proof": [
@@ -1010,6 +1053,16 @@
      "claim": "A v2.1 R2-javítások hatása (seed 1, 300 egység): termékpark, csőosztály-váltás és bekötött vezetékvégek.",
      "number": "52 of 60 farms shared a receipt header → 0; 73 of 73 branches in the lighter class → 0; 386 → 370 wired ends",
      "source": "docs/private/40-design/review-fixes.md (§11, R2)"
+    },
+    {
+     "claim": "A v2.2 szabályai a lezárt üzemeken",
+     "number": "56 építés közbeni szabályellenőrzésből egyik sem sérült a 10 lezárt EXP-0009 üzemen",
+     "source": "docs/private/30-experiments/EXP-0009-v22-sealed.md"
+    },
+    {
+     "claim": "A v2.2 üzemek nehezebbek a rendszernek (A2, v2.2 − v2.1, 18 közös család)",
+     "number": "100 lapon −7,6 pont [−10,1; −5,1], 1000 lapon −5,6 pont [−8,7; −2,7]",
+     "source": "docs/private/30-experiments/EXP-0009-v22-sealed.md"
     }
    ],
    "learn": [
@@ -1088,6 +1141,10 @@
     {
      "q": "Mi változott a v2.1-ben, és miért kell emiatt mindent újramérni?",
      "a": "Bekötött desztillátum és oldalelvétel, a szerelvények a berendezésük lapján, a fűtőgáz-érzékelő a vezetéken, egyszer számolt csonkok, javított számozás és szolgáltatási kódok. Az első mérésben ettől gold válasz nem lett hibás, de az üzemek mások lesznek, és a régi v2 konfigot a kód már nem építi újra. Egy állításhoz egy ismert hiba nélküli generátor kell, ezért fut az EXP-0008 friss üzemeken."
+    },
+    {
+     "q": "Miért kellett a v2.2, ha a v2.1 már a valódi rajzok sávjaiban volt?",
+     "a": "A v2.1 szabályait mi magunk ítéltük meg. A v2.2-ben minden szabály egy kézikönyv adott oldalára hivatkozik, és minden megépített üzemen ellenőrizzük, így a valósághűség forrása könyv, nem saját vélemény. Mérnöki átnézés ettől még nincs, ezt korlátként mondjuk ki."
     }
    ]
   },
@@ -2121,7 +2178,7 @@
     "2",
     "3"
    ],
-   "summary": "Ez az állomás a mérőeszköz: honnan tudjuk, hogy egy válasz helyes. A kérdéseket a generált üzem igazi (arany, ground-truth) gráfjából gyártjuk sablonokból, kérdéscsaládonként; minden családhoz egy kis Python-függvény kiszámolja a helyes választ, és feljegyzi a bizonyítékot (evidence), azt a részgráfot, amelyet olvasott. A bizonyítékból jön a `k` (hány laphatárt kell átlépni a válaszhoz; `k_connector` a lapközi csatlakozókon, `k_identity` a több lapra rajzolt tételeken át) és az `u` (hány egységhatárt). A pontozás determinisztikus, LLM-bíró nélkül: pontos egyezés, pontos halmaz-egyezés, útvonalnál bármely valódi út elfogadott, így minden futás API nélkül újrapontozható. A családok három csoportban vannak: dev-old (12) és dev-new (6), amelyeket a stratégiák szerzői láttak, és a lepecsételt held-out rész (6 család és 10 átfogalmazás), amelyet csak a fagyasztás után nyitottak ki; így mérhető, hogy a rendszer nem a benchmarkra van-e szabva.",
+   "summary": "Ez az állomás a mérőeszköz: honnan tudjuk, hogy egy válasz helyes. A kérdéseket a generált üzem igazi (arany, ground-truth) gráfjából gyártjuk sablonokból, kérdéscsaládonként; minden családhoz egy kis Python-függvény kiszámolja a helyes választ, és feljegyzi a bizonyítékot (evidence), azt a részgráfot, amelyet olvasott. A bizonyítékból jön a `k` (hány laphatárt kell átlépni a válaszhoz; `k_connector` a lapközi csatlakozókon, `k_identity` a több lapra rajzolt tételeken át) és az `u` (hány egységhatárt). A pontozás determinisztikus, LLM-bíró nélkül: pontos egyezés, pontos halmaz-egyezés, útvonalnál bármely valódi út elfogadott, így minden futás API nélkül újrapontozható. A családok három csoportban vannak: dev-old (12) és dev-new (6), amelyeket a stratégiák szerzői láttak, és a lepecsételt held-out rész (6 család és 10 átfogalmazás), amelyet csak a fagyasztás után nyitottak ki; így mérhető, hogy a rendszer nem a benchmarkra van-e szabva. Az EXP-0009 öt új családot hozott (X-kör): nyitott szelepek leválasztáshoz felfelé és lefelé, leválasztás tag nélküli szelepekkel felfelé és lefelé, és a szelep normál állása. A tag nélküli szelepet leírás nevezi meg (típus, vezetékszám, legközelebbi tagelt elem, oldal).",
    "why": [
     {
      "adr": "ADR-0013",
@@ -2174,6 +2231,10 @@
     {
      "design": "docs/private/40-design/review-fixes.md",
      "gist": "A 4. fejezet a VALVES_ON_PATH új, tétel-szintű definíciója: a szelepek száma A és B között a vonalnézet egy legrövidebb útján, ahol a jelöletlen idomokon átlépünk; csak akkor lesz kérdés egy párból, ha minden legrövidebb út ugyanazt a számot adja. A 3.1 táblázat a pontozást érintő hibákat sorolja."
+    },
+    {
+     "design": "docs/private/40-design/v2t-b-system-revision.md",
+     "gist": "A B rendszer és az X-kör kérdéscsaládjainak terve: mit lát a B, hogyan írjuk le a tag nélküli szelepet, hogyan pontozzuk a VALVE_SET és POSITION válaszokat, és a B kapui."
     }
    ],
    "how": [
@@ -2307,6 +2368,22 @@
      "calls": [
       "harness → class_vocabulary.answer_class_names → own_class_names; → final_answer.run_final_step(class_names=...)"
      ]
+    },
+    {
+     "file": "src/plantgraph/qa/questions/scope_x.py",
+     "entry": "scope_x_candidates",
+     "role": "Az X-kör kérdései: a regisztrált leválasztási bejárás (minden úton az első mozgatható szelep), a nyitott-szelep változatnál a normálisan zárt szelepek nélkül; ha egy szelepet nem lehet egyértelműen leírni, a kérdést elutasítja, nem fogalmazza át.",
+     "calls": [
+      "scope_x.scope_x_candidates → families_isolation.upstream_walk / families_heldout_reach.downstream_walk → scope_x_references.name_valves"
+     ]
+    },
+    {
+     "file": "src/plantgraph/qa/exp0009/gold_crosscheck.py",
+     "entry": "CrossChecker.check",
+     "role": "Független második számítás: a helyes választ a definícióból, külön kóddal újraszámolja a lapokból visszaépített gráfon, és összeveti a generátoréval.",
+     "calls": [
+      "gold_crosscheck_plants → gold_crosscheck_graph.build_flow_graph → gold_crosscheck.CrossChecker.check → gold_crosscheck_walks.isolation_valves"
+     ]
     }
    ],
    "proof": [
@@ -2369,6 +2446,21 @@
      "claim": "Az EX01 lapon (ChatP&ID reprodukció) a 0.91-et nem sikerült reprodukálni; ez az egyetlen hely, ahol nem kiszámolt igazsággal, hanem vak ellenőrzőlistás bírálattal pontoztunk.",
      "number": "ctx-high 0/0/0, ctx-low 0/0/0, ctx-gpt5mini 1/1/1 … 0.91 not reproduced",
      "source": "docs/private/30-experiments/_results.md"
+    },
+    {
+     "claim": "Az X-kör helyes válaszainak független ellenőrzése a 10 lezárt üzemen",
+     "number": "500 kérdés, 0 eltérés",
+     "source": "docs/private/30-experiments/EXP-0009-v22-sealed.md"
+    },
+    {
+     "claim": "Kézi szúrópróba: családonként 2 kérdés (seed 20261127)",
+     "number": "48 kérdés; a 38 R-kör kérdést egy külön szkript is újraszámolta, mind egyezik; 0 hibás helyes válasz",
+     "source": "docs/private/30-experiments/EXP-0009-v22-sealed.md"
+    },
+    {
+     "claim": "Mennyit magyaráz a leválasztási definíció (négy olvasat, utólagos)",
+     "number": "ha bármelyik olvasat elfogadható: B 0,207 → 0,362, A2 0,102 → 0,138; a B a kérdések 64%-ánál minden olvasat szerint téved",
+     "source": "docs/private/30-experiments/EXP-0009-v22-sealed.md"
     }
    ],
    "learn": [
@@ -2439,6 +2531,14 @@
     {
      "q": "Mik a kérdésrész korlátai?",
      "a": "Családonként egy sablonmegfogalmazás van (plusz tíz átfogalmazás), a kérdések generált üzemen készülnek, és nincsenek bennük berendezésadatok (ADR-0021), így a ChatP&ID adatlapos kérdései kívül esnek. Az izolációs arany definíció vitatható (a szabályozószelep elzárási pont-e). A held-out és az első mérés számai az EXP-0008-cal újra lesznek mérve."
+    },
+    {
+     "q": "Mi a gyenge pont a leválasztási kérdések definíciójában?",
+     "a": "A lefelé irányuló leválasztás helyes válaszában ott vannak a normálisan már zárt leeresztőszelepek, holott a kérdés azt kérdezi, mit kell elzárni. Ha ezeket kivesszük, a B pontszáma 0,05-ről 0,17-re nő. Felfelé viszont a rendszer maga is a regisztrált olvasatot követi: a segédközeg-szelepeket is felsorolja."
+    },
+    {
+     "q": "Ha a generátor számolja a helyes választ, honnan tudjuk, hogy jó?",
+     "a": "Három módon: egy külön írt második számítás (500/500 egyezés az X-körön), egy LLM-bíráló audit a pontozón (kappa 0,860, 0 pontozóhiba), és kézi szúrópróba (48 kérdés). A második számítás a kódot ellenőrzi, nem a definíciót; ezért kellett a szúrópróba és a definíció-elemzés is."
     }
    ]
   },
@@ -2451,7 +2551,7 @@
     "5",
     "6"
    ],
-   "summary": "Ez az állomás arról szól, hogyan jut el a kérdéshez szükséges gráfrészlet a nyelvi modellhez. Minden stratégia ugyanazt a szerződést követi: csak a kérdés szövegét látja (`Strategy.retrieve(question_text)`), kontextust ad vissza, és mind ugyanazzal a közös végső válaszlépéssel zár, tehát csak a kontextus megválasztása különbözik. Az út a ChatP&ID-féle ContextRAG-tól (az egész gráf a promptban: egy lapon működik, üzemi méretben nem fér el) a lapokat szűkítő Hierarchical-on és a kérdés információigénye szerint válogató need-aware változaton (üzemgráfon, P&ID-primerrel) át vezet a két végleges eszközig: a Cypher-szintig (a modell egy lekérdezést ír a Neo4j üzemrétegére) és a gráfeszköz-ügynökig, amely hat általános primitívet (find, neighbours, traverse, path, filter, aggregate) komponál. Ez a kettő lett a kaszkád két foka (8. állomás). A Jev-alapú útválasztás és modellválasztás döntésként megvan, de kód nem épült hozzá.",
+   "summary": "Ez az állomás arról szól, hogyan jut el a kérdéshez szükséges gráfrészlet a nyelvi modellhez. Minden stratégia ugyanazt a szerződést követi: csak a kérdés szövegét látja (`Strategy.retrieve(question_text)`), kontextust ad vissza, és mind ugyanazzal a közös végső válaszlépéssel zár, tehát csak a kontextus megválasztása különbözik. Az út a ChatP&ID-féle ContextRAG-tól (az egész gráf a promptban: egy lapon működik, üzemi méretben nem fér el) a lapokat szűkítő Hierarchical-on és a kérdés információigénye szerint válogató need-aware változaton (üzemgráfon, P&ID-primerrel) át vezet a két végleges eszközig: a Cypher-szintig (a modell egy lekérdezést ír a Neo4j üzemrétegére) és a gráfeszköz-ügynökig, amely hat általános primitívet (find, neighbours, traverse, path, filter, aggregate) komponál. Ez a kettő lett a kaszkád két foka (8. állomás). A Jev-alapú útválasztás és modellválasztás döntésként megvan, de kód nem épült hozzá. A V2T-B (ADR-0067) a befagyasztott V2T-A2 kiegészítése: ugyanazok a szintek, de a szelepeknél látja a normál állást, és a tag nélküli szelepet leírással meg tudja nevezni. Feltáró ágként futott, mert a hangoló kapuja (G1-B) elbukott.",
    "why": [
     {
      "adr": "ADR-0022",
@@ -2563,6 +2663,17 @@
       "D: stratégia × modell együttes routolása"
      ],
      "status": "accepted (2026-10-03); az ADR-0042 módosította, azt pedig az ADR-0046 kaszkád váltotta fel; az offline-join gondolata a kaszkádban él tovább (8. állomás)"
+    },
+    {
+     "adr": "ADR-0067",
+     "title": "V2T-B: a system revision that sees valve positions and untagged valves",
+     "decision": "Az A2 érintetlen marad (E9); a B két nézetet kap ugyanarról az üzemről (A: lecsupaszított, B: állással), egyszerre egy van a Neo4j-ben. A tag nélküli szelepet (típus, vezetékszám, legközelebbi tagelt elem, oldal) írja le, a pontozó ezt csomópontra oldja fel: akkor jó, ha pontosan a helyes szelepeket nevezi meg.",
+     "alternatives": [
+      "1A: egy tár az állással, az A2 sématextje elrejti (de akkor az A2 már nem E9)",
+      "1C: az állás külön csomópontként",
+      "2A: csak (típus, vezetékszám) — nem egyértelmű"
+     ],
+     "status": "accepted (user, 2026-11-23)"
     }
    ],
    "what": [
@@ -2731,6 +2842,30 @@
      "calls": [
       "chatpid_qa.main → load_chatpid_qa → _parse_line → summarise → format_summary"
      ]
+    },
+    {
+     "file": "src/plantgraph/qa/v2tb/descriptor.py",
+     "entry": "resolve_descriptor",
+     "role": "A tag nélküli szelep leírása és feloldása üzemi csomópontra; a canonical_descriptor írja a helyes válasz alakját.",
+     "calls": [
+      "scoring_b.resolve_item → descriptor.decode_item → descriptor.resolve_descriptor"
+     ]
+    },
+    {
+     "file": "src/plantgraph/qa/v2tb/plant_api_b.py",
+     "entry": "item_line_b",
+     "role": "Az ágens eszközei változatlanok, csak a szelepek sorába kerül két új tény: a normál állás és a leírás.",
+     "calls": [
+      "strategies_b → plant_api_b.item_line_b"
+     ]
+    },
+    {
+     "file": "src/plantgraph/qa/v2tb/scoring_b.py",
+     "entry": "score_valve_set",
+     "role": "A VALVE_SET és POSITION válaszok pontozása: minden tételt csomópontra old fel, és a halmazt hasonlítja; a többi típus a befagyasztott pontozóhoz megy.",
+     "calls": [
+      "attempt_b → scoring_b.score_answer_b → scoring_b.score_valve_set"
+     ]
     }
    ],
    "proof": [
@@ -2803,6 +2938,26 @@
      "claim": "Q5: a tipizált plant API (ügynök) a szabad Cypher fölött (első mérés, felülírta az EXP-0008); a held-out családokon az intervallum a 0-t is tartalmazza.",
      "number": "Q5 PASS +0.075 [+0.039, +0.111]; held-out FAIL +0.090 [−0.010, +0.180]",
      "source": "docs/private/30-experiments/EXP-0007-R5-sealed.md"
+    },
+    {
+     "claim": "B: szelepállás (POSITION_OF_VALVE, mindkét skála)",
+     "number": "0,96; leírással kérdezve 0,955 a 0,807-es „mindig a leggyakoribb” és a 0,875-ös szövegelőzmény-alapvonal mellett",
+     "source": "docs/private/30-experiments/EXP-0009-v22-sealed.md"
+    },
+    {
+     "claim": "B − A2 a leválasztási családokon (SB2, feltáró)",
+     "number": "+7,5 pont [+3,0; +12,2]; tag nélküli szelepet tartalmazó helyes válasznál B 0,305, A2 0,000",
+     "source": "docs/private/30-experiments/EXP-0009-v22-sealed.md"
+    },
+    {
+     "claim": "Lista-válaszok pontossága, felidézése, F1 (kaszkád, mindkét skála)",
+     "number": "A2 0,790 / 0,753 / 0,757; B 0,886 / 0,784 / 0,793",
+     "source": "docs/private/30-experiments/EXP-0009-v22-sealed.md"
+    },
+    {
+     "claim": "GLM 5.3 Flash a Luna helyett (A2, egy-egy üzem)",
+     "number": "100 lapon −1,3 [−5,1; +2,6], 1000 lapon −5,1 [−9,4; −1,3] pont",
+     "source": "docs/private/30-experiments/EXP-0009-v22-sealed.md"
     }
    ],
    "learn": [
@@ -2877,6 +3032,10 @@
     {
      "q": "Mi lett a Jev-útválasztással és a modellválasztó routerrel?",
      "a": "Mindkettő elfogadott döntés, de egyikhez sem épült kód: a kaszkád (ADR-0046) pontosabbnak és olcsóbbnak bizonyult, mint az erőfeszítés- vagy modellválasztás, a Jev pedig csak opcionális maradt. Az offline-join gondolata, vagyis a már rögzített futások válaszainak kérdésenkénti kiválasztása, a kaszkádban él tovább."
+    },
+    {
+     "q": "Miért feltáró a B eredménye, és nem megerősítő?",
+     "a": "A B hangoló kapuja (G1-B) elbukott: a validációs üzemeken mindkét leválasztási család 50% alatt volt. A felhasználó döntése szerint a B mégis lefutott a lezárt üzemeken, előre bejelentett eltéréssel, így minden B-szám leíró, a kapu bukása mellett közölve."
     }
    ]
   },
@@ -3199,6 +3358,16 @@
      "claim": "Ugyanazokon a lepecsételt kérdéseken a régi F1 (cascade_v3) gyengébb (első mérés, leíró, intervallum nélkül).",
      "number": "F1 cascade_v3 382/440 0.868 … (H100g2), 366/440 0.832 … (H1000g2)",
      "source": "docs/private/30-experiments/EXP-0007-R5-sealed.md"
+    },
+    {
+     "claim": "K1 a v2.2 üzemeken (kaszkád − mindig ágens)",
+     "number": "−3,1 pont [−5,3; −0,8], kérdésenként $0,00035-tel olcsóbb, nem gyorsabb: FAIL, másodszor is",
+     "source": "docs/private/30-experiments/EXP-0009-v22-sealed.md"
+    },
+    {
+     "claim": "Útválasztási veszteség az elzárt „cut … off” megfogalmazáson",
+     "number": "a B 11 olyan választ vesztett, amelyet az ágense eltalált (OPEN_VALVES_TO_ISOLATE_DOWNSTREAM: kaszkád 0,14, ágens egyedül 0,24)",
+     "source": "docs/private/30-experiments/EXP-0009-v22-sealed.md"
     }
    ],
    "learn": [
@@ -3279,6 +3448,10 @@
     {
      "q": "Egy üzem kérdései nem függetlenek. Hogyan kezelitek ezt az intervallumoknál?",
      "a": "Az első mérés egy üzemen kérdés-bootstrapot használt, ami csak arra az egy üzemre mond valamit. Az EXP-0008 skálánként öt üzemet mér, és kétlépcsős klaszter-bootstrapot használ: először üzemeket, aztán kérdéseket húz. Öt klaszterrel ez is alábecsüli az üzemek közti szórást, kb. 4/5-ös tényezővel, és ezt korlátként kimondjuk."
+    },
+    {
+     "q": "Miért bukik a K1 újra?",
+     "a": "A kaszkád olcsóbb, de pontatlanabb: a Cypher-szint néha elfogadható, de rossz választ ad, és a kaszkád nem lép tovább. Az EXP-0009-ben látszik egy konkrét ok is: az útválasztó szabály az „isolat…” szót keresi, az elzárt kérdések viszont „cut … off” szöveggel jönnek, így a Cypher-szintre kerülnek. Pontosságra törekedve a „mindig ágens” a jobb beállítás."
     }
    ]
   },
@@ -3336,6 +3509,15 @@
       "Méret a szokásos törlés-újratöltés után – korábbi korpuszok fenntartott helye benne marad"
      ],
      "status": "accepted (user, 2026-10-11)"
+    },
+    {
+     "adr": "ADR-0068",
+     "title": "Five launcher choices for EXP-0009 P1",
+     "decision": "A fizetős futások plafonja a kérdésszámból jön (n × $/kérdés × 1,5), nem egy száraz futásból; saját EXP-0009 építőparancs; a B korpuszfájl átcímkézve; minden lezárt futás visszajátszása; a validációs üzemek a többségi tag-rétegből.",
+     "alternatives": [
+      "1A: plafon száraz futásból, mint az EXP-0008-ban (kb. 4 óra extra a P1c-ben)"
+     ],
+     "status": "accepted (user, 2026-11-24)"
     }
    ],
    "what": [
@@ -3346,6 +3528,10 @@
     {
      "design": "docs/private/40-design/review-fixes.md",
      "gist": "§5.3 a pontozó-ellenőrzés (scorer audit) terve: a determinisztikus pontozó marad az elsődleges, egy második, független modell (anthropic/claude-sonnet-5.5) vakon, a pontozó ítélete nélkül dönti el, jó-e a válasz. Költségsorrend: pilot (G2 kapu), minden hibás sor, minimális véletlen helyes minta, ContextRAG hibás sorai, több helyes minta; $10 kemény plafon. Eltérésnél javítani csak a pontozót vagy a goldot szabad, a rendszert soha. §11 rögzíti a megvalósítás közben mért pilot-adatokat."
+    },
+    {
+     "design": "docs/private/40-design/exp0009-launcher-review.md",
+     "gist": "Az EXP-0009 indító átnézése indulás előtt: a talált hibák és a döntések, köztük az audit B-rétegéé (B2, F9)."
     }
    ],
    "how": [
@@ -3605,6 +3791,14 @@
       "render_report → group_stats / cohens_kappa / g2_verdict / disagreements_by_class_and_family"
      ],
      "excerpt": "def g2_verdict(records: list[AuditRecord]) -> G2Verdict:\n    \"\"\"Gate G2 over the pilot rows among `records`.\"\"\"\n    defects = [r for r in records if r.item.stratum in PILOT_DEFECT_STRATA]\n    controls = [r for r in records if r.item.stratum == \"pilot_control\"]\n    found = [r for r in defects if r.reply.verdict is not JudgeVerdict.INCORRECT]\n    right = [r for r in controls if r.reply.verdict is JudgeVerdict.CORRECT]\n    return G2Verdict(\n        n_defect=len(defects),\n        n_defect_found=len(found),\n        n_control=len(controls),\n        n_control_correct=len(right),\n    )"
+    },
+    {
+     "file": "src/plantgraph/qa/exp0009/launcher.py",
+     "entry": "main",
+     "role": "Az EXP-0009 indító parancsai (üzemek, pénz, futások, állapot, hangolás és befagyasztás, GLM-ág); a run_all.sh ezeket hívja szakaszonként (P0 → P1a → P1b → F10 → B10 → P1c → P1g → P1d → END).",
+     "calls": [
+      "launcher.main → launcher.build_parser → stages.stage_groups / analysis.main"
+     ]
     }
    ],
    "proof": [
@@ -3682,6 +3876,16 @@
      "claim": "A bíró hívásonkénti költségbecslése és a legrosszabb eset.",
      "number": "≈ $0.015 per call becslés; worst case $0.042 a 24,000 karakteres plafonon; a leghosszabb mért pilot-prompt (27,584 chars) up to $0.0457",
      "source": "docs/private/40-design/review-fixes.md"
+    },
+    {
+     "claim": "Az EXP-0009 P1 költsége",
+     "number": "futások $19,58, audit $3,51, összesen $23,09 a $35-os plafon alatt",
+     "source": "docs/private/30-experiments/EXP-0009-v22-sealed.md"
+    },
+    {
+     "claim": "Gépidő: egy 1000 lapos üzem négy P1c-ága",
+     "number": "kb. 3,7 óra üzemenként; egy Cypher-visszajátszás 25–45 perc",
+     "source": "docs/private/50-progress/2026-W48.md"
     }
    ],
    "learn": [],
@@ -3787,7 +3991,7 @@
     "8",
     "9"
    ],
-   "summary": "Itt áll össze, mit mértünk, milyen sorrendben és miért. Az EXP-0001 a skála egylapos végét méri (ContextRAG kontra kaszkád 1–30 lapon), az EXP-0002 a lezárt, egyszer futtatott teszt 100 és 1000 lapon (v1). Az EXP-0007 ezt megismételte a valószerűbb v2 üzemeken (V2T, R4 létra, R5 lezárt teszt, INFRA-2), az EXP-0004 pedig a lapok közötti azonosságot mérte (P3, P4). A kódátnézés eredményt mozgató hibákat talált, ezért az első v2 mérést az EXP-0008 tiszta újrafuttatása váltotta: öt-öt üzem skálánként, egyetlen indító, G1/G2 kapuk, pontozó-audit. Az EXP-0008 2026-11-17-én lefutott ($26.56 + $5.23): a kaszkád 0.914 / 0.908 kb. 100 / 1000 lapon, a ContextRAG egy lapon is gyengébb.",
+   "summary": "Itt áll össze, mit mértünk, milyen sorrendben és miért. Az EXP-0001 a skála egylapos végét méri (ContextRAG kontra kaszkád 1–30 lapon), az EXP-0002 a lezárt, egyszer futtatott teszt 100 és 1000 lapon (v1). Az EXP-0007 ezt megismételte a valószerűbb v2 üzemeken (V2T, R4 létra, R5 lezárt teszt, INFRA-2), az EXP-0004 pedig a lapok közötti azonosságot mérte (P3, P4). A kódátnézés eredményt mozgató hibákat talált, ezért az első v2 mérést az EXP-0008 tiszta újrafuttatása váltotta: öt-öt üzem skálánként, egyetlen indító, G1/G2 kapuk, pontozó-audit. Az EXP-0008 2026-11-17-én lefutott ($26.56 + $5.23): a kaszkád 0.914 / 0.908 kb. 100 / 1000 lapon, a ContextRAG egy lapon is gyengébb. Az EXP-0009 (2026-11-27) ugyanazt a befagyasztott kaszkádot mérte a nehezebb, v2.2-es üzemeken: 0,899 kb. 100 és 0,913 kb. 1000 lapon (Q4 PASS), a K1 ismét FAIL, a B feltáró ág a szelepállást jól olvassa (0,96), a leválasztás mindkét rendszernek nyitott probléma.",
    "why": [
     {
      "adr": "ADR-0053",
@@ -3838,6 +4042,16 @@
       "S2: LLM-bíró mint fő pontozó – nem determinisztikus, maga is ellenőrizetlen"
      ],
      "status": "proposed (a felhasználó 2026-11-07-én elfogadta az irányát; az EXP-0008 még nem futott)"
+    },
+    {
+     "adr": "ADR-0069",
+     "title": "The EXP-0009 audit judge and the audit scope",
+     "decision": "A B-réteget egy EXP-0009-es bírálói belépési pont pontozza a változatlan sablonnal és két új választípus-súgósorral; a fő auditminta csak az A2 R-körös soraiból jön.",
+     "alternatives": [
+      "(a) a befagyasztott bírálósablon átírása (megváltoztatná a regisztrált hash-t)",
+      "(c) a B-réteg elhagyása"
+     ],
+     "status": "accepted (main session, 2026-11-24)"
     }
    ],
    "what": [
@@ -3860,6 +4074,10 @@
     {
      "design": "docs/private/30-experiments/EXP-0008-v2-rerun.md",
      "gist": "Az EXP-0008 eredményjegyzete: beállítás, minden eredménytábla, értelmezés és korlátok."
+    },
+    {
+     "design": "docs/private/30-experiments/EXP-0009-v22-sealed.md",
+     "gist": "Az EXP-0009 eredményjegyzete: beállítás, A2 állítások, B feltáró eredmények, X-kör családonként, adateffektus, GLM-ág, audit, szúrópróba, a leválasztási definíció elemzése, korlátok."
     }
    ],
    "how": [
@@ -3984,6 +4202,14 @@
       "replay.compare → _rows → _stable",
       "c1_report.main → read_results → compare → render"
      ]
+    },
+    {
+     "file": "src/plantgraph/qa/exp0009/analysis.py",
+     "entry": "build_report",
+     "role": "Az EXP-0009 elemzése (T17): állítássorok, leíró táblák, P/R/F1, adateffektus; a kimenet a reports/analysis.md.",
+     "calls": [
+      "analysis.main → analysis_load.load_plant → analysis.build_report → analysis_render"
+     ]
     }
    ],
    "proof": [
@@ -4086,6 +4312,26 @@
      "claim": "Az EXP-0008 tervezett gépideje (nem futott).",
      "number": "≈ 72 h",
      "source": "docs/private/40-design/review-fixes.md"
+    },
+    {
+     "claim": "EXP-0009 Q4 (A2, R-kör, 5+5 üzem)",
+     "number": "0,899 kb. 100 lapon, 0,913 kb. 1000 lapon, különbség +1,4 pont [−1,9; +4,7]: PASS",
+     "source": "docs/private/30-experiments/EXP-0009-v22-sealed.md"
+    },
+    {
+     "claim": "EXP-0009 K2, K3, Q5",
+     "number": "K2 +6,7 [+5,0; +8,5]; K3 medián 5,4 s, p90 30,2 s; Q5 +12,9 [+9,2; +16,4]: mind PASS",
+     "source": "docs/private/30-experiments/EXP-0009-v22-sealed.md"
+    },
+    {
+     "claim": "EXP-0009 pontozó-audit",
+     "number": "kappa 0,860; 25 eltérésből 0 pontozó- vagy gold-hiba, 25 bírálói hiba",
+     "source": "docs/private/30-experiments/EXP-0009-v22-sealed.md"
+    },
+    {
+     "claim": "EXP-0009 X-kör családonként (acc@C, B / A2)",
+     "number": "UPSTREAM_ISOLATION_X 0,28 / 0,16; OPEN_VALVES_TO_ISOLATE 0,26 / 0,14; OPEN_VALVES_TO_ISOLATE_DOWNSTREAM 0,12 / 0,07; DOWNSTREAM_ISOLATION_X 0,04 / 0,03",
+     "source": "docs/private/30-experiments/EXP-0009-v22-sealed.md"
     }
    ],
    "learn": [
@@ -4186,6 +4432,10 @@
     {
      "q": "Mennyire általánosítható az eredmény?",
      "a": "Szintetikus üzemeken, generált kérdéseken, egy modellel és egy gépen mértünk; a held-out családokat ugyanaz a csapat tervezte. Az állítás „ilyen fajta üzemekre” szól. Valódi üzemen az azonosság-feloldás és a névadás szokásai másképp viselkedhetnek."
+    },
+    {
+     "q": "Mit tett hozzá az EXP-0009 az EXP-0008-hoz?",
+     "a": "Megmutatta, hogy a skálaeredmény (100 és 1000 lap között nincs pontosságvesztés) a nehezebb, kézikönyvi szabályú üzemeken is megáll, bár ezek 6–8 ponttal nehezebbek. Hozzátette a szelepállás- és leválasztási kérdéseket, és kimutatta, hogy a leválasztás a rendszer legnagyobb gyengesége."
     }
    ],
    "timeline": [
