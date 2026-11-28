@@ -12,7 +12,7 @@ Recover the cross-sheet ground truth that exists in the OPEN100 images but is mi
 ## 1. Input and output
 
 **In**
-- 12 `{0..11}.png` — the drawings (`C:\Users\b.kiszely\Desktop\Projects\Work Done\PID2Graph\Complete\PID2Graph OPEN100` — moved here 2026-09-05; `Patched/` beside it holds the tiled variant)
+- 12 `{0..11}.png` — the drawings (`C:/Users/Otthon/Desktop/Munka/PID2Graph/Complete/PID2Graph OPEN100` on this machine, corrected 2026-11-28; `Patched/` beside it holds the tiled variant)
 - 12 `{0..11}.graphml` — per-sheet graphs; nodes carry `label` + bbox only
 - The sheet→PID map established 2026-08-25 (see `10-literature/pid2graph.md`)
 
