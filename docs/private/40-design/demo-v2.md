@@ -710,3 +710,18 @@ None of these needs a new answer from the user.
   - `docs/private/30-experiments/EXP-0008-v2-rerun.md`, `_results.md:9`;
   - `docs/private/40-design/review-fixes.md:128`, `:473-481`;
   - ADR-0056:118, ADR-0063 point 3, ADR-0065 line 6.
+
+## 13. Verification record (2026-11-21)
+
+| Step | Result | Source |
+|---|---|---|
+| F1 | 513 demo tests pass; `mypy src/plantgraph/demo` clean; ruff clean | coder reports T1–T7, re-run by hand |
+| F2 | E9 freeze: `sha256sum -c` OK, no diff in frozen paths | `E9.sha256`, `E9.commit` |
+| F3 | Drawings: H100g21p1 100 pages, 1.31 MB; H1000g21p1 1,000 pages, 12.97 MB; self-check passes on both (0 dangling flags, 0 overlaps) | `data/runs/exp0008/demo/drawings/export_*.log` |
+| F4 | Server ready on both plants. With Neo4j holding H1000g21p1 both tiers open there; H100g21p1 shows the agent tier with `holds_other`. App working set ≈ 1,846 MiB with two opened cascades. Plant loads 26–32 s (H1000g21p1), 3–9 s (H100g21p1) | `/api/status`, `/api/plant` |
+| F5a | Routed questions only, cache copy, no paid call: H100g21p1 10/10 agree, H1000g21p1 10/10 agree, 0 misses | `data/runs/exp0008/demo/replay_agreement/F5a_*/replay_agreement.md` |
+| F5b | Not run | – |
+| F6' | Switched Neo4j to H100g21p1 for P1 and back to H1000g21p1 (user's yes, 2026-11-21) | `/api/plant` |
+| P1 | Six live asks, $0.0103 in all. H1000g21p1: isolation V-1101 routed to the agent, correct; lookup HS-556001 by Cypher, correct; flow path FV-117049 → GTV-134011 by Cypher, accepted but **wrong** (the EXP-0008 Cypher run had it right; a new model call, not a measurement). H100g21p1: isolation P-4302B routed to the agent, correct; SAME_UNIT and ROUTE_AVOIDING by Cypher, correct | `data/runs/exp0008/demo/calls.jsonl` |
+
+The presentation keeps the flow-path step under the declared first-of-family rule (§10 point 5).
